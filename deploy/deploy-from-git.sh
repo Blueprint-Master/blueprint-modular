@@ -2,12 +2,19 @@
 # Déploiement depuis le repo Git (à exécuter sur le serveur)
 # Usage: ./deploy/deploy-from-git.sh
 # Prérequis: git installé. Pour la 1ère fois: clone dans REPO_DIR puis lancer ce script.
+#
+# Déploie DEUX racines :
+# - Site vitrine (blueprint-modular.com) → /var/www/blueprint-modular
+# - Documentation (docs.blueprint-modular.com) → /var/www/blueprint-modular-docs
 
 set -e
 
 REPO_URL="https://github.com/remigit55/blueprint-modular.git"
 REPO_DIR="${REPO_DIR:-/home/ubuntu/blueprint-modular}"
-WWW_DIR="/var/www/blueprint-modular"
+STATIC="$REPO_DIR/frontend/static"
+
+VITRINE_DIR="/var/www/blueprint-modular"
+DOCS_DIR="/var/www/blueprint-modular-docs"
 
 echo "==> Déploiement Blueprint Modular depuis Git"
 
@@ -23,20 +30,38 @@ else
   cd "$REPO_DIR"
 fi
 
-# Copie des fichiers statiques vers /var/www/blueprint-modular
-echo "--> Copie des fichiers vers $WWW_DIR..."
-sudo mkdir -p "$WWW_DIR"
-sudo cp -r frontend/static/* "$WWW_DIR/"
-if [ -f "Logo BPM.png" ]; then
-  sudo cp "Logo BPM.png" "$WWW_DIR/"
-fi
-# Fichiers à la racine du site (index, doc.css, etc. sont déjà dans frontend/static)
-# Dossiers get-started, api-reference, deploy, knowledge-base sont copiés par le -r ci-dessus
+# --- Site vitrine (landing uniquement) ---
+echo "--> Vitrine → $VITRINE_DIR"
+sudo mkdir -p "$VITRINE_DIR"
+sudo cp "$STATIC/index.html" "$VITRINE_DIR/"
+sudo cp "$STATIC/landing.css" "$VITRINE_DIR/"
+sudo cp "$STATIC/favicon.ico" "$VITRINE_DIR/" 2>/dev/null || true
+sudo cp -r "$STATIC/img" "$VITRINE_DIR/" 2>/dev/null || true
 
+# --- Documentation (tout le contenu doc) ---
+echo "--> Documentation → $DOCS_DIR"
+sudo mkdir -p "$DOCS_DIR"
+# Hub doc : index (accueil de la doc) + docs.html (liens existants)
+sudo cp "$STATIC/docs.html" "$DOCS_DIR/index.html"
+sudo cp "$STATIC/docs.html" "$DOCS_DIR/docs.html"
+sudo cp "$STATIC/doc.css" "$DOCS_DIR/"
+sudo cp "$STATIC/components.html" "$DOCS_DIR/"
+sudo cp "$STATIC/reference.html" "$DOCS_DIR/"
+sudo cp "$STATIC/cheat-sheet.html" "$DOCS_DIR/"
+sudo cp "$STATIC/favicon.ico" "$DOCS_DIR/" 2>/dev/null || true
+sudo cp -r "$STATIC/img" "$DOCS_DIR/" 2>/dev/null || true
+sudo cp -r "$STATIC/get-started" "$DOCS_DIR/"
+sudo cp -r "$STATIC/api-reference" "$DOCS_DIR/"
+sudo cp -r "$STATIC/deploy" "$DOCS_DIR/"
+sudo cp -r "$STATIC/knowledge-base" "$DOCS_DIR/"
+
+# Droits
 echo "--> Droits (ubuntu:ubuntu)..."
-sudo chown -R ubuntu:ubuntu "$WWW_DIR"
+sudo chown -R ubuntu:ubuntu "$VITRINE_DIR"
+sudo chown -R ubuntu:ubuntu "$DOCS_DIR"
 
-echo "✅ Déploiement terminé. Site servi depuis $WWW_DIR"
-echo "   Pour mettre à jour Nginx avec la config du repo:"
-echo "   sudo cp $REPO_DIR/deploy/nginx.conf /etc/nginx/sites-available/blueprint-modular"
-echo "   sudo nginx -t && sudo systemctl reload nginx"
+echo "✅ Déploiement terminé."
+echo "   Vitrine:    $VITRINE_DIR (blueprint-modular.com)"
+echo "   Documentation: $DOCS_DIR (docs.blueprint-modular.com)"
+echo "   Pour Nginx: sudo cp $REPO_DIR/deploy/nginx.conf /etc/nginx/sites-available/blueprint-modular"
+echo "   Puis:       sudo nginx -t && sudo systemctl reload nginx"

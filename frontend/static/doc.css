@@ -28,6 +28,10 @@ body {
   padding: 1rem 1.5rem;
   border-bottom: 1px solid var(--border);
   flex-wrap: wrap;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  background: var(--bg);
 }
 .doc-nav a { color: var(--muted); text-decoration: none; font-size: 0.95rem; }
 .doc-nav a:hover { color: var(--accent); }
@@ -42,8 +46,8 @@ body {
   padding: 1.5rem 1rem 2rem;
   border-right: 1px solid var(--border);
   position: sticky;
-  top: 0;
-  max-height: 100vh;
+  top: 60px;
+  max-height: calc(100vh - 60px);
   overflow-y: auto;
 }
 .doc-sidebar h3 {
@@ -87,5 +91,5 @@ body {
 .doc-cta:hover { filter: brightness(1.1); }
 @media (max-width: 768px) {
   .doc-layout { flex-direction: column; }
-  .doc-sidebar { width: 100%; max-height: none; border-right: none; border-bottom: 1px solid var(--border); }
+  .doc-sidebar { width: 100%; top: 60px; max-height: none; border-right: none; border-bottom: 1px solid var(--border); }
 }
