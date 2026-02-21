@@ -1,0 +1,84 @@
+.bpm-title {
+  margin: 0;
+  font-family: "Segoe UI", "Source Sans", sans-serif;
+  font-weight: 600;
+  color: rgb(29, 29, 31);
+  line-height: 1.2;
+}
+
+.bpm-title-level-1 {
+  font-size: 2rem;
+  margin-bottom: 1.5rem;
+}
+
+.bpm-title-level-2 {
+  font-size: 1.5rem;
+  margin-bottom: 1rem;
+}
+
+.bpm-title-level-3 {
+  font-size: 1.25rem;
+  margin-bottom: 0.75rem;
+}
+
+.bpm-title-level-4 {
+  font-size: 1.125rem;
+  margin-bottom: 0.5rem;
+}
+
+/* Dark mode */
+.theme-dark .bpm-title {
+  color: #ffffff;
+}
+
+/* Conteneur pour le logo et le texte */
+.bpm-title-content {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.bpm-title-logo {
+  display: none; /* Caché par défaut sur desktop */
+  width: 32px;
+  height: 32px;
+  object-fit: contain;
+  flex-shrink: 0;
+  -webkit-tap-highlight-color: transparent;
+  tap-highlight-color: transparent;
+}
+.bpm-title-logo:focus,
+.bpm-title-logo:active {
+  outline: none;
+}
+
+.bpm-title-text {
+  flex: 1;
+}
+
+/* Afficher le logo sur mobile uniquement pour les titres de niveau 1 */
+@media (max-width: 639px) {
+  .bpm-title-level-1 .bpm-title-logo {
+    display: block;
+  }
+  
+  .bpm-title-level-1 {
+    font-size: 1.5rem;
+    margin-bottom: 1rem;
+  }
+  
+  .bpm-title-level-2 {
+    font-size: 1.25rem;
+    margin-bottom: 0.75rem;
+  }
+  
+  .bpm-title-level-3 {
+    font-size: 1.125rem;
+    margin-bottom: 0.5rem;
+  }
+  
+  .bpm-title-level-4 {
+    font-size: 1rem;
+    margin-bottom: 0.5rem;
+  }
+}

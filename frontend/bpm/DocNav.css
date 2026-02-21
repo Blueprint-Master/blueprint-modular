@@ -1,0 +1,47 @@
+.bpm-doc-nav {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+  padding: 1rem 1.5rem;
+  border-bottom: 1px solid var(--bpm-doc-border, #ededed);
+  flex-wrap: wrap;
+  background: var(--bpm-doc-bg, #fff);
+}
+
+.bpm-doc-nav a {
+  color: var(--bpm-doc-muted, #666);
+  text-decoration: none;
+  font-size: 0.95rem;
+}
+
+.bpm-doc-nav a:hover {
+  color: var(--bpm-doc-accent, #00A3E0);
+}
+
+.bpm-doc-nav-brand {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-weight: 600;
+  color: inherit;
+}
+
+.bpm-doc-nav-logo {
+  height: 32px;
+  width: auto;
+  max-width: 48px;
+  object-fit: contain;
+  flex-shrink: 0;
+}
+
+.bpm-doc-nav-word-blueprint {
+  color: var(--bpm-doc-bleu-profond, #1A4B8F);
+}
+
+.bpm-doc-nav-word-modular {
+  color: var(--bpm-doc-accent, #00A3E0);
+}
+
+.bpm-doc-nav-link {
+  color: var(--bpm-doc-muted, #666);
+}

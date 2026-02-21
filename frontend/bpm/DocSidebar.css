@@ -1,0 +1,45 @@
+.bpm-doc-sidebar {
+  width: 220px;
+  flex-shrink: 0;
+  padding: 1.5rem 1rem 2rem;
+  border-right: 1px solid var(--bpm-doc-border, #ededed);
+  position: sticky;
+  top: 0;
+  max-height: 100vh;
+  overflow-y: auto;
+  background: var(--bpm-doc-bg, #fff);
+}
+
+.bpm-doc-sidebar-section {
+  margin-top: 1rem;
+}
+
+.bpm-doc-sidebar-section:first-child {
+  margin-top: 0;
+}
+
+.bpm-doc-sidebar-title {
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--bpm-doc-muted, #666);
+  margin-bottom: 0.75rem;
+  font-weight: 600;
+}
+
+.bpm-doc-sidebar-link {
+  display: block;
+  padding: 0.35rem 0;
+  font-size: 0.9rem;
+  color: var(--bpm-doc-fg, #333);
+  text-decoration: none;
+}
+
+.bpm-doc-sidebar-link:hover {
+  color: var(--bpm-doc-accent, #00A3E0);
+}
+
+.bpm-doc-sidebar-link-active {
+  color: var(--bpm-doc-accent, #00A3E0);
+  font-weight: 500;
+}

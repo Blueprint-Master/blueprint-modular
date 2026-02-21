@@ -1,0 +1,111 @@
+.bpm-metric {
+    background: white;
+    padding-top: 0;
+    /* Supprimer padding-left pour aligner avec le titre "Portefeuille" à 32px */
+    padding: 0 20px 20px 0; /* top right bottom left */
+    border-radius: 8px;
+    font-family: "Segoe UI", "Source Sans", sans-serif;
+    margin-bottom: 0;
+    box-shadow: none; /* Pas d'ombre par défaut */
+    border: none; /* Pas de bordure */
+  }
+
+  /* Dark mode : fond = fond de l'app (noir), texte = même couleur que la sidebar (blanc / gris clair) */
+  .theme-dark .bpm-metric {
+    background: var(--bg-primary);
+  }
+
+  .theme-dark .bpm-metric-label,
+  .theme-dark .bpm-metric-label > span:first-child,
+  .theme-dark .bpm-metric-label > *:not(.bpm-metric-help) {
+    color: var(--text-primary);
+  }
+
+  .theme-dark .bpm-metric-help {
+    color: var(--text-secondary);
+  }
+
+  .theme-dark .bpm-metric-value {
+    color: var(--text-primary);
+  }
+
+  .theme-dark .bpm-metric-delta:not(.bpm-metric-delta-positive):not(.bpm-metric-delta-negative) {
+    color: var(--text-secondary);
+  }
+  
+  .bpm-metric-label {
+    font-size: 14px;
+    color: #666;
+    margin-bottom: 8px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    min-width: 0; /* Permet au flex de rétrécir */
+    overflow: visible; /* Permet au texte d'être visible */
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+  }
+
+  /* Texte du label - permettre les retours à la ligne */
+  .bpm-metric-label > span:first-child,
+  .bpm-metric-label > *:not(.bpm-metric-help) {
+    overflow: visible;
+    text-overflow: clip;
+    white-space: normal; /* Permet les retours à la ligne */
+    min-width: 0;
+    flex: 1;
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+  }
+
+  /* Icône d'aide ne doit pas rétrécir */
+  .bpm-metric-help {
+    flex-shrink: 0;
+  }
+  
+  .bpm-metric-help {
+    cursor: help;
+    color: #999;
+    font-size: 12px;
+  }
+  
+  .bpm-metric-value {
+    font-size: 32px;
+    font-weight: normal;
+    color: rgb(29, 29, 31);
+    margin-bottom: 4px;
+  }
+  
+  .bpm-metric-delta {
+    font-size: 14px;
+    font-weight: normal;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    min-height: 20px; /* Hauteur minimale seulement si contenu */
+    line-height: 20px;
+  }
+  
+  .bpm-metric-delta-empty {
+    display: none; /* Ne pas afficher et ne pas prendre d'espace */
+    height: 0;
+    min-height: 0;
+    margin: 0;
+    padding: 0;
+  }
+  
+  .bpm-metric-delta-placeholder {
+    display: none; /* Ne pas afficher le placeholder */
+  }
+  
+  .bpm-metric-delta-positive {
+    color: #28a745;
+  }
+  
+  .bpm-metric-delta-negative {
+    color: #dc3545;
+  }
+  
+  .bpm-metric-delta-arrow {
+    font-size: 12px;
+  }

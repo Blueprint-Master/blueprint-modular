@@ -1,0 +1,81 @@
+.bpm-panel {
+  font-family: "Segoe UI", "Source Sans", sans-serif;
+  font-size: 0.875rem;
+  padding: 0.75rem 1rem;
+  border-radius: 8px;
+  border: 1px solid var(--bpm-border, var(--border-color));
+  background: var(--bpm-surface, var(--surface));
+  color: var(--bpm-text-primary, var(--text-primary));
+  line-height: 1.5;
+  margin: 0.25rem 0;
+}
+
+.bpm-panel-header {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 0.25rem;
+  font-weight: 600;
+}
+
+.bpm-panel-icon {
+  font-size: 1rem;
+  line-height: 1;
+}
+
+.bpm-panel-body {
+  margin-top: 0.25rem;
+}
+
+.bpm-panel-info {
+  background: var(--bpm-surface);
+  border-color: var(--bpm-border);
+}
+
+.bpm-panel-success {
+  background: var(--bpm-success-bg);
+  color: var(--bpm-success-text);
+  border-color: var(--bpm-success-border);
+}
+
+.bpm-panel-warning {
+  background: var(--bpm-warning-bg);
+  color: var(--bpm-warning-text);
+  border-color: var(--bpm-warning-border);
+}
+
+.bpm-panel-error {
+  background: var(--bpm-error-bg);
+  color: var(--bpm-error-text);
+  border-color: var(--bpm-error-border);
+}
+
+/* Dark mode */
+html.theme-dark .bpm-panel {
+  background: var(--bpm-surface);
+  border-color: var(--bpm-border);
+  color: var(--bpm-text-primary);
+}
+
+html.theme-dark .bpm-panel-info {
+  background: var(--bpm-surface);
+  border-color: var(--bpm-border);
+}
+
+html.theme-dark .bpm-panel-success {
+  background: var(--bpm-success-bg);
+  color: var(--bpm-success-text);
+  border-color: var(--bpm-success-border);
+}
+
+html.theme-dark .bpm-panel-warning {
+  background: var(--bpm-warning-bg);
+  color: var(--bpm-warning-text);
+  border-color: var(--bpm-warning-border);
+}
+
+html.theme-dark .bpm-panel-error {
+  background: var(--bpm-error-bg);
+  color: var(--bpm-error-text);
+  border-color: var(--bpm-error-border);
+}

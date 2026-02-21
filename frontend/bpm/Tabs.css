@@ -1,0 +1,235 @@
+.bpm-tabs-container {
+  font-family: "Segoe UI", "Source Sans", sans-serif;
+  width: 100%;
+  border: none;
+}
+
+.bpm-tabs-header {
+  display: flex;
+  align-items: stretch;
+  border-bottom: none;
+  border-left: none;
+  border-right: none;
+  border-top: none;
+  gap: 0;
+  overflow-x: auto;
+  overflow-y: hidden;
+  -webkit-overflow-scrolling: touch;
+  position: relative;
+  z-index: 1;
+  scrollbar-width: thin;
+  scrollbar-color: #ccc #f0f2f6;
+  min-height: 0;
+}
+
+/* Améliorer le scroll horizontal sur mobile */
+@media (max-width: 768px) {
+  .bpm-tabs-header {
+    scrollbar-width: none; /* Masquer la scrollbar sur Firefox */
+    -ms-overflow-style: none; /* Masquer la scrollbar sur IE/Edge */
+    padding-bottom: 4px;
+  }
+
+  .bpm-tabs-header::-webkit-scrollbar {
+    display: none; /* Masquer la scrollbar sur Chrome/Safari */
+  }
+
+  .bpm-tab-button {
+    padding: 0.5rem 0.5rem;
+    font-size: 13px;
+    min-width: fit-content;
+  }
+  .bpm-tab-button:first-child {
+    padding-left: 0;
+  }
+}
+
+/* Styles spécifiques pour smartphone */
+@media (max-width: 639px) {
+  .bpm-tabs-content {
+    padding: 0.75rem 0;
+  }
+  
+  .bpm-tab-button {
+    padding: 0.5rem 0.5rem;
+    font-size: 0.8125rem;
+  }
+  .bpm-tab-button:first-child {
+    padding-left: 0;
+  }
+}
+
+.bpm-tabs-header::-webkit-scrollbar {
+  height: 4px;
+  width: 0;
+}
+
+.bpm-tabs-header::-webkit-scrollbar-track {
+  background: #f0f2f6;
+}
+
+.bpm-tabs-header::-webkit-scrollbar-thumb {
+  background: #ccc;
+  border-radius: 2px;
+}
+
+.bpm-tabs-header::-webkit-scrollbar-thumb:hover {
+  background: #999;
+}
+
+.bpm-tab-button {
+  padding: 0.75rem 0.5rem;
+  font-size: 14px;
+  font-weight: normal;
+  color: rgb(29, 29, 31) !important;
+  background-color: transparent;
+  border-left: none;
+  border-right: none;
+  border-top: none;
+  border-bottom: 2px solid rgb(237, 237, 237);
+  border-radius: 0;
+  cursor: pointer;
+  transition: color 0.2s ease, border-bottom-color 0.2s ease;
+  white-space: nowrap;
+  font-family: "Segoe UI", "Source Sans", sans-serif;
+  position: relative;
+  outline: none;
+  margin: 0;
+  box-shadow: none;
+  display: inline-flex;
+  align-items: center;
+  vertical-align: top;
+  z-index: 1;
+  line-height: 1.5;
+  flex-shrink: 0;
+  -webkit-tap-highlight-color: transparent;
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  user-select: none;
+}
+
+/* Premier onglet aligné à gauche (pas de padding-left en plus) */
+.bpm-tab-button:first-child {
+  padding-left: 0;
+}
+
+.bpm-tab-button-text {
+  display: inline-block;
+  position: relative;
+  color: inherit;
+}
+
+
+.bpm-tab-button:hover:not(.bpm-tab-active) {
+  background-color: transparent;
+  box-shadow: none;
+  outline: none;
+}
+
+.bpm-tab-button:hover:not(.bpm-tab-active) .bpm-tab-button-text {
+  color: rgb(29, 29, 31) !important;
+  font-weight: normal;
+}
+
+.bpm-tab-button:hover:not(.bpm-tab-active):focus-visible {
+  outline: none;
+}
+
+.bpm-tab-active {
+  color: var(--accent-color, #A49B6D) !important;
+  font-weight: normal;
+  background-color: transparent;
+  box-shadow: none;
+  position: relative;
+  border-bottom-width: 3px;
+  border-bottom-style: solid;
+  border-bottom-color: var(--accent-color, #A49B6D);
+  border-radius: 0;
+  display: inline-flex;
+  align-items: center;
+  vertical-align: top;
+  line-height: 1.5;
+}
+
+/* Div vide pour compléter la ligne grise à droite des onglets (même épaisseur que les onglets pour alignement) */
+.bpm-tabs-spacer {
+  flex: 1;
+  min-width: 1px;
+  border-bottom: 2px solid rgb(237, 237, 237);
+  pointer-events: none;
+  align-self: stretch;
+}
+
+.bpm-tab-active .bpm-tab-button-text {
+  color: var(--accent-color, #A49B6D) !important;
+  font-weight: normal;
+}
+
+.bpm-tab-button:hover.bpm-tab-active {
+  background-color: transparent;
+  box-shadow: none;
+  outline: none;
+}
+
+.bpm-tab-button:hover.bpm-tab-active .bpm-tab-button-text {
+  color: var(--accent-color, #A49B6D) !important;
+  font-weight: normal;
+}
+
+.bpm-tab-button:hover.bpm-tab-active:focus-visible {
+  outline: none;
+}
+
+.bpm-tab-button:focus-visible {
+  outline: none;
+}
+
+.bpm-tab-button:focus {
+  outline: none;
+}
+
+.bpm-tabs-content {
+  padding: 1rem 0;
+  font-family: "Segoe UI", "Source Sans", sans-serif;
+  width: 100%;
+  max-width: 100%;
+  box-sizing: border-box;
+  overflow-x: hidden;
+  overflow-y: visible; /* Permettre au dropdown de dépasser verticalement sans scrollbar */
+  position: relative;
+  /* S'assurer que les éléments enfants avec position absolute peuvent dépasser */
+  isolation: isolate;
+}
+
+/* Thème sombre : police et bordures des onglets */
+.theme-dark .bpm-tab-button {
+  color: #e8e8ed !important;
+  border-bottom-color: rgba(255, 255, 255, 0.15);
+}
+.theme-dark .bpm-tab-button:hover:not(.bpm-tab-active) .bpm-tab-button-text {
+  color: #f5f5f7 !important;
+}
+.theme-dark .bpm-tab-active {
+  color: var(--accent-color, #c4b896) !important;
+  border-bottom-color: var(--accent-color, #c4b896);
+}
+.theme-dark .bpm-tab-active .bpm-tab-button-text,
+.theme-dark .bpm-tab-button:hover.bpm-tab-active .bpm-tab-button-text {
+  color: var(--accent-color, #c4b896) !important;
+}
+.theme-dark .bpm-tabs-spacer {
+  border-bottom-color: rgba(255, 255, 255, 0.15);
+}
+.theme-dark .bpm-tabs-header {
+  scrollbar-color: rgba(255, 255, 255, 0.3) rgba(255, 255, 255, 0.08);
+}
+.theme-dark .bpm-tabs-header::-webkit-scrollbar-track {
+  background: rgba(255, 255, 255, 0.08);
+}
+.theme-dark .bpm-tabs-header::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.3);
+}
+.theme-dark .bpm-tabs-header::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, 0.5);
+}
+

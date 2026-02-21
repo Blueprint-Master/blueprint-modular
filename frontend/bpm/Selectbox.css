@@ -1,0 +1,292 @@
+.bpm-selectbox-container {
+  font-family: "Segoe UI", "Source Sans", sans-serif;
+  width: 100%;
+  position: relative;
+  z-index: 1; /* Z-index relatif au conteneur parent (modal) */
+}
+
+/* Quand le Selectbox est dans une modal, le dropdown doit être au-dessus */
+.bpm-modal .bpm-selectbox-container,
+.bpm-modal-backdrop .bpm-selectbox-container {
+  z-index: 100001; /* Plus élevé que la modal (100000) pour s'afficher au-dessus */
+  position: relative;
+  overflow: visible !important; /* Permettre au dropdown de dépasser */
+  isolation: isolate; /* Créer un nouveau contexte de stacking */
+}
+
+.bpm-modal .bpm-selectbox-wrapper,
+.bpm-modal-backdrop .bpm-selectbox-wrapper {
+  overflow: visible !important; /* Permettre au dropdown de dépasser */
+  position: relative;
+}
+
+.bpm-selectbox-label {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.875rem;
+  color: rgb(29, 29, 31);
+  font-weight: 500;
+  margin-bottom: 0.5rem;
+  font-family: "Segoe UI", "Source Sans", sans-serif;
+}
+
+.bpm-selectbox-help {
+  cursor: help;
+  color: #999;
+  font-size: 12px;
+}
+
+.bpm-selectbox-wrapper {
+  position: relative;
+  width: 100%;
+  overflow: visible; /* Permettre au dropdown de dépasser */
+}
+
+.bpm-selectbox {
+  width: 100%;
+  padding: 0.375rem 2.75rem 0.375rem 0.75rem;
+  font-size: 0.875rem;
+  font-family: "Segoe UI", "Source Sans", sans-serif;
+  font-weight: normal;
+  color: rgb(29, 29, 31) !important;
+  background: rgb(255, 255, 255) !important;
+  border: 1px solid rgb(237, 237, 237) !important;
+  border-radius: 8px !important;
+  outline: none !important;
+  transition: all 0.2s ease;
+  box-sizing: border-box;
+  cursor: pointer;
+  line-height: 1.4;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  min-height: unset;
+  height: 36px;
+  position: relative;
+  pointer-events: auto !important; /* S'assurer que les clics sont capturés */
+  user-select: none; /* Empêcher la sélection de texte */
+}
+
+.bpm-selectbox:hover:not(.bpm-selectbox-disabled) {
+  background-color: rgb(246, 246, 246) !important;
+  color: rgb(29, 29, 31) !important;
+  border: 1px solid var(--accent-color, #A49B6D) !important;
+}
+
+.bpm-selectbox:focus,
+.bpm-selectbox:focus-visible {
+  background-color: rgb(255, 255, 255) !important;
+  border: 1px solid var(--accent-color, #A49B6D) !important;
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--accent-color, #A49B6D) 25%, transparent) !important;
+  outline: none !important;
+}
+
+.bpm-selectbox-open {
+  border-color: var(--accent-color, #A49B6D) !important;
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--accent-color, #A49B6D) 25%, transparent) !important;
+}
+
+.bpm-selectbox-disabled {
+  background-color: rgb(246, 246, 246) !important;
+  color: rgb(29, 29, 31) !important;
+  border: 1px solid rgb(237, 237, 237) !important;
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
+.bpm-selectbox-value {
+  flex: 1;
+  text-align: left;
+  pointer-events: none; /* Le clic passe au parent .bpm-selectbox */
+  user-select: none; /* Empêcher la sélection de texte */
+}
+
+.bpm-selectbox-placeholder {
+  color: rgb(81, 81, 84);
+}
+
+.bpm-selectbox-arrow {
+  position: absolute;
+  right: 0.75rem;
+  top: 50%;
+  transform: translateY(-50%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  pointer-events: none; /* Le clic passe au parent .bpm-selectbox */
+  transition: transform 0.2s ease;
+  user-select: none; /* Empêcher la sélection */
+}
+
+.bpm-selectbox-arrow svg {
+  width: 20px;
+  height: 20px;
+  display: block;
+}
+
+.bpm-selectbox-disabled .bpm-selectbox-arrow {
+  opacity: 0.5;
+}
+
+/* Dropdown personnalisé */
+.bpm-selectbox-dropdown {
+  position: absolute;
+  top: 100%; /* Positionner juste en dessous du selectbox, sans marge négative */
+  bottom: auto !important; /* Forcer bottom: auto pour éviter les valeurs négatives */
+  left: 0;
+  right: 0;
+  background: rgb(255, 255, 255);
+  border: 1px solid rgb(237, 237, 237);
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  z-index: 999999; /* Z-index très élevé pour s'afficher au-dessus de tout */
+  max-height: 300px;
+  overflow: auto !important; /* Utiliser overflow au lieu de overflow-y/overflow-x séparés */
+  margin-top: 4px;
+  /* Forcer le scroll même quand rendu via portal */
+  -webkit-overflow-scrolling: touch;
+  /* S'assurer que le dropdown peut dépasser du container parent */
+  isolation: isolate;
+  /* Empêcher le parent d'afficher sa scrollbar quand le dropdown dépasse */
+  contain: layout style paint;
+}
+
+/* Dans une modal, utiliser fixed positioning pour éviter d'être coupé par overflow */
+.bpm-modal .bpm-selectbox-dropdown,
+.bpm-modal-backdrop .bpm-selectbox-dropdown {
+  /* La position sera calculée par JavaScript dans Selectbox.jsx avec position: fixed */
+  position: fixed !important;
+  z-index: 1000002 !important;
+  /* S'assurer que le dropdown est au-dessus de tout */
+  isolation: isolate;
+  /* S'assurer que le dropdown n'est pas coupé */
+  pointer-events: auto !important;
+  /* S'assurer que le dropdown est visible */
+  visibility: visible !important;
+  opacity: 1 !important;
+  display: block !important;
+  /* Forcer l'affichage au-dessus */
+  transform: translateZ(0);
+  /* S'assurer que le dropdown n'est pas masqué par overflow */
+  overflow: visible !important;
+  /* S'assurer que le dropdown n'est pas masqué par le backdrop */
+  will-change: transform;
+  /* Forcer la visibilité */
+  clip: auto !important;
+  clip-path: none !important;
+  /* Forcer la visibilité même si le parent a overflow hidden */
+  contain: none !important;
+}
+
+/* Forcer overflow visible sur tous les parents dans une modal */
+.bpm-modal .bpm-selectbox-container,
+.bpm-modal-backdrop .bpm-selectbox-container {
+  overflow: visible !important;
+}
+
+.bpm-modal .bpm-selectbox-wrapper,
+.bpm-modal-backdrop .bpm-selectbox-wrapper {
+  overflow: visible !important;
+}
+
+.bpm-modal-content .bpm-selectbox-container,
+.bpm-modal-content .bpm-selectbox-wrapper {
+  overflow: visible !important;
+}
+
+/* S'assurer que le dropdown peut dépasser du conteneur .bpm-tabs-content */
+.bpm-tabs-content .bpm-selectbox-container {
+  overflow: visible !important;
+  position: relative;
+  z-index: 10; /* Z-index relatif pour permettre au dropdown de s'afficher au-dessus */
+}
+
+.bpm-tabs-content .bpm-selectbox-wrapper {
+  overflow: visible !important;
+  position: relative;
+}
+
+/* S'assurer que le dropdown dans .bpm-tabs-content a un z-index élevé */
+/* Note: Le JavaScript utilise maintenant position: fixed pour tous les dropdowns,
+   donc cette règle ne s'applique plus. Le dropdown est rendu via portal dans le body. */
+.bpm-tabs-content .bpm-selectbox-dropdown {
+  /* Le dropdown avec position: fixed est rendu dans le body via portal,
+     donc ces styles ne s'appliquent plus. Conservés pour compatibilité. */
+  z-index: 10000 !important; /* Z-index élevé pour s'afficher au-dessus des éléments sticky (z-index: 10) */
+}
+
+.bpm-selectbox-option {
+  padding: 0.375rem 0.75rem;
+  padding-left: calc(0.75rem + 3px); /* Réserver l'espace pour la bordure selected */
+  font-family: "Segoe UI", "Source Sans", sans-serif;
+  font-size: 0.875rem;
+  font-weight: normal;
+  color: rgb(29, 29, 31);
+  background: rgb(255, 255, 255);
+  line-height: 1.4;
+  cursor: pointer;
+  transition: background-color 0.2s ease, color 0.2s ease;
+  border-left: 3px solid transparent;
+}
+
+.bpm-selectbox-option:first-child {
+  border-top-left-radius: 8px;
+  border-top-right-radius: 8px;
+}
+
+.bpm-selectbox-option:last-child {
+  border-bottom-left-radius: 8px;
+  border-bottom-right-radius: 8px;
+}
+
+.bpm-selectbox-option:hover {
+  background-color: rgb(246, 246, 246);
+  color: rgb(29, 29, 31);
+}
+
+.bpm-selectbox-option-selected {
+  background-color: rgb(246, 246, 246);
+  color: rgb(29, 29, 31);
+  font-weight: 500;
+  border-left-color: var(--accent-color, #A49B6D);
+}
+
+.bpm-selectbox-option-selected:hover {
+  background-color: rgb(237, 237, 237);
+}
+
+.bpm-selectbox-option:focus,
+.bpm-selectbox-option:focus-visible {
+  outline: 2px solid var(--accent-color, #A49B6D);
+  outline-offset: -2px;
+}
+
+/* Scrollbar pour le dropdown */
+.bpm-selectbox-dropdown::-webkit-scrollbar {
+  width: 8px;
+}
+
+.bpm-selectbox-dropdown::-webkit-scrollbar-track {
+  background: rgb(246, 246, 246);
+  border-radius: 4px;
+}
+
+.bpm-selectbox-dropdown::-webkit-scrollbar-thumb {
+  background: rgb(200, 200, 200);
+  border-radius: 4px;
+}
+
+.bpm-selectbox-dropdown::-webkit-scrollbar-thumb:hover {
+  background: rgb(170, 170, 170);
+}
+
+/* Forcer le scroll pour les dropdowns rendus via portal dans le body */
+body > .bpm-selectbox-dropdown {
+  overflow: auto !important;
+  /* Ne pas forcer max-height ici, laisser le style inline le gérer */
+  -webkit-overflow-scrolling: touch !important;
+  /* Z-index au-dessus de la modal (100000) pour s'afficher devant les popups */
+  z-index: 1000010 !important;
+  position: fixed !important; /* Forcer fixed pour sortir du contexte d'empilement */
+}

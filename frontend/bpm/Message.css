@@ -1,0 +1,85 @@
+.bpm-message {
+  font-family: "Segoe UI", "Source Sans", sans-serif;
+  font-size: 0.875rem;
+  padding: 0.5rem 0.75rem;
+  border-radius: 8px;
+  border: 1px solid var(--bpm-border);
+  background: var(--bpm-surface);
+  color: var(--bpm-text-primary);
+  box-shadow: none;
+  line-height: 1.5;
+  margin-top: 0.25rem;
+  display: block;
+}
+
+.bpm-message-info {
+  background: var(--bpm-surface);
+  color: var(--bpm-text-primary);
+  border-color: var(--bpm-border);
+}
+
+.bpm-message-success {
+  background: var(--bpm-success-bg);
+  color: var(--bpm-success-text);
+  border-color: var(--bpm-success-border);
+}
+
+.bpm-message-warning {
+  background: var(--bpm-warning-bg);
+  color: var(--bpm-warning-text);
+  border-color: var(--bpm-warning-border);
+}
+
+.bpm-message-error {
+  background: var(--bpm-error-bg);
+  color: var(--bpm-error-text);
+  border-color: var(--bpm-error-border);
+}
+
+/* Dark mode : variables héritées de html.theme-dark / .theme-dark */
+.theme-dark .bpm-message,
+html.theme-dark .bpm-message {
+  background: var(--bpm-surface);
+  color: var(--bpm-text-primary);
+  border-color: var(--bpm-border);
+}
+
+.theme-dark .bpm-message-info,
+html.theme-dark .bpm-message-info {
+  background: var(--bpm-surface);
+  color: var(--bpm-text-primary);
+  border-color: var(--bpm-border);
+}
+
+.theme-dark .bpm-message-success,
+html.theme-dark .bpm-message-success {
+  background: var(--bpm-success-bg);
+  color: var(--bpm-success-text);
+  border-color: var(--bpm-success-border);
+}
+
+.theme-dark .bpm-message-warning,
+html.theme-dark .bpm-message-warning {
+  background: var(--bpm-warning-bg);
+  color: var(--bpm-warning-text);
+  border-color: var(--bpm-warning-border);
+}
+
+.theme-dark .bpm-message-error,
+html.theme-dark .bpm-message-error {
+  background: var(--bpm-error-bg);
+  color: var(--bpm-error-text);
+  border-color: var(--bpm-error-border);
+}
+
+
+
+
+
+
+
+
+
+
+
+

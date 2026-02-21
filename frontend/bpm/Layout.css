@@ -1,0 +1,9 @@
+/* BPM Layout — shell sidebar + topbar + body. Réutilise Dashboard.css pour .dashboard-wrapper, .dashboard, .dashboard-page-content. */
+
+.bpm-layout-wrapper {
+  /* Alias pour ciblage spécifique BPM si besoin */
+}
+
+.bpm-layout-main {
+  /* Alias pour ciblage spécifique BPM si besoin */
+}

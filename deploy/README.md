@@ -1,29 +1,50 @@
-# Déploiement — www.blueprint-modular.com
+# Déploiement — Blueprint Modular
 
-Déploiement du site Blueprint Modular sur le VPS (même serveur que myportfolio.beam-consulting) : **Streamlit + Nginx + systemd**.
+Déploiement du site Blueprint Modular sur le VPS : **fichiers statiques (HTML/CSS)** servis par Nginx.
+
+## Deux façons de déployer
+
+| Méthode | Quand l'utiliser |
+|---------|------------------|
+| **Depuis Windows (SCP)** | `.\deploy_blueprint_modular.ps1` — envoie `frontend/static/` + Logo depuis ton PC vers le VPS. |
+| **Depuis le serveur (Git)** | Clone le repo sur le VPS, puis `./deploy/deploy-from-git.sh` — tout passe par le repo. |
+
+## Déploiement via Git (recommandé sur le serveur)
+
+À exécuter **sur le VPS** (après connexion SSH) :
+
+```bash
+# 1. Cloner le repo (une seule fois)
+git clone https://github.com/remigit55/blueprint-modular.git /home/ubuntu/blueprint-modular
+cd /home/ubuntu/blueprint-modular
+
+# 2. Rendre le script exécutable et lancer le déploiement
+chmod +x deploy/deploy-from-git.sh
+./deploy/deploy-from-git.sh
+```
+
+Le script met à jour le repo (`git pull`), copie `frontend/static/` et `Logo BPM.png` vers `/var/www/blueprint-modular`.  
+Pour les **mises à jour** : `cd /home/ubuntu/blueprint-modular && git pull && ./deploy/deploy-from-git.sh`.
+
+**Config Nginx** (une fois) : tu peux copier la config du repo sur le serveur :
+```bash
+sudo cp /home/ubuntu/blueprint-modular/deploy/nginx.conf /etc/nginx/sites-available/blueprint-modular
+# Adapter server_name si besoin, puis :
+sudo ln -sf /etc/nginx/sites-available/blueprint-modular /etc/nginx/sites-enabled/
+sudo nginx -t && sudo systemctl reload nginx
+```
 
 ## Fichiers
 
 | Fichier | Rôle |
 |---------|------|
-| **setup.sh** | Installation initiale : clone du repo, virtualenv, pip install, unit systemd (port 8503). À exécuter en root sur le VPS. |
-| **update.sh** | Mise à jour : `git pull`, mise à jour des dépendances, redémarrage du service. |
-| **nginx.conf** | Vhost Nginx à copier dans `/etc/nginx/sites-available/blueprint-modular` (HTTP→HTTPS, www→apex, proxy vers Streamlit). |
-| **CHECKLIST.md** | Checklist complète (DNS, setup, Nginx, Certbot, commandes utiles). |
+| **deploy-from-git.sh** | Déploiement depuis Git (clone/pull + copie vers `/var/www/blueprint-modular`). À exécuter sur le VPS. |
+| **nginx.conf** | Vhost Nginx (site statique). À copier dans `/etc/nginx/sites-available/blueprint-modular`. |
+| **setup.sh** | Ancien : Streamlit + systemd (référence). |
+| **update.sh** | Ancien : mise à jour Streamlit (référence). |
+| **CHECKLIST.md** | Checklist (DNS, Nginx, Certbot). |
 
 ## Prérequis
 
-- DNS **blueprint-modular.com** et **www.blueprint-modular.com** → IP du VPS
-- Port **8503** libre sur le VPS (`ss -tlnp | grep 85`)
-
-## Installation rapide (sur le VPS)
-
-```bash
-# Rendre les scripts exécutables (depuis le repo en local ou après clone)
-chmod +x deploy/setup.sh deploy/update.sh
-
-# Sur le VPS, en root (ou après clone dans /var/www/blueprint-modular)
-/var/www/blueprint-modular/deploy/setup.sh
-```
-
-Puis créer `.env`, configurer Nginx, lancer Certbot. Détail dans **CHECKLIST.md**.
+- DNS des domaines (ex. blueprintmodular.com, blueprint-modular.fr) → IP du VPS
+- Nginx installé ; dossier `/var/www/blueprint-modular` créé (le script le fait si besoin)

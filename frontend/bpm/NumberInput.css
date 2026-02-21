@@ -1,0 +1,62 @@
+.bpm-number-input-container {
+  font-family: "Segoe UI", "Source Sans", sans-serif;
+  width: 100%;
+}
+
+.bpm-number-input-label {
+  display: flex;
+  font-size: 14px;
+  color: rgb(29, 29, 31);
+  font-weight: 500;
+  margin-bottom: 8px;
+  align-items: center;
+  gap: 6px;
+}
+
+.bpm-number-input-help {
+  cursor: help;
+  color: #999;
+  font-size: 12px;
+}
+
+.bpm-number-input {
+  width: 100%;
+  padding: 0.5rem 0.75rem;
+  font-size: 14px;
+  font-family: "Segoe UI", "Source Sans", sans-serif;
+  color: rgb(29, 29, 31);
+  background-color: white;
+  border: 1px solid #d0d4da;
+  border-radius: 0.25rem;
+  outline: none;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+  box-sizing: border-box;
+}
+
+.bpm-number-input:hover:not(.bpm-number-input-disabled) {
+  border-color: var(--accent-color, #A49B6D);
+}
+
+.bpm-number-input:focus {
+  border-color: var(--accent-color, #A49B6D);
+  box-shadow: 0 0 0 3px rgba(164, 155, 109, 0.1);
+}
+
+.bpm-number-input-disabled {
+  background-color: var(--bg-secondary);
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
+.bpm-number-input::-webkit-inner-spin-button,
+.bpm-number-input::-webkit-outer-spin-button {
+  opacity: 0.6;
+  cursor: pointer;
+}
+
+.bpm-number-input:hover:not(.bpm-number-input-disabled)::-webkit-inner-spin-button,
+.bpm-number-input:hover:not(.bpm-number-input-disabled)::-webkit-outer-spin-button {
+  opacity: 1;
+}
+
+

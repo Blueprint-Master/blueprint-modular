@@ -15,37 +15,52 @@ if (-not (Test-Path $SSH_KEY)) {
     exit 1
 }
 
-$files = @("index.html", "doc.css", "components.html", "reference.html", "cheat-sheet.html", "Logo BPM.png")
+# Fichiers statiques dans frontend/static/
+$staticRoot = "frontend\static"
+$files = @("index.html", "doc.css", "components.html", "reference.html", "cheat-sheet.html")
 foreach ($f in $files) {
-    if (-not (Test-Path $f)) {
-        Write-Host "[ERREUR] Fichier manquant: $f" -ForegroundColor Red
+    if (-not (Test-Path (Join-Path $staticRoot $f))) {
+        Write-Host "[ERREUR] Fichier manquant: $staticRoot\$f" -ForegroundColor Red
         exit 1
     }
 }
-
-$scpFileList = @("index.html", "doc.css", "components.html", "reference.html", "cheat-sheet.html", "Logo BPM.png")
-if (Test-Path "favicon.ico") {
-    $scpFileList += "favicon.ico"
-    Write-Host "favicon.ico inclus (optionnel)." -ForegroundColor Gray
+if (-not (Test-Path "Logo BPM.png")) {
+    Write-Host "[ERREUR] Logo manquant: Logo BPM.png (a la racine)" -ForegroundColor Red
+    exit 1
 }
 
 Write-Host "Deploiement Blueprint Modular vers $SERVER_USER@${SERVER_IP}:$REMOTE_PATH" -ForegroundColor Cyan
 Write-Host ""
 
-# Copie des fichiers a la racine
-$scpArgs = @("-i", $SSH_KEY) + $scpFileList + "${SERVER_USER}@${SERVER_IP}:${REMOTE_PATH}/"
-& scp @scpArgs
+# Copie des fichiers (frontend/static -> racine distante, Logo a la racine)
+$remote = "${SERVER_USER}@${SERVER_IP}:${REMOTE_PATH}"
+foreach ($f in $files) {
+    $src = Join-Path $staticRoot $f
+    Write-Host "Copie $f ..." -ForegroundColor Gray
+    scp -i $SSH_KEY "$src" "${remote}/"
+    if ($LASTEXITCODE -ne 0) {
+        Write-Host "[ERREUR] Echec copie $f" -ForegroundColor Red
+        exit 1
+    }
+}
+Write-Host "Copie Logo BPM.png ..." -ForegroundColor Gray
+scp -i $SSH_KEY "Logo BPM.png" "${remote}/"
 if ($LASTEXITCODE -ne 0) {
-    Write-Host "[ERREUR] Echec de la copie (scp). Verifiez la cle SSH et l'acces au serveur." -ForegroundColor Red
+    Write-Host "[ERREUR] Echec copie Logo" -ForegroundColor Red
     exit 1
 }
+if (Test-Path "favicon.ico") {
+    scp -i $SSH_KEY "favicon.ico" "${remote}/"
+    Write-Host "favicon.ico inclus (optionnel)." -ForegroundColor Gray
+}
 
-# Copie des dossiers de la doc (pour que la sidebar et les liens fonctionnent)
+# Copie des dossiers de la doc depuis frontend/static
 $docDirs = @("get-started", "api-reference", "deploy", "knowledge-base")
 foreach ($dir in $docDirs) {
-    if (Test-Path $dir) {
-        Write-Host "Copie de $dir/ ..." -ForegroundColor Gray
-        scp -i $SSH_KEY -r "${dir}" "${SERVER_USER}@${SERVER_IP}:${REMOTE_PATH}/"
+    $dirPath = Join-Path $staticRoot $dir
+    if (Test-Path $dirPath) {
+        Write-Host "Copie de $dirPath ..." -ForegroundColor Gray
+        scp -i $SSH_KEY -r "${dirPath}" "${SERVER_USER}@${SERVER_IP}:${REMOTE_PATH}/"
         if ($LASTEXITCODE -ne 0) {
             Write-Host "[ATTENTION] Echec copie $dir" -ForegroundColor Yellow
         }

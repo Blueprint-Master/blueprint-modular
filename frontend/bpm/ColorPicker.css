@@ -1,0 +1,71 @@
+.bpm-color-picker-container {
+  font-family: "Segoe UI", "Source Sans", sans-serif;
+  flex: 1;
+  min-width: 120px;
+  margin-bottom: 1rem;
+}
+
+.bpm-color-picker-label {
+  display: block;
+  font-size: 14px;
+  color: rgb(29, 29, 31);
+  font-weight: normal;
+  margin-bottom: 8px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.bpm-color-picker-help {
+  cursor: help;
+  color: #999;
+  font-size: 12px;
+}
+
+.bpm-color-picker-wrapper {
+  display: flex;
+  align-items: center;
+  width: 100%;
+}
+
+.bpm-color-picker-input {
+  flex: 1;
+  width: 100%;
+  min-width: 0;
+  height: 38px;
+  border: 1px solid #d0d4da;
+  border-radius: 8px;
+  cursor: pointer;
+  padding: 2px;
+  background: white;
+  outline: none;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.bpm-color-picker-input:hover:not(:disabled) {
+  border-color: var(--accent-color, #A49B6D);
+}
+
+.bpm-color-picker-input:focus {
+  border-color: var(--accent-color, #A49B6D);
+  box-shadow: 0 0 0 3px rgba(164, 155, 109, 0.1);
+}
+
+.bpm-color-picker-input:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.bpm-color-picker-disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.bpm-color-picker-disabled .bpm-color-picker-input {
+  cursor: not-allowed;
+}
+
+
+
+
+

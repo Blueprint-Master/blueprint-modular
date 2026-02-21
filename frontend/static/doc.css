@@ -1,0 +1,91 @@
+/* Blueprint Modular — Site doc (thème blanc / bleu, comme myportfolio BEAM) */
+:root {
+  --bg: #ffffff;
+  --bg-card: #f6f6f6;
+  --bg-code: #f0f0f0;
+  --fg: #333;
+  --muted: #666;
+  --bleu-profond: #1A4B8F;
+  --bleu-cyan: #00A3E0;
+  --vert-menthe: #45D09E;
+  --accent: var(--bleu-cyan);
+  --border: rgb(237, 237, 237);
+  --bpm-font: "Inter", "Segoe UI", sans-serif;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  font-family: var(--bpm-font);
+  background: var(--bg);
+  color: var(--fg);
+  line-height: 1.6;
+  min-height: 100vh;
+  -webkit-font-smoothing: antialiased;
+}
+.doc-nav {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+  padding: 1rem 1.5rem;
+  border-bottom: 1px solid var(--border);
+  flex-wrap: wrap;
+}
+.doc-nav a { color: var(--muted); text-decoration: none; font-size: 0.95rem; }
+.doc-nav a:hover { color: var(--accent); }
+.doc-nav .brand { display: inline-flex; align-items: center; gap: 0.5rem; font-weight: 600; color: inherit; }
+.doc-nav .brand .brand-logo { height: 32px; width: auto; max-width: 48px; object-fit: contain; flex-shrink: 0; }
+.doc-nav .brand .word-blueprint { color: var(--bleu-profond); }
+.doc-nav .brand .word-modular { color: var(--bleu-cyan); }
+.doc-layout { display: flex; max-width: 1400px; margin: 0 auto; }
+.doc-sidebar {
+  width: 220px;
+  flex-shrink: 0;
+  padding: 1.5rem 1rem 2rem;
+  border-right: 1px solid var(--border);
+  position: sticky;
+  top: 0;
+  max-height: 100vh;
+  overflow-y: auto;
+}
+.doc-sidebar h3 {
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--muted);
+  margin-bottom: 0.75rem;
+  margin-top: 1rem;
+}
+.doc-sidebar h3:first-child { margin-top: 0; }
+.doc-sidebar a { display: block; padding: 0.35rem 0; font-size: 0.9rem; color: var(--fg); text-decoration: none; }
+.doc-sidebar a:hover { color: var(--accent); }
+.doc-sidebar a.active { color: var(--accent); font-weight: 500; }
+.doc-main { flex: 1; padding: 2rem 2.5rem 3rem; min-width: 0; }
+.doc-main h1 { font-size: 1.75rem; font-weight: 700; margin-bottom: 0.5rem; letter-spacing: -0.02em; }
+.doc-main .lead { color: var(--muted); font-size: 1rem; margin-bottom: 1.5rem; }
+.doc-main h2 { font-size: 1.1rem; font-weight: 600; margin: 2rem 0 0.75rem; }
+.doc-main p { margin-bottom: 0.75rem; font-size: 0.95rem; }
+.doc-main table { width: 100%; font-size: 0.9rem; border-collapse: collapse; margin: 0.75rem 0 1.5rem; }
+.doc-main th, .doc-main td { text-align: left; padding: 0.5rem 0.75rem; border: 1px solid var(--border); vertical-align: top; }
+.doc-main th { background: var(--bg-code); color: var(--muted); font-weight: 500; }
+.doc-main td:first-child { font-family: ui-monospace, monospace; color: var(--bleu-cyan); }
+.doc-main pre {
+  background: var(--bg-code);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 1rem;
+  font-size: 0.85rem;
+  overflow-x: auto;
+  margin: 0.75rem 0 1.5rem;
+}
+.doc-main pre code { color: #333; font-family: ui-monospace, monospace; }
+.doc-main code { background: var(--bg-code); padding: 0.15rem 0.4rem; border-radius: 4px; font-size: 0.9em; }
+.doc-main .example-title { font-weight: 600; margin: 1.25rem 0 0.5rem; font-size: 0.95rem; }
+.doc-main .info-box { background: var(--bg-card); border-left: 4px solid var(--accent); padding: 1rem; margin: 1rem 0; border-radius: 0 8px 8px 0; }
+.doc-main ul { margin: 0.5rem 0 1rem 1.5rem; }
+.doc-footer { margin-top: 3rem; padding-top: 1rem; font-size: 0.875rem; color: var(--muted); border-top: 1px solid var(--border); }
+.doc-footer a { color: var(--accent); text-decoration: none; }
+.doc-cta { display: inline-block; background: var(--bleu-profond); color: #fff; padding: 0.6rem 1.2rem; border-radius: 8px; text-decoration: none; font-weight: 600; margin-top: 0.5rem; font-size: 0.9rem; }
+.doc-cta:hover { filter: brightness(1.1); }
+@media (max-width: 768px) {
+  .doc-layout { flex-direction: column; }
+  .doc-sidebar { width: 100%; max-height: none; border-right: none; border-bottom: 1px solid var(--border); }
+}

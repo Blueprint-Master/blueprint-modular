@@ -1,0 +1,15 @@
+.bpm-code-block {
+  background: var(--bpm-doc-bg-code, #f0f0f0);
+  border: 1px solid var(--bpm-doc-border, #ededed);
+  border-radius: 8px;
+  padding: 1rem;
+  font-size: 0.85rem;
+  overflow-x: auto;
+  margin: 0.75rem 0 1.5rem;
+}
+
+.bpm-code-block code {
+  color: #333;
+  font-family: ui-monospace, "Cascadia Code", "Source Code Pro", Menlo, Monaco, Consolas, monospace;
+  white-space: pre;
+}

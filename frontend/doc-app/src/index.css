@@ -1,0 +1,24 @@
+:root {
+  --bpm-doc-bg: #ffffff;
+  --bpm-doc-bg-code: #f0f0f0;
+  --bpm-doc-fg: #333;
+  --bpm-doc-muted: #666;
+  --bpm-doc-bleu-profond: #1A4B8F;
+  --bpm-doc-accent: #00A3E0;
+  --bpm-doc-border: rgb(237, 237, 237);
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: "Inter", "Segoe UI", sans-serif;
+  -webkit-font-smoothing: antialiased;
+}
+
+#root {
+  min-height: 100vh;
+}

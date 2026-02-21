@@ -1,0 +1,13 @@
+.bpm-box {
+  transition: background-color 0.2s ease;
+}
+
+.bpm-box:hover {
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+/* Titres des bpm-box restent noirs en mode sombre (ex. Statuts dans Parametres) */
+html.theme-dark .bpm-box h3 {
+  color: #000;
+}
+

@@ -1,0 +1,157 @@
+.bpm-button {
+  font-family: "Segoe UI", "Source Sans", sans-serif;
+  font-weight: normal;
+  border: 1px solid rgb(237, 237, 237);
+  border-radius: 8px;
+  background: rgb(246, 246, 246);
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  text-decoration: none;
+  outline: none;
+  box-shadow: none;
+}
+
+/* Tailles */
+.bpm-button-small {
+  padding: 0.5rem 0.5rem;
+  font-size: 0.875rem;
+  line-height: 1.5;
+}
+
+.bpm-button-medium {
+  padding: 0.5rem 1rem;
+  font-size: 0.875rem;
+  line-height: 1.5;
+}
+
+.bpm-button-large {
+  padding: 0.5rem 1.5rem;
+  font-size: 0.875rem;
+  line-height: 1.5;
+}
+
+/* Variantes de couleur */
+.bpm-button-primary {
+  background-color: color-mix(in srgb, var(--accent-color, #A49B6D) 94%, transparent);
+  color: white;
+  border: 1px solid rgb(237, 237, 237);
+}
+
+.bpm-button-primary:hover:not(.bpm-button-disabled) {
+  background-color: var(--accent-color, #A49B6D);
+  color: white;
+}
+
+.bpm-button-primary:active:not(.bpm-button-disabled) {
+  background-color: color-mix(in srgb, var(--accent-color, #A49B6D) 75%, black);
+}
+
+.bpm-button-secondary {
+  background: rgb(255, 255, 255) !important;
+  color: rgb(29, 29, 31) !important;
+  border: 1px solid rgb(237, 237, 237) !important;
+  border-radius: 8px !important;
+}
+
+.bpm-button-secondary:hover:not(.bpm-button-disabled) {
+  background-color: rgb(246, 246, 246) !important;
+  color: rgb(29, 29, 31) !important;
+  border: 1px solid rgb(237, 237, 237) !important;
+  border-radius: 8px !important;
+}
+
+.bpm-button-secondary:active:not(.bpm-button-disabled) {
+  background-color: rgb(246, 246, 246)  !important;
+  border: 1px solid rgb(237, 237, 237) !important;
+  border-radius: 8px !important;
+}
+
+.bpm-button-success {
+  background-color: #21c354;
+  color: white;
+  border: 1px solid rgb(237, 237, 237);
+}
+
+.bpm-button-success:hover:not(.bpm-button-disabled) {
+  background-color: #1db04a;
+  color: white;
+}
+
+.bpm-button-success:active:not(.bpm-button-disabled) {
+  background-color: #1a9d40;
+}
+
+.bpm-button-danger {
+  background-color: #ff4b4b;
+  color: white;
+  border: 1px solid rgb(237, 237, 237);
+}
+
+.bpm-button-danger:hover:not(.bpm-button-disabled) {
+  background-color: #ff3333;
+  color: white;
+}
+
+.bpm-button-danger:active:not(.bpm-button-disabled) {
+  background-color: #e63939;
+}
+
+.bpm-button-info {
+  background-color: #1f77b4;
+  color: white;
+  border: 1px solid rgb(237, 237, 237);
+}
+
+.bpm-button-info:hover:not(.bpm-button-disabled) {
+  background-color: #1a6699;
+  color: white;
+}
+
+.bpm-button-info:active:not(.bpm-button-disabled) {
+  background-color: #15557e;
+}
+
+.bpm-button-warning {
+  background-color: #ffc108;
+  color: rgb(29, 29, 31);
+  border: 1px solid rgb(237, 237, 237);
+}
+
+.bpm-button-warning:hover:not(.bpm-button-disabled) {
+  background-color: #e6ad07;
+  color: rgb(29, 29, 31);
+}
+
+.bpm-button-warning:active:not(.bpm-button-disabled) {
+  background-color: #cc9906;
+}
+
+/* État désactivé */
+.bpm-button-disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  pointer-events: none;
+}
+
+/* Bouton primary désactivé : même style que les boutons secondaires inactifs */
+.bpm-button-primary.bpm-button-disabled {
+  background-color: rgb(246, 246, 246) !important;
+  color: rgb(128, 128, 128) !important;
+  border-color: rgb(237, 237, 237) !important;
+}
+
+/* Largeur complète */
+.bpm-button-full-width {
+  width: 100%;
+}
+
+/* Focus pour l'accessibilité */
+.bpm-button:focus-visible {
+  outline: 2px solid var(--accent-color, #A49B6D);
+  outline-offset: 2px;
+}
+
+

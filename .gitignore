@@ -14,3 +14,12 @@ npm-debug.log*
 
 # Env (ne pas commiter les secrets)
 .env
+
+# Node
+node_modules/
+
+# Build
+dist/
+
+# Doublon (source = frontend/doc-app)
+doc-app/

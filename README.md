@@ -19,17 +19,33 @@ Aucune dépendance au reste du repo : vous pouvez ouvrir uniquement ce dossier d
 
 ---
 
-## Contenu du projet
+## Structure du projet (frontend / backend)
+
+| Dossier / fichier | Rôle |
+|-------------------|------|
+| **frontend/** | Tout le code client (UI, doc, composants). |
+| **frontend/bpm/** | Composants React BPM + composants doc (DocNav, DocSidebar, DocLayout, CodeBlock). |
+| **frontend/doc-app/** | Site doc en React (recommandé). Build : `cd frontend/doc-app && npm run build` → `dist/`. |
+| **frontend/static/** | Site doc HTML statique : index.html, doc.css, get-started/, api-reference/, deploy/, knowledge-base/, cheat-sheet, components, reference. |
+| **frontend/api-docs/** | Pages pour l'URL /api/docs (MyPortfolio). |
+| **backend/** | Réservé au code serveur (API, etc.). Aucun backend pour l'instant — voir backend/README.md. |
+| **deploy/** | Scripts de déploiement : setup.sh, update.sh, nginx.conf. |
+| **Logo BPM.png**, **Logo-BPM-*** | Logos (racine). |
+| **app.py**, **pages/** | Ancien site Streamlit (référence). |
+| **deploy_blueprint_modular.ps1** | Déploie **frontend/static/** + Logo vers le VPS. |
+| **DEPLOIEMENT_DOMAINE.md** | Guide : DNS, Nginx, Certbot. |
+
+*(Ancienne liste détaillée ci-dessous.)*
 
 | Fichier / dossier | Rôle |
 |------------------|------|
-| **index.html** | **Page d'accueil doc** (headline BPM, installation rapide, liens Get started / API Reference / Deploy, What's new) |
+| **index.html** (dans frontend/static/) | **Page d'accueil doc** (headline BPM, installation rapide, liens Get started / API Reference / Deploy, What's new) |
 | **doc.css** | Feuille de style commune du site doc (thème BPM, accent #d4af37, dark mode) |
 | **get-started/** | Installation, Fundamentals, First app |
 | **api-reference/** | Text, Data, Metrics, Charts, Inputs, Layout, Panels, Media, Status, Chat, Config |
-| **app.py** | Entrypoint Streamlit pour **www.blueprint-modular.com** (déploiement VPS). |
-| **requirements.txt** | Dépendances Python (streamlit) pour le déploiement Streamlit. |
-| **pages/** | Pages Streamlit (Get started, API Reference, Deploy). |
+| **bpm/** | Composants React BPM (Button, Panel, Table, etc.) + **composants doc** : DocNav, DocSidebar, DocLayout, CodeBlock. |
+| **doc-app/** | **Site doc en React** (aucun Streamlit) : utilise uniquement les composants BPM. Build : `cd doc-app && npm run build` → `dist/`. |
+| **app.py**, **pages/** | Ancien site Streamlit (conservés pour référence) — **non utilisés** ; la doc est dans **doc-app**. |
 | **deploy/** | **Scripts de déploiement** : setup.sh, update.sh, nginx.conf, CHECKLIST.md — voir deploy/README.md. |
 | **.env.example** | Exemple pour .env sur le serveur (ENVIRONMENT=production). |
 | **knowledge-base/** | FAQ, Troubleshooting |
@@ -50,36 +66,33 @@ Aucune dépendance au reste du repo : vous pouvez ouvrir uniquement ce dossier d
 
 Les liens internes du site à la racine utilisent `/`, `/components` et `/reference`. Les fichiers dans `api-docs/` utilisent `/api/docs`, `/api/docs/components`, `/api/docs/reference`.
 
-### Fichiers à avoir avant déploiement
+### Fichiers pour le déploiement
 
-Les scripts de déploiement (deploy_blueprint_modular.ps1 / .sh) attendent : `index.html`, `components.html`, `reference.html`, **Logo BPM.png**. Les logos **Logo-BPM-nom.jpg** et **Logo-BPM-seul.png** sont déjà dans ce dossier (utilisés par les pages api-docs).
-
-- **favicon.ico** est optionnel ; s’il est présent dans le dossier, il sera inclus au déploiement. (Présent à la racine du dossier.)
+Le script **deploy_blueprint_modular.ps1** déploie **frontend/static/** et **Logo BPM.png** (Ã  la racine). **favicon.ico** Ã  la racine est optionnel.
 
 ## Prévisualisation en local
 
-**Site doc statique (HTML)** — depuis ce dossier :
+**Site doc statique (HTML)** — depuis le dossier des fichiers statiques :
 
 ```bash
-python -m http.server 8080
+cd frontend/static && python -m http.server 8080
 # Puis ouvrir http://localhost:8080
 ```
 
-**Application Streamlit** (celle déployée sur www.blueprint-modular.com) :
+**Site doc (React + BPM)** — recommandé :
 
 ```bash
-pip install -r requirements.txt
-streamlit run app.py
-# Puis ouvrir l’URL affichée (ex. http://localhost:8501)
+cd frontend/doc-app && npm install && cp "../../Logo BPM.png" "public/Logo BPM.png" && npm run dev
+# Puis ouvrir l’URL affichée (http://localhost:5173)
 ```
 
-## Déploiement — www.blueprint-modular.com (Streamlit + Nginx + systemd)
+## Déploiement — www.blueprint-modular.com (fichiers statiques, sans Streamlit)
 
-Le site est déployé en **Streamlit** sur le même VPS que myportfolio.beam-consulting.
+Le site doc est construit avec les **composants BPM** (React) dans **frontend/doc-app/**. Aucun Streamlit.
 
-1. Lire **[deploy/CHECKLIST.md](./deploy/CHECKLIST.md)** et **[deploy/README.md](./deploy/README.md)**.
-2. Sur le VPS : exécuter **deploy/setup.sh** (clone, venv, systemd), créer **.env**, configurer Nginx à partir de **deploy/nginx.conf**, lancer Certbot pour SSL.
-3. Mises à jour : sur le VPS, `cd /var/www/blueprint-modular && bash deploy/update.sh`.
+1. En local : `cd frontend/doc-app && npm run build` → les fichiers sont dans **frontend/doc-app/dist/**.
+2. Déployer **frontend/doc-app/dist/** vers le VPS, ou utiliser **deploy_blueprint_modular.ps1** (depuis Windows) pour le site **HTML statique** (**frontend/static/**), ou **deploy/deploy-from-git.sh** (sur le serveur, après clone du repo — voir **deploy/README.md**).
+3. Nginx : servir les fichiers statiques (voir **deploy/nginx.conf** : `root` + `try_files`).
 
 Repo : [github.com/remigit55/blueprint-modular](https://github.com/remigit55/blueprint-modular).
 

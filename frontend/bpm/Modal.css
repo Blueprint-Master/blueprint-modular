@@ -1,0 +1,186 @@
+.bpm-modal-backdrop {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  /* Fond assombri visible immédiatement pour que la modal soit bien perceptible */
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 10000;
+  padding: 2rem;
+  /* Transition pour l'affichage */
+  opacity: 1;
+  visibility: visible;
+  transition: opacity 0.1s ease-out, visibility 0.1s ease-out;
+}
+
+.bpm-modal-backdrop.bpm-modal-hidden {
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+}
+
+.bpm-modal {
+  background: white;
+  border-radius: 8px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+  display: flex;
+  flex-direction: column;
+  max-height: 90vh;
+  overflow: hidden; /* Empêcher le débordement de la modal */
+  max-width: 100%;
+  /* Affichage immédiat sans animation pour éviter tout glitch visuel */
+  transform: scale(1);
+  opacity: 1;
+  position: relative;
+  z-index: 10001;
+  transition: opacity 0.1s ease-out, transform 0.1s ease-out;
+  /* Créer un nouveau contexte de stacking pour les dropdowns */
+  isolation: isolate;
+}
+
+.bpm-modal.bpm-modal-hidden {
+  opacity: 0;
+  transform: scale(0.95);
+  pointer-events: none;
+}
+
+.bpm-modal-small {
+  width: 400px;
+}
+
+.bpm-modal-medium {
+  width: 600px;
+}
+
+.bpm-modal-large {
+  width: 800px;
+}
+
+.bpm-modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1.5rem;
+  border-bottom: 1px solid rgb(237, 237, 237);
+  flex-shrink: 0; /* Empêcher le header de rétrécir */
+}
+
+.bpm-modal-title {
+  margin: 0;
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: rgb(29, 29, 31);
+}
+
+.bpm-modal-close {
+  background: transparent !important;
+  border: none !important;
+  font-size: 1.5rem;
+  line-height: 1;
+  color: rgb(29, 29, 31) !important;
+  cursor: pointer;
+  padding: 0;
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 0 !important;
+  transition: color 0.2s;
+}
+
+.bpm-modal-close:hover {
+  background: transparent !important;
+  color: rgb(29, 29, 31) !important;
+}
+
+.bpm-modal-content {
+  padding: 1.5rem;
+  overflow-y: auto;
+  overflow-x: visible; /* Permettre au dropdown de dépasser horizontalement */
+  flex: 1;
+  pointer-events: auto;
+  position: relative; /* Pour le contexte de stacking */
+  min-height: 0; /* Permettre au flex de fonctionner correctement */
+  /* S'assurer que le scroll fonctionne */
+  -webkit-overflow-scrolling: touch;
+  overscroll-behavior: contain;
+}
+
+/* Réduire le padding pour les modals de taille medium si nécessaire */
+.bpm-modal-medium .bpm-modal-content {
+  padding-bottom: 1.5rem;
+}
+
+/* Forcer la visibilité des Selectbox dans les modals */
+.bpm-modal-content .bpm-selectbox-container {
+  overflow: visible !important;
+  position: relative;
+  z-index: 100001;
+}
+
+.bpm-modal-content .bpm-selectbox-wrapper {
+  overflow: visible !important;
+  position: relative;
+}
+
+.bpm-modal-content .bpm-selectbox-dropdown {
+  overflow: visible !important;
+}
+
+.bpm-modal-content input,
+.bpm-modal-content textarea,
+.bpm-modal-content select {
+  pointer-events: auto !important;
+}
+
+/* Scrollbar styling for modal content */
+.bpm-modal-content::-webkit-scrollbar {
+  width: 8px;
+}
+
+.bpm-modal-content::-webkit-scrollbar-track {
+  background: rgb(246, 246, 246);
+}
+
+.bpm-modal-content::-webkit-scrollbar-thumb {
+  background: rgb(200, 200, 200);
+  border-radius: 4px;
+}
+
+.bpm-modal-content::-webkit-scrollbar-thumb:hover {
+  background: rgb(170, 170, 170);
+}
+
+/* Dark theme: modal surface et texte */
+html.theme-dark .bpm-modal {
+  background: var(--surface);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
+}
+html.theme-dark .bpm-modal-header {
+  border-bottom-color: var(--border-color);
+}
+html.theme-dark .bpm-modal-title {
+  color: var(--text-primary);
+}
+html.theme-dark .bpm-modal-close,
+html.theme-dark .bpm-modal-close:hover {
+  color: var(--text-primary) !important;
+}
+html.theme-dark .bpm-modal-content {
+  color: var(--text-primary);
+}
+html.theme-dark .bpm-modal-content::-webkit-scrollbar-track {
+  background: var(--bg-secondary);
+}
+html.theme-dark .bpm-modal-content::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.2);
+}
+html.theme-dark .bpm-modal-content::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, 0.3);
+}
+

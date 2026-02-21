@@ -1,0 +1,81 @@
+.bpm-spinner-container {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.75rem;
+  font-family: "Segoe UI", "Source Sans", sans-serif;
+}
+
+.bpm-spinner {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  flex-shrink: 0;
+}
+
+.bpm-spinner-circle {
+  border: 2px solid rgb(237, 237, 237);
+  border-top-color: rgb(29, 29, 31);
+  border-radius: 50%;
+  animation: bpm-spinner-rotate 0.8s linear infinite;
+  box-sizing: border-box;
+}
+
+/* Tailles */
+.bpm-spinner-small .bpm-spinner-circle {
+  width: 16px;
+  height: 16px;
+  border-width: 2px;
+}
+
+.bpm-spinner-medium .bpm-spinner-circle {
+  width: 24px;
+  height: 24px;
+  border-width: 2px;
+}
+
+.bpm-spinner-large .bpm-spinner-circle {
+  width: 32px;
+  height: 32px;
+  border-width: 3px;
+}
+
+.bpm-spinner-text {
+  font-size: 0.875rem;
+  color: rgb(29, 29, 31);
+  line-height: 1.5;
+  display: inline-flex;
+  align-items: center;
+}
+
+/* Animation */
+@keyframes bpm-spinner-rotate {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+/* Dark mode */
+.theme-dark .bpm-spinner-circle {
+  border-color: rgb(81, 81, 84);
+  border-top-color: #ffffff;
+}
+
+.theme-dark .bpm-spinner-text {
+  color: #ffffff;
+}
+
+
+
+
+
+
+
+
+
+
+
+

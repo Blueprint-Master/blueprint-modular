@@ -1,0 +1,178 @@
+/* Wrapper externe pour la scrollbar - la scrollbar est ici */
+.bpm-table-wrapper {
+  width: 100%;
+  max-width: 100%;
+  overflow-y: auto; /* Scrollbar verticale pour le tableau uniquement */
+  overflow-x: auto; /* Scroll horizontal si nécessaire */
+  max-height: calc(100vh - 350px); /* Limiter la hauteur pour forcer le scroll interne */
+  border: 1px solid rgb(237, 237, 237);
+  border-radius: 8px;
+  background: white;
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  position: relative; /* ← AJOUTER pour que sticky fonctionne */
+}
+
+/* Scrollbar pour le tableau (verticale et horizontale) */
+.bpm-table-wrapper::-webkit-scrollbar {
+  width: 8px; /* Scrollbar verticale */
+  height: 8px; /* Scrollbar horizontale */
+}
+
+.bpm-table-wrapper::-webkit-scrollbar-track {
+  background: rgb(246, 246, 246);
+  border-radius: 4px;
+}
+
+.bpm-table-wrapper::-webkit-scrollbar-thumb {
+  background: rgba(200, 200, 200, 0.8);
+  border-radius: 4px;
+}
+
+.bpm-table-wrapper::-webkit-scrollbar-thumb:hover {
+  background: rgba(170, 170, 170, 0.9);
+}
+
+/* Container interne pour le tableau - pas de scrollbar ici */
+.bpm-table-container {
+  width: 100%;
+  max-width: 100%;
+  background: white;
+  box-sizing: border-box;
+  position: relative; /* ← AJOUTER */
+}
+
+.bpm-table {
+  width: 100%;
+  border-collapse: collapse;
+  border: none;
+  table-layout: auto;
+  min-width: 0;
+}
+
+.bpm-table thead {
+  background-color: rgb(246, 246, 246);
+  border-bottom: 1px solid rgb(237, 237, 237);
+  /* position: sticky doit être sur th, pas sur thead */
+}
+
+.bpm-table th {
+  padding: 12px 16px;
+  font-weight: 500;
+  color: rgb(81, 81, 84);
+  font-size: 14px;
+  white-space: nowrap;
+  border: 1px solid rgb(237, 237, 237);
+  text-align: left !important;
+  user-select: none;
+  background-color: rgb(246, 246, 246);
+  position: sticky; /* Chaque th doit être sticky */
+  top: 0;
+  z-index: 10;
+}
+
+.bpm-table th[style*="cursor: pointer"] {
+  transition: background-color 0.2s;
+}
+
+.bpm-table th[style*="cursor: pointer"]:hover {
+  background-color: rgb(226, 226, 228);
+}
+
+.bpm-table-header-content {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 8px;
+  position: relative;
+  padding-right: 20px;
+}
+
+.bpm-table-sort-indicator {
+  position: absolute;
+  right: 0;
+  width: 16px;
+  height: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.bpm-table-sort-indicator svg {
+  width: 16px;
+  height: 16px;
+}
+
+.bpm-table-sorted {
+  background-color: rgb(240, 240, 240);
+}
+
+.bpm-table td {
+  padding: 12px 16px;
+  color: rgb(29, 29, 31);
+  font-size: 14px;
+  border: 1px solid rgb(237, 237, 237);
+  white-space: nowrap;
+}
+
+.bpm-table-striped tbody tr:nth-of-type(odd) {
+  background-color: white;
+}
+
+.bpm-table tbody tr {
+  background-color: white;
+}
+
+.bpm-table-hover tbody tr:hover {
+  background-color: rgb(226, 226, 228);
+  cursor: pointer;
+}
+
+.bpm-table tbody tr:last-child td {
+  border-bottom: 1px solid rgb(237, 237, 237);
+}
+
+/* Dark theme: surfaces et bordures */
+html.theme-dark .bpm-table-wrapper {
+  border-color: var(--border-color);
+  background: var(--surface);
+}
+html.theme-dark .bpm-table-wrapper::-webkit-scrollbar-track {
+  background: var(--bg-secondary);
+}
+html.theme-dark .bpm-table-container {
+  background: var(--surface);
+}
+html.theme-dark .bpm-table thead,
+html.theme-dark .bpm-table th {
+  background-color: var(--bg-secondary);
+  border-color: var(--border-color);
+  color: var(--text-primary);
+}
+html.theme-dark .bpm-table th[style*="cursor: pointer"]:hover {
+  background-color: var(--surface-elevated, #2a2a2a);
+}
+html.theme-dark .bpm-table-sorted {
+  background-color: var(--surface-elevated, #2a2a2a);
+}
+html.theme-dark .bpm-table td {
+  border-color: var(--border-color);
+  color: var(--text-primary);
+}
+html.theme-dark .bpm-table-striped tbody tr:nth-of-type(odd) {
+  background-color: var(--surface);
+}
+html.theme-dark .bpm-table tbody tr {
+  background-color: var(--surface);
+}
+html.theme-dark .bpm-table tbody tr:nth-of-type(even) {
+  background-color: var(--surface-elevated, #252525);
+}
+html.theme-dark .bpm-table-hover tbody tr:hover {
+  background-color: rgba(255, 255, 255, 0.06);
+}
+html.theme-dark .bpm-table tbody tr:last-child td {
+  border-bottom-color: var(--border-color);
+}
