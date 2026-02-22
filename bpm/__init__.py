@@ -1,9 +1,121 @@
 """
-BPM — Blueprint Modular runtime (stub).
+BPM — Blueprint Modular runtime.
 Registry $ (refs réactives) et @ (inscription / décorateurs).
-À étendre pour bpm run, composants, etc.
+APIs composants (title, button, write, metric, etc.) pour bpm run app.py.
 """
 from typing import Any, Callable, Optional, TypeVar
+
+# --- Rendu : nœuds collectés pendant l'exécution du script ---
+_current_nodes: list[dict[str, Any]] = []
+_rerun_requested = False
+
+
+class SessionState(dict):
+    """État persisté entre les runs (équivalent session_state)."""
+
+    def __getattr__(self, key: str) -> Any:
+        try:
+            return self[key]
+        except KeyError:
+            raise AttributeError(key)
+
+    def __setattr__(self, key: str, value: Any) -> None:
+        self[key] = value
+
+
+# État de session partagé (une session par processus pour l'instant)
+session_state = SessionState()
+
+
+def _node(typ: str, **props: Any) -> None:
+    _current_nodes.append({"type": typ, "props": props})
+
+
+def get_current_nodes() -> list[dict[str, Any]]:
+    """Retourne la liste des nœuds du run en cours (usage interne serveur)."""
+    return list(_current_nodes)
+
+
+def reset_current_nodes() -> None:
+    """Réinitialise la liste des nœuds (usage interne serveur)."""
+    global _current_nodes, _rerun_requested
+    _current_nodes = []
+    _rerun_requested = False
+
+
+def rerun() -> None:
+    """Demande un re-run du script (après interaction)."""
+    global _rerun_requested
+    _rerun_requested = True
+
+
+def rerun_requested() -> bool:
+    """Indique si rerun() a été appelé (usage interne serveur)."""
+    return _rerun_requested
+
+
+# --- APIs composants (enregistrent un nœud de rendu) ---
+def title(text: str, level: int = 1) -> None:
+    _node("title", text=text, level=level)
+
+
+def write(text: str) -> None:
+    _node("write", text=str(text))
+
+
+def markdown(text: str) -> None:
+    _node("markdown", text=text)
+
+
+def button(label: str, key: Optional[str] = None) -> bool:
+    """Retourne True si le bouton a été cliqué (côté serveur, après re-run)."""
+    _node("button", label=label, key=key or f"btn_{len(_current_nodes)}")
+    return session_state.get(f"_clicked_{key or f'btn_{len(_current_nodes)-1}'}") is True
+
+
+def metric(label: str, value: Any, delta: Optional[Any] = None) -> None:
+    _node("metric", label=str(label), value=value, delta=delta)
+
+
+def table(data: Any) -> None:
+    """Accepte une liste de dicts ou un objet avec .to_dict('records')."""
+    if hasattr(data, "to_dict"):
+        rows = data.to_dict("records")
+    elif isinstance(data, list) and data and isinstance(data[0], dict):
+        rows = data
+    else:
+        rows = list(data) if data else []
+    _node("table", rows=rows)
+
+
+def header(text: str) -> None:
+    _node("header", text=text)
+
+
+def subheader(text: str) -> None:
+    _node("subheader", text=text)
+
+
+def caption(text: str) -> None:
+    _node("caption", text=text)
+
+
+def code(code: str, language: str = "python") -> None:
+    _node("code", code=code, language=language)
+
+
+def divider() -> None:
+    _node("divider")
+
+
+def toggle(label: str, value: bool = False, key: Optional[str] = None) -> bool:
+    _node("toggle", label=label, value=value, key=key or f"toggle_{len(_current_nodes)}")
+    return session_state.get(f"_toggle_{key or f'toggle_{len(_current_nodes)-1}'}", value)
+
+
+def panel(title_text: str, body: str = "", variant: str = "info") -> None:
+    _node("panel", title=title_text, body=body, variant=variant)
+
 
 # --- Registry @ : stockage par nom ---
 _REGISTRY: dict[str, Any] = {}
@@ -89,4 +201,22 @@ __all__ = [
     "page",
     "sidebar",
     "cache_data",
+    "session_state",
+    "get_current_nodes",
+    "reset_current_nodes",
+    "rerun",
+    "rerun_requested",
+    "title",
+    "write",
+    "markdown",
+    "button",
+    "metric",
+    "table",
+    "header",
+    "subheader",
+    "caption",
+    "code",
+    "divider",
+    "toggle",
+    "panel",
 ]
