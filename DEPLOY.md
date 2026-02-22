@@ -1,12 +1,34 @@
 # Déploiement en production — Blueprint Modular
 
-**Deux options principales :**
-- **VPS (ton serveur)** : plein contrôle, stockage persistant pour les uploads, une machine pour tout (app + base). Idéal si tu as déjà un serveur.
-- **Vercel** : zéro serveur à gérer, déploiement en une commande ; les uploads sont éphémères sauf si tu branches un stockage externe.
+Ce document décrit le déploiement **en production** : site statique (vitrine + doc) sur le VPS OVH, et options pour l’app Next.js (Docker, Vercel).
 
 ---
 
-## Option A : Déploiement sur ton VPS (recommandé si tu as un serveur)
+## Déploiement du site statique (vitrine + documentation) — VPS OVH actuel
+
+Le site public **blueprint-modular.com** (vitrine) et **docs.blueprint-modular.com** (documentation) sont des sites **statiques** déployés sur un VPS OVH. Pas de Next.js ni Node sur le serveur pour ces domaines.
+
+**Procédure (depuis Windows) :**
+
+1. **Commit + push** vers GitHub (branche `master`).
+2. Lancer le script de déploiement :
+   ```powershell
+   cd C:\Users\remi.cabrit\blueprint-modular
+   .\scripts\deploy-vps-remote.ps1
+   ```
+
+Le script :
+- Se connecte en SSH au VPS (`ubuntu@145.239.199.236`, clé `~/.ssh/portfolio_beam_key`).
+- Met à jour le repo sur le VPS : `git fetch origin` puis `git reset --hard origin/master`.
+- Exécute `deploy/deploy-from-git.sh` sur le VPS : nettoyage des répertoires cibles, copie de la vitrine vers `/var/www/blueprint-modular`, copie de la doc vers `/var/www/blueprint-modular-docs`, écriture de `version.txt`.
+
+**Vérifier la version en ligne :** ouvrir `https://blueprint-modular.com/version.txt` et `https://docs.blueprint-modular.com/version.txt` (hash = `git rev-parse --short HEAD` en local).
+
+Pour la procédure détaillée (build, commit, vérifications), voir **[COMMIT_DEPLOY.md](COMMIT_DEPLOY.md)**.
+
+---
+
+## Option A : Déploiement de l’app Next.js sur ton VPS (Docker)
 
 Sur ton VPS (Linux), avec Docker.
 
@@ -82,39 +104,31 @@ server {
 
 Puis `NEXTAUTH_URL=https://ton-domaine.com` et, dans la console Google OAuth, ajouter `https://ton-domaine.com/api/auth/callback/google`.
 
-### 5. Déploiement en une commande
+### 5. Déploiement de l’app Next.js en une commande
 
 **Sur le VPS (Linux)** après avoir cloné le repo :
 
 ```bash
-cd /opt/blueprint-modular
+cd /home/ubuntu/blueprint-modular  # ou /opt/blueprint-modular
 cp .env.example .env
 # Éditer .env (POSTGRES_PASSWORD, NEXTAUTH_SECRET, NEXTAUTH_URL, GOOGLE_CLIENT_*, etc.)
+# Si tu as un script dédié Docker/Next.js :
 chmod +x scripts/deploy-vps.sh
 ./scripts/deploy-vps.sh
 ```
 
-**Sous Windows (PowerShell)** — même repo cloné, avec Docker Desktop installé :
+(Le script type lance `docker-compose up -d --build`, attend la base, puis exécute les migrations Prisma.)
+
+**Depuis ta machine Windows** — déploiement **du site statique** (vitrine + doc) sur le VPS OVH actuel :
 
 ```powershell
-cd C:\opt\blueprint-modular
-Copy-Item .env.example .env
-# Éditer .env puis :
-.\scripts\deploy-vps.ps1
-```
-
-Le script lance `docker-compose up -d --build`, attend la base, puis exécute les migrations Prisma.
-
-**Depuis ta machine Windows** (si le repo est déjà cloné sur le VPS) :
-
-```powershell
-$env:VPS_HOST = "ton-ip-ou-domaine"
-$env:VPS_USER = "root"
+cd C:\Users\remi.cabrit\blueprint-modular
+git push origin master   # d’abord pousser les changements
 .\scripts\deploy-vps-remote.ps1
-# Ou en paramètres : .\scripts\deploy-vps-remote.ps1 -VpsHost ton-ip -User root
+# Ou avec paramètres : .\scripts\deploy-vps-remote.ps1 -VpsHost 145.239.199.236 -User ubuntu
 ```
 
-Cela fait un `ssh` sur le VPS, `git pull` puis `scripts/deploy-vps.sh`.
+Cela fait un SSH sur le VPS, `git fetch origin && git reset --hard origin/master`, puis `deploy/deploy-from-git.sh` (copie vitrine + doc, pas l’app Next.js). Pour déployer l’app Next.js sur un VPS, il faut un autre flux (build + PM2 ou Docker sur le serveur). Voir [COMMIT_DEPLOY.md](COMMIT_DEPLOY.md) pour la procédure complète du site statique.
 
 ### 6. Variante : docker-compose à la main
 
@@ -150,7 +164,7 @@ docker-compose up -d
 
 ---
 
-## Option B : Vercel (sans serveur)
+## Option B : Vercel (app Next.js, sans serveur)
 
 1. **Connexion Vercel (une fois)**  
    À la racine du projet :

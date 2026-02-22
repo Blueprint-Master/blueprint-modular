@@ -18,7 +18,7 @@ Machine Windows (dev)
     │
     └── Scripts locaux (Windows) :
         deploy_blueprint_modular.ps1       ← rsync direct (legacy)
-        scripts/deploy-vps-remote.ps1      ← SSH + git pull + deploy (recommandé)
+        scripts/deploy-vps-remote.ps1      ← SSH + git fetch/reset + deploy-from-git.sh (recommandé)
 ```
 
 **Serveur** : `ubuntu@145.239.199.236`  
@@ -79,17 +79,17 @@ cd C:\Users\remi.cabrit\blueprint-modular
 # Ou avec paramètres explicites :
 .\scripts\deploy-vps-remote.ps1 -VpsHost 145.239.199.236 -User ubuntu
 ```
-Ce script fait : SSH → git pull sur le VPS → exécute `deploy/deploy-from-git.sh`
+Ce script fait : SSH vers le VPS → `git fetch origin` puis `git reset --hard origin/master` (évite les conflits de modifs locales) → exécute `deploy/deploy-from-git.sh`.
 
 **Option B — Directement sur le VPS (SSH manuel) :**
 ```powershell
 # Connexion SSH
 ssh -i ~/.ssh/portfolio_beam_key ubuntu@145.239.199.236
 
-# Sur le VPS :
+# Sur le VPS (même logique que le script : fetch + reset pour rester aligné sur GitHub) :
 cd /home/ubuntu/blueprint-modular
-git pull
-./deploy/deploy-from-git.sh
+git fetch origin && git reset --hard origin/master
+chmod +x deploy/deploy-from-git.sh && bash deploy/deploy-from-git.sh
 ```
 
 ---
@@ -117,13 +117,16 @@ Puis tester dans le navigateur :
 
 ## CE QUE FAIT deploy/deploy-from-git.sh
 
-Le script déployé sur le VPS :
-1. `git pull` le repo dans `/home/ubuntu/blueprint-modular`
-2. Copie `frontend/static/index.html` + CSS/JS/img → `/var/www/blueprint-modular` (site vitrine)
-3. Copie toute la documentation → `/var/www/blueprint-modular-docs` (docs)
-4. Règle les permissions `ubuntu:ubuntu`
+Le script est exécuté **sur le VPS** après que le repo a été mis à jour (par `deploy-vps-remote.ps1` : `git fetch` + `reset --hard origin/master`). Il peut aussi faire un `git pull` si on l’appelle seul alors que le repo existe déjà.
 
-**Les deux domaines sont donc mis à jour à chaque déploiement.**
+1. **Mise à jour du repo** (si besoin) : `git pull` dans `/home/ubuntu/blueprint-modular`
+2. **Nettoyage** des répertoires cibles (évite fichiers obsolètes)
+3. **Vitrine** : copie `frontend/static/` (index.html, modules.html, CSS, JS, img, modules/, etc.) → `/var/www/blueprint-modular` (blueprint-modular.com)
+4. **Documentation** : copie tout le contenu doc (get-started, api-reference, deploy, knowledge-base, etc.) → `/var/www/blueprint-modular-docs` (docs.blueprint-modular.com)
+5. **Permissions** : `chown ubuntu:ubuntu` sur les deux racines
+6. **version.txt** : écrit le hash Git et la date dans chaque racine (pour vérifier la version en ligne)
+
+**Les deux domaines (vitrine + doc) sont donc mis à jour à chaque déploiement.**
 
 ---
 
