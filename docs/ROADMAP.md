@@ -5,6 +5,20 @@ Ce document relie le [paysage concurrentiel](../frontend/static/knowledge-base/c
 
 ---
 
+## Pour que « pip install blueprint-modular && bpm run app.py » fonctionne
+
+| Chantier | Statut | Détail |
+|----------|--------|--------|
+| Package Python sur PyPI (ou installable) | 📋 | `pyproject.toml` / `setup.py`, nom `blueprint-modular`, point d’entrée CLI `bpm` |
+| Commande `bpm run app.py` | 📋 | Exécution du script + serveur HTTP qui sert la page et reçoit les événements |
+| Protocole frontend / backend | 📋 | Premier rendu, puis événements (clics, etc.) → mise à jour refs → renvoi des delta de rendu (ou re-run) ; WebSocket ou HTTP |
+| APIs Python des composants | 📋 | `bpm.title`, `bpm.button`, `bpm.metric`, etc. + `bpm.session_state`, `bpm.rerun()` |
+| `bpm init` (optionnel) | 📋 | Génération d’un squelette de projet |
+
+**Doc utilisateur :** [knowledge-base/reste-a-faire.html](../frontend/static/knowledge-base/reste-a-faire.html) (publiée dans la doc). Page [Installation](../frontend/static/get-started/installation.html) mise à jour avec un encart qui pointe vers « Ce qu’il reste à faire ».
+
+---
+
 ## Différenciateurs BPM (à développer en priorité)
 
 | Axe | Doc / Fichiers |
