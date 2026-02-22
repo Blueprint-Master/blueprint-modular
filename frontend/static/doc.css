@@ -26,7 +26,17 @@
     --muted: #a3a3a3;
     --border: #404040;
     --color-surface: #2d2d2d;
+    --color-primary: #60a5fa;
   }
+  /* Landing (index) : header et nav en mode sombre */
+  .landing-header {
+    background: rgba(26, 26, 26, 0.95);
+    border-bottom-color: var(--border);
+  }
+  .landing-header .brand { color: var(--fg); }
+  .landing-nav-links a { color: var(--muted); }
+  .landing-nav-links a:hover { color: var(--accent); }
+  .hero-visual-placeholder { background: var(--bg-card) !important; color: var(--muted) !important; }
 }
 * { box-sizing: border-box; margin: 0; padding: 0; }
 body {
@@ -99,8 +109,8 @@ body {
   overflow-x: auto;
   margin: 0.75rem 0 1.5rem;
 }
-.doc-main pre code { color: #333; font-family: ui-monospace, monospace; }
-.doc-main code { background: var(--bg-code); padding: 0.15rem 0.4rem; border-radius: 4px; font-size: 0.9em; }
+.doc-main pre code { color: var(--fg); font-family: ui-monospace, monospace; }
+.doc-main code { background: var(--bg-code); color: var(--fg); padding: 0.15rem 0.4rem; border-radius: 4px; font-size: 0.9em; }
 .doc-main .example-title { font-weight: 600; margin: 1.25rem 0 0.5rem; font-size: 0.95rem; }
 .doc-main .info-box { background: var(--bg-card); border-left: 4px solid var(--accent); padding: 1rem; margin: 1rem 0; border-radius: 0 8px 8px 0; }
 .doc-main ul { margin: 0.5rem 0 1rem 1.5rem; }
@@ -237,13 +247,20 @@ body {
 .breadcrumb a:hover { text-decoration: underline; }
 
 /* Blocs d'alerte */
-.alert { display: flex; gap: 0.75rem; padding: 1rem 1.25rem; border-radius: 6px; margin: 1.5rem 0; }
+.alert { display: flex; gap: 0.75rem; padding: 1rem 1.25rem; border-radius: 6px; margin: 1.5rem 0; color: var(--fg); }
 .alert-important { background: #fff8e1; border-left: 4px solid #f59e0b; }
 .alert-info { background: #eff6ff; border-left: 4px solid #3b82f6; }
 .alert-tip { background: #f0fdf4; border-left: 4px solid #22c55e; }
 .alert-icon { flex-shrink: 0; }
 .alert-body { flex: 1; }
 .alert-body strong { display: block; margin-bottom: 0.25rem; }
+@media (prefers-color-scheme: dark) {
+  .alert-important { background: #422006; border-left-color: #f59e0b; color: #fef3c7; }
+  .alert-info { background: #1e3a5f; border-left-color: #60a5fa; color: #bfdbfe; }
+  .alert-tip { background: #052e16; border-left-color: #22c55e; color: #bbf7d0; }
+  .alert-body strong { color: inherit; }
+  .alert a { color: #93c5fd; }
+}
 
 /* Navigation Previous/Next */
 .doc-pagination { display: flex; justify-content: space-between; margin-top: 3rem; padding-top: 1.5rem; border-top: 1px solid var(--color-border); flex-wrap: wrap; gap: 1rem; }
