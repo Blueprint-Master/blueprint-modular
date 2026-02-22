@@ -82,16 +82,25 @@ server {
 
 Puis `NEXTAUTH_URL=https://ton-domaine.com` et, dans la console Google OAuth, ajouter `https://ton-domaine.com/api/auth/callback/google`.
 
-### 5. Déploiement en une commande (sur le VPS)
+### 5. Déploiement en une commande
 
-Sur le VPS, après avoir cloné le repo (une fois) :
+**Sur le VPS (Linux)** après avoir cloné le repo :
 
 ```bash
-cd /opt/blueprint-modular   # ou le chemin où tu as cloné
+cd /opt/blueprint-modular
 cp .env.example .env
 # Éditer .env (POSTGRES_PASSWORD, NEXTAUTH_SECRET, NEXTAUTH_URL, GOOGLE_CLIENT_*, etc.)
 chmod +x scripts/deploy-vps.sh
 ./scripts/deploy-vps.sh
+```
+
+**Sous Windows (PowerShell)** — même repo cloné, avec Docker Desktop installé :
+
+```powershell
+cd C:\opt\blueprint-modular
+Copy-Item .env.example .env
+# Éditer .env puis :
+.\scripts\deploy-vps.ps1
 ```
 
 Le script lance `docker-compose up -d --build`, attend la base, puis exécute les migrations Prisma.
