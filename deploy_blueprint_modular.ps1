@@ -17,16 +17,17 @@ if (-not (Test-Path $SSH_KEY)) {
 
 # Fichiers statiques dans frontend/static/
 $staticRoot = "frontend\static"
-$files = @("index.html", "doc.css", "components.html", "reference.html", "cheat-sheet.html")
+$files = @("index.html", "doc.css", "landing.css", "doc.js", "components.html", "reference.html", "cheat-sheet.html", "docs.html", "modules.html", "versions.html")
 foreach ($f in $files) {
     if (-not (Test-Path (Join-Path $staticRoot $f))) {
         Write-Host "[ERREUR] Fichier manquant: $staticRoot\$f" -ForegroundColor Red
         exit 1
     }
 }
-if (-not (Test-Path "Logo BPM.png")) {
-    Write-Host "[ERREUR] Logo manquant: Logo BPM.png (a la racine)" -ForegroundColor Red
-    exit 1
+if (Test-Path "Logo BPM.png") {
+    Write-Host "Logo BPM.png (racine) sera copie." -ForegroundColor Gray
+} elseif (-not (Test-Path (Join-Path $staticRoot "img"))) {
+    Write-Host "[ATTENTION] Ni Logo BPM.png ni frontend\static\img - logos possibles manquants" -ForegroundColor Yellow
 }
 
 Write-Host "Deploiement Blueprint Modular vers $SERVER_USER@${SERVER_IP}:$REMOTE_PATH" -ForegroundColor Cyan
@@ -43,19 +44,26 @@ foreach ($f in $files) {
         exit 1
     }
 }
-Write-Host "Copie Logo BPM.png ..." -ForegroundColor Gray
-scp -i $SSH_KEY "Logo BPM.png" "${remote}/"
-if ($LASTEXITCODE -ne 0) {
-    Write-Host "[ERREUR] Echec copie Logo" -ForegroundColor Red
-    exit 1
+if (Test-Path "Logo BPM.png") {
+    Write-Host "Copie Logo BPM.png ..." -ForegroundColor Gray
+    scp -i $SSH_KEY "Logo BPM.png" "${remote}/"
+    if ($LASTEXITCODE -ne 0) { Write-Host "[ERREUR] Echec copie Logo" -ForegroundColor Red; exit 1 }
 }
-if (Test-Path "favicon.ico") {
+if (Test-Path (Join-Path $staticRoot "favicon.ico")) {
+    scp -i $SSH_KEY (Join-Path $staticRoot "favicon.ico") "${remote}/"
+    Write-Host "favicon.ico copie." -ForegroundColor Gray
+} elseif (Test-Path "favicon.ico") {
     scp -i $SSH_KEY "favicon.ico" "${remote}/"
-    Write-Host "favicon.ico inclus (optionnel)." -ForegroundColor Gray
+    Write-Host "favicon.ico (racine) copie." -ForegroundColor Gray
+}
+# manifest.json si present
+if (Test-Path (Join-Path $staticRoot "manifest.json")) {
+    scp -i $SSH_KEY (Join-Path $staticRoot "manifest.json") "${remote}/"
+    Write-Host "manifest.json copie." -ForegroundColor Gray
 }
 
 # Copie des dossiers de la doc depuis frontend/static
-$docDirs = @("get-started", "api-reference", "deploy", "knowledge-base")
+$docDirs = @("get-started", "api-reference", "deploy", "knowledge-base", "modules", "img", "js", "i18n")
 foreach ($dir in $docDirs) {
     $dirPath = Join-Path $staticRoot $dir
     if (Test-Path $dirPath) {
@@ -73,3 +81,4 @@ Write-Host "Verification sur le serveur:" -ForegroundColor Cyan
 ssh -i $SSH_KEY "${SERVER_USER}@${SERVER_IP}" "ls -la $REMOTE_PATH"
 Write-Host ""
 Write-Host "Site disponible (apres config Nginx + SSL): https://VOTRE_DOMAINE.fr" -ForegroundColor Cyan
+Write-Host "Si le logo ne s'affiche pas (403): sur le serveur, executer les commandes chmod de deploy/PERMISSIONS-403.md" -ForegroundColor Yellow

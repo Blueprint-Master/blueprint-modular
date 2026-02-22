@@ -70,6 +70,8 @@
   position: sticky; /* Chaque th doit être sticky */
   top: 0;
   z-index: 10;
+  box-shadow: none;
+  border-radius: 0;
 }
 
 .bpm-table th[style*="cursor: pointer"] {
@@ -107,6 +109,7 @@
 
 .bpm-table-sorted {
   background-color: rgb(240, 240, 240);
+  box-shadow: none;
 }
 
 .bpm-table td {

@@ -33,7 +33,7 @@ const CopyButton = ({
       {...props}
     >
       {copied ? (
-        <span className="bpm-copybutton-check">✓</span>
+        <span className="bpm-copybutton-check">OK</span>
       ) : (
         <span className="bpm-copybutton-icon" aria-hidden="true">⎘</span>
       )}

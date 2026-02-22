@@ -36,9 +36,7 @@ const ColorPicker = ({
         <label className="bpm-color-picker-label">
           {label}
           {help && (
-            <span className="bpm-color-picker-help" title={help}>
-              ℹ️
-            </span>
+            <span className="bpm-color-picker-help" title={help} aria-label="Info">?</span>
           )}
         </label>
       )}

@@ -1,4 +1,50 @@
-# Blueprint Modular — Site de documentation
+# Blueprint Modular
+
+**Briques prêtes à l'emploi. Vous écrivez la logique.**
+
+Framework Python pour créer des interfaces de données sans HTML ni JS.
+
+## Installation
+
+```bash
+pip install blueprint-modular
+```
+
+## Utilisation rapide
+
+```bash
+bpm --version
+bpm init --name mon-app
+cd mon-app
+bpm run app.py
+```
+
+En Python :
+
+```python
+import bpm
+
+bpm.title("Mon tableau de bord")
+bpm.metric("CA", 142500, delta=3200)
+bpm.table(df)
+```
+
+## Documentation
+
+https://docs.blueprint-modular.com
+
+## Statut
+
+Blueprint Modular est en développement actif (alpha).  
+Certaines fonctionnalités sont en cours d'implémentation.
+
+## Licence
+
+MIT
+
+---
+
+# Site de documentation (ce dépôt)
 
 Site statique de documentation **Blueprint Modular** (BPM) : landing, composants et référence API. Projet isolé pour être hébergé sur un **domaine dédié** (OVH + VPS).
 

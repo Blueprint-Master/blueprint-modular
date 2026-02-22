@@ -2,6 +2,8 @@
 CLI BPM — bpm run app.py, bpm init.
 Point d'entrée : bpm = bpm.cli:main
 """
+from __future__ import annotations
+
 import argparse
 import json
 import os
@@ -187,45 +189,56 @@ def run(script_path: str, port: int = 8501, host: str = "127.0.0.1") -> None:
         server.shutdown()
 
 
-def init(target_dir: Optional[str] = None) -> None:
-    """Génère un squelette app.py (et optionnellement un dossier)."""
-    target_dir = target_dir or os.getcwd()
-    os.makedirs(target_dir, exist_ok=True)
-    app_py = os.path.join(target_dir, "app.py")
+def init(name: str = "mon-app") -> None:
+    """Scaffold une app BPM vide (dossier avec app.py, README.md, requirements.txt)."""
+    os.makedirs(name, exist_ok=True)
+    app_py = os.path.join(name, "app.py")
     if os.path.exists(app_py):
-        print(f"Le fichier {app_py} existe déjà.", file=sys.stderr)
+        print(f"Le dossier '{name}' contient déjà app.py.", file=sys.stderr)
         sys.exit(1)
-    content = '''"""
-App BPM — générée par bpm init.
-Lancer avec : bpm run app.py
-"""
-import bpm
-
-bpm.title("Bienvenue")
-bpm.write("Cette app utilise Blueprint Modular. Modifiez ce fichier puis rechargez la page.")
-bpm.metric("Exemple", 42, delta="+2")
-if bpm.button("Cliquez ici"):
-    bpm.write("Vous avez cliqué !")
-'''
     with open(app_py, "w", encoding="utf-8") as f:
-        f.write(content)
-    print(f"Créé : {app_py}")
+        f.write('''import bpm
+
+bpm.set_page_config(page_title="Mon App", layout="wide")
+bpm.title("Mon App Blueprint Modular")
+bpm.write("Bienvenue sur votre première app BPM.")
+
+bpm.metric("Valeur exemple", 142500, delta=3200)
+''')
+    with open(os.path.join(name, "README.md"), "w", encoding="utf-8") as f:
+        f.write(f"# {name}\n\nApp Blueprint Modular.\n\n## Lancer\n\n```\nbpm run app.py\n```\n")
+    with open(os.path.join(name, "requirements.txt"), "w", encoding="utf-8") as f:
+        f.write("blueprint-modular>=0.1.0\n")
+    print(f"App '{name}' créée.")
+    print(f"   cd {name}")
+    print(f"   bpm run app.py")
 
 
 def main() -> None:
-    parser = argparse.ArgumentParser(prog="bpm", description="Blueprint Modular — bpm run app.py")
-    sub = parser.add_subparsers(dest="command", required=True)
-    run_parser = sub.add_parser("run", help="Exécuter une app (serveur HTTP)")
-    run_parser.add_argument("script", nargs="?", default="app.py", help="Script Python (défaut: app.py)")
+    from bpm import __version__
+    parser = argparse.ArgumentParser(
+        prog="bpm",
+        description="Blueprint Modular — Framework Python pour interfaces de données",
+    )
+    parser.add_argument(
+        "--version", "-v",
+        action="version",
+        version=f"blueprint-modular {__version__}",
+    )
+    sub = parser.add_subparsers(dest="command")
+    run_parser = sub.add_parser("run", help="Lancer une app BPM")
+    run_parser.add_argument("file", nargs="?", default="app.py", help="Fichier Python (défaut: app.py)")
     run_parser.add_argument("--port", "-p", type=int, default=8501, help="Port (défaut: 8501)")
     run_parser.add_argument("--host", default="127.0.0.1", help="Host (défaut: 127.0.0.1)")
-    init_parser = sub.add_parser("init", help="Générer un squelette app.py")
-    init_parser.add_argument("dir", nargs="?", default=None, help="Dossier cible (défaut: .)")
+    init_parser = sub.add_parser("init", help="Scaffolder une app vide")
+    init_parser.add_argument("--name", default="mon-app", help="Nom du projet (défaut: mon-app)")
     args = parser.parse_args()
     if args.command == "run":
-        run(args.script, port=args.port, host=args.host)
+        run(args.file, port=args.port, host=args.host)
     elif args.command == "init":
-        init(getattr(args, "dir", None))
+        init(args.name)
+    else:
+        parser.print_help()
 
 
 if __name__ == "__main__":

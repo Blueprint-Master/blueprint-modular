@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Modules — Blueprint Modular</title>
+  <meta name="description" content="Add-in BPM : modules déjà développés (Wiki, IA, Veille, IBKR, Analyse de document) à appeler simplement avec bpm.use_module()." />
+  <link rel="icon" href="favicon.ico" />
+  <link rel="stylesheet" href="doc.css" />
+  <link rel="manifest" href="manifest.json" />
+  <meta name="theme-color" content="#2563eb" />
+</head>
+<body>
+  <nav class="doc-nav">
+    <a href="https://blueprint-modular.com/" class="brand"><img src="img/logo-bpm-nom.jpg" alt="" class="brand-logo" /><span class="word-blueprint">Blueprint</span> <span class="word-modular">Modular</span></a>
+    <a href="https://docs.blueprint-modular.com/get-started/installation.html">Get started</a>
+    <a href="https://docs.blueprint-modular.com/components.html">Components</a>
+    <a href="https://docs.blueprint-modular.com/api-reference/text.html">API Reference</a>
+    <a href="https://docs.blueprint-modular.com/deploy/concepts.html">Deploy</a>
+    <a href="https://docs.blueprint-modular.com/cheat-sheet.html">Cheat sheet</a>
+    <button class="nav-burger" aria-label="Menu" id="nav-burger-btn"><span></span><span></span><span></span></button>
+  </nav>
+  <div class="doc-layout">
+    <aside class="doc-sidebar">
+      <h3>Accueil</h3>
+      <a href="https://blueprint-modular.com/">Accueil</a>
+      <h3>Get started</h3>
+      <a href="https://docs.blueprint-modular.com/get-started/why-bpm.html">Pourquoi BPM</a>
+      <a href="https://docs.blueprint-modular.com/get-started/installation.html">Installation</a>
+      <a href="https://docs.blueprint-modular.com/get-started/fundamentals.html">Fundamentals</a>
+      <a href="https://docs.blueprint-modular.com/get-started/first-app.html">First app</a>
+      <h3>Components</h3>
+      <a href="https://docs.blueprint-modular.com/components.html">Catalogue des composants</a>
+      <h3>Modules</h3>
+      <a href="https://blueprint-modular.com/modules.html" class="active">Add-in (catalogue et appel simple)</a>
+      <a href="https://blueprint-modular.com/modules.html#comment-appeler">Comment les appeler</a>
+      <a href="modules/wiki.html">Wiki</a>
+      <a href="modules/ia.html">Module IA</a>
+      <a href="modules/veille.html">Module Veille</a>
+      <a href="modules/ibkr.html">Module IBKR</a>
+      <a href="modules/analyse-document.html">Analyse de document</a>
+      <h3>API Reference</h3>
+      <a href="https://docs.blueprint-modular.com/api-reference/text.html">Text</a>
+      <a href="https://docs.blueprint-modular.com/api-reference/data.html">Data</a>
+      <a href="https://docs.blueprint-modular.com/api-reference/metrics.html">Metrics</a>
+      <a href="https://docs.blueprint-modular.com/api-reference/charts.html">Charts</a>
+      <a href="https://docs.blueprint-modular.com/api-reference/inputs.html">Inputs</a>
+      <a href="https://docs.blueprint-modular.com/api-reference/layout.html">Layout</a>
+      <a href="https://docs.blueprint-modular.com/api-reference/panels.html">Panels</a>
+      <a href="https://docs.blueprint-modular.com/api-reference/media.html">Media</a>
+      <a href="https://docs.blueprint-modular.com/api-reference/status.html">Status</a>
+      <a href="https://docs.blueprint-modular.com/api-reference/chat.html">Chat</a>
+      <a href="https://docs.blueprint-modular.com/api-reference/config.html">Config</a>
+      <a href="https://docs.blueprint-modular.com/api-reference/connection.html">Connexion aux données</a>
+      <h3>Deploy</h3>
+      <a href="https://docs.blueprint-modular.com/deploy/concepts.html">Concepts</a>
+      <a href="https://docs.blueprint-modular.com/deploy/platforms.html">Platforms</a>
+      <h3>Knowledge base</h3>
+      <a href="https://docs.blueprint-modular.com/knowledge-base/faq.html">FAQ</a>
+      <a href="https://docs.blueprint-modular.com/knowledge-base/troubleshooting.html">Troubleshooting</a>
+      <a href="https://docs.blueprint-modular.com/knowledge-base/reste-a-faire.html">Ce qu'il reste à faire</a>
+      <h3>Ressources</h3>
+      <a href="https://docs.blueprint-modular.com/cheat-sheet.html">Cheat sheet</a>
+      <a href="https://docs.blueprint-modular.com/versions.html">Versions</a>
+    </aside>
+    <main class="doc-main">
+      <nav class="breadcrumb"><a href="https://blueprint-modular.com/">Accueil</a> › Modules</nav>
+      <h1>Modules add-in</h1>
+      <p class="lead">Les <strong>add-in</strong> sont des <strong>modules déjà développés</strong> : pages ou blocs prêts à l’emploi que vous pouvez <strong>appeler simplement</strong> dans vos apps BPM, sans tout réécrire. À la différence des composants (briques UI), un add-in est une page fonctionnelle complète.</p>
+
+      <section class="doc-section">
+        <h2>Qu’est-ce qu’un add-in ?</h2>
+        <p>Un <strong>add-in</strong> (module) est une page ou un bloc fourni par BPM ou par la communauté : Wiki, IA, Veille, IBKR, Analyse de document, etc. Vous l’intégrez en quelques lignes au lieu de recoder la logique et l’UI.</p>
+        <ul>
+          <li><strong>Appel simple</strong> : une fois le module disponible, vous l’ajoutez à votre app avec une API dédiée (voir ci-dessous).</li>
+          <li><strong>Réutilisable</strong> : même module utilisable dans plusieurs apps, avec ou sans personnalisation.</li>
+          <li><strong>Composable</strong> : vous pouvez combiner plusieurs add-in (ex. Wiki + IA) dans une même app.</li>
+        </ul>
+      </section>
+
+      <section class="doc-section" id="comment-appeler">
+        <h2>Comment appeler un module (appel simple)</h2>
+        <p>Quand un add-in est disponible, vous l’intégrez en une ou quelques lignes. Exemple d’usage prévu :</p>
+        <pre><code class="language-python">import bpm
+
+# Ajouter une page "Wiki" à l’app (exemple d’API prévue)
+bpm.use_module("wiki")   # page Wiki prête à l’emploi
+
+# Ou enregistrer une page personnalisée qui réutilise un module
+@bpm.page("ma-veille")
+def ma_veille():
+    bpm.use_module("veille")  # bloc Veille intégré dans cette page</code></pre>
+        <p>La sidebar et la navigation sont alors mises à jour automatiquement pour afficher les pages des modules ajoutés. Les modules listés ci-dessous sont soit <strong>déjà disponibles</strong> (vous pouvez les appeler ainsi), soit <strong>prévus</strong> dans la roadmap — dans ce cas la page de détail indique « prévu » et le lien vers <a href="https://docs.blueprint-modular.com/knowledge-base/reste-a-faire.html">Ce qu’il reste à faire</a>.</p>
+      </section>
+
+      <h2>Modules disponibles et prévus</h2>
+      <p>Liste des add-in déjà développés ou prévus. Cliquez sur une carte pour la description détaillée et l’usage.</p>
+
+      <div class="platform-grid">
+        <a class="platform-card" href="modules/wiki.html">
+          <h3>Wiki</h3>
+          <p>Wiki appelable et remplissable via IA. Consultation et édition assistées.</p>
+          <p class="platform-call"><code>bpm.use_module("wiki")</code></p>
+          <span class="badge badge-info">Prévu</span>
+        </a>
+        <a class="platform-card" href="modules/ia.html">
+          <h3>Module IA</h3>
+          <p>Interface et intégration IA (chat, complétion, agents).</p>
+          <p class="platform-call"><code>bpm.use_module("ia")</code></p>
+          <span class="badge badge-info">Prévu</span>
+        </a>
+        <a class="platform-card" href="modules/veille.html">
+          <h3>Module Veille</h3>
+          <p>Veille informationnelle : sources, alertes, agrégation.</p>
+          <p class="platform-call"><code>bpm.use_module("veille")</code></p>
+          <span class="badge badge-info">Prévu</span>
+        </a>
+        <a class="platform-card" href="modules/ibkr.html">
+          <h3>Module IBKR</h3>
+          <p>Connexion et visualisation Interactive Brokers (marchés, portefeuille).</p>
+          <p class="platform-call"><code>bpm.use_module("ibkr")</code></p>
+          <span class="badge badge-info">Prévu</span>
+        </a>
+        <a class="platform-card" href="modules/analyse-document.html">
+          <h3>Analyse de document</h3>
+          <p>Upload, extraction et analyse de documents (texte, PDF) avec IA.</p>
+          <p class="platform-call"><code>bpm.use_module("analyse-document")</code></p>
+          <span class="badge badge-info">Prévu</span>
+        </a>
+      </div>
+
+      <section class="whats-next">
+        <h2>Et maintenant ?</h2>
+        <ul>
+          <li><a href="https://docs.blueprint-modular.com/components.html">Catalogue des composants</a> — Briques UI</li>
+          <li><a href="https://docs.blueprint-modular.com/knowledge-base/reste-a-faire.html">Ce qu'il reste à faire</a> — Roadmap et modules à venir</li>
+        </ul>
+      </section>
+      <section class="help-cta">
+        <p>Une question ? Consultez la <a href="https://docs.blueprint-modular.com/knowledge-base/faq.html">FAQ</a> et la <a href="https://docs.blueprint-modular.com/knowledge-base/reste-a-faire.html">roadmap</a>.</p>
+      </section>
+      <footer class="site-footer" style="margin-top:2rem;">
+        <div class="footer-links">
+          <a href="https://docs.blueprint-modular.com/get-started/installation.html">Documentation</a>
+          <a href="https://docs.blueprint-modular.com/components.html">Composants</a>
+          <a href="https://blueprint-modular.com/modules.html">Modules</a>
+          <a href="https://docs.blueprint-modular.com/cheat-sheet.html">Cheat sheet</a>
+          <a href="https://docs.blueprint-modular.com/versions.html">Versions</a>
+          <a href="https://docs.blueprint-modular.com/knowledge-base/faq.html">FAQ</a>
+          <a href="https://docs.blueprint-modular.com/knowledge-base/reste-a-faire.html">Roadmap</a>
+        </div>
+        <div class="footer-meta">Blueprint Modular v0.1-alpha · Licence MIT</div>
+      </footer>
+    </main>
+  </div>
+  <script src="doc.js"></script>
+</body>
+</html>

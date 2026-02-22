@@ -30,6 +30,13 @@
       <a href="first-app.html">First app</a>
       <h3>Components</h3>
       <a href="../components.html">Catalogue des composants</a>
+      <h3>Modules</h3>
+      <a href="https://blueprint-modular.com/modules.html">Catalogue des modules</a>
+      <a href="../modules/wiki.html">Wiki</a>
+      <a href="../modules/ia.html">Module IA</a>
+      <a href="../modules/veille.html">Module Veille</a>
+      <a href="../modules/ibkr.html">Module IBKR</a>
+      <a href="../modules/analyse-document.html">Analyse de document</a>
       <h3>API Reference</h3>
       <a href="../api-reference/text.html">Text</a>
       <a href="../api-reference/data.html">Data</a>
@@ -52,6 +59,7 @@
       <a href="../knowledge-base/reste-a-faire.html">Ce qu'il reste à faire</a>
       <h3>Ressources</h3>
       <a href="../cheat-sheet.html">Cheat sheet</a>
+      <a href="../versions.html">Versions</a>
     </aside>
     <main class="doc-main">
       <nav class="breadcrumb">
@@ -84,8 +92,8 @@ if bpm.button("Incrémenter"):
 
 # Seul le bpm.metric se rafraîchit, pas toute la page.</code></pre>
       <div class="alert alert-info">
-        <span class="alert-icon">ℹ️</span>
-        <div class="alert-body"><strong>Note</strong> — En mode HTTP actuel, le re-run est complet ; les refs sont prévues pour un futur mode WebSocket/SSE avec réactivité granulaire.</div>
+        <span class="alert-icon"></span>
+        <div class="alert-body"><strong>Note</strong> — Aujourd'hui, chaque clic déclenche un re-run complet du script (comme Streamlit). Un mode WebSocket ou SSE est prévu pour mettre à jour uniquement les composants concernés, sans rechargement complet.</div>
       </div>
 
       <h2>Les décorateurs (@)</h2>
@@ -121,13 +129,16 @@ def navigation():
       </section>
 
       <section class="help-cta">
-        <p>Une question ou un retour ? Écrivez-nous à <a href="mailto:contact@blueprint-modular.com">contact@blueprint-modular.com</a>.</p>
+        <p>Une question ? Consultez la <a href="../knowledge-base/faq.html">FAQ</a> et la <a href="../knowledge-base/reste-a-faire.html">roadmap</a>.</p>
       </section>
 
-      <footer class="site-footer">
+      <footer class="site-footer" style="margin-top:2rem;">
         <div class="footer-links">
-          <a href="../index.html">Documentation</a>
+          <a href="../get-started/installation.html">Documentation</a>
+          <a href="../components.html">Composants</a>
+          <a href="https://blueprint-modular.com/modules.html">Modules</a>
           <a href="../cheat-sheet.html">Cheat sheet</a>
+          <a href="../versions.html">Versions</a>
           <a href="../knowledge-base/faq.html">FAQ</a>
           <a href="../knowledge-base/reste-a-faire.html">Roadmap</a>
         </div>
@@ -135,6 +146,6 @@ def navigation():
       </footer>
     </main>
   </div>
-  <script src="/doc.js"></script>
+  <script src="../doc.js"></script>
 </body>
 </html>

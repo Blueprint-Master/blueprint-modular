@@ -30,13 +30,19 @@ else
   cd "$REPO_DIR"
 fi
 
-# --- Site vitrine (landing uniquement) ---
+# --- Site vitrine (landing + page Modules) ---
 echo "--> Vitrine → $VITRINE_DIR"
 sudo mkdir -p "$VITRINE_DIR"
 sudo cp "$STATIC/index.html" "$VITRINE_DIR/"
 sudo cp "$STATIC/landing.css" "$VITRINE_DIR/"
+sudo cp "$STATIC/doc.css" "$VITRINE_DIR/"
+sudo cp "$STATIC/modules.html" "$VITRINE_DIR/"
 sudo cp "$STATIC/favicon.ico" "$VITRINE_DIR/" 2>/dev/null || true
+sudo cp "$STATIC/manifest.json" "$VITRINE_DIR/" 2>/dev/null || true
+sudo cp "$STATIC/doc.js" "$VITRINE_DIR/" 2>/dev/null || true
 sudo cp -r "$STATIC/img" "$VITRINE_DIR/" 2>/dev/null || true
+sudo cp -r "$STATIC/js" "$VITRINE_DIR/" 2>/dev/null || true
+sudo cp -r "$STATIC/modules" "$VITRINE_DIR/"
 
 # --- Documentation (tout le contenu doc) ---
 echo "--> Documentation → $DOCS_DIR"
@@ -49,19 +55,40 @@ sudo cp "$STATIC/doc.js" "$DOCS_DIR/"
 sudo cp "$STATIC/components.html" "$DOCS_DIR/"
 sudo cp "$STATIC/reference.html" "$DOCS_DIR/"
 sudo cp "$STATIC/cheat-sheet.html" "$DOCS_DIR/"
+sudo cp "$STATIC/modules.html" "$DOCS_DIR/"
+sudo cp "$STATIC/versions.html" "$DOCS_DIR/"
 sudo cp "$STATIC/favicon.ico" "$DOCS_DIR/" 2>/dev/null || true
 sudo cp -r "$STATIC/img" "$DOCS_DIR/" 2>/dev/null || true
+sudo cp -r "$STATIC/js" "$DOCS_DIR/" 2>/dev/null || true
+sudo cp -r "$STATIC/i18n" "$DOCS_DIR/" 2>/dev/null || true
+sudo cp -r "$STATIC/modules" "$DOCS_DIR/"
 sudo cp -r "$STATIC/get-started" "$DOCS_DIR/"
 sudo cp -r "$STATIC/api-reference" "$DOCS_DIR/"
 sudo cp -r "$STATIC/deploy" "$DOCS_DIR/"
 sudo cp -r "$STATIC/knowledge-base" "$DOCS_DIR/"
 
-# Droits
+# Droits (lecture par le serveur web www-data/nginx)
 echo "--> Droits (ubuntu:ubuntu)..."
 sudo chown -R ubuntu:ubuntu "$VITRINE_DIR"
 sudo chown -R ubuntu:ubuntu "$DOCS_DIR"
+if [ -d "$VITRINE_DIR/img" ]; then
+  sudo chmod 755 "$VITRINE_DIR/img"
+  sudo chmod 644 "$VITRINE_DIR/img"/* 2>/dev/null || true
+fi
+if [ -d "$DOCS_DIR/img" ]; then
+  sudo chmod 755 "$DOCS_DIR/img"
+  sudo chmod 644 "$DOCS_DIR/img"/* 2>/dev/null || true
+fi
+
+# Fichier de version (pour vérifier que la bonne version est en ligne)
+GIT_REV=$(git rev-parse --short HEAD 2>/dev/null || echo "unknown")
+GIT_DATE=$(git log -1 --format=%ci 2>/dev/null | cut -d' ' -f1 || echo "unknown")
+echo "${GIT_REV} ${GIT_DATE}" | sudo tee "$VITRINE_DIR/version.txt" >/dev/null
+echo "${GIT_REV} ${GIT_DATE}" | sudo tee "$DOCS_DIR/version.txt" >/dev/null
+sudo chown ubuntu:ubuntu "$VITRINE_DIR/version.txt" "$DOCS_DIR/version.txt" 2>/dev/null || true
 
 echo "✅ Déploiement terminé."
+echo "   Version déployée: $GIT_REV ($GIT_DATE)"
 echo "   Vitrine:    $VITRINE_DIR (blueprint-modular.com)"
 echo "   Documentation: $DOCS_DIR (docs.blueprint-modular.com)"
 echo "   Pour Nginx: sudo cp $REPO_DIR/deploy/nginx.conf /etc/nginx/sites-available/blueprint-modular"

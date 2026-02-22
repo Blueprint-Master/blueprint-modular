@@ -1,0 +1,75 @@
+{
+  "page": {
+    "title": "Blueprint Modular — Python building blocks for your UIs",
+    "description": "Import from bpm, the rest is done. Components, docs, deployment. No front-end."
+  },
+  "languages": {
+    "fr": "FR",
+    "en": "EN",
+    "de": "DE",
+    "es": "ES",
+    "it": "IT",
+    "nl": "NL",
+    "zh": "中文",
+    "ja": "日本語"
+  },
+  "landing": {
+    "nav": {
+      "why": "Why BPM",
+      "documentation": "Documentation",
+      "installation": "Installation",
+      "components": "Components",
+      "modules": "Modules",
+      "access_doc": "Open docs →"
+    },
+    "hero": {
+      "kicker": "Python framework",
+      "title": "Building blocks ready.<br />You write the logic.",
+      "desc": "Import from bpm, assemble metrics, tables, forms. No HTML, no JS. One codebase.",
+      "screenshot": "[ Screenshot BPM dashboard ]",
+      "demo_btn": "See demo",
+      "doc_btn": "Read docs",
+      "code_label": "Get started in one minute"
+    },
+    "pitch": {
+      "heading": "Why Blueprint Modular",
+      "item1": "Reusable components — Text, data, charts, forms, layout. All in the docs.",
+      "item2": "Python only — No front-end to wire. You declare, the UI updates.",
+      "item3": "Docs and deployment included — Installation, API, VPS/Docker deployment step by step."
+    },
+    "diff": {
+      "heading": "What BPM offers that others don't",
+      "intro": "Granular reactivity, design system, registry and config-driven layout: four strengths no other Python data framework offers natively.",
+      "item1": "Granular reactivity + simple syntax — Targeted component updates (refs, reactive store) without full script re-run.",
+      "item2": "Consistent design system (bpm.*) — Centralised tokens; customisation via CSS variables.",
+      "item3": "Registry $ and @ — Reactive refs for state; decorators for pages, sidebar, cache.",
+      "item4": "Config-driven layout — One app.config.js for everything; duplicate an app = edit that file.",
+      "link_text": "Read « Why BPM » →"
+    },
+    "use": {
+      "heading": "Ideal for",
+      "tag1": "Business prototypes",
+      "tag2": "Internal dashboards",
+      "tag3": "Data & ML tools",
+      "tag4": "Demo apps",
+      "card1": "Business prototypes",
+      "card2": "Internal dashboards",
+      "card3": "Data & ML tools",
+      "card4": "Demo apps"
+    },
+    "cta": {
+      "text": "Everything is documented: installation, components, API reference, deployment.",
+      "btn": "Open documentation"
+    },
+    "footer": {
+      "doc": "Documentation",
+      "components": "Components",
+      "modules": "Modules",
+      "cheat": "Cheat sheet",
+      "versions": "Versions",
+      "faq": "FAQ",
+      "roadmap": "Roadmap",
+      "meta": "Blueprint Modular v0.1-alpha · MIT License"
+    }
+  }
+}

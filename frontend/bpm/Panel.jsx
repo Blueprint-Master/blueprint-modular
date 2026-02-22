@@ -13,7 +13,7 @@ const Panel = ({
   className = '',
   ...props
 }) => {
-  const iconChar = icon ?? (variant === 'error' ? '!' : variant === 'warning' ? '⚠' : variant === 'success' ? '✓' : 'ℹ');
+  const iconChar = icon ?? (variant === 'error' ? '!' : variant === 'warning' ? '!' : variant === 'success' ? '+' : 'i');
   return (
     <div
       className={`bpm-panel bpm-panel-${variant} ${className}`.trim()}

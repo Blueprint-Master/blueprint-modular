@@ -3,6 +3,8 @@ BPM — Blueprint Modular runtime.
 Registry $ (refs réactives) et @ (inscription / décorateurs).
 APIs composants (title, button, write, metric, etc.) pour bpm run app.py.
 """
+__version__ = "0.1.0"
+
 from typing import Any, Callable, Optional, TypeVar
 
 # --- Rendu : nœuds collectés pendant l'exécution du script ---
@@ -117,6 +119,15 @@ def panel(title_text: str, body: str = "", variant: str = "info") -> None:
     _node("panel", title=title_text, body=body, variant=variant)
 
 
+def set_page_config(
+    page_title: str = "BPM App",
+    layout: str = "centered",
+    **kwargs: Any,
+) -> None:
+    """Configure la page (titre, layout). Pour l'instant enregistré mais pas utilisé par le rendu."""
+    _node("page_config", page_title=page_title, layout=layout, **kwargs)
+
+
 # --- Registry @ : stockage par nom ---
 _REGISTRY: dict[str, Any] = {}
 
@@ -194,6 +205,7 @@ def cache_data(fn: F) -> F:
 
 
 __all__ = [
+    "set_page_config",
     "register",
     "get_registered",
     "ref",
