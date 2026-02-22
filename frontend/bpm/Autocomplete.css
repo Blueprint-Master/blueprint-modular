@@ -1,0 +1,7 @@
+.bpm-autocomplete { position: relative; margin: 0.5rem 0; }
+.bpm-autocomplete-label { display: block; font-size: 0.875rem; font-weight: 500; margin-bottom: 0.25rem; }
+.bpm-autocomplete-input { width: 100%; padding: 0.5rem 0.75rem; font-size: 0.875rem; border: 1px solid #ddd; border-radius: 8px; }
+.bpm-autocomplete-input:focus { outline: none; border-color: #00A3E0; }
+.bpm-autocomplete-list { position: absolute; top: 100%; left: 0; right: 0; margin: 0; padding: 0.25rem 0; list-style: none; background: #fff; border: 1px solid #e0e0e0; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); max-height: 240px; overflow-y: auto; z-index: 100; }
+.bpm-autocomplete-option { padding: 0.5rem 0.75rem; cursor: pointer; font-size: 0.9rem; }
+.bpm-autocomplete-option:hover, .bpm-autocomplete-option-highlight { background: #f5f5f5; }

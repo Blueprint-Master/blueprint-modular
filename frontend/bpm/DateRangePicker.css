@@ -1,0 +1,5 @@
+.bpm-daterangepicker { font-family: "Segoe UI", sans-serif; margin: 0.5rem 0; }
+.bpm-daterangepicker-label { display: block; font-size: 0.875rem; font-weight: 500; margin-bottom: 0.35rem; }
+.bpm-daterangepicker-fields { display: flex; align-items: center; gap: 0.5rem; flex-wrap: wrap; }
+.bpm-daterangepicker-input { padding: 0.5rem 0.75rem; font-size: 0.875rem; border: 1px solid #ddd; border-radius: 8px; }
+.bpm-daterangepicker-sep { font-size: 0.85rem; color: #666; }

@@ -1,0 +1,125 @@
+# Roadmap BPM — fonctionnalités (référence interne)
+
+Ce document relie le [paysage concurrentiel](../frontend/static/knowledge-base/competitive-landscape.md) aux composants et chantiers BPM.  
+**Statuts :** ✅ Fait | 🚧 En cours | 📋 Prévu | ⏸ Backend (Python) requis
+
+---
+
+## Différenciateurs BPM (à développer en priorité)
+
+| Axe | Doc / Fichiers |
+|-----|----------------|
+| Réactivité granulaire + syntaxe simple | [REACTIVITE_GRANULAIRE.md](REACTIVITE_GRANULAIRE.md) — `frontend/bpm/reactiveStore.js`, `useReactive.js` |
+| Design system cohérent (`bpm.*`) | [DESIGN_SYSTEM.md](DESIGN_SYSTEM.md) — `frontend/bpm/theme.css` |
+| Registry `$` et `@` | [REGISTRY.md](REGISTRY.md) — `bpm/__init__.py` (ref, register, page, sidebar) |
+| Config-driven layout (`app.config.js`) | [APP_CONFIG.md](APP_CONFIG.md) — `frontend/bpm/app.config.example.js` |
+
+---
+
+## Architecture & exécution
+
+| Fonctionnalité | Statut | BPM / Note |
+|----------------|--------|------------|
+| Réactivité granulaire (re-render ciblé) | 🚧 | Store + hook : `reactiveStore.js`, `useReactive` ; doc : [REACTIVITE_GRANULAIRE.md](REACTIVITE_GRANULAIRE.md). Runtime Python à venir. |
+| Callbacks déclaratifs (Input / Output / State) | 📋 | À définir côté API Python |
+| Graphe de dépendances réactif | 📋 | Idem |
+
+---
+
+## Layout & UI
+
+| Fonctionnalité | Statut | BPM / Note |
+|----------------|--------|------------|
+| Classes CSS sur les composants | 🚧 | Prop `className` sur tous les composants BPM |
+| Layouts pixel-perfect / HTML/CSS natif | 📋 | Grid, Box, Divider déjà en place ; documenter usage CSS |
+| Cards natives | ✅ | `Card` (header/body/footer, image, actions) |
+| Navbar horizontale | ✅ | `DocNav` ; `TopNav` (générique) |
+| Grid layout configurable | ✅ | `Grid` (cols, gap, responsive xs/sm/md/lg) |
+| Accordion (multi-sections) | ✅ | `Accordion` (sections, allowMultiple) |
+| Stepper / Wizard | ✅ | `Stepper` (steps, currentStep, content par étape) |
+| Drawer / Offcanvas | ✅ | `Drawer` (placement left/right, overlay) |
+| Floating action button | ✅ | `FAB` (placement corners) |
+
+---
+
+## Composants données
+
+| Fonctionnalité | Statut | BPM / Note |
+|----------------|--------|------------|
+| DataTable avancée (tri, filtre, pagination, export) | 🚧 | `Table` existe ; étendre avec tri multi, pagination, export |
+| Pivot table | 📋 | Composant dédié ou lib externe (ag-grid, etc.) |
+| Tree view / hiérarchie | ✅ | `TreeView` (nodes avec children) |
+| Timeline | ✅ | `Timeline` (items date/title/description) |
+| KPI card avec sparkline | ✅ | `SparklineMetric` (label, value, delta, sparklineData) |
+
+---
+
+## Graphiques
+
+| Fonctionnalité | Statut | BPM / Note |
+|----------------|--------|------------|
+| Sélection interactive → données Python | ⏸ | Côté Python + événements chart |
+| Crossfiltering | ⏸ | Idem |
+| Gantt, Network, Sankey, 3D | 📋 | Wrappers Chart.js / Plotly / D3 ou composants dédiés |
+
+---
+
+## Formulaires & inputs
+
+| Fonctionnalité | Statut | BPM / Note |
+|----------------|--------|------------|
+| Validation formulaire côté Python | ⏸ | API Python |
+| Input masqué / formaté (téléphone, IBAN) | 📋 | `Input` avec `mask` / `format` |
+| Range date picker | ✅ | `DateRangePicker` (value { start, end }) |
+| Autocomplete / combobox | ✅ | `Autocomplete` (options, filtered list) |
+| Rich text editor | 📋 | Intégration Quill/TipTap ou composant simple |
+| Signature pad | 📋 | `SignaturePad` |
+| Rating / stars | ✅ | `Rating` (value, max, onChange) |
+| Kanban board | 📋 | `Kanban` (colonnes + drag & drop) |
+
+---
+
+## Authentification & droits
+
+| Fonctionnalité | Statut | BPM / Note |
+|----------------|--------|------------|
+| Auth native (login, sessions, rôles) | ⏸ | Backend + composants Login / Session |
+| SSO / SAML / LDAP | ⏸ | Backend |
+| Contrôle d’accès par composant | 📋 | Prop `requiredRole` ou HOC `withAuth` |
+| Audit log | ⏸ | Backend |
+
+---
+
+## Performance & scalabilité
+
+| Fonctionnalité | Statut | BPM / Note |
+|----------------|--------|------------|
+| Mise à jour partielle sans re-run | ⏸ | Architecture runtime |
+| Pagination serveur | 🚧 | `Table` + prop `pagination="server"` |
+| WebSocket état partagé, job queue, scaling | ⏸ | Backend / infra |
+
+---
+
+## Déploiement & intégration
+
+| Fonctionnalité | Statut | BPM / Note |
+|----------------|--------|------------|
+| Embedding dans page HTML | 📋 | Bundle BPM en UMD + script d’init |
+| Jupyter natif | ⏸ | Package Python `bpm` + extension |
+| REST API auto-générée | ⏸ | Python |
+| Theming via config | 📋 | Fichier thème (CSS vars) + doc |
+
+---
+
+## Différenciateurs BPM (objectifs)
+
+| Objectif | Statut |
+|----------|--------|
+| Réactivité granulaire + syntaxe simple | 📋 |
+| Design system cohérent `bpm.*` | 🚧 (composants en place) |
+| Registry `$` et `@` | ⏸ Python |
+| Layout piloté par `app.config.js` | 📋 |
+
+---
+
+*Dernière mise à jour : ajout des fonctionnalités issues du paysage concurrentiel.*

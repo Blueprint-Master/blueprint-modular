@@ -1,0 +1,103 @@
+.bpm-stepper {
+  font-family: "Segoe UI", "Source Sans", sans-serif;
+}
+
+.bpm-stepper-track {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 0;
+  margin-bottom: 1.5rem;
+}
+
+.bpm-stepper-step {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  flex: 1;
+  position: relative;
+}
+
+.bpm-stepper-step-clickable .bpm-stepper-dot {
+  cursor: pointer;
+}
+
+.bpm-stepper-dot {
+  width: 2rem;
+  height: 2rem;
+  border-radius: 50%;
+  border: 2px solid var(--bpm-border, #e0e0e0);
+  background: var(--bpm-surface, #fff);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--muted, #666);
+  transition: border-color 0.2s, background 0.2s, color 0.2s;
+}
+
+.bpm-stepper-dot:disabled {
+  cursor: default;
+}
+
+.bpm-stepper-step-active .bpm-stepper-dot {
+  border-color: var(--accent, #00A3E0);
+  background: var(--accent, #00A3E0);
+  color: #fff;
+}
+
+.bpm-stepper-step-past .bpm-stepper-dot {
+  border-color: var(--accent, #00A3E0);
+  background: var(--accent, #00A3E0);
+  color: #fff;
+}
+
+.bpm-stepper-check {
+  font-size: 0.9rem;
+  color: #fff;
+}
+
+.bpm-stepper-num {
+  line-height: 1;
+}
+
+.bpm-stepper-label {
+  margin-top: 0.5rem;
+  font-size: 0.8rem;
+  color: var(--muted, #666);
+  text-align: center;
+  max-width: 100px;
+}
+
+.bpm-stepper-step-active .bpm-stepper-label {
+  color: var(--bpm-text-primary, #333);
+  font-weight: 500;
+}
+
+.bpm-stepper-optional {
+  font-weight: 400;
+  opacity: 0.8;
+}
+
+.bpm-stepper-line {
+  position: absolute;
+  top: 1rem;
+  left: calc(50% + 1.25rem);
+  right: calc(-50% + 1.25rem);
+  height: 2px;
+  background: var(--bpm-border, #e0e0e0);
+  z-index: -1;
+}
+
+.bpm-stepper-step-past + .bpm-stepper-step .bpm-stepper-line,
+.bpm-stepper-step-past .bpm-stepper-line {
+  background: var(--accent, #00A3E0);
+}
+
+.bpm-stepper-content {
+  padding: 1rem;
+  background: var(--bg-card, #f6f6f6);
+  border-radius: 8px;
+  border: 1px solid var(--bpm-border, #e0e0e0);
+}

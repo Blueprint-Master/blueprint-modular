@@ -9,7 +9,14 @@ document.addEventListener('DOMContentLoaded', function() {
     sidebar.querySelectorAll('a').forEach(function(link) {
       link.addEventListener('click', function() {
         sidebar.classList.remove('open');
+        burger.setAttribute('aria-expanded', 'false');
       });
+    });
+    document.addEventListener('click', function(e) {
+      if (!sidebar.contains(e.target) && !burger.contains(e.target)) {
+        sidebar.classList.remove('open');
+        burger.setAttribute('aria-expanded', 'false');
+      }
     });
   }
 });

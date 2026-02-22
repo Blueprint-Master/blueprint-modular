@@ -1,0 +1,31 @@
+.bpm-sparkline-metric {
+  font-family: "Segoe UI", "Source Sans", sans-serif;
+  padding: 1rem;
+  background: var(--bpm-surface, #fff);
+  border: 1px solid var(--bpm-border, #e0e0e0);
+  border-radius: 8px;
+}
+
+.bpm-sparkline-metric-label {
+  font-size: 0.8rem;
+  color: var(--muted, #666);
+  margin-bottom: 0.25rem;
+}
+
+.bpm-sparkline-metric-value {
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: var(--bpm-text-primary, #333);
+}
+
+.bpm-sparkline-metric-delta.positive { color: #28a745; }
+.bpm-sparkline-metric-delta.negative { color: #dc3545; }
+
+.bpm-sparkline-metric-chart {
+  margin-top: 0.75rem;
+  height: 24px;
+  color: var(--accent, #00A3E0);
+  opacity: 0.8;
+}
+
+.bpm-sparkline-metric-chart svg { width: 100%; height: 100%; }

@@ -1,0 +1,72 @@
+.bpm-accordion {
+  font-family: "Segoe UI", "Source Sans", sans-serif;
+  border: 1px solid var(--bpm-border, #e0e0e0);
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.bpm-accordion-item {
+  border-bottom: 1px solid var(--bpm-border, #e0e0e0);
+}
+
+.bpm-accordion-item:last-child {
+  border-bottom: none;
+}
+
+.bpm-accordion-header {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.75rem 1rem;
+  border: none;
+  background: var(--bpm-surface, #fff);
+  color: var(--bpm-text-primary, #333);
+  font-size: 0.95rem;
+  font-weight: 500;
+  text-align: left;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.bpm-accordion-header:hover {
+  background: var(--bg-card, #f6f6f6);
+}
+
+.bpm-accordion-header.bpm-accordion-open {
+  background: var(--bg-card, #f6f6f6);
+}
+
+.bpm-accordion-icon {
+  flex-shrink: 0;
+  width: 1.25rem;
+  height: 1.25rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.1rem;
+  line-height: 1;
+  color: var(--accent, #00A3E0);
+}
+
+.bpm-accordion-title {
+  flex: 1;
+}
+
+.bpm-accordion-panel {
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 0.25s ease-out;
+}
+
+.bpm-accordion-panel.bpm-accordion-panel-visible {
+  max-height: 2000px;
+  transition: max-height 0.35s ease-in;
+}
+
+.bpm-accordion-content {
+  padding: 1rem 1rem 1rem 2.5rem;
+  background: var(--bpm-surface, #fff);
+  border-top: 1px solid var(--bpm-border, #e0e0e0);
+  font-size: 0.9rem;
+}

@@ -46,7 +46,6 @@
     <a href="api-reference/text.html">API Reference</a>
     <a href="deploy/concepts.html">Deploy</a>
     <a href="cheat-sheet.html">Cheat sheet</a>
-    <a href="https://blueprint-modular.com" class="back-to-site">← Blueprint-modular.com</a>
     <button class="nav-burger" aria-label="Menu" id="nav-burger-btn"><span></span><span></span><span></span></button>
   </nav>
 
@@ -137,7 +136,19 @@
       { id: 'EmptyState', name: 'EmptyState', category: 'Feedback', desc: 'État vide : titre, description, icône et action optionnels.', import: "import { EmptyState } from './bpm';", example: '<EmptyState title="Aucun résultat" description="..." action={<Button>Ajouter</Button>} />', props: [{ name: 'title', type: 'string', default: "'Aucune donnée'", desc: '' }, { name: 'description', type: 'string', default: '-', desc: '' }, { name: 'icon', type: 'node', default: '-', desc: '' }, { name: 'action', type: 'node', default: '-', desc: '' }] },
       { id: 'CopyButton', name: 'CopyButton', category: 'Utils', desc: 'Bouton pour copier du texte dans le presse-papier. text ou children.', import: "import { CopyButton } from './bpm';", example: '<CopyButton text={code} label="Copier" copiedLabel="Copié" />', props: [{ name: 'text', type: 'string', default: '-', desc: 'À copier' }, { name: 'label', type: 'string', default: "'Copier'", desc: '' }, { name: 'copiedLabel', type: 'string', default: "'Copié'", desc: '' }, { name: 'onCopy', type: 'function', default: '-', desc: '(text, err?) => {}' }] },
       { id: 'Chip', name: 'Chip', category: 'Structure', desc: 'Tag ou pastille. onDelete pour retirer, onClick pour clic. variant: default, primary.', import: "import { Chip } from './bpm';", example: '<Chip label="Filtre" onDelete={() => {}} />', props: [{ name: 'label', type: 'string', default: '-', desc: '' }, { name: 'onDelete', type: 'function', default: '-', desc: '' }, { name: 'onClick', type: 'function', default: '-', desc: '' }, { name: 'variant', type: 'string', default: "'default'", desc: 'default | primary' }] },
-      { id: 'Avatar', name: 'Avatar', category: 'Structure', desc: 'Photo ou initiales. src (URL), initials, size: small, medium, large.', import: "import { Avatar } from './bpm';", example: '<Avatar src={url} alt="User" /> ou <Avatar initials="JD" size="large" />', props: [{ name: 'src', type: 'string', default: '-', desc: 'URL image' }, { name: 'initials', type: 'string', default: '-', desc: 'Ex: JD' }, { name: 'size', type: 'string', default: "'medium'", desc: 'small | medium | large' }] }
+      { id: 'Avatar', name: 'Avatar', category: 'Structure', desc: 'Photo ou initiales. src (URL), initials, size: small, medium, large.', import: "import { Avatar } from './bpm';", example: '<Avatar src={url} alt="User" /> ou <Avatar initials="JD" size="large" />', props: [{ name: 'src', type: 'string', default: '-', desc: 'URL image' }, { name: 'initials', type: 'string', default: '-', desc: 'Ex: JD' }, { name: 'size', type: 'string', default: "'medium'", desc: 'small | medium | large' }] },
+      { id: 'Accordion', name: 'Accordion', category: 'Layout', desc: 'Panneaux repliables multiples. sections = [{ title, content }], allowMultiple.', import: "import { Accordion } from './bpm';", example: '<Accordion sections={[{title:\'A\',content:\'...\'}]} allowMultiple />', props: [{ name: 'sections', type: 'array', default: '[]', desc: '' }, { name: 'allowMultiple', type: 'boolean', default: 'false', desc: '' }] },
+      { id: 'Stepper', name: 'Stepper', category: 'Layout', desc: 'Wizard multi-étapes. steps = [{ label, optional?, content? }], currentStep.', import: "import { Stepper } from './bpm';", example: '<Stepper steps={[{label:\'Étape 1\',content:<p>...</p>}]} currentStep={0} />', props: [{ name: 'steps', type: 'array', default: '[]', desc: '' }, { name: 'currentStep', type: 'number', default: '0', desc: '' }, { name: 'onStepClick', type: 'function', default: '-', desc: '' }] },
+      { id: 'Drawer', name: 'Drawer', category: 'Layout', desc: 'Panneau latéral overlay. isOpen, onClose, placement (left|right), title.', import: "import { Drawer } from './bpm';", example: '<Drawer isOpen={open} onClose={() => setOpen(false)} title="Menu">{content}</Drawer>', props: [{ name: 'isOpen', type: 'boolean', default: 'false', desc: '' }, { name: 'onClose', type: 'function', default: '-', desc: '' }, { name: 'placement', type: 'string', default: "'left'", desc: 'left | right' }] },
+      { id: 'FAB', name: 'FAB', category: 'Layout', desc: 'Bouton flottant. placement: bottom-right, bottom-left, top-right, top-left.', import: "import { FAB } from './bpm';", example: '<FAB onClick={fn} placement="bottom-right">+</FAB>', props: [{ name: 'placement', type: 'string', default: "'bottom-right'", desc: '' }] },
+      { id: 'Grid', name: 'Grid', category: 'Layout', desc: 'Grille responsive. cols (nombre ou { xs, sm, md, lg }), gap.', import: "import { Grid } from './bpm';", example: '<Grid cols={3} gap="1rem">{children}</Grid>', props: [{ name: 'cols', type: 'number|object', default: '1', desc: '' }, { name: 'gap', type: 'string|number', default: "'1rem'", desc: '' }] },
+      { id: 'TopNav', name: 'TopNav', category: 'Layout', desc: 'Navbar horizontale. brand (node), items = [{ label, href? ou onClick? }].', import: "import { TopNav } from './bpm';", example: '<TopNav brand={<span>App</span>} items={[{label:\'Home\',href:\'/\'}]} />', props: [] },
+      { id: 'TreeView', name: 'TreeView', category: 'Data', desc: 'Arbre hiérarchique. nodes = [{ id, label, children? }], onSelect, selectedId.', import: "import { TreeView } from './bpm';", example: '<TreeView nodes={[{id:\'1\',label:\'Root\',children:[]}]} onSelect={fn} />', props: [] },
+      { id: 'Timeline', name: 'Timeline', category: 'Data', desc: 'Liste d\'événements. items = [{ date, title, description?, icon? }].', import: "import { Timeline } from './bpm';", example: '<Timeline items={[{date:\'2024-01\',title:\'Event\'}]} />', props: [] },
+      { id: 'SparklineMetric', name: 'SparklineMetric', category: 'Data', desc: 'KPI + mini-graphique. label, value, delta?, sparklineData = [].', import: "import { SparklineMetric } from './bpm';", example: '<SparklineMetric label="CA" value={1200} sparklineData={[10,20,15,30]} />', props: [] },
+      { id: 'DateRangePicker', name: 'DateRangePicker', category: 'Widgets', desc: 'Plage de dates. value = { start, end }, onChange({ start, end }).', import: "import { DateRangePicker } from './bpm';", example: '<DateRangePicker value={range} onChange={setRange} label="Période" />', props: [] },
+      { id: 'Autocomplete', name: 'Autocomplete', category: 'Widgets', desc: 'Input avec suggestions. options = [{ value, label }] ou strings.', import: "import { Autocomplete } from './bpm';", example: '<Autocomplete value={v} onChange={setV} options={[\'A\',\'B\']} />', props: [] },
+      { id: 'Rating', name: 'Rating', category: 'Widgets', desc: 'Étoiles. value, max (défaut 5), onChange, readOnly.', import: "import { Rating } from './bpm';", example: '<Rating value={3} max={5} onChange={setRating} />', props: [] }
     ];
 
     const categories = [...new Set(COMPONENTS.map(c => c.category))].sort();
@@ -204,6 +215,6 @@
 
     render();
   </script>
-<script src="doc.js"></script>
+<script src="/doc.js"></script>
 </body>
 </html>

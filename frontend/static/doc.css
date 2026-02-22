@@ -39,19 +39,6 @@ body {
 .doc-nav .brand .brand-logo { height: 32px; width: auto; max-width: 48px; object-fit: contain; flex-shrink: 0; }
 .doc-nav .brand .word-blueprint { color: var(--bleu-profond); }
 .doc-nav .brand .word-modular { color: var(--bleu-cyan); }
-.doc-nav .back-to-site {
-  margin-left: auto;
-  font-size: 0.85rem;
-  color: var(--accent);
-  border: 1px solid var(--accent);
-  padding: 0.25rem 0.75rem;
-  border-radius: 6px;
-  white-space: nowrap;
-}
-.doc-nav .back-to-site:hover {
-  background: var(--accent);
-  color: white;
-}
 .nav-burger {
   display: none;
 }
@@ -114,10 +101,7 @@ body {
     top: 0;
     z-index: 200;
   }
-  .doc-nav > a:not(.brand):not(.back-to-site) {
-    display: none;
-  }
-  .doc-nav .back-to-site {
+  .doc-nav > a:not(.brand) {
     display: none;
   }
   .nav-burger {

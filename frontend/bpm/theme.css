@@ -1,0 +1,67 @@
+/**
+ * BPM Design system — tokens centralisés
+ * Importer ce fichier à la racine de l'app pour que tous les composants bpm.*
+ * utilisent les mêmes couleurs, espacements et typo.
+ */
+:root {
+  /* Surfaces */
+  --bpm-bg: #ffffff;
+  --bpm-surface: #ffffff;
+  --bpm-bg-card: #f6f6f6;
+  --bpm-bg-code: #f0f0f0;
+
+  /* Texte */
+  --bpm-text-primary: #333;
+  --bpm-text-secondary: #666;
+  --bpm-fg: #333;
+  --bpm-muted: #666;
+
+  /* Couleurs identité */
+  --bpm-bleu-profond: #1A4B8F;
+  --bpm-bleu-cyan: #00A3E0;
+  --bpm-vert-menthe: #45D09E;
+
+  /* Accent (liens, focus, CTA) */
+  --bpm-accent: var(--bpm-bleu-cyan);
+  --accent: var(--bpm-accent);
+  --accent-color: var(--bpm-accent);
+
+  /* Bordures */
+  --bpm-border: rgb(237, 237, 237);
+  --border: var(--bpm-border);
+
+  /* Feedback */
+  --bpm-success-bg: #e8f5e9;
+  --bpm-success-text: #2e7d32;
+  --bpm-success-border: #a5d6a7;
+  --bpm-warning-bg: #fff8e1;
+  --bpm-warning-text: #f57c00;
+  --bpm-warning-border: #ffcc80;
+  --bpm-error-bg: #ffebee;
+  --bpm-error-text: #c62828;
+  --bpm-error-border: #ef9a9a;
+
+  /* Typo */
+  --bpm-font: "Inter", "Segoe UI", sans-serif;
+  --bpm-font-mono: ui-monospace, "Cascadia Code", monospace;
+
+  /* Spacing (optionnel pour layouts) */
+  --bpm-space-xs: 0.25rem;
+  --bpm-space-sm: 0.5rem;
+  --bpm-space-md: 1rem;
+  --bpm-space-lg: 1.5rem;
+  --bpm-space-xl: 2rem;
+
+  /* Radius */
+  --bpm-radius-sm: 4px;
+  --bpm-radius-md: 8px;
+  --bpm-radius-lg: 12px;
+}
+
+/* Alias pour compatibilité existante */
+html {
+  --bg: var(--bpm-bg);
+  --surface: var(--bpm-surface);
+  --text-primary: var(--bpm-text-primary);
+  --border-color: var(--bpm-border);
+}

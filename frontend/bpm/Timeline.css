@@ -1,0 +1,51 @@
+.bpm-timeline {
+  font-family: "Segoe UI", "Source Sans", sans-serif;
+  position: relative;
+}
+
+.bpm-timeline-item {
+  display: flex;
+  gap: 1rem;
+  padding-bottom: 1.25rem;
+}
+
+.bpm-timeline-item:last-child {
+  padding-bottom: 0;
+}
+
+.bpm-timeline-marker {
+  flex-shrink: 0;
+  width: 1rem;
+  height: 1rem;
+  margin-top: 0.25rem;
+}
+
+.bpm-timeline-dot {
+  display: block;
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  background: var(--accent, #00A3E0);
+}
+
+.bpm-timeline-content {
+  flex: 1;
+  min-width: 0;
+}
+
+.bpm-timeline-date {
+  font-size: 0.8rem;
+  color: var(--muted, #666);
+  margin-bottom: 0.2rem;
+}
+
+.bpm-timeline-title {
+  font-weight: 600;
+  color: var(--bpm-text-primary, #333);
+}
+
+.bpm-timeline-desc {
+  font-size: 0.9rem;
+  color: var(--muted, #666);
+  margin-top: 0.35rem;
+}
