@@ -10,7 +10,7 @@
 </head>
 <body>
   <nav class="doc-nav">
-    <a href="../index.html" class="brand"><img src="../img/logo-bpm-nom.jpg" alt="" class="brand-logo" /><span class="word-blueprint">Blueprint</span> <span class="word-modular">Modular</span></a>
+    <a href="https://blueprint-modular.com/" class="brand"><img src="../img/logo-bpm-nom.jpg" alt="" class="brand-logo" /><span class="word-blueprint">Blueprint</span> <span class="word-modular">Modular</span></a>
     <a href="installation.html">Get started</a>
     <a href="../components.html">Components</a>
     <a href="../api-reference/text.html">API Reference</a>
@@ -23,6 +23,7 @@
       <h3>Accueil</h3>
       <a href="../index.html">Accueil</a>
       <h3>Get started</h3>
+      <a href="why-bpm.html">Pourquoi BPM</a>
       <a href="installation.html">Installation</a>
       <a href="fundamentals.html" class="active">Fundamentals</a>
       <a href="first-app.html">First app</a>
@@ -69,10 +70,10 @@ if bpm.button("Incrémenter"):
 bpm.write(f"Compteur : {bpm.session_state.count}")</code></pre>
       <h2>Rechargement automatique</h2>
       <p>En développement, BPM surveille les fichiers et recharge automatiquement lors des modifications.</p>
-      <h2>Composants natifs vs iframe (sandbox)</h2>
+      <h2>Composants natifs et librairie React</h2>
       <ul>
         <li><strong>Composants natifs</strong> : rendus directement par le serveur BPM (Python).</li>
-        <li><strong>Composants React (sandbox)</strong> : certains UIs sont servis via une iframe vers <code>sandbox.beam-consulting.fr</code>.</li>
+        <li><strong>Librairie React</strong> : les composants <code>bpm</code> (frontend) peuvent être utilisés dans une app React ; le catalogue doc les liste tous.</li>
       </ul>
       <p><strong>Suivant :</strong> <a href="first-app.html">First app</a> — Tutoriel complet en 5 minutes.</p>
       <footer class="doc-footer"><a href="https://github.com/remigit55/blueprint-modular">Voir sur GitHub</a></footer>

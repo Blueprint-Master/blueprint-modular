@@ -13,7 +13,7 @@
 </head>
 <body>
   <nav class="doc-nav">
-    <a href="index.html" class="brand">
+    <a href="https://blueprint-modular.com/" class="brand">
       <img src="img/logo-bpm-nom.jpg" alt="" class="brand-logo" />
       <span class="word-blueprint">Blueprint</span> <span class="word-modular">Modular</span>
     </a>
@@ -30,6 +30,7 @@
       <h3>Accueil</h3>
       <a href="index.html" class="active">Accueil</a>
       <h3>Get started</h3>
+      <a href="get-started/why-bpm.html">Pourquoi BPM</a>
       <a href="get-started/installation.html">Installation</a>
       <a href="get-started/fundamentals.html">Fundamentals</a>
       <a href="get-started/first-app.html">First app</a>
@@ -76,6 +77,11 @@ bpm.table(df)</code></pre>
       <h2>Commencer</h2>
       <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1.5rem;">
         <div>
+          <h3 style="font-size: 1rem;">Pourquoi BPM</h3>
+          <p style="font-size: 0.9rem; color: var(--muted);">Réactivité granulaire, design system, registry $ et @, layout config-driven.</p>
+          <a href="get-started/why-bpm.html" class="doc-cta">Pourquoi BPM →</a>
+        </div>
+        <div>
           <h3 style="font-size: 1rem;">Get started</h3>
           <p style="font-size: 0.9rem; color: var(--muted);">Installation, fondamentaux et premier tutoriel.</p>
           <a href="get-started/installation.html" class="doc-cta">Commencer →</a>
@@ -94,8 +100,13 @@ bpm.table(df)</code></pre>
 
       <hr style="margin: 2rem 0; border-color: var(--border);" />
       <h2>What's new</h2>
-      <p>Consultez le changelog des composants pour les dernières mises à jour.</p>
-      <div class="info-box">Cette section sera alimentée par le changelog du package blueprint-modular.</div>
+      <ul>
+        <li><strong>Design system</strong> — Tokens centralisés dans <code>theme.css</code> ; tous les composants <code>bpm.*</code> partagent couleurs, espacements et typo.</li>
+        <li><strong>Registry <code>$</code> et <code>@</code></strong> — Réfs réactives (<code>bpm.ref</code>) et décorateurs (<code>@bpm.page</code>, <code>@bpm.sidebar</code>) dans le package Python <code>bpm</code>.</li>
+        <li><strong>Layout piloté par config</strong> — Exemple <code>app.config.example.js</code> : un fichier pour sidebar, pages et liens ; dupliquer une app = modifier la config.</li>
+        <li><strong>Réactivité granulaire</strong> — Store réactif (<code>reactiveStore.js</code>) et hook <code>useReactive(key)</code> côté frontend.</li>
+        <li><strong>Composants</strong> — Accordion, Stepper, Drawer, FAB, Grid, TopNav, TreeView, Timeline, SparklineMetric, DateRangePicker, Autocomplete, Rating, Card, Skeleton, Breadcrumb, Chip, Avatar, EmptyState, CopyButton, etc.</li>
+      </ul>
 
       <footer class="doc-footer">
         <a href="https://github.com/remigit55/blueprint-modular">Voir sur GitHub</a>
