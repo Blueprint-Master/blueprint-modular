@@ -1,0 +1,48 @@
+# Déploiement sur VPS : docker-compose up -d
+# Renseigner les variables dans .env (ou exporter avant)
+# NEXTAUTH_URL=https://ton-domaine.com
+
+services:
+  app:
+    build: .
+    restart: unless-stopped
+    ports:
+      - "3000:3000"
+    volumes:
+      - uploads_data:/app/uploads
+    environment:
+      - DATABASE_URL=postgresql://bpm:${POSTGRES_PASSWORD:-changeme}@db:5432/blueprint_modular
+      - NEXTAUTH_SECRET=${NEXTAUTH_SECRET}
+      - NEXTAUTH_URL=${NEXTAUTH_URL}
+      - GOOGLE_CLIENT_ID=${GOOGLE_CLIENT_ID}
+      - GOOGLE_CLIENT_SECRET=${GOOGLE_CLIENT_SECRET}
+    depends_on:
+      - db
+
+  db:
+    image: postgres:16-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: bpm
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-changeme}
+      POSTGRES_DB: blueprint_modular
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+
+  # Lancer une fois après le premier up : docker-compose run --rm migrate
+  migrate:
+    image: node:20-alpine
+    working_dir: /app
+    volumes:
+      - .:/app
+    environment:
+      - DATABASE_URL=postgresql://bpm:${POSTGRES_PASSWORD:-changeme}@db:5432/blueprint_modular
+    command: sh -c "npx prisma@5 migrate deploy --schema=prisma/schema.prisma"
+    depends_on:
+      - db
+    profiles:
+      - tools
+
+volumes:
+  uploads_data:
+  pgdata:

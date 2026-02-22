@@ -1,0 +1,4 @@
+{
+  "extends": "next/core-web-vitals",
+  "ignorePatterns": ["frontend/", "doc-app/", "bpm/", "*.config.*"]
+}

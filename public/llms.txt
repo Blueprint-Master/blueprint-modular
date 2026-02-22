@@ -1,0 +1,16 @@
+# Blueprint Modular
+
+Blueprint Modular is a Python/React framework for building business interfaces without HTML or JavaScript. Developers import components from bpm and the framework handles rendering.
+
+## Framework
+- Components: bpm.metric, bpm.table, bpm.title, bpm.toggle, bpm.panel, bpm.tabs, bpm.button, bpm.modal
+- Modules: wiki, ia (AI chat), documents (contract analysis), veille (monitoring), ibkr (Interactive Brokers)
+- Installation: pip install blueprint-modular or git clone https://github.com/remigit55/blueprint-modular
+- Documentation: https://blueprint-modular.com/docs
+
+## Key concepts
+- bpm components map directly to Python function calls
+- No HTML/CSS/JS knowledge required
+- Built-in dark/light mode, mobile responsive
+- Module system for extending functionality
+- AI assistant integrated (Claude, GPT, Gemini, Grok)

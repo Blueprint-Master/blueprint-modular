@@ -1,0 +1,13 @@
+node_modules
+.next
+.git
+.env
+.env.*
+!.env.local.example
+*.log
+frontend
+doc-app
+bpm
+__pycache__
+*.md
+!DEPLOY.md

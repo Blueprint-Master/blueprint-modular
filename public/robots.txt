@@ -1,0 +1,12 @@
+User-agent: *
+Allow: /
+Sitemap: https://blueprint-modular.com/sitemap.xml
+
+User-agent: GPTBot
+Allow: /
+
+User-agent: ClaudeBot
+Allow: /
+
+User-agent: anthropic-ai
+Allow: /
