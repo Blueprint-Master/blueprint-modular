@@ -108,12 +108,10 @@ Puis tester dans le navigateur :
 - https://blueprint-modular.com/modules.html (section Modules)
 
 **Vérifier que la bonne version est en ligne :**
-- Le script écrit le commit déployé dans **version.txt**. Comparer :
-  - En ligne : https://blueprint-modular.com/version.txt et https://docs.blueprint-modular.com/version.txt (format : `commit_short date`)
-  - En local : `git rev-parse --short HEAD`
-- Si les hash correspondent, le déploiement a bien mis à jour les fichiers. En cas de doute (cache navigateur ou CDN), faire un rechargement forcé (Ctrl+F5) ou ouvrir en navigation privée.
-- **Vitrine** (blueprint-modular.com) : index, modules.html, modules/*, manifest.json, doc.js, img, js, CSS. Les liens vers la doc pointent vers docs.blueprint-modular.com.
-- **Docs** (docs.blueprint-modular.com) : tout le contenu documentation (get-started, components, api-reference, deploy, knowledge-base, etc.).
+- Le script **vide** les répertoires vitrine et doc puis recopie tout (plus de fichiers obsolètes). Il écrit le commit dans **version.txt**.
+- Après déploiement : ouvrir https://blueprint-modular.com/version.txt et https://docs.blueprint-modular.com/version.txt — le hash doit être égal à `git rev-parse --short HEAD` en local.
+- Si tu vois encore une vieille landing ou une vieille doc : **rechargement forcé (Ctrl+F5)** ou navigation privée. Les pages HTML ont des en-têtes anti-cache pour limiter le cache navigateur.
+- **Vitrine** : index, modules.html, modules/*, manifest.json, doc.js, img, js, CSS. **Docs** : tout le contenu (get-started, components, api-reference, deploy, knowledge-base, etc.).
 
 ---
 

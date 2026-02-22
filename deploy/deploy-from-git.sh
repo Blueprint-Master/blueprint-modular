@@ -30,42 +30,46 @@ else
   cd "$REPO_DIR"
 fi
 
+# --- Nettoyage puis déploiement (évite anciennes versions / fichiers obsolètes) ---
+sudo mkdir -p "$VITRINE_DIR" "$DOCS_DIR"
+echo "--> Nettoyage des répertoires cibles..."
+sudo find "$VITRINE_DIR" -mindepth 1 -maxdepth 1 -exec rm -rf {} + 2>/dev/null || true
+sudo find "$DOCS_DIR" -mindepth 1 -maxdepth 1 -exec rm -rf {} + 2>/dev/null || true
+
 # --- Site vitrine (landing + page Modules) ---
 echo "--> Vitrine → $VITRINE_DIR"
-sudo mkdir -p "$VITRINE_DIR"
-sudo cp "$STATIC/index.html" "$VITRINE_DIR/"
-sudo cp "$STATIC/landing.css" "$VITRINE_DIR/"
-sudo cp "$STATIC/doc.css" "$VITRINE_DIR/"
-sudo cp "$STATIC/modules.html" "$VITRINE_DIR/"
-sudo cp "$STATIC/favicon.ico" "$VITRINE_DIR/" 2>/dev/null || true
-sudo cp "$STATIC/manifest.json" "$VITRINE_DIR/" 2>/dev/null || true
-sudo cp "$STATIC/doc.js" "$VITRINE_DIR/" 2>/dev/null || true
-sudo cp -r "$STATIC/img" "$VITRINE_DIR/" 2>/dev/null || true
-sudo cp -r "$STATIC/js" "$VITRINE_DIR/" 2>/dev/null || true
-sudo cp -r "$STATIC/modules" "$VITRINE_DIR/"
+sudo cp -f "$STATIC/index.html" "$VITRINE_DIR/"
+sudo cp -f "$STATIC/landing.css" "$VITRINE_DIR/"
+sudo cp -f "$STATIC/doc.css" "$VITRINE_DIR/"
+sudo cp -f "$STATIC/modules.html" "$VITRINE_DIR/"
+sudo cp -f "$STATIC/favicon.ico" "$VITRINE_DIR/" 2>/dev/null || true
+sudo cp -f "$STATIC/manifest.json" "$VITRINE_DIR/" 2>/dev/null || true
+sudo cp -f "$STATIC/doc.js" "$VITRINE_DIR/" 2>/dev/null || true
+sudo cp -rf "$STATIC/img" "$VITRINE_DIR/" 2>/dev/null || true
+sudo cp -rf "$STATIC/js" "$VITRINE_DIR/" 2>/dev/null || true
+sudo cp -rf "$STATIC/modules" "$VITRINE_DIR/"
 
 # --- Documentation (tout le contenu doc) ---
 echo "--> Documentation → $DOCS_DIR"
-sudo mkdir -p "$DOCS_DIR"
 # Hub doc : index (accueil de la doc) + docs.html (liens existants)
-sudo cp "$STATIC/docs.html" "$DOCS_DIR/index.html"
-sudo cp "$STATIC/docs.html" "$DOCS_DIR/docs.html"
-sudo cp "$STATIC/doc.css" "$DOCS_DIR/"
-sudo cp "$STATIC/doc.js" "$DOCS_DIR/"
-sudo cp "$STATIC/components.html" "$DOCS_DIR/"
-sudo cp "$STATIC/reference.html" "$DOCS_DIR/"
-sudo cp "$STATIC/cheat-sheet.html" "$DOCS_DIR/"
-sudo cp "$STATIC/modules.html" "$DOCS_DIR/"
-sudo cp "$STATIC/versions.html" "$DOCS_DIR/"
-sudo cp "$STATIC/favicon.ico" "$DOCS_DIR/" 2>/dev/null || true
-sudo cp -r "$STATIC/img" "$DOCS_DIR/" 2>/dev/null || true
-sudo cp -r "$STATIC/js" "$DOCS_DIR/" 2>/dev/null || true
-sudo cp -r "$STATIC/i18n" "$DOCS_DIR/" 2>/dev/null || true
-sudo cp -r "$STATIC/modules" "$DOCS_DIR/"
-sudo cp -r "$STATIC/get-started" "$DOCS_DIR/"
-sudo cp -r "$STATIC/api-reference" "$DOCS_DIR/"
-sudo cp -r "$STATIC/deploy" "$DOCS_DIR/"
-sudo cp -r "$STATIC/knowledge-base" "$DOCS_DIR/"
+sudo cp -f "$STATIC/docs.html" "$DOCS_DIR/index.html"
+sudo cp -f "$STATIC/docs.html" "$DOCS_DIR/docs.html"
+sudo cp -f "$STATIC/doc.css" "$DOCS_DIR/"
+sudo cp -f "$STATIC/doc.js" "$DOCS_DIR/"
+sudo cp -f "$STATIC/components.html" "$DOCS_DIR/"
+sudo cp -f "$STATIC/reference.html" "$DOCS_DIR/"
+sudo cp -f "$STATIC/cheat-sheet.html" "$DOCS_DIR/"
+sudo cp -f "$STATIC/modules.html" "$DOCS_DIR/"
+sudo cp -f "$STATIC/versions.html" "$DOCS_DIR/"
+sudo cp -f "$STATIC/favicon.ico" "$DOCS_DIR/" 2>/dev/null || true
+sudo cp -rf "$STATIC/img" "$DOCS_DIR/" 2>/dev/null || true
+sudo cp -rf "$STATIC/js" "$DOCS_DIR/" 2>/dev/null || true
+sudo cp -rf "$STATIC/i18n" "$DOCS_DIR/" 2>/dev/null || true
+sudo cp -rf "$STATIC/modules" "$DOCS_DIR/"
+sudo cp -rf "$STATIC/get-started" "$DOCS_DIR/"
+sudo cp -rf "$STATIC/api-reference" "$DOCS_DIR/"
+sudo cp -rf "$STATIC/deploy" "$DOCS_DIR/"
+sudo cp -rf "$STATIC/knowledge-base" "$DOCS_DIR/"
 
 # Droits (lecture par le serveur web www-data/nginx)
 echo "--> Droits (ubuntu:ubuntu)..."
