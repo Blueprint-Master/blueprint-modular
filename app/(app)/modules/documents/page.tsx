@@ -1,8 +1,9 @@
 "use client";
 
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import { Table, Message, Spinner } from "@/components/bpm";
+import { DocumentAnalysisImport } from "@/components/DocumentAnalysisImport";
 
 interface Document {
   id: string;
@@ -26,7 +27,6 @@ export default function DocumentsPage() {
   const [loading, setLoading] = useState(true);
   const [uploading, setUploading] = useState(false);
   const [search, setSearch] = useState("");
-  const fileInputRef = useRef<HTMLInputElement>(null);
 
   const fetchDocuments = () => {
     fetch("/api/documents")
@@ -54,22 +54,25 @@ export default function DocumentsPage() {
     return () => clearInterval(interval);
   }, [documents]);
 
-  const handleUpload = async (file: File) => {
-    if (!file || file.type !== "application/pdf") {
+  const handleAnalyze = async (files: File[]) => {
+    const pdfs = files.filter((f) => f.type === "application/pdf");
+    if (pdfs.length === 0) {
       alert("Seuls les fichiers PDF sont acceptés.");
       return;
     }
     setUploading(true);
-    const formData = new FormData();
-    formData.append("file", file);
     try {
-      const res = await fetch("/api/documents", { method: "POST", body: formData });
-      if (res.ok) {
-        const newDoc = await res.json();
-        setDocuments((prev) => [newDoc, ...prev]);
-      } else {
-        const err = await res.json().catch(() => ({}));
-        alert(err.error ?? "Erreur upload");
+      for (const file of pdfs) {
+        const formData = new FormData();
+        formData.append("file", file);
+        const res = await fetch("/api/documents", { method: "POST", body: formData });
+        if (res.ok) {
+          const newDoc = await res.json();
+          setDocuments((prev) => [newDoc, ...prev]);
+        } else {
+          const err = await res.json().catch(() => ({}));
+          alert(err.error ?? "Erreur upload");
+        }
       }
     } finally {
       setUploading(false);
@@ -124,35 +127,20 @@ export default function DocumentsPage() {
 
   return (
     <div className="documents-page doc-page">
-      <div className="doc-page-header">
-        <div className="doc-breadcrumb"><Link href="/modules">Modules</Link> → Module Documents</div>
-        <h1>Module Documents</h1>
-        <p className="doc-description">
-          Analyse de contrats PDF : extraction des métadonnées, résumé, points clés et échéances. Upload et suivi des documents.
-        </p>
-        <div className="doc-meta">
-          <span className="doc-badge doc-badge-category">Module</span>
-        </div>
-      </div>
-      <div className="documents-header">
+      <div className="doc-breadcrumb mb-2"><Link href="/modules">Modules</Link> → Analyse de documents</div>
+      <DocumentAnalysisImport
+        title="Analyse de documents"
+        description="Importez des documents PDF (analyses, études, rapports) pour générer automatiquement une synthèse actionnable grâce à Claude. Les analyses sont stockées en base de données et peuvent être réexploitées dans d'autres onglets."
+        accept=".pdf"
+        maxFiles={10}
+        dropLabel="Glissez-déposez ou cliquez pour sélectionner des fichiers PDF (jusqu'à 10 fichiers)"
+        buttonLabel="Analyser les documents"
+        disabled={uploading}
+        onAnalyze={handleAnalyze}
+      />
+
+      <div className="documents-header mt-8">
         <h2 className="text-lg font-semibold mb-2" style={{ color: "var(--bpm-text-primary)" }}>Documents</h2>
-        <div>
-          <input
-            ref={fileInputRef}
-            type="file"
-            accept=".pdf"
-            hidden
-            onChange={(e) => e.target.files?.[0] && handleUpload(e.target.files[0])}
-          />
-          <button
-            type="button"
-            className="btn-primary"
-            onClick={() => fileInputRef.current?.click()}
-            disabled={uploading}
-          >
-            {uploading ? "⏳ Analyse en cours..." : "+ Analyser un PDF"}
-          </button>
-        </div>
       </div>
 
       {alerts.length > 0 && (
@@ -174,15 +162,8 @@ export default function DocumentsPage() {
       {loading ? (
         <Spinner text="Chargement des documents..." />
       ) : documents.length === 0 ? (
-        <div className="documents-empty">
-          <p>Aucun document analysé pour l&apos;instant.</p>
-          <button
-            type="button"
-            className="btn-primary"
-            onClick={() => fileInputRef.current?.click()}
-          >
-            Analyser mon premier contrat
-          </button>
+        <div className="documents-empty py-6">
+          <p style={{ color: "var(--bpm-text-secondary)" }}>Aucun document analysé pour l&apos;instant.</p>
         </div>
       ) : (
         <Table

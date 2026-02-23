@@ -1,8 +1,10 @@
 "use client";
 
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect } from "react";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { Table, Button, Spinner, Selectbox, Panel } from "@/components/bpm";
+import { Table, Spinner, Selectbox, Panel } from "@/components/bpm";
+import { DocumentAnalysisImport } from "@/components/DocumentAnalysisImport";
 
 type Extracted = { supplier_name?: string; contract_date?: string; end_date?: string; overall_risk_level?: string };
 
@@ -67,7 +69,6 @@ export default function ContractsPage() {
   const [workspace, setWorkspace] = useState("");
   const [contractType, setContractType] = useState("");
   const [status, setStatus] = useState("");
-  const fileInputRef = useRef<HTMLInputElement>(null);
 
   const fetchContracts = () => {
     const params = new URLSearchParams();
@@ -98,28 +99,28 @@ export default function ContractsPage() {
     return () => clearInterval(interval);
   }, [contracts]);
 
-  const handleUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (!file) return;
+  const handleAnalyze = async (files: File[]) => {
+    if (files.length === 0) return;
     const ws = workspace || "nxtfood";
     const ct = contractType || "other";
     setUploading(true);
-    const formData = new FormData();
-    formData.append("file", file);
-    formData.append("workspace", ws);
-    formData.append("contractType", ct);
     try {
-      const res = await fetch("/api/contracts", { method: "POST", body: formData });
-      if (res.ok) {
-        const created = await res.json();
-        setContracts((prev) => [flattenContract(created as ContractRow), ...prev]);
-      } else {
-        const err = await res.json().catch(() => ({}));
-        alert(err.error ?? "Erreur upload");
+      for (const file of files) {
+        const formData = new FormData();
+        formData.append("file", file);
+        formData.append("workspace", ws);
+        formData.append("contractType", ct);
+        const res = await fetch("/api/contracts", { method: "POST", body: formData });
+        if (res.ok) {
+          const created = await res.json();
+          setContracts((prev) => [flattenContract(created as ContractRow), ...prev]);
+        } else {
+          const err = await res.json().catch(() => ({}));
+          alert(err.error ?? "Erreur upload");
+        }
       }
     } finally {
       setUploading(false);
-      e.target.value = "";
     }
   };
 
@@ -162,46 +163,36 @@ export default function ContractsPage() {
 
   return (
     <div className="doc-page">
-      <div className="doc-page-header flex flex-wrap items-center justify-between gap-4">
-        <div>
-          <h1>Base contractuelle</h1>
-          <p className="doc-description">
-            Contrats fournisseurs et CGV. Uploadez un PDF ou DOCX : l&apos;IA extrait les métadonnées et la synthèse.
-          </p>
-        </div>
-        <div className="flex flex-wrap items-center gap-2">
-          <Selectbox
-            options={WORKSPACES}
-            value={workspace}
-            onChange={(v) => setWorkspace(v ?? "")}
-            placeholder="Workspace"
-          />
-          <Selectbox
-            options={TYPES}
-            value={contractType}
-            onChange={(v) => setContractType(v ?? "")}
-            placeholder="Type"
-          />
-          <Selectbox
-            options={STATUSES}
-            value={status}
-            onChange={(v) => setStatus(v ?? "")}
-            placeholder="Statut"
-          />
-          <input
-            ref={fileInputRef}
-            type="file"
-            accept=".pdf,.docx,.txt"
-            className="hidden"
-            onChange={handleUpload}
-          />
-          <Button
-            onClick={() => fileInputRef.current?.click()}
-            disabled={uploading}
-          >
-            {uploading ? "Upload…" : "Upload contrat"}
-          </Button>
-        </div>
+      <div className="doc-breadcrumb mb-2"><Link href="/modules">Modules</Link> → Base contractuelle</div>
+      <DocumentAnalysisImport
+        title="Base contractuelle"
+        description="Importez des documents PDF (contrats fournisseurs, CGV, analyses) pour générer automatiquement une synthèse actionnable grâce à Claude. Les analyses sont stockées en base de données et peuvent être réexploitées dans d'autres onglets."
+        accept=".pdf,.docx,.txt"
+        maxFiles={10}
+        dropLabel="Glissez-déposez ou cliquez pour sélectionner des fichiers PDF, DOCX ou TXT (jusqu'à 10 fichiers)"
+        buttonLabel="Analyser les documents"
+        disabled={uploading}
+        onAnalyze={handleAnalyze}
+      />
+      <div className="flex flex-wrap items-center gap-2 mt-6 mb-4">
+        <Selectbox
+          options={WORKSPACES}
+          value={workspace}
+          onChange={(v) => setWorkspace(v ?? "")}
+          placeholder="Workspace"
+        />
+        <Selectbox
+          options={TYPES}
+          value={contractType}
+          onChange={(v) => setContractType(v ?? "")}
+          placeholder="Type"
+        />
+        <Selectbox
+          options={STATUSES}
+          value={status}
+          onChange={(v) => setStatus(v ?? "")}
+          placeholder="Statut"
+        />
       </div>
 
       {loading ? (

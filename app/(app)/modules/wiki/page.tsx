@@ -92,8 +92,8 @@ export default function WikiPage() {
   return (
     <div className="wiki-page doc-page">
       <div className="doc-page-header">
-        <div className="doc-breadcrumb"><Link href="/modules">Modules</Link> → Module Wiki</div>
-        <h1>Module Wiki</h1>
+        <div className="doc-breadcrumb"><Link href="/modules">Modules</Link> → Wiki</div>
+        <h1>Wiki</h1>
         <p className="doc-description">
           Wiki interne : articles en Markdown, arborescence, brouillons et publication. Idéal pour la doc d&apos;équipe.
         </p>

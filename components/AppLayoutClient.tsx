@@ -20,15 +20,15 @@ function getBreadcrumbFromPathname(pathname: string): { label: string; href?: st
     if (segments.length === 1) return [{ label: "Modules" }];
     const second = segments[1];
     const labels: Record<string, string> = {
-      auth: "bpm.auth",
-      notification: "bpm.notification",
-      wiki: "Module Wiki",
-      ia: "Module IA",
-      veille: "Module Veille",
-      documents: "Module Documents",
+      auth: "Auth",
+      notification: "Notification",
+      wiki: "Wiki",
+      ia: "IA",
+      veille: "Veille",
+      documents: "Analyse de documents",
       contracts: "Base contractuelle",
-      ibkr: "Module IBKR",
-      "analyse-document": "Module Documents",
+      ibkr: "IBKR",
+      "analyse-document": "Analyse de documents",
     };
     return [
       { label: "Modules", href: "/modules" },

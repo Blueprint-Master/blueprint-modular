@@ -5,7 +5,7 @@ import Image from "next/image";
 import { usePathname } from "next/navigation";
 import { useSession, signOut } from "next-auth/react";
 import { useTheme } from "@/components/ThemeProvider";
-import { Sun, Moon, ChevronLeft } from "lucide-react";
+import { Sun, ChevronLeft } from "lucide-react";
 import { useState } from "react";
 
 const vb = "0 -960 960 960";
@@ -38,6 +38,14 @@ function IconSandbox({ className }: { className?: string }) {
   return (
     <svg xmlns="http://www.w3.org/2000/svg" viewBox={vb} fill="currentColor" className={className}>
       <path d="M200-160q-25.54 0-36.31-22.81-10.77-22.81 5.08-42.57L400-506.15V-760h-55.38q-8.5 0-14.25-5.76t-5.75-14.27q0-8.51 5.75-14.24t14.25-5.73h270.76q8.5 0 14.25 5.76t5.75 14.27q0 8.51-5.75 14.24T615.38-760H560v253.85l231.23 280.77q15.85 19.76 5.08 42.57T760-160H200Zm80-80h400L544-400H416L280-240Zm-80 40h560L520-492v-268h-80v268L200-200Zm280-280Z" />
+    </svg>
+  );
+}
+
+function IconThemeDark({ className }: { className?: string }) {
+  return (
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox={vb} fill="currentColor" className={className}>
+      <path d="M484-120q-75.61 0-141.77-28.54-66.15-28.54-115.65-78.04-49.5-49.5-78.04-115.65Q120-408.39 120-484q0-116.77 67.23-210.58 67.23-93.81 177.39-130.8-4.16 93.61 28.69 180.03 32.84 86.43 99.23 152.81 66.38 66.39 152.81 99.23 86.42 32.85 180.03 28.69-36.76 110.16-130.69 177.39Q600.77-120 484-120Zm0-40q88 0 163-44t118-121.21q-86-8.03-163-43.62-77-35.6-138-96.77-61-61.17-97-137.78Q331-680 324-766q-77 43-120.5 118.5T160-484q0 135 94.5 229.5T484-160Zm-20-305.77Z" />
     </svg>
   );
 }
@@ -211,7 +219,7 @@ export function Sidebar() {
             style={{ color: "var(--bpm-sidebar-text)" }}
             onClick={toggleTheme}
           >
-            {theme === "dark" ? <Sun className="w-5 h-5 shrink-0" /> : <Moon className="w-5 h-5 shrink-0" />}
+            {theme === "dark" ? <Sun className="w-5 h-5 shrink-0" /> : <IconThemeDark className="w-5 h-5 shrink-0" />}
             {!collapsed && <span className="text-sm truncate">Thème</span>}
           </button>
           {session?.user && (

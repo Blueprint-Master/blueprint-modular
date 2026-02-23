@@ -71,7 +71,7 @@ export default function WikiNewPage() {
   return (
     <div>
       <div className="doc-breadcrumb" style={{ marginBottom: 8 }}>
-        <Link href="/modules">Modules</Link> → <Link href="/modules/wiki">Module Wiki</Link> → Nouvel article
+        <Link href="/modules">Modules</Link> → <Link href="/modules/wiki">Wiki</Link> → Nouvel article
       </div>
       <nav className="text-sm mb-4" style={{ color: "var(--bpm-text-secondary)" }}>
         <Link href="/modules/wiki">Wiki</Link>
