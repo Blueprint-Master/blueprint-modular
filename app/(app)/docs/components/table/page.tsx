@@ -72,7 +72,7 @@ export default function DocTablePage() {
           />
           {selectedRow && (
             <div className="mt-3 p-3 rounded-lg text-sm border" style={{ borderColor: "var(--bpm-border)", background: "var(--bpm-bg-secondary)", color: "var(--bpm-text-secondary)" }}>
-              <strong>Ligne cliquée :</strong> {selectedRow.Produit} — {String(selectedRow.Prix)} € — Stock {String(selectedRow.Stock)} — {String(selectedRow.Statut)}
+              <strong>Ligne cliquée :</strong> {String(selectedRow.Produit ?? "")} — {String(selectedRow.Prix ?? "")} € — Stock {String(selectedRow.Stock ?? "")} — {String(selectedRow.Statut ?? "")}
             </div>
           )}
           {!selectedRow && (
