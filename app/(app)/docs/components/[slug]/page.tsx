@@ -13,7 +13,7 @@ export default async function DocComponentSlugPage({ params }: Props) {
   const { prev, next } = getPrevNext(slug);
 
   return (
-    <div className="max-w-4xl">
+    <div className="doc-page">
       <div className="doc-page-header">
         <div className="doc-breadcrumb">
           <Link href="/docs">Documentation</Link> → <Link href="/docs/components">Composants</Link> → {entry.name}

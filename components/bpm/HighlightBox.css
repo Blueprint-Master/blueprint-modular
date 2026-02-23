@@ -1,0 +1,107 @@
+.bpm-highlight-box {
+  display: flex;
+  border-radius: 8px;
+  overflow: hidden;
+  border: 1px solid var(--bpm-border, #e5e5e5);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+  font-family: "Segoe UI", "Source Sans", sans-serif;
+  background: var(--bpm-bg-primary, #fff);
+  color: var(--bpm-text-primary, #1d1d1f);
+}
+
+.bpm-highlight-box-bar {
+  width: 20%;
+  min-width: 72px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem 0.5rem;
+  background: var(--bpm-highlight-bar-bg, #212121);
+  color: #fff;
+}
+
+.bpm-highlight-box-value {
+  font-size: 2rem;
+  font-weight: 700;
+  line-height: 1.2;
+  letter-spacing: -0.02em;
+}
+
+.bpm-highlight-box-label {
+  font-size: 0.6875rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  margin-top: 0.25rem;
+  color: rgba(255, 255, 255, 0.9);
+}
+
+.bpm-highlight-box-content {
+  flex: 1;
+  padding: 1rem 1.25rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.bpm-highlight-box-title {
+  margin: 0;
+  font-size: 1.0625rem;
+  font-weight: 600;
+  line-height: 1.35;
+  color: var(--bpm-text-primary, #1d1d1f);
+}
+
+.bpm-highlight-box-moment {
+  margin: 0;
+  font-size: 0.8125rem;
+  font-style: italic;
+  color: var(--bpm-text-secondary, #515154);
+  line-height: 1.4;
+}
+
+.bpm-highlight-box-block {
+  font-size: 0.875rem;
+  line-height: 1.45;
+  color: var(--bpm-text-primary, #1d1d1f);
+}
+
+.bpm-highlight-box-block-label {
+  font-weight: 600;
+  color: var(--bpm-text-primary, #1d1d1f);
+}
+
+.bpm-highlight-box-block-text {
+  font-weight: 400;
+}
+
+/* Dark mode */
+[data-theme="dark"] .bpm-highlight-box {
+  background: var(--bpm-bg-primary);
+  border-color: var(--bpm-border);
+}
+
+[data-theme="dark"] .bpm-highlight-box-bar {
+  background: var(--bpm-highlight-bar-bg, #2d2d2d);
+  color: #fff;
+}
+
+[data-theme="dark"] .bpm-highlight-box-title,
+[data-theme="dark"] .bpm-highlight-box-block,
+[data-theme="dark"] .bpm-highlight-box-block-label {
+  color: var(--bpm-text-primary);
+}
+
+[data-theme="dark"] .bpm-highlight-box-moment {
+  color: var(--bpm-text-secondary);
+}
+
+html.theme-dark .bpm-highlight-box {
+  background: var(--bpm-bg-primary);
+  border-color: var(--bpm-border);
+}
+
+html.theme-dark .bpm-highlight-box-bar {
+  background: var(--bpm-highlight-bar-bg, #2d2d2d);
+}

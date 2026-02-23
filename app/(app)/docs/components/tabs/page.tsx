@@ -23,7 +23,7 @@ export default function DocTabsPage() {
   const { prev, next } = getPrevNext("tabs");
 
   return (
-    <div className="max-w-4xl">
+    <div className="doc-page">
       <div className="doc-page-header">
         <div className="doc-breadcrumb"><Link href="/docs">Documentation</Link> → <Link href="/docs/components">Composants</Link> → bpm.tabs</div>
         <h1>bpm.tabs</h1>

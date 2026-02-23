@@ -66,6 +66,7 @@ def write(text: str) -> None:
 
 
 def markdown(text: str) -> None:
+    """Affiche du contenu Markdown (titres, listes, code, liens). Utilisez ``---`` sur une ligne pour une ligne horizontale."""
     _node("markdown", text=text)
 
 
@@ -75,8 +76,18 @@ def button(label: str, key: Optional[str] = None) -> bool:
     return session_state.get(f"_clicked_{key or f'btn_{len(_current_nodes)-1}'}") is True
 
 
-def metric(label: str, value: Any, delta: Optional[Any] = None) -> None:
-    _node("metric", label=str(label), value=value, delta=delta)
+def metric(
+    label: str,
+    value: Any,
+    delta: Optional[Any] = None,
+    *,
+    name: Optional[str] = None,
+) -> None:
+    """Affiche une métrique (valeur, label, delta optionnel). Si name est fourni, la métrique peut être référencée dans le chat IA via $metric:name ou @name."""
+    props: dict[str, Any] = {"label": str(label), "value": value, "delta": delta}
+    if name is not None:
+        props["name"] = name
+    _node("metric", **props)
 
 
 def table(data: Any) -> None:
@@ -106,8 +117,8 @@ def code(code: str, language: str = "python") -> None:
     _node("code", code=code, language=language)
 
 
-def divider() -> None:
-    _node("divider")
+def divider(label: Optional[str] = None, orientation: str = "horizontal") -> None:
+    _node("divider", label=label, orientation=orientation)
 
 
 def toggle(label: str, value: bool = False, key: Optional[str] = None) -> bool:
@@ -117,6 +128,127 @@ def toggle(label: str, value: bool = False, key: Optional[str] = None) -> bool:
 
 def panel(title_text: str, body: str = "", variant: str = "info") -> None:
     _node("panel", title=title_text, body=body, variant=variant)
+
+
+def emptystate(
+    title: str = "Aucune donnée",
+    description: Optional[str] = None,
+    action_label: Optional[str] = None,
+) -> None:
+    _node("emptystate", title=title, description=description, action_label=action_label)
+
+
+def input(
+    label: Optional[str] = None,
+    value: str = "",
+    placeholder: str = "",
+    type: str = "text",
+    key: Optional[str] = None,
+    disabled: bool = False,
+) -> str:
+    k = key or f"input_{len(_current_nodes)}"
+    _node("input", label=label, value=value, placeholder=placeholder, type=type, key=k, disabled=disabled)
+    return str(session_state.get(f"_input_{k}", value))
+
+
+def textarea(
+    label: Optional[str] = None,
+    value: str = "",
+    placeholder: str = "",
+    rows: int = 4,
+    key: Optional[str] = None,
+    disabled: bool = False,
+) -> str:
+    k = key or f"textarea_{len(_current_nodes)}"
+    _node("textarea", label=label, value=value, placeholder=placeholder, rows=rows, key=k, disabled=disabled)
+    return str(session_state.get(f"_textarea_{k}", value))
+
+
+def checkbox(
+    label: Optional[str] = None,
+    value: bool = False,
+    key: Optional[str] = None,
+    disabled: bool = False,
+) -> bool:
+    k = key or f"checkbox_{len(_current_nodes)}"
+    _node("checkbox", label=label, value=value, key=k, disabled=disabled)
+    return bool(session_state.get(f"_checkbox_{k}", value))
+
+
+def radiogroup(
+    label: Optional[str] = None,
+    options: Optional[list[Any]] = None,
+    value: Optional[str] = None,
+    key: Optional[str] = None,
+    layout: str = "vertical",
+    disabled: bool = False,
+) -> Optional[str]:
+    k = key or f"radiogroup_{len(_current_nodes)}"
+    opts = options or []
+    _node("radiogroup", label=label, options=opts, value=value, key=k, layout=layout, disabled=disabled)
+    return session_state.get(f"_radiogroup_{k}", value)
+
+
+def slider(
+    label: Optional[str] = None,
+    value: Optional[float] = None,
+    min: float = 0,
+    max: float = 100,
+    step: float = 1,
+    key: Optional[str] = None,
+    disabled: bool = False,
+) -> float:
+    k = key or f"slider_{len(_current_nodes)}"
+    v = value if value is not None else min
+    _node("slider", label=label, value=v, min=min, max=max, step=step, key=k, disabled=disabled)
+    return float(session_state.get(f"_slider_{k}", v))
+
+
+def dateinput(
+    label: Optional[str] = None,
+    value: Optional[str] = None,
+    min: Optional[str] = None,
+    max: Optional[str] = None,
+    key: Optional[str] = None,
+    disabled: bool = False,
+) -> Optional[str]:
+    k = key or f"dateinput_{len(_current_nodes)}"
+    _node("dateinput", label=label, value=value, min=min, max=max, key=k, disabled=disabled)
+    return session_state.get(f"_dateinput_{k}", value)
+
+
+def colorpicker(
+    label: Optional[str] = None,
+    value: str = "#000000",
+    key: Optional[str] = None,
+    disabled: bool = False,
+) -> str:
+    k = key or f"colorpicker_{len(_current_nodes)}"
+    _node("colorpicker", label=label, value=value, key=k, disabled=disabled)
+    return str(session_state.get(f"_colorpicker_{k}", value))
+
+
+def chip(
+    label: str = "",
+    variant: str = "default",
+    on_delete: bool = False,
+    disabled: bool = False,
+) -> None:
+    _node("chip", label=label, variant=variant, on_delete=on_delete, disabled=disabled)
+
+
+def breadcrumb(
+    items: Optional[list[dict[str, Any]]] = None,
+    separator: str = "›",
+) -> None:
+    _node("breadcrumb", items=items or [], separator=separator)
+
+
+def stepper(
+    steps: Optional[list[dict[str, Any]]] = None,
+    current_step: int = 0,
+) -> None:
+    _node("stepper", steps=steps or [], current_step=current_step)
 
 
 def set_page_config(
@@ -231,4 +363,15 @@ __all__ = [
     "divider",
     "toggle",
     "panel",
+    "emptystate",
+    "input",
+    "textarea",
+    "checkbox",
+    "radiogroup",
+    "slider",
+    "dateinput",
+    "colorpicker",
+    "chip",
+    "breadcrumb",
+    "stepper",
 ]

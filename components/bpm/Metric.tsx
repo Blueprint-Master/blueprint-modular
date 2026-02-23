@@ -9,6 +9,8 @@ export interface MetricProps {
   label: string;
   value: string | number;
   delta?: number | string | null;
+  /** Nom optionnel pour référencer la métrique dans le chat IA : $metric:name ou @name */
+  name?: string | null;
   /** Aucun = pas de couleur, normal = + vert / - rouge, inverse = + rouge / - vert */
   deltaType?: "aucun" | "normal" | "inverse";
   help?: string | null;
@@ -26,6 +28,7 @@ export function Metric({
   label,
   value,
   delta,
+  name = null,
   deltaType = "normal",
   help = null,
   deltaDecimals = 0,
@@ -41,7 +44,7 @@ export function Metric({
     JPY: "¥",
     CHF: "CHF",
   };
-  const sym = currency ? (symbols[currency] ?? currency) : "";
+  const sym = currency && currency !== "%" ? (symbols[currency] ?? currency) : "";
   const locale = valueLocale ?? "fr-FR";
   const formatWithLocale = (n: number, decimals: number) =>
     n.toLocaleString(locale, {
@@ -53,7 +56,9 @@ export function Metric({
     if (typeof d !== "number" || !Number.isFinite(d)) return "";
     const sign = d > 0 ? "+" : d < 0 ? "-" : "";
     const fmt = formatWithLocale(Math.abs(d), deltaDecimals);
-    return currency === "" ? `${sign}${fmt}%` : `${sign}${fmt} ${sym}`;
+    if (currency === "%") return `${sign}${fmt}%`;
+    if (!currency || currency === "") return `${sign}${fmt}`;
+    return `${sign}${fmt} ${sym}`;
   };
   const displayValue =
     typeof value === "number"
@@ -72,6 +77,7 @@ export function Metric({
         borderColor: "var(--bpm-border)",
         color: "var(--bpm-text-primary)",
       }}
+      data-metric-name={name && name !== "" ? name : undefined}
     >
       <div className="text-sm mb-1" style={{ color: "var(--bpm-text-secondary)" }}>
         {label}

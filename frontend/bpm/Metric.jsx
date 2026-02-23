@@ -1,7 +1,7 @@
 import React from 'react';
 import './Metric.css';
 
-const Metric = ({ label, value, delta, deltaType = 'normal', help = null, deltaDecimals = 0, currency = 'EUR' }) => {
+const Metric = ({ label, value, delta, name = null, deltaType = 'normal', help = null, deltaDecimals = 0, currency = 'EUR' }) => {
   const getDeltaClass = () => {
     if (!delta) return '';
     if (deltaType === 'aucun') return '';
@@ -27,21 +27,18 @@ const Metric = ({ label, value, delta, deltaType = 'normal', help = null, deltaD
   const formatDelta = (delta, decimals = 0, currency = 'EUR') => {
     if ((!delta && delta !== 0) || typeof delta !== 'number' || !Number.isFinite(delta)) return '';
     const sign = delta > 0 ? '+' : delta < 0 ? '-' : '';
-    // Format avec virgule pour décimales et espaces pour milliers
     const formatted = Math.abs(delta).toLocaleString('fr-FR', {
       minimumFractionDigits: decimals,
       maximumFractionDigits: decimals
     });
-    // Si currency est vide, on suppose que c'est un pourcentage
-    if (currency === '') {
-      return `${sign}${formatted}%`;
-    }
+    if (currency === '%') return `${sign}${formatted}%`;
+    if (!currency || currency === '') return `${sign}${formatted}`;
     const symbol = getCurrencySymbol(currency);
     return `${sign}${formatted} ${symbol}`;
   };
 
   return (
-    <div className="bpm-metric">
+    <div className="bpm-metric" data-metric-name={name && name !== '' ? name : undefined}>
       <div className="bpm-metric-label">
         {label}
         {help && (

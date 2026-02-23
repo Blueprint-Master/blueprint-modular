@@ -16,7 +16,7 @@ export default function DocMessagePage() {
   const { prev, next } = getPrevNext("message");
 
   return (
-    <div className="max-w-4xl">
+    <div className="doc-page">
       <div className="doc-page-header">
         <div className="doc-breadcrumb"><Link href="/docs">Documentation</Link> → <Link href="/docs/components">Composants</Link> → bpm.message</div>
         <h1>bpm.message</h1>

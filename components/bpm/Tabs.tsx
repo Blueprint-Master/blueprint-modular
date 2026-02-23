@@ -59,8 +59,8 @@ export function Tabs({
               activeTab === index ? "bpm-tab-active font-medium" : ""
             }`}
             style={{
-              borderBottomWidth: activeTab === index ? 2 : 1,
-              marginBottom: activeTab === index ? -1 : 0,
+              borderBottomWidth: activeTab === index ? 4 : 1,
+              marginBottom: activeTab === index ? -3 : 0,
               borderBottomColor:
                 activeTab === index ? "var(--bpm-accent)" : "transparent",
               color:

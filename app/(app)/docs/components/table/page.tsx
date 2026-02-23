@@ -42,7 +42,7 @@ export default function DocTablePage() {
   const { prev, next } = getPrevNext("table");
 
   return (
-    <div className="max-w-4xl">
+    <div className="doc-page">
       <div className="doc-page-header">
         <div className="doc-breadcrumb"><Link href="/docs">Documentation</Link> → <Link href="/docs/components">Composants</Link> → bpm.table</div>
         <h1>bpm.table</h1>

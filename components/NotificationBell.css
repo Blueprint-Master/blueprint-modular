@@ -141,6 +141,27 @@
   scrollbar-width: thin;
 }
 
+.notification-popup-content:hover {
+  scrollbar-width: auto;
+}
+
+.notification-popup-content::-webkit-scrollbar {
+  width: 8px;
+}
+
+.notification-popup-content::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.notification-popup-content::-webkit-scrollbar-thumb {
+  background: var(--bpm-border, #ddd);
+  border-radius: 4px;
+}
+
+.notification-popup-content::-webkit-scrollbar-thumb:hover {
+  background: var(--bpm-text-secondary, #999);
+}
+
 .notification-empty {
   padding: 40px 20px;
   text-align: center;
@@ -161,6 +182,34 @@
 }
 
 .notification-item:last-child { border-bottom: none; }
+
+.notification-item--success {
+  border-left: 3px solid var(--bpm-notification-success, #22c55e);
+}
+
+.notification-item--error {
+  border-left: 3px solid var(--bpm-notification-error, #ef4444);
+}
+
+.notification-item--warning {
+  border-left: 3px solid var(--bpm-notification-warning, #f59e0b);
+}
+
+.notification-item--info {
+  border-left: 3px solid var(--bpm-notification-info, #0ea5e9);
+}
+
+[data-theme="dark"] .notification-item:hover {
+  background-color: rgba(255, 255, 255, 0.06);
+}
+
+[data-theme="dark"] .notification-popup-content::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.2);
+}
+
+[data-theme="dark"] .notification-popup-content::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, 0.35);
+}
 
 .notification-item-content {
   flex: 1;

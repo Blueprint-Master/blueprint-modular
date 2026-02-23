@@ -12,10 +12,14 @@
   --bpm-accent-cyan: #00a3e0;
   --bpm-accent-mint: #45d09e;
   --bpm-accent-light: #b2ebf2;
-  /* Sidebar style doc : gris (aligné docs.blueprint-modular.com) */
-  --bpm-sidebar-bg: rgb(230, 230, 232);
+  /* Sidebar : style myportfolio BEAM (gris très clair, bordure discrète, lien actif gris) */
+  --bpm-sidebar-bg: #f8f8f8;
   --bpm-sidebar-text: #333;
-  --bpm-sidebar-border: rgb(210, 210, 212);
+  --bpm-sidebar-text-muted: #666;
+  --bpm-sidebar-border: rgb(237, 237, 237);
+  --bpm-sidebar-active-bg: #e0e0e0;
+  --bpm-sidebar-hover-bg: rgb(235, 235, 235);
+  --bpm-sidebar-logout-border: #cccccc;
   --bpm-border: rgb(237, 237, 237);
   --bpm-code-bg: #f5f5f5;
   --bpm-code-border: rgb(237, 237, 237);
@@ -31,7 +35,11 @@
   /* Sidebar mode sombre : gris foncé */
   --bpm-sidebar-bg: rgb(49, 51, 63);
   --bpm-sidebar-text: #e5e5e5;
+  --bpm-sidebar-text-muted: #b0b0b0;
   --bpm-sidebar-border: rgba(255, 255, 255, 0.08);
+  --bpm-sidebar-active-bg: rgba(255, 255, 255, 0.12);
+  --bpm-sidebar-hover-bg: rgba(255, 255, 255, 0.06);
+  --bpm-sidebar-logout-border: rgba(255, 255, 255, 0.2);
   --bpm-code-bg: #1a1a1a;
   --bpm-code-border: rgba(255, 255, 255, 0.15);
 }
@@ -73,6 +81,25 @@ body {
 .bpm-title-level-2 { font-size: 1.5rem; font-weight: 600; margin: 0.5rem 0; }
 .bpm-title-level-3 { font-size: 1.25rem; font-weight: 600; margin: 0.5rem 0; }
 .bpm-title-level-4 { font-size: 1.125rem; font-weight: 600; margin: 0.5rem 0; }
+
+/* Title with vertical bar (bpm.title bar) */
+.bpm-title-with-bar {
+  position: relative;
+  padding-left: 11px;
+}
+.bpm-title-with-bar::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 3px;
+  background: var(--bpm-text-primary, #1d1d1f);
+  border-radius: 0;
+}
+
+/* Doc page: largeur utile (réduit la marge blanche à droite) */
+.doc-page { max-width: 1400px; width: 100%; }
 
 /* Doc page header */
 .doc-page-header { margin-bottom: 32px; }
@@ -151,6 +178,22 @@ body {
 .documents-empty { text-align: center; padding: 64px; color: var(--bpm-text-secondary); }
 .documents-empty .btn-primary { margin-top: 16px; }
 
+/* bpm.markdown — rendu Markdown (titres, listes, code, --- = hr) */
+.bpm-markdown { font-size: 15px; line-height: 1.6; }
+.bpm-markdown h1 { font-size: 1.75rem; font-weight: 700; margin: 1rem 0 0.5rem; }
+.bpm-markdown h2 { font-size: 1.35rem; font-weight: 600; margin: 1.25rem 0 0.5rem; }
+.bpm-markdown h3 { font-size: 1.15rem; font-weight: 600; margin: 1rem 0 0.4rem; }
+.bpm-markdown p { margin: 0.5rem 0 1rem; }
+.bpm-markdown ul, .bpm-markdown ol { margin: 0.5rem 0 1rem; padding-left: 1.5rem; }
+.bpm-markdown code { background: var(--bpm-bg-secondary); padding: 0.15rem 0.4rem; border-radius: 4px; font-size: 0.9em; font-family: ui-monospace, monospace; }
+.bpm-markdown pre { margin: 0.75rem 0 1rem; overflow-x: auto; }
+.bpm-markdown pre code { padding: 0; background: transparent; }
+.bpm-markdown a { color: var(--bpm-accent-cyan); text-decoration: none; }
+.bpm-markdown a:hover { text-decoration: underline; }
+.bpm-markdown blockquote { margin: 1rem 0; padding-left: 1rem; border-left: 4px solid var(--bpm-border); color: var(--bpm-text-secondary); }
+
 /* Highlight.js (rehype-highlight) dans contenu Markdown wiki */
 .wiki-article-content .hljs { background: var(--bpm-code-bg); color: var(--bpm-text-primary); padding: 1rem; border-radius: 6px; border: 1px solid var(--bpm-code-border); overflow-x: auto; }
 .wiki-article-content pre code.hljs { padding: 0; }
+.bpm-markdown .hljs { background: var(--bpm-code-bg); padding: 1rem; border-radius: 6px; border: 1px solid var(--bpm-code-border); overflow-x: auto; }
+.bpm-markdown pre code.hljs { padding: 0; background: transparent; }

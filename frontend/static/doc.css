@@ -11,9 +11,13 @@
   --accent: var(--bleu-cyan);
   --border: rgb(237, 237, 237);
   --bpm-font: "Inter", "Segoe UI", sans-serif;
-  /* Sidebar : gris (sans blanc) */
-  --doc-sidebar-bg: rgb(230, 230, 232);
-  --doc-sidebar-border: rgb(210, 210, 212);
+  /* Sidebar : même style que myportfolio BEAM (gris, bordure, survol, actif) */
+  --doc-sidebar-bg: rgb(246, 246, 246);
+  --doc-sidebar-border: rgb(237, 237, 237);
+  --doc-sidebar-link: rgb(29, 29, 31);
+  --doc-sidebar-link-hover-bg: rgb(226, 226, 228);
+  --doc-sidebar-link-active: var(--accent);
+  --doc-sidebar-heading: #666666;
   /* Alias pour design system bpm.* */
   --color-primary: #2563eb;
   --color-muted: var(--muted);
@@ -30,9 +34,13 @@
     --border: #404040;
     --color-surface: #2d2d2d;
     --color-primary: #60a5fa;
-    /* Sidebar BEAM : gris foncé en mode sombre */
+    /* Sidebar BEAM : gris foncé en mode sombre (identique myportfolio) */
     --doc-sidebar-bg: rgb(49, 51, 63);
     --doc-sidebar-border: #000;
+    --doc-sidebar-link: #ffffff;
+    --doc-sidebar-link-hover-bg: rgba(255, 255, 255, 0.1);
+    --doc-sidebar-link-active: var(--accent);
+    --doc-sidebar-heading: #ffffff;
   }
   /* Landing (index) : header et nav en mode sombre */
   .landing-header {
@@ -92,14 +100,30 @@ body {
   font-size: 0.75rem;
   text-transform: uppercase;
   letter-spacing: 0.05em;
-  color: var(--muted);
+  color: var(--doc-sidebar-heading);
   margin-bottom: 0.75rem;
   margin-top: 1rem;
 }
 .doc-sidebar h3:first-child { margin-top: 0; }
-.doc-sidebar a { display: block; padding: 0.35rem 0; font-size: 0.9rem; color: var(--fg); text-decoration: none; }
-.doc-sidebar a:hover { color: var(--accent); }
-.doc-sidebar a.active { color: var(--accent); font-weight: 500; }
+.doc-sidebar a {
+  display: block;
+  padding: 0.35rem 0.5rem;
+  margin: 0 -0.5rem;
+  font-size: 0.9rem;
+  color: var(--doc-sidebar-link);
+  text-decoration: none;
+  border-radius: 6px;
+  transition: background-color 0.2s, color 0.2s;
+}
+.doc-sidebar a:hover {
+  background-color: var(--doc-sidebar-link-hover-bg);
+  color: var(--accent);
+}
+.doc-sidebar a.active {
+  color: var(--doc-sidebar-link-active);
+  font-weight: 500;
+  background-color: transparent;
+}
 .doc-main { flex: 1; padding: 2rem 2.5rem 3rem; min-width: 0; }
 /* Titre de page unique sur toutes les pages doc (Get started, Components, API Reference, etc.) */
 .doc-main h1 { font-size: 1.75rem; font-weight: 700; margin-bottom: 0.5rem; letter-spacing: -0.02em; line-height: 1.3; }

@@ -83,7 +83,7 @@ export function Modal({
         onClick={(e) => e.stopPropagation()}
       >
         <div
-          className="bpm-modal-header flex justify-between items-center px-6 py-4 border-b flex-shrink-0"
+          className="bpm-modal-header flex justify-between items-center px-4 py-3 border-b flex-shrink-0"
           style={{
             background: "var(--bpm-sidebar-bg)",
             borderColor: "var(--bpm-sidebar-border)",

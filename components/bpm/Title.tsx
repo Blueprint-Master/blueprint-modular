@@ -18,6 +18,8 @@ export interface TitleProps extends Omit<React.HTMLAttributes<HTMLHeadingElement
   bold?: boolean | number | null;
   /** Couleur du texte (ex. "var(--bpm-text-primary)", "#333"). Surcharge la couleur par défaut. */
   color?: string | null;
+  /** Barre verticale sombre à gauche du titre (comme en-tête de section). */
+  bar?: boolean;
   /** Optional logo URL (e.g. from localStorage). Shown only when level === 1. */
   logoUrl?: string | null;
   onLogoClick?: () => void;
@@ -29,6 +31,7 @@ export function Title({
   size: sizeProp = null,
   bold: boldProp = null,
   color: colorProp = null,
+  bar = false,
   logoUrl = null,
   onLogoClick,
   className = "",
@@ -64,7 +67,7 @@ export function Title({
     </>
   );
 
-  const classNames = `bpm-title bpm-title-level-${lvl} flex items-center gap-2 flex-wrap ${className}`.trim();
+  const classNames = `bpm-title bpm-title-level-${lvl} flex items-center gap-2 flex-wrap ${bar ? "bpm-title-with-bar" : ""} ${className}`.trim();
   const mergedStyle = { fontSize, fontWeight, ...style };
 
   if (lvl === 1) return <h1 className={classNames} style={mergedStyle} {...props}>{content}</h1>;

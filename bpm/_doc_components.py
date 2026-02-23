@@ -28,6 +28,7 @@ COMPONENT_DOC: list[ComponentDoc] = [
     {"slug": "expander", "name": "bpm.expander", "description": "Bloc repliable.", "category": "Mise en page"},
     {"slug": "accordion", "name": "bpm.accordion", "description": "Accordéon (sections repliables).", "category": "Mise en page"},
     {"slug": "card", "name": "bpm.card", "description": "Carte avec titre et contenu.", "category": "Mise en page"},
+    {"slug": "highlight-box", "name": "bpm.highlight-box", "description": "Carte avec barre latérale (numéro + label) et contenu structuré (titre, moment, RTB, cible).", "category": "Mise en page"},
     {"slug": "divider", "name": "bpm.divider", "description": "Séparateur horizontal.", "category": "Mise en page"},
     {"slug": "grid", "name": "bpm.grid", "description": "Grille responsive.", "category": "Mise en page"},
     {"slug": "emptystate", "name": "bpm.emptystate", "description": "État vide (aucune donnée).", "category": "Mise en page"},

@@ -54,7 +54,7 @@ export function NotificationBell() {
   const [minLevel, setMinLevel] = useState<1 | 2 | 3>(() => {
     if (typeof window === "undefined") return 3;
     try {
-      const v = parseInt(localStorage.getItem("notification_min_level") || "3", 10);
+      const v = parseInt(localStorage.getItem("bpm-notification-level") || "3", 10);
       return [1, 2, 3].includes(v) ? (v as 1 | 2 | 3) : 3;
     } catch {
       return 3;
@@ -64,14 +64,14 @@ export function NotificationBell() {
   useEffect(() => {
     const h = () => {
       try {
-        const v = parseInt(localStorage.getItem("notification_min_level") || "3", 10);
+        const v = parseInt(localStorage.getItem("bpm-notification-level") || "3", 10);
         setMinLevel([1, 2, 3].includes(v) ? (v as 1 | 2 | 3) : 3);
       } catch {
         setMinLevel(3);
       }
     };
-    window.addEventListener("notificationLevelUpdated", h);
-    return () => window.removeEventListener("notificationLevelUpdated", h);
+    window.addEventListener("bpm-notification-level-updated", h);
+    return () => window.removeEventListener("bpm-notification-level-updated", h);
   }, []);
 
   const [isMobile, setIsMobile] = useState(false);

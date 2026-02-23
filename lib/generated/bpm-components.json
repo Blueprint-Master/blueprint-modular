@@ -67,6 +67,12 @@
       "category": "Mise en page"
     },
     {
+      "slug": "highlight-box",
+      "name": "bpm.highlight-box",
+      "description": "Carte avec barre latérale (numéro + label) et contenu structuré (titre, moment, RTB, cible).",
+      "category": "Mise en page"
+    },
+    {
       "slug": "divider",
       "name": "bpm.divider",
       "description": "Séparateur horizontal.",

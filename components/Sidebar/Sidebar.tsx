@@ -3,37 +3,25 @@
 import Link from "next/link";
 import Image from "next/image";
 import { usePathname } from "next/navigation";
-import { useSession } from "next-auth/react";
+import { useSession, signOut } from "next-auth/react";
 import { useTheme } from "@/components/ThemeProvider";
 import {
   LayoutDashboard,
-  BookOpen,
   Boxes,
   Play,
   FolderOpen,
-  BookMarked,
-  Bot,
-  FileText,
-  Radio,
   Settings,
   Sun,
   Moon,
-  Menu,
   ChevronLeft,
 } from "lucide-react";
 import { useState } from "react";
-import { NotificationBell } from "@/components/NotificationBell";
 
 const navItems = [
   { href: "/dashboard", label: "Accueil", icon: LayoutDashboard },
-  { href: "/docs", label: "Documentation", icon: BookOpen },
   { href: "/docs/components", label: "Composants", icon: Boxes },
   { href: "/sandbox", label: "Sandbox", icon: Play },
   { href: "/modules", label: "Modules", icon: FolderOpen },
-  { href: "/modules/wiki", label: "Module Wiki", icon: BookMarked },
-  { href: "/modules/ia", label: "Module IA", icon: Bot },
-  { href: "/modules/documents", label: "Module Documents", icon: FileText },
-  { href: "/modules/veille", label: "Module Veille", icon: Radio },
   { href: "/settings", label: "Paramètres", icon: Settings },
 ];
 
@@ -55,10 +43,10 @@ export function Sidebar() {
     return (
       <Link
         href={href}
-        className={`flex items-center rounded-lg transition ${compact ? "flex-col gap-0.5 px-2 py-2 min-w-0" : "gap-3 px-3 py-2.5"}`}
+        className={`flex items-center transition ${compact ? "flex-col gap-0.5 px-2 py-2 min-w-0 rounded-lg" : "gap-3 px-3 py-2.5 rounded-lg hover:bg-[var(--bpm-sidebar-hover-bg)]"}`}
         style={{
-          background: isActive ? "var(--bpm-accent-cyan)" : "transparent",
-          color: isActive ? "#fff" : "var(--bpm-sidebar-text)",
+          background: isActive ? "var(--bpm-sidebar-active-bg)" : "transparent",
+          color: "var(--bpm-sidebar-text)",
         }}
         title={compact ? label : undefined}
       >
@@ -86,7 +74,8 @@ export function Sidebar() {
         href="/settings"
         className="flex flex-col items-center gap-0.5 px-2 py-2 rounded-lg min-w-0 transition"
         style={{
-          color: pathname.startsWith("/settings") ? "var(--bpm-accent-cyan)" : "var(--bpm-sidebar-text)",
+          color: "var(--bpm-sidebar-text)",
+          background: pathname.startsWith("/settings") ? "var(--bpm-sidebar-active-bg)" : "transparent",
         }}
         title="Paramètres"
       >
@@ -104,22 +93,30 @@ export function Sidebar() {
       {/* Desktop : sidebar verticale grise à gauche */}
       <aside
         className={`
-          fixed top-0 left-0 z-40 h-full flex-col
+          fixed top-0 left-0 z-40 h-full flex flex-col
           w-64 transition-[width] duration-200 ease-in-out
           hidden md:flex
           ${collapsed ? "md:w-16" : "md:w-64"}
         `}
-        style={{ background: "var(--bpm-sidebar-bg)", color: "var(--bpm-sidebar-text)", borderRight: "1px solid var(--bpm-sidebar-border)" }}
+        style={{
+          background: "var(--bpm-sidebar-bg)",
+          color: "var(--bpm-sidebar-text)",
+          borderRight: "1px solid var(--bpm-sidebar-border)",
+        }}
       >
-        <div className="flex items-center justify-between h-14 px-3 border-b shrink-0" style={{ borderColor: "var(--bpm-sidebar-border)" }}>
+        {/* Header : logo + collapse (hauteur réduite, style notifications) */}
+        <div
+          className="flex items-center justify-between px-4 py-3 border-b shrink-0"
+          style={{ borderColor: "var(--bpm-sidebar-border)" }}
+        >
           {!collapsed && (
-            <Link href="/dashboard" className="font-bold truncate" style={{ color: "var(--bpm-sidebar-text)" }}>
+            <Link href="/dashboard" className="font-bold truncate text-base" style={{ color: "var(--bpm-sidebar-text)" }}>
               Blueprint Modular
             </Link>
           )}
           <button
             type="button"
-            className="flex items-center justify-center w-8 h-8 rounded hover:opacity-80"
+            className="flex items-center justify-center w-8 h-8 rounded-lg hover:bg-[var(--bpm-sidebar-hover-bg)] transition"
             style={{ color: "var(--bpm-sidebar-text)" }}
             onClick={() => setCollapsed(!collapsed)}
             aria-label={collapsed ? "Ouvrir" : "Réduire"}
@@ -128,42 +125,67 @@ export function Sidebar() {
           </button>
         </div>
 
-        <nav className="flex-1 overflow-y-auto p-2 space-y-0.5">
+        {/* Navigation avec titre "Navigation" */}
+        <nav className="flex-1 overflow-y-auto p-3 space-y-0.5">
+          {!collapsed && (
+            <h3 className="text-xs font-semibold uppercase tracking-wider mb-2 px-3" style={{ color: "var(--bpm-sidebar-text-muted)" }}>
+              Navigation
+            </h3>
+          )}
           {navItems.map((item) => (
             <NavIcon key={item.href} href={item.href} label={item.label} icon={item.icon} />
           ))}
         </nav>
 
-        <div className="p-2 border-t shrink-0 space-y-1" style={{ borderColor: "var(--bpm-sidebar-border)" }}>
-          <div className="flex items-center gap-1">
-            <div className="flex-1 min-w-0">
-              <button
-                type="button"
-                className="flex items-center gap-3 w-full px-3 py-2.5 rounded-lg hover:opacity-80"
-                style={{ color: "var(--bpm-sidebar-text)" }}
-                onClick={toggleTheme}
-              >
-                {theme === "dark" ? <Sun className="w-5 h-5 shrink-0" /> : <Moon className="w-5 h-5 shrink-0" />}
-                {!collapsed && <span className="text-sm truncate">Thème</span>}
-              </button>
-            </div>
-            <div className="[&_.notification-bell-button]:rounded-lg" style={{ color: "var(--bpm-sidebar-text)" }}>
-              <NotificationBell />
-            </div>
-          </div>
+        {/* Bas : thème, utilisateur, déconnexion */}
+        <div className="p-3 border-t shrink-0 space-y-2" style={{ borderColor: "var(--bpm-sidebar-border)" }}>
+          <button
+            type="button"
+            className="flex items-center gap-3 w-full px-3 py-2 rounded-lg hover:bg-[var(--bpm-sidebar-hover-bg)] transition"
+            style={{ color: "var(--bpm-sidebar-text)" }}
+            onClick={toggleTheme}
+          >
+            {theme === "dark" ? <Sun className="w-5 h-5 shrink-0" /> : <Moon className="w-5 h-5 shrink-0" />}
+            {!collapsed && <span className="text-sm truncate">Thème</span>}
+          </button>
           {session?.user && (
-            <div className="flex items-center gap-3 px-3 py-2.5">
-              {session.user.image ? (
-                <Image src={session.user.image} alt="" width={32} height={32} className="w-8 h-8 rounded-full" />
-              ) : (
-                <div className="w-8 h-8 rounded-full flex items-center justify-center font-semibold text-white" style={{ background: "var(--bpm-accent-cyan)" }}>
-                  {(session.user.name ?? session.user.email ?? "?").slice(0, 1).toUpperCase()}
-                </div>
-              )}
+            <>
+              <div className="flex items-center gap-3 px-1 py-1">
+                {session.user.image ? (
+                  <Image src={session.user.image} alt="" width={32} height={32} className="w-8 h-8 rounded-full shrink-0 border-2" style={{ borderColor: "var(--bpm-sidebar-border)" }} />
+                ) : (
+                  <div className="w-8 h-8 rounded-full flex items-center justify-center font-semibold text-white shrink-0" style={{ background: "var(--bpm-accent-cyan)" }}>
+                    {(session.user.name ?? session.user.email ?? "?").slice(0, 1).toUpperCase()}
+                  </div>
+                )}
+                {!collapsed && (
+                  <div className="min-w-0 flex-1">
+                    <p className="text-sm font-bold truncate" style={{ color: "var(--bpm-sidebar-text)" }}>
+                      {session.user.name ?? "Utilisateur"}
+                    </p>
+                    {session.user.email && (
+                      <p className="text-xs truncate" style={{ color: "var(--bpm-sidebar-text-muted)" }}>
+                        {session.user.email}
+                      </p>
+                    )}
+                  </div>
+                )}
+              </div>
               {!collapsed && (
-                <span className="text-sm truncate" style={{ color: "var(--bpm-sidebar-text)" }}>{session.user.name ?? session.user.email}</span>
+                <button
+                  type="button"
+                  onClick={() => signOut({ callbackUrl: "/" })}
+                  className="w-full px-3 py-2.5 rounded-lg text-sm font-medium transition border"
+                  style={{
+                    color: "var(--bpm-sidebar-text)",
+                    background: "var(--bpm-bg-primary)",
+                    borderColor: "var(--bpm-sidebar-logout-border)",
+                  }}
+                >
+                  Se déconnecter
+                </button>
               )}
-            </div>
+            </>
           )}
         </div>
       </aside>

@@ -17,7 +17,7 @@ export default function DocSpinnerPage() {
   const { prev, next } = getPrevNext("spinner");
 
   return (
-    <div className="max-w-4xl">
+    <div className="doc-page">
       <div className="doc-page-header">
         <div className="doc-breadcrumb"><Link href="/docs">Documentation</Link> → <Link href="/docs/components">Composants</Link> → bpm.spinner</div>
         <h1>bpm.spinner</h1>

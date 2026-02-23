@@ -26,6 +26,22 @@
   margin-bottom: 0.5rem;
 }
 
+/* Title with vertical bar (bar prop) */
+.bpm-title-with-bar {
+  position: relative;
+  padding-left: 11px;
+}
+.bpm-title-with-bar::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 3px;
+  background: var(--bpm-text-primary, #1d1d1f);
+  border-radius: 0;
+}
+
 /* Dark mode */
 .theme-dark .bpm-title {
   color: #ffffff;

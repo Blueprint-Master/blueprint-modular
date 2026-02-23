@@ -16,7 +16,7 @@ export default function DocTogglePage() {
   const { prev, next } = getPrevNext("toggle");
 
   return (
-    <div className="max-w-4xl">
+    <div className="doc-page">
       <div className="doc-page-header">
         <div className="doc-breadcrumb"><Link href="/docs">Documentation</Link> → <Link href="/docs/components">Composants</Link> → bpm.toggle</div>
         <h1>bpm.toggle</h1>

@@ -85,6 +85,7 @@ def _nodes_to_html(nodes: list) -> str:
         }} else if (n.type === 'metric') {{
           const m = document.createElement('div');
           m.className = 'bpm-metric';
+          if (n.props.name) m.setAttribute('data-metric-name', n.props.name);
           m.innerHTML = '<div class="value">' + n.props.value + '</div><div>' + n.props.label + '</div>' +
             (n.props.delta != null ? '<div class="delta">' + n.props.delta + '</div>' : '');
           root.appendChild(m);
@@ -120,12 +121,307 @@ def _nodes_to_html(nodes: list) -> str:
           pre.textContent = n.props.code;
           root.appendChild(pre);
         }} else if (n.type === 'divider') {{
-          root.appendChild(document.createElement('hr'));
+          const orient = n.props.orientation || 'horizontal';
+          if (orient === 'vertical') {{
+            const div = document.createElement('div');
+            div.className = 'bpm-divider';
+            div.style.width = '1px';
+            div.style.alignSelf = 'stretch';
+            div.style.background = 'var(--bpm-border, #ccc)';
+            root.appendChild(div);
+          }} else {{
+            const wrap = document.createElement('div');
+            wrap.className = 'bpm-divider';
+            wrap.style.display = 'flex';
+            wrap.style.alignItems = 'center';
+            wrap.style.gap = '8px';
+            const line = () => {{
+              const s = document.createElement('span');
+              s.style.flex = '1';
+              s.style.height = '1px';
+              s.style.background = 'var(--bpm-border, #ccc)';
+              return s;
+            }};
+            wrap.appendChild(line());
+            if (n.props.label) {{
+              const lbl = document.createElement('span');
+              lbl.className = 'text-sm';
+              lbl.style.color = 'var(--bpm-text-secondary, #666)';
+              lbl.textContent = n.props.label;
+              wrap.appendChild(lbl);
+            }}
+            wrap.appendChild(line());
+            root.appendChild(wrap);
+          }}
         }} else if (n.type === 'panel') {{
           const p = document.createElement('div');
           p.className = 'bpm-panel';
           p.innerHTML = '<strong>' + n.props.title + '</strong><br/>' + (n.props.body || '');
           root.appendChild(p);
+        }} else if (n.type === 'emptystate') {{
+          const wrap = document.createElement('div');
+          wrap.className = 'bpm-emptystate';
+          wrap.style.textAlign = 'center';
+          wrap.style.padding = '2rem 1rem';
+          wrap.style.color = 'var(--bpm-text-secondary, #666)';
+          const h3 = document.createElement('h3');
+          h3.className = 'bpm-emptystate-title';
+          h3.style.margin = '0 0 0.25rem';
+          h3.style.fontSize = '1.125rem';
+          h3.style.color = 'var(--bpm-text-primary, #111)';
+          h3.textContent = n.props.title || 'Aucune donnée';
+          wrap.appendChild(h3);
+          if (n.props.description) {{
+            const p = document.createElement('p');
+            p.className = 'bpm-emptystate-desc';
+            p.style.margin = '0 0 0.75rem';
+            p.style.fontSize = '0.875rem';
+            p.textContent = n.props.description;
+            wrap.appendChild(p);
+          }}
+          if (n.props.action_label) {{
+            const btn = document.createElement('button');
+            btn.className = 'bpm-button';
+            btn.textContent = n.props.action_label;
+            wrap.appendChild(btn);
+          }}
+          root.appendChild(wrap);
+        }} else if (n.type === 'input') {{
+          const wrap = document.createElement('div');
+          wrap.className = 'bpm-input-wrap';
+          if (n.props.label) {{
+            const lbl = document.createElement('label');
+            lbl.className = 'bpm-input-label';
+            lbl.style.display = 'block';
+            lbl.style.fontSize = '0.875rem';
+            lbl.style.marginBottom = '0.25rem';
+            lbl.textContent = n.props.label;
+            wrap.appendChild(lbl);
+          }}
+          const inp = document.createElement('input');
+          inp.type = n.props.type || 'text';
+          inp.placeholder = n.props.placeholder || '';
+          inp.value = n.props.value || '';
+          inp.disabled = !!n.props.disabled;
+          inp.className = 'bpm-input';
+          inp.style.width = '100%';
+          inp.style.padding = '0.5rem 0.75rem';
+          wrap.appendChild(inp);
+          root.appendChild(wrap);
+        }} else if (n.type === 'textarea') {{
+          const wrap = document.createElement('div');
+          wrap.className = 'bpm-textarea-wrap';
+          if (n.props.label) {{
+            const lbl = document.createElement('label');
+            lbl.className = 'bpm-textarea-label';
+            lbl.style.display = 'block';
+            lbl.style.fontSize = '0.875rem';
+            lbl.style.marginBottom = '0.25rem';
+            lbl.textContent = n.props.label;
+            wrap.appendChild(lbl);
+          }}
+          const ta = document.createElement('textarea');
+          ta.placeholder = n.props.placeholder || '';
+          ta.value = n.props.value || '';
+          ta.rows = n.props.rows || 4;
+          ta.disabled = !!n.props.disabled;
+          ta.className = 'bpm-textarea';
+          ta.style.width = '100%';
+          ta.style.padding = '0.5rem 0.75rem';
+          ta.style.resize = 'vertical';
+          wrap.appendChild(ta);
+          root.appendChild(wrap);
+        }} else if (n.type === 'checkbox') {{
+          const lbl = document.createElement('label');
+          lbl.className = 'bpm-checkbox-wrap';
+          lbl.style.display = 'inline-flex';
+          lbl.style.alignItems = 'center';
+          lbl.style.gap = '0.5rem';
+          const inp = document.createElement('input');
+          inp.type = 'checkbox';
+          inp.checked = !!n.props.value;
+          inp.disabled = !!n.props.disabled;
+          inp.className = 'bpm-checkbox';
+          lbl.appendChild(inp);
+          if (n.props.label) {{
+            const s = document.createElement('span');
+            s.textContent = n.props.label;
+            lbl.appendChild(s);
+          }}
+          root.appendChild(lbl);
+        }} else if (n.type === 'radiogroup') {{
+          const wrap = document.createElement('div');
+          wrap.className = 'bpm-radiogroup-wrap';
+          wrap.style.display = 'flex';
+          wrap.style.flexDirection = n.props.layout === 'horizontal' ? 'row' : 'column';
+          wrap.style.gap = '0.5rem';
+          if (n.props.label) {{
+            const cap = document.createElement('span');
+            cap.style.display = 'block';
+            cap.style.marginBottom = '0.25rem';
+            cap.textContent = n.props.label;
+            wrap.appendChild(cap);
+          }}
+          const opts = n.props.options || [];
+          opts.forEach(function(opt) {{
+            const val = typeof opt === 'string' ? opt : (opt.value || opt.label || '');
+            const lab = typeof opt === 'string' ? opt : (opt.label || opt.value || '');
+            const l = document.createElement('label');
+            l.style.display = 'inline-flex';
+            l.style.alignItems = 'center';
+            l.style.gap = '0.5rem';
+            const r = document.createElement('input');
+            r.type = 'radio';
+            r.name = n.props.key || 'rg';
+            r.value = val;
+            r.checked = (n.props.value === val);
+            r.disabled = !!n.props.disabled;
+            l.appendChild(r);
+            const s = document.createElement('span');
+            s.textContent = lab;
+            l.appendChild(s);
+            wrap.appendChild(l);
+          }});
+          root.appendChild(wrap);
+        }} else if (n.type === 'slider') {{
+          const wrap = document.createElement('div');
+          wrap.className = 'bpm-slider-wrap';
+          if (n.props.label) {{
+            const lbl = document.createElement('label');
+            lbl.style.display = 'block';
+            lbl.style.marginBottom = '0.25rem';
+            lbl.textContent = n.props.label;
+            wrap.appendChild(lbl);
+          }}
+          const inp = document.createElement('input');
+          inp.type = 'range';
+          inp.min = n.props.min ?? 0;
+          inp.max = n.props.max ?? 100;
+          inp.step = n.props.step ?? 1;
+          inp.value = n.props.value ?? inp.min;
+          inp.disabled = !!n.props.disabled;
+          wrap.appendChild(inp);
+          const sp = document.createElement('span');
+          sp.textContent = inp.value;
+          wrap.appendChild(sp);
+          root.appendChild(wrap);
+        }} else if (n.type === 'dateinput') {{
+          const wrap = document.createElement('div');
+          wrap.className = 'bpm-dateinput-wrap';
+          if (n.props.label) {{
+            const lbl = document.createElement('label');
+            lbl.style.display = 'block';
+            lbl.style.marginBottom = '0.25rem';
+            lbl.textContent = n.props.label;
+            wrap.appendChild(lbl);
+          }}
+          const inp = document.createElement('input');
+          inp.type = 'date';
+          inp.value = n.props.value || '';
+          inp.min = n.props.min || '';
+          inp.max = n.props.max || '';
+          inp.disabled = !!n.props.disabled;
+          wrap.appendChild(inp);
+          root.appendChild(wrap);
+        }} else if (n.type === 'colorpicker') {{
+          const wrap = document.createElement('div');
+          wrap.className = 'bpm-colorpicker-wrap';
+          if (n.props.label) {{
+            const lbl = document.createElement('label');
+            lbl.style.display = 'block';
+            lbl.style.marginBottom = '0.25rem';
+            lbl.textContent = n.props.label;
+            wrap.appendChild(lbl);
+          }}
+          const inp = document.createElement('input');
+          inp.type = 'color';
+          inp.value = n.props.value || '#000000';
+          inp.disabled = !!n.props.disabled;
+          wrap.appendChild(inp);
+          const sp = document.createElement('span');
+          sp.textContent = n.props.value || '#000000';
+          wrap.appendChild(sp);
+          root.appendChild(wrap);
+        }} else if (n.type === 'chip') {{
+          const sp = document.createElement('span');
+          sp.className = 'bpm-chip';
+          sp.textContent = n.props.label || '';
+          sp.style.display = 'inline-flex';
+          sp.style.padding = '0.25rem 0.5rem';
+          sp.style.borderRadius = '9999px';
+          sp.style.fontSize = '0.75rem';
+          if (n.props.variant === 'primary') {{ sp.style.background = 'var(--bpm-accent)'; sp.style.color = '#fff'; }}
+          else if (n.props.variant === 'outline') {{ sp.style.border = '1px solid var(--bpm-border)'; }}
+          root.appendChild(sp);
+        }} else if (n.type === 'breadcrumb') {{
+          const nav = document.createElement('nav');
+          nav.className = 'bpm-breadcrumb';
+          nav.setAttribute('aria-label', 'Fil d\'Ariane');
+          const ol = document.createElement('ol');
+          ol.style.display = 'flex';
+          ol.style.flexWrap = 'wrap';
+          ol.style.alignItems = 'center';
+          ol.style.gap = '0.25rem';
+          ol.style.listStyle = 'none';
+          ol.style.margin = '0';
+          ol.style.padding = '0';
+          const items = n.props.items || [];
+          const sep = n.props.separator || '›';
+          items.forEach(function(it, i) {{
+            const li = document.createElement('li');
+            li.style.display = 'flex';
+            li.style.alignItems = 'center';
+            li.style.gap = '0.25rem';
+            if (i > 0) {{
+              const s = document.createElement('span');
+              s.textContent = sep;
+              s.setAttribute('aria-hidden', 'true');
+              s.style.opacity = '0.6';
+              li.appendChild(s);
+            }}
+            if (it.href != null && i < items.length - 1) {{
+              const a = document.createElement('a');
+              a.href = it.href;
+              a.textContent = it.label || '';
+              a.style.color = 'var(--bpm-accent-cyan)';
+              li.appendChild(a);
+            }} else {{
+              const s = document.createElement('span');
+              s.textContent = it.label || '';
+              li.appendChild(s);
+            }}
+            ol.appendChild(li);
+          }});
+          nav.appendChild(ol);
+          root.appendChild(nav);
+        }} else if (n.type === 'stepper') {{
+          const wrap = document.createElement('div');
+          wrap.className = 'bpm-stepper';
+          const steps = n.props.steps || [];
+          const cur = n.props.current_step ?? 0;
+          steps.forEach(function(st, i) {{
+            const row = document.createElement('div');
+            row.style.display = 'flex';
+            row.style.alignItems = 'flex-start';
+            row.style.gap = '0.75rem';
+            const btn = document.createElement('button');
+            btn.type = 'button';
+            btn.textContent = i < cur ? '✓' : (i + 1);
+            btn.style.width = '2rem';
+            btn.style.height = '2rem';
+            btn.style.borderRadius = '9999px';
+            btn.style.border = '2px solid';
+            btn.style.borderColor = (i <= cur) ? 'var(--bpm-accent)' : 'var(--bpm-border)';
+            btn.style.background = (i < cur) ? 'var(--bpm-accent)' : 'var(--bpm-bg-primary)';
+            btn.style.color = (i <= cur) ? '#fff' : 'var(--bpm-text-secondary)';
+            row.appendChild(btn);
+            const lbl = document.createElement('span');
+            lbl.textContent = st.label || ('Étape ' + (i + 1));
+            lbl.style.fontSize = '0.875rem';
+            row.appendChild(lbl);
+            wrap.appendChild(row);
+          }});
+          root.appendChild(wrap);
         }} else {{
           const p = document.createElement('p');
           p.textContent = JSON.stringify(n);
