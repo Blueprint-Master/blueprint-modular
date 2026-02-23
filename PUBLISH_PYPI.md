@@ -1,5 +1,23 @@
 # Publier blueprint-modular sur PyPI
 
+## Option 1 : Trusted Publishing (recommandé, sans token)
+
+1. **Sur PyPI** : aller dans le projet (ou « Add new pending publisher » si première fois), section **Publishing** → **Add a new trusted publisher**.
+   - **Owner :** `remigit55`
+   - **Repository name :** `blueprint-modular`
+   - **Workflow name :** `workflow.yml`
+   - **Environment name (optional) :** `pypi`
+
+2. **Sur GitHub** (optionnel) : dans le repo → Settings → Environments → créer l’environnement `pypi` si tu veux un gate avant publication.
+
+3. **Publier** : pousser un tag `v*` (ex. `v0.1.0`). Le workflow `.github/workflows/workflow.yml` build et envoie sur PyPI.
+   ```bash
+   git tag v0.1.0
+   git push origin v0.1.0
+   ```
+
+## Option 2 : Publication manuelle (token)
+
 ## Vérifier que le nom est disponible
 
 ```bash
