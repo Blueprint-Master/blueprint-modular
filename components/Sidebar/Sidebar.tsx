@@ -51,7 +51,7 @@ export function Sidebar() {
         title={compact ? label : undefined}
       >
         <Icon className="w-5 h-5 shrink-0" />
-        {showLabel && <span className={compact ? "text-xs font-medium truncate max-w-full text-center" : "text-sm font-medium truncate"}>{label}</span>}
+        {showLabel && <span className={compact ? "text-xs font-normal truncate max-w-full text-center" : "text-sm font-normal truncate"}>{label}</span>}
       </Link>
     );
   };
@@ -65,6 +65,7 @@ export function Sidebar() {
         color: "var(--bpm-sidebar-text)",
         borderColor: "var(--bpm-sidebar-border)",
         minHeight: "calc(56px + env(safe-area-inset-bottom, 0))",
+        fontWeight: 400,
       }}
     >
       {navItems.map((item) => (
@@ -90,6 +91,7 @@ export function Sidebar() {
           background: "var(--bpm-sidebar-bg)",
           color: "var(--bpm-sidebar-text)",
           borderRight: "1px solid var(--bpm-sidebar-border)",
+          fontWeight: 400,
         }}
       >
         {/* Header : logo + collapse (hauteur réduite, style notifications) */}
@@ -116,7 +118,7 @@ export function Sidebar() {
         {/* Navigation avec titre "Navigation" */}
         <nav className="flex-1 overflow-y-auto p-3 space-y-0.5">
           {!collapsed && (
-            <h3 className="text-xs font-semibold uppercase tracking-wider mb-2 px-3" style={{ color: "var(--bpm-sidebar-text-muted)" }}>
+            <h3 className="text-xs font-normal uppercase tracking-wider mb-2 px-3" style={{ color: "var(--bpm-sidebar-text-muted)" }}>
               Navigation
             </h3>
           )}
@@ -163,7 +165,7 @@ export function Sidebar() {
                 <button
                   type="button"
                   onClick={() => signOut({ callbackUrl: "/" })}
-                  className="w-full px-3 py-2.5 rounded-lg text-sm font-medium transition border"
+                  className="w-full px-3 py-2.5 rounded-lg text-sm font-normal transition border"
                   style={{
                     color: "var(--bpm-sidebar-text)",
                     background: "var(--bpm-bg-primary)",
