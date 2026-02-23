@@ -19,6 +19,7 @@ export default function DocMetricPage() {
   const [valueLocale, setValueLocale] = useState<ValueLocaleOption>("fr-FR");
   const [valueDecimals, setValueDecimals] = useState(0);
   const [valueGrouping, setValueGrouping] = useState(true);
+  const [border, setBorder] = useState(true);
 
   const escapedLabel = label.replace(/"/g, '\\"');
   const pyDelta = delta ?? "None";
@@ -28,7 +29,8 @@ export default function DocMetricPage() {
   const pyValueLocale = valueLocale !== "fr-FR" ? `, valueLocale="${valueLocale}"` : "";
   const pyValueDecimals = valueDecimals !== 0 ? `, valueDecimals=${valueDecimals}` : "";
   const pyValueGrouping = !valueGrouping ? `, valueGrouping=False` : "";
-  const pythonCode = `bpm.metric(label="${escapedLabel}", value=${value}, delta=${pyDelta}${pyName}${pyDeltaType}${pyCurrency}${pyValueLocale}${pyValueDecimals}${pyValueGrouping})`;
+  const pyBorder = !border ? `, border=False` : "";
+  const pythonCode = `bpm.metric(label="${escapedLabel}", value=${value}, delta=${pyDelta}${pyName}${pyDeltaType}${pyCurrency}${pyValueLocale}${pyValueDecimals}${pyValueGrouping}${pyBorder})`;
   const { prev, next } = getPrevNext("metric");
 
   return (
@@ -56,6 +58,7 @@ export default function DocMetricPage() {
             valueLocale={valueLocale}
             valueDecimals={valueDecimals}
             valueGrouping={valueGrouping}
+            border={border}
           />
         </div>
         <div className="sandbox-controls">
@@ -130,6 +133,13 @@ export default function DocMetricPage() {
               <option value="false">false (1000,50)</option>
             </select>
           </div>
+          <div className="sandbox-control-group">
+            <label>border</label>
+            <select value={border ? "true" : "false"} onChange={(e) => setBorder(e.target.value === "true")}>
+              <option value="true">true (avec bordure)</option>
+              <option value="false">false (sans bordure)</option>
+            </select>
+          </div>
         </div>
         <div className="sandbox-code">
           <div className="sandbox-code-header">
@@ -160,6 +170,7 @@ export default function DocMetricPage() {
           <tr><td><code>valueLocale</code></td><td><code>string</code></td><td>fr-FR</td><td>Non</td><td>Locale pour formater value et delta (ex. fr-FR → 1 000,50, en-US → 1,000.50).</td></tr>
           <tr><td><code>valueDecimals</code></td><td><code>number</code></td><td>0</td><td>Non</td><td>Nombre de décimales pour la valeur.</td></tr>
           <tr><td><code>valueGrouping</code></td><td><code>boolean</code></td><td>true</td><td>Non</td><td>Séparateur de milliers (false = 1000,50 sans espace).</td></tr>
+          <tr><td><code>border</code></td><td><code>boolean</code></td><td>true</td><td>Non</td><td>Afficher la bordure autour de la métrique (false = pas de bordure).</td></tr>
         </tbody>
       </table>
 

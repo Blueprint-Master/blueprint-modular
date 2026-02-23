@@ -83,6 +83,19 @@ body {
 .doc-nav .brand .brand-logo { height: 28px; width: auto; max-width: 44px; object-fit: contain; flex-shrink: 0; }
 .doc-nav .brand .word-blueprint { color: var(--bleu-profond); }
 .doc-nav .brand .word-modular { color: var(--bleu-cyan); }
+.doc-nav .doc-nav-app {
+  margin-left: auto;
+  padding: 0.4rem 0.75rem;
+  background: var(--accent);
+  color: #fff;
+  font-weight: 500;
+  font-size: 0.875rem;
+  border-radius: 6px;
+  white-space: nowrap;
+}
+.doc-nav .doc-nav-app:hover { filter: brightness(1.1); color: #fff; }
+.doc-nav .doc-nav-app:focus,
+.doc-nav .doc-nav-app:focus-visible { outline: none; box-shadow: 0 0 0 2px var(--accent); }
 .nav-burger {
   display: none;
 }
@@ -219,9 +232,10 @@ body {
     top: 0;
     z-index: 200;
   }
-  .doc-nav > a:not(.brand) {
+  .doc-nav > a:not(.brand):not(.doc-nav-app) {
     display: none;
   }
+  .doc-nav .doc-nav-app { margin-left: auto; }
   .nav-burger {
     display: flex;
     flex-direction: column;

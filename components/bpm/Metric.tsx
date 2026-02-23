@@ -22,6 +22,8 @@ export interface MetricProps {
   valueDecimals?: number;
   /** Afficher le séparateur de milliers (true par défaut). false → 1000,50 au lieu de 1 000,50. */
   valueGrouping?: boolean;
+  /** Afficher la bordure autour de la métrique (true par défaut). */
+  border?: boolean;
 }
 
 export function Metric({
@@ -36,6 +38,7 @@ export function Metric({
   valueLocale,
   valueDecimals = 0,
   valueGrouping = true,
+  border = true,
 }: MetricProps) {
   const symbols: Record<string, string> = {
     EUR: "€",
@@ -71,10 +74,10 @@ export function Metric({
 
   return (
     <div
-      className="inline-block p-4 rounded-lg border min-w-[140px]"
+      className={`inline-block p-4 rounded-lg min-w-[140px] ${border ? "border" : ""}`}
       style={{
         background: "var(--bpm-surface)",
-        borderColor: "var(--bpm-border)",
+        ...(border ? { borderColor: "var(--bpm-border)" } : {}),
         color: "var(--bpm-text-primary)",
       }}
       data-metric-name={name && name !== "" ? name : undefined}

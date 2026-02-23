@@ -3,6 +3,7 @@
 import { Suspense } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
 import { useMemo, useEffect, useState } from "react";
+import React from "react";
 import {
   Panel,
   Message,
@@ -15,6 +16,70 @@ import {
   Tooltip,
   CodeBlock,
 } from "@/components/bpm";
+
+const DEFAULT_CODE = `bpm.title("Ma page", level=1)
+bpm.metric("CA", "142 500")
+bpm.button("Valider")
+bpm.panel("Info", "Contenu du panneau.")
+bpm.message("Message de confirmation", type="success")`;
+
+/** Parse une ligne du type bpm.xxx("...", ...) et retourne un noeud React ou null */
+function parseBpmLine(line: string, key: number): React.ReactNode {
+  const trimmed = line.trim();
+  if (!trimmed || trimmed.startsWith("#")) return null;
+
+  const titleMatch = trimmed.match(/bpm\.title\s*\(\s*["']([^"']*)["']\s*(?:,\s*level\s*=\s*(\d))?\s*\)/);
+  if (titleMatch) {
+    const level = titleMatch[2] ? Math.min(3, Math.max(1, parseInt(titleMatch[2], 10))) : 1;
+    return <Title key={key} level={level as 1 | 2 | 3}>{titleMatch[1]}</Title>;
+  }
+
+  const metricMatch = trimmed.match(/bpm\.metric\s*\(\s*["']([^"']*)["']\s*,\s*["']([^"']*)["']\s*(?:,\s*delta\s*=\s*(-?\d+(?:\.\d+)?))?\s*(?:,\s*border\s*=\s*(True|False))?\s*\)/);
+  if (metricMatch) {
+    const delta = metricMatch[3] != null ? parseFloat(metricMatch[3]) : undefined;
+    const border = metricMatch[4] === undefined || metricMatch[4] === "True";
+    return <Metric key={key} label={metricMatch[1]} value={metricMatch[2]} delta={delta} border={border} />;
+  }
+
+  const buttonMatch = trimmed.match(/bpm\.button\s*\(\s*["']([^"']*)["']\s*\)/);
+  if (buttonMatch) {
+    return <Button key={key}>{buttonMatch[1]}</Button>;
+  }
+
+  const panelMatch = trimmed.match(/bpm\.panel\s*\(\s*["']([^"']*)["']\s*,\s*["']([^"']*)["']\s*(?:,\s*variant\s*=\s*["'](\w+)["'])?\s*\)/);
+  if (panelMatch) {
+    const variant = (panelMatch[3] as "info" | "success" | "warning" | "error") || "info";
+    return <Panel key={key} variant={variant} title={panelMatch[1]}>{panelMatch[2]}</Panel>;
+  }
+
+  const messageMatch = trimmed.match(/bpm\.message\s*\(\s*["']([^"']*)["']\s*(?:,\s*type\s*=\s*["'](\w+)["'])?\s*\)/);
+  if (messageMatch) {
+    const type = (messageMatch[2] as "info" | "success" | "warning" | "error") || "info";
+    return <Message key={key} type={type}>{messageMatch[1]}</Message>;
+  }
+
+  const spinnerMatch = trimmed.match(/bpm\.spinner\s*\(\s*(?:text\s*=\s*["']([^"']*)["'])?\s*\)/);
+  if (spinnerMatch) {
+    return <Spinner key={key} size="medium" text={spinnerMatch[1] ?? ""} />;
+  }
+
+  const codeblockMatch = trimmed.match(/bpm\.codeblock\s*\(\s*["']([^"']*)["']\s*(?:,\s*language\s*=\s*["'](\w+)["'])?\s*\)/);
+  if (codeblockMatch) {
+    const code = codeblockMatch[1].replace(/\\n/g, "\n");
+    return <CodeBlock key={key} code={code} language={(codeblockMatch[2] as "python" | "javascript") ?? "python"} />;
+  }
+
+  return null;
+}
+
+function parseCodeToPreview(code: string): React.ReactNode[] {
+  const nodes: React.ReactNode[] = [];
+  code.split("\n").forEach((line, i) => {
+    const node = parseBpmLine(line, i);
+    if (node) nodes.push(node);
+  });
+  return nodes;
+}
 
 const SANDBOX_COMPONENTS = [
   { value: "panel", label: "bpm.panel" },
@@ -40,6 +105,8 @@ function SandboxContent() {
   const theme = (searchParams.get("theme") || searchParams.get("th") || "light").toLowerCase();
   const isDark = theme === "dark";
   const [tableSelectedRow, setTableSelectedRow] = useState<Record<string, unknown> | null>(null);
+  const [mode, setMode] = useState<"selector" | "code">("code");
+  const [code, setCode] = useState(DEFAULT_CODE);
 
   const setParams = (updates: Record<string, string>) => {
     const p = new URLSearchParams(searchParams.toString());
@@ -176,8 +243,86 @@ function SandboxContent() {
           Sandbox
         </h1>
         <p className="text-sm mb-4" style={{ color: "var(--bpm-text-secondary)" }}>
-          Choisissez un composant et ajustez les options pour voir le rendu en direct.
+          Choisissez un composant ou écrivez du code pour composer une page en direct.
         </p>
+        <div className="flex gap-2 mb-4">
+          <button
+            type="button"
+            onClick={() => setMode("code")}
+            className="px-3 py-1.5 rounded-lg text-sm font-medium transition"
+            style={{
+              background: mode === "code" ? "var(--bpm-accent-cyan)" : "var(--bpm-bg-primary)",
+              color: mode === "code" ? "#fff" : "var(--bpm-text-primary)",
+              border: "1px solid var(--bpm-border)",
+            }}
+          >
+            Par code
+          </button>
+          <button
+            type="button"
+            onClick={() => setMode("selector")}
+            className="px-3 py-1.5 rounded-lg text-sm font-medium transition"
+            style={{
+              background: mode === "selector" ? "var(--bpm-accent-cyan)" : "var(--bpm-bg-primary)",
+              color: mode === "selector" ? "#fff" : "var(--bpm-text-primary)",
+              border: "1px solid var(--bpm-border)",
+            }}
+          >
+            Par composant
+          </button>
+        </div>
+
+        {mode === "code" && (
+          <>
+            <div
+              className="rounded-lg border mb-4"
+              style={{
+                background: "var(--bpm-bg-primary)",
+                borderColor: "var(--bpm-border)",
+              }}
+            >
+              <label className="block text-xs font-semibold p-3 pb-1" style={{ color: "var(--bpm-text-secondary)" }}>
+                Code (appels bpm.*)
+              </label>
+              <textarea
+                value={code}
+                onChange={(e) => setCode(e.target.value)}
+                placeholder={DEFAULT_CODE}
+                spellCheck={false}
+                className="w-full p-3 pt-1 font-mono text-sm rounded-b-lg resize-y min-h-[180px] focus:outline-none focus:ring-2"
+                style={{
+                  background: "var(--bpm-code-bg, #f5f5f5)",
+                  borderColor: "var(--bpm-border)",
+                  color: "var(--bpm-text-primary)",
+                }}
+                rows={10}
+              />
+              <p className="text-xs px-3 pb-3" style={{ color: "var(--bpm-text-secondary)" }}>
+                Exemples : bpm.title(&quot;Titre&quot;, level=1), bpm.metric(&quot;CA&quot;, &quot;142 500&quot;), bpm.button(&quot;OK&quot;), bpm.panel(&quot;Titre&quot;, &quot;Contenu&quot;), bpm.message(&quot;Texte&quot;, type=&quot;success&quot;), bpm.spinner(), bpm.codeblock(&quot;code&quot;, language=&quot;python&quot;).
+              </p>
+            </div>
+            <div
+              className="rounded-lg border p-4 mb-6"
+              style={{ background: "var(--bpm-bg-primary)", borderColor: "var(--bpm-border)" }}
+            >
+              <p className="text-xs font-semibold mb-3" style={{ color: "var(--bpm-text-secondary)" }}>
+                Aperçu en direct
+              </p>
+              <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
+                {parseCodeToPreview(code).length ? (
+                  parseCodeToPreview(code).map((node, i) => <React.Fragment key={i}>{node}</React.Fragment>)
+                ) : (
+                  <p className="text-sm" style={{ color: "var(--bpm-text-secondary)" }}>
+                    Écrivez des appels bpm.* ci-dessus pour voir le rendu ici.
+                  </p>
+                )}
+              </div>
+            </div>
+          </>
+        )}
+
+        {mode === "selector" && (
+          <>
         <div
           className="flex flex-wrap gap-4 p-4 rounded-lg border mb-6"
           style={{
@@ -269,6 +414,8 @@ function SandboxContent() {
         <div className="rounded-lg border p-4" style={{ background: "var(--bpm-bg-primary)", borderColor: "var(--bpm-border)" }}>
           {content}
         </div>
+          </>
+        )}
       </div>
     </div>
   );
