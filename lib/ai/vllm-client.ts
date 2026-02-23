@@ -1,6 +1,7 @@
 /**
- * Client HTTP vers vLLM (zéro dépendance OpenAI).
- * Utilisé côté serveur (API routes). En dev avec AI_MOCK=true, retourne des réponses mockées.
+ * Client HTTP vers Ollama (zéro dépendance OpenAI).
+ * Utilisé côté serveur (API routes Next.js uniquement).
+ * En dev avec AI_MOCK=true, retourne des réponses mockées réalistes.
  */
 
 import { AI_CONFIG } from "./config";
@@ -23,7 +24,7 @@ async function sleep(ms: number): Promise<void> {
   return new Promise((r) => setTimeout(r, ms));
 }
 
-/** Réponse mockée pour le développement sans serveur vLLM */
+/** Réponse mockée pour le développement sans serveur Ollama */
 function mockChatResponse(messages: ChatMessage[]): string {
   const lastUser = [...messages].reverse().find((m) => m.role === "user");
   const question = lastUser?.content ?? "";
@@ -31,9 +32,9 @@ function mockChatResponse(messages: ChatMessage[]): string {
     return `Voici les modules actuellement disponibles dans l'application : **Wiki** (documentation interne), **Documents** (contrats et analyses), **IA** (assistant conversationnel). Vous pouvez poser des questions sur les données de ces modules en les sélectionnant dans le panneau de contexte.`;
   }
   if (question.includes("contrat") || question.includes("contract")) {
-    return `En mode mock, les données de contrats ne sont pas chargées. En production, l'assistant aurait accès aux métadonnées des contrats (fournisseur, dates, engagements, niveau de risque) pour répondre à vos questions.`;
+    return `En mode mock, les données de contrats ne sont pas chargées. En production, l'assistant a accès aux métadonnées des contrats (fournisseur, dates, engagements, niveau de risque) pour répondre à vos questions.`;
   }
-  return `Réponse mockée (AI_MOCK=true). Vous avez demandé : « ${question.slice(0, 80)}${question.length > 80 ? "…" : ""} ». Configurez un serveur vLLM avec Mixtral pour des réponses réelles.`;
+  return `Réponse mockée (AI_MOCK=true). Vous avez demandé : « ${question.slice(0, 80)}${question.length > 80 ? "…" : ""} ». Configurez AI_MOCK=false et pointez AI_SERVER_URL vers Ollama pour des réponses réelles.`;
 }
 
 export class VLLMClient {
@@ -42,7 +43,12 @@ export class VLLMClient {
   private timeout: number;
   private maxRetries: number;
 
-  constructor(options?: { baseUrl?: string; mock?: boolean; timeout?: number; maxRetries?: number }) {
+  constructor(options?: {
+    baseUrl?: string;
+    mock?: boolean;
+    timeout?: number;
+    maxRetries?: number;
+  }) {
     this.baseUrl = options?.baseUrl ?? AI_CONFIG.baseUrl.replace(/\/$/, "");
     this.mock = options?.mock ?? AI_CONFIG.mock;
     this.timeout = options?.timeout ?? AI_CONFIG.timeout;
@@ -50,27 +56,25 @@ export class VLLMClient {
   }
 
   /**
-   * POST /v1/chat/completions — chat avec streaming optionnel.
+   * POST /api/chat — chat Ollama sans streaming.
    * Retry x2 en cas d'erreur réseau.
    */
   async chat(
     messages: ChatMessage[],
     opts: VLLMChatOptions = {}
-  ): Promise<{ content: string; stream?: ReadableStream<Uint8Array> }> {
+  ): Promise<{ content: string }> {
     const timeout = opts.timeout ?? this.timeout;
-    const max_tokens = opts.max_tokens ?? 4096;
 
     if (this.mock) {
       await sleep(1200);
-      const content = mockChatResponse(messages);
-      return { content };
+      return { content: mockChatResponse(messages) };
     }
 
-    const url = `${this.baseUrl}/v1/chat/completions`;
+    // Format Ollama : /api/chat
+    const url = `${this.baseUrl}/api/chat`;
     const body = {
       model: AI_CONFIG.model,
       messages: messages.map((m) => ({ role: m.role, content: m.content })),
-      max_tokens,
       stream: false,
     };
 
@@ -86,25 +90,31 @@ export class VLLMClient {
           signal: controller.signal,
         });
         clearTimeout(id);
+
         if (!res.ok) {
           const text = await res.text();
-          throw new Error(`vLLM ${res.status}: ${text.slice(0, 200)}`);
+          throw new Error(`Ollama ${res.status}: ${text.slice(0, 200)}`);
         }
+
+        // Format réponse Ollama : { message: { role, content }, done: true }
         const data = (await res.json()) as {
-          choices?: Array<{ message?: { content?: string } }>;
+          message?: { content?: string };
+          done?: boolean;
         };
-        const content = data.choices?.[0]?.message?.content ?? "";
+        const content = data.message?.content ?? "";
         return { content };
       } catch (err) {
         lastError = err instanceof Error ? err : new Error(String(err));
         if (attempt < this.maxRetries) await sleep(1000 * (attempt + 1));
       }
     }
-    throw lastError ?? new Error("vLLM chat failed");
+    throw lastError ?? new Error("Ollama chat failed");
   }
 
   /**
-   * Chat en streaming — retourne un ReadableStream pour SSE.
+   * Chat en streaming — Ollama envoie du JSON pur ligne par ligne.
+   * Chaque ligne : { message: { content: "..." }, done: false }
+   * Dernière ligne : { done: true }
    */
   async chatStream(
     messages: ChatMessage[],
@@ -112,7 +122,6 @@ export class VLLMClient {
     opts: VLLMChatOptions = {}
   ): Promise<string> {
     const timeout = opts.timeout ?? this.timeout;
-    const max_tokens = opts.max_tokens ?? 4096;
 
     if (this.mock) {
       await sleep(800);
@@ -124,16 +133,17 @@ export class VLLMClient {
       return content;
     }
 
-    const url = `${this.baseUrl}/v1/chat/completions`;
+    // Format Ollama streaming : /api/chat avec stream: true
+    const url = `${this.baseUrl}/api/chat`;
     const body = {
       model: AI_CONFIG.model,
       messages: messages.map((m) => ({ role: m.role, content: m.content })),
-      max_tokens,
       stream: true,
     };
 
     const controller = new AbortController();
     const id = setTimeout(() => controller.abort(), timeout);
+
     const res = await fetch(url, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -141,30 +151,41 @@ export class VLLMClient {
       signal: controller.signal,
     });
     clearTimeout(id);
-    if (!res.ok) throw new Error(`vLLM ${res.status}`);
+
+    if (!res.ok) throw new Error(`Ollama ${res.status}`);
+
     const reader = res.body?.getReader();
     const decoder = new TextDecoder();
     let full = "";
+    let buffer = "";
+
     if (reader) {
       while (true) {
         const { done, value } = await reader.read();
         if (done) break;
-        const chunk = decoder.decode(value, { stream: true });
-        const lines = chunk.split("\n");
+
+        buffer += decoder.decode(value, { stream: true });
+        const lines = buffer.split("\n");
+
+        // Garder la dernière ligne incomplète dans le buffer
+        buffer = lines.pop() ?? "";
+
         for (const line of lines) {
-          if (line.startsWith("data: ") && line !== "data: [DONE]") {
-            try {
-              const json = JSON.parse(line.slice(6)) as {
-                choices?: Array<{ delta?: { content?: string } }>;
-              };
-              const text = json.choices?.[0]?.delta?.content ?? "";
-              if (text) {
-                full += text;
-                onChunk(text);
-              }
-            } catch {
-              // ignore
+          if (!line.trim()) continue;
+          try {
+            // Ollama stream : JSON pur, pas de préfixe "data: "
+            const json = JSON.parse(line) as {
+              message?: { content?: string };
+              done?: boolean;
+            };
+            const text = json.message?.content ?? "";
+            if (text) {
+              full += text;
+              onChunk(text);
             }
+            if (json.done) break;
+          } catch {
+            // ignore les lignes non-JSON
           }
         }
       }
@@ -173,29 +194,37 @@ export class VLLMClient {
   }
 
   /**
-   * GET /health — vérifie que le serveur vLLM est disponible.
+   * GET /api/tags — vérifie qu'Ollama est disponible et liste les modèles.
    */
   async healthCheck(): Promise<VLLMHealthResult> {
     if (this.mock) {
-      return { available: true, model: "mock", latencyMs: 0 };
+      return { available: true, model: "mock (AI_MOCK=true)", latencyMs: 0 };
     }
+
     const start = Date.now();
     try {
-      const res = await fetch(`${this.baseUrl}/health`, {
+      const res = await fetch(`${this.baseUrl}/api/tags`, {
         method: "GET",
         signal: AbortSignal.timeout(5000),
       });
       const latencyMs = Date.now() - start;
+
       if (!res.ok) {
         return { available: false, latencyMs, error: `HTTP ${res.status}` };
       }
-      let model = AI_CONFIG.model;
-      try {
-        const data = (await res.json()) as { model?: string };
-        if (data.model) model = data.model;
-      } catch {
-        // ignore
-      }
+
+      // Ollama retourne { models: [{ name, model, ... }] }
+      const data = (await res.json()) as {
+        models?: Array<{ name: string; model: string }>;
+      };
+
+      // Trouver le modèle configuré dans la liste
+      const configuredModel = AI_CONFIG.model;
+      const found = data.models?.find(
+        (m) => m.name === configuredModel || m.model === configuredModel
+      );
+      const model = found?.name ?? configuredModel;
+
       return { available: true, model, latencyMs };
     } catch (err) {
       return {
