@@ -1,5 +1,6 @@
 import Link from "next/link";
-import { LayoutDashboard, Boxes, Play, FolderOpen, Settings, BookOpen, ExternalLink, Sparkles } from "lucide-react";
+import { Boxes, FolderOpen, Settings, ExternalLink, Sparkles } from "lucide-react";
+import { SandboxIcon } from "@/components/icons/SandboxIcon";
 
 const quickLinks = [
   {
@@ -18,7 +19,7 @@ const quickLinks = [
     href: "/sandbox",
     label: "Sandbox",
     description: "Tester les composants en direct ou écrire du code bpm.* pour composer une page",
-    icon: Play,
+    icon: SandboxIcon,
   },
   {
     href: "/modules",

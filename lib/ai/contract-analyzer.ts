@@ -1,10 +1,11 @@
 /**
- * Pipeline d'analyse IA d'un contrat — appelle vLLM local.
+ * Pipeline d'analyse IA d'un contrat — appelle Ollama (VLLMClient).
  * Extraction de métadonnées structurées (JSON) depuis le texte du contrat.
+ * Règle : analyse à l'upload uniquement ; résultat stocké en base (extracted_data).
  */
 
 import { vllmClient } from "./vllm-client";
-import { AI_CONFIG } from "./config";
+import { TEMPLATE_ANALYSE_CONTRAT } from "./prompt-templates";
 
 export type ContractType = "supplier" | "cgv" | "other";
 
@@ -41,50 +42,58 @@ export interface ExtractedData {
 
 const MAX_TEXT_CHARS = 12000;
 
-function buildExtractionPrompt(text: string, contractType: ContractType): string {
-  const truncated = text.slice(0, MAX_TEXT_CHARS);
-  return `Tu es un assistant spécialisé dans l'analyse de contrats. Extrais les informations structurées du contrat ci-dessous.
-
-Type de contrat : ${contractType}
-
-Retourne UNIQUEMENT un objet JSON valide (pas de texte avant ou après, pas de markdown) avec les champs suivants quand tu peux les identifier (sinon null ou [] selon le cas) :
-- supplier_name (string)
-- buyer_name (string)
-- signatories (array de { name, role, date })
-- contract_date, start_date, end_date, renewal_date (YYYY-MM-DD ou null)
-- termination_notice_days (number)
-- waiver_deadline (YYYY-MM-DD ou null)
-- commitments (array de { type, description, amount?, currency?, deadline?, party_responsible })
-- payment_terms (string)
-- penalty_clauses (array de string)
-- confidentiality, exclusivity (boolean)
-- governing_law, dispute_resolution (string)
-- executive_summary (string, 3-5 phrases)
-- key_risks, key_opportunities (array de string)
-- action_items (array de { action, deadline?, owner })
-- overall_risk_level ("low" | "medium" | "high")
-
-Document :
----
-${truncated}
----`;
+/** Pattern de parsing robuste — extrait le JSON même si le LLM ajoute du texte */
+function extractJSON(response: string): string {
+  const start = response.indexOf("{");
+  const end = response.lastIndexOf("}");
+  if (start === -1 || end === -1) throw new Error("Pas de JSON trouvé dans la réponse");
+  return response.slice(start, end + 1);
 }
 
-function parseJsonResponse(response: string): ExtractedData {
-  const trimmed = response.trim();
-  const jsonMatch = trimmed.match(/\{[\s\S]*\}/);
-  if (!jsonMatch) throw new Error("Réponse LLM sans JSON valide");
-  return JSON.parse(jsonMatch[0]) as ExtractedData;
+function parseAndValidate(raw: string): ExtractedData {
+  const jsonStr = extractJSON(raw);
+  const data = JSON.parse(jsonStr) as Record<string, unknown>;
+
+  const out: ExtractedData = {};
+
+  if (typeof data.supplier_name === "string") out.supplier_name = data.supplier_name;
+  if (typeof data.buyer_name === "string") out.buyer_name = data.buyer_name;
+  if (Array.isArray(data.signatories)) out.signatories = data.signatories as ExtractedData["signatories"];
+  if (typeof data.contract_date === "string") out.contract_date = data.contract_date;
+  if (typeof data.start_date === "string") out.start_date = data.start_date;
+  if (typeof data.end_date === "string") out.end_date = data.end_date;
+  if (typeof data.renewal_date === "string") out.renewal_date = data.renewal_date;
+  if (typeof data.termination_notice_days === "number") out.termination_notice_days = data.termination_notice_days;
+  if (typeof data.waiver_deadline === "string") out.waiver_deadline = data.waiver_deadline;
+  if (Array.isArray(data.commitments)) out.commitments = data.commitments as ExtractedData["commitments"];
+  if (typeof data.payment_terms === "string") out.payment_terms = data.payment_terms;
+  if (Array.isArray(data.penalty_clauses)) out.penalty_clauses = data.penalty_clauses as string[];
+  if (typeof data.confidentiality === "boolean") out.confidentiality = data.confidentiality;
+  if (typeof data.exclusivity === "boolean") out.exclusivity = data.exclusivity;
+  if (typeof data.governing_law === "string") out.governing_law = data.governing_law;
+  if (typeof data.dispute_resolution === "string") out.dispute_resolution = data.dispute_resolution;
+  if (typeof data.executive_summary === "string") out.executive_summary = data.executive_summary;
+  if (Array.isArray(data.key_risks)) out.key_risks = data.key_risks as string[];
+  if (Array.isArray(data.key_opportunities)) out.key_opportunities = data.key_opportunities as string[];
+  if (Array.isArray(data.action_items)) out.action_items = data.action_items as ExtractedData["action_items"];
+  if (data.overall_risk_level === "low" || data.overall_risk_level === "medium" || data.overall_risk_level === "high") {
+    out.overall_risk_level = data.overall_risk_level;
+  }
+
+  // Champs critiques : on assure au minimum des valeurs par défaut pour ne pas planter l'UI
+  if (!out.executive_summary) out.executive_summary = "Résumé non extrait.";
+  if (!out.overall_risk_level) out.overall_risk_level = "medium";
+
+  return out;
 }
 
 export async function analyzeContract(
   contractText: string,
   contractType: ContractType
 ): Promise<ExtractedData> {
-  const prompt = buildExtractionPrompt(contractText, contractType);
-  const { content } = await vllmClient.chat(
-    [{ role: "user", content: prompt }],
-    { max_tokens: 4096 }
-  );
-  return parseJsonResponse(content);
+  const truncated = contractText.slice(0, MAX_TEXT_CHARS);
+  const prompt = TEMPLATE_ANALYSE_CONTRAT({ contractText: truncated, contractType });
+
+  const { content } = await vllmClient.chat([{ role: "user", content: prompt }], { max_tokens: 4096 });
+  return parseAndValidate(content);
 }

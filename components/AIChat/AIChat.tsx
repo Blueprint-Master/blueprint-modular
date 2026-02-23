@@ -2,10 +2,20 @@
 
 import { useState, useRef, useEffect } from "react";
 import { useSession } from "next-auth/react";
-import { Button } from "@/components/bpm";
+import { Button, Checkbox } from "@/components/bpm";
+import { moduleRegistry } from "@/lib/ai/module-registry";
 
 type MessageRole = "user" | "assistant";
 type ChatMessage = { role: MessageRole; content: string };
+type ProviderId = "vllm" | "claude" | "openai" | "gemini" | "grok";
+
+const PROVIDER_LABELS: Record<ProviderId, string> = {
+  vllm: "Ollama",
+  claude: "Claude",
+  openai: "OpenAI",
+  gemini: "Gemini",
+  grok: "Grok",
+};
 
 export function AIChat() {
   const { data: session, status } = useSession();
@@ -13,8 +23,22 @@ export function AIChat() {
   const [input, setInput] = useState("");
   const [streaming, setStreaming] = useState(false);
   const [streamingContent, setStreamingContent] = useState("");
-  const [provider, setProvider] = useState<"claude" | "openai" | "gemini" | "grok">("claude");
+  const [provider, setProvider] = useState<ProviderId>("vllm");
+  const [health, setHealth] = useState<{ available: boolean; model?: string } | null>(null);
+  const [selectedModuleIds, setSelectedModuleIds] = useState<string[]>([]);
+  const [modules, setModules] = useState(moduleRegistry.getAllModules());
   const bottomRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    setModules(moduleRegistry.getAllModules());
+  }, []);
+
+  useEffect(() => {
+    fetch("/api/ai/health")
+      .then((r) => r.json())
+      .then(setHealth)
+      .catch(() => setHealth({ available: false }));
+  }, []);
 
   useEffect(() => {
     bottomRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -32,14 +56,21 @@ export function AIChat() {
       .concat([{ role: "user", content: text }])
       .map((m) => ({ role: m.role, content: m.content }));
 
+    let contextFromModules: string | undefined;
+    if (selectedModuleIds.length > 0) {
+      const { text: ctx } = await moduleRegistry.buildContext(selectedModuleIds);
+      contextFromModules = ctx;
+    }
+
     try {
       const res = await fetch("/api/ai/chat", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           message: text,
-          provider_name: provider,
+          provider_name: provider as string,
           conversation_history: history.slice(0, -1).map((m) => ({ role: m.role, content: m.content })),
+          context_from_modules: contextFromModules,
         }),
       });
       if (!res.ok) {
@@ -101,25 +132,53 @@ export function AIChat() {
   return (
     <div className="flex flex-col h-full min-h-0 rounded-lg border" style={{ borderColor: "var(--bpm-border)", background: "var(--bpm-surface)" }}>
       <div className="flex items-center gap-2 p-2 border-b flex-wrap" style={{ borderColor: "var(--bpm-border)" }}>
+        {health && (
+          <span
+            className="h-2 w-2 rounded-full shrink-0"
+            style={{ background: health.available ? "var(--bpm-accent-mint)" : "var(--bpm-accent)" }}
+            title={health.available ? health.model : "IA indisponible"}
+          />
+        )}
         <span className="text-sm" style={{ color: "var(--bpm-text-secondary)" }}>Modèle:</span>
-        {(["claude", "openai", "gemini", "grok"] as const).map((p) => (
+        {(["vllm", "claude", "openai", "gemini", "grok"] as const).map((p) => (
           <button
             key={p}
             type="button"
             onClick={() => setProvider(p)}
             className={`px-2 py-1 rounded text-sm ${provider === p ? "btn-primary" : "btn-secondary"}`}
           >
-            @{p}
+            {PROVIDER_LABELS[p]}
           </button>
         ))}
-        <span className="text-xs ml-2" style={{ color: "var(--bpm-text-secondary)" }}>
-          Contexte: $wiki $documents $component:metric
-        </span>
+        {health?.model && (
+          <span className="text-xs" style={{ color: "var(--bpm-text-secondary)" }}>
+            {health.model}
+          </span>
+        )}
       </div>
+      {modules.length > 0 && (
+        <div className="flex items-center gap-2 p-2 border-b flex-wrap" style={{ borderColor: "var(--bpm-border)" }}>
+          <span className="text-xs" style={{ color: "var(--bpm-text-secondary)" }}>Contexte:</span>
+          {modules.map((m) => (
+            <label key={m.moduleId} className="flex items-center gap-1.5 text-sm cursor-pointer">
+              <Checkbox
+                checked={selectedModuleIds.includes(m.moduleId)}
+                onChange={(checked) =>
+                  setSelectedModuleIds((prev) =>
+                    checked ? [...prev, m.moduleId] : prev.filter((id) => id !== m.moduleId)
+                  )
+                }
+                label=""
+              />
+              <span style={{ color: "var(--bpm-text-primary)" }}>{m.label}</span>
+            </label>
+          ))}
+        </div>
+      )}
       <div className="flex-1 overflow-y-auto p-4 space-y-4 min-h-0">
         {messages.length === 0 && !streamingContent && (
           <p className="text-sm" style={{ color: "var(--bpm-text-secondary)" }}>
-            Posez une question. Utilisez @claude, @gpt, @gemini ou @grok pour changer de modèle.
+            Posez une question. Ollama (Qwen2.5) par défaut ; choisissez un autre modèle dans la barre ci-dessus si besoin.
           </p>
         )}
         {messages.map((m, i) => (

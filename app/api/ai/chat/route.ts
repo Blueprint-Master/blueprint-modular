@@ -15,7 +15,7 @@ export async function POST(req: Request) {
   const body = await req.json().catch(() => ({}));
   const {
     message,
-    provider_name = "claude",
+    provider_name = "vllm",
     conversation_history = [],
     discussion_id,
     context_from_modules,
