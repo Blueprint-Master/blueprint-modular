@@ -8,6 +8,7 @@ const modules = [
   { href: "/modules/wiki", label: "Module Wiki", description: "Wiki interne et pages documentées.", icon: BookMarked },
   { href: "/modules/ia", label: "Module IA", description: "Assistant et chat IA.", icon: Bot },
   { href: "/modules/documents", label: "Module Documents", description: "Analyse et gestion de documents.", icon: FileText },
+  { href: "/modules/contracts", label: "Base contractuelle", description: "Contrats fournisseurs et CGV : upload, analyse IA, consultation.", icon: FileText },
   { href: "/modules/veille", label: "Module Veille", description: "Veille et flux d’information.", icon: Radio },
   { href: "/modules/notification", label: "Module Notification", description: "Historique des notifications, cloche dans le header, niveaux 1–3.", icon: Bell },
 ];

@@ -19,6 +19,7 @@ model User {
   apiKeys         ApiKey[]
   wikiArticles    WikiArticle[]     @relation("Author")
   documents       Document[]
+  contracts       Contract[]
   aiConversations AiConversation[]
 }
 
@@ -71,6 +72,25 @@ model Document {
   rawText        String?  @db.Text
   createdAt      DateTime @default(now())
   uploadedBy     User     @relation(fields: [uploadedById], references: [id], onDelete: Cascade)
+}
+
+model Contract {
+  id                String    @id @default(cuid())
+  title             String
+  contractType      String    @map("contract_type")   // 'supplier' | 'cgv' | 'other'
+  workspace         String    // 'nxtfood' | 'beam'
+  filePath          String    @map("file_path")
+  fileHash          String    @map("file_hash")
+  originalFilename  String    @map("original_filename")
+  fileSizeBytes     Int       @map("file_size_bytes")
+  status            String    @default("pending")    // 'pending' | 'analyzing' | 'done' | 'error'
+  analysisProgress  Int       @default(0) @map("analysis_progress")
+  extractedData     Json?     @map("extracted_data")
+  createdAt         DateTime  @default(now()) @map("created_at")
+  analyzedAt        DateTime? @map("analyzed_at")
+  updatedAt         DateTime  @updatedAt @map("updated_at")
+  uploadedById      String    @map("uploaded_by_id")
+  uploadedBy        User      @relation(fields: [uploadedById], references: [id], onDelete: Cascade)
 }
 
 model AiConversation {

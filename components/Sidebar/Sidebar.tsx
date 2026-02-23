@@ -5,27 +5,60 @@ import Image from "next/image";
 import { usePathname } from "next/navigation";
 import { useSession, signOut } from "next-auth/react";
 import { useTheme } from "@/components/ThemeProvider";
-import {
-  LayoutDashboard,
-  Boxes,
-  Play,
-  FolderOpen,
-  Settings,
-  Sun,
-  Moon,
-  ChevronLeft,
-} from "lucide-react";
+import { Sun, Moon, ChevronLeft } from "lucide-react";
 import { useState } from "react";
 
+const vb = "0 -960 960 960";
+
+function IconAccueil({ className }: { className?: string }) {
+  return (
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox={vb} fill="currentColor" className={className}>
+      <path d="M540-600v-200h260v200H540ZM160-480v-320h260v320H160Zm380 320v-320h260v320H540Zm-380 0v-200h260v200H160Zm40-360h180v-240H200v240Zm380 320h180v-240H580v240Zm0-440h180v-120H580v120ZM200-200h180v-120H200v120Zm180-320Zm200-120Zm0 200ZM380-320Z" />
+    </svg>
+  );
+}
+
+function IconComposants({ className }: { className?: string }) {
+  return (
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox={vb} fill="currentColor" className={className}>
+      <path d="M652.15-481.54 483.08-650.62l169.07-169.07 169.08 169.07-169.08 169.08Zm-467.54-53.84v-240.01h240.01v240.01H184.61Zm350.77 350.77v-240.01h240.01v240.01H535.38Zm-350.77 0v-240.01h240.01v240.01H184.61Zm40.01-390.77h160v-160h-160v160Zm428.53 38.76 113-113-113-113-113 113 113 113Zm-77.77 312h160v-160h-160v160Zm-350.76 0h160v-160h-160v160Zm160-350.76Zm155.53-74.24Zm-155.53 265Zm190.76 0Z" />
+    </svg>
+  );
+}
+
+function IconModules({ className }: { className?: string }) {
+  return (
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox={vb} fill="currentColor" className={className}>
+      <path d="M120-200v-411.54h113.08V-760h191.54v148.46h110.76V-760h191.54v148.46H840V-200H120Zm40-40h640v-331.54H160V-240Zm113.08-371.54h111.54V-720H273.08v108.46Zm302.3 0h111.54V-720H575.38v108.46ZM160-240h640-640Zm113.08-371.54h111.54-111.54Zm302.3 0h111.54-111.54Z" />
+    </svg>
+  );
+}
+
+function IconSandbox({ className }: { className?: string }) {
+  return (
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox={vb} fill="currentColor" className={className}>
+      <path d="M480-120q-72.23 0-123.04-49.65-50.81-49.66-50.81-121.12v-363.08q-27.61 0-46.88-18.88Q240-691.62 240-719.23v-54.62q0-27.61 19.27-46.88Q278.54-840 306.15-840h346.93q27.61 0 47.27 19.27Q720-801.46 720-773.85v54.62q0 27.61-19.65 46.5-19.66 18.88-47.27 18.88v374.62q-4.62 67.61-54.66 113.42T480-120ZM306.15-693.85h346.93q10.77 0 18.84-7.3 8.08-7.31 8.08-18.08v-54.62q0-10.77-8.08-18.46-8.07-7.69-18.84-7.69H306.15q-10.77 0-18.46 7.69-7.69 7.69-7.69 18.46v54.62q0 10.77 7.69 18.08 7.69 7.3 18.46 7.3Zm268.08 496.16q38.85-37.69 38.85-93.08v-30h-127.7v-40h127.7v-113.85h-127.7v-40h127.7v-139.23H346.15v363.08q0 55.39 39.23 93.08Q424.62-160 480-160t94.23-37.69ZM280-693.85V-800-693.85Z" />
+    </svg>
+  );
+}
+
+function IconParametres({ className }: { className?: string }) {
+  return (
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox={vb} fill="currentColor" className={className}>
+      <path d="m405.38-120-14.46-115.69q-19.15-5.77-41.42-18.16-22.27-12.38-37.88-26.53L204.92-235l-74.61-130 92.23-69.54q-1.77-10.84-2.92-22.34-1.16-11.5-1.16-22.35 0-10.08 1.16-21.19 1.15-11.12 2.92-25.04L130.31-595l74.61-128.46 105.93 44.61q17.92-14.92 38.77-26.92 20.84-12 40.53-18.54L405.38-840h149.24l14.46 116.46q23 8.08 40.65 18.54 17.65 10.46 36.35 26.15l109-44.61L829.69-595l-95.31 71.85q3.31 12.38 3.7 22.73.38 10.34.38 20.42 0 9.31-.77 19.65-.77 10.35-3.54 25.04L827.92-365l-74.61 130-107.23-46.15q-18.7 15.69-37.62 26.92-18.92 11.23-39.38 17.77L554.62-120H405.38ZM440-160h78.23L533-268.31q30.23-8 54.42-21.96 24.2-13.96 49.27-38.27L736.46-286l39.77-68-87.54-65.77q5-17.08 6.62-31.42 1.61-14.35 1.61-28.81 0-15.23-1.61-28.81-1.62-13.57-6.62-29.88L777.77-606 738-674l-102.08 42.77q-18.15-19.92-47.73-37.35-29.57-17.42-55.96-23.11L520-800h-79.77l-12.46 107.54q-30.23 6.46-55.58 20.81-25.34 14.34-50.42 39.42L222-674l-39.77 68L269-541.23q-5 13.46-7 29.23t-2 32.77q0 15.23 2 30.23t6.23 29.23l-86 65.77L222-286l99-42q23.54 23.77 48.88 38.12 25.35 14.34 57.12 22.34L440-160Zm38.92-220q41.85 0 70.93-29.08 29.07-29.07 29.07-70.92t-29.07-70.92Q520.77-580 478.92-580q-42.07 0-71.04 29.08-28.96 29.07-28.96 70.92t28.96 70.92Q436.85-380 478.92-380ZM480-480Z" />
+    </svg>
+  );
+}
+
 const navItems = [
-  { href: "/dashboard", label: "Accueil", icon: LayoutDashboard },
-  { href: "/docs/components", label: "Composants", icon: Boxes },
-  { href: "/modules", label: "Modules", icon: FolderOpen },
-  { href: "/sandbox", label: "Sandbox", icon: Play },
-  { href: "/settings", label: "Paramètres", icon: Settings },
+  { href: "/dashboard", label: "Accueil", icon: IconAccueil },
+  { href: "/docs/components", label: "Composants", icon: IconComposants },
+  { href: "/modules", label: "Modules", icon: IconModules },
+  { href: "/sandbox", label: "Sandbox", icon: IconSandbox },
+  { href: "/settings", label: "Paramètres", icon: IconParametres },
 ];
 
-const LOGO_CANDIDATES = ["/img/logo-bpm-nom.jpg", "/img/logo-bpm-nom.png"];
+const LOGO_CANDIDATES = ["/img/logo-bpm.png", "/img/logo-bpm-nom.jpg", "/img/logo-bpm-nom.png"];
 /** Couleurs fixes du logo (ne varient pas avec le wizard / couleur d'accent) */
 const LOGO_BLUE = "#1a4b8f";
 const LOGO_CYAN = "#00a3e0";
@@ -109,8 +142,8 @@ export function Sidebar() {
       >
         {/* Header : logo + collapse (style type PortfolioManagement : logo centré en haut) */}
         <div
-          className="relative flex flex-col items-center justify-center px-4 py-5 border-b shrink-0"
-          style={{ borderColor: "var(--bpm-sidebar-border)" }}
+          className="relative flex flex-col items-center justify-center px-4 pb-5 border-b shrink-0"
+          style={{ borderColor: "var(--bpm-sidebar-border)", paddingTop: "2.5rem" }}
         >
           <Link href="/dashboard" className="flex flex-col items-center justify-center w-full min-h-[2.5rem] gap-1">
             {collapsed ? (
@@ -118,9 +151,9 @@ export function Sidebar() {
                 <Image
                   src={logoSrc}
                   alt="Blueprint Modular"
-                  width={32}
-                  height={32}
-                  className="h-8 w-auto object-contain"
+                  width={80}
+                  height={80}
+                  className="h-20 w-auto object-contain"
                   priority
                   onError={handleLogoError}
                 />
@@ -133,14 +166,14 @@ export function Sidebar() {
                   <Image
                     src={logoSrc}
                     alt=""
-                    width={120}
-                    height={40}
-                    className="h-10 w-auto object-contain"
+                    width={300}
+                    height={100}
+                    className="h-[6.25rem] w-auto object-contain"
                     priority
                     onError={handleLogoError}
                   />
                 ) : null}
-                <span className="font-bold text-base tracking-tight">
+                <span className="font-bold text-xl tracking-tight">
                   <span style={{ color: LOGO_BLUE }}>Blueprint</span>
                   <span style={{ color: LOGO_CYAN }}> Modular</span>
                 </span>

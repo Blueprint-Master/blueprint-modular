@@ -1,6 +1,8 @@
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import Anthropic from "@anthropic-ai/sdk";
+import { vllmClient } from "@/lib/ai/vllm-client";
+import { SYSTEM_PROMPT_WITH_CONTEXT } from "@/lib/ai/prompt-templates";
 
 export const dynamic = "force-dynamic";
 
@@ -16,11 +18,13 @@ export async function POST(req: Request) {
     provider_name = "claude",
     conversation_history = [],
     discussion_id,
+    context_from_modules,
   } = body as {
     message?: string;
-    provider_name?: "claude" | "openai" | "gemini" | "grok";
+    provider_name?: "claude" | "openai" | "gemini" | "grok" | "vllm";
     conversation_history?: { role: string; content: string }[];
     discussion_id?: string;
+    context_from_modules?: string;
   };
 
   if (!message || typeof message !== "string") {
@@ -32,6 +36,29 @@ export async function POST(req: Request) {
   const stream = new ReadableStream({
     async start(controller) {
       try {
+        if (provider_name === "vllm") {
+          const systemContent = context_from_modules
+            ? SYSTEM_PROMPT_WITH_CONTEXT(context_from_modules)
+            : undefined;
+          const messages = [
+            ...(systemContent ? [{ role: "system" as const, content: systemContent }] : []),
+            ...conversation_history.map((m) => ({ role: m.role as "user" | "assistant", content: m.content })),
+            { role: "user" as const, content: message },
+          ];
+          try {
+            await vllmClient.chatStream(messages, (chunk) => {
+              controller.enqueue(encoder.encode(`data: ${JSON.stringify({ type: "chunk", t: chunk })}\n\n`));
+            });
+            controller.enqueue(
+              encoder.encode(`data: ${JSON.stringify({ type: "done", discussion_id: discussion_id ?? "new" })}\n\n`)
+            );
+          } catch (vllmErr) {
+            const errMsg = vllmErr instanceof Error ? vllmErr.message : "vLLM error";
+            controller.enqueue(encoder.encode(`data: ${JSON.stringify({ type: "error", message: errMsg })}\n\n`));
+          }
+          controller.close();
+          return;
+        }
         if (provider_name === "claude") {
           const apiKey = process.env.ANTHROPIC_API_KEY;
           if (!apiKey) {

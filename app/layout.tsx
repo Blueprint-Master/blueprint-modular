@@ -11,9 +11,13 @@ export const metadata: Metadata = {
   description:
     "Briques Python/React pour vos interfaces métier. Sans HTML ni JavaScript.",
   manifest: "/manifest",
+  icons: {
+    icon: "/img/icon-pwa-192.png",
+    apple: "/img/icon-pwa-512.png",
+  },
   themeColor: [
-    { media: "(prefers-color-scheme: light)", color: "#1a4b8f" },
-    { media: "(prefers-color-scheme: dark)", color: "#1a4b8f" },
+    { media: "(prefers-color-scheme: light)", color: "#ffffff" },
+    { media: "(prefers-color-scheme: dark)", color: "#1a1a1a" },
   ],
   appleWebApp: {
     capable: true,
@@ -30,9 +34,9 @@ export default function RootLayout({
   return (
     <html lang="fr" suppressHydrationWarning>
       <head>
-        <link rel="apple-touch-icon" href="/img/logo-bpm-nom.jpg" />
+        <link rel="apple-touch-icon" href="/img/icon-pwa-512.png" />
         <meta name="apple-mobile-web-app-capable" content="yes" />
-        <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+        <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
         <script
           dangerouslySetInnerHTML={{
             __html: `(function(){var t=localStorage.getItem('bpm-theme');document.documentElement.setAttribute('data-theme',t==='dark'?'dark':'light');var a=localStorage.getItem('bpm-accent-color');if(a&&/^#[0-9A-Fa-f]{6}$/.test(a))document.documentElement.style.setProperty('--bpm-accent',a);})();`,

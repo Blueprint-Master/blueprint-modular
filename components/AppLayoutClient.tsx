@@ -4,6 +4,9 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { Sidebar } from "@/components/Sidebar";
 import { NotificationBell } from "@/components/NotificationBell";
+import { AIAssistant } from "@/components/ai/AIAssistant";
+import { ModuleRegistryInit } from "@/components/ai/ModuleRegistryInit";
+import { AssistantProvider } from "@/lib/ai/assistant-context";
 
 function getBreadcrumbFromPathname(pathname: string): { label: string; href?: string }[] {
   const segments = pathname.split("/").filter(Boolean);
@@ -23,6 +26,7 @@ function getBreadcrumbFromPathname(pathname: string): { label: string; href?: st
       ia: "Module IA",
       veille: "Module Veille",
       documents: "Module Documents",
+      contracts: "Base contractuelle",
       ibkr: "Module IBKR",
       "analyse-document": "Module Documents",
     };
@@ -52,7 +56,7 @@ export function AppLayoutClient({ children }: { children: React.ReactNode }) {
       <Sidebar />
       <div className="flex-1 flex flex-col min-h-screen md:ml-64">
         <header
-          className="sticky top-0 z-30 flex h-14 shrink-0 items-center justify-between px-4"
+          className="sticky top-0 z-30 flex h-14 shrink-0 items-center justify-between px-3 sm:px-4 gap-2"
           style={{ background: "var(--bpm-bg-primary)" }}
         >
           <nav aria-label="Fil d'Ariane" className="doc-breadcrumb doc-breadcrumb-header text-sm truncate min-w-0">
@@ -79,10 +83,14 @@ export function AppLayoutClient({ children }: { children: React.ReactNode }) {
             <NotificationBell />
           </div>
         </header>
-        <main className="app-main flex-1 pt-4 pb-20 md:pb-4 px-4 min-h-0">
+        <main className="app-main flex-1 pt-4 pb-20 md:pb-4 px-3 sm:px-4 min-h-0">
           {children}
         </main>
       </div>
+      <AssistantProvider>
+        <ModuleRegistryInit />
+        <AIAssistant />
+      </AssistantProvider>
     </div>
   );
 }

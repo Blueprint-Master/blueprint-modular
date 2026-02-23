@@ -57,7 +57,7 @@ export default function DashboardPage() {
       </h2>
       <div
         className="grid gap-4 mb-10"
-        style={{ gridTemplateColumns: "repeat(auto-fill, minmax(260px, 1fr))" }}
+        style={{ gridTemplateColumns: "repeat(auto-fill, minmax(min(260px, 100%), 1fr))" }}
       >
         {quickLinks.map((item) => {
           const Icon = item.icon;

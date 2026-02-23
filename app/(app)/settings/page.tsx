@@ -256,12 +256,12 @@ export default function SettingsPage() {
                 {keys.map((k) => (
                   <li
                     key={k.id}
-                    className="flex items-center justify-between p-3 rounded-lg border"
+                    className="flex flex-wrap items-center gap-2 p-3 rounded-lg border"
                     style={{ borderColor: "var(--bpm-border)", background: "var(--bpm-surface)" }}
                   >
-                    <span style={{ color: "var(--bpm-text-primary)" }}>{k.provider}</span>
-                    <span className="text-sm font-mono" style={{ color: "var(--bpm-text-secondary)" }}>{k.keyMasked}</span>
-                    <Button variant="outline" onClick={() => deleteKey(k.id)}>Supprimer</Button>
+                    <span className="shrink-0" style={{ color: "var(--bpm-text-primary)" }}>{k.provider}</span>
+                    <span className="text-sm font-mono min-w-0 truncate flex-1" style={{ color: "var(--bpm-text-secondary)" }}>{k.keyMasked}</span>
+                    <Button variant="outline" onClick={() => deleteKey(k.id)} className="shrink-0 w-full sm:w-auto">Supprimer</Button>
                   </li>
                 ))}
               </ul>

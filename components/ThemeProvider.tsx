@@ -17,6 +17,8 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
   const [theme, setTheme] = useState<Theme>("light");
   const [mounted, setMounted] = useState(false);
 
+  const themeColorHex = theme === "dark" ? "#1a1a1a" : "#ffffff";
+
   useEffect(() => {
     const stored = localStorage.getItem("bpm-theme") as Theme | null;
     const value = stored === "dark" || stored === "light" ? stored : "light";
@@ -24,6 +26,12 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
     document.documentElement.setAttribute("data-theme", value);
     setMounted(true);
   }, []);
+
+  useEffect(() => {
+    if (!mounted) return;
+    const meta = document.querySelector('meta[name="theme-color"]');
+    if (meta) meta.setAttribute("content", themeColorHex);
+  }, [mounted, themeColorHex]);
 
   const toggleTheme = useCallback(() => {
     const next = theme === "light" ? "dark" : "light";

@@ -62,7 +62,7 @@ export function Modal({
 
   const modalContent = (
     <div
-      className={`bpm-modal-backdrop fixed inset-0 flex items-center justify-center p-8 transition-opacity ${
+      className={`bpm-modal-backdrop fixed inset-0 flex items-center justify-center p-4 sm:p-8 transition-opacity ${
         !isOpen ? "opacity-0 invisible pointer-events-none" : ""
       }`}
       style={{
