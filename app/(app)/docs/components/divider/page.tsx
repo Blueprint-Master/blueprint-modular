@@ -8,10 +8,14 @@ import { getPrevNext } from "@/lib/docPages";
 export default function DocDividerPage() {
   const [label, setLabel] = useState("");
   const [orientation, setOrientation] = useState<"horizontal" | "vertical">("horizontal");
+  const [thickness, setThickness] = useState(1);
+  const [color, setColor] = useState("var(--bpm-border)");
 
   const parts: string[] = [];
   if (label.trim() !== "") parts.push(`label="${label.trim().replace(/"/g, '\\"')}"`);
   if (orientation !== "horizontal") parts.push(`orientation="${orientation}"`);
+  if (thickness !== 1) parts.push(`thickness=${thickness}`);
+  if (color !== "var(--bpm-border)") parts.push(`color="${color.replace(/"/g, '\\"')}"`);
   const pythonCode = parts.length ? `bpm.divider(${parts.join(", ")})` : "bpm.divider()";
   const { prev, next } = getPrevNext("divider");
 
@@ -36,7 +40,7 @@ export default function DocDividerPage() {
         <div className="sandbox-preview">
           <div className="w-full" style={orientation === "vertical" ? { display: "flex", gap: "1rem", alignItems: "stretch", minHeight: 80 } : undefined}>
             <span className="text-sm" style={{ color: "var(--bpm-text-secondary)" }}>Au-dessus</span>
-            <Divider label={label.trim() || undefined} orientation={orientation} />
+            <Divider label={label.trim() || undefined} orientation={orientation} thickness={thickness} color={color} />
             <span className="text-sm" style={{ color: "var(--bpm-text-secondary)" }}>En dessous</span>
           </div>
         </div>
@@ -58,6 +62,25 @@ export default function DocDividerPage() {
               value={label}
               onChange={(e) => setLabel(e.target.value)}
               placeholder="ex. ou"
+            />
+          </div>
+          <div className="sandbox-control-group">
+            <label>thickness</label>
+            <input
+              type="number"
+              min={1}
+              max={20}
+              value={thickness}
+              onChange={(e) => setThickness(Math.max(1, Math.min(20, parseInt(e.target.value, 10) || 1)))}
+            />
+          </div>
+          <div className="sandbox-control-group">
+            <label>color</label>
+            <input
+              type="text"
+              value={color}
+              onChange={(e) => setColor(e.target.value)}
+              placeholder="var(--bpm-border)"
             />
           </div>
         </div>
@@ -98,6 +121,20 @@ export default function DocDividerPage() {
             <td>Orientation de la ligne.</td>
           </tr>
           <tr>
+            <td><code>thickness</code></td>
+            <td><code>number</code></td>
+            <td>1</td>
+            <td>Non</td>
+            <td>Épaisseur de la ligne en pixels.</td>
+          </tr>
+          <tr>
+            <td><code>color</code></td>
+            <td><code>string</code></td>
+            <td>var(--bpm-border)</td>
+            <td>Non</td>
+            <td>Couleur de la ligne (CSS : variable, hex, rgb, etc.).</td>
+          </tr>
+          <tr>
             <td><code>className</code></td>
             <td><code>string</code></td>
             <td>—</td>
@@ -110,6 +147,7 @@ export default function DocDividerPage() {
       <h2 className="text-lg font-semibold mt-8 mb-2">Exemples</h2>
       <CodeBlock code="bpm.divider()" language="python" />
       <CodeBlock code='bpm.divider(label="ou")' language="python" />
+      <CodeBlock code="bpm.divider(thickness=3, color=\"var(--bpm-accent)\")" language="python" />
 
       <nav className="doc-pagination">
         {prev ? <Link href={"/docs/components/" + prev}>← bpm.{prev}</Link> : <span />}
