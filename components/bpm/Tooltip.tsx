@@ -50,6 +50,26 @@ export function Tooltip({
     setCoords({ top, left });
   };
 
+  const getTransform = (): string => {
+    switch (position) {
+      case "top":
+      case "bottom":
+        return "translate(-50%, 0)";
+      case "top-start":
+      case "bottom-start":
+        return "translate(0, 0)";
+      case "top-end":
+      case "bottom-end":
+        return "translate(-100%, 0)";
+      case "left":
+        return "translate(-100%, -50%)";
+      case "right":
+        return "translate(0, -50%)";
+      default:
+        return "translate(-50%, 0)";
+    }
+  };
+
   const show = () => {
     setVisible(true);
     requestAnimationFrame(updatePosition);
@@ -62,7 +82,7 @@ export function Tooltip({
       style={{
         left: coords.left,
         top: coords.top,
-        transform: "translate(-50%, 0)",
+        transform: getTransform(),
         background: "var(--bpm-text-primary)",
         color: "var(--bpm-bg-primary)",
       }}
