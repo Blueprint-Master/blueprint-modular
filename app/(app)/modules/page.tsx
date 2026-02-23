@@ -24,24 +24,43 @@ export default function ModulesPage() {
           <span className="doc-badge doc-badge-category">Vue d&apos;ensemble</span>
         </div>
       </div>
-      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+      <div
+        className="grid gap-4 mb-10"
+        style={{ gridTemplateColumns: "repeat(auto-fill, minmax(260px, 1fr))" }}
+      >
         {modules.map((mod) => {
           const Icon = mod.icon;
           return (
             <Link
               key={mod.href}
               href={mod.href}
-              className="flex flex-col p-4 rounded-lg border transition hover:opacity-90"
+              className="block p-4 rounded-xl border transition hover:border-[var(--bpm-accent-cyan)] hover:shadow-md"
               style={{
-                background: "var(--bpm-bg-secondary)",
+                background: "var(--bpm-bg-primary)",
                 borderColor: "var(--bpm-border)",
-                color: "var(--bpm-text-primary)",
+                color: "inherit",
+                textDecoration: "none",
               }}
             >
-              <Icon className="w-8 h-8 mb-2 shrink-0" style={{ color: "var(--bpm-accent)" }} aria-hidden />
-              <span className="font-semibold block">{mod.label}</span>
-              <span className="text-sm mt-1 block" style={{ color: "var(--bpm-text-secondary)" }}>
+              <div className="flex items-center gap-3 mb-2">
+                <span
+                  className="flex items-center justify-center w-10 h-10 rounded-lg shrink-0"
+                  style={{ background: "var(--bpm-bg-secondary)", color: "var(--bpm-accent-cyan)" }}
+                >
+                  <Icon className="w-5 h-5" aria-hidden />
+                </span>
+                <span className="font-semibold" style={{ color: "var(--bpm-text-primary)" }}>
+                  {mod.label}
+                </span>
+              </div>
+              <p className="text-sm" style={{ color: "var(--bpm-text-secondary)", marginLeft: "52px" }}>
                 {mod.description}
+              </p>
+              <span
+                className="inline-block mt-2 text-sm font-medium"
+                style={{ color: "var(--bpm-accent-cyan)", marginLeft: "52px" }}
+              >
+                Ouvrir →
               </span>
             </Link>
           );
