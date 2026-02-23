@@ -147,7 +147,7 @@ export default function DocDividerPage() {
       <h2 className="text-lg font-semibold mt-8 mb-2">Exemples</h2>
       <CodeBlock code="bpm.divider()" language="python" />
       <CodeBlock code='bpm.divider(label="ou")' language="python" />
-      <CodeBlock code="bpm.divider(thickness=3, color=\"var(--bpm-accent)\")" language="python" />
+      <CodeBlock code={'bpm.divider(thickness=3, color="var(--bpm-accent)")'} language="python" />
 
       <nav className="doc-pagination">
         {prev ? <Link href={"/docs/components/" + prev}>← bpm.{prev}</Link> : <span />}
