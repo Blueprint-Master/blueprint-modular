@@ -59,10 +59,11 @@ body {
   z-index: 100;
   background: var(--bg);
 }
-.doc-nav a { color: var(--muted); text-decoration: none; font-size: 0.95rem; }
+/* Taille unique pour tous les liens et le brand du header doc */
+.doc-nav a { color: var(--muted); text-decoration: none; font-size: 0.9375rem; }
 .doc-nav a:hover { color: var(--accent); }
-.doc-nav .brand { display: inline-flex; align-items: center; gap: 0.5rem; font-weight: 600; color: inherit; }
-.doc-nav .brand .brand-logo { height: 32px; width: auto; max-width: 48px; object-fit: contain; flex-shrink: 0; }
+.doc-nav .brand { display: inline-flex; align-items: center; gap: 0.5rem; font-weight: 600; color: inherit; font-size: 0.9375rem; }
+.doc-nav .brand .brand-logo { height: 28px; width: auto; max-width: 44px; object-fit: contain; flex-shrink: 0; }
 .doc-nav .brand .word-blueprint { color: var(--bleu-profond); }
 .doc-nav .brand .word-modular { color: var(--bleu-cyan); }
 .nav-burger {
@@ -92,7 +93,8 @@ body {
 .doc-sidebar a:hover { color: var(--accent); }
 .doc-sidebar a.active { color: var(--accent); font-weight: 500; }
 .doc-main { flex: 1; padding: 2rem 2.5rem 3rem; min-width: 0; }
-.doc-main h1 { font-size: 1.75rem; font-weight: 700; margin-bottom: 0.5rem; letter-spacing: -0.02em; }
+/* Titre de page unique sur toutes les pages doc (Get started, Components, API Reference, etc.) */
+.doc-main h1 { font-size: 1.75rem; font-weight: 700; margin-bottom: 0.5rem; letter-spacing: -0.02em; line-height: 1.3; }
 .doc-main .lead { color: var(--muted); font-size: 1rem; margin-bottom: 1.5rem; }
 .doc-main h2 { font-size: 1.1rem; font-weight: 600; margin: 2rem 0 0.75rem; }
 .doc-main p { margin-bottom: 0.75rem; font-size: 0.95rem; }

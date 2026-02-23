@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Chat — API Reference — Blueprint Modular</title>
+  <title>header — API Reference — Blueprint Modular</title>
   <link rel="icon" href="../favicon.ico" />
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="../doc.css" />
@@ -36,7 +36,7 @@
       <a href="title.html">title</a>
       <a href="header.html">header</a>
       <a href="subheader.html">subheader</a>
-      <a href="caption.html">caption</a>
+      <a href="header.html" class="active">header</a>
       <a href="code.html">code</a>
       <a href="latex.html">latex</a>
       <a href="badge.html">badge</a>
@@ -49,7 +49,7 @@
       <a href="panels.html">Panels</a>
       <a href="media.html">Media</a>
       <a href="status.html">Status</a>
-      <a href="chat.html" class="active">Chat</a>
+      <a href="chat.html">Chat</a>
       <a href="config.html">Config</a>
       <a href="connection.html">Connexion aux données</a>
       <h3>Modules</h3>
@@ -71,30 +71,21 @@
       <a href="../versions.html">Versions</a>
     </aside>
     <main class="doc-main">
-      <h1>Chat</h1>
-      <p class="lead">Composants de chat (Oliver) : <code>bpm.chat.message</code>, <code>bpm.chat.input</code>, <code>bpm.write_stream</code>.</p>
+      <nav class="breadcrumb"><a href="../index.html">Accueil</a> › <a href="text.html">Texte</a> › header</nav>
+      <h1>header</h1>
+      <p class="lead">Affiche un en-tête de section.</p>
       <h2>Référence API</h2>
-      <table><thead><tr><th>Fonction</th><th>BPM</th></tr></thead>
+      <table>
+        <thead><tr><th>Fonction</th><th>BPM</th></tr></thead>
         <tbody>
-          <tr><td>chat_message()</td><td>bpm.chat.message()</td></tr>
-          <tr><td>chat_input()</td><td>bpm.chat.input()</td></tr>
-          <tr><td>write_stream()</td><td>bpm.write_stream()</td></tr>
+          <tr><td>header()</td><td>bpm.header()</td></tr>
         </tbody>
       </table>
-      <h2>Exemples</h2>
+      <h2>Exemple</h2>
       <pre><code>import bpm
 
-with bpm.chat.message("user"):
-    bpm.write("Bonjour !")
-
-with bpm.chat.message("assistant"):
-    bpm.write("Réponse de l'assistant.")
-
-user_input = bpm.chat.input("Votre message")
-if user_input:
-    with bpm.chat.message("assistant"):
-        bpm.write_stream(generate_response(user_input))</code></pre>
-      <p><a href="../components.html">Catalogue des composants</a> — composants conversationnels.</p>
+bpm.header("Section")</code></pre>
+      <p><a href="../components.html">Voir le catalogue des composants</a>.</p>
       <section class="help-cta"><p>Une question ? Consultez la <a href="../knowledge-base/faq.html">FAQ</a> et la <a href="../knowledge-base/reste-a-faire.html">roadmap</a>.</p></section>
       <footer class="site-footer" style="margin-top:2rem;">
         <div class="footer-links">

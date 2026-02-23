@@ -70,6 +70,7 @@ Aucune. **Prochaine priorité** : Gestion des droits owner/admin/user sur chaque
 - useTheme() retourne une valeur par défaut si hors ThemeProvider pour éviter erreur au prerender.
 - Middleware protège /dashboard, /docs, /modules, /settings (redirection vers /login si non authentifié).
 - Auth : seul Google configuré ; Apple et X nécessitent des clés dans .env.local.
+- **Module d'authentification (add-in)** : lorsqu'un add-in Auth sera développé (au même titre que Wiki, IA, Documents, Veille), il doit **reprendre le modèle de Myportfolio.beam-consulting** (https://myportfolio.beam-consulting.fr) — flux, UX et comportement à aligner sur cette référence.
 
 ---
 
@@ -91,5 +92,5 @@ Aucune. **Prochaine priorité** : Gestion des droits owner/admin/user sur chaque
 - Phase 4 : 404 stylée, Prev/Next doc, dark mode blocs code, avatar Sidebar en next/image, uploads/ dans .gitignore.
 - Fichiers : .env.local.example, .eslintrc.json, health-check.sh, lib/encrypt.ts.
 - **Phase 2 continuation** : 15 pages doc composants avec structure complète ; index docs/components en grille ; lib/docPages.ts ; styles highlight wiki. Wiki : API search/published, arborescence, [slug] Markdown, new/edit. Documents : pdf-parse + Claude, GET/DELETE [id], alertes 30j. IA : AIChat + /api/ai/chat SSE. CSS global (--bpm-*).
-- **Déploiement production** : Vercel (`npm run deploy` / `npx vercel --prod --yes`), URL https://blueprint-modular.vercel.app. Variables d’env à configurer dans le projet Vercel (DATABASE_URL, NEXTAUTH_*, GOOGLE_*, ANTHROPIC_API_KEY).
+- **Déploiement production** : **VPS Ubuntu uniquement**, alimenté par commit Git. Pas de Vercel. Procédure : push `origin/master` puis `.\scripts\deploy-vps-remote.ps1`. Vitrine + doc statiques → blueprint-modular.com / docs.blueprint-modular.com ; app Next.js (Wiki, modules) → app.blueprint-modular.com (voir deploy/DEPLOY_APP.md).
 - **Nettoyage** : suppression dossier dupliqué `blueprint-modular/`, `BLUEPRINT_CURSOR_PROMPT_V2.md`, `AUDIT_STATUS.md` ; imports inutiles retirés (Link, useSession sur modules/documents) ; `blueprint-modular/` ajouté au .gitignore.

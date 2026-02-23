@@ -1,10 +1,13 @@
 # Déploiement en production — Blueprint Modular
 
-Ce document décrit le déploiement **en production** : site statique (vitrine + doc) sur le VPS OVH, et options pour l’app Next.js (Docker, Vercel).
+**Production = VPS Ubuntu uniquement**, alimenté par commit Git. Aucun déploiement Vercel.
+
+- **Vitrine** (blueprint-modular.com) et **doc statique** (docs.blueprint-modular.com) : déployés par `deploy-from-git.sh` sur le VPS.
+- **App Next.js** (Wiki, modules, sandbox) : optionnellement sur le même VPS (app.blueprint-modular.com), voir **deploy/DEPLOY_APP.md**.
 
 ---
 
-## Déploiement du site statique (vitrine + documentation) — VPS OVH actuel
+## Déploiement (vitrine + doc + app) — VPS OVH
 
 Le site public **blueprint-modular.com** (vitrine) et **docs.blueprint-modular.com** (documentation) sont des sites **statiques** déployés sur un VPS OVH. Pas de Next.js ni Node sur le serveur pour ces domaines.
 
@@ -164,53 +167,22 @@ docker-compose up -d
 
 ---
 
-## Option B : Vercel (app Next.js, sans serveur)
+## Vercel — non utilisé
 
-1. **Connexion Vercel (une fois)**  
-   À la racine du projet :
-   ```bash
-   npx vercel login
-   ```
-   Suivre le lien dans le terminal pour te connecter (GitHub, GitLab ou email).
+Le déploiement production se fait **uniquement sur le VPS Ubuntu** (alimenté par commit Git). Vercel n'est pas utilisé.
 
-2. **Base de données PostgreSQL**  
-   Créer une base (gratuite) sur [Neon](https://neon.tech) ou [Vercel Postgres](https://vercel.com/storage/postgres), et récupérer l’URL `DATABASE_URL`.
-
-3. **Variables d’environnement**  
-   Les définir dans le dashboard Vercel (Project → Settings → Environment Variables) **avant** le premier déploiement, ou les renseigner quand la CLI le demande :
-   - `DATABASE_URL` (PostgreSQL)
-   - `NEXTAUTH_SECRET` (ex. `openssl rand -hex 32`)
-   - `NEXTAUTH_URL` = l’URL de prod (ex. `https://blueprint-modular-xxx.vercel.app`) — à mettre à jour après le 1er déploiement
-   - `GOOGLE_CLIENT_ID` et `GOOGLE_CLIENT_SECRET` (créer une app OAuth Google et ajouter l’URL de callback Vercel)
-
-4. **Déployer**
-   ```bash
-   npm run deploy
-   ```
-   Ou : `npx vercel --prod`. La première fois, choisir “Create new project” et accepter les options par défaut.
-
-5. **Migrations sur la base de prod**  
-   Une fois l’URL de prod connue, appliquer les migrations (avec `DATABASE_URL` pointant vers la base de prod) :
-   ```bash
-   npx prisma migrate deploy --schema=prisma/schema.prisma
-   ```
-
-6. **OAuth Google**  
-   Dans la console Google Cloud : ajouter dans “URIs de redirection autorisés” l’URL `https://TON_PROJECT.vercel.app/api/auth/callback/google`, et mettre `NEXTAUTH_URL` dans Vercel à cette même URL.
-
-**Déploiements suivants** : `npm run deploy` à chaque fois, ou connecter le repo GitHub à Vercel pour des déploiements automatiques à chaque push.
 
 ---
 
-## Variables d’environnement (VPS ou Vercel)
+## Variables d’environnement (VPS)
 
-À configurer sur la plateforme (Vercel, Docker, etc.) :
+À configurer sur le VPS (fichier `.env`, voir `deploy/app-env.example`) :
 
 | Variable | Obligatoire | Description |
 |----------|--------------|-------------|
-| `DATABASE_URL` | Oui | URL PostgreSQL (ex. Neon, Supabase, Vercel Postgres) |
+| `DATABASE_URL` | Oui | URL PostgreSQL  |
 | `NEXTAUTH_SECRET` | Oui | Secret pour les sessions (ex. `openssl rand -hex 32`) |
-| `NEXTAUTH_URL` | Oui | URL publique de l’app (ex. `https://ton-app.vercel.app`) |
+| `NEXTAUTH_URL` | Oui | URL publique de l’app (ex. `https://app.blueprint-modular.com`) |
 | `GOOGLE_CLIENT_ID` | Oui | OAuth Google |
 | `GOOGLE_CLIENT_SECRET` | Oui | OAuth Google |
 | `ENCRYPTION_SECRET` | Optionnel | Chiffrement des clés API (défaut : `NEXTAUTH_SECRET`) |
@@ -220,17 +192,6 @@ Après premier déploiement, exécuter les migrations Prisma sur la base :
 ```bash
 npx prisma migrate deploy --schema=prisma/schema.prisma
 ```
-
----
-
-## Récap : Vercel (détails)
-
-1. Pousser le code sur GitHub/GitLab/Bitbucket.
-2. Sur [vercel.com](https://vercel.com), **Add New Project** → importer le repo.
-3. Configurer les variables d’environnement (voir tableau ci-dessus).
-4. Déployer. Vercel détecte Next.js et lance `next build`.
-
-**Note :** Les fichiers uploadés (module Documents) sont stockés localement dans `uploads/`. Sur Vercel (serverless), ce dossier est **éphémère**. Pour une persistance en production, il faudra brancher un stockage (Vercel Blob, S3, etc.) plus tard.
 
 ---
 

@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Text — API Reference — Blueprint Modular</title>
+  <title>Texte — API Reference — Blueprint Modular</title>
   <link rel="icon" href="../favicon.ico" />
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="../doc.css" />
@@ -27,17 +27,20 @@
       <a href="../get-started/installation.html">Installation</a>
       <a href="../get-started/fundamentals.html">Fundamentals</a>
       <a href="../get-started/first-app.html">First app</a>
-      <h3>Components</h3>
+      <h3>Composants</h3>
       <a href="../components.html">Catalogue des composants</a>
-      <h3>Modules</h3>
-      <a href="https://blueprint-modular.com/modules.html">Catalogue des modules</a>
-      <a href="../modules/wiki.html">Module Wiki</a>
-      <a href="../modules/ia.html">Module IA</a>
-      <a href="../modules/veille.html">Module Veille</a>
-      <a href="../modules/ibkr.html">Module IBKR</a>
-      <a href="../modules/analyse-document.html">Module Documents</a>
-      <h3>API Reference</h3>
-      <a href="text.html" class="active">Text</a>
+      <a href="text.html" class="active">Texte</a>
+      <a href="write.html">write</a>
+      <a href="markdown.html">markdown</a>
+      <a href="text-fn.html">text</a>
+      <a href="title.html">title</a>
+      <a href="header.html">header</a>
+      <a href="subheader.html">subheader</a>
+      <a href="caption.html">caption</a>
+      <a href="code.html">code</a>
+      <a href="latex.html">latex</a>
+      <a href="badge.html">badge</a>
+      <a href="html.html">html</a>
       <a href="data.html">Data</a>
       <a href="metrics.html">Metrics</a>
       <a href="charts.html">Charts</a>
@@ -49,6 +52,13 @@
       <a href="chat.html">Chat</a>
       <a href="config.html">Config</a>
       <a href="connection.html">Connexion aux données</a>
+      <h3>Modules</h3>
+      <a href="https://blueprint-modular.com/modules.html">Catalogue des modules</a>
+      <a href="../modules/wiki.html">Module Wiki</a>
+      <a href="../modules/ia.html">Module IA</a>
+      <a href="../modules/veille.html">Module Veille</a>
+      <a href="../modules/ibkr.html">Module IBKR</a>
+      <a href="../modules/analyse-document.html">Module Documents</a>
       <h3>Deploy</h3>
       <a href="../deploy/concepts.html">Concepts</a>
       <a href="../deploy/platforms.html">Platforms</a>
@@ -61,38 +71,21 @@
       <a href="../versions.html">Versions</a>
     </aside>
     <main class="doc-main">
-      <h1>Text</h1>
-      <p class="lead">Composants d'affichage de texte : <code>bpm.write</code>, <code>bpm.markdown</code>, <code>bpm.title</code>, <code>bpm.header</code>, <code>bpm.subheader</code>, <code>bpm.caption</code>, <code>bpm.code</code>, <code>bpm.latex</code>, <code>bpm.badge</code>, <code>bpm.html</code>.</p>
-      <h2>Référence API</h2>
-      <table>
-        <thead><tr><th>Fonction</th><th>BPM</th></tr></thead>
-        <tbody>
-          <tr><td>write()</td><td>bpm.write()</td></tr>
-          <tr><td>markdown()</td><td>bpm.markdown()</td></tr>
-          <tr><td>text()</td><td>bpm.text()</td></tr>
-          <tr><td>title()</td><td>bpm.title()</td></tr>
-          <tr><td>header()</td><td>bpm.header()</td></tr>
-          <tr><td>subheader()</td><td>bpm.subheader()</td></tr>
-          <tr><td>caption()</td><td>bpm.caption()</td></tr>
-          <tr><td>code()</td><td>bpm.code()</td></tr>
-          <tr><td>latex()</td><td>bpm.latex()</td></tr>
-          <tr><td>badge()</td><td>bpm.badge()</td></tr>
-          <tr><td>html()</td><td>bpm.html()</td></tr>
-        </tbody>
-      </table>
-      <h2>Exemples</h2>
-      <pre><code>import bpm
-
-bpm.title("Mon titre")
-bpm.header("Section")
-bpm.subheader("Sous-section")
-bpm.markdown("Du **gras** et de l'*italique*.")
-bpm.write("Texte brut ou objet Python.")
-bpm.caption("Légende discrète.")
-bpm.code("def hello():\\n    print('Hello')", language="python")
-bpm.latex(r"e^{i\\pi} + 1 = 0")
-bpm.badge("Nouveau", type="info")</code></pre>
-      <h2>Preview live</h2>
+      <h1>Texte</h1>
+      <p class="lead">Composants d'affichage de texte. Une page par composant :</p>
+      <ul>
+        <li><a href="write.html">write</a> — texte brut ou objet Python</li>
+        <li><a href="markdown.html">markdown</a> — contenu Markdown</li>
+        <li><a href="text-fn.html">text</a> — texte simple</li>
+        <li><a href="title.html">title</a> — titre (niveaux 1 à 4)</li>
+        <li><a href="header.html">header</a> — en-tête de section</li>
+        <li><a href="subheader.html">subheader</a> — sous-titre</li>
+        <li><a href="caption.html">caption</a> — légende</li>
+        <li><a href="code.html">code</a> — bloc de code</li>
+        <li><a href="latex.html">latex</a> — formules LaTeX</li>
+        <li><a href="badge.html">badge</a> — badge / étiquette</li>
+        <li><a href="html.html">html</a> — HTML brut</li>
+      </ul>
       <p><a href="../components.html">Voir le catalogue des composants</a> (texte, titre, markdown, code).</p>
       <p class="doc-footer" style="margin-top:1rem;"><small>Variables CSS : <code>--bpm-font-family</code>, <code>--bpm-color-text</code>, <code>--bpm-color-muted</code>.</small></p>
       <section class="help-cta"><p>Une question ? Consultez la <a href="../knowledge-base/faq.html">FAQ</a> et la <a href="../knowledge-base/reste-a-faire.html">roadmap</a>.</p></section>
