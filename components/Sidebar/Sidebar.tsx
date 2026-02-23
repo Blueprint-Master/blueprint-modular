@@ -25,12 +25,18 @@ const navItems = [
   { href: "/settings", label: "Paramètres", icon: Settings },
 ];
 
+const LOGO_SRC = "/img/logo-bpm-nom.jpg";
+/** Couleurs fixes du logo (ne varient pas avec le wizard / couleur d'accent) */
+const LOGO_BLUE = "#1a4b8f";
+const LOGO_CYAN = "#00a3e0";
+
 export function Sidebar() {
   const pathname = usePathname();
   const { data: session } = useSession();
   const { theme, toggleTheme } = useTheme();
   const [collapsed, setCollapsed] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
+  const [logoError, setLogoError] = useState(false);
 
   const NavIcon = ({
     icon: Icon,
@@ -102,27 +108,35 @@ export function Sidebar() {
         >
           <Link href="/dashboard" className="flex flex-col items-center justify-center w-full min-h-[2.5rem] gap-1">
             {collapsed ? (
-              <Image
-                src="/Logo BPM.png"
-                alt="Blueprint Modular"
-                width={32}
-                height={32}
-                className="h-8 w-auto object-contain"
-                priority
-              />
+              !logoError ? (
+                <Image
+                  src={LOGO_SRC}
+                  alt="Blueprint Modular"
+                  width={32}
+                  height={32}
+                  className="h-8 w-auto object-contain"
+                  priority
+                  onError={() => setLogoError(true)}
+                />
+              ) : (
+                <span className="font-bold text-sm truncate" style={{ color: LOGO_BLUE }}>BPM</span>
+              )
             ) : (
               <>
-                <Image
-                  src="/Logo BPM.png"
-                  alt=""
-                  width={120}
-                  height={40}
-                  className="h-10 w-auto object-contain"
-                  priority
-                />
+                {!logoError ? (
+                  <Image
+                    src={LOGO_SRC}
+                    alt=""
+                    width={120}
+                    height={40}
+                    className="h-10 w-auto object-contain"
+                    priority
+                    onError={() => setLogoError(true)}
+                  />
+                ) : null}
                 <span className="font-bold text-base tracking-tight">
-                  <span style={{ color: "var(--bpm-accent)" }}>Blueprint</span>
-                  <span style={{ color: "var(--bpm-accent-cyan)" }}> Modular</span>
+                  <span style={{ color: LOGO_BLUE }}>Blueprint</span>
+                  <span style={{ color: LOGO_CYAN }}> Modular</span>
                 </span>
               </>
             )}
