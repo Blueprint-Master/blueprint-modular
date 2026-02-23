@@ -102,6 +102,10 @@ export function NotificationBell() {
     if (isMobile) setAnimActive(true);
   }, [isOpen, isClosing, isMobile]);
 
+  const requestClose = useCallback(() => {
+    setIsClosing(true);
+  }, []);
+
   useEffect(() => {
     if (isOpen && !isClosing && !isMobile) {
       const id = requestAnimationFrame(() => setAnimActive(true));
@@ -117,10 +121,6 @@ export function NotificationBell() {
     document.addEventListener("mousedown", h);
     return () => document.removeEventListener("mousedown", h);
   }, [isOpen, isMobile, requestClose]);
-
-  const requestClose = useCallback(() => {
-    setIsClosing(true);
-  }, []);
 
   const handleAnimEnd = (e: React.AnimationEvent) => {
     if (e.animationName === "notification-dock-close") {
