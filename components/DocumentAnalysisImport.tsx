@@ -139,7 +139,7 @@ export function DocumentAnalysisImport({
           aria-label={dropLabel}
         >
           <div className="flex flex-col items-center gap-3">
-            <DocIcon className="w-14 h-14 opacity-60" style={{ color: "var(--bpm-text-secondary)" }} />
+            <div className="w-14 h-14 opacity-60" style={{ color: "var(--bpm-text-secondary)" }}><DocIcon className="w-full h-full" /></div>
             <p className="text-sm max-w-md">{dropLabel}</p>
             {selectedFiles.length > 0 && (
               <p className="text-xs" style={{ color: "var(--bpm-accent-cyan)" }}>
