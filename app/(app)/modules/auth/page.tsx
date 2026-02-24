@@ -66,7 +66,7 @@ export default function AuthModulePage() {
             className="text-sm font-medium"
             style={{ color: "var(--bpm-accent-cyan)" }}
           >
-            Voir la page de connexion →
+            Aperçu
           </Link>
         </div>
         <div
@@ -88,9 +88,16 @@ export default function AuthModulePage() {
             <li>Bouton Google bleu #4285f4, bouton principal couleur accent</li>
             <li>Thème sombre supporté (html.theme-dark)</li>
           </ul>
-          <span className="text-sm" style={{ color: "var(--bpm-text-secondary)" }}>
+          <span className="text-sm block mb-3" style={{ color: "var(--bpm-text-secondary)" }}>
             Utilisé dans le projet myportfolio.beam-consulting
           </span>
+          <Link
+            href="/login"
+            className="text-sm font-medium"
+            style={{ color: "var(--bpm-accent-cyan)" }}
+          >
+            Aperçu
+          </Link>
         </div>
         <div
           className="p-4 rounded-xl border"
@@ -110,9 +117,16 @@ export default function AuthModulePage() {
             <li>Même composant <code className="text-xs">LoginPage</code> avec <code className="text-xs">showEmailOption=false</code></li>
             <li>Page épurée, un seul call-to-action</li>
           </ul>
-          <span className="text-sm" style={{ color: "var(--bpm-text-secondary)" }}>
+          <span className="text-sm block mb-3" style={{ color: "var(--bpm-text-secondary)" }}>
             Disponible en passant <code className="text-xs">showEmailOption=false</code>
           </span>
+          <Link
+            href="/login?showEmailOption=false"
+            className="text-sm font-medium"
+            style={{ color: "var(--bpm-accent-cyan)" }}
+          >
+            Aperçu
+          </Link>
         </div>
       </div>
 
@@ -166,26 +180,7 @@ export default function AuthModulePage() {
             Se déconnecter
           </button>
         </div>
-      ) : (
-        <div
-          className="max-w-md p-6 rounded-xl border"
-          style={{
-            background: "var(--bpm-bg-secondary)",
-            borderColor: "var(--bpm-border)",
-          }}
-        >
-          <p className="mb-4" style={{ color: "var(--bpm-text-secondary)" }}>
-            Vous n&apos;êtes pas connecté. Connectez-vous pour accéder à votre session.
-          </p>
-          <Link
-            href="/login"
-            className="inline-flex items-center justify-center px-4 py-2 rounded-lg font-medium text-white transition"
-            style={{ background: "var(--bpm-accent)" }}
-          >
-            Se connecter
-          </Link>
-        </div>
-      )}
+      ) : null}
     </div>
   );
 }

@@ -1,8 +1,6 @@
 "use client";
 
-import React, { useMemo } from "react";
-
-export interface LineChartDatum {
+import React, { useMemo } from "react";export interface LineChartDatum {
   x: number | string;
   y: number;
 }

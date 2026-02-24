@@ -3,9 +3,11 @@
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
+import { useSession } from "next-auth/react";
 import { Button, Panel, Toggle } from "@/components/bpm";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
+import { getGuestWikiArticles, addGuestArticle } from "@/lib/wiki-guest";
 
 function slugFromTitle(title: string): string {
   return title
@@ -17,6 +19,7 @@ function slugFromTitle(title: string): string {
 
 export default function WikiNewPage() {
   const router = useRouter();
+  const { data: session } = useSession();
   const [title, setTitle] = useState("");
   const [content, setContent] = useState("");
   const [slug, setSlug] = useState("");
@@ -28,11 +31,16 @@ export default function WikiNewPage() {
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    fetch("/api/wiki")
-      .then((r) => (r.ok ? r.json() : []))
-      .then((data) => setParents(Array.isArray(data) ? data : []))
-      .catch(() => setParents([]));
-  }, []);
+    if (session) {
+      fetch("/api/wiki", { credentials: "include" })
+        .then((r) => (r.ok ? r.json() : []))
+        .then((data) => setParents(Array.isArray(data) ? data : []))
+        .catch(() => setParents([]));
+    } else {
+      const guest = getGuestWikiArticles();
+      setParents(guest.map((a) => ({ id: a.id, title: a.title, slug: a.slug })));
+    }
+  }, [session]);
 
   const handleTitleChange = (v: string) => {
     setTitle(v);
@@ -44,16 +52,30 @@ export default function WikiNewPage() {
     setError(null);
     setSaving(true);
     try {
+      const finalSlug = (slug || slugFromTitle(title)).replace(/\s+/g, "-").toLowerCase().replace(/[^a-z0-9-]/g, "");
+      if (!session) {
+        const article = addGuestArticle({
+          title,
+          content,
+          slug: finalSlug,
+          parentId,
+          isPublished,
+          author: { name: "Invité" },
+        });
+        router.push(`/modules/wiki/${article.slug}`);
+        return;
+      }
       const res = await fetch("/api/wiki", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           title,
           content,
-          slug: slug || slugFromTitle(title),
+          slug: finalSlug,
           parentId: parentId || undefined,
           isPublished,
         }),
+        credentials: "include",
       });
       if (!res.ok) {
         const data = await res.json().catch(() => ({}));

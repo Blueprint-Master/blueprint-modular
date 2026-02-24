@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useNotificationHistory } from "@/contexts/NotificationHistoryContext";
 import { getNotificationLevel } from "@/lib/notificationLevels";
+import { CodeBlock } from "@/components/bpm";
 
 export default function NotificationModulePage() {
   const { addNotification } = useNotificationHistory();
@@ -36,6 +37,47 @@ export default function NotificationModulePage() {
       <p className="mb-6" style={{ color: "var(--bpm-text-secondary)", maxWidth: "60ch" }}>
         La cloche affiche les notifications récentes (stockées dans le navigateur). Chaque notification a un niveau 1, 2 ou 3 ; le filtre dans <Link href="/settings" className="underline" style={{ color: "var(--bpm-accent-cyan)" }}>Paramètres → Général</Link> permet de n&apos;afficher que les niveaux suffisamment prioritaires.
       </p>
+
+      <h2 className="text-lg font-semibold mt-8 mb-2" style={{ color: "var(--bpm-text-primary)" }}>Comment implanter le module</h2>
+      <p className="mb-3" style={{ color: "var(--bpm-text-secondary)", maxWidth: "60ch" }}>
+        Le module repose sur un <strong style={{ color: "var(--bpm-text-primary)" }}>contexte React</strong> et une <strong style={{ color: "var(--bpm-text-primary)" }}>cloche dans le header</strong> déjà intégrée au layout. À faire dans votre app :
+      </p>
+      <ul className="list-disc pl-5 mb-4 space-y-1" style={{ color: "var(--bpm-text-secondary)", maxWidth: "60ch" }}>
+        <li>Envelopper l&apos;arbre de l&apos;app avec <code className="px-1.5 py-0.5 rounded text-sm" style={{ background: "var(--bpm-bg-secondary)", color: "var(--bpm-text-primary)" }}>NotificationHistoryProvider</code> (ou utiliser <code className="px-1.5 py-0.5 rounded text-sm" style={{ background: "var(--bpm-bg-secondary)", color: "var(--bpm-text-primary)" }}>NotificationProviders</code> qui inclut aussi le toast).</li>
+        <li>Dans tout composant enfant, utiliser <code className="px-1.5 py-0.5 rounded text-sm" style={{ background: "var(--bpm-bg-secondary)", color: "var(--bpm-text-primary)" }}>useNotificationHistory()</code> pour obtenir <code className="px-1.5 py-0.5 rounded text-sm" style={{ background: "var(--bpm-bg-secondary)", color: "var(--bpm-text-primary)" }}>addNotification</code>.</li>
+        <li>Appeler <code className="px-1.5 py-0.5 rounded text-sm" style={{ background: "var(--bpm-bg-secondary)", color: "var(--bpm-text-primary)" }}>addNotification(&#123; message, type?, title?, pageName? &#125;)</code>. Le niveau (1–3) est déduit automatiquement via <code className="px-1.5 py-0.5 rounded text-sm" style={{ background: "var(--bpm-bg-secondary)", color: "var(--bpm-text-primary)" }}>getNotificationLevel</code> si vous ne le fournissez pas.</li>
+      </ul>
+      <p className="mb-2" style={{ color: "var(--bpm-text-secondary)", maxWidth: "60ch" }}>
+        Fichiers principaux : <code className="px-1.5 py-0.5 rounded text-sm" style={{ background: "var(--bpm-bg-secondary)", color: "var(--bpm-text-primary)" }}>contexts/NotificationHistoryContext.tsx</code>, <code className="px-1.5 py-0.5 rounded text-sm" style={{ background: "var(--bpm-bg-secondary)", color: "var(--bpm-text-primary)" }}>lib/notificationLevels.ts</code>, <code className="px-1.5 py-0.5 rounded text-sm" style={{ background: "var(--bpm-bg-secondary)", color: "var(--bpm-text-primary)" }}>components/NotificationBell.tsx</code>.
+      </p>
+      <div className="mb-6">
+        <CodeBlock
+          code={`import { useNotificationHistory } from "@/contexts/NotificationHistoryContext";
+import { getNotificationLevel } from "@/lib/notificationLevels";
+
+function MyComponent() {
+  const { addNotification } = useNotificationHistory();
+
+  const handleSave = () => {
+    addNotification({
+      message: "Enregistrement réussi.",
+      type: "success",
+      title: "Sauvegarde",
+      pageName: "Mon écran",
+    });
+    // Niveau déduit automatiquement (ex. 2 pour success)
+  };
+
+  const handleError = () => {
+    const payload = { message: "Échec.", type: "error" as const, title: "Erreur", pageName: null };
+    addNotification({ ...payload, level: getNotificationLevel(payload) });
+  };
+
+  return <button onClick={handleSave}>Sauvegarder</button>;
+}`}
+          language="tsx"
+        />
+      </div>
 
       <h2 className="text-lg font-semibold mt-6 mb-2" style={{ color: "var(--bpm-text-primary)" }}>Tester la cloche</h2>
       <div

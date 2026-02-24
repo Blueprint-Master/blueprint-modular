@@ -136,6 +136,11 @@ export default function DocumentsPage() {
         disabled={uploading}
         onAnalyze={handleAnalyze}
       />
+      {uploading && (
+        <div className="flex items-center justify-center gap-2 py-4" style={{ color: "var(--bpm-text-secondary)" }}>
+          <Spinner size="small" text="Analyse en cours..." />
+        </div>
+      )}
 
       <div className="documents-header mt-8">
         <h2 className="text-lg font-semibold mb-2" style={{ color: "var(--bpm-text-primary)" }}>Documents</h2>

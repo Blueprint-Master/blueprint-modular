@@ -3,19 +3,9 @@
 import { useState, useEffect, useCallback } from "react";
 import Link from "next/link";
 import { useSession } from "next-auth/react";
+import { getGuestWikiArticles, deleteGuestArticle, type GuestWikiArticle } from "@/lib/wiki-guest";
 
-interface WikiArticle {
-  id: string;
-  title: string;
-  slug: string;
-  parentId: string | null;
-  isPublished: boolean;
-  updatedAt: string;
-  author?: { name: string | null };
-  authorId?: string;
-  canEdit?: boolean;
-  children?: WikiArticle[];
-}
+type WikiArticle = GuestWikiArticle;
 
 function buildTree(items: WikiArticle[], parentId: string | null = null): WikiArticle[] {
   return items
@@ -66,13 +56,19 @@ export default function WikiPage() {
 
   const fetchArticles = useCallback(() => {
     setLoading(true);
+    if (!session) {
+      const guest = getGuestWikiArticles();
+      setArticles(guest);
+      setLoading(false);
+      return;
+    }
     const url = search ? `/api/wiki?search=${encodeURIComponent(search)}` : "/api/wiki";
-    fetch(url)
+    fetch(url, { credentials: "include" })
       .then((r) => (r.ok ? r.json() : []))
       .then((data) => setArticles(Array.isArray(data) ? data : []))
       .catch(() => setArticles([]))
       .finally(() => setLoading(false));
-  }, [search]);
+  }, [search, session]);
 
   useEffect(() => {
     fetchArticles();
@@ -82,12 +78,25 @@ export default function WikiPage() {
     e.preventDefault();
     e.stopPropagation();
     if (!confirm("Supprimer cet article ?")) return;
-    const res = await fetch(`/api/wiki/${encodeURIComponent(slug)}`, { method: "DELETE" });
+    if (!session) {
+      if (deleteGuestArticle(slug)) setArticles((prev) => prev.filter((a) => a.slug !== slug));
+      return;
+    }
+    const res = await fetch(`/api/wiki/${encodeURIComponent(slug)}`, { method: "DELETE", credentials: "include" });
     if (res.ok) setArticles((prev) => prev.filter((a) => a.slug !== slug));
   };
 
-  const tree = buildTree(articles);
-  const displayed = articles.filter((a) => a.parentId === selectedParent);
+  const filteredArticles =
+    !session && search.trim()
+      ? articles.filter(
+          (a) =>
+            a.title.toLowerCase().includes(search.toLowerCase()) ||
+            a.slug.toLowerCase().includes(search.toLowerCase()) ||
+            (a.content && a.content.toLowerCase().includes(search.toLowerCase()))
+        )
+      : articles;
+  const tree = buildTree(filteredArticles);
+  const displayed = filteredArticles.filter((a) => a.parentId === selectedParent);
 
   return (
     <div className="wiki-page doc-page">
@@ -103,15 +112,9 @@ export default function WikiPage() {
       </div>
       <div className="wiki-header">
         <h2 className="text-lg font-semibold mb-2" style={{ color: "var(--bpm-text-primary)" }}>Articles</h2>
-        {session ? (
-          <Link href="/modules/wiki/new" className="btn-primary">
-            + Nouvel article
-          </Link>
-        ) : (
-          <span className="text-sm" style={{ color: "var(--bpm-text-secondary)" }}>
-            <Link href="/login" className="underline" style={{ color: "var(--bpm-accent-cyan)" }}>Connexion</Link> requise pour créer un article.
-          </span>
-        )}
+        <Link href="/modules/wiki/new" className="btn-primary">
+          + Nouvel article
+        </Link>
       </div>
       <div className="wiki-search">
         <input
@@ -126,13 +129,9 @@ export default function WikiPage() {
       ) : articles.length === 0 ? (
         <div className="wiki-empty">
           <p>Le wiki est vide pour l&apos;instant.</p>
-          {session ? (
-            <Link href="/modules/wiki/new">Créer le premier article →</Link>
-          ) : (
-            <p className="text-sm mt-2" style={{ color: "var(--bpm-text-secondary)" }}>
-              <Link href="/login" className="underline" style={{ color: "var(--bpm-accent-cyan)" }}>Connectez-vous</Link> pour créer des articles.
-            </p>
-          )}
+          <Link href="/modules/wiki/new" className="text-sm mt-2 inline-block" style={{ color: "var(--bpm-accent-cyan)" }}>
+            Créer le premier article →
+          </Link>
         </div>
       ) : (
         <div className="wiki-layout">

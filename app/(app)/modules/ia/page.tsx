@@ -18,7 +18,7 @@ export default function IAPage() {
           </div>
           <h1 style={{ margin: 0 }}>{ASSISTANT_NAME}</h1>
           <p className="doc-description" style={{ margin: "0.25rem 0 0" }}>
-            Assistant conversationnel (Ollama par défaut, Claude en fallback). Contexte Wiki et Documents.
+            Assistant conversationnel (Ollama par défaut, Claude en fallback). Contexte Wiki et Documents. Ollama ⏱ 1 min) &gt; Voir exactement ce que l&apos;on a fait pour Oliver dans Portfolio Manager
           </p>
           <div className="doc-meta" style={{ marginTop: 4 }}>
             <span className="doc-badge doc-badge-category">Ollama</span>

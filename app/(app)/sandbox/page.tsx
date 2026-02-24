@@ -90,9 +90,16 @@ function parseBpmLine(line: string, key: number): React.ReactNode {
     return <Metric key={key} label={metricMatch[1]} value={metricMatch[2]} delta={delta} border={border} />;
   }
 
-  const buttonMatch = trimmed.match(/bpm\.button\s*\(\s*["']([^"']*)["']\s*\)/);
+  const buttonMatch = trimmed.match(/bpm\.button\s*\(\s*["']([^"']*)["']\s*(?:,\s*variant\s*=\s*["'](\w+)["'])?\s*(?:,\s*size\s*=\s*["'](\w+)["'])?\s*(?:,\s*disabled\s*=\s*(true|True|false|False))?\s*\)/);
   if (buttonMatch) {
-    return <Button key={key}>{buttonMatch[1]}</Button>;
+    const variant = (buttonMatch[2] as "primary" | "secondary" | "outline" | undefined) ?? "primary";
+    const size = (buttonMatch[3] as "small" | "medium" | "large" | undefined) ?? "medium";
+    const disabled = buttonMatch[4]?.toLowerCase() === "true";
+    return (
+      <Button key={key} variant={variant} size={size} disabled={disabled}>
+        {buttonMatch[1]}
+      </Button>
+    );
   }
 
   const panelMatch = trimmed.match(/bpm\.panel\s*\(\s*["']([^"']*)["']\s*,\s*["']([^"']*)["']\s*(?:,\s*variant\s*=\s*["'](\w+)["'])?\s*\)/);
@@ -1254,8 +1261,9 @@ function SandboxContent() {
                 {aiGenerating ? "Génération…" : "✦ Générer"}
               </button>
               {aiGenerating && (
-                <span className="text-xs" style={{ color: "var(--bpm-text-secondary)" }}>
-                  Qwen2.5 génère votre page (~30-60s)…
+                <span className="inline-flex items-center gap-2" style={{ color: "var(--bpm-text-secondary)" }}>
+                  <Spinner size="small" text="" className="shrink-0" />
+                  <span className="text-xs">Qwen2.5 génère votre page (~30-60s)…</span>
                 </span>
               )}
               {!aiGenerating && (
@@ -1264,6 +1272,18 @@ function SandboxContent() {
                 </span>
               )}
             </div>
+            {aiGenerating && (
+              <div className="mt-6 pt-4 border-t" style={{ borderColor: "var(--bpm-border)" }}>
+                <p className="text-xs font-semibold mb-3" style={{ color: "var(--bpm-text-secondary)" }}>
+                  Génération en cours…
+                </p>
+                <div className="flex flex-col gap-3">
+                  <Skeleton variant="text" className="w-full" />
+                  <Skeleton variant="text" className="w-[85%]" />
+                  <Skeleton variant="rectangular" className="w-full" style={{ minHeight: 120 }} />
+                </div>
+              </div>
+            )}
           </div>
         )}
       </div>

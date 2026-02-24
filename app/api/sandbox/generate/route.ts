@@ -2,6 +2,8 @@ import { getSessionOrTestUser, isSkipAuthForTest } from "@/lib/auth";
 import { vllmClient } from "@/lib/ai/vllm-client";
 
 export const dynamic = "force-dynamic";
+/** Évite le 504 : la génération IA peut prendre 30–60s. Sur Vercel Pro, maxDuration peut être augmenté (ex. 300) dans vercel.json si besoin. */
+export const maxDuration = 60;
 
 const SYSTEM_PROMPT_GENERATOR = `Tu es un générateur de code pour Blueprint Modular.
 Tu réponds TOUJOURS en français.
@@ -70,6 +72,10 @@ export async function POST(req: Request) {
   const encoder = new TextEncoder();
   const stream = new ReadableStream({
     async start(controller) {
+      // Envoyer un premier octet immédiatement pour éviter le 504 (proxy/gateway timeout avant première réponse).
+      controller.enqueue(
+        encoder.encode(`data: ${JSON.stringify({ type: "start", message: "Connexion au modèle…" })}\n\n`)
+      );
       try {
         await vllmClient.chatStream(
           [

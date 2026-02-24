@@ -23,7 +23,6 @@ function AIHeaderIconButtons() {
     width: 40,
     height: 40,
     padding: 0,
-    border: "1px solid var(--bpm-border)",
     borderRadius: 8,
     background: "var(--bpm-bg-primary)",
     color: "var(--bpm-text-primary)",

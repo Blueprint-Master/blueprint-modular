@@ -174,8 +174,8 @@ body {
   color: rgba(255, 255, 255, 0.5);
 }
 
-/* Doc page: largeur utile (réduit la marge blanche à droite) */
-.doc-page { max-width: 1400px; width: 100%; }
+/* Doc page: largeur utile (réduit la marge blanche à droite), responsive */
+.doc-page { max-width: 1400px; width: 100%; min-width: 0; box-sizing: border-box; }
 
 /* Doc page header */
 .doc-page-header { margin-bottom: 32px; }
@@ -254,13 +254,31 @@ body {
 [data-theme="dark"] .wiki-draft { background: rgba(245,158,11,0.3); color: #fcd34d; }
 @media (max-width: 768px) { .wiki-layout { grid-template-columns: 1fr; } .wiki-sidebar { border-right: none; border-bottom: 1px solid var(--bpm-border); padding: 0 0 16px; } }
 
-/* Documents */
-.documents-page { max-width: 1200px; }
-.documents-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px; }
+/* Main content: évite débordement horizontal sur PWA / mobile */
+.app-main { min-width: 0; max-width: 100%; overflow-x: hidden; }
+
+/* Documents — responsive PWA */
+.documents-page { max-width: 1200px; width: 100%; min-width: 0; box-sizing: border-box; }
+.documents-page .doc-page-header .doc-description { word-wrap: break-word; overflow-wrap: break-word; max-width: 100%; }
+.documents-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px; flex-wrap: wrap; gap: 8px; }
 .documents-filters { margin-bottom: 16px; }
-.documents-filters input { padding: 8px 12px; border: 1px solid var(--bpm-border); border-radius: 8px; width: 300px; max-width: 100%; font-size: 14px; background: var(--bpm-surface); color: var(--bpm-text-primary); }
-.documents-empty { text-align: center; padding: 64px; color: var(--bpm-text-secondary); }
+.documents-filters input { padding: 8px 12px; border: 1px solid var(--bpm-border); border-radius: 8px; width: 300px; max-width: 100%; font-size: 14px; background: var(--bpm-surface); color: var(--bpm-text-primary); box-sizing: border-box; }
+.documents-empty { text-align: center; padding: 64px 16px; color: var(--bpm-text-secondary); }
 .documents-empty .btn-primary { margin-top: 16px; }
+/* Table documents : défilement horizontal sur petit écran */
+.documents-page .bpm-table-wrapper { max-width: 100%; overflow-x: auto; -webkit-overflow-scrolling: touch; }
+@media (max-width: 640px) {
+  .documents-page .doc-page-header + div [role="button"] { padding-left: 1rem; padding-right: 1rem; }
+  .documents-page .doc-page-header + div [role="button"] p { font-size: 0.8125rem; }
+  .documents-filters input { width: 100%; }
+}
+
+/* Base contractuelle — même traitement que documents / IA */
+.contracts-page { max-width: 1200px; width: 100%; min-width: 0; box-sizing: border-box; }
+.contracts-page .bpm-selectbox { border: none !important; }
+.contracts-page .bpm-table-wrapper { max-width: 100%; overflow-x: auto; -webkit-overflow-scrolling: touch; }
+.contracts-page .doc-page-header + div { margin-top: 0.5rem; }
+.doc-import-analyze-button { border: none; }
 
 /* bpm.markdown — rendu Markdown (titres, listes, code, --- = hr) */
 .bpm-markdown { font-size: 15px; line-height: 1.6; }

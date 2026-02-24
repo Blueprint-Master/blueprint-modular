@@ -112,7 +112,7 @@ export function DocumentAnalysisImport({
         <h1>{title}</h1>
         <p className="doc-description">{description}</p>
       </div>
-      <div className="mt-6">
+      <div className="mt-4">
         <input
           ref={inputRef}
           type="file"
@@ -130,7 +130,7 @@ export function DocumentAnalysisImport({
           onDragOver={handleDragOver}
           onDragLeave={handleDragLeave}
           onKeyDown={(e) => (e.key === "Enter" || e.key === " ") && handleClick()}
-          className="rounded-xl border-2 border-dashed py-12 px-6 text-center cursor-pointer transition-colors"
+          className="rounded-xl border-2 border-dashed py-10 px-6 text-center cursor-pointer transition-colors min-w-0 max-w-full"
           style={{
             borderColor: isDragging ? "var(--bpm-accent-cyan)" : "var(--bpm-border)",
             background: isDragging ? "var(--bpm-bg-secondary)" : "var(--bpm-bg-primary)",
@@ -141,6 +141,15 @@ export function DocumentAnalysisImport({
           <div className="flex flex-col items-center gap-3">
             <div className="w-14 h-14 opacity-60" style={{ color: "var(--bpm-text-secondary)" }}><DocIcon className="w-full h-full" /></div>
             <p className="text-sm max-w-md">{dropLabel}</p>
+            <button
+              type="button"
+              className="doc-import-pj-button"
+              onClick={(e) => { e.stopPropagation(); handleClick(); }}
+              style={{ color: "var(--bpm-accent-cyan)", background: "none", border: "none", cursor: "pointer", fontSize: "0.875rem", textDecoration: "underline" }}
+              aria-label="Parcourir les fichiers (PJ)"
+            >
+              Parcourir les fichiers (PJ)
+            </button>
             {selectedFiles.length > 0 && (
               <p className="text-xs" style={{ color: "var(--bpm-accent-cyan)" }}>
                 {selectedFiles.length} fichier{selectedFiles.length > 1 ? "s" : ""} sélectionné{selectedFiles.length > 1 ? "s" : ""}
@@ -153,7 +162,7 @@ export function DocumentAnalysisImport({
             type="button"
             onClick={handleSubmit}
             disabled={disabled || selectedFiles.length === 0}
-            className="px-4 py-2 rounded-lg font-medium text-sm disabled:opacity-50 disabled:cursor-not-allowed"
+            className="px-4 py-2 rounded-lg font-medium text-sm disabled:opacity-50 disabled:cursor-not-allowed doc-import-analyze-button"
             style={{
               background: "var(--bpm-accent-cyan)",
               color: "var(--bpm-bg)",

@@ -28,6 +28,8 @@ export { Message } from "./Message";
 export type { MessageProps, MessageType } from "./Message";
 export { Spinner } from "./Spinner";
 export type { SpinnerProps, SpinnerSize } from "./Spinner";
+export { SpinnerDot } from "./SpinnerDot";
+export type { SpinnerDotProps } from "./SpinnerDot";
 export { Tooltip } from "./Tooltip";
 export type { TooltipProps, TooltipPlacement } from "./Tooltip";
 export { Selectbox } from "./Selectbox";

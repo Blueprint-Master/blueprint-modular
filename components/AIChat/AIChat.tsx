@@ -6,38 +6,32 @@ import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import rehypeHighlight from "rehype-highlight";
 import { getDollarSuggestions } from "./ai-suggestions";
+import { SpinnerDot } from "@/components/bpm";
 import "./AIChat.css";
 
 const PROVIDER_ALIAS: Record<string, string> = {
   claude: "claude",
-  gpt: "openai",
-  chatgpt: "openai",
-  gemini: "gemini",
-  grok: "grok",
   ollama: "vllm",
   qwen: "qwen",
   mistral: "mistral",
 };
 
 const AT_COLORS: Record<string, string> = {
-  openai: "#10A37F",
   claude: "#F97316",
   vllm: "#10A37F",
   qwen: "#6037DB",
   mistral: "#FA4C0A",
-  gemini: "#4285F4",
-  grok: "#626262",
 };
 
+/** Modèles disponibles (sans GPT, Gemini, Grok). */
 const PROVIDERS_LIST = [
   { id: "vllm", shortLabel: "Ollama", color: AT_COLORS.vllm },
   { id: "qwen", shortLabel: "Qwen", color: AT_COLORS.qwen },
   { id: "mistral", shortLabel: "Mistral", color: AT_COLORS.mistral },
   { id: "claude", shortLabel: "Claude", color: AT_COLORS.claude },
-  { id: "openai", shortLabel: "GPT", color: AT_COLORS.openai },
-  { id: "gemini", shortLabel: "Gemini", color: AT_COLORS.gemini },
-  { id: "grok", shortLabel: "Grok", color: AT_COLORS.grok },
 ];
+
+const EXCLUDED_PROVIDERS = new Set(["openai", "gemini", "grok"]);
 
 function parseProviderFromText(text: string, fallback: string): string {
   const m = text.match(/@(\w+)/i);
@@ -170,10 +164,12 @@ export function AIChat({
   const [customTitles, setCustomTitles] = useState<Record<string, string>>({});
   const [historyClosing, setHistoryClosing] = useState(false);
   const [historyOpenAnimationActive, setHistoryOpenAnimationActive] = useState(false);
+  const [attachedFiles, setAttachedFiles] = useState<File[]>([]);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLTextAreaElement>(null);
   const highlightRef = useRef<HTMLDivElement>(null);
   const inputRowRef = useRef<HTMLDivElement>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
   const abortRef = useRef<AbortController | null>(null);
 
   useEffect(() => {
@@ -236,7 +232,8 @@ export function AIChat({
     fetch("/api/ai/providers", { credentials: "include" })
       .then((r) => (r.ok ? r.json() : {}))
       .then((data: { providers?: { provider_name: string; label: string; color?: string }[]; default_provider?: string }) => {
-        const list = data?.providers ?? PROVIDERS_LIST.map((p) => ({ provider_name: p.id, label: p.shortLabel, color: p.color }));
+        const raw = data?.providers ?? PROVIDERS_LIST.map((p) => ({ provider_name: p.id, label: p.shortLabel, color: p.color }));
+        const list = raw.filter((p) => !EXCLUDED_PROVIDERS.has(p.provider_name));
         setConfiguredProviders(list);
         if (data?.default_provider && list.some((x) => x.provider_name === data.default_provider)) {
           setActiveProvider(data.default_provider);
@@ -275,12 +272,13 @@ export function AIChat({
 
   const handleSend = async () => {
     const text = inputText.trim();
-    if (!text || isStreaming || !session) return;
+    if (!text || isStreaming) return;
 
     let providers = parseAllProvidersFromText(text);
     if (providers.length === 0) providers = [parseProviderFromText(text, activeProvider)];
 
     setInputText("");
+    setAttachedFiles([]);
     setIsStreaming(true);
     abortRef.current = new AbortController();
 
@@ -568,7 +566,7 @@ export function AIChat({
               <strong>Discuter avec {assistantName}…</strong>
             </p>
             <p>
-              <code>@</code> Modèle : <code>@Claude</code>, <code>@Qwen</code>, <code>@Mistral</code>, <code>@Ollama</code>, <code>@GPT</code>, <code>@Gemini</code>, <code>@Grok</code>.
+              <code>@</code> Modèle : <code>@Claude</code>, <code>@Qwen</code>, <code>@Mistral</code>, <code>@Ollama</code>.
             </p>
             <p>
               <code>$</code> Données : <code>$wiki</code>, <code>$doc</code>, <code>$metric</code>, <code>$table</code>, <code>$chart</code>.
@@ -580,20 +578,44 @@ export function AIChat({
         )}
         {messages.map((msg, i) => {
           const isLastEmpty = isStreaming && i === messages.length - 1 && msg.role === "assistant" && !(msg.content || "").trim();
-          if (isLastEmpty) return null;
+          if (isLastEmpty) {
+            return (
+              <div key={i} className="bpm-ai-message bpm-ai-message--assistant">
+                <div className="bpm-ai-message-header">
+                  <span className="bpm-ai-message-provider" style={{ color: providerColor(msg.provider ?? "vllm") }}>
+                    {providerLabel(msg.provider ?? "vllm")}:
+                  </span>
+                </div>
+                <div className="bpm-ai-message-body bpm-ai-message-body--loading">
+                  <SpinnerDot size="small" />
+                  <span className="bpm-ai-message-loading-text">Réflexion…</span>
+                </div>
+              </div>
+            );
+          }
           return <MessageBubble key={i} message={msg} assistantName={assistantName} />;
         })}
-        {isStreaming && (
-          <div className="bpm-ai-typing">
-            <span className="bpm-ai-typing-dot" />
-            <span className="bpm-ai-typing-dot" />
-            <span className="bpm-ai-typing-dot" />
-          </div>
-        )}
         <div ref={messagesEndRef} />
       </div>
 
       <div className="bpm-ai-chat-input-wrap">
+        {attachedFiles.length > 0 && (
+          <div className="bpm-ai-chat-attached-files">
+            {attachedFiles.map((f, idx) => (
+              <span key={idx} className="bpm-ai-chat-attached-file">
+                <span className="bpm-ai-chat-attached-file-name">{f.name}</span>
+                <button
+                  type="button"
+                  className="bpm-ai-chat-attached-file-remove"
+                  onClick={() => setAttachedFiles((prev) => prev.filter((_, i) => i !== idx))}
+                  aria-label={`Retirer ${f.name}`}
+                >
+                  ×
+                </button>
+              </span>
+            ))}
+          </div>
+        )}
         <div ref={inputRowRef} className="bpm-ai-chat-input-row">
           <div className="bpm-ai-chat-input-box">
             <div className="bpm-ai-chat-input-wrap-inner">
@@ -628,6 +650,30 @@ export function AIChat({
                 rows={1}
               />
               <div className="bpm-ai-chat-input-actions">
+                <input
+                  ref={fileInputRef}
+                  type="file"
+                  multiple
+                  className="hidden"
+                  aria-hidden
+                  onChange={(e) => {
+                    const files = e.target.files ? Array.from(e.target.files) : [];
+                    setAttachedFiles((prev) => [...prev, ...files].slice(0, 5));
+                    e.target.value = "";
+                  }}
+                />
+                <button
+                  type="button"
+                  className="bpm-ai-chat-pj-button"
+                  onClick={() => fileInputRef.current?.click()}
+                  disabled={isStreaming}
+                  aria-label="Joindre un fichier (PJ)"
+                  title="Pièce jointe"
+                >
+                  <svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 -960 960 960" width="24" fill="currentColor">
+                    <path d="M460-80q-83 0-141.5-58.5T260-280v-440q0-83 58.5-141.5T460-920h40q83 0 141.5 58.5T700-720v440q0 83-58.5 141.5T500-80h-40Zm0-80h40q50 0 85-35t35-85v-440q0-50-35-85t-85-35h-40q-50 0-85 35t-35 85v440q0 50 35 85t85 35Zm200-160q50 0 85-35t35-85v-320h80v320q0 83-58.5 141.5T660-80q-83 0-141.5-58.5T460-280v-320h80v320q0 50 35 85t85 35Z" />
+                  </svg>
+                </button>
                 <button
                   type="button"
                   className="bpm-ai-chat-send-arrow"
@@ -639,7 +685,7 @@ export function AIChat({
                   title="Envoyer"
                 >
                   <svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 -960 960 960" width="24" fill="currentColor">
-                    <path d="M460-200v-483.15L228.31-451.46 200-480l280-280 280 280-28.31 28.54L500-683.15V-200h-40Z" />
+                    <path d="M120-160v-640l760 320-760 320Zm80-120 474-200-474-200v140l240 60-240 60v140Zm0 0v-400 400Z" />
                   </svg>
                 </button>
               </div>
