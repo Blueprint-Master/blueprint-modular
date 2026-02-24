@@ -69,14 +69,14 @@ Page du projet : https://pypi.org/project/blueprint-modular/
 ## Mise à jour de version
 
 1. Modifier la version dans :
-   - `pyproject.toml` : `version = "0.1.9"`
-   - `bpm/__init__.py` : `__version__ = "0.1.9"`
+   - `pyproject.toml` : `version = "0.1.10"`
+   - `bpm/__init__.py` : `__version__ = "0.1.10"`
    - `bpm/cli.py` : utilise `__version__` de `bpm`, pas de doublon
 
 2. Commit + push, puis créer et pousser le tag (publication automatique via le workflow) :
    ```bash
    git add pyproject.toml bpm/__init__.py
-   git commit -m "chore: version 0.1.9"
+   git commit -m "chore: version 0.1.10"
    git push origin master
    git tag v0.1.9
    git push origin v0.1.9

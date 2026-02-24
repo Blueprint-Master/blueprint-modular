@@ -2,8 +2,14 @@
 # Puis renseigner les valeurs (surtout DATABASE_URL, NEXTAUTH_SECRET, NEXTAUTH_URL, Google OAuth).
 
 # NextAuth (obligatoire en prod)
+# NEXTAUTH_URL doit être EXACTEMENT l’URL publique de l’app (https, pas http).
 NEXTAUTH_SECRET=    # openssl rand -hex 32
 NEXTAUTH_URL=https://app.blueprint-modular.com
+
+# Si les modules (Documents, Contrats, Wiki, Sandbox IA) renvoient 401 sans être connecté :
+# mettre SKIP_AUTH_FOR_TEST=true pour utiliser le 1er utilisateur en base (tests/démo).
+# Prérequis : au moins un utilisateur créé (inscription ou OAuth une fois).
+# SKIP_AUTH_FOR_TEST=true
 
 # OAuth (Google pour la connexion)
 GOOGLE_CLIENT_ID=

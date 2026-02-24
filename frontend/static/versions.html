@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="fr">
 <head>
   <meta charset="UTF-8" />
@@ -67,7 +67,14 @@
       <h1>Versions</h1>
       <p class="lead">Historique des versions de Blueprint Modular et contenu de chaque version.</p>
 
-      <h2>v0.1.9 (actuelle)</h2>
+      <h2>v0.1.10 (actuelle)</h2>
+      <ul>
+        <li>Auth modules : <code>getSessionOrTestUser</code> partout (dont Sandbox Par IA) ; option <code>SKIP_AUTH_FOR_TEST=true</code> documentée dans <code>deploy/app-env.example</code> pour utiliser les modules sans connexion (démo/tests).</li>
+        <li>UI : suppression du breadcrumb en double sur le détail des modules (Documents, Contrats).</li>
+        <li>Package Python sur PyPI : <code>pip install blueprint-modular</code> (version 0.1.10, Trusted Publishing via tag <code>v*</code>).</li>
+      </ul>
+
+      <h2>v0.1.9</h2>
       <ul>
         <li>Package Python sur PyPI : <code>pip install blueprint-modular</code> (Trusted Publishing via tag <code>v*</code>)</li>
         <li>Sandbox : mode <strong>Par IA</strong> — description en français → génération de code <code>bpm.*</code> via Ollama (API <code>/api/sandbox/generate</code>, stream SSE)</li>
@@ -112,7 +119,7 @@
           <a href="knowledge-base/faq.html">FAQ</a>
           <a href="knowledge-base/reste-a-faire.html">Ce qu'il reste à faire</a>
         </div>
-        <div class="footer-meta">Blueprint Modular v0.1.9</div>
+        <div class="footer-meta">Blueprint Modular v0.1.10</div>
       </footer>
     </main>
   </div>
