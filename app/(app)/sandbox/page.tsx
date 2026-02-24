@@ -1280,7 +1280,7 @@ function SandboxContent() {
                 <div className="flex flex-col gap-3">
                   <Skeleton variant="text" className="w-full" />
                   <Skeleton variant="text" className="w-[85%]" />
-                  <Skeleton variant="rectangular" className="w-full" style={{ minHeight: 120 }} />
+                  <Skeleton variant="rectangular" className="w-full" height={120} />
                 </div>
               </div>
             )}
