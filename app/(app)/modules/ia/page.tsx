@@ -30,7 +30,7 @@ export default function IAPage() {
             Assistant conversationnel. Contexte Wiki et Documents.
           </p>
           <div className="doc-meta" style={{ marginTop: 4 }}>
-            <span className="doc-badge doc-badge-category">Qwen</span>
+            <span className="doc-badge doc-badge-category">IA</span>
             <span className="doc-reading-time">⏱ 1 min</span>
           </div>
         </div>

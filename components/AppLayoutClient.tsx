@@ -62,13 +62,13 @@ function getBreadcrumbFromPathname(pathname: string): { label: string; href?: st
   if (segments.length === 0) return [];
   if (segments[0] === "docs") {
     if (segments[1] === "getting-started")
-      return [{ label: "Docs", href: "/docs" }, { label: "Démarrage" }];
+      return [{ label: "Documentation", href: "/docs" }, { label: "Démarrage" }];
     if (segments[1] === "components") {
       const slug = segments[2];
       if (slug) return [{ label: "Composants", href: "/docs/components" }, { label: `bpm.${slug}` }];
       return [{ label: "Composants" }];
     }
-    return [{ label: "Docs" }];
+    return [{ label: "Documentation" }];
   }
   if (segments[0] === "modules") {
     if (segments.length === 1) return [{ label: "Modules" }];
@@ -90,7 +90,7 @@ function getBreadcrumbFromPathname(pathname: string): { label: string; href?: st
     ];
   }
   if (segments[0] === "settings") return [{ label: "Paramètres" }];
-  if (segments[0] === "dashboard") return [{ label: "Dashboard" }];
+  if (segments[0] === "dashboard") return [{ label: "Accueil" }];
   if (segments[0] === "sandbox") return [{ label: "Sandbox" }];
   return [];
 }
@@ -142,9 +142,26 @@ function AppLayoutInner({ children }: { children: React.ReactNode }) {
               <NotificationBell />
             </div>
           </header>
-          <main className="app-main flex-1 pt-4 pb-20 md:pb-4 px-3 sm:px-4 min-h-0">
+          <main id="main-content" className="app-main flex-1 pt-4 pb-20 md:pb-4 px-3 sm:px-4 min-h-0" role="main">
             {children}
           </main>
+          <footer
+            className="shrink-0 py-4 px-3 sm:px-4 border-t text-sm"
+            style={{ borderColor: "var(--bpm-border)", color: "var(--bpm-text-secondary)" }}
+            role="contentinfo"
+          >
+            <div className="flex flex-wrap items-center justify-between gap-4 max-w-[1400px] mx-auto">
+              <span>Blueprint Modular v0.1.13</span>
+              <span className="flex flex-wrap gap-4">
+                <a href="https://docs.blueprint-modular.com/" target="_blank" rel="noopener noreferrer" className="hover:underline" style={{ color: "var(--bpm-color-link)" }}>Documentation</a>
+                <a href="https://pypi.org/project/blueprint-modular/" target="_blank" rel="noopener noreferrer" className="hover:underline" style={{ color: "var(--bpm-color-link)" }}>PyPI</a>
+                <a href="/dashboard" className="hover:underline" style={{ color: "var(--bpm-color-link)" }}>Accueil</a>
+              </span>
+            </div>
+            <p className="mt-2 text-xs max-w-[1400px] mx-auto" style={{ color: "var(--bpm-text-secondary)" }}>
+              Fait avec Blueprint Modular — briques Python/React pour vos interfaces métier.
+            </p>
+          </footer>
         </div>
       <AssistantProvider>
         <ModuleRegistryInit />

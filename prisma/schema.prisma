@@ -49,6 +49,8 @@ model WikiArticle {
   isPublished Boolean  @default(false)
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
+  embeddingVector String?   @db.Text  // JSON array du vecteur
+  embeddingAt     DateTime?
   parent      WikiArticle?  @relation("WikiHierarchy", fields: [parentId], references: [id])
   children    WikiArticle[] @relation("WikiHierarchy")
   author      User         @relation("Author", fields: [authorId], references: [id], onDelete: Cascade)
@@ -88,6 +90,8 @@ model Contract {
   extractedData     Json?     @map("extracted_data")
   createdAt         DateTime  @default(now()) @map("created_at")
   analyzedAt        DateTime? @map("analyzed_at")
+  embeddingVector   String?   @map("embedding_vector") @db.Text  // JSON array du vecteur
+  embeddingAt       DateTime? @map("embedding_at")
   updatedAt         DateTime  @updatedAt @map("updated_at")
   uploadedById      String    @map("uploaded_by_id")
   uploadedBy        User      @relation(fields: [uploadedById], references: [id], onDelete: Cascade)

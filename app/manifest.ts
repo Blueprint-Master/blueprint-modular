@@ -26,5 +26,11 @@ export default function manifest(): MetadataRoute.Manifest {
         purpose: "maskable",
       },
     ],
+    categories: ["developer-tools", "productivity", "business"],
+    shortcuts: [
+      { name: "Sandbox", short_name: "Sandbox", url: "/sandbox", description: "Tester les composants BPM" },
+      { name: "Composants", short_name: "Composants", url: "/docs/components", description: "Catalogue des composants BPM" },
+      { name: "Modules", short_name: "Modules", url: "/modules", description: "Modules prêts à l'emploi" },
+    ],
   };
 }

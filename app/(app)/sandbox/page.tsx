@@ -1106,6 +1106,9 @@ function SandboxContent() {
             <div
               className="rounded-lg border p-4 mb-6"
               style={{ background: "var(--bpm-bg-primary)", borderColor: "var(--bpm-border)" }}
+              role="status"
+              aria-live="polite"
+              aria-label="Aperçu en direct"
             >
               <p className="text-xs font-semibold mb-3" style={{ color: "var(--bpm-text-secondary)" }}>
                 Aperçu en direct

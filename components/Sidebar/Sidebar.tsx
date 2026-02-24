@@ -108,6 +108,7 @@ export function Sidebar() {
   /* Barre mobile en bas : largeur fixe par icône, pas de fond gris, icône active en bleu */
   const mobileNavBar = (
     <aside
+      aria-label="Navigation mobile"
       className="fixed left-0 right-0 bottom-0 z-40 md:hidden flex flex-row items-stretch border-t pb-[env(safe-area-inset-bottom,0)] pt-2"
       style={{
         background: "var(--bpm-sidebar-bg)",
@@ -169,7 +170,7 @@ export function Sidebar() {
                 {!logoError ? (
                   <Image
                     src={logoSrc}
-                    alt=""
+                    alt="Blueprint Modular"
                     width={300}
                     height={100}
                     className="h-[6.25rem] w-auto object-contain"
@@ -195,12 +196,12 @@ export function Sidebar() {
           </button>
         </div>
 
-        {/* Navigation avec titre "Navigation" */}
-        <nav className="flex-1 overflow-y-auto p-3 pt-10 space-y-0.5">
+        {/* Navigation principale */}
+        <nav className="flex-1 overflow-y-auto p-3 pt-10 space-y-0.5" aria-label="Navigation principale">
           {!collapsed && (
-            <h3 className="text-xs font-normal uppercase tracking-wider mb-2 px-3" style={{ color: "var(--bpm-sidebar-text-muted)" }}>
+            <span className="block text-xs font-normal uppercase tracking-wider mb-2 px-3" style={{ color: "var(--bpm-sidebar-text-muted)" }}>
               Navigation
-            </h3>
+            </span>
           )}
           {navItems.map((item) => (
             <NavIcon key={item.href} href={item.href} label={item.label} icon={item.icon} />

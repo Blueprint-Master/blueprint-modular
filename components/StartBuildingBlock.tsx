@@ -2,6 +2,7 @@
 
 import { useState, useCallback } from "react";
 import Link from "next/link";
+import Image from "next/image";
 
 const COMMAND = "pip install blueprint-modular";
 
@@ -34,28 +35,34 @@ export function StartBuildingBlock() {
       className="rounded-xl p-8 mb-12 max-w-2xl mx-auto text-center"
       style={{
         background: "var(--bpm-bg-primary)",
+        marginTop: "8rem",
       }}
     >
-      <h2 className="text-3xl md:text-4xl font-bold mb-3" style={{ color: "var(--bpm-text-primary)" }}>
-        Commencer à construire votre application
+      <Image
+        src="/Logo-BPM-nom.jpg"
+        alt="Blueprint Modular"
+        width={280}
+        height={120}
+        className="mx-auto mb-6"
+        priority
+      />
+      <h2 className="font-bold" style={{ color: "var(--bpm-text-primary)", fontSize: "3rem", lineHeight: "3rem", marginBottom: "2rem" }}>
+        Commencer à construire votre application avec <code className="text-sm px-1.5 py-0.5 rounded align-middle" style={{ background: "var(--bpm-bg-secondary)" }}>bpm</code>
       </h2>
-      <p className="text-base mb-5" style={{ color: "var(--bpm-text-secondary)" }}>
-        Installez le package Python BPM, puis créez votre première app avec <code className="text-sm px-1.5 py-0.5 rounded" style={{ background: "var(--bpm-bg-secondary)" }}>bpm run</code>.
-      </p>
       <div
-        className="flex items-center justify-center gap-3 rounded-lg px-4 py-3 font-mono text-sm mx-auto max-w-md"
+        className="group flex items-center justify-center gap-3 rounded-lg px-4 py-3 font-mono text-sm mx-auto max-w-md"
         style={{
           background: "var(--bpm-bg-secondary)",
           color: "var(--bpm-text-primary)",
         }}
       >
-        <code id="start-building-command" className="break-all">
+        <code id="start-building-command" className="break-all" style={{ paddingTop: ".5rem", paddingBottom: ".5rem", maxWidth: "20rem" }}>
           {COMMAND}
         </code>
         <button
           type="button"
           onClick={handleCopy}
-          className="shrink-0 p-2 rounded-md transition"
+          className={`shrink-0 p-2 rounded-md transition ${copied ? "opacity-100" : "opacity-0 group-hover:opacity-100"}`}
           style={{
             background: copied ? "var(--bpm-accent)" : "transparent",
             color: copied ? "#fff" : "var(--bpm-text-secondary)",
@@ -76,11 +83,11 @@ export function StartBuildingBlock() {
         </button>
       </div>
       <p className="text-sm mt-3" style={{ color: "var(--bpm-text-secondary)" }}>
-        Collez cette commande dans votre terminal, ou consultez la{" "}
+        Collez la commande dans votre terminal, ou consultez la{" "}
         <Link href="/docs/getting-started" className="underline" style={{ color: "var(--bpm-accent-cyan)" }}>
           documentation
-        </Link>{" "}
-        pour un guide pas à pas.
+        </Link>
+        .
       </p>
     </div>
   );

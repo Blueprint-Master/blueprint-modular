@@ -4,13 +4,13 @@ import Link from "next/link";
 import { Bell, BookMarked, Bot, FileText, Radio, Shield } from "lucide-react";
 
 const modules = [
-  { href: "/modules/auth", label: "Auth", description: "Authentification (Google, e-mail), session et whitelist.", icon: Shield },
-  { href: "/modules/wiki", label: "Wiki", description: "Wiki interne et pages documentées.", icon: BookMarked, simulatorAndDoc: true },
-  { href: "/modules/ia", label: "IA", description: "Assistant et chat IA.", icon: Bot, simulatorAndDoc: true },
-  { href: "/modules/documents", label: "Analyse de documents", description: "Analyse et gestion de documents.", icon: FileText, simulatorAndDoc: true },
-  { href: "/modules/contracts", label: "Base contractuelle", description: "Contrats fournisseurs et CGV : upload, analyse IA, consultation.", icon: FileText, simulatorAndDoc: true },
+  { href: "/modules/auth", label: "Auth", description: "Authentification Google & e-mail, gestion de sessions et whitelist utilisateurs.", icon: Shield },
+  { href: "/modules/wiki", label: "Wiki", description: "Créez et gérez des articles internes en Markdown avec arborescence et publication.", icon: BookMarked, simulatorAndDoc: true },
+  { href: "/modules/ia", label: "IA", description: "Assistant conversationnel avec accès à votre Wiki, documents et données métier.", icon: Bot, simulatorAndDoc: true },
+  { href: "/modules/documents", label: "Analyse de documents", description: "Uploadez, analysez et interrogez vos documents PDF, Word et plus avec l'IA.", icon: FileText, simulatorAndDoc: true },
+  { href: "/modules/contracts", label: "Base contractuelle", description: "Centralisez contrats fournisseurs et CGV, analysez-les avec l'IA.", icon: FileText, simulatorAndDoc: true },
   { href: "/modules/veille", label: "Veille", description: "Veille et flux d’information.", icon: Radio },
-  { href: "/modules/notification", label: "Notification", description: "Historique des notifications, cloche dans le header, niveaux 1–3.", icon: Bell },
+  { href: "/modules/notification", label: "Notification", description: "Gérez les alertes applicatives avec 3 niveaux de priorité et un historique complet.", icon: Bell },
 ];
 
 export default function ModulesPage() {
@@ -29,8 +29,11 @@ export default function ModulesPage() {
         {modules.map((mod) => {
           const Icon = mod.icon;
           const hasSimulatorDoc = "simulatorAndDoc" in mod && (mod as { simulatorAndDoc?: boolean }).simulatorAndDoc;
-          const cardContent = (
-            <>
+          const cardClassName = "flex flex-col p-4 rounded-xl border transition hover:border-[var(--bpm-accent-cyan)] hover:shadow-md min-h-[140px]";
+          const cardStyle = { background: "var(--bpm-bg-primary)", borderColor: "var(--bpm-border)" };
+          const linkStyle = { color: "var(--bpm-color-link)" };
+          return (
+            <div key={mod.href} className={`block ${cardClassName}`} style={cardStyle}>
               <div className="flex items-center gap-3 mb-2">
                 <span
                   className="flex items-center justify-center w-10 h-10 rounded-lg shrink-0"
@@ -47,65 +50,20 @@ export default function ModulesPage() {
                   {mod.description}
                 </p>
                 <div className="flex flex-wrap gap-3 mt-auto pt-3" style={{ marginLeft: "52px" }}>
-                {hasSimulatorDoc ? (
-                  <>
-                    <Link
-                      href={`${mod.href}/simulateur`}
-                      className="text-sm font-medium"
-                      style={{ color: "var(--bpm-accent-cyan)" }}
-                    >
-                      Simulateur
-                    </Link>
-                    <Link
-                      href={`${mod.href}/documentation`}
-                      className="text-sm font-medium"
-                      style={{ color: "var(--bpm-accent-cyan)" }}
-                    >
-                      Documentation
-                    </Link>
-                  </>
-                ) : (
-                  <Link
-                    href={mod.href}
-                    className="text-sm font-medium"
-                    style={{ color: "var(--bpm-accent-cyan)" }}
-                  >
+                  <Link href={mod.href} className="text-sm font-medium hover:underline" style={linkStyle}>
                     Ouvrir →
                   </Link>
-                )}
+                  <Link href={`${mod.href}/documentation`} className="text-sm font-medium hover:underline" style={linkStyle}>
+                    Documentation
+                  </Link>
+                  {hasSimulatorDoc && (
+                    <Link href={`${mod.href}/simulateur`} className="text-sm font-medium hover:underline" style={linkStyle}>
+                      Simulateur
+                    </Link>
+                  )}
                 </div>
               </div>
-            </>
-          );
-          const cardClassName = "flex flex-col p-4 rounded-xl border transition hover:border-[var(--bpm-accent-cyan)] hover:shadow-md min-h-[140px]";
-          const cardStyle = {
-            background: "var(--bpm-bg-primary)",
-            borderColor: "var(--bpm-border)",
-          };
-          if (hasSimulatorDoc) {
-            return (
-              <div
-                key={mod.href}
-                className={`block ${cardClassName}`}
-                style={cardStyle}
-              >
-                {cardContent}
-              </div>
-            );
-          }
-          return (
-            <Link
-              key={mod.href}
-              href={mod.href}
-              className={`block ${cardClassName}`}
-              style={{
-                ...cardStyle,
-                color: "inherit",
-                textDecoration: "none",
-              }}
-            >
-              {cardContent}
-            </Link>
+            </div>
           );
         })}
       </div>

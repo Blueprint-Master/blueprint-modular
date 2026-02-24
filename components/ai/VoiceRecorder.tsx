@@ -86,12 +86,19 @@ export function VoiceRecorder({
     else if (state === "recording") stopRecording();
   };
 
+  const MicIcon = () => (
+    <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="currentColor" aria-hidden>
+      <path d="M423.08-463.08Q400-486.15 400-520v-240q0-33.85 23.08-56.92Q446.15-840 480-840t56.92 23.08Q560-793.85 560-760v240q0 33.85-23.08 56.92Q513.85-440 480-440t-56.92-23.08ZM480-640Zm-20 500v-140.69q-94-8.62-157-76.85-63-68.23-63-162.46h40q0 83 58.5 141.5T480-320q83 0 141.5-58.5T680-520h40q0 94.23-63 162.46t-157 76.85V-140h-40Zm48.5-351.5Q520-503 520-520v-240q0-17-11.5-28.5T480-800q-17 0-28.5 11.5T440-760v240q0 17 11.5 28.5T480-480q17 0 28.5-11.5Z" />
+    </svg>
+  );
+
   const buttonLabel =
     state === "idle"
-      ? `🎤 ${label}`
+      ? null
       : state === "recording"
-        ? "⏹ Arrêter"
-        : "⏳ Transcription…";
+        ? "Arrêter"
+        : "Transcription…";
+  const buttonText = state === "idle" ? label : buttonLabel;
 
   const buttonStyle: React.CSSProperties = {
     padding: "6px 14px",
@@ -117,8 +124,15 @@ export function VoiceRecorder({
       onClick={handleClick}
       disabled={state === "transcribing" || disabled}
       style={buttonStyle}
+      aria-label={state === "idle" ? label : state === "recording" ? "Arrêter l'enregistrement" : "Transcription en cours"}
     >
-      {buttonLabel}
+      {state === "idle" && (
+        <span style={{ display: "inline-flex", alignItems: "center", gap: 6 }}>
+          <MicIcon />
+          {buttonText}
+        </span>
+      )}
+      {state !== "idle" && buttonText}
     </button>
   );
 }

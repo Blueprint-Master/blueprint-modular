@@ -2,6 +2,13 @@ import Link from "next/link";
 import { Boxes, FolderOpen, Settings, ExternalLink, Sparkles } from "lucide-react";
 import { SandboxIcon } from "@/components/icons/SandboxIcon";
 import { StartBuildingBlock } from "@/components/StartBuildingBlock";
+import type { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "Accueil",
+  description:
+    "Tableau de bord Blueprint Modular — installez le package Python BPM et accédez à vos composants, modules et sandbox en un clic.",
+};
 
 const quickLinks = [
   {
@@ -19,7 +26,7 @@ const quickLinks = [
   {
     href: "/sandbox",
     label: "Sandbox",
-    description: "Tester les composants en direct ou écrire du code bpm.* pour composer une page",
+    description: "Tester les composants en direct ou écrire du code bpm.* pour créer une page",
     icon: SandboxIcon,
   },
   {
@@ -43,7 +50,9 @@ const resources = [
 
 export default function DashboardPage() {
   return (
-    <div className="doc-page">
+    <div className="doc-page" data-page-description="Tableau de bord Blueprint Modular — installation du package Python BPM, accès aux composants, modules et sandbox.">
+      <h1 className="text-xl font-semibold mb-1" style={{ color: "var(--bpm-text-primary)" }}>Accueil</h1>
+      <p className="text-sm mb-6" style={{ color: "var(--bpm-text-secondary)" }}>Tableau de bord — accédez à vos composants, modules et sandbox.</p>
       <StartBuildingBlock />
 
       <h2 className="text-base font-semibold mb-3" style={{ color: "var(--bpm-text-primary)" }}>

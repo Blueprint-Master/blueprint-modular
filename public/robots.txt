@@ -1,6 +1,8 @@
 User-agent: *
 Allow: /
-Sitemap: https://blueprint-modular.com/sitemap.xml
+Disallow: /settings/
+Disallow: /api/
+Sitemap: https://app.blueprint-modular.com/sitemap.xml
 
 User-agent: GPTBot
 Allow: /

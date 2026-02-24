@@ -36,13 +36,6 @@ export default function HomePage() {
           >
             Connexion
           </Link>
-          <Link
-            href="/dashboard"
-            className="px-4 py-2 rounded-lg border font-medium"
-            style={{ borderColor: "var(--bpm-border)", color: "var(--bpm-text-primary)" }}
-          >
-            Dashboard
-          </Link>
         </div>
       </div>
     </main>

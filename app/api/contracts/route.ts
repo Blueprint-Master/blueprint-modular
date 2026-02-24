@@ -163,6 +163,42 @@ export async function POST(request: Request) {
         analyzedAt: new Date(),
       },
     });
+
+    // Indexation embedding en arrière-plan (non bloquant)
+    setImmediate(async () => {
+      try {
+        const { generateEmbedding } = await import("@/lib/ai/embedding-client");
+        const data = extractedData as {
+          executive_summary?: string;
+          supplier_name?: string;
+          key_obligations?: string[];
+        } | null;
+        const textToEmbed = [
+          data?.executive_summary ?? "",
+          data?.supplier_name ?? "",
+          ...(data?.key_obligations ?? []),
+          text.slice(0, 2000),
+        ]
+          .filter(Boolean)
+          .join(" ");
+
+        if (textToEmbed.trim().length > 50) {
+          const vector = await generateEmbedding(textToEmbed);
+          await prisma.contract.update({
+            where: { id: contract.id },
+            data: {
+              embeddingVector: JSON.stringify(vector),
+              embeddingAt: new Date(),
+            },
+          });
+        }
+      } catch (embErr) {
+        console.warn(
+          "[contracts] Embedding échoué:",
+          embErr instanceof Error ? embErr.message : String(embErr)
+        );
+      }
+    });
   } catch (err) {
     console.error("[contracts] analyse failed:", err instanceof Error ? err.message : String(err));
     await prisma.contract.update({

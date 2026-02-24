@@ -18,6 +18,12 @@ GOOGLE_CLIENT_SECRET=
 # Base de données (obligatoire)
 DATABASE_URL=postgresql://user:password@localhost:5432/blueprint_modular
 
+# Ollama — modèles (VPS : ollama pull qwen3:8b && qwen3-embedding:4b && qwen3-vl:8b)
+# AI_SERVER_URL=http://localhost:11434
+# AI_MODEL=qwen3:8b
+# AI_EMBEDDING_MODEL=qwen3-embedding:4b
+# AI_VISION_MODEL=qwen3-vl:8b
+
 # Optionnel : autres OAuth, clés IA, etc.
 # APPLE_ID= ...
 # ANTHROPIC_API_KEY= ...
