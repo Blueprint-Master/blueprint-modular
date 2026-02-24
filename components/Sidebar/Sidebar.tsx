@@ -8,6 +8,7 @@ import { useTheme } from "@/components/ThemeProvider";
 import { Sun, ChevronLeft } from "lucide-react";
 import { useState } from "react";
 import { SandboxIcon } from "@/components/icons/SandboxIcon";
+import { useSidebar } from "@/contexts/SidebarContext";
 
 const vb = "0 -960 960 960";
 
@@ -68,7 +69,9 @@ export function Sidebar() {
   const pathname = usePathname();
   const { data: session } = useSession();
   const { theme, toggleTheme } = useTheme();
-  const [collapsed, setCollapsed] = useState(false);
+  const sidebarCtx = useSidebar();
+  const collapsed = sidebarCtx?.collapsed ?? false;
+  const setCollapsed = sidebarCtx?.setCollapsed ?? (() => {});
   const [mobileOpen, setMobileOpen] = useState(false);
   const [logoError, setLogoError] = useState(false);
   const [logoIndex, setLogoIndex] = useState(0);

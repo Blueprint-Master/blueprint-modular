@@ -8,6 +8,7 @@ import { AIAssistant } from "@/components/ai/AIAssistant";
 import { ModuleRegistryInit } from "@/components/ai/ModuleRegistryInit";
 import { AssistantProvider } from "@/lib/ai/assistant-context";
 import { AIHeaderProvider, useAIHeader } from "@/contexts/AIHeaderContext";
+import { SidebarProvider, useSidebar } from "@/contexts/SidebarContext";
 
 const ASSISTANT_NAME = "Assistant";
 
@@ -89,21 +90,24 @@ function getBreadcrumbFromPathname(pathname: string): { label: string; href?: st
   return [];
 }
 
-export function AppLayoutClient({ children }: { children: React.ReactNode }) {
+function AppLayoutInner({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
   const breadcrumbItems = getBreadcrumbFromPathname(pathname ?? "");
+  const sidebar = useSidebar();
+  const collapsed = sidebar?.collapsed ?? false;
 
   return (
-    <AIHeaderProvider>
-      <div className="min-h-screen flex" style={{ background: "var(--bpm-bg-primary)", color: "var(--bpm-text-primary)" }}>
-        {/* Bande grise à gauche (même gris que la sidebar, évite la bande blanche) */}
-        <div
-          className="hidden md:block fixed top-0 left-0 bottom-0 w-64 -z-10"
-          style={{ background: "var(--bpm-sidebar-bg)" }}
-          aria-hidden
-        />
-        <Sidebar />
-        <div className="flex-1 flex flex-col min-h-screen md:ml-64">
+    <div className="min-h-screen flex" style={{ background: "var(--bpm-bg-primary)", color: "var(--bpm-text-primary)" }}>
+      {/* Bande grise à gauche : largeur = sidebar (64 ou 16) pour éviter bande blanche quand réduite */}
+      <div
+        className={`hidden md:block fixed top-0 left-0 bottom-0 -z-10 transition-[width] duration-200 ease-in-out ${collapsed ? "w-16" : "w-64"}`}
+        style={{ background: "var(--bpm-sidebar-bg)" }}
+        aria-hidden
+      />
+      <Sidebar />
+      <div
+        className={`flex-1 flex flex-col min-h-screen transition-[margin-left] duration-200 ease-in-out ${collapsed ? "md:ml-16" : "md:ml-64"}`}
+      >
           <header
             className="sticky top-0 z-30 flex h-14 shrink-0 items-center justify-between px-3 sm:px-4 gap-2"
             style={{ background: "var(--bpm-bg-primary)" }}
@@ -137,11 +141,20 @@ export function AppLayoutClient({ children }: { children: React.ReactNode }) {
             {children}
           </main>
         </div>
-        <AssistantProvider>
-          <ModuleRegistryInit />
-          <AIAssistant />
-        </AssistantProvider>
-      </div>
+      <AssistantProvider>
+        <ModuleRegistryInit />
+        <AIAssistant />
+      </AssistantProvider>
+    </div>
+  );
+}
+
+export function AppLayoutClient({ children }: { children: React.ReactNode }) {
+  return (
+    <AIHeaderProvider>
+      <SidebarProvider>
+        <AppLayoutInner>{children}</AppLayoutInner>
+      </SidebarProvider>
     </AIHeaderProvider>
   );
 }

@@ -257,6 +257,8 @@ body {
 
 /* Main content: évite débordement horizontal sur PWA / mobile */
 .app-main { min-width: 0; max-width: 100%; overflow-x: hidden; }
+/* Page IA : une seule hauteur visible, pas de scroll page (scroll uniquement dans la zone bulles, comme Oliver) */
+.app-main:has(.ia-page-full-height) { display: flex; flex-direction: column; overflow: hidden; min-height: 0; }
 
 /* Documents — responsive PWA */
 .documents-page { max-width: 1200px; width: 100%; min-width: 0; box-sizing: border-box; }

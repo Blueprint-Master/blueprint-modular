@@ -25,37 +25,13 @@ const AT_COLORS: Record<string, string> = {
 
 /** Modèles disponibles (sans GPT, Gemini, Grok). */
 const PROVIDERS_LIST = [
-  { id: "vllm", shortLabel: "Ollama", color: AT_COLORS.vllm },
+  { id: "vllm", shortLabel: "Qwen", color: AT_COLORS.vllm },
   { id: "qwen", shortLabel: "Qwen", color: AT_COLORS.qwen },
   { id: "mistral", shortLabel: "Mistral", color: AT_COLORS.mistral },
   { id: "claude", shortLabel: "Claude", color: AT_COLORS.claude },
 ];
 
 const EXCLUDED_PROVIDERS = new Set(["openai", "gemini", "grok"]);
-
-function parseProviderFromText(text: string, fallback: string): string {
-  const m = text.match(/@(\w+)/i);
-  if (m) {
-    const n = PROVIDER_ALIAS[m[1].toLowerCase()];
-    if (n) return n;
-  }
-  return fallback;
-}
-
-function parseAllProvidersFromText(text: string): string[] {
-  const seen = new Set<string>();
-  const order: string[] = [];
-  const re = /@(\w+)/gi;
-  let match;
-  while ((match = re.exec(text)) !== null) {
-    const n = PROVIDER_ALIAS[match[1].toLowerCase()];
-    if (n && !seen.has(n)) {
-      seen.add(n);
-      order.push(n);
-    }
-  }
-  return order;
-}
 
 function highlightAtAndDollar(text: string): React.ReactNode {
   if (typeof text !== "string") return text;
@@ -152,7 +128,6 @@ export function AIChat({
   const [activeProvider, setActiveProvider] = useState("vllm");
   const [isStreaming, setIsStreaming] = useState(false);
   const [configuredProviders, setConfiguredProviders] = useState<{ provider_name: string; label: string; color?: string }[]>([]);
-  const [showProviderSugg, setShowProviderSugg] = useState(false);
   const [showTokenSugg, setShowTokenSugg] = useState(false);
   const [tokenSuggestions, setTokenSuggestions] = useState<{ token: string; label: string; location?: string }[]>([]);
   const [historyConversations, setHistoryConversations] = useState<
@@ -245,8 +220,6 @@ export function AIChat({
   const handleInputChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     const value = e.target.value;
     setInputText(value);
-    const atMatch = value.match(/@(\w*)$/);
-    setShowProviderSugg(!!atMatch);
     const dollarMatch = value.match(/\$(\w*)(?::(\w*))?$/);
     if (dollarMatch) {
       const tokenPrefix = dollarMatch[1];
@@ -258,24 +231,11 @@ export function AIChat({
     }
   };
 
-  const providerList = configuredProviders.length > 0 ? configuredProviders : PROVIDERS_LIST.map((p) => ({ provider_name: p.id, label: p.shortLabel, color: p.color }));
-  const atProviderSuggestions = providerList.map((p) => ({
-    id: p.provider_name,
-    shortLabel: p.label,
-    color: p.color ?? AT_COLORS[p.provider_name] ?? "var(--bpm-accent-cyan)",
-  }));
-  const atPrefix = (inputText.match(/@(\w*)$/) ?? [])[1] ?? "";
-  const atFilteredList = atPrefix
-    ? atProviderSuggestions.filter((p) => (p.shortLabel ?? "").toLowerCase().startsWith(atPrefix.toLowerCase()))
-    : atProviderSuggestions;
-  const hasProviderSugg = showProviderSugg && atFilteredList.length > 0;
-
   const handleSend = async () => {
     const text = inputText.trim();
     if (!text || isStreaming) return;
 
-    let providers = parseAllProvidersFromText(text);
-    if (providers.length === 0) providers = [parseProviderFromText(text, activeProvider)];
+    const providers = ["vllm"]; // Pour l'instant uniquement Qwen (vllm)
 
     setInputText("");
     setAttachedFiles([]);
@@ -335,7 +295,15 @@ export function AIChat({
                 });
               }
               if (data.type === "done" && data.discussion_id) setCurrentDiscussionId(data.discussion_id);
-              if (data.type === "error") removeLastAssistant();
+              if (data.type === "error") {
+                const errMsg = typeof data.message === "string" ? data.message : "Erreur lors de l'appel au modèle.";
+                setMessages((prev) => {
+                  const next = [...prev];
+                  const last = next[next.length - 1];
+                  if (last?.role === "assistant") next[next.length - 1] = { ...last, content: `*Erreur :* ${errMsg}` };
+                  return next;
+                });
+              }
             } catch {
               // ignore
             }
@@ -566,9 +534,6 @@ export function AIChat({
               <strong>Discuter avec {assistantName}…</strong>
             </p>
             <p>
-              <code>@</code> Modèle : <code>@Claude</code>, <code>@Qwen</code>, <code>@Mistral</code>, <code>@Ollama</code>.
-            </p>
-            <p>
               <code>$</code> Données : <code>$wiki</code>, <code>$doc</code>, <code>$metric</code>, <code>$table</code>, <code>$chart</code>.
             </p>
             <p>
@@ -670,8 +635,9 @@ export function AIChat({
                   aria-label="Joindre un fichier (PJ)"
                   title="Pièce jointe"
                 >
-                  <svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 -960 960 960" width="24" fill="currentColor">
-                    <path d="M460-80q-83 0-141.5-58.5T260-280v-440q0-83 58.5-141.5T460-920h40q83 0 141.5 58.5T700-720v440q0 83-58.5 141.5T500-80h-40Zm0-80h40q50 0 85-35t35-85v-440q0-50-35-85t-85-35h-40q-50 0-85 35t-35 85v440q0 50 35 85t85 35Zm200-160q50 0 85-35t35-85v-320h80v320q0 83-58.5 141.5T660-80q-83 0-141.5-58.5T460-280v-320h80v320q0 50 35 85t85 35Z" />
+                  {/* Icône Plus (Material) */}
+                  <svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24" fill="currentColor">
+                    <path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z" />
                   </svg>
                 </button>
                 <button
@@ -684,8 +650,9 @@ export function AIChat({
                   aria-label="Envoyer"
                   title="Envoyer"
                 >
-                  <svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 -960 960 960" width="24" fill="currentColor">
-                    <path d="M120-160v-640l760 320-760 320Zm80-120 474-200-474-200v140l240 60-240 60v140Zm0 0v-400 400Z" />
+                  {/* Flèche d'envoi (avion / send) */}
+                  <svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24" fill="currentColor">
+                    <path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2v7z" />
                   </svg>
                 </button>
               </div>
@@ -693,33 +660,9 @@ export function AIChat({
           </div>
         </div>
 
-        {(hasProviderSugg || showTokenSugg) && (
+        {showTokenSugg && (
           <div className="bpm-ai-suggestions-tooltip" role="listbox">
-            {hasProviderSugg &&
-              atFilteredList.map((p) => (
-                <button
-                  key={p.id}
-                  type="button"
-                  role="option"
-                  aria-selected={false}
-                  className="bpm-ai-sugg-tooltip-item"
-                  onClick={() => {
-                    const v = inputText.replace(/@\w*$/, `@${p.shortLabel} `);
-                    setInputText(v);
-                    setShowProviderSugg(false);
-                    inputRef.current?.focus();
-                  }}
-                >
-                  <span className="bpm-ai-sugg-tooltip-content">
-                    <span className="bpm-ai-sugg-tooltip-primary" style={{ color: p.color }}>
-                      {p.shortLabel}
-                    </span>
-                    <span className="bpm-ai-sugg-tooltip-secondary">@{p.shortLabel}</span>
-                  </span>
-                </button>
-              ))}
-            {showTokenSugg &&
-              tokenSuggestions.slice(0, 14).map((s, i) => (
+            {tokenSuggestions.slice(0, 14).map((s, i) => (
                 <button
                   key={`${s.token}-${i}`}
                   type="button"
