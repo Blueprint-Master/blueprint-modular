@@ -2,7 +2,6 @@
 
 import { useState, useCallback } from "react";
 import Link from "next/link";
-import Image from "next/image";
 
 const COMMAND = "pip install blueprint-modular";
 
@@ -38,16 +37,8 @@ export function StartBuildingBlock() {
         marginTop: "8rem",
       }}
     >
-      <Image
-        src="/Logo-BPM-nom.jpg"
-        alt="Blueprint Modular"
-        width={280}
-        height={120}
-        className="mx-auto mb-6"
-        priority
-      />
       <h2 className="font-bold" style={{ color: "var(--bpm-text-primary)", fontSize: "3rem", lineHeight: "3rem", marginBottom: "2rem" }}>
-        Commencer à construire votre application avec <code className="text-sm px-1.5 py-0.5 rounded align-middle" style={{ background: "var(--bpm-bg-secondary)" }}>bpm</code>
+        Commencer à construire votre application avec <code className="px-2 py-1 rounded align-middle text-lg font-medium" style={{ background: "var(--bpm-bg-secondary)" }}>bpm.*</code>
       </h2>
       <div
         className="group flex items-center justify-center gap-3 rounded-lg px-4 py-3 font-mono text-sm mx-auto max-w-md"
