@@ -1,7 +1,6 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import Link from "next/link";
 import { Table, Message, Spinner } from "@/components/bpm";
 import { DocumentAnalysisImport } from "@/components/DocumentAnalysisImport";
 
@@ -127,7 +126,6 @@ export default function DocumentsPage() {
 
   return (
     <div className="documents-page doc-page">
-      <div className="doc-breadcrumb mb-2"><Link href="/modules">Modules</Link> → Analyse de documents</div>
       <DocumentAnalysisImport
         title="Analyse de documents"
         description="Importez des documents PDF (analyses, études, rapports) pour générer automatiquement une synthèse actionnable grâce à Claude. Les analyses sont stockées en base de données et peuvent être réexploitées dans d'autres onglets."

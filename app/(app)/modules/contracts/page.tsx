@@ -1,7 +1,6 @@
 "use client";
 
 import { useState, useEffect, useCallback } from "react";
-import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { Table, Spinner, Selectbox, Panel } from "@/components/bpm";
 import { DocumentAnalysisImport } from "@/components/DocumentAnalysisImport";
@@ -163,7 +162,6 @@ export default function ContractsPage() {
 
   return (
     <div className="doc-page">
-      <div className="doc-breadcrumb mb-2"><Link href="/modules">Modules</Link> → Base contractuelle</div>
       <DocumentAnalysisImport
         title="Base contractuelle"
         description="Importez des documents PDF (contrats fournisseurs, CGV, analyses) pour générer automatiquement une synthèse actionnable grâce à Claude. Les analyses sont stockées en base de données et peuvent être réexploitées dans d'autres onglets."
