@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { getSessionOrTestUser } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { vllmClient } from "@/lib/ai/vllm-client";
+import { extractTextFromBuffer } from "@/lib/contract-extract";
 import { writeFile, mkdir } from "fs/promises";
 import path from "path";
 
@@ -71,13 +72,10 @@ export async function POST(request: Request) {
 Ne retourne rien d'autre que ce JSON. Pas de texte avant ou après. Pas de balises markdown.`;
 
   try {
-    const { PDFParse } = (await import("pdf-parse")) as { PDFParse: new (opts: { data: Buffer }) => { getText: () => Promise<{ text: string }> } };
-    const parser = new PDFParse({ data: buf });
-    const textResult = await parser.getText();
-    const rawText = textResult?.text ?? "";
+    const rawText = (await extractTextFromBuffer(buf, mime, file.name)).slice(0, 50000);
     await prisma.document.update({
       where: { id: doc.id },
-      data: { rawText: rawText.slice(0, 50000) },
+      data: { rawText },
     });
 
     const apiKey = process.env.ANTHROPIC_API_KEY;
@@ -105,7 +103,8 @@ Ne retourne rien d'autre que ce JSON. Pas de texte avant ou après. Pas de balis
           );
           const jsonMatch = content.match(/\{[\s\S]*\}/);
           parsed = jsonMatch ? (JSON.parse(jsonMatch[0]) as Record<string, unknown>) : null;
-        } catch {
+        } catch (ollamaErr) {
+          console.error("[documents] Analyse Ollama échouée:", ollamaErr instanceof Error ? ollamaErr.message : String(ollamaErr));
           parsed = null;
         }
       }
@@ -132,7 +131,8 @@ Ne retourne rien d'autre que ce JSON. Pas de texte avant ou après. Pas de balis
     } else {
       await prisma.document.update({ where: { id: doc.id }, data: { analysisStatus: "done" } });
     }
-  } catch {
+  } catch (err) {
+    console.error("[documents] Erreur analyse document:", err instanceof Error ? err.message : String(err));
     await prisma.document.update({ where: { id: doc.id }, data: { analysisStatus: "error" } });
     doc = await prisma.document.findUniqueOrThrow({ where: { id: doc.id } });
   }
