@@ -1,6 +1,6 @@
-ï»¿{
+{
   "page": {
-    "title": "Blueprint Modular â€” Python building blocks for your UIs",
+    "title": "Blueprint Modular — Python building blocks for your UIs",
     "description": "Import from bpm, the rest is done. Components, docs, deployment. No front-end."
   },
   "languages": {
@@ -10,8 +10,8 @@
     "es": "ES",
     "it": "IT",
     "nl": "NL",
-    "zh": "ä¸­æ–‡",
-    "ja": "æ—¥æœ¬èªž"
+    "zh": "??",
+    "ja": "???"
   },
   "landing": {
     "nav": {
@@ -33,18 +33,18 @@
     },
     "pitch": {
       "heading": "Why Blueprint Modular",
-      "item1": "Reusable components â€” Text, data, charts, forms, layout. All in the docs.",
-      "item2": "Python only â€” No front-end to wire. You declare, the UI updates.",
-      "item3": "Docs and deployment included â€” Installation, API, VPS/Docker deployment step by step."
+      "item1": "Reusable components — Text, data, charts, forms, layout. All in the docs.",
+      "item2": "Python only — No front-end to wire. You declare, the UI updates.",
+      "item3": "Docs and deployment included — Installation, API, VPS/Docker deployment step by step."
     },
     "diff": {
       "heading": "What BPM offers that others don't",
       "intro": "Granular reactivity, design system, registry and config-driven layout: four strengths no other Python data framework offers natively.",
-      "item1": "Granular reactivity + simple syntax â€” Targeted component updates (refs, reactive store) without full script re-run.",
-      "item2": "Consistent design system (bpm.*) â€” Centralised tokens; customisation via CSS variables.",
-      "item3": "Registry $ and @ â€” Reactive refs for state; decorators for pages, sidebar, cache.",
-      "item4": "Config-driven layout â€” One app.config.js for everything; duplicate an app = edit that file.",
-      "link_text": "Read Â« Why BPM Â» â†’"
+      "item1": "Granular reactivity + simple syntax — Targeted component updates (refs, reactive store) without full script re-run.",
+      "item2": "Consistent design system (bpm.*) — Centralised tokens; customisation via CSS variables.",
+      "item3": "Registry $ and @ — Reactive refs for state; decorators for pages, sidebar, cache.",
+      "item4": "Config-driven layout — One app.config.js for everything; duplicate an app = edit that file.",
+      "link_text": "Read « Why BPM » ?"
     },
     "use": {
       "heading": "Ideal for",
@@ -69,7 +69,7 @@
       "versions": "Versions",
       "faq": "FAQ",
       "roadmap": "Roadmap",
-      "meta": "Blueprint Modular v0.1.10"
+      "meta": "Blueprint Modular v0.1.11"
     }
   }
 }

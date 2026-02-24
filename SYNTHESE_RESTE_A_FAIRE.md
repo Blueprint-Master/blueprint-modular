@@ -27,12 +27,7 @@ Document généré à partir de :
 
 ### 1.3 Wiki IA
 
-- **Créer `POST /api/wiki/generate`**  
-  - Body : `{ notes, articleType, workspace }`.  
-  - Valider paramètres (notes non vides, `articleType` et `workspace` valides).  
-  - Construire le prompt avec `TEMPLATE_WIKI_GENERATION`.  
-  - Utiliser `vllmClient.chatStream()` et renvoyer un stream SSE au même format que `/api/ai/chat` (`data: { type: "chunk", t }`, puis `type: "done"`).  
-  - Ne pas sauvegarder automatiquement l’article ; l’utilisateur valide avant publication.
+- **Fait.** `POST /api/wiki/generate` en place : body `{ notes, articleType, workspace }` (génération depuis notes) ou `{ action: "format", content, title? }` (mise en forme). Stream SSE, pas de sauvegarde auto. Page d’édition wiki : bouton « Aide IA » (mettre en forme le contenu actuel, générer un article depuis des notes). Module IA : contenu des articles récents exposé en contexte (`/api/wiki?withContent=true`).
 
 ### 1.4 Règles à respecter (rappel)
 
@@ -57,7 +52,7 @@ Ce document décrit la cible « une nuit » (assistant, contrats, wiki). Une par
 
 - [ ] **Assistant** : répond à « quels modules sont disponibles ? » et à des questions sur les données d’un module enregistré (contexte bien injecté).  
 - [ ] **Contrats** : upload PDF → analyse déclenchée (mock ou Ollama) ; liste avec filtres NXTFOOD / BEAM strictement séparés.  
-- [ ] **Wiki** : création manuelle d’articles ; génération d’articles depuis notes brutes (via `POST /api/wiki/generate` en stream).  
+- [x] **Wiki** : création manuelle d’articles ; génération d’articles depuis notes brutes (via `POST /api/wiki/generate` en stream) ; mise en forme IA sur la page d’édition ; contenu des articles disponible pour le module IA.  
 - [ ] **Aucune dépendance** vers OpenAI / ChatGPT / service cloud IA (Ollama local uniquement pour cette phase).
 
 Points d’attention issus du doc :  
@@ -95,11 +90,11 @@ Points d’attention issus du doc :
 |----------|--------------------|--------|
 | Haute    | IA — Prompts       | Enrichir `prompt-templates.ts` (SYSTEM_PROMPT_BASE + templates analyse données, contrat, wiki, synthèse). |
 | Haute    | IA — Contrats      | Robustifier `contract-analyzer.ts` (extractJSON, TEMPLATE_ANALYSE_CONTRAT, validation, réponses partielles). |
-| Haute    | IA — Wiki          | Créer `POST /api/wiki/generate` (stream SSE, TEMPLATE_WIKI_GENERATION, pas de sauvegarde auto). |
+| —        | IA — Wiki          | Fait : `POST /api/wiki/generate` (stream, génération + mise en forme), Aide IA sur édition, contenu wiki dans le module IA. |
 | Moyenne  | Données / Sécurité | Vérifier filtrage workspace (nxtfood/beam) sur toutes les API contrats et wiki. |
 | Moyenne  | Validation         | Tester assistant (modules disponibles + questions sur données) et sandbox « Par IA » (dashboard financier). |
 | Optionnel| Mission            | Droits owner/admin/user par module ; TOC / Pagefind / barre de lecture. |
 
 ---
 
-*Dernière mise à jour : synthèse des 5 documents listés en en-tête.*
+*Dernière mise à jour : 2026-02-24 — Wiki IA (génération, mise en forme, Aide IA, contenu pour module IA) marqué comme fait.*

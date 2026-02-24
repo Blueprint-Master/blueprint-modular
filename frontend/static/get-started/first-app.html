@@ -1,9 +1,9 @@
-Ôªø<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="fr">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Premi√®re app ‚Äî Blueprint Modular</title>
+  <title>PremiËre app ó Blueprint Modular</title>
   <link rel="icon" href="../favicon.ico" />
   <link rel="icon" type="image/png" href="../img/logo-bpm.png" />
   <link rel="stylesheet" href="../doc.css" />
@@ -16,10 +16,10 @@
     <a href="../get-started/why-bpm.html">Pourquoi BPM</a>
     <a href="../get-started/installation.html">Installation</a>
     <a href="../components.html">Composants</a>
-    <a href="../api-reference/text.html">R√©f√©rence API</a>
-    <a href="../deploy/concepts.html">D√©ployer</a>
+    <a href="../api-reference/text.html">RÈfÈrence API</a>
+    <a href="../deploy/concepts.html">DÈployer</a>
     <a href="https://blueprint-modular.com/modules.html">Modules</a>
-    <a href="../cheat-sheet.html">Aide-m√©moire</a>
+    <a href="../cheat-sheet.html">Aide-mÈmoire</a>
     <a href="https://app.blueprint-modular.com/dashboard" class="doc-nav-app" target="_blank" rel="noopener">Ouvrir l'app</a>
     <button class="nav-burger" aria-label="Menu" id="nav-burger-btn"><span></span><span></span><span></span></button>
   </nav>
@@ -27,25 +27,25 @@
     <aside class="doc-sidebar">
       <h3>Accueil</h3>
       <a href="../index.html">Accueil</a>
-      <h3>D√©marrage</h3>
+      <h3>DÈmarrage</h3>
       <a href="why-bpm.html">Pourquoi BPM</a>
       <a href="installation.html">Installation</a>
       <a href="fundamentals.html">Fondamentaux</a>
-      <a href="first-app.html" class="active">Premi√®re app</a>
+      <a href="first-app.html" class="active">PremiËre app</a>
       <h3>Composants</h3>
       <a href="../components.html">Catalogue des composants</a>
       <a href="../api-reference/text.html">Texte</a>
-      <a href="../api-reference/data.html">Donn√©es</a>
-      <a href="../api-reference/metrics.html">M√©triques</a>
+      <a href="../api-reference/data.html">DonnÈes</a>
+      <a href="../api-reference/metrics.html">MÈtriques</a>
       <a href="../api-reference/charts.html">Graphiques</a>
       <a href="../api-reference/inputs.html">Saisie</a>
       <a href="../api-reference/layout.html">Mise en page</a>
       <a href="../api-reference/panels.html">Panneaux</a>
-      <a href="../api-reference/media.html">M√©dias</a>
+      <a href="../api-reference/media.html">MÈdias</a>
       <a href="../api-reference/status.html">Statut</a>
       <a href="../api-reference/chat.html">Chat</a>
       <a href="../api-reference/config.html">Config</a>
-      <a href="../api-reference/connection.html">Connexion aux donn√©es</a>
+      <a href="../api-reference/connection.html">Connexion aux donnÈes</a>
       <h3>Modules</h3>
       <a href="https://blueprint-modular.com/modules.html">Catalogue des modules</a>
       <a href="../modules/wiki.html">Module Wiki</a>
@@ -53,41 +53,41 @@
       <a href="../modules/veille.html">Module Veille</a>
       <a href="../modules/ibkr.html">Module IBKR</a>
       <a href="../modules/analyse-document.html">Module Documents</a>
-      <h3>D√©ployer</h3>
+      <h3>DÈployer</h3>
       <a href="../deploy/concepts.html">Concepts</a>
       <a href="../deploy/platforms.html">Plateformes</a>
       <h3>Base de connaissances</h3>
       <a href="../knowledge-base/faq.html">FAQ</a>
-      <a href="../knowledge-base/troubleshooting.html">D√©pannage</a>
-      <a href="../knowledge-base/reste-a-faire.html">Ce qu'il reste √† faire</a>
+      <a href="../knowledge-base/troubleshooting.html">DÈpannage</a>
+      <a href="../knowledge-base/reste-a-faire.html">Ce qu'il reste ‡ faire</a>
       <h3>Ressources</h3>
-      <a href="../cheat-sheet.html">Aide-m√©moire</a>
+      <a href="../cheat-sheet.html">Aide-mÈmoire</a>
       <a href="../versions.html">Versions</a>
     </aside>
     <main class="doc-main">
       <nav class="breadcrumb">
-        <a href="../index.html">Accueil</a> ‚Ä∫ <a href="installation.html">D√©marrage</a> ‚Ä∫ Premi√®re app
+        <a href="../index.html">Accueil</a> õ <a href="installation.html">DÈmarrage</a> õ PremiËre app
       </nav>
 
-      <h1>Premi√®re app</h1>
-      <p class="lead">Tutoriel pas √† pas : cr√©er un dashboard de m√©triques de vente.</p>
+      <h1>PremiËre app</h1>
+      <p class="lead">Tutoriel pas ‡ pas : crÈer un dashboard de mÈtriques de vente.</p>
 
-      <h2>Ce que vous allez cr√©er</h2>
-      <p>Un dashboard de ventes avec 3 m√©triques, un tableau et un graphique d'√©volution du CA.</p>
-      <div class="preview-placeholder" style="min-height:280px;">[ Screenshot r√©sultat final : dashboard ventes ]</div>
+      <h2>Ce que vous allez crÈer</h2>
+      <p>Un dashboard de ventes avec 3 mÈtriques, un tableau et un graphique d'Èvolution du CA.</p>
+      <div class="preview-placeholder" style="min-height:280px;">[ Screenshot rÈsultat final : dashboard ventes ]</div>
 
-      <h2>√âtape 1 ‚Äî Cr√©er le fichier</h2>
+      <h2>…tape 1 ó CrÈer le fichier</h2>
       <pre><code class="language-bash">mkdir mon-dashboard &amp;&amp; cd mon-dashboard
 touch app.py</code></pre>
 
-      <h2>√âtape 2 ‚Äî √âcrire l'app</h2>
+      <h2>…tape 2 ó …crire l'app</h2>
       <pre><code class="language-python">import bpm
 import pandas as pd
 
 bpm.set_page_config(page_title="Dashboard Ventes", layout="wide")
 bpm.title("Dashboard Ventes")
 
-# M√©triques
+# MÈtriques
 col1, col2, col3 = bpm.columns(3)
 with col1:
     bpm.metric("CA du mois", 142500, delta=3200)
@@ -96,45 +96,45 @@ with col2:
 with col3:
     bpm.metric("Panier moyen", 501.8, delta=15.2)
 
-# Donn√©es
+# DonnÈes
 df = pd.DataFrame({
-    "Mois": ["Jan", "F√©v", "Mar", "Avr", "Mai"],
+    "Mois": ["Jan", "FÈv", "Mar", "Avr", "Mai"],
     "CA": [98000, 112000, 134000, 128000, 142500]
 })
 
-bpm.subheader("√âvolution du CA")
+bpm.subheader("…volution du CA")
 bpm.chart.line(df, x="Mois", y="CA")
 
-bpm.subheader("D√©tail par mois")
+bpm.subheader("DÈtail par mois")
 bpm.table(df)</code></pre>
       <div class="alert alert-info">
         <span class="alert-icon"></span>
-        <div class="alert-body"><strong>Note</strong> ‚Äî <code>bpm.columns</code> et <code>bpm.chart.line</code> sont pr√©vus dans l'API ; l'impl√©mentation actuelle propose <code>bpm.metric</code>, <code>bpm.table</code>, <code>bpm.title</code>, <code>bpm.write</code>, <code>bpm.button</code>, <code>bpm.panel</code>. Voir <a href="../knowledge-base/reste-a-faire.html">Ce qu'il reste √† faire</a>.</div>
+        <div class="alert-body"><strong>Note</strong> ó <code>bpm.columns</code> et <code>bpm.chart.line</code> sont prÈvus dans l'API ; l'implÈmentation actuelle propose <code>bpm.metric</code>, <code>bpm.table</code>, <code>bpm.title</code>, <code>bpm.write</code>, <code>bpm.button</code>, <code>bpm.panel</code>. Voir <a href="../knowledge-base/reste-a-faire.html">Ce qu'il reste ‡ faire</a>.</div>
       </div>
 
-      <h2>√âtape 3 ‚Äî Lancer</h2>
+      <h2>…tape 3 ó Lancer</h2>
       <pre><code class="language-bash">bpm run app.py</code></pre>
       <p>Ouvrez <code>http://localhost:8501</code> dans votre navigateur.</p>
 
-      <h2>R√©sultat attendu</h2>
-      <div class="preview-placeholder" style="min-height:200px;">[ Screenshot : titre, 3 m√©triques, graphique, tableau ]</div>
+      <h2>RÈsultat attendu</h2>
+      <div class="preview-placeholder" style="min-height:200px;">[ Screenshot : titre, 3 mÈtriques, graphique, tableau ]</div>
 
       <nav class="doc-pagination">
-        <a class="prev" href="fundamentals.html">‚Üê Pr√©c√©dent : Fondamentaux</a>
-        <a class="next" href="../components.html">Suivant : Catalogue des composants ‚Üí</a>
+        <a class="prev" href="fundamentals.html">? PrÈcÈdent : Fondamentaux</a>
+        <a class="next" href="../components.html">Suivant : Catalogue des composants ?</a>
       </nav>
 
       <section class="whats-next">
         <h2>Et maintenant ?</h2>
         <ul>
-          <li><a href="../components.html">Catalogue des composants</a> ‚Äî D√©couvrir tous les widgets</li>
-          <li><a href="../api-reference/metrics.html">API Reference ‚Äî Metrics</a></li>
-          <li><a href="../deploy/concepts.html">D√©ployer</a> ‚Äî Mettre en production</li>
+          <li><a href="../components.html">Catalogue des composants</a> ó DÈcouvrir tous les widgets</li>
+          <li><a href="../api-reference/metrics.html">API Reference ó Metrics</a></li>
+          <li><a href="../deploy/concepts.html">DÈployer</a> ó Mettre en production</li>
         </ul>
       </section>
 
       <section class="help-cta">
-        <p>Une question ? Consultez la <a href="../knowledge-base/faq.html">FAQ</a> et la <a href="../knowledge-base/reste-a-faire.html">Ce qu'il reste √† faire</a>.</p>
+        <p>Une question ? Consultez la <a href="../knowledge-base/faq.html">FAQ</a> et la <a href="../knowledge-base/reste-a-faire.html">Ce qu'il reste ‡ faire</a>.</p>
       </section>
 
       <footer class="site-footer" style="margin-top:2rem;">
@@ -142,12 +142,12 @@ bpm.table(df)</code></pre>
           <a href="../index.html">Accueil</a>
           <a href="../components.html">Composants</a>
           <a href="https://blueprint-modular.com/modules.html">Modules</a>
-          <a href="../cheat-sheet.html">Aide-m√©moire</a>
+          <a href="../cheat-sheet.html">Aide-mÈmoire</a>
           <a href="../versions.html">Versions</a>
           <a href="../knowledge-base/faq.html">FAQ</a>
-          <a href="../knowledge-base/reste-a-faire.html">Ce qu'il reste √† faire</a>
+          <a href="../knowledge-base/reste-a-faire.html">Ce qu'il reste ‡ faire</a>
         </div>
-        <div class="footer-meta">Blueprint Modular v0.1.10</div>
+        <div class="footer-meta">Blueprint Modular v0.1.11</div>
       </footer>
     </main>
   </div>

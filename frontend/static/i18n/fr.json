@@ -1,7 +1,7 @@
-ï»¿{
+{
   "page": {
-    "title": "Blueprint Modular â€” Briques Python pour vos interfaces",
-    "description": "Importez depuis bpm, le reste est dÃ©jÃ  fait. Composants, doc, dÃ©ploiement. Pas de front."
+    "title": "Blueprint Modular — Briques Python pour vos interfaces",
+    "description": "Importez depuis bpm, le reste est déjà fait. Composants, doc, déploiement. Pas de front."
   },
   "languages": {
     "fr": "FR",
@@ -10,8 +10,8 @@
     "es": "ES",
     "it": "IT",
     "nl": "NL",
-    "zh": "ä¸­æ–‡",
-    "ja": "æ—¥æœ¬èªž"
+    "zh": "??",
+    "ja": "???"
   },
   "landing": {
     "nav": {
@@ -20,45 +20,45 @@
       "installation": "Installation",
       "components": "Composants",
       "modules": "Modules",
-      "access_doc": "AccÃ©der Ã  la doc"
+      "access_doc": "Accéder à la doc"
     },
     "hero": {
       "kicker": "Framework Python",
-      "title": "Briques prÃªtes.<br />Vous Ã©crivez la logique.",
-      "desc": "Importez depuis bpm, assemblez mÃ©triques, tableaux, formulaires. Pas de HTML, pas de JS. Une seule codebase.",
+      "title": "Briques prêtes.<br />Vous écrivez la logique.",
+      "desc": "Importez depuis bpm, assemblez métriques, tableaux, formulaires. Pas de HTML, pas de JS. Une seule codebase.",
       "screenshot": "[ Screenshot dashboard BPM ]",
-      "demo_btn": "Voir la dÃ©mo",
+      "demo_btn": "Voir la démo",
       "doc_btn": "Lire la doc",
-      "code_label": "DÃ©marrage en une minute"
+      "code_label": "Démarrage en une minute"
     },
     "pitch": {
       "heading": "Pourquoi Blueprint Modular",
-      "item1": "Composants rÃ©utilisables â€” Texte, donnÃ©es, graphiques, formulaires, layout. Tout est dans la doc.",
-      "item2": "Python uniquement â€” Pas de front Ã  cÃ¢bler. Vous dÃ©clarez, l'interface se met Ã  jour.",
-      "item3": "Doc et dÃ©ploiement inclus â€” Installation, API, dÃ©ploiement VPS/Docker dÃ©crits pas Ã  pas."
+      "item1": "Composants réutilisables — Texte, données, graphiques, formulaires, layout. Tout est dans la doc.",
+      "item2": "Python uniquement — Pas de front à câbler. Vous déclarez, l'interface se met à jour.",
+      "item3": "Doc et déploiement inclus — Installation, API, déploiement VPS/Docker décrits pas à pas."
     },
     "diff": {
       "heading": "Ce que BPM apporte que les autres n'ont pas",
-      "intro": "RÃ©activitÃ© granulaire, design system, registry et layout pilotÃ© par config : quatre atouts qu'aucun autre framework Python pour la data ne propose nativement.",
-      "item1": "RÃ©activitÃ© granulaire + syntaxe simple â€” Mise Ã  jour ciblÃ©e des composants (refs, store rÃ©actif) sans re-run complet du script.",
-      "item2": "Design system cohÃ©rent (bpm.*) â€” Tokens centralisÃ©s ; personnalisation par variables CSS.",
-      "item3": "Registry $ et @ â€” RÃ©fs rÃ©actives pour l'Ã©tat ; dÃ©corateurs pour pages, sidebar, cache.",
-      "item4": "Layout pilotÃ© par config â€” Un fichier app.config.js pour tout ; dupliquer une app = modifier ce fichier.",
-      "link_text": "Lire Â« Pourquoi BPM Â» â†’"
+      "intro": "Réactivité granulaire, design system, registry et layout piloté par config : quatre atouts qu'aucun autre framework Python pour la data ne propose nativement.",
+      "item1": "Réactivité granulaire + syntaxe simple — Mise à jour ciblée des composants (refs, store réactif) sans re-run complet du script.",
+      "item2": "Design system cohérent (bpm.*) — Tokens centralisés ; personnalisation par variables CSS.",
+      "item3": "Registry $ et @ — Réfs réactives pour l'état ; décorateurs pour pages, sidebar, cache.",
+      "item4": "Layout piloté par config — Un fichier app.config.js pour tout ; dupliquer une app = modifier ce fichier.",
+      "link_text": "Lire « Pourquoi BPM » ?"
     },
     "use": {
-      "heading": "IdÃ©al pour",
-      "tag1": "Prototypes mÃ©tier",
+      "heading": "Idéal pour",
+      "tag1": "Prototypes métier",
       "tag2": "Dashboards internes",
       "tag3": "Outils data & ML",
-      "tag4": "Apps de dÃ©mo",
-      "card1": "Prototypes mÃ©tier",
+      "tag4": "Apps de démo",
+      "card1": "Prototypes métier",
       "card2": "Dashboards internes",
       "card3": "Outils data & ML",
-      "card4": "Apps de dÃ©mo"
+      "card4": "Apps de démo"
     },
     "cta": {
-      "text": "Tout est documentÃ© : installation, composants, rÃ©fÃ©rence API, dÃ©ploiement.",
+      "text": "Tout est documenté : installation, composants, référence API, déploiement.",
       "btn": "Ouvrir la documentation"
     },
     "footer": {
@@ -69,7 +69,7 @@
       "versions": "Versions",
       "faq": "FAQ",
       "roadmap": "Roadmap",
-      "meta": "Blueprint Modular v0.1.10"
+      "meta": "Blueprint Modular v0.1.11"
     }
   }
 }
