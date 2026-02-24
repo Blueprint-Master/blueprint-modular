@@ -295,6 +295,7 @@ export default function SettingsPage() {
         ),
       },
     ],
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- setters stables (contexte/setState)
     [
       status,
       session,

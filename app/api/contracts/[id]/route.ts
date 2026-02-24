@@ -1,16 +1,14 @@
 import { NextResponse } from "next/server";
-import { getServerSession } from "next-auth";
-import { authOptions } from "@/lib/auth";
+import { getSessionOrTestUser } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { unlink } from "fs/promises";
 
 export const dynamic = "force-dynamic";
 
 async function getContractAndCheckAuth(id: string) {
-  const session = await getServerSession(authOptions);
-  if (!session?.user?.email) return { error: NextResponse.json({ error: "Unauthorized" }, { status: 401 }) };
-  const user = await prisma.user.findUnique({ where: { email: session.user.email } });
-  if (!user) return { error: NextResponse.json({ error: "User not found" }, { status: 404 }) };
+  const result = await getSessionOrTestUser();
+  if (!result) return { error: NextResponse.json({ error: "Unauthorized" }, { status: 401 }) };
+  const { user } = result;
   const contract = await prisma.contract.findUnique({ where: { id } });
   if (!contract) return { error: NextResponse.json({ error: "Not found" }, { status: 404 }) };
   if (contract.uploadedById !== user.id)

@@ -35,9 +35,9 @@ Ne commence le développement qu'après avoir produit ce rapport.
 Tu travailles sur **Blueprint Modular**, un framework React modulaire avec composants `bpm.*`.
 L'application est déployée sur `https://app.blueprint-modular.com/dashboard`.
 
-Tu dois intégrer une **couche IA locale** complète, connectée à un serveur vLLM faisant tourner **Mixtral 8x7B** (pas OpenAI, pas de cloud — tout en local, API REST sur `http://AI_SERVER_URL/v1`).
+La **couche IA locale** est connectée à **Ollama** (modèle **Qwen2.5:7b** par défaut), pas OpenAI ni cloud — tout en local. Le client appelle Ollama via les API Routes Next.js (`app/api/ai/`), jamais depuis le frontend.
 
-La variable `AI_SERVER_URL` sera définie dans `.env`. En développement, utilise un mock.
+Variables d’environnement : `AI_SERVER_URL` (URL Ollama, ex. `http://localhost:11434`), `AI_MOCK=true` (dév sans serveur). Voir `lib/ai/config.ts`.
 
 ---
 
@@ -48,48 +48,26 @@ La variable `AI_SERVER_URL` sera définie dans `.env`. En développement, utilis
 **Description**
 Un panneau de chat IA flottant, accessible depuis n'importe quelle page du dashboard. L'assistant "voit" tous les modules actifs de l'application et peut répondre à des questions sur leurs données.
 
-**Fichiers à créer**
+**Fichiers existants (à étendre, pas à recréer)**
 
 ```
-src/
-├── ai/
-│   ├── core/
-│   │   ├── llm_client.js          # Client HTTP vers vLLM (zéro dépendance openai)
-│   │   ├── context_builder.js     # Transforme les données des modules en texte
-│   │   ├── module_registry.js     # Registry central des modules et leurs données
-│   │   └── prompt_templates.js    # Templates de prompts métier
-│   ├── components/
-│   │   ├── AIAssistant.jsx        # Panneau principal (chat)
-│   │   ├── AIMessage.jsx          # Rendu d'un message (user/assistant)
-│   │   ├── AIContextSelector.jsx  # Sélecteur de modules à inclure dans le contexte
-│   │   └── AIThinkingIndicator.jsx # Indicateur de chargement
-│   └── hooks/
-│       ├── useAIAssistant.js      # Hook principal du chat
-│       └── useModuleRegistry.js   # Hook pour enregistrer/lire les modules
+lib/ai/
+├── vllm-client.ts      # Client Ollama (chat, chatStream, healthCheck)
+├── config.ts           # AI_CONFIG (baseUrl, model, timeout, mock)
+├── context-builder.ts  # Données des modules → texte pour le LLM
+├── module-registry.ts  # Registry des modules et leurs données
+├── prompt-templates.ts # SYSTEM_PROMPT_BASE, TEMPLATE_*, etc.
+└── contract-analyzer.ts # Analyse JSON contrats
+
+app/api/ai/
+├── chat/route.ts       # POST, stream SSE (provider vllm par défaut)
+└── health/route.ts     # Statut Ollama
+
+components/ai/
+└── AIAssistant.tsx     # Panneau chat + contexte modules
 ```
 
-**Spécifications llm_client.js**
-```javascript
-// Client HTTP pur — zéro librairie tierce, zéro dépendance OpenAI
-// Appelle directement l'API REST vLLM
-
-class LLMClient {
-  constructor(baseUrl = process.env.REACT_APP_AI_SERVER_URL) {}
-  
-  async chat(messages, options = {}) {
-    // POST /v1/chat/completions avec fetch natif
-    // Gestion du streaming (ReadableStream)
-    // Timeout configurable (défaut 60s)
-    // Retry automatique x2 en cas d'erreur réseau
-    // En développement (REACT_APP_AI_MOCK=true) : retourne une réponse mockée
-  }
-  
-  async healthCheck() {
-    // GET /health — vérifie que le serveur IA est disponible
-    // Retourne { available: bool, model: string, latency: ms }
-  }
-}
-```
+**Convention client IA** : les appels Ollama se font **uniquement** depuis les API Routes (côté serveur). Le frontend appelle `/api/ai/chat` ; la config est dans `lib/ai/config.ts` (variables d’env `AI_SERVER_URL`, `AI_MOCK`, `AI_MODEL`).
 
 **Spécifications module_registry.js**
 ```javascript
@@ -286,11 +264,11 @@ class Contract(Base):
 class ContractAnalyzer:
     """
     Pipeline d'analyse IA d'un contrat.
-    Appelle vLLM local — JAMAIS d'API externe.
+    Appelle Ollama local (via lib/ai) — JAMAIS d'API externe.
     """
     
     def __init__(self, llm_base_url: str):
-        # Client HTTP vers vLLM — requests pur, zéro dépendance openai
+        # En pratique : l'analyse est faite dans lib/ai/contract-analyzer.ts (Next.js)
         pass
     
     async def analyze(self, contract_text: str, contract_type: str) -> dict:
@@ -434,7 +412,7 @@ class Settings(BaseSettings):
     # Base de données
     DATABASE_URL: str = "postgresql+asyncpg://user:pass@localhost/blueprint"
     
-    # IA — serveur vLLM local
+    # IA — serveur Ollama local
     AI_SERVER_URL: str = "http://localhost:8000"
     AI_MODEL: str = "mixtral-8x7b-instruct"
     AI_TIMEOUT: int = 120
@@ -452,7 +430,7 @@ class Settings(BaseSettings):
 
 ```
 # AI
-GET  /api/ai/health              → statut du serveur vLLM
+GET  /api/ai/health              → statut du serveur Ollama
 POST /api/ai/chat                → chat générique (stream SSE)
 
 # Contracts
@@ -499,16 +477,15 @@ POST /api/ai/context             → reçoit les données de modules, retourne c
 
 ## 🧪 MOCKS DE DÉVELOPPEMENT
 
-Pour travailler sans le serveur vLLM :
+Pour travailler sans le serveur Ollama :
 
-```javascript
-// .env.development
-REACT_APP_AI_MOCK=true
-REACT_APP_AI_SERVER_URL=http://localhost:8000
-
-// llm_client.js doit détecter REACT_APP_AI_MOCK=true 
-// et retourner des réponses mockées réalistes après 1-2s de délai simulé
+```bash
+# .env.local
+AI_MOCK=true
+AI_SERVER_URL=http://localhost:11434
 ```
+
+Le client dans `lib/ai/vllm-client.ts` utilise `AI_CONFIG.mock` et retourne des réponses mockées lorsque `AI_MOCK=true`.
 
 Exemples de réponses mockées à prévoir :
 - Analyse de portefeuille → texte de synthèse structurée
@@ -521,9 +498,9 @@ Exemples de réponses mockées à prévoir :
 
 1. **Analyse préliminaire** (rapport obligatoire)
 2. **Backend de base** (si inexistant) + connexion DB + migrations
-3. **llm_client.js + mocks** (fondation de tout le reste)
-4. **module_registry.js + context_builder.js**
-5. **AIAssistant.jsx** (Module 1 complet)
+3. **lib/ai (vllm-client + config + mocks)** (fondation de tout le reste)
+4. **module-registry.ts + context-builder.ts**
+5. **AIAssistant.tsx** (Module 1 complet)
 6. **Backend contracts** (models + analyzer + router)
 7. **ContractUpload + ContractList + ContractDetail** (Module 2 complet)
 8. **Backend wiki** (models + router)

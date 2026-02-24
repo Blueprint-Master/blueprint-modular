@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import Link from "next/link";
 import { useSession } from "next-auth/react";
 
@@ -64,19 +64,19 @@ export default function WikiPage() {
   const [loading, setLoading] = useState(true);
   const [selectedParent, setSelectedParent] = useState<string | null>(null);
 
-  const fetchArticles = () => {
+  const fetchArticles = useCallback(() => {
+    setLoading(true);
     const url = search ? `/api/wiki?search=${encodeURIComponent(search)}` : "/api/wiki";
     fetch(url)
       .then((r) => (r.ok ? r.json() : []))
       .then((data) => setArticles(Array.isArray(data) ? data : []))
       .catch(() => setArticles([]))
       .finally(() => setLoading(false));
-  };
+  }, [search]);
 
   useEffect(() => {
-    setLoading(true);
     fetchArticles();
-  }, [search]);
+  }, [fetchArticles]);
 
   const handleDelete = async (e: React.MouseEvent, slug: string) => {
     e.preventDefault();

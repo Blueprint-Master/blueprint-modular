@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { Table, Spinner, Selectbox, Panel } from "@/components/bpm";
@@ -70,7 +70,7 @@ export default function ContractsPage() {
   const [contractType, setContractType] = useState("");
   const [status, setStatus] = useState("");
 
-  const fetchContracts = () => {
+  const fetchContracts = useCallback(() => {
     const params = new URLSearchParams();
     if (workspace) params.set("workspace", workspace);
     if (contractType) params.set("contractType", contractType);
@@ -86,18 +86,18 @@ export default function ContractsPage() {
         setContracts([]);
         setLoading(false);
       });
-  };
+  }, [workspace, contractType, status]);
 
   useEffect(() => {
     fetchContracts();
-  }, [workspace, contractType, status]);
+  }, [fetchContracts]);
 
   useEffect(() => {
     const hasAnalyzing = contracts.some((c) => c.status === "analyzing" || c.status === "pending");
     if (!hasAnalyzing) return;
     const interval = setInterval(fetchContracts, 3000);
     return () => clearInterval(interval);
-  }, [contracts]);
+  }, [contracts, fetchContracts]);
 
   const handleAnalyze = async (files: File[]) => {
     if (files.length === 0) return;

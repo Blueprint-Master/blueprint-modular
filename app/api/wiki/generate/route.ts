@@ -1,5 +1,4 @@
-import { getServerSession } from "next-auth";
-import { authOptions } from "@/lib/auth";
+import { getSessionOrTestUser } from "@/lib/auth";
 import { vllmClient } from "@/lib/ai/vllm-client";
 import { TEMPLATE_WIKI_GENERATION } from "@/lib/ai/prompt-templates";
 
@@ -19,8 +18,8 @@ function isWorkspace(s: string): s is Workspace {
 }
 
 export async function POST(req: Request) {
-  const session = await getServerSession(authOptions);
-  if (!session) {
+  const result = await getSessionOrTestUser();
+  if (!result) {
     return new Response(JSON.stringify({ error: "Unauthorized" }), { status: 401 });
   }
 

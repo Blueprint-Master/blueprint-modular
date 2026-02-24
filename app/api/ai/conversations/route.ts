@@ -11,9 +11,19 @@ export async function GET() {
   const list = await prisma.aiConversation.findMany({
     where: { userId: user.id },
     orderBy: { updatedAt: "desc" },
-    select: { id: true, preview: true, createdAt: true },
+    take: 100,
+    include: {
+      messages: { orderBy: { createdAt: "asc" as const }, select: { userMessage: true, aiResponse: true, providerName: true } },
+    },
   });
-  return NextResponse.json(list);
+  const out = list.map((c) => ({
+    id: c.id,
+    preview: c.preview,
+    createdAt: c.createdAt,
+    updated_at: c.updatedAt,
+    messages: c.messages.map((m) => ({ user_message: m.userMessage, ai_response: m.aiResponse, provider_name: m.providerName })),
+  }));
+  return NextResponse.json(out);
 }
 
 export async function POST() {

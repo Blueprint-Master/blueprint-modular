@@ -45,6 +45,22 @@ MIT
 
 ---
 
+# Application Next.js (ce dépôt)
+
+L’**application dashboard** Blueprint Modular est une app **Next.js 14** (App Router) avec authentification, modules métier (contrats, wiki, documents, IA) et couche IA locale (Ollama / Qwen2.5).
+
+| Dossier / fichier | Rôle |
+|-------------------|------|
+| **app/** | Pages et layouts (App Router) ; API sous `app/api/` (auth, ai, contracts, wiki, documents, settings). |
+| **lib/** | Auth (NextAuth), Prisma, **lib/ai** (client Ollama, prompts, module registry, context builder, contract analyzer). |
+| **components/** | Composants React dont **components/bpm** (design system), Sidebar, thème, assistant IA. |
+| **prisma/** | Schéma PostgreSQL et migrations. |
+
+**Commandes :** `npm install` puis `npm run dev` (dév) ou `npm run build` (prod).  
+**Config :** `.env.local` (voir `.env.example`) — ex. `DATABASE_URL`, `NEXTAUTH_SECRET`, `AI_SERVER_URL` (Ollama), `AI_MOCK=true` (dév sans serveur IA).
+
+---
+
 # Site de documentation (ce dépôt)
 
 Site statique de documentation **Blueprint Modular** (BPM) : landing, composants et référence API. Projet isolé pour être hébergé sur un **domaine dédié** (OVH + VPS).
@@ -75,7 +91,7 @@ Aucune dépendance au reste du repo : vous pouvez ouvrir uniquement ce dossier d
 | **frontend/doc-app/** | Site doc en React (recommandé). Build : `cd frontend/doc-app && npm run build` → `dist/`. |
 | **frontend/static/** | Site doc HTML statique : index.html, doc.css, get-started/, api-reference/, deploy/, knowledge-base/, cheat-sheet, components, reference. |
 | **frontend/api-docs/** | Pages pour l'URL /api/docs (MyPortfolio). |
-| **backend/** | Réservé au code serveur (API, etc.). Aucun backend pour l'instant — voir backend/README.md. |
+| **backend/** | Réservé à d’éventuels services externes. L’API métier est dans **app/api/** (Next.js). |
 | **deploy/** | Scripts de déploiement : setup.sh, update.sh, nginx.conf. |
 | **Logo BPM.png**, **Logo-BPM-*** | Logos (racine). |
 | **app.py** | Exemple d’app BPM : <code>bpm run app.py</code>. |
@@ -118,6 +134,13 @@ Les liens internes du site à la racine utilisent `/`, `/components` et `/refere
 Le script **deploy_blueprint_modular.ps1** déploie **frontend/static/** et **Logo BPM.png** (Ã  la racine). **favicon.ico** Ã  la racine est optionnel.
 
 ## Prévisualisation en local
+
+**Application Next.js (dashboard)** — à la racine du dépôt :
+
+```bash
+npm install && npm run dev
+# Puis ouvrir l’URL affichée (ex. http://localhost:3000)
+```
 
 **Site doc statique (HTML)** — depuis le dossier des fichiers statiques :
 

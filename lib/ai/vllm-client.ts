@@ -11,6 +11,8 @@ export type ChatMessage = { role: "user" | "assistant" | "system"; content: stri
 export interface VLLMChatOptions {
   timeout?: number;
   max_tokens?: number;
+  /** Override du modèle Ollama (ex. qwen2.5:7b, mistral:7b). */
+  model?: string;
 }
 
 export interface VLLMHealthResult {
@@ -136,7 +138,7 @@ export class VLLMClient {
     // Format Ollama streaming : /api/chat avec stream: true
     const url = `${this.baseUrl}/api/chat`;
     const body = {
-      model: AI_CONFIG.model,
+      model: opts.model ?? AI_CONFIG.model,
       messages: messages.map((m) => ({ role: m.role, content: m.content })),
       stream: true,
     };

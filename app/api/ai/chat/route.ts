@@ -1,16 +1,48 @@
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
+import { prisma } from "@/lib/prisma";
 import Anthropic from "@anthropic-ai/sdk";
 import { vllmClient } from "@/lib/ai/vllm-client";
 import { SYSTEM_PROMPT_WITH_CONTEXT } from "@/lib/ai/prompt-templates";
 
 export const dynamic = "force-dynamic";
 
+async function saveConversationTurn(
+  userId: string,
+  discussionId: string | undefined,
+  userMessage: string,
+  aiResponse: string,
+  providerName: string
+): Promise<string> {
+  const preview = userMessage.slice(0, 80) + (userMessage.length > 80 ? "…" : "");
+  if (discussionId) {
+    const conv = await prisma.aiConversation.findFirst({ where: { id: discussionId, userId } });
+    if (conv) {
+      await prisma.$transaction([
+        prisma.aiMessage.create({
+          data: { conversationId: conv.id, userMessage, aiResponse, providerName },
+        }),
+        prisma.aiConversation.update({ where: { id: conv.id }, data: { preview, updatedAt: new Date() } }),
+      ]);
+      return conv.id;
+    }
+  }
+  const conv = await prisma.aiConversation.create({
+    data: { userId, preview },
+  });
+  await prisma.aiMessage.create({
+    data: { conversationId: conv.id, userMessage, aiResponse, providerName },
+  });
+  return conv.id;
+}
+
 export async function POST(req: Request) {
   const session = await getServerSession(authOptions);
-  if (!session) {
+  if (!session?.user?.email) {
     return new Response("Unauthorized", { status: 401 });
   }
+  const user = await prisma.user.findUnique({ where: { email: session.user.email } });
+  if (!user) return new Response("Unauthorized", { status: 401 });
 
   const body = await req.json().catch(() => ({}));
   const {
@@ -21,22 +53,31 @@ export async function POST(req: Request) {
     context_from_modules,
   } = body as {
     message?: string;
-    provider_name?: "claude" | "openai" | "gemini" | "grok" | "vllm";
+    provider_name?: "claude" | "openai" | "gemini" | "grok" | "vllm" | "qwen" | "mistral";
     conversation_history?: { role: string; content: string }[];
     discussion_id?: string;
     context_from_modules?: string;
   };
+
+  const ollamaProvider = provider_name === "vllm" || provider_name === "qwen" || provider_name === "mistral";
+  const ollamaModel =
+    provider_name === "qwen"
+      ? process.env.AI_MODEL_QWEN ?? "qwen2.5:7b"
+      : provider_name === "mistral"
+        ? process.env.AI_MODEL_MISTRAL ?? "mistral:7b"
+        : undefined;
 
   if (!message || typeof message !== "string") {
     return new Response(JSON.stringify({ error: "message required" }), { status: 400 });
   }
 
   const encoder = new TextEncoder();
+  let fullResponse = "";
 
   const stream = new ReadableStream({
     async start(controller) {
       try {
-        if (provider_name === "vllm") {
+        if (ollamaProvider) {
           const systemContent = context_from_modules
             ? SYSTEM_PROMPT_WITH_CONTEXT(context_from_modules)
             : undefined;
@@ -47,10 +88,12 @@ export async function POST(req: Request) {
           ];
           try {
             await vllmClient.chatStream(messages, (chunk) => {
+              fullResponse += chunk;
               controller.enqueue(encoder.encode(`data: ${JSON.stringify({ type: "chunk", t: chunk })}\n\n`));
-            });
+            }, ollamaModel ? { model: ollamaModel } : {});
+            const savedId = await saveConversationTurn(user.id, discussion_id, message, fullResponse, provider_name);
             controller.enqueue(
-              encoder.encode(`data: ${JSON.stringify({ type: "done", discussion_id: discussion_id ?? "new" })}\n\n`)
+              encoder.encode(`data: ${JSON.stringify({ type: "done", discussion_id: savedId })}\n\n`)
             );
           } catch (vllmErr) {
             const errMsg = vllmErr instanceof Error ? vllmErr.message : "vLLM error";
@@ -91,15 +134,15 @@ export async function POST(req: Request) {
               typeof (event as { delta?: { text?: string } }).delta?.text === "string"
             ) {
               const chunk = (event as { delta: { text: string } }).delta.text;
+              fullResponse += chunk;
               controller.enqueue(
                 encoder.encode(`data: ${JSON.stringify({ type: "chunk", t: chunk })}\n\n`)
               );
             }
           }
+          const savedId = await saveConversationTurn(user.id, discussion_id, message, fullResponse, provider_name);
           controller.enqueue(
-            encoder.encode(
-              `data: ${JSON.stringify({ type: "done", discussion_id: discussion_id ?? "new" })}\n\n`
-            )
+            encoder.encode(`data: ${JSON.stringify({ type: "done", discussion_id: savedId })}\n\n`)
           );
         } else {
           controller.enqueue(
@@ -109,9 +152,9 @@ export async function POST(req: Request) {
           );
         }
       } catch (err) {
-        const message = err instanceof Error ? err.message : "Unknown error";
+        const msg = err instanceof Error ? err.message : "Unknown error";
         controller.enqueue(
-          encoder.encode(`data: ${JSON.stringify({ type: "error", message })}\n\n`)
+          encoder.encode(`data: ${JSON.stringify({ type: "error", message: msg })}\n\n`)
         );
       } finally {
         controller.close();

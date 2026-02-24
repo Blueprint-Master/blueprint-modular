@@ -1,66 +1,295 @@
 "use client";
 
-import { useState, useRef, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { useSession } from "next-auth/react";
-import { Button, Checkbox } from "@/components/bpm";
-import { moduleRegistry } from "@/lib/ai/module-registry";
+import ReactMarkdown from "react-markdown";
+import remarkGfm from "remark-gfm";
+import rehypeHighlight from "rehype-highlight";
+import { getDollarSuggestions } from "./ai-suggestions";
+import "./AIChat.css";
 
-type MessageRole = "user" | "assistant";
-type ChatMessage = { role: MessageRole; content: string };
-type ProviderId = "vllm" | "claude" | "openai" | "gemini" | "grok";
-
-const PROVIDER_LABELS: Record<ProviderId, string> = {
-  vllm: "Ollama",
-  claude: "Claude",
-  openai: "OpenAI",
-  gemini: "Gemini",
-  grok: "Grok",
+const PROVIDER_ALIAS: Record<string, string> = {
+  claude: "claude",
+  gpt: "openai",
+  chatgpt: "openai",
+  gemini: "gemini",
+  grok: "grok",
+  ollama: "vllm",
+  qwen: "qwen",
+  mistral: "mistral",
 };
 
-export function AIChat() {
-  const { data: session, status } = useSession();
-  const [messages, setMessages] = useState<ChatMessage[]>([]);
-  const [input, setInput] = useState("");
-  const [streaming, setStreaming] = useState(false);
-  const [streamingContent, setStreamingContent] = useState("");
-  const [provider, setProvider] = useState<ProviderId>("vllm");
-  const [health, setHealth] = useState<{ available: boolean; model?: string } | null>(null);
-  const [selectedModuleIds, setSelectedModuleIds] = useState<string[]>([]);
-  const [modules, setModules] = useState(moduleRegistry.getAllModules());
-  const bottomRef = useRef<HTMLDivElement>(null);
+const AT_COLORS: Record<string, string> = {
+  openai: "#10A37F",
+  claude: "#F97316",
+  vllm: "#10A37F",
+  qwen: "#6037DB",
+  mistral: "#FA4C0A",
+  gemini: "#4285F4",
+  grok: "#626262",
+};
 
-  useEffect(() => {
-    setModules(moduleRegistry.getAllModules());
-  }, []);
+const PROVIDERS_LIST = [
+  { id: "vllm", shortLabel: "Ollama", color: AT_COLORS.vllm },
+  { id: "qwen", shortLabel: "Qwen", color: AT_COLORS.qwen },
+  { id: "mistral", shortLabel: "Mistral", color: AT_COLORS.mistral },
+  { id: "claude", shortLabel: "Claude", color: AT_COLORS.claude },
+  { id: "openai", shortLabel: "GPT", color: AT_COLORS.openai },
+  { id: "gemini", shortLabel: "Gemini", color: AT_COLORS.gemini },
+  { id: "grok", shortLabel: "Grok", color: AT_COLORS.grok },
+];
 
-  useEffect(() => {
-    fetch("/api/ai/health")
-      .then((r) => r.json())
-      .then(setHealth)
-      .catch(() => setHealth({ available: false }));
-  }, []);
+function parseProviderFromText(text: string, fallback: string): string {
+  const m = text.match(/@(\w+)/i);
+  if (m) {
+    const n = PROVIDER_ALIAS[m[1].toLowerCase()];
+    if (n) return n;
+  }
+  return fallback;
+}
 
-  useEffect(() => {
-    bottomRef.current?.scrollIntoView({ behavior: "smooth" });
-  }, [messages, streamingContent]);
-
-  const send = async () => {
-    const text = input.trim();
-    if (!text || streaming) return;
-    setInput("");
-    setMessages((prev) => [...prev, { role: "user", content: text }]);
-    setStreaming(true);
-    setStreamingContent("");
-
-    const history = messages
-      .concat([{ role: "user", content: text }])
-      .map((m) => ({ role: m.role, content: m.content }));
-
-    let contextFromModules: string | undefined;
-    if (selectedModuleIds.length > 0) {
-      const { text: ctx } = await moduleRegistry.buildContext(selectedModuleIds);
-      contextFromModules = ctx;
+function parseAllProvidersFromText(text: string): string[] {
+  const seen = new Set<string>();
+  const order: string[] = [];
+  const re = /@(\w+)/gi;
+  let match;
+  while ((match = re.exec(text)) !== null) {
+    const n = PROVIDER_ALIAS[match[1].toLowerCase()];
+    if (n && !seen.has(n)) {
+      seen.add(n);
+      order.push(n);
     }
+  }
+  return order;
+}
+
+function highlightAtAndDollar(text: string): React.ReactNode {
+  if (typeof text !== "string") return text;
+  const re = /(@[a-zA-Z0-9_.]+|\$[a-zA-Z]+(?::[^;\s]+)?(?:;[^\s]+)?|(?<!\w)#[a-zA-ZÀ-ÿ0-9_-]+)/g;
+  const parts = text.split(re);
+  return parts.map((part, i) => {
+    if (!part) return null;
+    if (part.startsWith("@")) {
+      const name = part.slice(1).toLowerCase();
+      const providerId = PROVIDER_ALIAS[name] ?? name;
+      const color = AT_COLORS[providerId] ?? "var(--bpm-accent-cyan)";
+      return (
+        <span key={`ad-${i}`} className="bpm-ai-at-mention" data-provider={providerId || "other"} style={{ color }}>
+          {part}
+        </span>
+      );
+    }
+    if (part.startsWith("$")) {
+      return (
+        <span key={`ad-${i}`} className="bpm-ai-accent">
+          {part}
+        </span>
+      );
+    }
+    if (part.startsWith("#")) {
+      return (
+        <span key={`ad-${i}`} className="bpm-ai-tag">
+          {part}
+        </span>
+      );
+    }
+    return part;
+  });
+}
+
+type ChatMsg = { role: "user" | "assistant"; content: string; provider?: string };
+
+function MessageBubble({
+  message,
+  assistantName,
+}: {
+  message: ChatMsg;
+  assistantName: string;
+}) {
+  if (message.role === "assistant") {
+    const label = PROVIDERS_LIST.find((p) => p.id === message.provider)?.shortLabel ?? message.provider ?? assistantName;
+    const color = PROVIDERS_LIST.find((p) => p.id === message.provider)?.color ?? AT_COLORS[message.provider ?? ""] ?? "var(--bpm-text-secondary)";
+    return (
+      <div className="bpm-ai-message bpm-ai-message--assistant">
+        <div className="bpm-ai-message-header">
+          <span className="bpm-ai-message-provider" style={{ color }}>
+            {label}:
+          </span>
+        </div>
+        <div className="bpm-ai-message-body">
+          <ReactMarkdown
+            remarkPlugins={[remarkGfm]}
+            rehypePlugins={[rehypeHighlight]}
+            components={{
+              text: ({ children }) => <>{highlightAtAndDollar(String(children))}</>,
+            }}
+          >
+            {message.content || ""}
+          </ReactMarkdown>
+        </div>
+      </div>
+    );
+  }
+  return (
+    <div className="bpm-ai-message bpm-ai-message--user">
+      <div className="bpm-ai-message-body">{highlightAtAndDollar(message.content || "")}</div>
+    </div>
+  );
+}
+
+export interface AIChatProps {
+  historyOpen?: boolean;
+  onCloseHistory?: () => void;
+  newDiscussionTrigger?: number;
+  assistantName?: string;
+}
+
+const STORAGE_TITLES_KEY = "ia_discussion_titles";
+
+export function AIChat({
+  historyOpen = false,
+  onCloseHistory,
+  newDiscussionTrigger = 0,
+  assistantName = "Assistant",
+}: AIChatProps) {
+  const { data: session, status } = useSession();
+  const [messages, setMessages] = useState<ChatMsg[]>([]);
+  const [inputText, setInputText] = useState("");
+  const [activeProvider, setActiveProvider] = useState("vllm");
+  const [isStreaming, setIsStreaming] = useState(false);
+  const [configuredProviders, setConfiguredProviders] = useState<{ provider_name: string; label: string; color?: string }[]>([]);
+  const [showProviderSugg, setShowProviderSugg] = useState(false);
+  const [showTokenSugg, setShowTokenSugg] = useState(false);
+  const [tokenSuggestions, setTokenSuggestions] = useState<{ token: string; label: string; location?: string }[]>([]);
+  const [historyConversations, setHistoryConversations] = useState<
+    { id: string; preview?: string; createdAt: string; updated_at: string; messages: { user_message: string; ai_response: string; provider_name: string }[] }[]
+  >([]);
+  const [historyLoading, setHistoryLoading] = useState(false);
+  const [selectedHistoryId, setSelectedHistoryId] = useState<string | null>(null);
+  const [currentDiscussionId, setCurrentDiscussionId] = useState<string | null>(null);
+  const [customTitles, setCustomTitles] = useState<Record<string, string>>({});
+  const [historyClosing, setHistoryClosing] = useState(false);
+  const [historyOpenAnimationActive, setHistoryOpenAnimationActive] = useState(false);
+  const messagesEndRef = useRef<HTMLDivElement>(null);
+  const inputRef = useRef<HTMLTextAreaElement>(null);
+  const highlightRef = useRef<HTMLDivElement>(null);
+  const inputRowRef = useRef<HTMLDivElement>(null);
+  const abortRef = useRef<AbortController | null>(null);
+
+  useEffect(() => {
+    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+  }, [messages]);
+
+  useEffect(() => {
+    if (inputText && highlightRef.current && inputRef.current) {
+      highlightRef.current.scrollTop = inputRef.current.scrollTop;
+      highlightRef.current.scrollLeft = inputRef.current.scrollLeft;
+    }
+  }, [inputText]);
+
+  useEffect(() => {
+    if (newDiscussionTrigger > 0) {
+      setMessages([]);
+      setCurrentDiscussionId(null);
+    }
+  }, [newDiscussionTrigger]);
+
+  useEffect(() => {
+    if (!historyOpen || !session) return;
+    setHistoryOpenAnimationActive(true);
+  }, [historyOpen, session]);
+  useEffect(() => {
+    if (!historyOpen) setHistoryOpenAnimationActive(false);
+  }, [historyOpen]);
+
+  const requestCloseHistory = () => {
+    if (historyOpen && !historyClosing) setHistoryClosing(true);
+  };
+  const handleHistoryPanelAnimationEnd = (e: React.AnimationEvent) => {
+    if (e.animationName === "history-dock-close") {
+      onCloseHistory?.();
+      setHistoryClosing(false);
+    }
+  };
+
+  useEffect(() => {
+    if (!historyOpen || !session?.user?.email) return;
+    setHistoryLoading(true);
+    setSelectedHistoryId(null);
+    fetch("/api/ai/conversations")
+      .then((r) => (r.ok ? r.json() : []))
+      .then((data: typeof historyConversations) => {
+        setHistoryConversations(Array.isArray(data) ? data : []);
+        try {
+          const raw = localStorage.getItem(STORAGE_TITLES_KEY);
+          setCustomTitles(raw ? JSON.parse(raw) : {});
+        } catch {
+          setCustomTitles({});
+        }
+      })
+      .catch(() => setHistoryConversations([]))
+      .finally(() => setHistoryLoading(false));
+  }, [historyOpen, session]);
+
+  useEffect(() => {
+    if (!session) return;
+    fetch("/api/ai/providers")
+      .then((r) => (r.ok ? r.json() : {}))
+      .then((data: { providers?: { provider_name: string; label: string; color?: string }[]; default_provider?: string }) => {
+        const list = data?.providers ?? PROVIDERS_LIST.map((p) => ({ provider_name: p.id, label: p.shortLabel, color: p.color }));
+        setConfiguredProviders(list);
+        if (data?.default_provider && list.some((x) => x.provider_name === data.default_provider)) {
+          setActiveProvider(data.default_provider);
+        }
+      })
+      .catch(() => setConfiguredProviders(PROVIDERS_LIST.map((p) => ({ provider_name: p.id, label: p.shortLabel, color: p.color }))));
+  }, [session]);
+
+  const handleInputChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+    const value = e.target.value;
+    setInputText(value);
+    const atMatch = value.match(/@(\w*)$/);
+    setShowProviderSugg(!!atMatch);
+    const dollarMatch = value.match(/\$(\w*)(?::(\w*))?$/);
+    if (dollarMatch) {
+      const tokenPrefix = dollarMatch[1];
+      const sugg = getDollarSuggestions(tokenPrefix);
+      setTokenSuggestions(sugg);
+      setShowTokenSugg(sugg.length > 0);
+    } else {
+      setShowTokenSugg(false);
+    }
+  };
+
+  const providerList = configuredProviders.length > 0 ? configuredProviders : PROVIDERS_LIST.map((p) => ({ provider_name: p.id, label: p.shortLabel, color: p.color }));
+  const atProviderSuggestions = providerList.map((p) => ({
+    id: p.provider_name,
+    shortLabel: p.label,
+    color: p.color ?? AT_COLORS[p.provider_name] ?? "var(--bpm-accent-cyan)",
+  }));
+  const atPrefix = (inputText.match(/@(\w*)$/) ?? [])[1] ?? "";
+  const atFilteredList = atPrefix
+    ? atProviderSuggestions.filter((p) => (p.shortLabel ?? "").toLowerCase().startsWith(atPrefix.toLowerCase()))
+    : atProviderSuggestions;
+  const hasProviderSugg = showProviderSugg && atFilteredList.length > 0;
+
+  const handleSend = async () => {
+    const text = inputText.trim();
+    if (!text || isStreaming || !session) return;
+
+    let providers = parseAllProvidersFromText(text);
+    if (providers.length === 0) providers = [parseProviderFromText(text, activeProvider)];
+
+    setInputText("");
+    setIsStreaming(true);
+    abortRef.current = new AbortController();
+
+    const baseHistory = messages.slice(-10).map((m) => ({ role: m.role, content: m.content }));
+    const userMsg: ChatMsg = { role: "user", content: text };
+    setMessages((prev) => [...prev, userMsg, { role: "assistant", content: "", provider: providers[0] }]);
+
+    const removeLastAssistant = () =>
+      setMessages((prev) => (prev.length >= 2 && prev[prev.length - 1].role === "assistant" ? prev.slice(0, -1) : prev));
 
     try {
       const res = await fetch("/api/ai/chat", {
@@ -68,14 +297,20 @@ export function AIChat() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           message: text,
-          provider_name: provider as string,
-          conversation_history: history.slice(0, -1).map((m) => ({ role: m.role, content: m.content })),
-          context_from_modules: contextFromModules,
+          provider_name: providers[0],
+          conversation_history: [...baseHistory, { role: "user", content: text }],
+          discussion_id: currentDiscussionId ?? undefined,
         }),
+        signal: abortRef.current.signal,
       });
+      if (res.status === 401) {
+        removeLastAssistant();
+        setIsStreaming(false);
+        return;
+      }
       if (!res.ok) {
-        setStreamingContent(`Erreur: ${res.status}`);
-        setStreaming(false);
+        removeLastAssistant();
+        setIsStreaming(false);
         return;
       }
       const reader = res.body?.getReader();
@@ -88,36 +323,48 @@ export function AIChat() {
           const chunk = decoder.decode(value, { stream: true });
           const lines = chunk.split("\n");
           for (const line of lines) {
-            if (line.startsWith("data: ")) {
-              try {
-                const data = JSON.parse(line.slice(6)) as { type: string; t?: string; message?: string };
-                if (data.type === "chunk" && data.t) {
-                  full += data.t;
-                  setStreamingContent(full);
-                }
-                if (data.type === "error") {
-                  setStreamingContent((prev) => prev + `\n[Erreur: ${data.message}]`);
-                }
-              } catch {
-                // ignore parse errors
+            if (!line.startsWith("data: ")) continue;
+            try {
+              const data = JSON.parse(line.slice(6)) as { type: string; t?: string; discussion_id?: string; message?: string };
+              if (data.type === "chunk" && data.t) {
+                full += data.t;
+                setMessages((prev) => {
+                  const next = [...prev];
+                  const last = next[next.length - 1];
+                  if (last?.role === "assistant") next[next.length - 1] = { ...last, content: full };
+                  return next;
+                });
               }
+              if (data.type === "done" && data.discussion_id) setCurrentDiscussionId(data.discussion_id);
+              if (data.type === "error") removeLastAssistant();
+            } catch {
+              // ignore
             }
           }
         }
       }
-      setMessages((prev) => [...prev, { role: "assistant", content: full || streamingContent }]);
-      setStreamingContent("");
+      setMessages((prev) => {
+        const next = [...prev];
+        const last = next[next.length - 1];
+        if (last?.role === "assistant") next[next.length - 1] = { ...last, content: full || last.content };
+        return next;
+      });
     } catch (err) {
-      setStreamingContent(`Erreur: ${err instanceof Error ? err.message : "Réseau"}`);
+      if ((err as Error).name !== "AbortError") removeLastAssistant();
     } finally {
-      setStreaming(false);
+      setIsStreaming(false);
+      abortRef.current = null;
     }
   };
+
+  const selectedConversation = selectedHistoryId ? historyConversations.find((c) => c.id === selectedHistoryId) : null;
+  const providerLabel = (name: string) => PROVIDERS_LIST.find((p) => p.id === name)?.shortLabel ?? name;
+  const providerColor = (name: string) => PROVIDERS_LIST.find((p) => p.id === name)?.color ?? AT_COLORS[name] ?? "var(--bpm-text-secondary)";
 
   if (status === "loading") {
     return (
       <div className="p-4" style={{ color: "var(--bpm-text-secondary)" }}>
-        Chargement...
+        Chargement…
       </div>
     );
   }
@@ -130,93 +377,332 @@ export function AIChat() {
   }
 
   return (
-    <div className="flex flex-col h-full min-h-0 rounded-lg border" style={{ borderColor: "var(--bpm-border)", background: "var(--bpm-surface)" }}>
-      <div className="flex items-center gap-2 p-2 border-b flex-wrap" style={{ borderColor: "var(--bpm-border)" }}>
-        {health && (
-          <span
-            className="h-2 w-2 rounded-full shrink-0"
-            style={{ background: health.available ? "var(--bpm-accent-mint)" : "var(--bpm-accent)" }}
-            title={health.available ? health.model : "IA indisponible"}
-          />
-        )}
-        <span className="text-sm" style={{ color: "var(--bpm-text-secondary)" }}>Modèle:</span>
-        {(["vllm", "claude", "openai", "gemini", "grok"] as const).map((p) => (
-          <button
-            key={p}
-            type="button"
-            onClick={() => setProvider(p)}
-            className={`px-2 py-1 rounded text-sm ${provider === p ? "btn-primary" : "btn-secondary"}`}
+    <div className="bpm-ai-chat">
+      {(historyOpen || historyClosing) && (
+        <div
+          className="bpm-ai-history-overlay"
+          role="dialog"
+          aria-label={`Historique des échanges avec ${assistantName}`}
+          onClick={(e) => {
+            if (e.target === e.currentTarget) requestCloseHistory();
+          }}
+        >
+          <div
+            className={`bpm-ai-history-panel${historyOpenAnimationActive ? " tooltip-dock-open" : ""}${historyClosing ? " tooltip-dock-closing" : ""}`}
+            onClick={(e) => e.stopPropagation()}
+            onAnimationEnd={handleHistoryPanelAnimationEnd}
           >
-            {PROVIDER_LABELS[p]}
-          </button>
-        ))}
-        {health?.model && (
-          <span className="text-xs" style={{ color: "var(--bpm-text-secondary)" }}>
-            {health.model}
-          </span>
-        )}
-      </div>
-      {modules.length > 0 && (
-        <div className="flex items-center gap-2 p-2 border-b flex-wrap" style={{ borderColor: "var(--bpm-border)" }}>
-          <span className="text-xs" style={{ color: "var(--bpm-text-secondary)" }}>Contexte:</span>
-          {modules.map((m) => (
-            <label key={m.moduleId} className="flex items-center gap-1.5 text-sm cursor-pointer">
-              <Checkbox
-                checked={selectedModuleIds.includes(m.moduleId)}
-                onChange={(checked) =>
-                  setSelectedModuleIds((prev) =>
-                    checked ? [...prev, m.moduleId] : prev.filter((id) => id !== m.moduleId)
-                  )
-                }
-                label=""
-              />
-              <span style={{ color: "var(--bpm-text-primary)" }}>{m.label}</span>
-            </label>
-          ))}
+            <div className="bpm-ai-history-header">
+              <h2 className="bpm-ai-history-title">Historique des échanges</h2>
+              {historyConversations.length > 0 && (
+                <button
+                  type="button"
+                  className="bpm-ai-history-clear-button"
+                  onClick={() => {
+                    if (!window.confirm(`Effacer tout l'historique des échanges avec ${assistantName} ?`)) return;
+                    Promise.all(
+                      historyConversations.map((d) =>
+                        fetch(`/api/ai/conversations/${encodeURIComponent(d.id)}`, { method: "DELETE" })
+                      )
+                    ).then(() => {
+                      setHistoryConversations([]);
+                      setSelectedHistoryId(null);
+                      setCurrentDiscussionId(null);
+                    });
+                  }}
+                >
+                  Effacer
+                </button>
+              )}
+            </div>
+            <div className="bpm-ai-history-body">
+              {historyLoading ? (
+                <p className="bpm-ai-history-loading">Chargement…</p>
+              ) : historyConversations.length === 0 ? (
+                <p className="bpm-ai-history-empty">Aucun échange enregistré.</p>
+              ) : selectedConversation ? (
+                <>
+                  <button type="button" className="bpm-ai-history-back" onClick={() => setSelectedHistoryId(null)}>
+                    ← Liste
+                  </button>
+                  <div className="bpm-ai-history-detail">
+                    {(selectedConversation.messages || []).map((msg, idx) => (
+                      <React.Fragment key={idx}>
+                        <MessageBubble
+                          message={{ role: "user", content: msg.user_message }}
+                          assistantName={assistantName}
+                        />
+                        <MessageBubble
+                          message={{
+                            role: "assistant",
+                            content: msg.ai_response,
+                            provider: msg.provider_name,
+                          }}
+                          assistantName={assistantName}
+                        />
+                      </React.Fragment>
+                    ))}
+                  </div>
+                </>
+              ) : (
+                <ul className="bpm-ai-history-list">
+                  {historyConversations.map((d) => {
+                    const date = d.updated_at ? new Date(d.updated_at) : (d.createdAt ? new Date(d.createdAt) : null);
+                    const dateStr = date
+                      ? date.toLocaleDateString("fr-FR", {
+                          day: "2-digit",
+                          month: "short",
+                          year: "numeric",
+                          hour: "2-digit",
+                          minute: "2-digit",
+                        })
+                      : "";
+                    const displayPreview =
+                      customTitles[d.id] !== undefined && customTitles[d.id] !== ""
+                        ? customTitles[d.id]
+                        : d.preview ?? "";
+                    const msgCount = (d.messages || []).length;
+                    const firstProvider = d.messages?.[0]?.provider_name;
+                    return (
+                      <li key={d.id} className="bpm-ai-history-row">
+                        <button
+                          type="button"
+                          className="bpm-ai-history-item"
+                          onClick={() => {
+                            const msgs = (d.messages || []).flatMap((m) => [
+                              { role: "user" as const, content: m.user_message },
+                              {
+                                role: "assistant" as const,
+                                content: m.ai_response,
+                                provider: m.provider_name,
+                              },
+                            ]);
+                            setMessages(msgs);
+                            setCurrentDiscussionId(d.id);
+                            setSelectedHistoryId(null);
+                            requestCloseHistory();
+                          }}
+                        >
+                          <span className="bpm-ai-history-item-meta">
+                            {firstProvider && (
+                              <>
+                                <span style={{ color: providerColor(firstProvider), fontWeight: "bold" }}>
+                                  {providerLabel(firstProvider)}
+                                </span>
+                                {" · "}
+                              </>
+                            )}
+                            {msgCount > 0 && (
+                              <span className="bpm-ai-history-item-count">
+                                {msgCount} message{msgCount > 1 ? "s" : ""}
+                              </span>
+                            )}
+                            {msgCount > 0 && " · "}
+                            {dateStr}
+                          </span>
+                          <span className="bpm-ai-history-item-preview">
+                            {displayPreview ? displayPreview.charAt(0).toUpperCase() + displayPreview.slice(1) : ""}
+                          </span>
+                        </button>
+                        <button
+                          type="button"
+                          className="bpm-ai-history-edit"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            const current =
+                              customTitles[d.id] !== undefined && customTitles[d.id] !== "" ? customTitles[d.id] : d.preview ?? "";
+                            const value = window.prompt("Modifier le titre de la conversation", current);
+                            if (value !== null) {
+                              const next = { ...customTitles, [d.id]: value.trim() };
+                              setCustomTitles(next);
+                              try {
+                                localStorage.setItem(STORAGE_TITLES_KEY, JSON.stringify(next));
+                              } catch {}
+                            }
+                          }}
+                          aria-label="Modifier le titre"
+                        >
+                          <svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 -960 960 960" width="24" fill="currentColor">
+                            <path d="M200-200h43.92l427.93-427.92-43.93-43.93L200-243.92V-200Zm-40 40v-100.77l527.23-527.77q6.15-5.48 13.57-8.47 7.43-2.99 15.49-2.99t15.62 2.54q7.55 2.54 13.94 9.15l42.69 42.93q6.61 6.38 9.04 14 2.42 7.63 2.42 15.25 0 8.13-2.74 15.56-2.74 7.42-8.72 13.57L260.77-160H160Z" />
+                          </svg>
+                        </button>
+                        <button
+                          type="button"
+                          className="bpm-ai-history-delete"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            if (!window.confirm("Supprimer cette discussion de l'historique ?")) return;
+                            fetch(`/api/ai/conversations/${encodeURIComponent(d.id)}`, { method: "DELETE" }).then((res) => {
+                              if (res.status === 204 || res.ok) {
+                                setHistoryConversations((prev) => prev.filter((c) => c.id !== d.id));
+                                if (selectedHistoryId === d.id) setSelectedHistoryId(null);
+                                if (currentDiscussionId === d.id) {
+                                  setCurrentDiscussionId(null);
+                                }
+                                setCustomTitles((prev) => {
+                                  const next = { ...prev };
+                                  delete next[d.id];
+                                  try {
+                                    localStorage.setItem(STORAGE_TITLES_KEY, JSON.stringify(next));
+                                  } catch {}
+                                  return next;
+                                });
+                              }
+                            });
+                          }}
+                          aria-label="Supprimer"
+                        >
+                          <svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 -960 960 960" width="24" fill="currentColor">
+                            <path d="M304.62-160q-26.85 0-45.74-18.88Q240-197.77 240-224.62V-720h-40v-40h160v-30.77h240V-760h160v40h-40v495.38q0 27.62-18.5 46.12Q683-160 655.38-160H304.62ZM680-720H280v495.38q0 10.77 6.92 17.7 6.93 6.92 17.7 6.92h350.76q9.24 0 16.93-7.69 7.69-7.69 7.69-16.93V-720Z" />
+                          </svg>
+                        </button>
+                      </li>
+                    );
+                  })}
+                </ul>
+              )}
+            </div>
+          </div>
         </div>
       )}
-      <div className="flex-1 overflow-y-auto p-4 space-y-4 min-h-0">
-        {messages.length === 0 && !streamingContent && (
-          <p className="text-sm" style={{ color: "var(--bpm-text-secondary)" }}>
-            Posez une question. Ollama (Qwen2.5) par défaut ; choisissez un autre modèle dans la barre ci-dessus si besoin.
-          </p>
-        )}
-        {messages.map((m, i) => (
-          <div key={i} className="space-y-1">
-            <div className="text-xs font-medium" style={{ color: m.role === "user" ? "var(--bpm-accent)" : "var(--bpm-accent-mint)" }}>
-              {m.role === "user" ? "Vous" : "IA"}
-            </div>
-            <p className="text-sm whitespace-pre-wrap" style={{ color: "var(--bpm-text-primary)" }}>{m.content}</p>
-          </div>
-        ))}
-        {streamingContent && (
-          <div className="space-y-1">
-            <div className="text-xs font-medium" style={{ color: "var(--bpm-accent-mint)" }}>IA</div>
-            <p className="text-sm whitespace-pre-wrap" style={{ color: "var(--bpm-text-primary)" }}>{streamingContent}</p>
+
+      <div className="bpm-ai-chat-messages">
+        {messages.length === 0 && (
+          <div className="bpm-ai-chat-welcome">
+            <p>
+              <strong>Discuter avec {assistantName}…</strong>
+            </p>
+            <p>
+              <code>@</code> Modèle : <code>@Claude</code>, <code>@Qwen</code>, <code>@Mistral</code>, <code>@Ollama</code>, <code>@GPT</code>, <code>@Gemini</code>, <code>@Grok</code>.
+            </p>
+            <p>
+              <code>$</code> Données : <code>$wiki</code>, <code>$doc</code>, <code>$metric</code>, <code>$table</code>, <code>$chart</code>.
+            </p>
+            <p>
+              <code>#</code> Filtres : <code>#Energie</code>, <code>#Minier</code>…
+            </p>
           </div>
         )}
-        <div ref={bottomRef} />
+        {messages.map((msg, i) => {
+          const isLastEmpty = isStreaming && i === messages.length - 1 && msg.role === "assistant" && !(msg.content || "").trim();
+          if (isLastEmpty) return null;
+          return <MessageBubble key={i} message={msg} assistantName={assistantName} />;
+        })}
+        {isStreaming && (
+          <div className="bpm-ai-typing">
+            <span className="bpm-ai-typing-dot" />
+            <span className="bpm-ai-typing-dot" />
+            <span className="bpm-ai-typing-dot" />
+          </div>
+        )}
+        <div ref={messagesEndRef} />
       </div>
-      <form
-        className="p-4 border-t flex gap-2"
-        style={{ borderColor: "var(--bpm-border)" }}
-        onSubmit={(e) => {
-          e.preventDefault();
-          send();
-        }}
-      >
-        <input
-          type="text"
-          value={input}
-          onChange={(e) => setInput(e.target.value)}
-          placeholder="Écrivez votre message..."
-          className="flex-1 px-3 py-2 rounded border text-sm"
-          style={{ borderColor: "var(--bpm-border)", background: "var(--bpm-bg-primary)", color: "var(--bpm-text-primary)" }}
-        />
-        <Button type="submit" disabled={streaming || !input.trim()}>
-          {streaming ? "..." : "Envoyer"}
-        </Button>
-      </form>
+
+      <div className="bpm-ai-chat-input-wrap">
+        <div ref={inputRowRef} className="bpm-ai-chat-input-row">
+          <div className="bpm-ai-chat-input-box">
+            <div className="bpm-ai-chat-input-wrap-inner">
+              {inputText && (
+                <div ref={highlightRef} className="bpm-ai-chat-input-highlight" aria-hidden>
+                  <div className="bpm-ai-chat-input-highlight-inner">{highlightAtAndDollar(inputText)}</div>
+                </div>
+              )}
+              <textarea
+                ref={inputRef}
+                className={`bpm-ai-chat-input${inputText ? " bpm-ai-chat-input--highlight" : ""}`}
+                placeholder={
+                  messages.length === 0
+                    ? `Discuter avec ${assistantName}…`
+                    : `Répondre à ${assistantName}…`
+                }
+                value={inputText}
+                onChange={handleInputChange}
+                onScroll={() => {
+                  if (highlightRef.current && inputRef.current) {
+                    highlightRef.current.scrollTop = inputRef.current.scrollTop;
+                    highlightRef.current.scrollLeft = inputRef.current.scrollLeft;
+                  }
+                }}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter" && !e.shiftKey) {
+                    e.preventDefault();
+                    handleSend();
+                  }
+                }}
+                disabled={isStreaming}
+                rows={1}
+              />
+              <div className="bpm-ai-chat-input-actions">
+                <button
+                  type="button"
+                  className="bpm-ai-chat-send-arrow"
+                  onClick={() => {
+                    if (!isStreaming && inputText.trim()) handleSend();
+                  }}
+                  disabled={isStreaming || !inputText.trim()}
+                  aria-label="Envoyer"
+                  title="Envoyer"
+                >
+                  <svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 -960 960 960" width="24" fill="currentColor">
+                    <path d="M460-200v-483.15L228.31-451.46 200-480l280-280 280 280-28.31 28.54L500-683.15V-200h-40Z" />
+                  </svg>
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {(hasProviderSugg || showTokenSugg) && (
+          <div className="bpm-ai-suggestions-tooltip" role="listbox">
+            {hasProviderSugg &&
+              atFilteredList.map((p) => (
+                <button
+                  key={p.id}
+                  type="button"
+                  role="option"
+                  aria-selected={false}
+                  className="bpm-ai-sugg-tooltip-item"
+                  onClick={() => {
+                    const v = inputText.replace(/@\w*$/, `@${p.shortLabel} `);
+                    setInputText(v);
+                    setShowProviderSugg(false);
+                    inputRef.current?.focus();
+                  }}
+                >
+                  <span className="bpm-ai-sugg-tooltip-content">
+                    <span className="bpm-ai-sugg-tooltip-primary" style={{ color: p.color }}>
+                      {p.shortLabel}
+                    </span>
+                    <span className="bpm-ai-sugg-tooltip-secondary">@{p.shortLabel}</span>
+                  </span>
+                </button>
+              ))}
+            {showTokenSugg &&
+              tokenSuggestions.slice(0, 14).map((s, i) => (
+                <button
+                  key={`${s.token}-${i}`}
+                  type="button"
+                  role="option"
+                  aria-selected={false}
+                  className="bpm-ai-sugg-tooltip-item"
+                  onClick={() => {
+                    const v = inputText.replace(/\$\w*(?::[\w-]*)?$/, s.token + " ");
+                    setInputText(v);
+                    setShowTokenSugg(false);
+                    inputRef.current?.focus();
+                  }}
+                >
+                  <span className="bpm-ai-sugg-tooltip-content">
+                    <span className="bpm-ai-sugg-tooltip-primary">{s.label}</span>
+                    <span className="bpm-ai-sugg-tooltip-secondary" title={s.location}>
+                      {s.location ? `${s.token} · ${s.location}` : s.token}
+                    </span>
+                  </span>
+                </button>
+              ))}
+          </div>
+        )}
+      </div>
     </div>
   );
 }

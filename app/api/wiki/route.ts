@@ -1,18 +1,14 @@
 import { NextResponse } from "next/server";
-import { getServerSession } from "next-auth";
-import { authOptions } from "@/lib/auth";
+import { getSessionOrTestUser } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 
 export async function GET(request: Request) {
-  const session = await getServerSession(authOptions);
-  if (!session) {
-    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-  }
+  const result = await getSessionOrTestUser();
+  if (!result) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  const { user } = result;
   const { searchParams } = new URL(request.url);
   const publishedOnly = searchParams.get("published") === "true";
   const search = searchParams.get("search")?.trim() ?? "";
-
-  const user = await prisma.user.findUnique({ where: { email: session.user?.email ?? "" } });
 
   const visibility =
     user && !publishedOnly
@@ -53,14 +49,9 @@ export async function GET(request: Request) {
 }
 
 export async function POST(request: Request) {
-  const session = await getServerSession(authOptions);
-  if (!session?.user?.email) {
-    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-  }
-  const user = await prisma.user.findUnique({ where: { email: session.user.email } });
-  if (!user) {
-    return NextResponse.json({ error: "User not found" }, { status: 404 });
-  }
+  const result = await getSessionOrTestUser();
+  if (!result) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  const { user } = result;
   const body = await request.json();
   const { title, content, slug, parentId, isPublished } = body as {
     title?: string;

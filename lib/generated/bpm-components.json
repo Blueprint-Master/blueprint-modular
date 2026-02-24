@@ -335,6 +335,66 @@
       "name": "bpm.codeblock",
       "description": "Bloc de code avec Copier.",
       "category": "Utilitaires"
+    },
+    {
+      "slug": "topnav",
+      "name": "bpm.topnav",
+      "description": "Barre de navigation supérieure (titre + liens).",
+      "category": "Navigation"
+    },
+    {
+      "slug": "fab",
+      "name": "bpm.fab",
+      "description": "Bouton d'action flottant (FAB).",
+      "category": "Interaction"
+    },
+    {
+      "slug": "treeview",
+      "name": "bpm.treeview",
+      "description": "Arbre de noeuds repliables et sélectionnables.",
+      "category": "Affichage de données"
+    },
+    {
+      "slug": "timeline",
+      "name": "bpm.timeline",
+      "description": "Frise chronologique (étapes, statuts).",
+      "category": "Affichage de données"
+    },
+    {
+      "slug": "image",
+      "name": "bpm.image",
+      "description": "Image avec alt, dimensions et object-fit.",
+      "category": "Média"
+    },
+    {
+      "slug": "pdf",
+      "name": "bpm.pdf",
+      "description": "Visualiseur PDF (iframe).",
+      "category": "Média"
+    },
+    {
+      "slug": "autocomplete",
+      "name": "bpm.autocomplete",
+      "description": "Champ de saisie avec suggestions.",
+      "category": "Interaction"
+    },
+    {
+      "slug": "plotly",
+      "name": "bpm.plotly",
+      "description": "Graphique Plotly (iframe ou placeholder).",
+      "category": "Graphiques"
+    },
+    {
+      "slug": "map",
+      "name": "bpm.map",
+      "description": "Carte (OpenStreetMap iframe).",
+      "category": "Média"
+    },
+    {
+      "slug": "altair",
+      "name": "bpm.altair",
+      "description": "Graphique Altair / Vega-Lite.",
+      "category": "Graphiques"
     }
   ]
 }
