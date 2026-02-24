@@ -14,9 +14,11 @@ export function isSkipAuthForTest(): boolean {
   return SKIP_AUTH_FOR_TEST;
 }
 
+const DEMO_USER_EMAIL = "demo@blueprint-modular.local";
+
 /**
  * Retourne l'utilisateur courant (session) ou, si SKIP_AUTH_FOR_TEST=true et pas de session,
- * le premier utilisateur en base (pour tester les modules sans se connecter).
+ * le premier utilisateur en base, ou un utilisateur démo créé à la volée si la base est vide.
  */
 export async function getSessionOrTestUser(): Promise<{ user: User } | null> {
   const session = await getServerSession(authOptions);
@@ -25,8 +27,19 @@ export async function getSessionOrTestUser(): Promise<{ user: User } | null> {
     if (user) return { user };
   }
   if (SKIP_AUTH_FOR_TEST) {
-    const testUser = await prisma.user.findFirst({ orderBy: { createdAt: "asc" } });
-    if (testUser) return { user: testUser };
+    let testUser = await prisma.user.findFirst({ orderBy: { createdAt: "asc" } });
+    if (!testUser) {
+      testUser = await prisma.user.upsert({
+        where: { email: DEMO_USER_EMAIL },
+        create: {
+          email: DEMO_USER_EMAIL,
+          name: "Utilisateur démo",
+          role: "USER",
+        },
+        update: {},
+      });
+    }
+    return { user: testUser };
   }
   return null;
 }
