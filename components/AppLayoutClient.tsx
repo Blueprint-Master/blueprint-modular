@@ -179,7 +179,7 @@ function AppLayoutInner({ children }: { children: React.ReactNode }) {
               <NotificationBell />
             </div>
           </header>
-          <main id="main-content" className="app-main flex-1 pt-4 pb-6 md:pb-4 px-3 sm:px-4 min-h-0" role="main">
+          <main id="main-content" className="app-main flex-1 pt-4 pb-[calc(5rem+env(safe-area-inset-bottom,0px))] md:pb-4 px-3 sm:px-4 min-h-0" role="main">
             {children}
           </main>
           <footer
@@ -188,7 +188,7 @@ function AppLayoutInner({ children }: { children: React.ReactNode }) {
             role="contentinfo"
           >
             <div className="flex flex-wrap items-center justify-between gap-4 max-w-[1400px] mx-auto">
-              <span>Blueprint Modular v0.1.18</span>
+              <span>Blueprint Modular v0.1.19</span>
               <span className="flex flex-wrap gap-4">
                 <a href="https://docs.blueprint-modular.com/" target="_blank" rel="noopener noreferrer" className="hover:underline" style={{ color: "var(--bpm-color-link)" }}>Documentation</a>
                 <a href="https://pypi.org/project/blueprint-modular/" target="_blank" rel="noopener noreferrer" className="hover:underline" style={{ color: "var(--bpm-color-link)" }}>PyPI</a>

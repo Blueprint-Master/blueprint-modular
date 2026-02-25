@@ -114,7 +114,8 @@ export function Sidebar() {
     );
   };
 
-  /* Barre mobile en bas : largeur fixe par icône, pas de fond gris, icône active en bleu */
+  /* Barre mobile en bas : sans Accueil (on est déjà sur l'app, pas besoin du lien Accueil) */
+  const mobileNavItems = navItems.filter((item) => item.href !== "/dashboard");
   const mobileNavBar = (
     <aside
       aria-label="Navigation mobile"
@@ -127,7 +128,7 @@ export function Sidebar() {
         fontWeight: 400,
       }}
     >
-      {navItems.map((item) => (
+      {mobileNavItems.map((item) => (
         <NavIcon key={item.href} href={item.href} label={item.label} icon={item.icon} compact />
       ))}
     </aside>

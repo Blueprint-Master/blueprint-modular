@@ -31,15 +31,33 @@ export default function CalendrierDocumentationPage() {
         Structure des événements
       </h3>
       <p className="mb-2 text-sm" style={{ color: "var(--bpm-text-secondary)" }}>
-        Chaque événement est typiquement un objet avec :
+        Chaque événement est un objet avec les champs suivants (tous optionnels sauf date, heure, titre) :
       </p>
       <ul className="list-disc pl-6 mb-4 text-sm" style={{ color: "var(--bpm-text-secondary)" }}>
-        <li><code>id</code> — identifiant unique (optionnel)</li>
-        <li><code>date</code> — date au format ISO ou YYYY-MM-DD</li>
-        <li><code>heure</code> ou <code>startTime</code> — heure de début</li>
-        <li><code>titre</code> ou <code>title</code> — libellé de l&apos;événement</li>
-        <li><code>duree</code> ou <code>duration</code> — durée en minutes (optionnel)</li>
+        <li><code>id</code> — identifiant unique</li>
+        <li><code>date</code> — date au format YYYY-MM-DD</li>
+        <li><code>heure</code> — heure de début (ex. 09h, 14h30)</li>
+        <li><code>titre</code> — libellé de l&apos;événement</li>
+        <li><code>duree</code> — durée en minutes (optionnel)</li>
         <li><code>couleur</code> — couleur d&apos;affichage (optionnel)</li>
+        <li><code>description</code> — notes ou description (optionnel)</li>
+        <li><code>lieu</code> — lieu (salle, Visio) (optionnel)</li>
+        <li><code>categorie</code> — catégorie ou tag (optionnel)</li>
+        <li><code>statut</code> — confirmé / annulé / tentative (optionnel)</li>
+        <li><code>participants</code> — liste d&apos;identifiants ou noms (optionnel)</li>
+      </ul>
+
+      <h2 className="text-lg font-semibold mt-8 mb-2" style={{ color: "var(--bpm-text-primary)" }}>
+        Compatible avec
+      </h2>
+      <p className="mb-2 text-sm" style={{ color: "var(--bpm-text-secondary)" }}>
+        Le Calendrier s&apos;intègre naturellement avec d&apos;autres modules Blueprint Modular :
+      </p>
+      <ul className="list-disc pl-6 mb-4 text-sm" style={{ color: "var(--bpm-text-secondary)" }}>
+        <li><strong>Tâches</strong> — une tâche avec échéance peut être affichée comme événement dans l&apos;agenda.</li>
+        <li><strong>Workflow</strong> — les transitions de statut peuvent déclencher des créneaux ou rappels dans le calendrier.</li>
+        <li><strong>Notifications ciblées</strong> — rappels (ex. J-1 avant un événement) ou alertes selon le profil utilisateur.</li>
+        <li><strong>Réservation / Créneaux</strong> — partage de la notion de plage horaire et de disponibilité.</li>
       </ul>
 
       <h2 className="text-lg font-semibold mt-8 mb-2" style={{ color: "var(--bpm-text-primary)" }}>
@@ -66,7 +84,7 @@ bpm.title("Agenda")
         Simulateur
       </h2>
       <p className="mb-4" style={{ color: "var(--bpm-text-secondary)" }}>
-        Le simulateur permet de tester les vues Jour, Semaine et Mois avec des événements de démo et de voir le comportement du module sans backend.
+        Le simulateur propose la <strong>vue Jour</strong> (timeline verticale avec créneaux 8h–20h et événements positionnés, gestion des chevauchements), la <strong>vue Semaine</strong> (grille temporelle : colonnes Lun–Dim, lignes par demi-heure), la <strong>vue Mois</strong> (grille avec jour courant mis en évidence, clic pour ouvrir le jour). S&apos;y ajoutent la <strong>navigation temporelle</strong> (← / →, Aujourd&apos;hui), les <strong>filtres par couleur</strong>, le <strong>clic sur un événement</strong> (modale détail) et le bouton <strong>+ Nouvel événement</strong> (formulaire de création). Aucune icône ambiguë dans l&apos;en-tête : libellés clairs uniquement.
       </p>
       <p className="mt-6 text-sm" style={{ color: "var(--bpm-text-secondary)" }}>
         <Link href="/modules/calendrier/simulateur" className="font-medium underline" style={{ color: "var(--bpm-accent-cyan)" }}>Ouvrir le simulateur Calendrier</Link>

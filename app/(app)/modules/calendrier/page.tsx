@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { Tabs, CodeBlock, Panel, Button } from "@/components/bpm";
+import { Tabs, CodeBlock, Button } from "@/components/bpm";
 
 const docContent = (
   <>
@@ -22,24 +22,31 @@ function SimuContent() {
   ];
   return (
     <>
-      <h2 className="text-lg font-semibold mt-0 mb-2" style={{ color: "var(--bpm-text-primary)" }}>Semaine type (démo)</h2>
       <p className="text-sm mb-4" style={{ color: "var(--bpm-text-secondary)" }}>Événements de démo. En production : vues jour / semaine / mois avec sélection de date.</p>
-      <Panel variant="info" title="Événements">
-        <div className="flex gap-2 mb-4">
-          <Button size="small">Jour</Button>
-          <Button variant="secondary" size="small">Semaine</Button>
-          <Button variant="secondary" size="small">Mois</Button>
+      <div
+        className="rounded-2xl overflow-hidden"
+        style={{
+          border: "1px solid var(--bpm-border)",
+          background: "var(--bpm-bg-primary)",
+        }}
+      >
+        <div className="flex gap-1 p-2 border-b" style={{ borderColor: "var(--bpm-border)", background: "var(--bpm-bg-secondary)" }}>
+          <Button size="small" variant="secondary">Jour</Button>
+          <Button size="small" variant="primary">Semaine</Button>
+          <Button size="small" variant="secondary">Mois</Button>
         </div>
-        <ul className="space-y-2 text-sm" style={{ color: "var(--bpm-text-secondary)" }}>
-          {events.map((e, i) => (
-            <li key={i} className="flex gap-3" style={{ color: "var(--bpm-text-primary)" }}>
-              <span className="shrink-0">{e.date}</span>
-              <span className="shrink-0">{e.heure}</span>
-              <span>{e.titre}</span>
-            </li>
-          ))}
-        </ul>
-      </Panel>
+        <div className="p-4">
+          <ul className="space-y-3 text-sm m-0 list-none p-0">
+            {events.map((e, i) => (
+              <li key={i} className="flex gap-4 items-baseline" style={{ color: "var(--bpm-text-primary)" }}>
+                <span className="shrink-0 text-xs font-medium w-24" style={{ color: "var(--bpm-text-secondary)" }}>{e.date}</span>
+                <span className="shrink-0 w-12" style={{ color: "var(--bpm-text-secondary)" }}>{e.heure}</span>
+                <span>{e.titre}</span>
+              </li>
+            ))}
+          </ul>
+        </div>
+      </div>
     </>
   );
 }

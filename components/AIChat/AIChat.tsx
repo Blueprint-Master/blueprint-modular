@@ -253,7 +253,11 @@ export function AIChat({
 
     let contextFromModules: string | undefined;
     try {
-      const moduleIds = moduleRegistry.getAllModules().map((m) => m.moduleId);
+      let moduleIds = moduleRegistry.getAllModules().map((m) => m.moduleId);
+      if (moduleIds.length === 0) {
+        await new Promise((r) => setTimeout(r, 150));
+        moduleIds = moduleRegistry.getAllModules().map((m) => m.moduleId);
+      }
       if (moduleIds.length > 0) {
         const { text: ctx } = await moduleRegistry.buildContext(moduleIds);
         contextFromModules = ctx?.trim() || undefined;

@@ -24,18 +24,35 @@ export default function CommentairesDocumentationPage() {
         Comment fonctionne le module Commentaires
       </h2>
       <p className="mb-4" style={{ color: "var(--bpm-text-secondary)" }}>
-        Le module affiche un <strong>fil de commentaires</strong> associé à une entité (par ex. un document, une ligne de tableau, un projet). Chaque commentaire comporte un <strong>auteur</strong>, une <strong>date</strong> et un <strong>contenu</strong>. L&apos;utilisateur peut ajouter un nouveau commentaire via un champ de saisie et un bouton d&apos;envoi. Les données sont persistées côté backend (API ou base) selon votre implémentation.
+        Le module affiche un <strong>fil de commentaires</strong> associé à une entité (document, ligne, projet). Un <strong>contexte optionnel</strong> (nom + lien de l&apos;entité) peut être affiché en en-tête pour rappeler sur quoi portent les commentaires. Chaque commentaire comporte un auteur (format structuré pour avatars), une date, un contenu, et optionnellement un type (commentaire / annotation / décision / blocage) et un statut résolu. Zone de saisie multi-lignes (Ctrl+Entrée pour envoyer) et bouton Envoyer. Les données sont persistées côté backend (API ou base) selon votre implémentation.
       </p>
 
       <h3 className="text-base font-semibold mt-6 mb-2" style={{ color: "var(--bpm-text-primary)" }}>
         Structure des commentaires
       </h3>
+      <p className="mb-2 text-sm" style={{ color: "var(--bpm-text-secondary)" }}>
+        Champs de base et champs optionnels (pour threading, résolution, type) :
+      </p>
       <ul className="list-disc pl-6 mb-4 text-sm" style={{ color: "var(--bpm-text-secondary)" }}>
-        <li><code>id</code> — identifiant unique</li>
-        <li><code>entityId</code> / <code>entityType</code> — référence à l&apos;entité commentée</li>
-        <li><code>author</code> — nom ou identifiant de l&apos;auteur</li>
-        <li><code>date</code> — date/heure du commentaire (ISO ou format affiché)</li>
-        <li><code>content</code> — texte du commentaire</li>
+        <li><code>id</code>, <code>entityId</code> / <code>entityType</code>, <code>content</code>, <code>date</code> (ISO)</li>
+        <li><code>author</code> — format structuré recommandé : <code>&#123; id, displayName, avatar? &#125;</code> pour cohérence et avatars</li>
+        <li><code>parentId</code> — pour réponses imbriquées (optionnel)</li>
+        <li><code>type</code> — commentaire / annotation / décision / blocage (optionnel)</li>
+        <li><code>resolved</code>, <code>resolvedBy</code>, <code>resolvedAt</code> — clôture (optionnel)</li>
+        <li><code>editedAt</code> — trace des modifications (optionnel)</li>
+        <li><code>attachments</code> — pièces jointes (optionnel)</li>
+      </ul>
+
+      <h2 className="text-lg font-semibold mt-8 mb-2" style={{ color: "var(--bpm-text-primary)" }}>
+        Connexions inter-modules
+      </h2>
+      <p className="mb-2 text-sm" style={{ color: "var(--bpm-text-secondary)" }}>
+        Le module Commentaires s&apos;intègre avec :
+      </p>
+      <ul className="list-disc pl-6 mb-4 text-sm" style={{ color: "var(--bpm-text-secondary)" }}>
+        <li><strong>Notifications ciblées</strong> — notifier les participants ou les @mentionnés à chaque nouveau commentaire</li>
+        <li><strong>Audit / Log</strong> — tracer les créations, modifications et suppressions de commentaires dans le journal d&apos;audit</li>
+        <li><strong>Workflow</strong> — un commentaire de type &quot;blocage&quot; peut conditionner une transition d&apos;état (ex. blocage levé → passage à &quot;En revue&quot;)</li>
       </ul>
 
       <h2 className="text-lg font-semibold mt-8 mb-2" style={{ color: "var(--bpm-text-primary)" }}>
@@ -47,7 +64,7 @@ export default function CommentairesDocumentationPage() {
 
       <p className="mb-2 text-sm font-medium" style={{ color: "var(--bpm-text-primary)" }}>Exemple — afficher et ajouter un commentaire :</p>
       <CodeBlock
-        code={'bpm.title("Commentaires")\nbpm.panel("Commentaires", bpm.container(comments_list))\n# Zone "Nouveau commentaire" : input + bouton Envoyer'}
+        code={'bpm.title("Commentaires")\n# Conteneur épuré (sans bpm.panel) : fil + zone "Nouveau commentaire" (textarea + Envoyer)\n# GET /api/comments?entityId=... & POST /api/comments'}
         language="python"
       />
 
@@ -55,7 +72,7 @@ export default function CommentairesDocumentationPage() {
         Simulateur
       </h2>
       <p className="mb-4" style={{ color: "var(--bpm-text-secondary)" }}>
-        Le simulateur permet d&apos;afficher un fil de commentaires de démo et d&apos;ajouter un nouveau commentaire (état local) pour tester l&apos;interface sans backend.
+        Le simulateur propose un fil long (20+ commentaires) avec types variés (commentaire, annotation, décision, blocage), réponses imbriquées, commentaires résolus, contexte d&apos;entité, avatars colorés, actions au survol (modifier, supprimer, marquer résolu), zone multi-lignes (Ctrl+Entrée pour envoyer), validation, chargement et pagination.
       </p>
       <p className="mt-6 text-sm" style={{ color: "var(--bpm-text-secondary)" }}>
         <Link href="/modules/commentaires/simulateur" className="font-medium underline" style={{ color: "var(--bpm-accent-cyan)" }}>Ouvrir le simulateur Commentaires</Link>

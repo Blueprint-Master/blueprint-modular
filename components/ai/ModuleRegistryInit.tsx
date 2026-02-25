@@ -15,7 +15,7 @@ export function ModuleRegistryInit() {
       description: "Articles du wiki interne (guides, procédures). Contenu des articles récents inclus pour que l'assistant puisse s'appuyer sur le texte.",
       getData: async () => {
         try {
-          const res = await fetch("/api/wiki?withContent=true&limit=15");
+          const res = await fetch("/api/wiki?withContent=true&limit=15", { credentials: "include" });
           if (!res.ok) return { raw: "Wiki : non disponible." };
           const articles = (await res.json()) as { title: string; slug: string; content?: string }[];
           const dataframes = [
@@ -38,7 +38,7 @@ export function ModuleRegistryInit() {
       description: "Documents uploadés et analysés (contrats, métadonnées).",
       getData: async () => {
         try {
-          const res = await fetch("/api/documents");
+          const res = await fetch("/api/documents", { credentials: "include" });
           if (!res.ok) return { raw: "Documents : non disponible." };
           const docs = (await res.json()) as { filename: string; analysisStatus: string; supplier?: string }[];
           return {
