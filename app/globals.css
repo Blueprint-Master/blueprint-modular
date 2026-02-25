@@ -299,6 +299,8 @@ textarea.bpm-textarea:focus {
 .sandbox-container { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; border: 1px solid var(--bpm-border); border-radius: 12px; overflow: hidden; }
 .sandbox-preview { padding: 32px; background: var(--bpm-surface); display: flex; align-items: center; justify-content: center; min-height: 160px; overflow: visible; }
 .sandbox-preview--spinner { min-height: 220px; }
+.sandbox-preview--loadingbar { min-height: 140px; }
+.sandbox-preview--transition { min-height: 200px; }
 .sandbox-controls { padding: 24px; background: var(--bpm-bg-secondary); border-left: 1px solid var(--bpm-border); }
 .sandbox-control-group { margin-bottom: 16px; }
 .sandbox-controls label { display: block; font-size: 12px; font-weight: 600; color: var(--bpm-text-secondary); margin-bottom: 4px; text-transform: uppercase; letter-spacing: 0.5px; }

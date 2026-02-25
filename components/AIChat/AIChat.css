@@ -220,6 +220,11 @@
 .bpm-ai-message--error { border-color: rgba(239, 68, 68, 0.4); }
 .bpm-ai-message-actions { display: flex; align-items: center; gap: 0.5rem; margin-left: auto; flex-wrap: wrap; }
 .bpm-ai-message-error-badge { margin-left: 0.25rem; }
+.bpm-ai-message-footer {
+  font-size: 0.7rem;
+  color: var(--bpm-text-secondary);
+  margin-top: 0.25rem;
+}
 
 .bpm-ai-typing { align-self: flex-start; padding: 0.75rem 1rem; display: flex; gap: 4px; align-items: center; }
 .bpm-ai-typing-dot {

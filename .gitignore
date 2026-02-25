@@ -8,6 +8,9 @@ Thumbs.db
 *.swp
 *.swo
 
+# Cursor (cache, projets, transcripts, terminaux)
+.cursor/
+
 # Logs
 *.log
 npm-debug.log*

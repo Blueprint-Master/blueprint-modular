@@ -8,7 +8,7 @@ import rehypeHighlight from "rehype-highlight";
 import { getDollarSuggestions } from "./ai-suggestions";
 import { moduleRegistry } from "@/lib/ai/module-registry";
 import { VoiceRecorder } from "@/components/ai/VoiceRecorder";
-import { Panel, Button, Badge, Checkbox } from "@/components/bpm";
+import { Button, Badge } from "@/components/bpm";
 import "./AIChat.css";
 
 const PROVIDER_ALIAS: Record<string, string> = {
@@ -163,9 +163,7 @@ export function AIChat({
   const [historyOpenAnimationActive, setHistoryOpenAnimationActive] = useState(false);
   const [attachedFiles, setAttachedFiles] = useState<File[]>([]);
   const [selectedContextModuleIds, setSelectedContextModuleIds] = useState<string[]>([]);
-  const [contextPanelOpen, setContextPanelOpen] = useState(false);
   const [streamProgress, setStreamProgress] = useState<{ startTime: number; tokenCount: number } | null>(null);
-  const contextPanelRef = useRef<HTMLDivElement>(null);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLTextAreaElement>(null);
   const highlightRef = useRef<HTMLDivElement>(null);
@@ -182,17 +180,6 @@ export function AIChat({
       hasInitializedContext.current = true;
     }
   }, []);
-
-  useEffect(() => {
-    if (!contextPanelOpen) return;
-    const onDocClick = (e: MouseEvent) => {
-      if (contextPanelRef.current && !contextPanelRef.current.contains(e.target as Node)) {
-        setContextPanelOpen(false);
-      }
-    };
-    document.addEventListener("click", onDocClick, true);
-    return () => document.removeEventListener("click", onDocClick, true);
-  }, [contextPanelOpen]);
 
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -717,58 +704,6 @@ export function AIChat({
           );
         })}
         <div ref={messagesEndRef} />
-      </div>
-
-      <div className="bpm-ai-chat-provider-row">
-        <span className="bpm-ai-chat-provider-label">Modèle :</span>
-        {configuredProviders.map((p) => (
-          <button
-            key={p.provider_name}
-            type="button"
-            className={`bpm-ai-chat-provider-badge${activeProvider === p.provider_name ? " bpm-ai-chat-provider-badge--active" : ""}`}
-            style={{ borderColor: activeProvider === p.provider_name ? (p.color ?? "var(--bpm-accent)") : "var(--bpm-border)", color: p.color ?? "var(--bpm-text-primary)" }}
-            onClick={() => setActiveProvider(p.provider_name)}
-            aria-pressed={activeProvider === p.provider_name}
-            aria-label={`Utiliser ${p.label}`}
-          >
-            {p.label}
-          </button>
-        ))}
-      </div>
-
-      <div className="bpm-ai-chat-context-wrap" ref={contextPanelRef}>
-        <button
-          type="button"
-          className={`bpm-ai-chat-context-button${contextPanelOpen ? " bpm-ai-chat-context-button--open" : ""}`}
-          onClick={() => setContextPanelOpen((v) => !v)}
-          aria-expanded={contextPanelOpen}
-          aria-haspopup="true"
-          aria-label="Choisir les modules de contexte"
-          title="Contexte (Wiki, Documents)"
-        >
-          Contexte {selectedContextModuleIds.length > 0 ? `(${selectedContextModuleIds.length})` : ""}
-        </button>
-        {contextPanelOpen && (
-          <Panel variant="info" title="Modules inclus dans le contexte" className="bpm-ai-chat-context-panel">
-            <p className="bpm-ai-chat-context-hint">Cochez les modules dont les données seront envoyées au modèle à chaque message.</p>
-            {moduleRegistry.getAllModules().map((m) => (
-              <div key={m.moduleId} className="bpm-ai-chat-context-check">
-                <Checkbox
-                  label={m.label}
-                  checked={selectedContextModuleIds.includes(m.moduleId)}
-                  onChange={(checked) => {
-                    setSelectedContextModuleIds((prev) =>
-                      checked ? [...prev, m.moduleId] : prev.filter((id) => id !== m.moduleId)
-                    );
-                  }}
-                />
-              </div>
-            ))}
-            {moduleRegistry.getAllModules().length === 0 && (
-              <p className="bpm-ai-chat-context-empty">Aucun module enregistré (Wiki, Documents).</p>
-            )}
-          </Panel>
-        )}
       </div>
 
       <div className="bpm-ai-chat-input-wrap">
