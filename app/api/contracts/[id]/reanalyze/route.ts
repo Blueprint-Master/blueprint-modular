@@ -9,12 +9,17 @@ export const dynamic = "force-dynamic";
 
 export async function POST(
   _request: Request,
-  { params }: { params: Promise<{ id: string }> }
+  context: { params: Promise<{ id: string }> | { id: string } }
 ) {
   const result = await getSessionOrTestUser();
   if (!result) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   const { user } = result;
-  const { id } = await params;
+  const params = context.params;
+  const resolved = typeof (params as Promise<{ id: string }>)?.then === "function"
+    ? await (params as Promise<{ id: string }>)
+    : (params as { id: string });
+  const id = resolved?.id;
+  if (!id) return NextResponse.json({ error: "Bad request" }, { status: 400 });
   const contract = await prisma.contract.findUnique({ where: { id } });
   if (!contract || contract.uploadedById !== user.id)
     return NextResponse.json({ error: "Not found" }, { status: 404 });
@@ -54,5 +59,24 @@ export async function POST(
   }
 
   const updated = await prisma.contract.findUniqueOrThrow({ where: { id } });
-  return NextResponse.json(updated);
+  const payload = {
+    id: updated.id,
+    title: updated.title,
+    contractType: updated.contractType,
+    workspace: updated.workspace,
+    originalFilename: updated.originalFilename,
+    status: updated.status,
+    analysisProgress: updated.analysisProgress,
+    extractedData: (() => {
+      if (updated.extractedData == null) return null;
+      try {
+        return JSON.parse(JSON.stringify(updated.extractedData));
+      } catch {
+        return null;
+      }
+    })(),
+    createdAt: updated.createdAt.toISOString(),
+    analyzedAt: updated.analyzedAt?.toISOString() ?? null,
+  };
+  return NextResponse.json(payload);
 }

@@ -127,7 +127,7 @@ export default function ContractDetailPage() {
         </div>
         <div className="flex flex-wrap gap-2">
           <Button variant="outline" onClick={reanalyze} disabled={reanalyzing || contract.status === "analyzing"}>
-            {reanalyzing || contract.status === "analyzing" ? "Ré-analyse…" : "Ré-analyser"}
+            {reanalyzing || contract.status === "analyzing" ? "Relance…" : "Relancer l'analyse"}
           </Button>
           <Button onClick={askAssistant}>Poser une question</Button>
         </div>

@@ -40,20 +40,65 @@ model ApiKey {
 }
 
 model WikiArticle {
-  id          String   @id @default(cuid())
-  title       String
-  content     String   @db.Text
-  slug        String   @unique
-  parentId    String?
-  authorId    String
-  isPublished Boolean  @default(false)
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
-  embeddingVector String?   @db.Text  // JSON array du vecteur
-  embeddingAt     DateTime?
-  parent      WikiArticle?  @relation("WikiHierarchy", fields: [parentId], references: [id])
-  children    WikiArticle[] @relation("WikiHierarchy")
-  author      User         @relation("Author", fields: [authorId], references: [id], onDelete: Cascade)
+  id                 String    @id @default(cuid())
+  title              String
+  content            String    @db.Text
+  slug               String    @unique
+  parentId           String?
+  authorId           String
+  isPublished        Boolean   @default(false)
+  createdAt          DateTime  @default(now())
+  updatedAt          DateTime  @updatedAt
+  embeddingVector    String?   @db.Text // JSON array du vecteur (pgvector / RAG)
+  embeddingAt        DateTime?
+  excerpt            String?   @db.Text
+  tags               String[]  @default([])
+  coverImage         String?   @map("cover_image")
+  lastRevisedBy      String?   @map("last_revised_by")
+  readingTimeMinutes Int?      @map("reading_time_minutes")
+  wordCount          Int?      @map("word_count")
+  viewCount          Int       @default(0) @map("view_count")
+  pinned             Boolean   @default(false) @map("pinned")
+  parent             WikiArticle?   @relation("WikiHierarchy", fields: [parentId], references: [id])
+  children           WikiArticle[]  @relation("WikiHierarchy")
+  author             User          @relation("Author", fields: [authorId], references: [id], onDelete: Cascade)
+  revisions          WikiRevision[]
+  comments           WikiComment[]
+  backlinksFrom      WikiBacklink[] @relation("WikiBacklinkSource")
+  backlinksTo        WikiBacklink[] @relation("WikiBacklinkTarget")
+}
+
+model WikiRevision {
+  id         String     @id @default(cuid())
+  articleId  String     @map("article_id")
+  content    String     @db.Text
+  authorId   String     @map("author_id")
+  authorName String?    @map("author_name")
+  changeNote String?    @map("change_note") @db.Text
+  createdAt  DateTime   @default(now()) @map("created_at")
+  article    WikiArticle @relation(fields: [articleId], references: [id], onDelete: Cascade)
+}
+
+model WikiComment {
+  id         String     @id @default(cuid())
+  articleId  String     @map("article_id")
+  content    String     @db.Text
+  authorId   String     @map("author_id")
+  authorName String?    @map("author_name")
+  createdAt  DateTime   @default(now()) @map("created_at")
+  updatedAt  DateTime   @updatedAt @map("updated_at")
+  article    WikiArticle @relation(fields: [articleId], references: [id], onDelete: Cascade)
+}
+
+model WikiBacklink {
+  id               String     @id @default(cuid())
+  sourceArticleId  String     @map("source_article_id")
+  targetArticleId  String     @map("target_article_id")
+  createdAt        DateTime   @default(now()) @map("created_at")
+  source           WikiArticle @relation("WikiBacklinkSource", fields: [sourceArticleId], references: [id], onDelete: Cascade)
+  target           WikiArticle @relation("WikiBacklinkTarget", fields: [targetArticleId], references: [id], onDelete: Cascade)
+  @@unique([sourceArticleId, targetArticleId])
+  @@index([targetArticleId])
 }
 
 model Document {

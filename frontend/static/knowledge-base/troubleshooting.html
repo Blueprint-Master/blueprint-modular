@@ -1,9 +1,9 @@
-ï»¿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="fr">
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>DÃ©pannage  â€”  Blueprint Modular</title>
+  <title>Dépannage  —  Blueprint Modular</title>
   <link rel="icon" href="../favicon.ico" />
   <link rel="icon" type="image/png" href="../img/logo-bpm.png" />
   <link rel="stylesheet" href="../doc.css" />
@@ -14,10 +14,10 @@
     <a href="../get-started/why-bpm.html">Pourquoi BPM</a>
     <a href="../get-started/installation.html">Installation</a>
     <a href="../components.html">Composants</a>
-    <a href="../api-reference/text.html">RÃ©fÃ©rence API</a>
-    <a href="../deploy/concepts.html">DÃ©ployer</a>
+    <a href="../api-reference/text.html">Référence API</a>
+    <a href="../deploy/concepts.html">Déployer</a>
     <a href="https://blueprint-modular.com/modules.html">Modules</a>
-    <a href="../cheat-sheet.html">Aide-mÃ©moire</a>
+    <a href="../cheat-sheet.html">Aide-mémoire</a>
     <a href="https://app.blueprint-modular.com/dashboard" class="doc-nav-app" target="_blank" rel="noopener">Ouvrir l'app</a>
     <button class="nav-burger" aria-label="Menu" id="nav-burger-btn"><span></span><span></span><span></span></button>
   </nav>
@@ -25,25 +25,25 @@
     <aside class="doc-sidebar">
       <h3>Accueil</h3>
       <a href="../index.html">Accueil</a>
-      <h3>DÃ©marrage</h3>
+      <h3>Démarrage</h3>
       <a href="../get-started/why-bpm.html">Pourquoi BPM</a>
       <a href="../get-started/installation.html">Installation</a>
       <a href="../get-started/fundamentals.html">Fondamentaux</a>
-      <a href="../get-started/first-app.html">PremiÃ¨re app</a>
+      <a href="../get-started/first-app.html">Première app</a>
       <h3>Composants</h3>
       <a href="../components.html">Catalogue des composants</a>
       <a href="../api-reference/text.html">Texte</a>
-      <a href="../api-reference/data.html">DonnÃ©es</a>
-      <a href="../api-reference/metrics.html">MÃ©triques</a>
+      <a href="../api-reference/data.html">Données</a>
+      <a href="../api-reference/metrics.html">Métriques</a>
       <a href="../api-reference/charts.html">Graphiques</a>
       <a href="../api-reference/inputs.html">Saisie</a>
       <a href="../api-reference/layout.html">Mise en page</a>
       <a href="../api-reference/panels.html">Panneaux</a>
-      <a href="../api-reference/media.html">MÃ©dias</a>
+      <a href="../api-reference/media.html">Médias</a>
       <a href="../api-reference/status.html">Statut</a>
       <a href="../api-reference/chat.html">Chat</a>
       <a href="../api-reference/config.html">Config</a>
-      <a href="../api-reference/connection.html">Connexion aux donnÃ©es</a>
+      <a href="../api-reference/connection.html">Connexion aux données</a>
       <h3>Modules</h3>
       <a href="https://blueprint-modular.com/modules.html">Catalogue des modules</a>
       <a href="../modules/wiki.html">Module Wiki</a>
@@ -51,71 +51,71 @@
       <a href="../modules/veille.html">Module Veille</a>
       <a href="../modules/ibkr.html">Module IBKR</a>
       <a href="../modules/analyse-document.html">Module Documents</a>
-      <h3>DÃ©ployer</h3>
+      <h3>Déployer</h3>
       <a href="../deploy/concepts.html">Concepts</a>
       <a href="../deploy/platforms.html">Plateformes</a>
       <h3>Base de connaissances</h3>
       <a href="faq.html">FAQ</a>
-      <a href="troubleshooting.html" class="active">DÃ©pannage</a>
-      <a href="reste-a-faire.html">Ce qu'il reste Ã  faire</a>
+      <a href="troubleshooting.html" class="active">Dépannage</a>
+      <a href="reste-a-faire.html">Ce qu'il reste à faire</a>
       <h3>Ressources</h3>
-      <a href="../cheat-sheet.html">Aide-mÃ©moire</a>
+      <a href="../cheat-sheet.html">Aide-mémoire</a>
       <a href="../versions.html">Versions</a>
     </aside>
     <main class="doc-main">
-      <nav class="breadcrumb"><a href="../index.html">Accueil</a> â€º <a href="faq.html">Base de connaissances</a> â€º DÃ©pannage</nav>
-      <h1>DÃ©pannage</h1>
-      <p class="lead">ProblÃ¨me â†’ cause â†’ solution. DÃ©pannage courant pour les apps BPM.</p>
+      <nav class="breadcrumb"><a href="../index.html">Accueil</a> › <a href="faq.html">Base de connaissances</a> › Dépannage</nav>
+      <h1>Dépannage</h1>
+      <p class="lead">Problème ? cause ? solution. Dépannage courant pour les apps BPM.</p>
 
-      <h2>1. <code>bpm</code> : command not found aprÃ¨s <code>pip install</code></h2>
-      <p><strong>Cause â€”</strong> Le script console <code>bpm</code> n'est pas dans le PATH (venv non activÃ© ou pip install sans <code>-e .</code>).</p>
-      <p><strong>Solution â€”</strong> Activer l'environnement virtuel : <code>source .venv/bin/activate</code> (Linux/macOS) ou <code>.venv\Scripts\activate</code> (Windows). Ou lancer explicitement : <code>python -m bpm.cli run app.py</code>.</p>
+      <h2>1. <code>bpm</code> : command not found après <code>pip install</code></h2>
+      <p><strong>Cause —</strong> Le script console <code>bpm</code> n'est pas dans le PATH (venv non activé ou pip install sans <code>-e .</code>).</p>
+      <p><strong>Solution —</strong> Activer l'environnement virtuel : <code>source .venv/bin/activate</code> (Linux/macOS) ou <code>.venv\Scripts\activate</code> (Windows). Ou lancer explicitement : <code>python -m bpm.cli run app.py</code>.</p>
 
-      <h2>2. Port dÃ©jÃ  utilisÃ© au lancement</h2>
-      <p><strong>Cause â€”</strong> Un autre processus utilise le port par dÃ©faut (8501).</p>
-      <p><strong>Solution â€”</strong> Changer le port : <code>bpm run app.py --port 8502</code> ou <code>python -m bpm.cli run app.py --port 8502</code>.</p>
+      <h2>2. Port déjà utilisé au lancement</h2>
+      <p><strong>Cause —</strong> Un autre processus utilise le port par défaut (8501).</p>
+      <p><strong>Solution —</strong> Changer le port : <code>bpm run app.py --port 8502</code> ou <code>python -m bpm.cli run app.py --port 8502</code>.</p>
 
-      <h2>3. L'app se recharge entiÃ¨rement Ã  chaque clic</h2>
-      <p><strong>Cause â€”</strong> Comportement actuel : chaque interaction dÃ©clenche un re-run complet du script (comme Streamlit).</p>
-      <p><strong>Solution â€”</strong> C'est normal pour l'instant. La rÃ©activitÃ© granulaire (mise Ã  jour ciblÃ©e sans re-run) est prÃ©vue (WebSocket/SSE) â€” voir <a href="reste-a-faire.html">Ce qu'il reste Ã  faire</a>.</p>
+      <h2>3. L'app se recharge entièrement à chaque clic</h2>
+      <p><strong>Cause —</strong> Comportement actuel : chaque interaction déclenche un re-run complet du script (comme Streamlit).</p>
+      <p><strong>Solution —</strong> C'est normal pour l'instant. La réactivité granulaire (mise à jour ciblée sans re-run) est prévue (WebSocket/SSE) — voir <a href="reste-a-faire.html">Ce qu'il reste à faire</a>.</p>
 
-      <h2>4. Les refs rÃ©actives ne se mettent pas Ã  jour</h2>
-      <p><strong>Cause â€”</strong> Les refs (<code>bpm.ref</code>) et la mise Ã  jour ciblÃ©e ne sont pas encore implÃ©mentÃ©es cÃ´tÃ© serveur Python / protocole.</p>
-      <p><strong>Solution â€”</strong> Utiliser <code>bpm.session_state</code> pour persister l'Ã©tat entre les runs. Les refs seront documentÃ©es quand le support sera en place.</p>
+      <h2>4. Les refs réactives ne se mettent pas à jour</h2>
+      <p><strong>Cause —</strong> Les refs (<code>bpm.ref</code>) et la mise à jour ciblée ne sont pas encore implémentées côté serveur Python / protocole.</p>
+      <p><strong>Solution —</strong> Utiliser <code>bpm.session_state</code> pour persister l'état entre les runs. Les refs seront documentées quand le support sera en place.</p>
 
       <h2>5. Erreur Nginx 502 Bad Gateway</h2>
-      <p><strong>Cause â€”</strong> Nginx ne peut pas joindre le serveur BPM (processus arrÃªtÃ©, mauvais port, ou BPM Ã  l'Ã©coute sur 127.0.0.1 uniquement).</p>
-      <p><strong>Solution â€”</strong> VÃ©rifier que le service BPM tourne : <code>systemctl status blueprint-modular</code>. VÃ©rifier que <code>proxy_pass</code> pointe vers le bon port (ex. <code>http://127.0.0.1:8501</code>). VÃ©rifier les logs Nginx et le journal systemd du service.</p>
+      <p><strong>Cause —</strong> Nginx ne peut pas joindre le serveur BPM (processus arrêté, mauvais port, ou BPM à l'écoute sur 127.0.0.1 uniquement).</p>
+      <p><strong>Solution —</strong> Vérifier que le service BPM tourne : <code>systemctl status blueprint-modular</code>. Vérifier que <code>proxy_pass</code> pointe vers le bon port (ex. <code>http://127.0.0.1:8501</code>). Vérifier les logs Nginx et le journal systemd du service.</p>
 
-      <h2>6. SSL : certificat expirÃ© ou non reconnu</h2>
-      <p><strong>Cause â€”</strong> Certificat Let's Encrypt expirÃ© ou renouvellement Certbot non configurÃ©.</p>
-      <p><strong>Solution â€”</strong> Renouveler : <code>certbot renew</code>. VÃ©rifier la tÃ¢che cron ou systemd timer pour le renouvellement automatique. VÃ©rifier que le navigateur fait confiance au certificat (pas d'auto-signÃ© en prod sans import).</p>
+      <h2>6. SSL : certificat expiré ou non reconnu</h2>
+      <p><strong>Cause —</strong> Certificat Let's Encrypt expiré ou renouvellement Certbot non configuré.</p>
+      <p><strong>Solution —</strong> Renouveler : <code>certbot renew</code>. Vérifier la tâche cron ou systemd timer pour le renouvellement automatique. Vérifier que le navigateur fait confiance au certificat (pas d'auto-signé en prod sans import).</p>
 
       <h2>7. <code>ModuleNotFoundError: No module named 'bpm'</code></h2>
-      <p><strong>Cause â€”</strong> Python s'exÃ©cute dans un environnement oÃ¹ le package BPM n'est pas installÃ© (autre venv, autre interprÃ©teur).</p>
-      <p><strong>Solution â€”</strong> Installer le package : <code>pip install blueprint-modular</code> (PyPI). Si vous avez accÃ¨s au dÃ©pÃ´t privÃ© : <code>pip install -e .</code> depuis la racine du repo. VÃ©rifier avec <code>python -c "import bpm; print(bpm.__file__)"</code>.</p>
+      <p><strong>Cause —</strong> Python s'exécute dans un environnement où le package BPM n'est pas installé (autre venv, autre interpréteur).</p>
+      <p><strong>Solution —</strong> Installer le package : <code>pip install blueprint-modular</code> (PyPI). Si vous avez accès au dépôt privé : <code>pip install -e .</code> depuis la racine du repo. Vérifier avec <code>python -c "import bpm; print(bpm.__file__)"</code>.</p>
 
       <section class="whats-next">
         <h2>Et maintenant ?</h2>
         <ul>
-          <li><a href="faq.html">FAQ</a>&nbsp;â€” Questions frÃ©quentes</li>
-          <li><a href="../deploy/platforms.html">DÃ©ployer â€” Plateformes</a>&nbsp;â€” Configuration serveur</li>
+          <li><a href="faq.html">FAQ</a>&nbsp;— Questions fréquentes</li>
+          <li><a href="../deploy/platforms.html">Déployer — Plateformes</a>&nbsp;— Configuration serveur</li>
         </ul>
       </section>
       <section class="help-cta">
-        <p>Une question ? Consultez la <a href="../knowledge-base/faq.html">FAQ</a> et la <a href="../knowledge-base/reste-a-faire.html">Ce qu'il reste Ã  faire</a>.</p>
+        <p>Une question ? Consultez la <a href="../knowledge-base/faq.html">FAQ</a> et la <a href="../knowledge-base/reste-a-faire.html">Ce qu'il reste à faire</a>.</p>
       </section>
       <footer class="site-footer" style="margin-top:2rem;">
         <div class="footer-links">
           <a href="../index.html">Accueil</a>
           <a href="../components.html">Composants</a>
           <a href="https://blueprint-modular.com/modules.html">Modules</a>
-          <a href="../cheat-sheet.html">Aide-mÃ©moire</a>
+          <a href="../cheat-sheet.html">Aide-mémoire</a>
           <a href="../versions.html">Versions</a>
           <a href="../knowledge-base/faq.html">FAQ</a>
-          <a href="../knowledge-base/reste-a-faire.html">Ce qu'il reste Ã  faire</a>
+          <a href="../knowledge-base/reste-a-faire.html">Ce qu'il reste à faire</a>
         </div>
-        <div class="footer-meta">Blueprint Modular v0.1.20</div>
+        <div class="footer-meta">Blueprint Modular v0.1.21</div>
       </footer>
     </main>
   </div>

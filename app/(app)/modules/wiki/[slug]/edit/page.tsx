@@ -19,6 +19,11 @@ export default function WikiEditPage() {
   const [title, setTitle] = useState("");
   const [content, setContent] = useState("");
   const [isPublished, setIsPublished] = useState(false);
+  const [excerpt, setExcerpt] = useState("");
+  const [tags, setTags] = useState<string[]>([]);
+  const [tagInput, setTagInput] = useState("");
+  const [pinned, setPinned] = useState(false);
+  const [changeNote, setChangeNote] = useState("");
   const [preview, setPreview] = useState(false);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
@@ -92,19 +97,30 @@ export default function WikiEditPage() {
 
   useEffect(() => {
     if (!slug) return;
-    if (status === "loading") return;
 
+    // Toujours vérifier le localStorage en premier : un article créé en invité
+    // peut être édité même si l'utilisateur est connecté (article pas encore en base).
+    const guest = getGuestArticleBySlug(slug);
+    if (guest?.canEdit) {
+      setTitle(guest.title);
+      setContent(guest.content ?? "");
+      setIsPublished(guest.isPublished ?? false);
+      setExcerpt((guest as { excerpt?: string }).excerpt ?? "");
+      setTags(Array.isArray((guest as { tags?: string[] }).tags) ? (guest as { tags: string[] }).tags : []);
+      setPinned((guest as { pinned?: boolean }).pinned ?? false);
+      setIsGuestArticle(true);
+      setLoading(false);
+      return;
+    }
+    if (guest && !guest.canEdit) {
+      setError("Article en lecture seule en mode invité (article de base).");
+      setLoading(false);
+      return;
+    }
+
+    if (status === "loading") return;
     if (!session) {
-      const guest = getGuestArticleBySlug(slug);
-      if (guest?.canEdit) {
-        setTitle(guest.title);
-        setContent(guest.content ?? "");
-        setIsPublished(guest.isPublished ?? false);
-        setIsGuestArticle(true);
-        setLoading(false);
-        return;
-      }
-      setError("Article introuvable ou non modifiable en mode invité");
+      setError("Article introuvable.");
       setLoading(false);
       return;
     }
@@ -114,10 +130,13 @@ export default function WikiEditPage() {
         if (!r.ok) throw new Error("Not found");
         return r.json();
       })
-      .then((a) => {
+      .then((a: { title: string; content?: string; isPublished?: boolean; excerpt?: string | null; tags?: string[]; pinned?: boolean }) => {
         setTitle(a.title);
         setContent(a.content ?? "");
         setIsPublished(a.isPublished ?? false);
+        setExcerpt(a.excerpt ?? "");
+        setTags(Array.isArray(a.tags) ? a.tags : []);
+        setPinned(a.pinned ?? false);
       })
       .catch(() => setError("Article introuvable"))
       .finally(() => setLoading(false));
@@ -137,7 +156,15 @@ export default function WikiEditPage() {
       const res = await fetch(`/api/wiki/${encodeURIComponent(slug)}`, {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ title, content, isPublished }),
+        body: JSON.stringify({
+          title,
+          content,
+          isPublished,
+          excerpt: excerpt.trim() || null,
+          tags,
+          pinned,
+          changeNote: changeNote.trim() || null,
+        }),
         credentials: "include",
       });
       if (!res.ok) throw new Error("Erreur");
@@ -180,6 +207,58 @@ export default function WikiEditPage() {
         <div>
           <Toggle label="Publié" value={isPublished} onChange={setIsPublished} />
         </div>
+        <div>
+          <Toggle label="Épingler cet article" value={pinned} onChange={setPinned} />
+        </div>
+        <label className="block">
+          <span className="block text-sm mb-1" style={{ color: "var(--bpm-text-secondary)" }}>Résumé (excerpt)</span>
+          <input
+            type="text"
+            value={excerpt}
+            onChange={(e) => setExcerpt(e.target.value)}
+            placeholder="2-3 lignes optionnel"
+            className="bpm-input w-full px-3 py-2 rounded border"
+            style={{ borderColor: "var(--bpm-border)", background: "var(--bpm-surface)", color: "var(--bpm-text-primary)" }}
+          />
+        </label>
+        <label className="block">
+          <span className="block text-sm mb-1" style={{ color: "var(--bpm-text-secondary)" }}>Tags (séparés par Entrée)</span>
+          <div className="flex flex-wrap gap-1 mb-1">
+            {tags.map((t) => (
+              <span key={t} className="inline-flex items-center gap-1 px-2 py-0.5 rounded text-sm" style={{ background: "var(--bpm-border)", color: "var(--bpm-text-primary)" }}>
+                {t}
+                <button type="button" onClick={() => setTags((prev) => prev.filter((x) => x !== t))} className="opacity-70 hover:opacity-100" aria-label="Retirer">×</button>
+              </span>
+            ))}
+            <input
+              type="text"
+              value={tagInput}
+              onChange={(e) => setTagInput(e.target.value)}
+              onKeyDown={(e) => {
+                if (e.key === "Enter" || e.key === ",") {
+                  e.preventDefault();
+                  const v = (e.key === "," ? tagInput.replace(/,/g, "") : tagInput).trim();
+                  if (v && !tags.includes(v)) setTags((prev) => [...prev, v]);
+                  setTagInput("");
+                }
+              }}
+              placeholder="Ajouter un tag..."
+              className="flex-1 min-w-[120px] px-2 py-1 rounded border text-sm"
+              style={{ borderColor: "var(--bpm-border)", background: "var(--bpm-surface)", color: "var(--bpm-text-primary)" }}
+            />
+          </div>
+        </label>
+        <label className="block">
+          <span className="block text-sm mb-1" style={{ color: "var(--bpm-text-secondary)" }}>Note de changement (historique)</span>
+          <input
+            type="text"
+            value={changeNote}
+            onChange={(e) => setChangeNote(e.target.value)}
+            placeholder="Optionnel : décrire les modifications"
+            className="bpm-input w-full px-3 py-2 rounded border"
+            style={{ borderColor: "var(--bpm-border)", background: "var(--bpm-surface)", color: "var(--bpm-text-primary)" }}
+          />
+        </label>
 
         <div className="flex flex-wrap items-center gap-2 border-b pb-2" style={{ borderColor: "var(--bpm-border)" }}>
           <Toggle

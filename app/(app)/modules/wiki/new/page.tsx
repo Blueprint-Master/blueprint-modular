@@ -25,6 +25,10 @@ export default function WikiNewPage() {
   const [slug, setSlug] = useState("");
   const [parentId, setParentId] = useState<string | null>(null);
   const [isPublished, setIsPublished] = useState(false);
+  const [excerpt, setExcerpt] = useState("");
+  const [tags, setTags] = useState<string[]>([]);
+  const [tagInput, setTagInput] = useState("");
+  const [pinned, setPinned] = useState(false);
   const [preview, setPreview] = useState(false);
   const [parents, setParents] = useState<{ id: string; title: string; slug: string }[]>([]);
   const [saving, setSaving] = useState(false);
@@ -80,6 +84,9 @@ export default function WikiNewPage() {
           slug: finalSlug,
           parentId: parentId || undefined,
           isPublished,
+          excerpt: excerpt.trim() || undefined,
+          tags: tags.length ? tags : undefined,
+          pinned,
         }),
         credentials: "include",
       });
@@ -239,6 +246,47 @@ export default function WikiNewPage() {
         <div>
           <Toggle label="Publié" value={isPublished} onChange={setIsPublished} />
         </div>
+        <div>
+          <Toggle label="Épingler cet article" value={pinned} onChange={setPinned} />
+        </div>
+        <label className="block">
+          <span className="block text-sm mb-1" style={{ color: "var(--bpm-text-secondary)" }}>Résumé (excerpt)</span>
+          <input
+            type="text"
+            value={excerpt}
+            onChange={(e) => setExcerpt(e.target.value)}
+            placeholder="2-3 lignes optionnel"
+            className="bpm-input w-full px-3 py-2 rounded border"
+            style={{ borderColor: "var(--bpm-border)", background: "var(--bpm-surface)", color: "var(--bpm-text-primary)" }}
+          />
+        </label>
+        <label className="block">
+          <span className="block text-sm mb-1" style={{ color: "var(--bpm-text-secondary)" }}>Tags (Entrée ou virgule pour ajouter)</span>
+          <div className="flex flex-wrap gap-1 mb-1">
+            {tags.map((t) => (
+              <span key={t} className="inline-flex items-center gap-1 px-2 py-0.5 rounded text-sm" style={{ background: "var(--bpm-border)", color: "var(--bpm-text-primary)" }}>
+                {t}
+                <button type="button" onClick={() => setTags((prev) => prev.filter((x) => x !== t))} className="opacity-70 hover:opacity-100" aria-label="Retirer">×</button>
+              </span>
+            ))}
+            <input
+              type="text"
+              value={tagInput}
+              onChange={(e) => setTagInput(e.target.value)}
+              onKeyDown={(e) => {
+                if (e.key === "Enter" || e.key === ",") {
+                  e.preventDefault();
+                  const v = (e.key === "," ? tagInput.replace(/,/g, "") : tagInput).trim();
+                  if (v && !tags.includes(v)) setTags((prev) => [...prev, v]);
+                  setTagInput("");
+                }
+              }}
+              placeholder="Ajouter un tag..."
+              className="flex-1 min-w-[120px] px-2 py-1 rounded border text-sm"
+              style={{ borderColor: "var(--bpm-border)", background: "var(--bpm-surface)", color: "var(--bpm-text-primary)" }}
+            />
+          </div>
+        </label>
 
         <div className="flex items-center gap-2 border-b pb-2" style={{ borderColor: "var(--bpm-border)" }}>
           <Toggle

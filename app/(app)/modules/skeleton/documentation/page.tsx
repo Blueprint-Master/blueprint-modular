@@ -44,8 +44,16 @@ export default function SkeletonDocumentationPage() {
         <strong>Quand préférer le skeleton au spinner ?</strong> Utilisez un skeleton lorsque la page a une structure identifiable (tableau, formulaire, article) : le placeholder reproduit cette structure et réduit la perception du temps d&apos;attente. Utilisez un spinner pour des actions ponctuelles (soumission, chargement d&apos;un détail en overlay).
       </p>
       <p className="mb-2 text-sm" style={{ color: "var(--bpm-text-secondary)" }}>
-        <strong>Transition vers le contenu :</strong> affichez le skeleton tant que <code>loading === true</code>, puis le contenu réel. Pour une transition fluide, appliquez <code>transition: opacity 200ms ease-out</code> sur le conteneur skeleton et passez à <code>opacity: 0</code> avant de retirer le skeleton du DOM ou de le cacher.
+        <strong>Transition vers le contenu :</strong> affichez le skeleton tant que <code>loading === true</code>, puis le contenu réel. Pour une transition fluide, appliquez <code>transition: opacity 200ms ease-out</code> sur le conteneur skeleton (classe <code>bpm-skeleton-container</code>) et passez à <code>opacity: 0</code> avant de retirer le skeleton du DOM ou de le cacher.
       </p>
+      <p className="mb-2 text-sm" style={{ color: "var(--bpm-text-secondary)" }}>
+        <strong>Réduire les animations :</strong> le composant respecte <code>prefers-reduced-motion</code> (animation désactivée automatiquement). Vous pouvez aussi passer <code>animated=false</code> pour un skeleton statique (screenshots, tests).
+      </p>
+
+      <nav className="doc-pagination mt-8">
+        <Link href="/modules/skeleton" style={{ color: "var(--bpm-accent-cyan)" }}>← Retour au module Skeleton</Link>
+        <Link href="/modules/skeleton/simulateur" style={{ color: "var(--bpm-accent-cyan)" }}>Simulateur</Link>
+      </nav>
     </div>
   );
 }

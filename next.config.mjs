@@ -2,6 +2,11 @@
 const nextConfig = {
   reactStrictMode: true,
   output: "standalone",
+  async redirects() {
+    return [
+      { source: "/modules/skeleton/documentation", destination: "/modules/skeleton", permanent: false },
+    ];
+  },
   experimental: {
     serverActions: {
       bodySizeLimit: "50mb",

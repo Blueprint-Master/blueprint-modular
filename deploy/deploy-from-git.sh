@@ -105,6 +105,8 @@ if [ -f "$REPO_DIR/package.json" ] && [ -f "$REPO_DIR/next.config.mjs" ]; then
   else
     npm install
     npx prisma generate
+    npx prisma migrate deploy
+    node prisma/seed-wiki-procedures.cjs || true
     rm -rf .next
     npm run build
     mkdir -p .next/standalone/.next

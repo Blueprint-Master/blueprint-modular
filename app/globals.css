@@ -28,6 +28,7 @@
   /* Tableaux : bande striée plus claire que l'en-tête */
   --bpm-table-stripe: #f7f7f7;
   --bpm-skeleton-bg: #f0f0f0;
+  --bpm-skeleton-shimmer-mid: #e0e0e0;
 }
 
 [data-theme="dark"] {
@@ -49,10 +50,25 @@
   --bpm-code-border: rgba(255, 255, 255, 0.15);
   --bpm-table-stripe: #232323;
   --bpm-skeleton-bg: rgb(50, 52, 58);
+  --bpm-skeleton-shimmer-mid: rgb(65, 68, 75);
 }
 
-/* Skeleton : contraste mode sombre, reduced motion, conteneur */
+/* Skeleton : contraste mode sombre, reduced motion, conteneur, shimmer */
+@keyframes bpm-shimmer {
+  0% { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}
 .bpm-skeleton { background: var(--bpm-skeleton-bg) !important; }
+.bpm-skeleton--shimmer {
+  background: linear-gradient(
+    90deg,
+    var(--bpm-skeleton-bg) 25%,
+    var(--bpm-skeleton-shimmer-mid) 50%,
+    var(--bpm-skeleton-bg) 75%
+  ) !important;
+  background-size: 200% 100% !important;
+  animation: bpm-shimmer 1.5s ease-in-out infinite;
+}
 @media (prefers-reduced-motion: reduce) {
   .bpm-skeleton { animation: none !important; }
   .bpm-skeleton--shimmer { animation: none !important; }
@@ -62,7 +78,8 @@
   transition: opacity 200ms ease-out;
 }
 [data-theme="dark"] .bpm-skeleton-container {
-  background: rgba(255, 255, 255, 0.02);
+  /* Contraste : conteneur plus clair que le fond page pour délimiter la zone skeleton (audit P1). */
+  background: var(--bpm-surface);
 }
 
 html {

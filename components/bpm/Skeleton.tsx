@@ -13,6 +13,8 @@ export interface SkeletonProps {
   className?: string;
   /** Désactive l'animation pulse (utile pour screenshots, tests, prefers-reduced-motion). */
   animated?: boolean;
+  /** Animation shimmer (dégradé balayant) en alternative au pulse. */
+  shimmer?: boolean;
   /** Contrôle le rayon des bords (ignoré si variant === "circular"). */
   rounded?: SkeletonRounded;
 }
@@ -30,15 +32,17 @@ export function Skeleton({
   height,
   className = "",
   animated = true,
+  shimmer = false,
   rounded = "md",
 }: SkeletonProps) {
   const style: React.CSSProperties = {};
   if (width != null) style.width = typeof width === "number" ? `${width}px` : width;
   if (height != null) style.height = typeof height === "number" ? `${height}px` : height;
   const roundClass = variant === "circular" ? "rounded-full" : roundedClass[rounded];
+  const animationClass = shimmer ? "bpm-skeleton--shimmer" : animated ? "animate-pulse" : "";
   return (
     <span
-      className={`bpm-skeleton inline-block ${animated ? "animate-pulse" : ""} ${roundClass} ${className}`.trim()}
+      className={`bpm-skeleton inline-block ${animationClass} ${roundClass} ${className}`.trim()}
       style={{
         ...style,
         background: "var(--bpm-skeleton-bg, var(--bpm-bg-secondary))",

@@ -27,7 +27,7 @@ export default function SkeletonSimulateurPage() {
         className="bpm-skeleton-container rounded-xl border p-6"
         style={{ borderColor: "var(--bpm-border)", background: "var(--bpm-bg-primary)" }}
         role="status"
-        aria-busy
+        aria-busy="true"
         aria-live="polite"
         aria-label="Chargement"
       >
@@ -87,6 +87,11 @@ export default function SkeletonSimulateurPage() {
           ))}
         </div>
       </div>
+
+      <nav className="doc-pagination mt-8">
+        <Link href="/modules/skeleton" style={{ color: "var(--bpm-accent-cyan)" }}>← Retour au module Skeleton</Link>
+        <Link href="/modules/skeleton/documentation" style={{ color: "var(--bpm-accent-cyan)" }}>Documentation</Link>
+      </nav>
     </div>
   );
 }

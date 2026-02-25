@@ -81,6 +81,7 @@ export default function ContractsPage() {
   const [status, setStatus] = useState("");
   const [searchText, setSearchText] = useState("");
   const [reanalyzingId, setReanalyzingId] = useState<string | null>(null);
+  const [deletingId, setDeletingId] = useState<string | null>(null);
 
   const fetchContracts = useCallback(() => {
     const params = new URLSearchParams();
@@ -119,6 +120,23 @@ export default function ContractsPage() {
       if (res.ok) fetchContracts();
     } finally {
       setReanalyzingId(null);
+    }
+  };
+
+  const handleDelete = async (id: string, filename: string) => {
+    if (deletingId) return;
+    if (!confirm(`Supprimer le contrat « ${filename} » ? Cette action est irréversible.`)) return;
+    setDeletingId(id);
+    try {
+      const res = await fetch(`/api/contracts/${id}`, { method: "DELETE", credentials: "include" });
+      if (res.ok) {
+        setContracts((prev) => prev.filter((c) => c.id !== id));
+      } else {
+        const err = await res.json().catch(() => ({}));
+        alert((err && typeof err === "object" && "error" in err && typeof (err as { error?: string }).error === "string") ? (err as { error: string }).error : "Erreur lors de la suppression.");
+      }
+    } finally {
+      setDeletingId(null);
     }
   };
 

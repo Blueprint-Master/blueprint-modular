@@ -20,8 +20,15 @@ type Article = {
   createdAt: string;
   updatedAt: string;
   author: { name: string | null; email?: string };
-  children: { id: string; title: string; slug: string }[];
+  children: { id: string; title: string; slug: string; excerpt?: string; tags?: string[]; pinned?: boolean }[];
   canEdit?: boolean;
+  excerpt?: string | null;
+  tags?: string[];
+  pinned?: boolean;
+  viewCount?: number;
+  readingTimeMinutes?: number | null;
+  wordCount?: number | null;
+  lastRevisedBy?: string | null;
 };
 
 function guestToArticle(g: ReturnType<typeof getGuestArticleBySlug>): Article | null {
@@ -42,10 +49,35 @@ function guestToArticle(g: ReturnType<typeof getGuestArticleBySlug>): Article | 
   };
 }
 
-/** Transforme #mot (hashtags en milieu de ligne) en spans tag pour le rendu, sans casser les titres Markdown (# en début de ligne). */
+/** Transforme #mot (hashtags) en spans tag pour le rendu, sans casser les titres Markdown (H1–H6 : # suivi d'un espace). */
 function contentWithHashtagTags(content: string): string {
   if (!content) return content;
-  return content.replace(/\s#([a-zA-Z0-9_\u00C0-\u024F-]+)/g, ' <span class="bpm-wiki-tag">$1</span>');
+  const withLineStart = content.replace(/^#([a-zA-Z0-9_\u00C0-\u024F-]+)/gm, '<span class="bpm-wiki-tag">$1</span>');
+  return withLineStart.replace(/\s#([a-zA-Z0-9_\u00C0-\u024F-]+)/g, ' <span class="bpm-wiki-tag">$1</span>');
+}
+
+/** Transforme [[slug]] et [[slug|label]] en liens Markdown vers /modules/wiki/slug. */
+function contentWithWikiLinks(content: string): string {
+  if (!content) return content;
+  return content.replace(/\[\[([^\]|]+)(?:\|([^\]]*))?\]\]/g, (_, slugPart, label) => {
+    const slug = slugPart.trim().toLowerCase().replace(/\s+/g, "-");
+    const text = (label ?? slugPart).trim() || slug;
+    return `[${text}](/modules/wiki/${encodeURIComponent(slug)})`;
+  });
+}
+
+/** Extrait les titres H2 et H3 pour la table des matières. */
+function buildToc(content: string): { level: 2 | 3; text: string; id: string }[] {
+  const toc: { level: 2 | 3; text: string; id: string }[] = [];
+  const regex = /^(##|###)\s+(.+)$/gm;
+  let m: RegExpExecArray | null;
+  while ((m = regex.exec(content)) !== null) {
+    const level = (m[1].length === 2 ? 2 : 3) as 2 | 3;
+    const text = m[2].trim();
+    const id = text.toLowerCase().replace(/\s+/g, "-").replace(/[^a-z0-9-]/g, "");
+    toc.push({ level, text, id });
+  }
+  return toc;
 }
 
 export default function WikiArticlePage() {
@@ -57,6 +89,10 @@ export default function WikiArticlePage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [deleting, setDeleting] = useState(false);
+  const [backlinks, setBacklinks] = useState<{ id: string; title: string; slug: string }[]>([]);
+  const [comments, setComments] = useState<{ id: string; content: string; authorName?: string; createdAt: string }[]>([]);
+  const [commentText, setCommentText] = useState("");
+  const [commentSending, setCommentSending] = useState(false);
 
   useEffect(() => {
     if (!slug) return;
@@ -70,7 +106,8 @@ export default function WikiArticlePage() {
       return;
     }
 
-    fetch(`/api/wiki/${encodeURIComponent(slug)}`, { credentials: "include" })
+    const incView = "1";
+    fetch(`/api/wiki/${encodeURIComponent(slug)}?incView=${incView}`, { credentials: "include" })
       .then((r) => {
         if (!r.ok) throw new Error("Not found");
         return r.json();
@@ -79,6 +116,45 @@ export default function WikiArticlePage() {
       .catch(() => setError("Article introuvable"))
       .finally(() => setLoading(false));
   }, [slug, session, status]);
+
+  useEffect(() => {
+    if (!session || !slug || !article?.id) return;
+    fetch(`/api/wiki/${encodeURIComponent(slug)}/backlinks`, { credentials: "include" })
+      .then((r) => (r.ok ? r.json() : []))
+      .then((data) => setBacklinks(Array.isArray(data) ? data : []))
+      .catch(() => setBacklinks([]));
+    fetch(`/api/wiki/${encodeURIComponent(slug)}/comments`, { credentials: "include" })
+      .then((r) => (r.ok ? r.json() : []))
+      .then((data) => setComments(Array.isArray(data) ? data : []))
+      .catch(() => setComments([]));
+  }, [session, slug, article?.id]);
+
+  const refreshComments = () => {
+    if (!session || !slug) return;
+    fetch(`/api/wiki/${encodeURIComponent(slug)}/comments`, { credentials: "include" })
+      .then((r) => (r.ok ? r.json() : []))
+      .then((data) => setComments(Array.isArray(data) ? data : []));
+  };
+
+  const handleAddComment = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!commentText.trim() || commentSending || !session) return;
+    setCommentSending(true);
+    try {
+      const res = await fetch(`/api/wiki/${encodeURIComponent(slug)}/comments`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ content: commentText.trim() }),
+        credentials: "include",
+      });
+      if (res.ok) {
+        setCommentText("");
+        refreshComments();
+      }
+    } finally {
+      setCommentSending(false);
+    }
+  };
 
   const handleDelete = async () => {
     if (!confirm("Supprimer cet article ?")) return;
@@ -107,71 +183,171 @@ export default function WikiArticlePage() {
     );
   }
 
+  const toc = buildToc(article.content);
+  const contentForRender = contentWithHashtagTags(contentWithWikiLinks(article.content));
+
   return (
-    <div>
-      <div className="flex flex-wrap items-center justify-between gap-4 mb-4">
-        <h1 className="text-2xl font-bold" style={{ color: "var(--bpm-text-primary)" }}>
-          {article.title}
-        </h1>
-        <div className="flex items-center gap-2 text-sm" style={{ color: "var(--bpm-text-secondary)" }}>
-          Mis à jour le {new Date(article.updatedAt).toLocaleDateString("fr-FR")}
-          {article.author?.name && ` · ${article.author.name}`}
-          {!session && article.canEdit === false && (
-            <span className="text-xs px-2 py-0.5 rounded border" style={{ borderColor: "var(--bpm-border)", background: "var(--bpm-bg-secondary)" }}>
-              Lecture seule
-            </span>
-          )}
-          {(session || article.canEdit) && (
-            <>
-              <Link href={`/modules/wiki/${article.slug}/edit`}>
-                <Button variant="outline" size="small">Modifier</Button>
-              </Link>
-              <Button variant="outline" size="small" onClick={handleDelete} disabled={deleting}>
-                Supprimer
-              </Button>
-            </>
-          )}
-        </div>
-      </div>
-      {!article.isPublished && (
-        <span className="wiki-draft inline-block mb-4">Brouillon</span>
-      )}
-
-      <div
-        className="prose prose-sm max-w-none rounded-lg p-6 border wiki-article-content"
-        style={{
-          borderColor: "var(--bpm-border)",
-          background: "var(--bpm-surface)",
-          color: "var(--bpm-text-primary)",
-        }}
-      >
-        <ReactMarkdown remarkPlugins={[remarkGfm]} rehypePlugins={[rehypeRaw, rehypeHighlight]}>
-          {contentWithHashtagTags(article.content) || "*Aucun contenu.*"}
-        </ReactMarkdown>
-      </div>
-
-      {article.children && article.children.length > 0 && (
-        <div className="mt-8">
-          <h2 className="text-lg font-semibold mb-2" style={{ color: "var(--bpm-text-primary)" }}>
-            Sous-articles
-          </h2>
-          <ul className="flex flex-wrap gap-2">
-            {article.children.map((c) => (
-              <li key={c.id}>
-                <Link href={`/modules/wiki/${c.slug}`} className="underline" style={{ color: "var(--bpm-accent-cyan)" }}>
-                  → {c.title}
+    <div className="flex flex-col lg:flex-row gap-6">
+      <main className="flex-1 min-w-0">
+        <div className="flex flex-wrap items-center justify-between gap-4 mb-4">
+          <h1 className="text-2xl font-bold" style={{ color: "var(--bpm-text-primary)" }}>
+            {article.title}
+            {article.pinned && (
+              <span className="ml-2 text-xs px-2 py-0.5 rounded font-normal" style={{ background: "var(--bpm-accent)", color: "#fff" }}>Épinglé</span>
+            )}
+            {!article.isPublished && <span className="wiki-draft ml-2">Brouillon</span>}
+          </h1>
+          <div className="flex items-center gap-2 flex-wrap">
+            {(session || article.canEdit) && (
+              <>
+                <Link href={`/modules/wiki/${article.slug}/edit`}>
+                  <Button variant="outline" size="small">Modifier</Button>
                 </Link>
-              </li>
-            ))}
-          </ul>
+                <Link href={`/modules/wiki/${article.slug}/history`}>
+                  <Button variant="outline" size="small">Historique</Button>
+                </Link>
+                <Button variant="outline" size="small" onClick={handleDelete} disabled={deleting}>
+                  Supprimer
+                </Button>
+              </>
+            )}
+          </div>
         </div>
-      )}
 
-      <nav className="doc-pagination mt-8">
-        <Link href="/modules/wiki" style={{ color: "var(--bpm-accent-cyan)" }}>← Retour au Wiki</Link>
-        <Link href="/modules/wiki/new" style={{ color: "var(--bpm-accent-cyan)" }}>Créer un article</Link>
-        <Link href="/modules/wiki/documentation" style={{ color: "var(--bpm-accent-cyan)" }}>Documentation</Link>
-      </nav>
+        <div className="flex flex-wrap gap-2 text-sm mb-4" style={{ color: "var(--bpm-text-secondary)" }}>
+          <span>Mis à jour le {new Date(article.updatedAt).toLocaleDateString("fr-FR")}</span>
+          {(article.lastRevisedBy ?? article.author?.name) && <span> · {article.lastRevisedBy ?? article.author?.name}</span>}
+          {article.readingTimeMinutes != null && <span> · {article.readingTimeMinutes} min</span>}
+          {article.wordCount != null && <span> · {article.wordCount} mots</span>}
+          {article.viewCount != null && article.viewCount > 0 && <span> · {article.viewCount} vue{article.viewCount > 1 ? "s" : ""}</span>}
+          {!session && article.canEdit === false && (
+            <span className="text-xs px-2 py-0.5 rounded border" style={{ borderColor: "var(--bpm-border)", background: "var(--bpm-bg-secondary)" }}>Lecture seule</span>
+          )}
+        </div>
+
+        {article.excerpt && (
+          <p className="text-sm mb-4 rounded-lg p-3 border" style={{ borderColor: "var(--bpm-border)", background: "var(--bpm-bg-secondary)", color: "var(--bpm-text-secondary)" }}>
+            {article.excerpt}
+          </p>
+        )}
+
+        {Array.isArray(article.tags) && article.tags.length > 0 && (
+          <div className="flex flex-wrap gap-1 mb-4">
+            {article.tags.map((t) => (
+              <Link key={t} href={`/modules/wiki?tag=${encodeURIComponent(t)}`} className="text-xs px-2 py-0.5 rounded hover:opacity-90" style={{ background: "var(--bpm-border)", color: "var(--bpm-text-secondary)" }}>
+                {t}
+              </Link>
+            ))}
+          </div>
+        )}
+
+        <div
+          className="prose prose-sm max-w-none rounded-lg p-6 border wiki-article-content max-w-[720px]"
+          style={{
+            borderColor: "var(--bpm-border)",
+            background: "var(--bpm-surface)",
+            color: "var(--bpm-text-primary)",
+          }}
+        >
+          <ReactMarkdown
+            remarkPlugins={[remarkGfm]}
+            rehypePlugins={[rehypeRaw, rehypeHighlight]}
+            components={{
+              h2: ({ node, children, ...props }) => {
+                const text = typeof children?.[0] === "string" ? children[0] : "";
+                const id = text.toLowerCase().replace(/\s+/g, "-").replace(/[^a-z0-9-]/g, "");
+                return <h2 id={id || undefined} {...props}>{children}</h2>;
+              },
+              h3: ({ node, children, ...props }) => {
+                const text = typeof children?.[0] === "string" ? children[0] : "";
+                const id = text.toLowerCase().replace(/\s+/g, "-").replace(/[^a-z0-9-]/g, "");
+                return <h3 id={id || undefined} {...props}>{children}</h3>;
+              },
+            }}
+          >
+            {contentForRender || "*Aucun contenu.*"}
+          </ReactMarkdown>
+        </div>
+
+        {article.children && article.children.length > 0 && (
+          <div className="mt-8">
+            <h2 className="text-lg font-semibold mb-2" style={{ color: "var(--bpm-text-primary)" }}>Dans cet espace</h2>
+            <ul className="flex flex-wrap gap-2">
+              {article.children.map((c) => (
+                <li key={c.id}>
+                  <Link href={`/modules/wiki/${c.slug}`} className="underline" style={{ color: "var(--bpm-accent-cyan)" }}>
+                    → {c.title}
+                  </Link>
+                </li>
+              ))}
+            </ul>
+          </div>
+        )}
+
+        {session && backlinks.length > 0 && (
+          <div className="mt-8">
+            <h2 className="text-lg font-semibold mb-2" style={{ color: "var(--bpm-text-primary)" }}>Articles qui citent celui-ci</h2>
+            <ul className="flex flex-wrap gap-2">
+              {backlinks.map((b) => (
+                <li key={b.id}>
+                  <Link href={`/modules/wiki/${b.slug}`} className="underline" style={{ color: "var(--bpm-accent-cyan)" }}>
+                    {b.title}
+                  </Link>
+                </li>
+              ))}
+            </ul>
+          </div>
+        )}
+
+        {session && (
+          <div className="mt-8">
+            <h2 className="text-lg font-semibold mb-2" style={{ color: "var(--bpm-text-primary)" }}>Commentaires</h2>
+            <ul className="space-y-3 mb-4">
+              {comments.map((c) => (
+                <li key={c.id} className="text-sm p-3 rounded border" style={{ borderColor: "var(--bpm-border)", background: "var(--bpm-bg-secondary)" }}>
+                  <p className="m-0 whitespace-pre-wrap">{c.content}</p>
+                  <span className="text-xs opacity-70">{c.authorName ?? "Anonyme"} · {new Date(c.createdAt).toLocaleString("fr-FR")}</span>
+                </li>
+              ))}
+            </ul>
+            <form onSubmit={handleAddComment} className="flex flex-col gap-2">
+              <textarea
+                value={commentText}
+                onChange={(e) => setCommentText(e.target.value)}
+                placeholder="Ajouter un commentaire..."
+                rows={2}
+                className="w-full px-3 py-2 rounded border text-sm"
+                style={{ borderColor: "var(--bpm-border)", background: "var(--bpm-surface)", color: "var(--bpm-text-primary)" }}
+              />
+              <Button type="submit" size="small" disabled={commentSending || !commentText.trim()}>
+                {commentSending ? "Envoi…" : "Publier"}
+              </Button>
+            </form>
+          </div>
+        )}
+
+        <nav className="doc-pagination mt-8">
+          <Link href="/modules/wiki" style={{ color: "var(--bpm-accent-cyan)" }}>← Retour au Wiki</Link>
+          <Link href="/modules/wiki/new" style={{ color: "var(--bpm-accent-cyan)" }}>Créer un article</Link>
+          <Link href="/modules/wiki/tags" style={{ color: "var(--bpm-accent-cyan)" }}>Tags</Link>
+          <Link href="/modules/wiki/documentation" style={{ color: "var(--bpm-accent-cyan)" }}>Documentation</Link>
+        </nav>
+      </main>
+
+      {toc.length > 0 && (
+        <aside className="lg:w-48 flex-shrink-0 order-first lg:order-last">
+          <nav className="sticky top-4 text-sm border rounded-lg p-3" style={{ borderColor: "var(--bpm-border)", background: "var(--bpm-bg-secondary)" }}>
+            <p className="font-semibold mb-2" style={{ color: "var(--bpm-text-primary)" }}>Sommaire</p>
+            <ul className="space-y-1">
+              {toc.map((item) => (
+                <li key={item.id} style={{ paddingLeft: item.level === 3 ? 12 : 0 }}>
+                  <a href={`#${item.id}`} className="hover:underline" style={{ color: "var(--bpm-accent-cyan)" }}>{item.text}</a>
+                </li>
+              ))}
+            </ul>
+          </nav>
+        </aside>
+      )}
     </div>
   );
 }

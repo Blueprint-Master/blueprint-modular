@@ -332,13 +332,7 @@ export default function CalendrierSimulateurPage() {
                 <span className="sm:hidden">S. {getISOWeekNumber(focusDate)}</span>
                 <span className="hidden sm:inline">{formatTitle(view, focusDate)}</span>
               </>
-            ) : view === "mois" ? (
-              "Vue Mois"
-            ) : view === "jour" ? (
-              "Vue Jour"
-            ) : (
-              formatTitle(view, focusDate)
-            )}
+            ) : view === "jour" ? null : view === "mois" ? null : formatTitle(view, focusDate)}
           </p>
           <div className="w-4 flex-shrink-0 sm:w-10" />
         </div>
@@ -454,7 +448,6 @@ export default function CalendrierSimulateurPage() {
                 }}
               >
                 {/* Coin haut gauche : numéro de semaine + période (ex. Semaine 9 - du 23 févr.…) */}
-                {/* Coin haut gauche : S. 9 sur mobile, S. 9 - du 23 fév.… sur desktop */}
                 <div
                   className="py-1 pr-1 text-xs font-medium border-b border-r truncate flex items-center"
                   style={{ gridColumn: 1, gridRow: 1, borderColor: "var(--bpm-border)", color: "var(--bpm-text-secondary)", background: "var(--bpm-bg-secondary)" }}

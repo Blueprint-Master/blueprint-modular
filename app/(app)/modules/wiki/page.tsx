@@ -75,6 +75,9 @@ export default function WikiPage() {
 
   const openArticle = (slug: string) => router.push(`/modules/wiki/${slug}`);
 
+  const [tagFilter, setTagFilter] = useState<string | null>(null);
+  const [allTags, setAllTags] = useState<{ tag: string; count: number }[]>([]);
+
   const fetchArticles = useCallback(() => {
     setLoading(true);
     if (!session) {
@@ -83,13 +86,25 @@ export default function WikiPage() {
       setLoading(false);
       return;
     }
-    const url = search ? `/api/wiki?search=${encodeURIComponent(search)}` : "/api/wiki";
+    const params = new URLSearchParams();
+    if (search) params.set("search", search);
+    if (tagFilter) params.set("tag", tagFilter);
+    const url = `/api/wiki${params.toString() ? `?${params.toString()}` : ""}`;
     fetch(url, { credentials: "include" })
       .then((r) => (r.ok ? r.json() : []))
       .then((data) => setArticles(Array.isArray(data) ? data : []))
       .catch(() => setArticles([]))
       .finally(() => setLoading(false));
-  }, [search, session]);
+  }, [search, tagFilter, session]);
+
+  useEffect(() => {
+    if (session) {
+      fetch("/api/wiki/tags", { credentials: "include" })
+        .then((r) => (r.ok ? r.json() : []))
+        .then((data) => setAllTags(Array.isArray(data) ? data : []))
+        .catch(() => setAllTags([]));
+    }
+  }, [session]);
 
   useEffect(() => {
     fetchArticles();
@@ -117,7 +132,14 @@ export default function WikiPage() {
         )
       : articles;
   const tree = buildTree(filteredArticles);
-  const displayed = filteredArticles.filter((a) => a.parentId === selectedParent);
+  const displayed = filteredArticles
+    .filter((a) => a.parentId === selectedParent)
+    .sort((a, b) => {
+      const pinnedA = (a as { pinned?: boolean }).pinned ? 1 : 0;
+      const pinnedB = (b as { pinned?: boolean }).pinned ? 1 : 0;
+      if (pinnedB !== pinnedA) return pinnedB - pinnedA;
+      return new Date((b as { updatedAt?: string }).updatedAt ?? b.updatedAt).getTime() - new Date((a as { updatedAt?: string }).updatedAt ?? a.updatedAt).getTime();
+    });
 
   return (
     <div className="wiki-page doc-page">
@@ -137,13 +159,41 @@ export default function WikiPage() {
           + Nouvel article
         </Link>
       </div>
-      <div className="wiki-search">
+      <div className="wiki-search flex flex-wrap items-center gap-2">
         <input
           type="search"
           placeholder="Rechercher dans le wiki..."
           value={search}
           onChange={(e) => setSearch(e.target.value)}
+          className="flex-1 min-w-[200px]"
         />
+        {session && allTags.length > 0 && (
+          <div className="flex flex-wrap gap-1 items-center">
+            <span className="text-xs" style={{ color: "var(--bpm-text-secondary)" }}>Tag :</span>
+            <button
+              type="button"
+              onClick={() => setTagFilter(null)}
+              className={`text-xs px-2 py-1 rounded ${tagFilter === null ? "opacity-100 font-medium" : "opacity-70"}`}
+              style={{ background: "var(--bpm-bg-secondary)", color: "var(--bpm-text-primary)" }}
+            >
+              Tous
+            </button>
+            {allTags.slice(0, 12).map(({ tag }) => (
+              <button
+                key={tag}
+                type="button"
+                onClick={() => setTagFilter(tagFilter === tag ? null : tag)}
+                className={`text-xs px-2 py-1 rounded ${tagFilter === tag ? "opacity-100 font-medium" : "opacity-70"}`}
+                style={{
+                  background: tagFilter === tag ? "var(--bpm-accent-cyan)" : "var(--bpm-bg-secondary)",
+                  color: tagFilter === tag ? "#fff" : "var(--bpm-text-primary)",
+                }}
+              >
+                {tag}
+              </button>
+            ))}
+          </div>
+        )}
       </div>
       {loading ? (
         <div className="wiki-loading">Chargement...</div>
@@ -178,15 +228,34 @@ export default function WikiPage() {
               <p>Aucun article dans cette section.</p>
             ) : (
               <div className="wiki-article-list">
-                {displayed.map((article) => (
+                {displayed.map((article) => {
+                  const a = article as WikiArticle & { excerpt?: string; tags?: string[]; pinned?: boolean; wordCount?: number; readingTimeMinutes?: number; viewCount?: number; lastRevisedBy?: string };
+                  return (
                   <div key={article.id} className="wiki-card flex flex-col gap-2">
                     <div className="flex justify-between items-start gap-3">
                       <Link href={`/modules/wiki/${article.slug}`} className="min-w-0 flex-1 no-underline block" style={{ color: "inherit" }}>
-                        <h3>{article.title}</h3>
-                        <div className="wiki-card-meta">
+                        <h3 className="flex items-center gap-2 flex-wrap">
+                          {article.title}
+                          {a.pinned && (
+                            <span className="text-xs px-2 py-0.5 rounded" style={{ background: "var(--bpm-accent)", color: "#fff" }}>Épinglé</span>
+                          )}
+                          {!article.isPublished && <span className="wiki-draft text-xs">Brouillon</span>}
+                        </h3>
+                        {a.excerpt && (
+                          <p className="text-sm mt-1 line-clamp-2" style={{ color: "var(--bpm-text-secondary)" }}>{a.excerpt}</p>
+                        )}
+                        <div className="wiki-card-meta flex flex-wrap items-center gap-2 mt-1">
                           <span>Mis à jour le {new Date(article.updatedAt).toLocaleDateString("fr-FR")}</span>
                           {article.author && <span> · {article.author.name ?? ""}</span>}
-                          {!article.isPublished && <span className="wiki-draft">Brouillon</span>}
+                          {a.readingTimeMinutes != null && <span> · {a.readingTimeMinutes} min</span>}
+                          {a.viewCount != null && a.viewCount > 0 && <span> · {a.viewCount} vue{a.viewCount > 1 ? "s" : ""}</span>}
+                          {Array.isArray(a.tags) && a.tags.length > 0 && (
+                            <span className="flex gap-1 flex-wrap">
+                              {a.tags.slice(0, 5).map((t) => (
+                                <span key={t} className="text-xs px-1.5 py-0.5 rounded" style={{ background: "var(--bpm-border)", color: "var(--bpm-text-secondary)" }}>{t}</span>
+                              ))}
+                            </span>
+                          )}
                         </div>
                       </Link>
                       {article.canEdit && (
@@ -211,7 +280,7 @@ export default function WikiPage() {
                       )}
                     </div>
                   </div>
-                ))}
+                );})}
               </div>
             )}
           </main>
@@ -219,6 +288,7 @@ export default function WikiPage() {
       )}
       <nav className="doc-pagination mt-8">
         <Link href="/modules/wiki/new" style={{ color: "var(--bpm-accent-cyan)" }}>Créer un article</Link>
+        <Link href="/modules/wiki/tags" style={{ color: "var(--bpm-accent-cyan)" }}>Tags</Link>
         <Link href="/modules/wiki/documentation" style={{ color: "var(--bpm-accent-cyan)" }}>Documentation</Link>
       </nav>
     </div>

@@ -2,47 +2,144 @@ import { NextResponse } from "next/server";
 import { getSessionOrTestUser } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { normalizeSlug } from "@/lib/slug";
+import { countWords, readingTimeMinutes, extractWikiSlugs } from "@/lib/wiki-utils";
+
+const MAX_REVISIONS_PER_ARTICLE = 50;
+
+type Params = Promise<{ slug: string }> | { slug: string };
+
+async function resolveParams(params: Params): Promise<{ slug: string }> {
+  return typeof (params as Promise<{ slug: string }>)?.then === "function"
+    ? await (params as Promise<{ slug: string }>)
+    : (params as { slug: string });
+}
 
 export async function GET(
-  _request: Request,
-  { params }: { params: Promise<{ slug: string }> }
+  request: Request,
+  context: { params: Params }
 ) {
   const result = await getSessionOrTestUser();
   if (!result) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   const { user } = result;
-  const { slug: rawSlug } = await params;
+  const { slug: rawSlug } = await resolveParams(context.params);
   const slug = normalizeSlug(rawSlug);
+  const { searchParams } = new URL(request.url);
+  const incView = searchParams.get("incView") === "1";
+
   const article = await prisma.wikiArticle.findFirst({
     where: user
       ? { slug, OR: [{ isPublished: true }, { authorId: user.id }] }
       : { slug, isPublished: true },
     include: {
       author: { select: { name: true, email: true } },
-      children: { select: { id: true, title: true, slug: true } },
+      children: { select: { id: true, title: true, slug: true, excerpt: true, tags: true, pinned: true } },
     },
   });
   if (!article) return NextResponse.json({ error: "Not found" }, { status: 404 });
-  return NextResponse.json(article);
+
+  if (incView) {
+    await prisma.wikiArticle.update({
+      where: { id: article.id },
+      data: { viewCount: { increment: 1 } },
+    });
+  }
+
+  const payload = { ...article, ...(incView ? { viewCount: article.viewCount + 1 } : {}) };
+  return NextResponse.json(payload);
 }
 
 export async function PUT(
   request: Request,
-  { params }: { params: Promise<{ slug: string }> }
+  context: { params: Params }
 ) {
   const result = await getSessionOrTestUser();
   if (!result) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   const { user } = result;
-  const { slug: rawSlug } = await params;
+  const { slug: rawSlug } = await resolveParams(context.params);
   const slug = normalizeSlug(rawSlug);
   const article = await prisma.wikiArticle.findFirst({ where: { slug, authorId: user.id } });
   if (!article) return NextResponse.json({ error: "Not found" }, { status: 404 });
-  const body = (await request.json()) as { title?: string; content?: string; isPublished?: boolean };
-  const updated = await prisma.wikiArticle.update({
+
+  const body = (await request.json()) as {
+    title?: string;
+    content?: string;
+    isPublished?: boolean;
+    excerpt?: string | null;
+    tags?: string[];
+    coverImage?: string | null;
+    pinned?: boolean;
+    changeNote?: string | null;
+  };
+
+  const content = body.content ?? article.content;
+  const wordCount = countWords(content);
+  const readingTime = readingTimeMinutes(content);
+  const slugsInContent = extractWikiSlugs(content);
+
+  const targetArticles = await prisma.wikiArticle.findMany({
+    where: { slug: { in: slugsInContent.map((s) => normalizeSlug(s)) } },
+    select: { id: true },
+  });
+  const targetIds = targetArticles.map((a) => a.id);
+
+  await prisma.$transaction(async (tx) => {
+    await tx.wikiRevision.create({
+      data: {
+        articleId: article.id,
+        content: article.content,
+        authorId: article.authorId,
+        authorName: user.name ?? undefined,
+        changeNote: body.changeNote ?? undefined,
+      },
+    });
+
+    const revCount = await tx.wikiRevision.count({ where: { articleId: article.id } });
+    if (revCount > MAX_REVISIONS_PER_ARTICLE) {
+      const oldest = await tx.wikiRevision.findMany({
+        where: { articleId: article.id },
+        orderBy: { createdAt: "asc" },
+        take: revCount - MAX_REVISIONS_PER_ARTICLE,
+      });
+      for (const r of oldest) {
+        await tx.wikiRevision.delete({ where: { id: r.id } });
+      }
+    }
+
+    await tx.wikiBacklink.deleteMany({ where: { sourceArticleId: article.id } });
+    for (const targetId of targetIds) {
+      if (targetId !== article.id) {
+        await tx.wikiBacklink.upsert({
+          where: {
+            sourceArticleId_targetArticleId: { sourceArticleId: article.id, targetArticleId: targetId },
+          },
+          create: { sourceArticleId: article.id, targetArticleId: targetId },
+          update: {},
+        });
+      }
+    }
+
+    await tx.wikiArticle.update({
+      where: { id: article.id },
+      data: {
+        ...(body.title != null && { title: body.title }),
+        ...(body.content != null && { content: body.content }),
+        ...(body.isPublished != null && { isPublished: body.isPublished }),
+        ...(body.excerpt !== undefined && { excerpt: body.excerpt || null }),
+        ...(body.tags !== undefined && { tags: body.tags ?? [] }),
+        ...(body.coverImage !== undefined && { coverImage: body.coverImage || null }),
+        ...(body.pinned !== undefined && { pinned: body.pinned }),
+        wordCount,
+        readingTimeMinutes: readingTime,
+        lastRevisedBy: user.name ?? null,
+      },
+    });
+  });
+
+  const updated = await prisma.wikiArticle.findUniqueOrThrow({
     where: { id: article.id },
-    data: {
-      ...(body.title != null && { title: body.title }),
-      ...(body.content != null && { content: body.content }),
-      ...(body.isPublished != null && { isPublished: body.isPublished }),
+    include: {
+      author: { select: { name: true, email: true } },
+      children: { select: { id: true, title: true, slug: true, excerpt: true, tags: true, pinned: true } },
     },
   });
   return NextResponse.json(updated);
@@ -50,19 +147,19 @@ export async function PUT(
 
 export async function PATCH(
   request: Request,
-  { params }: { params: Promise<{ slug: string }> }
+  context: { params: Params }
 ) {
-  return PUT(request, { params });
+  return PUT(request, context);
 }
 
 export async function DELETE(
   _request: Request,
-  { params }: { params: Promise<{ slug: string }> }
+  context: { params: Params }
 ) {
   const result = await getSessionOrTestUser();
   if (!result) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   const { user } = result;
-  const { slug: rawSlug } = await params;
+  const { slug: rawSlug } = await resolveParams(context.params);
   const slug = normalizeSlug(rawSlug);
   const article = await prisma.wikiArticle.findFirst({ where: { slug } });
   if (!article) return NextResponse.json({ error: "Not found" }, { status: 404 });

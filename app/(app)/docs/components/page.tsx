@@ -61,6 +61,7 @@ import {
   NfcBadge,
   Drawer,
   Pagination,
+  LoadingBar,
 } from "@/components/bpm";
 import registry from "@/lib/generated/bpm-components.json";
 
@@ -117,6 +118,7 @@ const PREVIEW_BY_SLUG: Record<string, React.ReactNode> = {
   chip: <Chip label="Tag" variant="default" />,
   message: <Message type="info">Message</Message>,
   spinner: <Spinner size="small" text="" />,
+  loadingbar: <PreviewBox><LoadingBar variant="sweep" /></PreviewBox>,
   tooltip: <Tooltip text="Aide"><span className="underline">?</span></Tooltip>,
   statusbox: <PreviewBox><StatusBox label="Statut" state="complete" /></PreviewBox>,
   breadcrumb: <Breadcrumb items={[{ label: "Accueil", href: "#" }, { label: "Doc", href: "#" }]} />,
@@ -135,6 +137,7 @@ const PREVIEW_BY_SLUG: Record<string, React.ReactNode> = {
   qrcode: <QRCode value="https://blueprint-modular.com" size={80} />,
   nfcbadge: <NfcBadge label="Scannable" variant="primary" />,
   drawer: <PreviewBox><span className="text-sm" style={{ color: "var(--bpm-text-secondary)" }}>bpm.drawer (ouvrir avec state)</span></PreviewBox>,
+  transition: <PreviewBox><span className="text-sm" style={{ color: "var(--bpm-text-secondary)" }}>bpm.transition (fade, shimmer, border, grid)</span></PreviewBox>,
   pagination: <Pagination page={1} totalPages={5} onPageChange={() => {}} />,
 };
 

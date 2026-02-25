@@ -47,6 +47,12 @@ export default function SkeletonModulePage() {
         </p>
       </div>
       <Tabs tabs={[{ label: "Documentation", content: docContent }, { label: "Simulateur", content: <SimuContent /> }]} defaultTab={0} />
+
+      <nav className="doc-pagination mt-8">
+        <Link href="/modules" style={{ color: "var(--bpm-accent-cyan)" }}>← Retour aux modules</Link>
+        <Link href="/modules/skeleton/documentation" style={{ color: "var(--bpm-accent-cyan)" }}>Documentation</Link>
+        <Link href="/modules/skeleton/simulateur" style={{ color: "var(--bpm-accent-cyan)" }}>Simulateur</Link>
+      </nav>
     </div>
   );
 }

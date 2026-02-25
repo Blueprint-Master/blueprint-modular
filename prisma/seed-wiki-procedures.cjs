@@ -12,6 +12,8 @@ const PROCEDURES = [
   {
     title: "Procédure de rédaction des documents (fond et forme)",
     slug: "procedure-redaction-documents",
+    excerpt: "Critères de fond (exactitude, structure, vocabulaire) et de forme (mise en page, typographie, relecture) pour les documents internes.",
+    tags: ["rédaction", "documents", "qualité", "procédure"],
     content: `# Procédure de rédaction des documents (fond et forme)
 
 ## #objectif
@@ -57,6 +59,8 @@ Garantir que tous les documents internes (notes, rapports, comptes-rendus) respe
   {
     title: "Procédure de tenue des réunions",
     slug: "procedure-tenue-reunions",
+    excerpt: "Préparation, déroulement et suivi des réunions : ordre du jour, animation, compte-rendu et tableau des actions.",
+    tags: ["réunions", "ordre du jour", "compte-rendu", "procédure"],
     content: `# Procédure de tenue des réunions
 
 ## #objectif
@@ -104,6 +108,8 @@ Assurer l'efficacité et la traçabilité des réunions (équipe, projet, comit�
   {
     title: "Procédure de communication écrite et orale",
     slug: "procedure-communication-ecrite-orale",
+    excerpt: "Échanges professionnels : contexte, message, canal (courriel, messagerie, oral, présentations) et bonnes pratiques.",
+    tags: ["communication", "courriel", "réunion", "procédure"],
     content: `# Procédure de communication écrite et orale
 
 ## #objectif
@@ -149,35 +155,60 @@ Homogénéiser les échanges (courriels, messages, présentations, échanges ora
   },
 ];
 
+function countWords(text) {
+  if (!text || !text.trim()) return 0;
+  return text.trim().split(/\s+/).filter(Boolean).length;
+}
+function readingTimeMinutes(text) {
+  return Math.max(1, Math.ceil(countWords(text) / 200));
+}
+
 async function main() {
-  const user = await prisma.user.findFirst();
+  let user = await prisma.user.findFirst();
   if (!user) {
-    console.warn("Aucun utilisateur en base. Créez un compte (inscription) puis relancez le seed.");
-    process.exit(1);
+    console.log("Aucun utilisateur en base : création d'un utilisateur de seed pour le Wiki…");
+    user = await prisma.user.create({
+      data: {
+        email: "wiki-seed@blueprint-modular.local",
+        name: "Wiki Seed",
+        role: "USER",
+      },
+    });
+    console.log("Utilisateur créé : " + user.email);
   }
 
   for (const proc of PROCEDURES) {
+    const wordCount = countWords(proc.content);
+    const readingTime = readingTimeMinutes(proc.content);
+    const data = {
+      title: proc.title,
+      content: proc.content,
+      isPublished: true,
+      excerpt: proc.excerpt || null,
+      tags: proc.tags || [],
+      wordCount,
+      readingTimeMinutes: readingTime,
+      lastRevisedBy: user.name,
+    };
     const existing = await prisma.wikiArticle.findUnique({ where: { slug: proc.slug } });
     if (existing) {
       console.log("Article déjà existant : " + proc.slug + ", mis à jour.");
       await prisma.wikiArticle.update({
         where: { id: existing.id },
-        data: { title: proc.title, content: proc.content, isPublished: true },
+        data,
       });
     } else {
       await prisma.wikiArticle.create({
         data: {
-          title: proc.title,
+          ...data,
           slug: proc.slug,
-          content: proc.content,
           authorId: user.id,
-          isPublished: true,
         },
       });
       console.log("Créé : " + proc.slug);
     }
   }
-  console.log("Seed Wiki (procédures de bonne tenue) terminé.");
+  console.log("Seed Wiki terminé : 3 articles disponibles pour les tests (liste, détail, module IA).");
 }
 
 main()

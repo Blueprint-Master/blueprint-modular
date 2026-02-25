@@ -253,6 +253,12 @@
       "category": "Feedback"
     },
     {
+      "slug": "loadingbar",
+      "name": "bpm.loadingbar",
+      "description": "Barre de chargement (sweep, blocks, iso, stacked, arc, dots).",
+      "category": "Feedback"
+    },
+    {
       "slug": "tooltip",
       "name": "bpm.tooltip",
       "description": "Info-bulle au survol.",
@@ -418,6 +424,12 @@
       "slug": "drawer",
       "name": "bpm.drawer",
       "description": "Tiroir / panneau latéral (détail, formulaire, filtres).",
+      "category": "Mise en page"
+    },
+    {
+      "slug": "transition",
+      "name": "bpm.transition",
+      "description": "Transition entre vues (fade, shimmer, border, grid).",
       "category": "Mise en page"
     },
     {

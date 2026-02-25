@@ -16,49 +16,67 @@ async function getContractAndCheckAuth(id: string) {
   return { contract, user };
 }
 
+function safeJsonClone(value: unknown): unknown {
+  if (value == null) return value;
+  try {
+    return JSON.parse(JSON.stringify(value));
+  } catch {
+    return null;
+  }
+}
+
 export async function GET(
   _request: Request,
   context: { params: Promise<{ id: string }> | { id: string } }
 ) {
-  const params = context.params;
-  const id = typeof (params as Promise<{ id: string }>).then === "function"
-    ? (await (params as Promise<{ id: string }>)).id
-    : (params as { id: string }).id;
-  if (!id) return NextResponse.json({ error: "Bad request" }, { status: 400 });
-  const result = await getContractAndCheckAuth(id);
-  if ("error" in result) return result.error;
-  const c = result.contract;
-  return NextResponse.json({
-    id: c.id,
-    title: c.title,
-    contractType: c.contractType,
-    workspace: c.workspace,
-    originalFilename: c.originalFilename,
-    status: c.status,
-    analysisProgress: c.analysisProgress,
-    extractedData: c.extractedData,
-    createdAt: c.createdAt.toISOString(),
-    analyzedAt: c.analyzedAt?.toISOString() ?? null,
-  });
+  try {
+    const params = context.params;
+    const resolved = typeof (params as Promise<{ id: string }>)?.then === "function"
+      ? await (params as Promise<{ id: string }>)
+      : (params as { id: string });
+    const id = resolved?.id;
+    if (!id) return NextResponse.json({ error: "Bad request" }, { status: 400 });
+    const result = await getContractAndCheckAuth(id);
+    if ("error" in result) return result.error;
+    const c = result.contract;
+    const payload = {
+      id: c.id,
+      title: c.title,
+      contractType: c.contractType,
+      workspace: c.workspace,
+      originalFilename: c.originalFilename,
+      status: c.status,
+      analysisProgress: c.analysisProgress,
+      extractedData: safeJsonClone(c.extractedData),
+      createdAt: c.createdAt.toISOString(),
+      analyzedAt: c.analyzedAt?.toISOString() ?? null,
+    };
+    return NextResponse.json(payload);
+  } catch (err) {
+    console.error("[contracts] GET [id] error:", err);
+    return NextResponse.json({ error: "Erreur serveur" }, { status: 500 });
+  }
 }
 
 export async function DELETE(
   _request: Request,
   context: { params: Promise<{ id: string }> | { id: string } }
 ) {
-  const params = context.params;
-  const id = typeof (params as Promise<{ id: string }>).then === "function"
-    ? (await (params as Promise<{ id: string }>)).id
-    : (params as { id: string }).id;
-  if (!id) return NextResponse.json({ error: "Bad request" }, { status: 400 });
-  const result = await getContractAndCheckAuth(id);
-  if ("error" in result) return result.error;
-  const { contract } = result;
   try {
+    const params = context.params;
+    const resolved = typeof (params as Promise<{ id: string }>)?.then === "function"
+      ? await (params as Promise<{ id: string }>)
+      : (params as { id: string });
+    const id = resolved?.id;
+    if (!id) return NextResponse.json({ error: "Bad request" }, { status: 400 });
+    const result = await getContractAndCheckAuth(id);
+    if ("error" in result) return result.error;
+    const { contract } = result;
     await unlink(contract.filePath).catch(() => {});
-  } catch {
-    // ignore
+    await prisma.contract.delete({ where: { id } });
+    return NextResponse.json({ ok: true });
+  } catch (err) {
+    console.error("[contracts] DELETE [id] error:", err);
+    return NextResponse.json({ error: "Erreur serveur" }, { status: 500 });
   }
-  await prisma.contract.delete({ where: { id } });
-  return NextResponse.json({ ok: true });
 }

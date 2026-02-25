@@ -61,6 +61,7 @@ COMPONENT_DOC: list[ComponentDoc] = [
     # Feedback
     {"slug": "message", "name": "bpm.message", "description": "Bandeau info/success/warning/error.", "category": "Feedback"},
     {"slug": "spinner", "name": "bpm.spinner", "description": "Indicateur de chargement.", "category": "Feedback"},
+    {"slug": "loadingbar", "name": "bpm.loadingbar", "description": "Barre de chargement (sweep, blocks, iso, stacked, arc, dots).", "category": "Feedback"},
     {"slug": "tooltip", "name": "bpm.tooltip", "description": "Info-bulle au survol.", "category": "Feedback"},
     {"slug": "statusbox", "name": "bpm.statusbox", "description": "Boîte de statut (success, warning, error, info).", "category": "Feedback"},
     # Navigation & structure
@@ -96,5 +97,6 @@ COMPONENT_DOC: list[ComponentDoc] = [
     {"slug": "nfcbadge", "name": "bpm.nfcbadge", "description": "Badge / tag NFC (statut Scannable, etc.).", "category": "Identification & traçabilité"},
     # Mise en page / Feedback
     {"slug": "drawer", "name": "bpm.drawer", "description": "Tiroir / panneau latéral (détail, formulaire, filtres).", "category": "Mise en page"},
+    {"slug": "transition", "name": "bpm.transition", "description": "Transition entre vues (fade, shimmer, border, grid).", "category": "Mise en page"},
     {"slug": "pagination", "name": "bpm.pagination", "description": "Pagination (page, taille, total) pour listes et tableaux.", "category": "Affichage de données"},
 ]
