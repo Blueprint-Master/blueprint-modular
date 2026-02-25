@@ -5,7 +5,7 @@ import { TEMPLATE_WIKI_GENERATION, TEMPLATE_WIKI_FORMAT } from "@/lib/ai/prompt-
 export const dynamic = "force-dynamic";
 
 const ARTICLE_TYPES = ["guide", "procedure", "best-practice", "reference"] as const;
-const WORKSPACES = ["nxtfood", "beam", "shared"] as const;
+const WORKSPACES = ["service1", "service2", "shared"] as const;
 
 type ArticleType = (typeof ARTICLE_TYPES)[number];
 type Workspace = (typeof WORKSPACES)[number];
@@ -54,7 +54,7 @@ export async function POST(req: Request) {
     }
     if (!workspace || !isWorkspace(workspace)) {
       return new Response(
-        JSON.stringify({ error: "workspace invalide (nxtfood, beam, shared)" }),
+        JSON.stringify({ error: "workspace invalide (service1, service2, shared)" }),
         { status: 400 }
       );
     }

@@ -112,11 +112,11 @@ export const TEMPLATE_WIKI_GENERATION = ({
 }: {
   notes: string;
   articleType: "guide" | "procedure" | "best-practice" | "reference";
-  workspace: "nxtfood" | "beam" | "shared";
+  workspace: "service1" | "service2" | "shared";
 }) => `${SYSTEM_PROMPT_BASE}
 
 Génère un article wiki structuré de type "${articleType}" 
-pour le workspace "${workspace === "nxtfood" ? "NXTFOOD" : workspace === "beam" ? "BEAM Consulting" : "partagé"}".
+pour le workspace "${workspace === "service1" ? "Service 1" : workspace === "service2" ? "Service 2" : "partagé"}".
 
 Notes brutes à structurer :
 ${notes}

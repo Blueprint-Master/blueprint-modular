@@ -10,6 +10,8 @@ type RegisterPageProps = {
   title?: string;
   logoSrc?: string | null;
   callbackUrl?: string | null;
+  /** Si false, affiche le formulaire en carte centrée (modèle par défaut). */
+  useSplitLayout?: boolean;
 };
 
 function GoogleIcon() {
@@ -35,6 +37,7 @@ export function RegisterPage({
   title = "Blueprint Modular",
   logoSrc = null,
   callbackUrl = null,
+  useSplitLayout = false,
 }: RegisterPageProps) {
   const [fullName, setFullName] = useState("");
   const [email, setEmail] = useState("");
@@ -79,8 +82,7 @@ export function RegisterPage({
     }
   };
 
-  return (
-    <AuthSplitLayout ratio="40" rightOverlay={true}>
+  const formContent = (
       <div className={styles.formBlock}>
         {logoSrc && !logoError && (
           <div className={styles.logo}>
@@ -194,6 +196,18 @@ export function RegisterPage({
           </p>
         </footer>
       </div>
+  );
+
+  if (!useSplitLayout) {
+    return (
+      <div className={styles.centeredWrap}>
+        <div className={styles.centeredCard}>{formContent}</div>
+      </div>
+    );
+  }
+  return (
+    <AuthSplitLayout ratio="40" rightOverlay={true}>
+      {formContent}
     </AuthSplitLayout>
   );
 }

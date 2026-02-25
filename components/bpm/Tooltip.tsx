@@ -17,12 +17,18 @@ export interface TooltipProps {
   text: string;
   children: React.ReactNode;
   position?: TooltipPlacement;
+  /** Couleur de fond du tooltip (hex, rgb ou nom CSS). Par défaut : var(--bpm-text-primary). */
+  backgroundColor?: string | null;
+  /** Couleur du texte du tooltip (hex, rgb ou nom CSS). Par défaut : var(--bpm-bg-primary). */
+  textColor?: string | null;
 }
 
 export function Tooltip({
   text,
   children,
   position = "top",
+  backgroundColor = null,
+  textColor = null,
 }: TooltipProps) {
   const [visible, setVisible] = useState(false);
   const [coords, setCoords] = useState({ top: 0, left: 0 });
@@ -83,8 +89,8 @@ export function Tooltip({
         left: coords.left,
         top: coords.top,
         transform: getTransform(),
-        background: "var(--bpm-text-primary)",
-        color: "var(--bpm-bg-primary)",
+        background: backgroundColor ?? "var(--bpm-text-primary)",
+        color: textColor ?? "var(--bpm-bg-primary)",
       }}
     >
       {text}

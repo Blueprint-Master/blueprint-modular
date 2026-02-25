@@ -13,6 +13,11 @@ export default function VeilleModulePage() {
           <span className="doc-badge doc-badge-category">Module</span>
           <span className="doc-reading-time">⏱ 1 min</span>
         </div>
+        <p className="mt-3" style={{ color: "var(--bpm-text-secondary)" }}>
+          <Link href="/modules/veille/documentation" className="font-medium underline" style={{ color: "var(--bpm-accent-cyan)" }}>
+            Documentation complète (fonctionnement, installation, paramétrage) →
+          </Link>
+        </p>
       </div>
       <h2 className="text-lg font-semibold mt-6 mb-2" style={{ color: "var(--bpm-text-primary)" }}>À propos</h2>
       <p style={{ color: "var(--bpm-text-secondary)", maxWidth: "60ch" }}>

@@ -22,7 +22,7 @@ export async function POST(request: Request) {
     uploadedById: user.id,
     embeddingVector: { not: null },
   };
-  if (workspace && ["nxtfood", "beam"].includes(workspace)) where.workspace = workspace;
+  if (workspace && ["service1", "service2"].includes(workspace)) where.workspace = workspace;
 
   const contracts = await prisma.contract.findMany({
     where,

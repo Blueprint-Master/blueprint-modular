@@ -50,9 +50,6 @@ export default function ModulesPage() {
                   {mod.description}
                 </p>
                 <div className="flex flex-wrap gap-3 mt-auto pt-3" style={{ marginLeft: "52px" }}>
-                  <Link href={mod.href} className="text-sm font-medium hover:underline" style={linkStyle}>
-                    Ouvrir →
-                  </Link>
                   <Link href={`${mod.href}/documentation`} className="text-sm font-medium hover:underline" style={linkStyle}>
                     Documentation
                   </Link>

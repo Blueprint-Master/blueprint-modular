@@ -3,7 +3,7 @@
 import { useState, useEffect, useRef } from "react";
 import { useParams, useRouter } from "next/navigation";
 import Link from "next/link";
-import { Button, Panel, Toggle } from "@/components/bpm";
+import { Button, Panel, Toggle, Selectbox } from "@/components/bpm";
 import { WikiEditorToolbar } from "@/components/wiki/WikiEditorToolbar";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
@@ -24,7 +24,7 @@ export default function WikiEditPage() {
   const [aiLoading, setAiLoading] = useState(false);
   const [aiNotes, setAiNotes] = useState("");
   const [aiArticleType, setAiArticleType] = useState<"guide" | "procedure" | "best-practice" | "reference">("guide");
-  const [aiWorkspace, setAiWorkspace] = useState<"nxtfood" | "beam" | "shared">("shared");
+  const [aiWorkspace, setAiWorkspace] = useState<"service1" | "service2" | "shared">("shared");
 
   const contentTextareaRef = useRef<HTMLTextAreaElement>(null);
 
@@ -133,16 +133,6 @@ export default function WikiEditPage() {
 
   return (
     <div>
-      <div className="doc-breadcrumb" style={{ marginBottom: 8 }}>
-        <Link href="/modules">Modules</Link> → <Link href="/modules/wiki">Wiki</Link> → <Link href={`/modules/wiki/${slug}`}>{slug}</Link> → Modifier
-      </div>
-      <nav className="text-sm mb-4" style={{ color: "var(--bpm-text-secondary)" }}>
-        <Link href="/modules/wiki">Wiki</Link>
-        <span className="mx-2">/</span>
-        <Link href={`/modules/wiki/${slug}`}>{slug}</Link>
-        <span className="mx-2">/</span>
-        <span>Modifier</span>
-      </nav>
       <h1 className="text-2xl font-bold mb-6" style={{ color: "var(--bpm-accent)" }}>
         Modifier l&apos;article
       </h1>
@@ -210,27 +200,29 @@ export default function WikiEditPage() {
                 style={{ borderColor: "var(--bpm-border)", background: "var(--bpm-bg)", color: "var(--bpm-text-primary)" }}
               />
               <div className="flex flex-wrap gap-2 items-center mb-2">
-                <select
+                <Selectbox
+                  label="Type"
+                  options={[
+                    { value: "guide", label: "Guide" },
+                    { value: "procedure", label: "Procédure" },
+                    { value: "best-practice", label: "Bonnes pratiques" },
+                    { value: "reference", label: "Référence" },
+                  ]}
                   value={aiArticleType}
-                  onChange={(e) => setAiArticleType(e.target.value as typeof aiArticleType)}
-                  className="px-2 py-1 rounded border text-sm"
-                  style={{ borderColor: "var(--bpm-border)", background: "var(--bpm-bg)", color: "var(--bpm-text-primary)" }}
-                >
-                  <option value="guide">Guide</option>
-                  <option value="procedure">Procédure</option>
-                  <option value="best-practice">Bonnes pratiques</option>
-                  <option value="reference">Référence</option>
-                </select>
-                <select
+                  onChange={(v) => setAiArticleType(v as typeof aiArticleType)}
+                  placeholder="Type"
+                />
+                <Selectbox
+                  label="Workspace"
+                  options={[
+                    { value: "service1", label: "Service 1" },
+                    { value: "service2", label: "Service 2" },
+                    { value: "shared", label: "Partagé" },
+                  ]}
                   value={aiWorkspace}
-                  onChange={(e) => setAiWorkspace(e.target.value as typeof aiWorkspace)}
-                  className="px-2 py-1 rounded border text-sm"
-                  style={{ borderColor: "var(--bpm-border)", background: "var(--bpm-bg)", color: "var(--bpm-text-primary)" }}
-                >
-                  <option value="nxtfood">NXTFOOD</option>
-                  <option value="beam">BEAM Consulting</option>
-                  <option value="shared">Partagé</option>
-                </select>
+                  onChange={(v) => setAiWorkspace(v as typeof aiWorkspace)}
+                  placeholder="Workspace"
+                />
                 <Button
                   type="button"
                   size="small"

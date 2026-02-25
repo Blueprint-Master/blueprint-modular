@@ -44,8 +44,25 @@ export function WikiEditorToolbar({
     });
   };
 
+  /** Insère un préfixe au début de la ligne courante (ex. # , - ). */
+  const applyLinePrefix = (prefix: string) => {
+    const ta = textareaRef.current;
+    if (!ta) return;
+    const start = ta.selectionStart;
+    const lineStart = value.lastIndexOf("\n", start - 1) + 1;
+    const newValue = value.slice(0, lineStart) + prefix + value.slice(lineStart);
+    onChange(newValue);
+    requestAnimationFrame(() => {
+      ta.focus();
+      ta.setSelectionRange(lineStart + prefix.length, lineStart + prefix.length);
+    });
+  };
+
   const handleBold = () => applyWrap("**", "**");
   const handleItalic = () => applyWrap("*", "*");
+  const handleHeading = (level: 1 | 2 | 3) => applyLinePrefix("#".repeat(level) + " ");
+  const handleBulletList = () => applyLinePrefix("- ");
+  const handleNumberedList = () => applyLinePrefix("1. ");
   const handleColor = (hex: string) => {
     const ta = textareaRef.current;
     if (!ta) return;
@@ -92,6 +109,33 @@ export function WikiEditorToolbar({
           <em>I</em>
         </Button>
       </span>
+      <span className="w-px self-stretch" style={{ background: "var(--bpm-border)" }} aria-hidden />
+      <span title="Titre 1">
+        <Button type="button" variant="outline" size="small" disabled={disabled} onClick={() => handleHeading(1)}>
+          H1
+        </Button>
+      </span>
+      <span title="Titre 2">
+        <Button type="button" variant="outline" size="small" disabled={disabled} onClick={() => handleHeading(2)}>
+          H2
+        </Button>
+      </span>
+      <span title="Titre 3">
+        <Button type="button" variant="outline" size="small" disabled={disabled} onClick={() => handleHeading(3)}>
+          H3
+        </Button>
+      </span>
+      <span title="Liste à puces">
+        <Button type="button" variant="outline" size="small" disabled={disabled} onClick={handleBulletList}>
+          •
+        </Button>
+      </span>
+      <span title="Liste numérotée">
+        <Button type="button" variant="outline" size="small" disabled={disabled} onClick={handleNumberedList}>
+          1.
+        </Button>
+      </span>
+      <span className="w-px self-stretch" style={{ background: "var(--bpm-border)" }} aria-hidden />
       <div className="relative inline-block" ref={colorPopoverRef}>
         <span title="Couleur du texte">
           <Button

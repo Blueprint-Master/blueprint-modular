@@ -48,8 +48,11 @@ export function AIAssistant() {
 
   useEffect(() => {
     if (!isOpen) return;
-    fetch("/api/ai/health")
-      .then((r) => r.json())
+    fetch("/api/ai/health", { credentials: "include" })
+      .then((r) => {
+        if (!r.ok) return { available: false, error: r.status === 401 ? "Non connecté" : "Indisponible" };
+        return r.json();
+      })
       .then(setHealth)
       .catch(() => setHealth({ available: false, error: "Réseau" }));
   }, [isOpen]);

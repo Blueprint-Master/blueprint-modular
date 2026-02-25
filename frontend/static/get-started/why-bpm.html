@@ -1,9 +1,9 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="fr">
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Pourquoi BPM  Blueprint Modular</title>
+  <title>Pourquoi BPM — Blueprint Modular</title>
   <meta name="description" content="Pourquoi Blueprint Modular est la meilleure solution : réactivité granulaire, design system, registry $ et @, layout piloté par config." />
   <link rel="icon" href="../favicon.ico" />
   <link rel="icon" type="image/png" href="../img/logo-bpm.png" />
@@ -71,33 +71,33 @@
       <h2>Les quatre atouts BPM</h2>
 
       <h3>1. Réactivité granulaire + syntaxe simple</h3>
-      <p>Les frameworks classiques opposent soit la simplicité (tout le script se réexécute à chaque clic), soit la réactivité ciblée (callbacks explicites partout). BPM vise les deux : une syntaxe aussi simple que possible, avec des <strong>réfs réactives</strong> (<code>bpm.ref("x")</code>) pour que seuls les composants concernés se mettent à jour  pas de re-run complet de la page.</p>
+      <p>Les frameworks classiques opposent soit la simplicité (tout le script se réexécute à chaque clic), soit la réactivité ciblée (callbacks explicites partout). BPM vise les deux : une syntaxe aussi simple que possible, avec des <strong>réfs réactives</strong> (<code>bpm.ref("x")</code>) pour que seuls les composants concernés se mettent à jour — pas de re-run complet de la page.</p>
       <p>Côté frontend, un <strong>store réactif</strong> et un hook <code>useReactive(key)</code> permettent déjà des interfaces réactives sans tout recharger.</p>
 
       <h3>2. Design system cohérent (<code>bpm.*</code>)</h3>
-      <p>Tous les composants BPM partagent les mêmes <strong>tokens</strong> (couleurs, espacements, typo) via <code>theme.css</code>. Vous personnalisez lapp en surchargeant des variables CSS, sans toucher au code des composants. Aucun autre framework Python pour la data noffre un vrai design system natif.</p>
+      <p>Tous les composants BPM partagent les mêmes <strong>tokens</strong> (couleurs, espacements, typo) via <code>theme.css</code>. Vous personnalisez l'app en surchargeant des variables CSS, sans toucher au code des composants. Aucun autre framework Python pour la data n'offre un vrai design system natif.</p>
 
       <h3>3. Registry <code>$</code> et <code>@</code></h3>
       <p>BPM introduit une <strong>registry</strong> avec deux idées clés :</p>
       <ul>
-        <li><strong><code>$</code></strong>  Réfs réactives : état nommé (<code>bpm.ref("compteur")</code>) avec <code>.get()</code>, <code>.set()</code>, <code>.subscribe()</code>. Seuls les widgets qui lisent cette ref se rafraîchissent.</li>
-        <li><strong><code>@</code></strong>  Inscription de blocs : <code>@bpm.page("rapports")</code>, <code>@bpm.sidebar</code>, <code>@bpm.cache_data</code>. Le layout peut rendre « le bloc enregistré sous ce nom ».</li>
+        <li><strong><code>$</code></strong> — Réfs réactives : état nommé (<code>bpm.ref("compteur")</code>) avec <code>.get()</code>, <code>.set()</code>, <code>.subscribe()</code>. Seuls les widgets qui lisent cette ref se rafraîchissent.</li>
+        <li><strong><code>@</code></strong> — Inscription de blocs : <code>@bpm.page("rapports")</code>, <code>@bpm.sidebar</code>, <code>@bpm.cache_data</code>. Le layout peut rendre « le bloc enregistré sous ce nom ».</li>
       </ul>
       <p>Aucun concurrent ne propose cette double sémantique en natif.</p>
 
       <h3>4. Layout piloté par config (<code>app.config.js</code>)</h3>
-      <p>Sidebar, header, pages et liens sont décrits dans <strong>un seul fichier de config</strong>. Dupliquer une app = copier le projet et modifier ce fichier. Pas besoin de toucher au code des pages ni au Layout. Aucun autre framework ne permet de cloner une app en ne changeant quun fichier.</p>
+      <p>Sidebar, header, pages et liens sont décrits dans <strong>un seul fichier de config</strong>. Dupliquer une app = copier le projet et modifier ce fichier. Pas besoin de toucher au code des pages ni au Layout. Aucun autre framework ne permet de cloner une app en ne changeant qu'un fichier.</p>
 
       <h2>Ce qui est inclus</h2>
       <ul>
-        <li><strong>Composants</strong>  Texte, données, graphiques, inputs, layout, feedback (Message, Modal, Toast, Spinner, Progress, Skeleton, EmptyState), structure (Card, Accordion, Stepper, Drawer, FAB, Grid, TopNav, TreeView, Timeline, Breadcrumb, Chip, Avatar). Tous avec une prop <code>className</code> pour vos styles.</li>
-        <li><strong>Documentation</strong>  Installation, fondamentaux, première app, référence API, déploiement VPS/Docker, FAQ, cheat sheet.</li>
-        <li><strong>Déploiement</strong>  Guides pour VPS (Nginx, systemd), Docker, et scripts de déploiement depuis Git.</li>
+        <li><strong>Composants</strong> — Texte, données, graphiques, inputs, layout, feedback (Message, Modal, Toast, Spinner, Progress, Skeleton, EmptyState), structure (Card, Accordion, Stepper, Drawer, FAB, Grid, TopNav, TreeView, Timeline, Breadcrumb, Chip, Avatar). Tous avec une prop <code>className</code> pour vos styles.</li>
+        <li><strong>Documentation</strong> — Installation, fondamentaux, première app, référence API, déploiement VPS/Docker, FAQ, cheat sheet.</li>
+        <li><strong>Déploiement</strong> — Guides pour VPS (Nginx, systemd), Docker, et scripts de déploiement depuis Git.</li>
       </ul>
 
       <h2>En résumé</h2>
       <p>BPM est la solution qui vous donne : <strong>Python uniquement</strong>, <strong>syntaxe simple</strong>, <strong>réactivité ciblée</strong>, <strong>design system cohérent</strong>, <strong>registry</strong> pour état et blocs, et <strong>layout config-driven</strong> pour dupliquer une app en un fichier. Le tout documenté et déployable sans lock-in.</p>
-      <p><strong>Suivant :</strong> <a href="installation.html">Installation</a>  Installer BPM et lancer votre première commande.</p>
+      <p><strong>Suivant :</strong> <a href="installation.html">Installation</a> — Installer BPM et lancer votre première commande.</p>
       <section class="help-cta"><p>Une question ? Consultez la <a href="../knowledge-base/faq.html">FAQ</a> et la <a href="../knowledge-base/reste-a-faire.html">Ce qu'il reste à faire</a>.</p></section>
       <footer class="site-footer" style="margin-top:2rem;">
         <div class="footer-links">

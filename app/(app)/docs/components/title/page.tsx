@@ -13,10 +13,14 @@ export default function DocTitlePage() {
   const [color, setColor] = useState<string>("");
   const [bar, setBar] = useState(false);
   const [inverted, setInverted] = useState(false);
+  const [barColor, setBarColor] = useState("");
+  const [invertedBackground, setInvertedBackground] = useState("");
 
   const sizeProp = size.trim() || null;
   const boldProp = bold === "true" ? true : bold === "false" ? false : null;
   const colorProp = color.trim() || null;
+  const barColorProp = barColor.trim() || null;
+  const invertedBgProp = invertedBackground.trim() || null;
 
   const pyLevel = `level=${level}`;
   const pyContent = `content="${children.replace(/"/g, '\\"')}"`;
@@ -24,8 +28,10 @@ export default function DocTitlePage() {
   const pyBold = bold === "true" ? ", bold=True" : bold === "false" ? ", bold=False" : "";
   const pyColor = colorProp ? `, color="${colorProp.replace(/"/g, '\\"')}"` : "";
   const pyBar = bar ? ", bar=True" : "";
+  const pyBarColor = barColorProp ? `, bar_color="${barColorProp.replace(/"/g, '\\"')}"` : "";
   const pyInverted = inverted ? ", inverted=True" : "";
-  const pythonCode = `bpm.title(${pyLevel}, ${pyContent}${pySize}${pyBold}${pyColor}${pyBar}${pyInverted})`;
+  const pyInvertedBg = invertedBgProp ? `, inverted_background="${invertedBgProp.replace(/"/g, '\\"')}"` : "";
+  const pythonCode = `bpm.title(${pyLevel}, ${pyContent}${pySize}${pyBold}${pyColor}${pyBar}${pyBarColor}${pyInverted}${pyInvertedBg})`;
   const { prev, next } = getPrevNext("title");
 
   return (
@@ -48,7 +54,9 @@ export default function DocTitlePage() {
             bold={boldProp === null ? undefined : boldProp}
             color={colorProp}
             bar={bar}
+            barColor={barColorProp}
             inverted={inverted}
+            invertedBackground={invertedBgProp}
           >
             {children}
           </Title>
@@ -107,6 +115,28 @@ export default function DocTitlePage() {
               Couleur inversée (blanc sur noir)
             </label>
           </div>
+          {bar && (
+            <div className="sandbox-control-group">
+              <label>barColor (optionnel)</label>
+              <input
+                type="text"
+                value={barColor}
+                onChange={(e) => setBarColor(e.target.value)}
+                placeholder="ex. #00a3e2, #1d1d1f"
+              />
+            </div>
+          )}
+          {inverted && (
+            <div className="sandbox-control-group">
+              <label>invertedBackground (optionnel)</label>
+              <input
+                type="text"
+                value={invertedBackground}
+                onChange={(e) => setInvertedBackground(e.target.value)}
+                placeholder="ex. #1d1d1f, #00a3e2"
+              />
+            </div>
+          )}
         </div>
         <div className="sandbox-code">
           <div className="sandbox-code-header"><span>Python</span><button type="button" onClick={() => navigator.clipboard.writeText(pythonCode)}>Copier</button></div>
@@ -122,7 +152,9 @@ export default function DocTitlePage() {
           <tr><td><code>bold</code></td><td><code>boolean | number</code></td><td>—</td><td>Non</td><td>Gras : true=700, false=400, ou nombre. Surcharge le niveau.</td></tr>
           <tr><td><code>color</code></td><td><code>string</code></td><td>—</td><td>Non</td><td>Couleur CSS (ex. var(--bpm-text-primary), #333).</td></tr>
           <tr><td><code>bar</code></td><td><code>boolean</code></td><td>false</td><td>Non</td><td>Barre verticale sombre à gauche du titre (style en-tête de section).</td></tr>
+          <tr><td><code>barColor</code></td><td><code>string</code></td><td>—</td><td>Non</td><td>Couleur de la barre gauche (hex, rgb ou nom CSS). Pris en compte si bar=True.</td></tr>
           <tr><td><code>inverted</code></td><td><code>boolean</code></td><td>false</td><td>Non</td><td>Couleur inversée : fond sombre, texte blanc (style badge / scénario).</td></tr>
+          <tr><td><code>invertedBackground</code></td><td><code>string</code></td><td>#1d1d1f</td><td>Non</td><td>Couleur de fond quand inverted=True (hex, rgb ou nom CSS).</td></tr>
         </tbody>
       </table>
       <h2 className="text-lg font-semibold mt-8 mb-2">Exemples</h2>
@@ -131,6 +163,8 @@ export default function DocTitlePage() {
       <CodeBlock code={'bpm.title(level=3, content="Sous-titre", size="1.5rem", bold=True, color="var(--bpm-accent)")'} language="python" />
       <CodeBlock code={'bpm.title(level=2, content="Quel go-to-market ? 3 scénarios évalués", bar=True)'} language="python" />
       <CodeBlock code={'bpm.title(level=3, content="SCÉNARIO 2", inverted=True)'} language="python" />
+      <CodeBlock code={'bpm.title(level=2, content="Titre", bar=True, bar_color="#00a3e2")'} language="python" />
+      <CodeBlock code={'bpm.title(level=3, content="Badge", inverted=True, inverted_background="#00a3e2")'} language="python" />
       <nav className="doc-pagination">
         {prev ? <Link href={"/docs/components/" + prev}>← bpm.{prev}</Link> : <span />}
         {next ? <Link href={"/docs/components/" + next}>bpm.{next} →</Link> : <span />}

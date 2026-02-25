@@ -33,6 +33,11 @@ export default function IAPage() {
             <span className="doc-badge doc-badge-category">IA</span>
             <span className="doc-reading-time">⏱ 1 min</span>
           </div>
+          <p className="mt-3 text-sm" style={{ color: "var(--bpm-text-secondary)" }}>
+            <Link href="/modules/ia/documentation" className="font-medium underline" style={{ color: "var(--bpm-accent-cyan)" }}>
+              Documentation complète (fonctionnement, installation, $, contexte modules, API) →
+            </Link>
+          </p>
         </div>
       </div>
       <div style={{ flex: 1, overflow: "hidden", minHeight: 0, display: "flex", flexDirection: "column" }}>

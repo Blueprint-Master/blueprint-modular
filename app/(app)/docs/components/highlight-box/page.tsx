@@ -1,10 +1,23 @@
 "use client";
 
+import { useState } from "react";
 import Link from "next/link";
 import { HighlightBox, CodeBlock } from "@/components/bpm";
 import { getPrevNext } from "@/lib/docPages";
 
+const BAR_COLORS: { value: string; label: string }[] = [
+  { value: "#212121", label: "Noir (défaut)" },
+  { value: "#00a3e2", label: "Bleu accent" },
+  { value: "#1a4b8f", label: "Bleu foncé" },
+  { value: "#0d9488", label: "Teal" },
+  { value: "#15803d", label: "Vert" },
+  { value: "#b45309", label: "Orange" },
+  { value: "#b91c1c", label: "Rouge" },
+  { value: "#7c3aed", label: "Violet" },
+];
+
 export default function DocHighlightBoxPage() {
+  const [barColor, setBarColor] = useState("#212121");
   const { prev, next } = getPrevNext("highlight-box");
 
   const exampleRtb = [
@@ -14,6 +27,8 @@ export default function DocHighlightBoxPage() {
     "Faible MG",
   ];
   const exampleCible = "Usage quotidien, entrée de gamme, recrutement large";
+
+  const pythonBarColor = barColor === "#212121" ? "" : ", bar_color=\"" + barColor + "\"";
 
   return (
     <div className="doc-page">
@@ -42,6 +57,33 @@ export default function DocHighlightBoxPage() {
               momentDescription="base quotidienne — petit-déjeuner salé, sandwich, collation"
               rtbPoints={exampleRtb}
               targetPoints={exampleCible}
+              barColor={barColor}
+            />
+          </div>
+        </div>
+        <div className="sandbox-controls">
+          <div className="sandbox-control-group">
+            <label>Couleur de la barre (barColor)</label>
+            <select
+              value={barColor}
+              onChange={(e) => setBarColor(e.target.value)}
+              className="w-full px-3 py-2 rounded border text-sm"
+              style={{ borderColor: "var(--bpm-border)", background: "var(--bpm-bg-primary)", color: "var(--bpm-text-primary)" }}
+            >
+              {BAR_COLORS.map((c) => (
+                <option key={c.value} value={c.value}>{c.label}</option>
+              ))}
+            </select>
+          </div>
+          <div className="sandbox-control-group">
+            <label>Ou hex personnalisé</label>
+            <input
+              type="text"
+              value={barColor}
+              onChange={(e) => setBarColor(e.target.value)}
+              placeholder="#212121"
+              className="w-full px-3 py-2 rounded border text-sm font-mono"
+              style={{ borderColor: "var(--bpm-border)", background: "var(--bpm-bg-primary)", color: "var(--bpm-text-primary)" }}
             />
           </div>
         </div>
@@ -55,7 +97,7 @@ export default function DocHighlightBoxPage() {
   title="Tranché hyperprotéiné (type dinde / poulet)",
   moment_description="base quotidienne — petit-déjeuner salé, sandwich, collation",
   rtb_points=["+30% protéines vs classique", "Protéines pois & blé français", "Format tranché pratique", "Faible MG"],
-  target_points="Usage quotidien, entrée de gamme, recrutement large"
+  target_points="Usage quotidien, entrée de gamme, recrutement large"${pythonBarColor}
 )`}</code></pre>
         </div>
       </div>
@@ -114,6 +156,13 @@ export default function DocHighlightBoxPage() {
             <td>Points Cible (chaîne ou liste).</td>
           </tr>
           <tr>
+            <td><code>barColor</code></td>
+            <td><code>string</code></td>
+            <td>#212121</td>
+            <td>Non</td>
+            <td>Couleur de la barre latérale (hex, rgb ou nom CSS).</td>
+          </tr>
+          <tr>
             <td><code>className</code></td>
             <td><code>string</code></td>
             <td>—</td>
@@ -126,6 +175,11 @@ export default function DocHighlightBoxPage() {
       <h2 className="text-lg font-semibold mt-8 mb-2">Exemple minimal</h2>
       <CodeBlock
         code={'bpm.highlight_box(value=1, label="DAILY", title="Mon produit")'}
+        language="python"
+      />
+      <h2 className="text-lg font-semibold mt-6 mb-2">Avec couleur de barre</h2>
+      <CodeBlock
+        code={'bpm.highlight_box(value=1, label="DAILY", title="Mon produit", bar_color="#00a3e2")'}
         language="python"
       />
 

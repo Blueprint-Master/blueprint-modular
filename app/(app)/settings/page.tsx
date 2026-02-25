@@ -74,7 +74,7 @@ function useNotificationLevel() {
 export default function SettingsPage() {
   const { data: session, status } = useSession();
   const { theme, toggleTheme } = useTheme();
-  const [accentColor, setAccentColor] = useStoredAccent("#1a4b8f");
+  const [accentColor, setAccentColor] = useStoredAccent("#00a3e2");
   const [notificationLevel, setNotificationLevel] = useNotificationLevel();
 
   const [keys, setKeys] = useState<ApiKeyRow[]>([]);
@@ -217,21 +217,16 @@ export default function SettingsPage() {
               </Panel>
             )}
             <form onSubmit={addKey} className="flex flex-wrap gap-4 items-end mb-4">
-              <label className="block min-w-[140px]">
-                <span className="block text-sm font-medium mb-1" style={{ color: "var(--bpm-text-primary)" }}>Fournisseur</span>
-                <select
+              <div className="min-w-[140px]">
+                <Selectbox
+                  label="Fournisseur"
+                  options={PROVIDERS}
                   value={provider}
-                  onChange={(e) => setProvider(e.target.value)}
+                  onChange={setProvider}
+                  placeholder="Choisir..."
                   required
-                  className="w-full px-3 py-2 rounded border text-sm"
-                  style={{ borderColor: "var(--bpm-border)", background: "var(--bpm-bg-primary)", color: "var(--bpm-text-primary)" }}
-                >
-                  <option value="">Choisir...</option>
-                  {PROVIDERS.map((p) => (
-                    <option key={p} value={p}>{p}</option>
-                  ))}
-                </select>
-              </label>
+                />
+              </div>
               <div className="min-w-[200px]">
                 <Input
                   label="Clé (secrète)"

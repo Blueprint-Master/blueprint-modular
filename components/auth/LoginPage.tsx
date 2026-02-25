@@ -13,6 +13,8 @@ type LoginPageProps = {
   logoSrc?: string | null;
   callbackUrl?: string | null;
   showEmailOption?: boolean;
+  /** Si false, affiche le formulaire en carte centrée (modèle historique) au lieu du layout split. */
+  useSplitLayout?: boolean;
 };
 
 function GoogleIcon() {
@@ -32,6 +34,7 @@ export function LoginPage({
   logoSrc = null,
   callbackUrl = null,
   showEmailOption = true,
+  useSplitLayout = false,
 }: LoginPageProps) {
   const [loginMethod, setLoginMethod] = useState<"email" | "google" | null>(null);
   const [email, setEmail] = useState("");
@@ -72,9 +75,8 @@ export function LoginPage({
     }
   };
 
-  return (
-    <AuthSplitLayout ratio="40" rightOverlay={true}>
-      <div className={styles.formBlock}>
+  const formContent = (
+    <div className={styles.formBlock}>
         {logoSrc && !logoError && (
           <div className={styles.logo}>
             <Image
@@ -116,7 +118,7 @@ export function LoginPage({
                   <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" style={{ marginRight: 12 }} aria-hidden>
                     <path d="M20 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z" />
                   </svg>
-                  Continuer avec l’e-mail
+                  {"Continuer avec l'e-mail"}
                 </button>
               </>
             )}
@@ -179,7 +181,7 @@ export function LoginPage({
             </Link>
             <span className={styles.footerSep}>·</span>
             <Link href={callbackUrl || "/"} className={styles.footerLink}>
-              {callbackUrl ? "Accéder sans se connecter" : "Retour à l’accueil"}
+              {callbackUrl ? "Accéder sans se connecter" : "Retour à l'accueil"}
             </Link>
           </div>
           <p className={styles.terms}>
@@ -189,6 +191,20 @@ export function LoginPage({
           </p>
         </footer>
       </div>
+  );
+
+  if (!useSplitLayout) {
+    return (
+      <div className={styles.centeredWrap}>
+        <div className={styles.centeredCard}>{formContent}</div>
+      </div>
+    );
+  }
+
+  return (
+    <AuthSplitLayout ratio="40" rightOverlay={true}>
+      {formContent}
     </AuthSplitLayout>
   );
 }
+

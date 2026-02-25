@@ -6,7 +6,7 @@ import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import rehypeHighlight from "rehype-highlight";
 import { getDollarSuggestions } from "./ai-suggestions";
-import { SpinnerDot } from "@/components/bpm";
+import { moduleRegistry } from "@/lib/ai/module-registry";
 import "./AIChat.css";
 
 const PROVIDER_ALIAS: Record<string, string> = {
@@ -249,6 +249,17 @@ export function AIChat({
     const removeLastAssistant = () =>
       setMessages((prev) => (prev.length >= 2 && prev[prev.length - 1].role === "assistant" ? prev.slice(0, -1) : prev));
 
+    let contextFromModules: string | undefined;
+    try {
+      const moduleIds = moduleRegistry.getAllModules().map((m) => m.moduleId);
+      if (moduleIds.length > 0) {
+        const { text: ctx } = await moduleRegistry.buildContext(moduleIds);
+        contextFromModules = ctx?.trim() || undefined;
+      }
+    } catch {
+      // ignorer si le contexte n'est pas disponible
+    }
+
     try {
       const res = await fetch("/api/ai/chat", {
         method: "POST",
@@ -258,6 +269,7 @@ export function AIChat({
           provider_name: providers[0],
           conversation_history: [...baseHistory, { role: "user", content: text }],
           discussion_id: currentDiscussionId ?? undefined,
+          context_from_modules: contextFromModules,
         }),
         signal: abortRef.current.signal,
         credentials: "include",
@@ -545,16 +557,10 @@ export function AIChat({
           const isLastEmpty = isStreaming && i === messages.length - 1 && msg.role === "assistant" && !(msg.content || "").trim();
           if (isLastEmpty) {
             return (
-              <div key={i} className="bpm-ai-message bpm-ai-message--assistant">
-                <div className="bpm-ai-message-header">
-                  <span className="bpm-ai-message-provider" style={{ color: providerColor(msg.provider ?? "vllm") }}>
-                    {providerLabel(msg.provider ?? "vllm")}:
-                  </span>
-                </div>
-                <div className="bpm-ai-message-body bpm-ai-message-body--loading">
-                  <SpinnerDot size="small" />
-                  <span className="bpm-ai-message-loading-text">Réflexion…</span>
-                </div>
+              <div key={i} className="bpm-ai-typing" aria-label="Réflexion en cours">
+                <span className="bpm-ai-typing-dot" />
+                <span className="bpm-ai-typing-dot" />
+                <span className="bpm-ai-typing-dot" />
               </div>
             );
           }

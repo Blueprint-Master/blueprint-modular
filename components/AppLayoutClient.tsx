@@ -84,10 +84,22 @@ function getBreadcrumbFromPathname(pathname: string): { label: string; href?: st
       ibkr: "IBKR",
       "analyse-document": "Analyse de documents",
     };
-    return [
+    const base = [
       { label: "Modules", href: "/modules" },
-      { label: labels[second] ?? second },
+      { label: labels[second] ?? second, href: second ? `/modules/${second}` : undefined },
     ];
+    if (second === "wiki" && segments.length >= 3) {
+      const third = segments[2];
+      if (third === "new") {
+        return [...base, { label: "Nouvel article" }];
+      }
+      const slugHref = `/modules/wiki/${third}`;
+      if (segments.length >= 4 && segments[3] === "edit") {
+        return [...base, { label: third, href: slugHref }, { label: "Modifier" }];
+      }
+      return [...base, { label: third, href: slugHref }];
+    }
+    return base;
   }
   if (segments[0] === "settings") return [{ label: "Paramètres" }];
   if (segments[0] === "dashboard") return [];
@@ -144,11 +156,11 @@ function AppLayoutInner({ children }: { children: React.ReactNode }) {
               </div>
             </header>
           )}
-          <main id="main-content" className="app-main flex-1 pt-4 pb-20 md:pb-4 px-3 sm:px-4 min-h-0" role="main">
+          <main id="main-content" className="app-main flex-1 pt-4 pb-6 md:pb-4 px-3 sm:px-4 min-h-0" role="main">
             {children}
           </main>
           <footer
-            className="shrink-0 py-4 px-3 sm:px-4 border-t text-sm"
+            className="max-md:hidden md:block shrink-0 py-4 px-3 sm:px-4 border-t text-sm"
             style={{ borderColor: "var(--bpm-border)", color: "var(--bpm-text-secondary)" }}
             role="contentinfo"
           >

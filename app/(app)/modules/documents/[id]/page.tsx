@@ -32,7 +32,7 @@ export default function DocumentDetailPage() {
     if (!id) return;
     let cancelled = false;
     setLoading(true);
-    fetch(`/api/documents/${id}`)
+    fetch(`/api/documents/${id}`, { credentials: "include" })
       .then((r) => (r.ok ? r.json() : null))
       .then((d) => { if (!cancelled) setDoc(d); })
       .catch(() => { if (!cancelled) setDoc(null); })
@@ -45,7 +45,7 @@ export default function DocumentDetailPage() {
   useEffect(() => {
     if (!id || !isProcessing) return;
     const interval = setInterval(() => {
-      fetch(`/api/documents/${id}`)
+      fetch(`/api/documents/${id}`, { credentials: "include" })
         .then((r) => (r.ok ? r.json() : null))
         .then(setDoc);
     }, 3000);
@@ -56,7 +56,7 @@ export default function DocumentDetailPage() {
     if (!confirm("Supprimer ce document ?")) return;
     setDeleting(true);
     try {
-      const res = await fetch(`/api/documents/${id}`, { method: "DELETE" });
+      const res = await fetch(`/api/documents/${id}`, { method: "DELETE", credentials: "include" });
       if (res.ok) router.push("/modules/documents");
     } finally {
       setDeleting(false);

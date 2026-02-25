@@ -1,5 +1,6 @@
 "use client";
 
+import React from "react";
 import Link from "next/link";
 import {
   Metric,
@@ -60,13 +61,22 @@ import registry from "@/lib/generated/bpm-components.json";
 
 type ComponentEntry = (typeof registry.components)[number];
 
+/** Wrapper pour que l'aperçu soit visible dans la carte (min-height + centrage). */
+function PreviewBox({ children }: { children: React.ReactNode }) {
+  return (
+    <div style={{ minHeight: 56, display: "flex", alignItems: "center", justifyContent: "center", width: "100%", padding: 8 }}>
+      {children}
+    </div>
+  );
+}
+
 /** Previews par slug (React) — les données nom/description/catégorie viennent du registry Python. */
 const PREVIEW_BY_SLUG: Record<string, React.ReactNode> = {
   metric: <Metric value={142500} label="CA" delta={3200} />,
   table: <Table columns={[{ key: "A", label: "A" }, { key: "B", label: "B" }]} data={[{ A: "1", B: "2" }]} />,
   title: <Title level={2}>Titre</Title>,
-  text: <Text>Texte corps</Text>,
-  caption: <Caption>Légende</Caption>,
+  text: <PreviewBox><Text>Texte corps</Text></PreviewBox>,
+  caption: <PreviewBox><Caption>Légende</Caption></PreviewBox>,
   badge: <Badge variant="success">OK</Badge>,
   progress: <Progress value={60} max={100} />,
   skeleton: <Skeleton variant="text" />,
@@ -80,9 +90,9 @@ const PREVIEW_BY_SLUG: Record<string, React.ReactNode> = {
   grid: <Grid cols={2} gap="0.5rem"><div className="p-2 rounded bg-[var(--bpm-bg-secondary)]">1</div><div className="p-2 rounded bg-[var(--bpm-bg-secondary)]">2</div></Grid>,
   column: <Column columns={3}><div className="p-2 rounded bg-[var(--bpm-bg-secondary)] text-sm">1</div><div className="p-2 rounded bg-[var(--bpm-bg-secondary)] text-sm">2</div><div className="p-2 rounded bg-[var(--bpm-bg-secondary)] text-sm">3</div></Column>,
   emptystate: <EmptyState title="Aucune donnée" description="Ajoutez des éléments." />,
-  container: <Container><span className="text-sm">Contenu</span></Container>,
-  empty: <Empty><span className="text-sm opacity-70">—</span></Empty>,
-  popover: <Popover trigger={<Button size="small">Ouvrir</Button>}><span className="text-sm">Contenu</span></Popover>,
+  container: <PreviewBox><Container><span className="text-sm">Contenu</span></Container></PreviewBox>,
+  empty: <PreviewBox><Empty><span className="text-sm opacity-70">—</span></Empty></PreviewBox>,
+  popover: <PreviewBox><Popover trigger={<Button size="small">Ouvrir</Button>}><span className="text-sm">Contenu</span></Popover></PreviewBox>,
   button: <Button>Action</Button>,
   toggle: <Toggle value={false} onChange={() => {}} label="Option" />,
   theme: <Theme variant="toggle" />,
@@ -94,22 +104,22 @@ const PREVIEW_BY_SLUG: Record<string, React.ReactNode> = {
   radiogroup: <RadioGroup options={[{ value: "a", label: "A" }, { value: "b", label: "B" }]} value="a" onChange={() => {}} />,
   slider: <Slider value={50} min={0} max={100} onChange={() => {}} />,
   dateinput: <DateInput value="" onChange={() => {}} label="Date" />,
-  daterangepicker: <DateRangePicker start={null} end={null} onChange={() => {}} label="Plage" />,
-  timeinput: <TimeInput value={null} onChange={() => {}} label="Heure" />,
-  rating: <Rating value={3} max={5} onChange={() => {}} />,
-  fileuploader: <FileUploader label="Fichier" onFiles={() => {}} />,
+  daterangepicker: <PreviewBox><DateRangePicker start={null} end={null} onChange={() => {}} label="Plage" /></PreviewBox>,
+  timeinput: <PreviewBox><TimeInput value={null} onChange={() => {}} label="Heure" /></PreviewBox>,
+  rating: <PreviewBox><Rating value={3} max={5} onChange={() => {}} /></PreviewBox>,
+  fileuploader: <PreviewBox><FileUploader label="Fichier" onFiles={() => {}} /></PreviewBox>,
   colorpicker: <ColorPicker value="#00a3e0" onChange={() => {}} />,
   chip: <Chip label="Tag" variant="default" />,
   message: <Message type="info">Message</Message>,
   spinner: <Spinner size="small" text="" />,
   tooltip: <Tooltip text="Aide"><span className="underline">?</span></Tooltip>,
-  statusbox: <StatusBox label="Statut" state="complete" />,
+  statusbox: <PreviewBox><StatusBox label="Statut" state="complete" /></PreviewBox>,
   breadcrumb: <Breadcrumb items={[{ label: "Accueil", href: "#" }, { label: "Doc", href: "#" }]} />,
   stepper: <Stepper steps={[{ label: "Étape 1" }, { label: "Étape 2" }]} currentStep={0} />,
   avatar: <Avatar initials="JD" size="medium" />,
   audio: <span className="text-sm" style={{ color: "var(--bpm-text-secondary)" }}>bpm.audio</span>,
   video: <span className="text-sm" style={{ color: "var(--bpm-text-secondary)" }}>bpm.video</span>,
-  html: <Html html="<strong>HTML</strong>" />,
+  html: <PreviewBox><Html html="<strong>HTML</strong>" /></PreviewBox>,
   linechart: <LineChart data={[{ x: 1, y: 10 }, { x: 2, y: 20 }, { x: 3, y: 15 }]} width={120} height={60} />,
   barchart: <BarChart data={[{ x: "A", y: 40 }, { x: "B", y: 60 }]} width={120} height={60} />,
   areachart: <AreaChart data={[{ x: 1, y: 10 }, { x: 2, y: 20 }]} width={120} height={60} />,

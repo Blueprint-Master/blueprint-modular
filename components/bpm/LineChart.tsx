@@ -3,9 +3,7 @@
 import React, { useMemo } from "react";export interface LineChartDatum {
   x: number | string;
   y: number;
-}
-
-export interface LineChartProps {
+}export interface LineChartProps {
   data: LineChartDatum[];
   width?: number;
   height?: number;

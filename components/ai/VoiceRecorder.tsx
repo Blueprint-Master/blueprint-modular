@@ -31,9 +31,16 @@ export function VoiceRecorder({
         const res = await fetch("/api/wiki/transcribe", {
           method: "POST",
           body: formData,
+          credentials: "include",
         });
 
-        const data = (await res.json()) as { transcription?: string; error?: string };
+        let data: { transcription?: string; error?: string };
+        try {
+          const text = await res.text();
+          data = text ? (JSON.parse(text) as { transcription?: string; error?: string }) : {};
+        } catch {
+          data = { error: !res.ok ? `Erreur ${res.status}` : "Réponse invalide" };
+        }
 
         if (!res.ok || data.error) {
           throw new Error(data.error ?? `Erreur ${res.status}`);
@@ -101,7 +108,11 @@ export function VoiceRecorder({
   const buttonText = state === "idle" ? label : buttonLabel;
 
   const buttonStyle: React.CSSProperties = {
-    padding: "6px 14px",
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+    gap: 6,
+    padding: "8px 16px",
     borderRadius: 8,
     fontSize: 13,
     fontWeight: 500,
@@ -113,7 +124,7 @@ export function VoiceRecorder({
         ? "var(--bpm-accent)"
         : state === "transcribing"
           ? "var(--bpm-border)"
-          : "var(--bpm-accent-cyan)",
+          : "var(--bpm-accent)",
     color: state === "transcribing" ? "var(--bpm-text-secondary)" : "#fff",
     animation: state === "recording" ? "pulse 1.5s infinite" : "none",
   };
@@ -126,13 +137,8 @@ export function VoiceRecorder({
       style={buttonStyle}
       aria-label={state === "idle" ? label : state === "recording" ? "Arrêter l'enregistrement" : "Transcription en cours"}
     >
-      {state === "idle" && (
-        <span style={{ display: "inline-flex", alignItems: "center", gap: 6 }}>
-          <MicIcon />
-          {buttonText}
-        </span>
-      )}
-      {state !== "idle" && buttonText}
+      {state === "idle" && <MicIcon />}
+      {buttonText}
     </button>
   );
 }

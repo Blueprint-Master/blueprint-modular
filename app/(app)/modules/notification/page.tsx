@@ -162,6 +162,11 @@ function MyComponent() {
           <span className="doc-badge doc-badge-category">Module</span>
           <span className="doc-reading-time">⏱ 1 min</span>
         </div>
+        <p className="mt-3 text-sm" style={{ color: "var(--bpm-text-secondary)" }}>
+          <Link href="/modules/notification/documentation" className="font-medium underline" style={{ color: "var(--bpm-accent-cyan)" }}>
+            Documentation complète (fonctionnement, installation, paramétrage, code) →
+          </Link>
+        </p>
       </div>
 
       <Tabs

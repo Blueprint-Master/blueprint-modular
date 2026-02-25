@@ -3,7 +3,7 @@ import { redirect } from "next/navigation";
 import { authOptions } from "@/lib/auth";
 import { LoginPage } from "@/components/auth";
 
-type Props = { searchParams: Promise<{ callbackUrl?: string; showEmailOption?: string }> };
+type Props = { searchParams: Promise<{ callbackUrl?: string; showEmailOption?: string; layout?: string }> };
 
 export default async function LoginPageRoute({ searchParams }: Props) {
   const session = await getServerSession(authOptions);
@@ -12,6 +12,7 @@ export default async function LoginPageRoute({ searchParams }: Props) {
   const params = await searchParams;
   const callbackUrl = params?.callbackUrl ? decodeURIComponent(params.callbackUrl) : null;
   const showEmailOption = params?.showEmailOption !== "false";
+  const useSplitLayout = params?.layout === "split";
 
   return (
     <LoginPage
@@ -20,6 +21,7 @@ export default async function LoginPageRoute({ searchParams }: Props) {
       logoSrc="/img/logo-bpm-nom.jpg"
       callbackUrl={callbackUrl}
       showEmailOption={showEmailOption}
+      useSplitLayout={useSplitLayout}
     />
   );
 }

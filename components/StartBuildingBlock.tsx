@@ -36,7 +36,7 @@ export function StartBuildingBlock() {
         background: "var(--bpm-bg-primary)",
       }}
     >
-      <h2 className="font-bold mt-[6.5rem] md:mt-[13rem]" style={{ color: "var(--bpm-text-primary)", fontSize: "3rem", lineHeight: "3rem", marginBottom: "2rem" }}>
+      <h2 className="font-bold mt-[6.5rem] md:mt-[6rem]" style={{ color: "var(--bpm-text-primary)", fontSize: "3rem", lineHeight: "3rem", marginBottom: "2rem" }}>
         Commencer à construire votre application avec <code className="px-2.5 py-1.5 rounded align-middle text-xl font-medium" style={{ background: "var(--bpm-bg-secondary)" }}>bpm.*</code>
       </h2>
       <div

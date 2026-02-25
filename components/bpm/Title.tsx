@@ -20,8 +20,12 @@ export interface TitleProps extends Omit<React.HTMLAttributes<HTMLHeadingElement
   color?: string | null;
   /** Barre verticale sombre à gauche du titre (comme en-tête de section). */
   bar?: boolean;
+  /** Couleur de la barre gauche (hex, rgb ou nom CSS). Ignoré si bar=false. */
+  barColor?: string | null;
   /** Couleur inversée : fond sombre, texte blanc (style badge / scénario). */
   inverted?: boolean;
+  /** Couleur de fond quand inverted=true (hex, rgb ou nom CSS). Par défaut : #1d1d1f. */
+  invertedBackground?: string | null;
   /** Optional logo URL (e.g. from localStorage). Shown only when level === 1. */
   logoUrl?: string | null;
   onLogoClick?: () => void;
@@ -34,7 +38,9 @@ export function Title({
   bold: boldProp = null,
   color: colorProp = null,
   bar = false,
+  barColor: barColorProp = null,
   inverted = false,
+  invertedBackground: invertedBgProp = null,
   logoUrl = null,
   onLogoClick,
   className = "",
@@ -71,7 +77,9 @@ export function Title({
   );
 
   const classNames = `bpm-title bpm-title-level-${lvl} flex items-center gap-2 flex-wrap ${bar ? "bpm-title-with-bar" : ""} ${inverted ? "bpm-title-inverted" : ""} ${className}`.trim();
-  const mergedStyle = { fontSize, fontWeight, ...style };
+  const mergedStyle: React.CSSProperties = { fontSize, fontWeight, ...style };
+  if (bar && barColorProp) (mergedStyle as Record<string, string>)["--bpm-title-bar-color"] = barColorProp;
+  if (inverted && invertedBgProp) (mergedStyle as Record<string, string>)["--bpm-title-inverted-bg"] = invertedBgProp;
 
   if (lvl === 1) return <h1 className={classNames} style={mergedStyle} {...props}>{content}</h1>;
   if (lvl === 2) return <h2 className={classNames} style={mergedStyle} {...props}>{content}</h2>;

@@ -4,7 +4,7 @@ import { useState, useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { useSession } from "next-auth/react";
-import { Button, Panel, Toggle } from "@/components/bpm";
+import { Button, Panel, Toggle, Selectbox } from "@/components/bpm";
 import { WikiEditorToolbar } from "@/components/wiki/WikiEditorToolbar";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
@@ -31,7 +31,7 @@ export default function WikiNewPage() {
   const [error, setError] = useState<string | null>(null);
   const [voiceError, setVoiceError] = useState<string | null>(null);
   const [articleType, setArticleType] = useState<"guide" | "procedure" | "best-practice" | "reference">("procedure");
-  const [workspace, setWorkspace] = useState<"nxtfood" | "beam" | "shared">("nxtfood");
+  const [workspace, setWorkspace] = useState<"service1" | "service2" | "shared">("service1");
   const [generating, setGenerating] = useState(false);
 
   const contentTextareaRef = useRef<HTMLTextAreaElement>(null);
@@ -142,14 +142,6 @@ export default function WikiNewPage() {
 
   return (
     <div>
-      <div className="doc-breadcrumb" style={{ marginBottom: 8 }}>
-        <Link href="/modules">Modules</Link> → <Link href="/modules/wiki">Wiki</Link> → Nouvel article
-      </div>
-      <nav className="text-sm mb-4" style={{ color: "var(--bpm-text-secondary)" }}>
-        <Link href="/modules/wiki">Wiki</Link>
-        <span className="mx-2">/</span>
-        <span>Nouvel article</span>
-      </nav>
       <h1 className="text-2xl font-bold mb-6" style={{ color: "var(--bpm-accent)" }}>
         Nouvel article
       </h1>
@@ -169,33 +161,29 @@ export default function WikiNewPage() {
           ✦ Générer depuis une note vocale
         </p>
         <div className="flex gap-3 mb-3 flex-wrap">
-          <div>
-            <label className="block text-xs mb-1" style={{ color: "var(--bpm-text-secondary)" }}>Type</label>
-            <select
-              value={articleType}
-              onChange={(e) => setArticleType(e.target.value as typeof articleType)}
-              className="px-2 py-1.5 rounded border text-sm"
-              style={{ borderColor: "var(--bpm-border)", background: "var(--bpm-bg-secondary)", color: "var(--bpm-text-primary)" }}
-            >
-              <option value="procedure">Procédure</option>
-              <option value="guide">Guide</option>
-              <option value="best-practice">Bonne pratique</option>
-              <option value="reference">Référence</option>
-            </select>
-          </div>
-          <div>
-            <label className="block text-xs mb-1" style={{ color: "var(--bpm-text-secondary)" }}>Workspace</label>
-            <select
-              value={workspace}
-              onChange={(e) => setWorkspace(e.target.value as typeof workspace)}
-              className="px-2 py-1.5 rounded border text-sm"
-              style={{ borderColor: "var(--bpm-border)", background: "var(--bpm-bg-secondary)", color: "var(--bpm-text-primary)" }}
-            >
-              <option value="nxtfood">NXTFOOD</option>
-              <option value="beam">BEAM</option>
-              <option value="shared">Partagé</option>
-            </select>
-          </div>
+          <Selectbox
+            label="Type"
+            options={[
+              { value: "procedure", label: "Procédure" },
+              { value: "guide", label: "Guide" },
+              { value: "best-practice", label: "Bonne pratique" },
+              { value: "reference", label: "Référence" },
+            ]}
+            value={articleType}
+            onChange={(v) => setArticleType(v as typeof articleType)}
+            placeholder="Type"
+          />
+          <Selectbox
+            label="Workspace"
+            options={[
+              { value: "service1", label: "Service 1" },
+              { value: "service2", label: "Service 2" },
+              { value: "shared", label: "Partagé" },
+            ]}
+            value={workspace}
+            onChange={(v) => setWorkspace(v as typeof workspace)}
+            placeholder="Workspace"
+          />
         </div>
         <div className="flex items-center gap-3">
           <VoiceRecorder
@@ -241,20 +229,13 @@ export default function WikiNewPage() {
             style={{ borderColor: "var(--bpm-border)", background: "var(--bpm-surface)", color: "var(--bpm-text-primary)" }}
           />
         </label>
-        <label className="block">
-          <span className="block text-sm mb-1" style={{ color: "var(--bpm-text-secondary)" }}>Parent</span>
-          <select
-            value={parentId ?? ""}
-            onChange={(e) => setParentId(e.target.value || null)}
-            className="w-full px-3 py-2 rounded border"
-            style={{ borderColor: "var(--bpm-border)", background: "var(--bpm-surface)", color: "var(--bpm-text-primary)" }}
-          >
-            <option value="">Aucun (racine)</option>
-            {parents.map((p) => (
-              <option key={p.id} value={p.id}>{p.title}</option>
-            ))}
-          </select>
-        </label>
+        <Selectbox
+          label="Parent"
+          options={[{ value: "", label: "Aucun (racine)" }, ...parents.map((p) => ({ value: p.id, label: p.title }))]}
+          value={parentId ?? ""}
+          onChange={(v) => setParentId(v || null)}
+          placeholder="Aucun (racine)"
+        />
         <div>
           <Toggle label="Publié" value={isPublished} onChange={setIsPublished} />
         </div>

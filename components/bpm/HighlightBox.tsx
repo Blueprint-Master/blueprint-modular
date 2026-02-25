@@ -16,6 +16,8 @@ export interface HighlightBoxProps {
   rtbPoints?: string[] | null;
   /** Points Cible (chaîne ou liste) */
   targetPoints?: string | string[] | null;
+  /** Couleur de la barre latérale (hex, rgb ou nom CSS). Par défaut : noir (#212121). */
+  barColor?: string | null;
   className?: string;
 }
 
@@ -26,6 +28,7 @@ export function HighlightBox({
   momentDescription,
   rtbPoints,
   targetPoints,
+  barColor = null,
   className = "",
 }: HighlightBoxProps) {
   const rtbText =
@@ -39,13 +42,15 @@ export function HighlightBox({
         ? targetPoints.join(", ")
         : targetPoints;
 
+  const barStyle = barColor ? { background: barColor } : undefined;
+
   return (
     <div
       className={`bpm-highlight-box ${className}`.trim()}
       role="article"
       aria-label={title}
     >
-      <div className="bpm-highlight-box-bar">
+      <div className="bpm-highlight-box-bar" style={barStyle}>
         <span className="bpm-highlight-box-value">{value}</span>
         <span className="bpm-highlight-box-label">{label}</span>
       </div>

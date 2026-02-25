@@ -32,7 +32,7 @@ export async function GET(request: Request) {
   const where: { uploadedById: string; workspace?: string; contractType?: string; status?: string } = {
     uploadedById: user.id,
   };
-  if (workspace && ["nxtfood", "beam"].includes(workspace)) where.workspace = workspace;
+  if (workspace && ["service1", "service2"].includes(workspace)) where.workspace = workspace;
   if (contractType && ["supplier", "cgv", "other"].includes(contractType)) where.contractType = contractType;
   if (status && ["pending", "analyzing", "done", "error"].includes(status)) where.status = status;
 
@@ -76,7 +76,7 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: "Requête invalide" }, { status: 400 });
   }
   const file = formData.get("file") as File | null;
-  const workspace = (formData.get("workspace") as string) || "nxtfood";
+  const workspace = (formData.get("workspace") as string) || "service1";
   const contractType = (formData.get("contractType") as string) || "other";
 
   if (!file || file.size === 0) return NextResponse.json({ error: "Aucun fichier fourni" }, { status: 400 });
@@ -84,8 +84,8 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: `Fichier trop volumineux (max ${MAX_FILE_SIZE_MB} Mo)` }, { status: 400 });
   if (!ALLOWED_MIMES.includes(file.type))
     return NextResponse.json({ error: "Seuls PDF, DOCX et TXT sont acceptés" }, { status: 400 });
-  if (!["nxtfood", "beam"].includes(workspace))
-    return NextResponse.json({ error: "Workspace invalide (nxtfood ou beam)" }, { status: 400 });
+  if (!["service1", "service2"].includes(workspace))
+    return NextResponse.json({ error: "Workspace invalide (service1 ou service2)" }, { status: 400 });
   const ct = contractType as ContractType;
   if (!["supplier", "cgv", "other"].includes(ct))
     return NextResponse.json({ error: "Type de contrat invalide (supplier, cgv, other)" }, { status: 400 });

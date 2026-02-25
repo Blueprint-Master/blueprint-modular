@@ -33,6 +33,11 @@ export default function AuthModulePage() {
         </div>
       </div>
 
+      <p className="mb-4" style={{ color: "var(--bpm-text-secondary)" }}>
+        <Link href="/modules/auth/documentation" className="font-medium underline" style={{ color: "var(--bpm-accent-cyan)" }}>
+          Documentation complète (implémentation, choix du modèle, code pour charger et utiliser Auth) →
+        </Link>
+      </p>
       <h2 className="text-lg font-semibold mt-6 mb-2" style={{ color: "var(--bpm-text-primary)" }}>À propos</h2>
       <p className="mb-6" style={{ color: "var(--bpm-text-secondary)" }}>
         Le module auth utilise NextAuth (providers Google, credentials). La session est disponible dans toute l&apos;app ; les pages protégées redirigent vers la page de connexion si l&apos;utilisateur n&apos;est pas connecté.
@@ -40,7 +45,7 @@ export default function AuthModulePage() {
 
       <h2 className="text-lg font-semibold mt-8 mb-3" style={{ color: "var(--bpm-text-primary)" }}>Modèles de page de connexion</h2>
       <p className="mb-4 text-sm" style={{ color: "var(--bpm-text-secondary)" }}>
-        L&apos;app utilise le <strong>modèle split</strong> (formulaire à gauche, visuel à droite). Trois variantes sont documentées ci-dessous.
+        Par défaut, l&apos;app utilise le <strong>modèle carte centrée</strong>. Trois variantes sont documentées ci-dessous.
       </p>
       <div className="grid gap-4 mb-8" style={{ gridTemplateColumns: "repeat(auto-fill, minmax(280px, 1fr))" }}>
         <div
@@ -51,24 +56,14 @@ export default function AuthModulePage() {
           }}
         >
           <h3 className="font-semibold mb-1" style={{ color: "var(--bpm-text-primary)", fontSize: "1rem" }}>
-            1. Modèle split (actuel)
+            1. Modèle carte centrée (par défaut)
           </h3>
           <p className="text-sm mb-3" style={{ color: "var(--bpm-text-secondary)" }}>
-            Layout en deux panneaux : à gauche le formulaire (connexion ou création de compte), à droite une image de fond (équipe, collaboration) avec overlay type carte de réunion.
+            Carte centrée, titre + sous-titre, choix E-mail ou Google, formulaire email avec Retour / Se connecter, footer avec lien accueil et Connexion.
           </p>
-          <div className="rounded-lg border mb-3 overflow-hidden" style={{ borderColor: "var(--bpm-border)", aspectRatio: "16/10" }}>
-            <Image
-              src="https://images.unsplash.com/photo-1522071820081-009f0129c71c?w=600&q=80"
-              alt="Exemple visuel : équipe en collaboration (Unsplash)"
-              width={400}
-              height={250}
-              className="w-full h-full object-cover"
-            />
-          </div>
           <ul className="text-xs mb-3 pl-4 list-disc" style={{ color: "var(--bpm-text-secondary)" }}>
-            <li>Composants <code className="text-xs">LoginPage</code>, <code className="text-xs">RegisterPage</code>, <code className="text-xs">AuthSplitLayout</code></li>
-            <li>Styles partagés <code className="text-xs">AuthForm.module.css</code></li>
-            <li><strong>/login</strong> et <strong>/register</strong>, footer Sign in / Terms &amp; Conditions</li>
+            <li>Composants <code className="text-xs">LoginPage</code>, <code className="text-xs">RegisterPage</code> avec <code className="text-xs">useSplitLayout=false</code></li>
+            <li>Styles <code className="text-xs">AuthForm.module.css</code></li>
           </ul>
           <div className="flex gap-2 flex-wrap">
             <Link href="/login" className="text-sm font-medium" style={{ color: "var(--bpm-accent-cyan)" }}>Connexion</Link>
@@ -83,16 +78,16 @@ export default function AuthModulePage() {
           }}
         >
           <h3 className="font-semibold mb-1" style={{ color: "var(--bpm-text-primary)", fontSize: "1rem" }}>
-            2. Modèle carte centrée (historique)
+            2. Modèle split
           </h3>
           <p className="text-sm mb-3" style={{ color: "var(--bpm-text-secondary)" }}>
-            Carte centrée, titre + sous-titre, choix E-mail ou Google, formulaire email avec Retour / Se connecter, footer avec lien accueil et Connexion. Non utilisé dans cette version.
+            Layout en deux panneaux : à gauche le formulaire, à droite une image de fond (équipe, collaboration) avec overlay type carte de réunion.
           </p>
           <ul className="text-xs mb-3 pl-4 list-disc" style={{ color: "var(--bpm-text-secondary)" }}>
-            <li>Même composant <code className="text-xs">LoginPage</code> sans <code className="text-xs">AuthSplitLayout</code></li>
-            <li>Styles <code className="text-xs">AuthForm.module.css</code></li>
+            <li>Composants <code className="text-xs">LoginPage</code>, <code className="text-xs">RegisterPage</code>, <code className="text-xs">AuthSplitLayout</code></li>
+            <li>Paramètre <code className="text-xs">?layout=split</code></li>
           </ul>
-          <Link href="/login" className="text-sm font-medium" style={{ color: "var(--bpm-accent-cyan)" }}>
+          <Link href="/login?layout=split" className="text-sm font-medium" style={{ color: "var(--bpm-accent-cyan)" }}>
             Aperçu login
           </Link>
         </div>
@@ -112,11 +107,7 @@ export default function AuthModulePage() {
           <ul className="text-xs mb-3 pl-4 list-disc" style={{ color: "var(--bpm-text-secondary)" }}>
             <li>Pas de formulaire e-mail / mot de passe</li>
             <li>Même composant <code className="text-xs">LoginPage</code> avec <code className="text-xs">showEmailOption=false</code></li>
-            <li>Page épurée, un seul call-to-action</li>
           </ul>
-          <span className="text-sm block mb-3" style={{ color: "var(--bpm-text-secondary)" }}>
-            Disponible en passant <code className="text-xs">showEmailOption=false</code>
-          </span>
           <Link
             href="/login?showEmailOption=false"
             className="text-sm font-medium"

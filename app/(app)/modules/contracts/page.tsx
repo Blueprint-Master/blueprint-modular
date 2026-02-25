@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect, useCallback } from "react";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { Table, Spinner, Selectbox, Panel } from "@/components/bpm";
 import { DocumentAnalysisImport } from "@/components/DocumentAnalysisImport";
@@ -36,8 +37,8 @@ function flattenContract(c: ContractRow): ContractRow {
 
 const WORKSPACES = [
   { value: "", label: "Tous les workspaces" },
-  { value: "nxtfood", label: "NXTFOOD" },
-  { value: "beam", label: "BEAM" },
+  { value: "service1", label: "Service 1" },
+  { value: "service2", label: "Service 2" },
 ];
 const TYPES = [
   { value: "", label: "Tous les types" },
@@ -74,7 +75,7 @@ export default function ContractsPage() {
     if (workspace) params.set("workspace", workspace);
     if (contractType) params.set("contractType", contractType);
     if (status) params.set("status", status);
-    fetch(`/api/contracts?${params}`)
+    fetch(`/api/contracts?${params}`, { credentials: "include" })
       .then((r) => (r.ok ? r.json() : []))
       .then((data) => {
         const list = Array.isArray(data) ? data : [];
@@ -100,7 +101,7 @@ export default function ContractsPage() {
 
   const handleAnalyze = async (files: File[]) => {
     if (files.length === 0) return;
-    const ws = workspace || "nxtfood";
+    const ws = workspace || "service1";
     const ct = contractType || "other";
     setUploading(true);
     try {
@@ -109,7 +110,7 @@ export default function ContractsPage() {
         formData.append("file", file);
         formData.append("workspace", ws);
         formData.append("contractType", ct);
-        const res = await fetch("/api/contracts", { method: "POST", body: formData });
+        const res = await fetch("/api/contracts", { method: "POST", body: formData, credentials: "include" });
         if (res.ok) {
           const created = await res.json();
           setContracts((prev) => [flattenContract(created as ContractRow), ...prev]);
@@ -119,7 +120,12 @@ export default function ContractsPage() {
             continue;
           }
           const err = await res.json().catch(() => ({}));
-          alert((err as { error?: string }).error ?? "Erreur upload");
+          const msg = (err && typeof err === "object" && "error" in err && typeof (err as { error?: string }).error === "string")
+            ? (err as { error: string }).error
+            : res.status === 401
+              ? "Non autorisé. Connectez-vous pour importer des contrats."
+              : `Erreur upload (${res.status})`;
+          alert(msg);
         }
       }
     } finally {
@@ -167,6 +173,11 @@ export default function ContractsPage() {
   return (
     <div className="doc-page contracts-page">
       <div id="documentation">
+      <p className="mb-4" style={{ color: "var(--bpm-text-secondary)" }}>
+        <Link href="/modules/contracts/documentation" className="font-medium underline" style={{ color: "var(--bpm-accent-cyan)" }}>
+          Documentation complète (fonctionnement, installation, dépendances, paramétrage, API) →
+        </Link>
+      </p>
       <DocumentAnalysisImport
         title="Base contractuelle"
         description="Importez des documents PDF (contrats fournisseurs, CGV, analyses) pour générer automatiquement une synthèse actionnable grâce à Claude. Les analyses sont stockées en base de données et peuvent être réexploitées dans d'autres onglets."

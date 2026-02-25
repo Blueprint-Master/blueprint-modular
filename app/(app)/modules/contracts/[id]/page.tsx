@@ -76,7 +76,7 @@ export default function ContractDetailPage() {
 
   useEffect(() => {
     if (!id) return;
-    fetch(`/api/contracts/${id}`)
+    fetch(`/api/contracts/${id}`, { credentials: "include" })
       .then((r) => (r.ok ? r.json() : null))
       .then(setContract)
       .finally(() => setLoading(false));
@@ -86,7 +86,7 @@ export default function ContractDetailPage() {
     if (!id || reanalyzing) return;
     setReanalyzing(true);
     try {
-      const res = await fetch(`/api/contracts/${id}/reanalyze`, { method: "POST" });
+      const res = await fetch(`/api/contracts/${id}/reanalyze`, { method: "POST", credentials: "include" });
       if (res.ok) {
         const updated = await res.json();
         setContract(updated);

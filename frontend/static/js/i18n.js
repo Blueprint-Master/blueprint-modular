@@ -55,7 +55,10 @@
       return (s && s.getAttribute('data-i18n-base')) || '';
     })();
     var url = base + 'i18n/' + lang + '.json';
-    fetch(url).then(function(r) { return r.json(); }).then(function(t) {
+    fetch(url).then(function(r) { return r.arrayBuffer(); }).then(function(buffer) {
+      var decoder = new TextDecoder('utf-8');
+      return JSON.parse(decoder.decode(buffer));
+    }).then(function(t) {
       applyTranslations(t);
       if (t.page && t.page.title) document.title = t.page.title;
       if (t.page && t.page.description) {

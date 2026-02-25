@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import Link from "next/link";
 import { Table, Message, Spinner } from "@/components/bpm";
 import { DocumentAnalysisImport } from "@/components/DocumentAnalysisImport";
 
@@ -28,7 +29,7 @@ export default function DocumentsPage() {
   const [search, setSearch] = useState("");
 
   const fetchDocuments = () => {
-    fetch("/api/documents")
+    fetch("/api/documents", { credentials: "include" })
       .then((r) => (r.ok ? r.json() : []))
       .then((data) => {
         setDocuments(Array.isArray(data) ? data : []);
@@ -64,13 +65,18 @@ export default function DocumentsPage() {
       for (const file of pdfs) {
         const formData = new FormData();
         formData.append("file", file);
-        const res = await fetch("/api/documents", { method: "POST", body: formData });
+        const res = await fetch("/api/documents", { method: "POST", body: formData, credentials: "include" });
         if (res.ok) {
           const newDoc = await res.json();
           setDocuments((prev) => [newDoc, ...prev]);
         } else {
           const err = await res.json().catch(() => ({}));
-          alert(err.error ?? "Erreur upload");
+          const msg = (err && typeof err === "object" && "error" in err && typeof err.error === "string")
+            ? err.error
+            : res.status === 413
+              ? "Fichier trop volumineux (limite 1 Mo par défaut). Vérifiez la config serveur."
+              : `Erreur upload (${res.status})`;
+          alert(msg);
         }
       }
     } finally {
@@ -127,6 +133,11 @@ export default function DocumentsPage() {
   return (
     <div className="documents-page doc-page">
       <div id="documentation">
+      <p className="mb-4" style={{ color: "var(--bpm-text-secondary)" }}>
+        <Link href="/modules/documents/documentation" className="font-medium underline" style={{ color: "var(--bpm-accent-cyan)" }}>
+          Documentation complète (fonctionnement, installation, dépendances, paramétrage, API) →
+        </Link>
+      </p>
       <DocumentAnalysisImport
         title="Analyse de documents"
         description="Importez des documents PDF (analyses, études, rapports) pour générer automatiquement une synthèse actionnable grâce à Claude. Les analyses sont stockées en base de données et peuvent être réexploitées dans d'autres onglets."

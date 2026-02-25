@@ -1,5 +1,25 @@
 /* Styles partagés formulaire auth (login / register) — utilisé dans le panneau gauche du split */
 
+/* Enveloppe carte centrée (modèle historique sans split) */
+.centeredWrap {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem;
+  background: var(--bpm-bg-primary, #f8f9fa);
+}
+
+.centeredCard {
+  width: 100%;
+  max-width: 420px;
+  padding: 2rem;
+  border-radius: 16px;
+  border: 1px solid var(--bpm-border, #e8e8e8);
+  background: var(--bpm-surface, #fff);
+  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.06);
+}
+
 .formBlock {
   text-align: left;
   width: 100%;
@@ -139,7 +159,7 @@
 
 .formGroup input:focus {
   outline: none;
-  border-color: var(--bpm-accent, #1a4b8f);
+  border-color: var(--bpm-accent, #00a3e2);
   box-shadow: 0 0 0 3px rgba(26, 75, 143, 0.12);
 }
 
@@ -180,7 +200,7 @@
 }
 
 .submitButton {
-  background: var(--bpm-accent, #1a4b8f);
+  background: var(--bpm-accent, #00a3e2);
   color: #fff;
   border: none;
 }
@@ -229,7 +249,7 @@
 
 .footerLink:hover {
   text-decoration: underline;
-  color: var(--bpm-accent, #1a4b8f);
+  color: var(--bpm-accent, #00a3e2);
 }
 
 .footerSep {
@@ -250,5 +270,5 @@
 }
 
 .terms a:hover {
-  color: var(--bpm-accent, #1a4b8f);
+  color: var(--bpm-accent, #00a3e2);
 }

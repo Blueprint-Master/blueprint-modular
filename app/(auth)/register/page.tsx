@@ -3,7 +3,7 @@ import { redirect } from "next/navigation";
 import { authOptions } from "@/lib/auth";
 import { RegisterPage } from "@/components/auth";
 
-type Props = { searchParams: Promise<{ callbackUrl?: string }> };
+type Props = { searchParams: Promise<{ callbackUrl?: string; layout?: string }> };
 
 export default async function RegisterPageRoute({ searchParams }: Props) {
   const session = await getServerSession(authOptions);
@@ -11,12 +11,14 @@ export default async function RegisterPageRoute({ searchParams }: Props) {
 
   const params = await searchParams;
   const callbackUrl = params?.callbackUrl ? decodeURIComponent(params.callbackUrl) : null;
+  const useSplitLayout = params?.layout === "split";
 
   return (
     <RegisterPage
       title="Blueprint Modular"
       logoSrc="/img/logo-bpm-nom.jpg"
       callbackUrl={callbackUrl}
+      useSplitLayout={useSplitLayout}
     />
   );
 }

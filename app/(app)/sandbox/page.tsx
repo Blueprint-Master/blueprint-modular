@@ -64,6 +64,8 @@ import {
   Map,
   AltairChart,
   ScatterChart,
+  Caption,
+  Popover,
 } from "@/components/bpm";
 
 const DEFAULT_CODE = `bpm.title("Ma page", level=1)
@@ -71,6 +73,19 @@ bpm.metric("CA", "142 500")
 bpm.button("Valider")
 bpm.panel("Info", "Contenu du panneau.")
 bpm.message("Message de confirmation", type="success")`;
+
+/** Wrapper pour bpm.modal (état open local). */
+function SandboxModalWrapper({ title, content, itemKey }: { title: string; content: string; itemKey: number }) {
+  const [open, setOpen] = useState(false);
+  return (
+    <React.Fragment key={itemKey}>
+      <Button onClick={() => setOpen(true)}>Ouvrir le modal</Button>
+      <Modal isOpen={open} onClose={() => setOpen(false)} title={title}>
+        {content}
+      </Modal>
+    </React.Fragment>
+  );
+}
 
 /** Parse une ligne du type bpm.xxx("...", ...) et retourne un noeud React ou null */
 function parseBpmLine(line: string, key: number): React.ReactNode {
@@ -168,6 +183,262 @@ function parseBpmLine(line: string, key: number): React.ReactNode {
         <ScatterChart data={data} width={400} height={180} />
       </div>
     );
+  }
+
+  // === TEXTE & CONTENU ===
+  const markdownMatch = trimmed.match(/bpm\.markdown\s*\(\s*["']([^"']*)["']\s*\)/);
+  if (markdownMatch) {
+    const content = markdownMatch[1].replace(/\\n/g, "\n");
+    return <Markdown key={key} text={content} />;
+  }
+  const captionMatch = trimmed.match(/bpm\.caption\s*\(\s*["']([^"']*)["']\s*\)/);
+  if (captionMatch) return <Caption key={key}>{captionMatch[1]}</Caption>;
+  const highlightboxMatch = trimmed.match(/bpm\.highlightbox\s*\(\s*["']([^"']*)["']\s*(?:,\s*variant\s*=\s*["'](\w+)["'])?\s*\)/);
+  if (highlightboxMatch) {
+    const title = highlightboxMatch[1];
+    const label = highlightboxMatch[2] ?? "Info";
+    return <HighlightBox key={key} value={1} label={label} title={title} />;
+  }
+  const jsonviewerMatch = trimmed.match(/bpm\.jsonviewer\s*\(\s*["']([^"']*)["']\s*\)/);
+  if (jsonviewerMatch) {
+    let data: unknown;
+    try {
+      data = JSON.parse(jsonviewerMatch[1].replace(/\\"/g, '"'));
+    } catch {
+      data = jsonviewerMatch[1];
+    }
+    return <JsonViewer key={key} data={data} />;
+  }
+
+  // === LAYOUT ===
+  const cardMatch = trimmed.match(/bpm\.card\s*\(\s*["']([^"']*)["']\s*,\s*["']([^"']*)["']\s*\)/);
+  if (cardMatch) return <Card key={key} title={cardMatch[1]}>{cardMatch[2]}</Card>;
+  const dividerMatch = trimmed.match(/bpm\.divider\s*\(\s*\)/);
+  if (dividerMatch) return <Divider key={key} />;
+  const emptyMatch = trimmed.match(/bpm\.empty\s*\(\s*["']([^"']*)["']\s*\)/);
+  if (emptyMatch) return <Empty key={key}>{emptyMatch[1]}</Empty>;
+  const emptystateMatch = trimmed.match(/bpm\.emptystate\s*\(\s*["']([^"']*)["']\s*,\s*["']([^"']*)["']\s*(?:,\s*icon\s*=\s*["']([^"']*)["'])?\s*\)/);
+  if (emptystateMatch) {
+    const icon = emptystateMatch[3];
+    return (
+      <EmptyState key={key} title={emptystateMatch[1]} description={emptystateMatch[2]} icon={icon ?? undefined} />
+    );
+  }
+  const containerMatch = trimmed.match(/bpm\.container\s*\(\s*["']([^"']*)["']\s*\)/);
+  if (containerMatch) return <Container key={key}>{containerMatch[1]}</Container>;
+
+  // === NAVIGATION ===
+  const breadcrumbMatch = trimmed.match(/bpm\.breadcrumb\s*\(\s*["']([^"']*)["']\s*\)/);
+  if (breadcrumbMatch) {
+    const items = breadcrumbMatch[1].split(/\s*>\s*/).map((s) => s.trim()).filter(Boolean);
+    const breadcrumbItems = items.map((label, i) => (i < items.length - 1 ? { label, href: "#" } : { label }));
+    return <Breadcrumb key={key} items={breadcrumbItems} />;
+  }
+  const stepperMatch = trimmed.match(/bpm\.stepper\s*\(\s*["']([^"']*)["']\s*(?:,\s*current\s*=\s*(\d+))?\s*\)/);
+  if (stepperMatch) {
+    const stepLabels = stepperMatch[1].split(/\s*>\s*/).map((s) => s.trim()).filter(Boolean);
+    const current = stepperMatch[2] != null ? Math.max(0, parseInt(stepperMatch[2], 10) - 1) : 0;
+    const steps = stepLabels.map((label, i) => ({ id: `step-${i}`, label }));
+    return <Stepper key={key} steps={steps} currentStep={current} />;
+  }
+  const tabsMatch = trimmed.match(/bpm\.tabs\s*\(\s*["']([^"']*)["']\s*\)/);
+  if (tabsMatch) {
+    const labels = tabsMatch[1].split(/\s*\|\s*/).map((s) => s.trim()).filter(Boolean);
+    const tabs = labels.map((label) => ({ label, content: null as React.ReactNode }));
+    return <Tabs key={key} tabs={tabs} />;
+  }
+
+  // === FEEDBACK & STATUT ===
+  const badgeMatch = trimmed.match(/bpm\.badge\s*\(\s*["']([^"']*)["']\s*(?:,\s*variant\s*=\s*["'](\w+)["'])?\s*\)/);
+  if (badgeMatch) {
+    const variant = (badgeMatch[2] as "default" | "success" | "warning" | "error" | "primary") ?? "default";
+    return <Badge key={key} variant={variant}>{badgeMatch[1]}</Badge>;
+  }
+  const chipMatch = trimmed.match(/bpm\.chip\s*\(\s*["']([^"']*)["']\s*\)/);
+  if (chipMatch) return <Chip key={key} label={chipMatch[1]} />;
+  const progressMatch = trimmed.match(/bpm\.progress\s*\(\s*value\s*=\s*(\d+)\s*(?:,\s*label\s*=\s*["']([^"']*)["'])?\s*\)/);
+  if (progressMatch) {
+    const value = Math.min(100, Math.max(0, parseInt(progressMatch[1], 10)));
+    const label = progressMatch[2];
+    return <Progress key={key} value={value} max={100} label={label} showValue />;
+  }
+  const skeletonMatch = trimmed.match(/bpm\.skeleton\s*\(\s*lines\s*=\s*(\d+)\s*\)/);
+  if (skeletonMatch) {
+    const lines = Math.max(1, parseInt(skeletonMatch[1], 10));
+    return (
+      <div key={key} className="flex flex-col gap-2">
+        {Array.from({ length: lines }, (_, i) => (
+          <Skeleton key={i} variant="text" width={i === lines - 1 && lines > 1 ? "85%" : "100%"} />
+        ))}
+      </div>
+    );
+  }
+  const statusboxMatch = trimmed.match(/bpm\.statusbox\s*\(\s*["']([^"']*)["']\s*(?:,\s*status\s*=\s*["'](\w+)["'])?\s*\)/);
+  if (statusboxMatch) {
+    const status = statusboxMatch[2];
+    const state = status === "success" ? "complete" : (status === "info" ? "running" : (status as "running" | "complete" | "error")) ?? "running";
+    return <StatusBox key={key} label={statusboxMatch[1]} state={state} />;
+  }
+  const avatarMatch = trimmed.match(/bpm\.avatar\s*\(\s*["']([^"']*)["']\s*(?:,\s*size\s*=\s*["'](\w+)["'])?\s*\)/);
+  if (avatarMatch) {
+    const size = (avatarMatch[2] as "small" | "medium" | "large") ?? "medium";
+    return <Avatar key={key} name={avatarMatch[1]} size={size} />;
+  }
+  const tooltipMatch = trimmed.match(/bpm\.tooltip\s*\(\s*["']([^"']*)["']\s*,\s*["']([^"']*)["']\s*\)/);
+  if (tooltipMatch) {
+    return (
+      <Tooltip key={key} text={tooltipMatch[2]}>
+        <span style={{ textDecoration: "underline", cursor: "help" }}>{tooltipMatch[1]}</span>
+      </Tooltip>
+    );
+  }
+
+  // === INPUTS ===
+  const inputMatch = trimmed.match(/bpm\.input\s*\(\s*["']([^"']*)["']\s*\)/);
+  if (inputMatch) return <Input key={key} placeholder={inputMatch[1]} value="" onChange={() => {}} />;
+  const textareaMatch = trimmed.match(/bpm\.textarea\s*\(\s*["']([^"']*)["']\s*(?:,\s*rows\s*=\s*(\d+))?\s*\)/);
+  if (textareaMatch) {
+    const rows = textareaMatch[2] != null ? parseInt(textareaMatch[2], 10) : 4;
+    return <Textarea key={key} placeholder={textareaMatch[1]} rows={rows} value="" onChange={() => {}} />;
+  }
+  const numberinputMatch = trimmed.match(/bpm\.numberinput\s*\(\s*["']([^"']*)["']\s*,\s*value\s*=\s*(-?\d+(?:\.\d+)?)\s*\)/);
+  if (numberinputMatch) {
+    const value = parseFloat(numberinputMatch[2]);
+    return <NumberInput key={key} label={numberinputMatch[1]} value={value} onChange={() => {}} />;
+  }
+  const dateinputMatch = trimmed.match(/bpm\.dateinput\s*\(\s*["']([^"']*)["']\s*\)/);
+  if (dateinputMatch) return <DateInput key={key} label={dateinputMatch[1]} value="" onChange={() => {}} />;
+  const selectboxMatch = trimmed.match(/bpm\.selectbox\s*\(\s*["']([^"']*)["']\s*,\s*["']([^"']*)["']\s*\)/);
+  if (selectboxMatch) {
+    const options = selectboxMatch[2].split(/\s*\|\s*/).map((s) => s.trim()).filter(Boolean);
+    const selectOptions = options.map((o) => ({ value: o, label: o }));
+    return <Selectbox key={key} label={selectboxMatch[1]} options={selectOptions} value="" onChange={() => {}} />;
+  }
+  const checkboxMatch = trimmed.match(/bpm\.checkbox\s*\(\s*["']([^"']*)["']\s*(?:,\s*checked\s*=\s*(True|False))?\s*\)/);
+  if (checkboxMatch) {
+    const checked = checkboxMatch[2] !== "False";
+    return <Checkbox key={key} label={checkboxMatch[1]} checked={checked} onChange={() => {}} />;
+  }
+  const toggleMatch = trimmed.match(/bpm\.toggle\s*\(\s*["']([^"']*)["']\s*,\s*value\s*=\s*(True|False)\s*\)/);
+  if (toggleMatch) {
+    const value = toggleMatch[2] !== "False";
+    return <Toggle key={key} label={toggleMatch[1]} value={value} onChange={() => {}} />;
+  }
+  const radiogroupMatch = trimmed.match(/bpm\.radiogroup\s*\(\s*["']([^"']*)["']\s*,\s*value\s*=\s*["']([^"']*)["']\s*\)/);
+  if (radiogroupMatch) {
+    const options = radiogroupMatch[1].split(/\s*\|\s*/).map((s) => s.trim()).filter(Boolean);
+    const radioOptions = options.map((o) => ({ value: o, label: o }));
+    return <RadioGroup key={key} name={`rg-${key}`} options={radioOptions} value={radiogroupMatch[2]} onChange={() => {}} label="" />;
+  }
+  const sliderMatch = trimmed.match(/bpm\.slider\s*\(\s*value\s*=\s*(\d+)\s*,\s*min\s*=\s*(\d+)\s*,\s*max\s*=\s*(\d+)\s*\)/);
+  if (sliderMatch) {
+    const value = parseInt(sliderMatch[1], 10);
+    const min = parseInt(sliderMatch[2], 10);
+    const max = parseInt(sliderMatch[3], 10);
+    return <Slider key={key} value={value} min={min} max={max} onChange={() => {}} />;
+  }
+  const ratingMatch = trimmed.match(/bpm\.rating\s*\(\s*value\s*=\s*(\d+)\s*(?:,\s*max\s*=\s*(\d+))?\s*\)/);
+  if (ratingMatch) {
+    const value = parseInt(ratingMatch[1], 10);
+    const max = parseInt(ratingMatch[2] ?? "5", 10);
+    return <Rating key={key} value={value} max={max} onChange={() => {}} />;
+  }
+  const colorpickerMatch = trimmed.match(/bpm\.colorpicker\s*\(\s*value\s*=\s*["']([^"']*)["']\s*\)/);
+  if (colorpickerMatch) return <ColorPicker key={key} value={colorpickerMatch[1]} onChange={() => {}} />;
+  const autocompleteMatch = trimmed.match(/bpm\.autocomplete\s*\(\s*["']([^"']*)["']\s*,\s*["']([^"']*)["']\s*\)/);
+  if (autocompleteMatch) {
+    const opts = autocompleteMatch[2].split(/\s*\|\s*/).map((s) => s.trim()).filter(Boolean);
+    const options = opts.map((o) => ({ value: o, label: o }));
+    return <Autocomplete key={key} placeholder={autocompleteMatch[1]} options={options} value="" onChange={() => {}} />;
+  }
+  const fileuploaderMatch = trimmed.match(/bpm\.fileuploader\s*\(\s*["']([^"']*)["']\s*\)/);
+  if (fileuploaderMatch) return <FileUploader key={key} label={fileuploaderMatch[1]} onFiles={() => {}} />;
+
+  // === DONNÉES ===
+  const tableMatch = trimmed.match(/bpm\.table\s*\(\s*["']([^"']*)["']\s*\)/);
+  if (tableMatch) {
+    const rows = tableMatch[1].split(/\s*\|\s*/).map((s) => s.trim()).filter(Boolean);
+    if (rows.length >= 1) {
+      const headers = rows[0].split(",").map((s) => s.trim());
+      const columns = headers.map((h) => ({ key: h, label: h }));
+      const data = rows.slice(1).map((row) => {
+        const cells = row.split(",").map((s) => s.trim());
+        const obj: Record<string, string> = {};
+        headers.forEach((h, i) => { obj[h] = cells[i] ?? ""; });
+        return obj;
+      });
+      return <Table key={key} columns={columns} data={data} />;
+    }
+  }
+  const accordionMatch = trimmed.match(/bpm\.accordion\s*\(\s*["']([^"']*)["']\s*\)/);
+  if (accordionMatch) {
+    const titles = accordionMatch[1].split(/\s*\|\s*/).map((s) => s.trim()).filter(Boolean);
+    const sections = titles.map((t, i) => ({ id: `acc-${i}`, title: t, content: "" as React.ReactNode }));
+    return <Accordion key={key} sections={sections} />;
+  }
+  const expanderMatch = trimmed.match(/bpm\.expander\s*\(\s*["']([^"']*)["']\s*,\s*["']([^"']*)["']\s*\)/);
+  if (expanderMatch) return <Expander key={key} title={expanderMatch[1]}>{expanderMatch[2]}</Expander>;
+  const timelineMatch = trimmed.match(/bpm\.timeline\s*\(\s*["']([^"']*)["']\s*\)/);
+  if (timelineMatch) {
+    const labels = timelineMatch[1].split(/\s*\|\s*/).map((s) => s.trim()).filter(Boolean);
+    const items = labels.map((title) => ({ title }));
+    return <Timeline key={key} items={items} />;
+  }
+  const treeviewMatch = trimmed.match(/bpm\.treeview\s*\(\s*["']([^"']*)["']\s*\)/);
+  if (treeviewMatch) {
+    const parts = treeviewMatch[1].split(/\s*\|\s*/).map((s) => s.trim()).filter(Boolean);
+    const pathList = parts.map((p) => p.split(/\s*>\s*/).map((s) => s.trim()).filter(Boolean));
+    const nodeMap: Record<string, { id: string; label: string; children: { id: string; label: string }[] }> = {};
+    pathList.forEach((path) => {
+      if (path.length >= 2) {
+        const [rootLabel, ...childLabels] = path;
+        const rootId = rootLabel.toLowerCase().replace(/\s+/g, "-");
+        if (!nodeMap[rootId]) {
+          nodeMap[rootId] = { id: rootId, label: rootLabel, children: [] };
+        }
+        const root = nodeMap[rootId];
+        childLabels.forEach((lbl) => {
+          const cId = lbl.toLowerCase().replace(/\s+/g, "-");
+          if (!root.children.some((c) => c.id === cId)) root.children.push({ id: cId, label: lbl });
+        });
+      }
+    });
+    const nodes = Object.values(nodeMap);
+    if (nodes.length > 0) return <Treeview key={key} nodes={nodes} />;
+  }
+
+  // === MÉDIAS ===
+  const imageMatch = trimmed.match(/bpm\.image\s*\(\s*["']([^"']*)["']\s*(?:,\s*alt\s*=\s*["']([^"']*)["'])?\s*\)/);
+  if (imageMatch) return <Image key={key} src={imageMatch[1]} alt={imageMatch[2] ?? ""} />;
+  const videoMatch = trimmed.match(/bpm\.video\s*\(\s*["']([^"']*)["']\s*\)/);
+  if (videoMatch) return <Video key={key} src={videoMatch[1]} controls />;
+  const audioMatch = trimmed.match(/bpm\.audio\s*\(\s*["']([^"']*)["']\s*\)/);
+  if (audioMatch) return <Audio key={key} src={audioMatch[1]} controls />;
+  const mapMatch = trimmed.match(/bpm\.map\s*\(\s*lat\s*=\s*([\d.-]+)\s*,\s*lng\s*=\s*([\d.-]+)\s*(?:,\s*zoom\s*=\s*(\d+))?\s*\)/);
+  if (mapMatch) {
+    const lat = parseFloat(mapMatch[1]);
+    const lng = parseFloat(mapMatch[2]);
+    return <Map key={key} lat={lat} lng={lng} width="100%" height={300} />;
+  }
+
+  // === AVANCÉS ===
+  const modalMatch = trimmed.match(/bpm\.modal\s*\(\s*["']([^"']*)["']\s*,\s*["']([^"']*)["']\s*\)/);
+  if (modalMatch) return <SandboxModalWrapper key={key} itemKey={key} title={modalMatch[1]} content={modalMatch[2]} />;
+  const popoverMatch = trimmed.match(/bpm\.popover\s*\(\s*["']([^"']*)["']\s*,\s*["']([^"']*)["']\s*\)/);
+  if (popoverMatch) {
+    return (
+      <Popover key={key} trigger={<Button>{popoverMatch[1]}</Button>}>
+        {popoverMatch[2]}
+      </Popover>
+    );
+  }
+  const fabMatch = trimmed.match(/bpm\.fab\s*\(\s*["']([^"']*)["']\s*\)/);
+  if (fabMatch) return <FAB key={key} icon={fabMatch[1]} onClick={() => {}} />;
+  const topnavMatch = trimmed.match(/bpm\.topnav\s*\(\s*["']([^"']*)["']\s*,\s*["']([^"']*)["']\s*\)/);
+  if (topnavMatch) {
+    const items = topnavMatch[2].split(/\s*\|\s*/).map((s) => s.trim()).filter(Boolean);
+    const navItems = items.map((label) => ({ label, href: "#" }));
+    return <TopNav key={key} title={topnavMatch[1]} titleHref="#" items={navItems} />;
   }
 
   return null;
@@ -296,6 +567,19 @@ function SandboxContent() {
   useEffect(() => {
     setCompletionIndex((i) => Math.min(i, Math.max(0, completionList.length - 1)));
   }, [completionList.length]);
+
+  useEffect(() => {
+    try {
+      const pending = sessionStorage.getItem("sandbox-pending-code");
+      if (pending?.trim()) {
+        setCode(pending.trim());
+        setMode("code");
+        sessionStorage.removeItem("sandbox-pending-code");
+      }
+    } catch {
+      /* ignore */
+    }
+  }, []);
 
   const applyCompletion = useCallback(
     (method: string) => {
@@ -1277,7 +1561,7 @@ function SandboxContent() {
                   cursor: aiGenerating || !aiDescription.trim() ? "not-allowed" : "pointer",
                 }}
               >
-                {aiGenerating ? "Génération…" : "✦ Générer"}
+                {aiGenerating ? "Génération…" : "Générer"}
               </button>
               {aiGenerating && (
                 <span className="inline-flex items-center gap-2" style={{ color: "var(--bpm-text-secondary)" }}>
