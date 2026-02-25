@@ -181,14 +181,16 @@ export default function ContractsPage() {
           <span className="flex items-center gap-2 flex-wrap">
             <span className={isError ? "rounded px-2 py-0.5 text-xs font-medium bg-red-100 text-red-800" : ""}>{statusLabel}</span>
             {isError && id && (
-              <Button
-                size="small"
-                variant="secondary"
-                disabled={!!reanalyzingId}
-                onClick={(e) => { e.stopPropagation(); handleReanalyze(id); }}
-              >
-                {isReanalyzing ? "…" : "Relancer l'analyse"}
-              </Button>
+              <span onClick={(e) => e.stopPropagation()}>
+                <Button
+                  size="small"
+                  variant="secondary"
+                  disabled={!!reanalyzingId}
+                  onClick={() => handleReanalyze(id)}
+                >
+                  {isReanalyzing ? "…" : "Relancer l'analyse"}
+                </Button>
+              </span>
             )}
           </span>
         );
