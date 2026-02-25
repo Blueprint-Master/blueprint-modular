@@ -9,9 +9,7 @@ import React, { useMemo } from "react";export interface LineChartDatum {
   height?: number;
   color?: string;
   className?: string;
-}
-
-export function LineChart(p: LineChartProps) {
+}export function LineChart(p: LineChartProps) {
   const { data, width = 400, height = 200, color = "var(--bpm-accent-cyan)", className = "" } = p;
   const path = useMemo(() => {
     if (!data.length) return "";
