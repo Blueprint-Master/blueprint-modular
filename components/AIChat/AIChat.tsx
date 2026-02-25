@@ -325,7 +325,10 @@ export function AIChat({
               }
               if (data.type === "done" && data.discussion_id) setCurrentDiscussionId(data.discussion_id);
               if (data.type === "error") {
-                const errMsg = typeof data.message === "string" ? data.message : "Erreur lors de l'appel au modèle.";
+                let errMsg = typeof data.message === "string" ? data.message : "Erreur lors de l'appel au modèle.";
+                if (/network error|failed to fetch|fetch failed|econnrefused|econnreset/i.test(errMsg)) {
+                  errMsg = "Impossible de joindre le service IA. Vérifiez votre connexion et qu'Ollama est démarré (ex. http://localhost:11434), ou définissez AI_MOCK=true pour le mode démo.";
+                }
                 setMessages((prev) => {
                   const next = [...prev];
                   const last = next[next.length - 1];
@@ -349,7 +352,11 @@ export function AIChat({
       if ((err as Error).name === "AbortError") {
         removeLastAssistant();
       } else {
-        const errMsg = err instanceof Error ? err.message : "Connexion ou timeout. Vérifiez que le service IA (Ollama) est démarré.";
+        const raw = err instanceof Error ? err.message : String(err);
+        const isNetwork = /network error|failed to fetch|fetch failed|econnrefused|econnreset|network request failed|load failed/i.test(raw);
+        const errMsg = isNetwork
+          ? "Impossible de joindre le service IA. Vérifiez votre connexion et qu'Ollama est démarré (ex. http://localhost:11434), ou définissez AI_MOCK=true pour le mode démo."
+          : raw;
         setMessages((prev) => {
           const next = [...prev];
           const last = next[next.length - 1];

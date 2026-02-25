@@ -1228,7 +1228,7 @@ function SandboxContent() {
                 const raw = data.message ?? "Erreur inconnue";
                 const friendly =
                   /network error|failed to fetch|fetch failed|econnrefused|econnreset|network request failed/i.test(raw)
-                    ? "Vérifiez qu'Ollama est démarré (http://localhost:11434). Sinon, définissez AI_MOCK=true dans .env.local pour le mode démo."
+                    ? "Vérifiez qu'Ollama est démarré (ex. http://localhost:11434). Sinon, définissez AI_MOCK=true dans .env pour le mode démo."
                     : raw;
                 setAiError(friendly);
               }
@@ -1242,7 +1242,7 @@ function SandboxContent() {
       const raw = err instanceof Error ? err.message : "Erreur réseau";
       const friendly =
         /network error|failed to fetch|fetch failed|econnrefused|econnreset|network request failed/i.test(raw)
-          ? "Vérifiez qu'Ollama est démarré (http://localhost:11434). Sinon, définissez AI_MOCK=true dans .env.local pour le mode démo."
+          ? "Vérifiez qu'Ollama est démarré (ex. http://localhost:11434). Sinon, définissez AI_MOCK=true dans .env pour le mode démo."
           : raw;
       setAiError(friendly);
       setCode("");

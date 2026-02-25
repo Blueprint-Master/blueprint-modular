@@ -121,14 +121,19 @@ export function VoiceRecorder({
     fontWeight: 500,
     cursor: state === "transcribing" || disabled ? "not-allowed" : "pointer",
     border: "none",
-    transition: "background 0.2s",
+    transition: "background 0.2s, color 0.2s",
     background:
       state === "recording"
         ? "var(--bpm-accent)"
         : state === "transcribing"
           ? "var(--bpm-border)"
-          : "var(--bpm-accent)",
-    color: state === "transcribing" ? "var(--bpm-text-secondary)" : "#fff",
+          : "var(--bpm-bg-secondary)",
+    color:
+      state === "recording"
+        ? "#fff"
+        : state === "transcribing"
+          ? "var(--bpm-text-secondary)"
+          : "var(--bpm-text-primary)",
     animation: state === "recording" ? "pulse 1.5s infinite" : "none",
   };
 

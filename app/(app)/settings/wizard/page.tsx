@@ -184,7 +184,7 @@ export default function SettingsWizardPage() {
                 const raw = data.message ?? "Erreur inconnue";
                 const friendly =
                   /network error|failed to fetch|fetch failed|econnrefused|econnreset|network request failed/i.test(raw)
-                    ? "Impossible de joindre le service de génération. Vérifiez que Ollama est démarré (http://localhost:11434) ou définissez AI_MOCK=true dans .env.local pour le mode démo."
+                    ? "Impossible de joindre le service de génération. Vérifiez qu'Ollama est démarré (ex. http://localhost:11434) ou définissez AI_MOCK=true dans .env pour le mode démo."
                     : raw;
                 setAiError(friendly);
               }
@@ -198,7 +198,7 @@ export default function SettingsWizardPage() {
       const raw = err instanceof Error ? err.message : "Erreur réseau";
       const friendly =
         /network error|failed to fetch|fetch failed|econnrefused|econnreset|network request failed/i.test(raw)
-          ? "Impossible de joindre le service de génération. Vérifiez que Ollama est démarré (http://localhost:11434) ou définissez AI_MOCK=true dans .env.local pour le mode démo."
+          ? "Impossible de joindre le service de génération. Vérifiez qu'Ollama est démarré (ex. http://localhost:11434) ou définissez AI_MOCK=true dans .env pour le mode démo."
           : raw;
       setAiError(friendly);
       setAiCode("");
