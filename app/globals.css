@@ -230,6 +230,15 @@ body {
 }
 .skip-nav:focus { top: 0; outline: 2px solid var(--bpm-accent-cyan); outline-offset: 2px; }
 
+/* Champs de saisie : bordure couleur principale au focus (évite le noir par défaut) */
+.bpm-input:focus,
+.bpm-textarea:focus,
+textarea.bpm-textarea:focus {
+  outline: none !important;
+  border-color: var(--bpm-accent) !important;
+  box-shadow: 0 0 0 2px rgba(0, 163, 226, 0.2);
+}
+
 .doc-breadcrumb { font-size: 12px; color: var(--bpm-text-secondary); margin-bottom: 8px; }
 .doc-breadcrumb-header { margin-bottom: 0; }
 .doc-breadcrumb a { color: var(--bpm-color-link); text-decoration: none; }

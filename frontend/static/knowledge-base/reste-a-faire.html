@@ -112,13 +112,13 @@
       <h3>2. Commande <code>bpm run</code></h3>
       <ul>
         <li><strong>Point d'entrée CLI</strong> — <strong>Fait.</strong> Sous-commandes <code>bpm run &lt;script&gt;</code> et <code>bpm init [dir]</code>.</li>
-        <li><strong><code>bpm run app.py</code></strong> — <strong>Fait.</strong> Exécution du script, collecte des nœuds de rendu, serveur HTTP (port 8501 par défaut, <code>--host</code> / <code>--port</code>).</li>
+        <li><strong><code>bpm run app.py</code></strong> — <strong>Fait.</strong> Exécution du script, collecte des n&#339;uds de rendu, serveur HTTP (port 8501 par défaut, <code>--host</code> / <code>--port</code>).</li>
         <li><strong>Serveur web</strong> — <strong>Fait.</strong> ThreadingHTTPServer qui exécute le script à chaque requête GET et renvoie une page HTML avec rendu (JS minimal côté client). Clics sur boutons → requête avec <code>?clicked=...</code> → re-run.</li>
       </ul>
 
       <h3>3. Protocole frontend / backend</h3>
       <ul>
-        <li><strong>Premier chargement</strong> — <strong>Fait.</strong> Le serveur exécute <code>app.py</code>, collecte les nœuds (title, write, button, metric, table, panel, etc.), renvoie une page HTML avec JSON + script de rendu (titres, texte, boutons, métriques, tableaux, panels).</li>
+        <li><strong>Premier chargement</strong> — <strong>Fait.</strong> Le serveur exécute <code>app.py</code>, collecte les n&#339;uds (title, write, button, metric, table, panel, etc.), renvoie une page HTML avec JSON + script de rendu (titres, texte, boutons, métriques, tableaux, panels).</li>
         <li><strong>Interactions (boutons)</strong> — <strong>Fait.</strong> Clic → GET <code>/?clicked=&lt;key&gt;</code> → mise à jour <code>session_state</code> → re-run du script → nouvelle page. Pas encore de réactivité granulaire (re-run complet comme Streamlit).</li>
         <li><strong>WebSocket ou SSE</strong> — <strong>À faire.</strong> Pour l'instant : re-run par requête HTTP. Plus tard : WebSocket ou SSE pour pousser les mises à jour sans rechargement complet (réactivité granulaire).</li>
       </ul>

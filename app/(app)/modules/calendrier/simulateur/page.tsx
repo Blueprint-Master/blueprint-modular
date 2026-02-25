@@ -37,6 +37,15 @@ function hourStringToMinutes(h: string): number {
   return parseInt(m[1], 10) * 60 + (parseInt(m[2] || "0", 10) || 0);
 }
 
+/** Affiche l'heure de façon uniforme (09h00, 10h30) quel que soit le format stocké (9h, 10h, 09h00). */
+function formatHeureDisplay(heure: string): string {
+  const m = heure.match(/(\d{1,2})h(\d{0,2})/);
+  if (!m) return heure;
+  const h = m[1].padStart(2, "0");
+  const min = (m[2] || "0").padStart(2, "0");
+  return `${h}h${min}`;
+}
+
 /** Génère des événements de démo enrichis (P1, P14). */
 function buildDemoEvents(anchorMonth: Date): CalEvent[] {
   const y = anchorMonth.getFullYear();
@@ -157,6 +166,16 @@ function getWeekRange(d: Date): { start: Date; end: Date } {
 const MONTHS = "janvier,février,mars,avril,mai,juin,juillet,août,septembre,octobre,novembre,décembre".split(",");
 const WEEKDAYS_SHORT = "dim.,lun.,mar.,mer.,jeu.,ven.,sam.".split(",");
 const WEEKDAYS_LABELS = ["Lun", "Mar", "Mer", "Jeu", "Ven", "Sam", "Dim"];
+const WEEKDAYS_FULL = ["Lundi", "Mardi", "Mercredi", "Jeudi", "Vendredi", "Samedi", "Dimanche"];
+
+/** Numéro de semaine ISO (1–53) */
+function getISOWeekNumber(d: Date): number {
+  const { start } = getWeekRange(d);
+  const jan4 = new Date(start.getFullYear(), 0, 4);
+  const jan4Start = getWeekRange(jan4).start;
+  const diffDays = (start.getTime() - jan4Start.getTime()) / (24 * 3600 * 1000);
+  return Math.floor(diffDays / 7) + 1;
+}
 
 function formatTitle(view: View, focusDate: Date): string {
   if (view === "jour") {
@@ -165,8 +184,9 @@ function formatTitle(view: View, focusDate: Date): string {
   }
   if (view === "semaine") {
     const { start, end } = getWeekRange(focusDate);
-    const fmt = (x: Date) => `${x.getDate()} ${MONTHS[x.getMonth()].slice(0, 3)}.`;
-    return `Semaine du ${fmt(start)} – ${fmt(end)} ${end.getFullYear()}`;
+    const weekNum = getISOWeekNumber(focusDate);
+    const fmt = (x: Date) => `${x.getDate()} ${MONTHS[x.getMonth()].slice(0, 3)}. ${x.getFullYear()}`;
+    return `Semaine ${weekNum} - du ${fmt(start)} au ${fmt(end)}`;
   }
   return `${MONTHS[focusDate.getMonth()]} ${focusDate.getFullYear()}`;
 }
@@ -290,7 +310,7 @@ export default function CalendrierSimulateurPage() {
       </div>
 
       <div
-        className="rounded-2xl overflow-hidden"
+        className="rounded-2xl overflow-hidden min-w-0"
         style={{ border: "1px solid var(--bpm-border)", background: "var(--bpm-bg-primary)" }}
       >
         {/* Navigation temporelle + Nouvel événement */}
@@ -298,7 +318,7 @@ export default function CalendrierSimulateurPage() {
           className="flex flex-wrap items-center justify-between gap-2 px-3 py-2 border-b"
           style={{ borderColor: "var(--bpm-border)", background: "var(--bpm-bg-secondary)" }}
         >
-          <div className="flex items-center gap-1">
+          <div className="flex items-center gap-1 flex-shrink-0">
             <Button size="small" variant="secondary" onClick={goPrev} aria-label="Période précédente">←</Button>
             <Button size="small" variant="secondary" onClick={goNext} aria-label="Période suivante">→</Button>
             <Button size="small" variant="secondary" onClick={goToday}>Aujourd&apos;hui</Button>
@@ -306,10 +326,10 @@ export default function CalendrierSimulateurPage() {
               + Nouvel événement
             </Button>
           </div>
-          <p className="text-sm font-medium m-0" style={{ color: "var(--bpm-text-primary)" }}>
+          <p className="text-sm font-medium m-0 flex-1 min-w-0 truncate text-center px-2" style={{ color: "var(--bpm-text-primary)" }} title={formatTitle(view, focusDate)}>
             {formatTitle(view, focusDate)}
           </p>
-          <div className="w-40" />
+          <div className="w-4 flex-shrink-0 sm:w-10" />
         </div>
 
         {/* Filtres par couleur (P13) */}
@@ -332,7 +352,7 @@ export default function CalendrierSimulateurPage() {
                 color: filterCouleur === c ? "#fff" : "var(--bpm-text-primary)",
               }}
             >
-              <span className="w-2 h-2 rounded-full shrink-0" style={{ background: c }} />
+              <span className="w-2 h-2 rounded-full shrink-0" style={{ background: filterCouleur === c ? "#fff" : c }} />
               {COULEURS.find((x) => x.value === c)?.label ?? "Couleur"}
             </button>
           ))}
@@ -345,7 +365,7 @@ export default function CalendrierSimulateurPage() {
           <Button size="small" variant={view === "mois" ? "primary" : "secondary"} onClick={() => setView("mois")}>Mois</Button>
         </div>
 
-        <div className="p-4 min-h-[320px]">
+        <div className="p-4 min-h-[320px] min-w-0 overflow-hidden">
           {/* Vue Jour — Timeline verticale (P5) + événements simultanés (P12) */}
           {view === "jour" && (
             <div className="text-sm">
@@ -357,15 +377,15 @@ export default function CalendrierSimulateurPage() {
                   </span>
                 )}
               </p>
-              <div className="flex gap-0">
-              <div className="shrink-0 w-14 flex flex-col" style={{ color: "var(--bpm-text-secondary)" }}>
+              <div className="flex gap-0 min-w-0">
+              <div className="cal-time-col shrink-0 w-14 flex flex-col" style={{ color: "var(--bpm-text-secondary)", minWidth: 56 }}>
                 {Array.from({ length: (DAY_END_MIN - DAY_START_MIN) / 30 }, (_, i) => (
-                  <div key={i} className="h-8 text-xs" style={{ lineHeight: "2rem" }}>
+                  <div key={i} className="h-8 text-xs flex items-center" style={{ minHeight: 32 }}>
                     {(DAY_START_MIN / 60 + i / 2) | 0}h{i % 2 === 1 ? "30" : "00"}
                   </div>
                 ))}
               </div>
-              <div className="flex-1 relative" style={{ minHeight: (TOTAL_MIN / 30) * 32 }}>
+              <div className="flex-1 min-w-0 relative" style={{ minHeight: (TOTAL_MIN / 30) * 32 }}>
                 {dayEvents.length === 0 && (
                   <p className="absolute top-4 left-0 text-sm" style={{ color: "var(--bpm-text-secondary)" }}>Aucun événement ce jour.</p>
                 )}
@@ -397,7 +417,7 @@ export default function CalendrierSimulateurPage() {
                     >
                       <span className="block w-1 h-full rounded absolute left-0 top-0" style={{ background: ev.couleur ?? "var(--bpm-accent-cyan)" }} />
                       <span className="font-medium truncate block">{ev.titre}</span>
-                      <span className="text-xs opacity-80">{ev.heure}{ev.duree ? ` — ${ev.duree} min` : ""}</span>
+                      <span className="text-xs opacity-80">{formatHeureDisplay(ev.heure)}{ev.duree ? ` — ${ev.duree} min` : ""}</span>
                     </button>
                   );
                 })}
@@ -408,24 +428,29 @@ export default function CalendrierSimulateurPage() {
 
           {/* Vue Semaine — Grille temporelle (P4) : colonnes = jours, lignes = créneaux 30 min */}
           {view === "semaine" && (
-            <div className="overflow-x-auto">
+            <div className="overflow-x-auto min-w-0 -mx-1 px-1" style={{ WebkitOverflowScrolling: "touch" }}>
               <div
-                className="grid text-sm"
+                className="grid text-sm w-full"
                 style={{
-                  gridTemplateColumns: "60px repeat(7, minmax(80px, 1fr))",
+                  gridTemplateColumns: "56px repeat(7, minmax(0, 1fr))",
                   gridTemplateRows: `auto repeat(${(DAY_END_MIN - DAY_START_MIN) / 30}, 32px)`,
-                  minWidth: 640,
+                  minWidth: 0,
                 }}
               >
                 <div style={{ gridColumn: 1 }} />
-                {WEEKDAYS_LABELS.map((label, col) => (
-                  <div key={label} className="py-1 text-center font-medium border-b" style={{ gridColumn: col + 2, borderColor: "var(--bpm-border)", color: "var(--bpm-text-secondary)" }}>
-                    {label}
-                  </div>
-                ))}
+                {[0, 1, 2, 3, 4, 5, 6].map((dayOffset) => {
+                  const { start } = getWeekRange(focusDate);
+                  const d = new Date(start);
+                  d.setDate(start.getDate() + dayOffset);
+                  return (
+                    <div key={dayOffset} className="py-1 text-center font-medium border-b truncate text-xs sm:text-sm" style={{ gridColumn: dayOffset + 2, borderColor: "var(--bpm-border)", color: "var(--bpm-text-secondary)" }} title={`${WEEKDAYS_FULL[dayOffset]} ${d.getDate()}`}>
+                      <span className="hidden sm:inline">{WEEKDAYS_FULL[dayOffset]} </span>{d.getDate()}
+                    </div>
+                  );
+                })}
                 {Array.from({ length: (DAY_END_MIN - DAY_START_MIN) / 30 }, (_, rowIdx) => (
                   <React.Fragment key={rowIdx}>
-                    <div className="text-xs py-1 pr-2 text-right border-b" style={{ gridColumn: 1, gridRow: rowIdx + 2, borderColor: "var(--bpm-border)", color: "var(--bpm-text-secondary)" }}>
+                    <div className="cal-time-col text-xs flex items-center justify-end pr-2 border-b min-h-[32px]" style={{ gridColumn: 1, gridRow: rowIdx + 2, borderColor: "var(--bpm-border)", color: "var(--bpm-text-secondary)" }}>
                       {(DAY_START_MIN / 60 + rowIdx / 2) | 0}h{rowIdx % 2 === 1 ? "30" : "00"}
                     </div>
                     {[0, 1, 2, 3, 4, 5, 6].map((dayOffset) => {
@@ -456,7 +481,7 @@ export default function CalendrierSimulateurPage() {
                               }}
                               onClick={(e) => { e.stopPropagation(); setSelectedEvent(ev); }}
                             >
-                              {ev.heure} {ev.titre}
+                              {formatHeureDisplay(ev.heure)} {ev.titre}
                             </button>
                           ))}
                         </div>
@@ -474,7 +499,7 @@ export default function CalendrierSimulateurPage() {
           {/* Vue Mois */}
           {view === "mois" && (
             <div className="text-sm">
-              <div className="inline-grid grid-cols-7 gap-1.5 text-center" style={{ maxWidth: 480 }}>
+              <div className="inline-grid grid-cols-7 gap-1.5 text-center w-full max-w-full sm:max-w-[480px]">
                 {WEEKDAYS_LABELS.map((d) => (
                   <span key={d} className="text-xs font-medium py-1" style={{ color: "var(--bpm-text-secondary)" }}>{d}</span>
                 ))}
@@ -529,7 +554,7 @@ export default function CalendrierSimulateurPage() {
         {selectedEvent && (
           <div className="space-y-3 text-sm">
             <p className="m-0"><strong>Date :</strong> {selectedEvent.date}</p>
-            <p className="m-0"><strong>Heure :</strong> {selectedEvent.heure}{selectedEvent.duree ? ` (${selectedEvent.duree} min)` : ""}</p>
+            <p className="m-0"><strong>Heure :</strong> {formatHeureDisplay(selectedEvent.heure)}{selectedEvent.duree ? ` (${selectedEvent.duree} min)` : ""}</p>
             {selectedEvent.lieu && <p className="m-0"><strong>Lieu :</strong> {selectedEvent.lieu}</p>}
             {selectedEvent.categorie && <p className="m-0"><strong>Catégorie :</strong> {selectedEvent.categorie}</p>}
             {selectedEvent.statut && <p className="m-0"><strong>Statut :</strong> {selectedEvent.statut}</p>}

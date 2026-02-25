@@ -37,3 +37,71 @@
   width: 10px;
   height: 10px;
 }
+
+/* Variant Wheel : anneau plus épais (même spin que circle) */
+.bpm-spinner-wheel {
+  /* border déjà défini en inline */
+}
+
+/* Variant Pulse : cercle plein qui pulse (scale + opacité) */
+.bpm-spinner-pulse {
+  border-radius: 50%;
+  animation: bpm-spinner-pulse 1.2s ease-in-out infinite;
+}
+.bpm-spinner-pulse--small {
+  width: 16px;
+  height: 16px;
+}
+.bpm-spinner-pulse--medium {
+  width: 24px;
+  height: 24px;
+}
+.bpm-spinner-pulse--large {
+  width: 32px;
+  height: 32px;
+}
+@keyframes bpm-spinner-pulse {
+  0%, 100% {
+    transform: scale(0.85);
+    opacity: 0.6;
+  }
+  50% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+/* Variant Bars : 4 barres verticales type égaliseur */
+.bpm-spinner-bars {
+  display: inline-flex;
+  align-items: flex-end;
+  gap: 3px;
+}
+.bpm-spinner-bar {
+  border-radius: 2px;
+  animation: bpm-spinner-bar 0.8s ease-in-out infinite;
+}
+.bpm-spinner-bar:nth-child(1) { animation-delay: 0s; }
+.bpm-spinner-bar:nth-child(2) { animation-delay: 0.1s; }
+.bpm-spinner-bar:nth-child(3) { animation-delay: 0.2s; }
+.bpm-spinner-bar:nth-child(4) { animation-delay: 0.3s; }
+.bpm-spinner-bars--small .bpm-spinner-bar {
+  width: 4px;
+  height: 12px;
+}
+.bpm-spinner-bars--medium .bpm-spinner-bar {
+  width: 5px;
+  height: 16px;
+}
+.bpm-spinner-bars--large .bpm-spinner-bar {
+  width: 6px;
+  height: 20px;
+}
+@keyframes bpm-spinner-bar {
+  0%, 100% {
+    transform: scaleY(0.4);
+  }
+  50% {
+    transform: scaleY(1);
+  }
+}

@@ -1,7 +1,9 @@
 "use client";
 
+import React, { useState, useMemo } from "react";
 import Link from "next/link";
 import { Bell, BookMarked, Bot, Calendar, FileText, LayoutDashboard, Link2, Mail, MessageSquare, Package, PenTool, Radio, Settings, Shield, StickyNote, Table2, Webhook } from "lucide-react";
+import { Input } from "@/components/bpm";
 
 /** Catégories dans l’ordre d’affichage. À l’intérieur de chaque catégorie, les modules sont triés par label. */
 const CATEGORY_ORDER = [
@@ -56,7 +58,34 @@ const MODULES_BY_CATEGORY: Record<(typeof CATEGORY_ORDER)[number], { href: strin
 };
 
 export default function ModulesPage() {
+  const [searchQuery, setSearchQuery] = useState("");
   const linkStyle = { color: "var(--bpm-accent-cyan)" };
+
+  const keywords = useMemo(
+    () =>
+      searchQuery
+        .trim()
+        .toLowerCase()
+        .split(/\s+/)
+        .filter(Boolean),
+    [searchQuery]
+  );
+
+  const filteredByCategory = useMemo(() => {
+    if (keywords.length === 0) {
+      return Object.fromEntries(CATEGORY_ORDER.map((cat) => [cat, MODULES_BY_CATEGORY[cat]])) as typeof MODULES_BY_CATEGORY;
+    }
+    const out: Partial<Record<(typeof CATEGORY_ORDER)[number], typeof MODULES_BY_CATEGORY[(typeof CATEGORY_ORDER)[number]]>> = {};
+    for (const category of CATEGORY_ORDER) {
+      const items = MODULES_BY_CATEGORY[category] ?? [];
+      const filtered = items.filter((mod) => {
+        const text = `${mod.label} ${mod.description} ${category}`.toLowerCase();
+        return keywords.every((kw) => text.includes(kw));
+      });
+      if (filtered.length) out[category] = filtered;
+    }
+    return out;
+  }, [keywords]);
 
   return (
     <div className="doc-page">
@@ -65,10 +94,19 @@ export default function ModulesPage() {
         <p className="doc-description">
           Modules disponibles, classés par catégorie. Chaque module dispose d&apos;une page avec Documentation et Simulateur pour tester en ligne.
         </p>
+        <div className="mt-4 max-w-md">
+          <Input
+            type="search"
+            value={searchQuery}
+            onChange={setSearchQuery}
+            placeholder="Rechercher un module (mots-clés…)"
+            aria-label="Rechercher un module par mots-clés"
+          />
+        </div>
       </div>
 
       {CATEGORY_ORDER.map((category) => {
-        const items = MODULES_BY_CATEGORY[category];
+        const items = filteredByCategory[category];
         if (!items?.length) return null;
         return (
           <section key={category} className="mb-10">

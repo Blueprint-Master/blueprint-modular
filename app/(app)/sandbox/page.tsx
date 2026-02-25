@@ -11,7 +11,10 @@ import {
   Table,
   Tabs,
   Title,
+  Text,
+  Caption,
   Spinner,
+  SpinnerDot,
   Tooltip,
   CodeBlock,
   Badge,
@@ -44,6 +47,8 @@ import {
   StatusBox,
   NumberInput,
   DateInput,
+  DateRangePicker,
+  TimeInput,
   RadioGroup,
   Rating,
   FileUploader,
@@ -64,13 +69,14 @@ import {
   Map,
   AltairChart,
   ScatterChart,
-  Caption,
   Popover,
   Barcode,
   QRCode,
   NfcBadge,
   Drawer,
   Pagination,
+  useToast,
+  Html,
 } from "@/components/bpm";
 
 const DEFAULT_CODE = `bpm.title("Ma page", level=1)
@@ -114,6 +120,18 @@ function DrawerPreview() {
       <Drawer open={open} onClose={() => setOpen(false)} title="Détails">
         <p style={{ color: "var(--bpm-text-secondary)", fontSize: 14 }}>Contenu du tiroir latéral.</p>
       </Drawer>
+    </div>
+  );
+}
+
+/** Prévisualisation toast (nécessite useToast dans le rendu). */
+function ToastPreview() {
+  const { showToast } = useToast();
+  return (
+    <div style={{ padding: 16, display: "flex", gap: 8, flexWrap: "wrap" }}>
+      <Button onClick={() => showToast("Message de démo", "info")}>Toast info</Button>
+      <Button onClick={() => showToast("Succès enregistré", "success")}>Toast success</Button>
+      <Button onClick={() => showToast("Attention requise", "warning")}>Toast warning</Button>
     </div>
   );
 }
@@ -639,6 +657,13 @@ const SANDBOX_COMPONENTS = [
   { value: "drawer", label: "bpm.drawer" },
   { value: "pagination", label: "bpm.pagination" },
   { value: "popover", label: "bpm.popover" },
+  { value: "text", label: "bpm.text" },
+  { value: "caption", label: "bpm.caption" },
+  { value: "spinnerdot", label: "bpm.spinnerdot" },
+  { value: "daterangepicker", label: "bpm.daterangepicker" },
+  { value: "timeinput", label: "bpm.timeinput" },
+  { value: "toast", label: "bpm.toast" },
+  { value: "html", label: "bpm.html" },
 ] as const;
 
 const SANDBOX_MODULES = [
@@ -871,6 +896,21 @@ function SandboxContent() {
         </div>
       );
     }
+    if (component === "text") {
+      return (
+        <div style={{ padding: 16, display: "flex", flexDirection: "column", gap: 8 }}>
+          <Text>Texte simple (bpm.text).</Text>
+          <Text mono>Texte monospace (mono=True).</Text>
+        </div>
+      );
+    }
+    if (component === "caption") {
+      return (
+        <div style={{ padding: 16 }}>
+          <Caption>Légende ou sous-titre (bpm.caption).</Caption>
+        </div>
+      );
+    }
     if (component === "spinner") {
       return (
         <div style={{ padding: 16, display: "flex", gap: 24, alignItems: "center", flexWrap: "wrap" }}>
@@ -878,6 +918,21 @@ function SandboxContent() {
           <Spinner size="medium" text="Chargement…" variant="circle" />
           <Spinner size="medium" text="" variant="dot" />
           <Spinner size="large" text="Dot…" variant="dot" />
+          <Spinner size="medium" text="" variant="wheel" />
+          <Spinner size="medium" text="Wheel" variant="wheel" />
+          <Spinner size="medium" text="" variant="pulse" />
+          <Spinner size="medium" text="Pulse" variant="pulse" />
+          <Spinner size="medium" text="" variant="bars" />
+          <Spinner size="medium" text="Bars" variant="bars" />
+        </div>
+      );
+    }
+    if (component === "spinnerdot") {
+      return (
+        <div style={{ padding: 16, display: "flex", gap: 24, alignItems: "center", flexWrap: "wrap" }}>
+          <SpinnerDot size="small" />
+          <SpinnerDot size="medium" />
+          <SpinnerDot size="large" />
         </div>
       );
     }
@@ -1142,6 +1197,20 @@ function SandboxContent() {
         </div>
       );
     }
+    if (component === "daterangepicker") {
+      return (
+        <div style={{ padding: 16, maxWidth: 320 }}>
+          <DateRangePicker label="Période" start={null} end={null} onChange={() => {}} />
+        </div>
+      );
+    }
+    if (component === "timeinput") {
+      return (
+        <div style={{ padding: 16, maxWidth: 200 }}>
+          <TimeInput label="Heure" value={null} onChange={() => {}} />
+        </div>
+      );
+    }
     if (component === "radiogroup") {
       const options = [{ value: "x", label: "Option X" }, { value: "y", label: "Option Y" }];
       return (
@@ -1340,6 +1409,14 @@ function SandboxContent() {
           <Popover trigger={<Button>Ouvrir</Button>}>
             <p style={{ padding: 8, margin: 0 }}>Contenu du popover.</p>
           </Popover>
+        </div>
+      );
+    }
+    if (component === "toast") return <ToastPreview />;
+    if (component === "html") {
+      return (
+        <div style={{ padding: 16 }}>
+          <Html html='<p>Contenu <strong>HTML</strong> (bpm.html). Utiliser uniquement avec du contenu de confiance.</p>' />
         </div>
       );
     }

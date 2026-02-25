@@ -2,7 +2,24 @@
 
 import React, { useState, useRef, useEffect, useCallback } from "react";
 import Link from "next/link";
-import { Button, Textarea, Spinner } from "@/components/bpm";
+import { Button, Textarea, Spinner, Chip } from "@/components/bpm";
+
+/** Icônes conformes à la charte Blueprint (stroke, couleur accent) */
+const IconEdit = () => (
+  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ color: "var(--bpm-accent)" }} aria-hidden>
+    <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7" />
+    <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z" />
+  </svg>
+);
+const IconTrash = () => (
+  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ color: "var(--bpm-accent)" }} aria-hidden>
+    <path d="M3 6h18" />
+    <path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6" />
+    <path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2" />
+    <line x1="10" y1="11" x2="10" y2="17" />
+    <line x1="14" y1="11" x2="14" y2="17" />
+  </svg>
+);
 
 /** Auteur structuré (P2) */
 type Author = { id: string; displayName: string; avatar?: string | null };
@@ -110,13 +127,16 @@ export default function CommentairesSimulateurPage() {
   const [visibleCount, setVisibleCount] = useState(10);
   const [editingId, setEditingId] = useState<string | null>(null);
   const [editContent, setEditContent] = useState("");
+  const [newCommentType, setNewCommentType] = useState<Comment["type"]>("commentaire");
+  const [filterType, setFilterType] = useState<Comment["type"] | null>(null);
 
   const trimmed = newComment.trim();
   const canSend = trimmed.length > 0 && !sending;
 
-  const displayedComments = comments.slice(-visibleCount);
-  const hasMore = comments.length > visibleCount;
-  const olderCount = comments.length - visibleCount;
+  const filteredComments = filterType ? comments.filter((c) => c.type === filterType) : comments;
+  const displayedComments = filteredComments.slice(-visibleCount);
+  const hasMore = filteredComments.length > visibleCount;
+  const olderCount = filteredComments.length - visibleCount;
 
   const handleSend = useCallback(async () => {
     const content = newComment.trim();
@@ -130,7 +150,7 @@ export default function CommentairesSimulateurPage() {
         author: { id: currentUserId, displayName: currentUserDisplayName },
         date: new Date().toISOString(),
         content,
-        type: "commentaire",
+        type: newCommentType,
       };
       setComments((prev) => [...prev, c]);
       setNewComment("");
@@ -204,9 +224,23 @@ export default function CommentairesSimulateurPage() {
         style={{ borderColor: "var(--bpm-border)", background: "var(--bpm-bg-primary)" }}
       >
         {/* En-tête avec compteur (P8) — pas d'icône ℹ */}
-        <h2 className="text-base font-semibold m-0 mb-3" style={{ color: "var(--bpm-text-primary)" }}>
+        <h2 className="text-base font-semibold m-0 mb-2" style={{ color: "var(--bpm-text-primary)" }}>
           Commentaires ({comments.length})
+          {filterType && (
+            <span className="font-normal text-sm ml-2" style={{ color: "var(--bpm-text-secondary)" }}>
+              — Filtre : {COMMENT_TYPES[filterType]?.label ?? filterType} ({filteredComments.length})
+            </span>
+          )}
         </h2>
+
+        {/* Filtre par type */}
+        <div className="flex flex-wrap items-center gap-2 mb-3">
+          <span className="text-xs font-medium" style={{ color: "var(--bpm-text-secondary)" }}>Filtrer :</span>
+          <Chip label="Tous" variant={filterType === null ? "primary" : "default"} onClick={() => setFilterType(null)} />
+          {(Object.keys(COMMENT_TYPES) as (keyof typeof COMMENT_TYPES)[]).map((t) => (
+            <Chip key={t} label={COMMENT_TYPES[t].label} variant={filterType === t ? "primary" : "default"} onClick={() => setFilterType(t)} />
+          ))}
+        </div>
 
         {/* Pagination (P16) */}
         {hasMore && (
@@ -263,7 +297,7 @@ export default function CommentairesSimulateurPage() {
                       <textarea
                         value={editContent}
                         onChange={(e) => setEditContent(e.target.value)}
-                        className="w-full px-2 py-1.5 rounded border text-sm resize-y"
+                        className="bpm-textarea w-full px-2 py-1.5 rounded-lg border text-sm resize-y"
                         style={{ borderColor: "var(--bpm-border)", background: "var(--bpm-bg-primary)", color: "var(--bpm-text-primary)" }}
                         rows={2}
                         autoFocus
@@ -282,12 +316,20 @@ export default function CommentairesSimulateurPage() {
                   <div className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity flex gap-1">
                     {isOwn && (
                       <>
-                        <button type="button" onClick={() => handleEdit(c.id, c.content)} className="p-1 rounded hover:bg-black/10" title="Modifier" aria-label="Modifier">✏️</button>
-                        <button type="button" onClick={() => handleDelete(c.id)} className="p-1 rounded hover:bg-black/10" title="Supprimer" aria-label="Supprimer">🗑️</button>
+                        <button type="button" onClick={() => handleEdit(c.id, c.content)} className="p-1 rounded hover:bg-black/10 flex items-center justify-center" title="Modifier" aria-label="Modifier">
+                          <IconEdit />
+                        </button>
+                        <button type="button" onClick={() => handleDelete(c.id)} className="p-1 rounded hover:bg-black/10 flex items-center justify-center" title="Supprimer" aria-label="Supprimer">
+                          <IconTrash />
+                        </button>
                       </>
                     )}
                     {!c.resolved && (c.type === "décision" || c.type === "blocage" || c.type === "annotation") && (
-                      <button type="button" onClick={() => handleResolve(c.id)} className="p-1 rounded hover:bg-black/10" title="Marquer résolu" aria-label="Marquer résolu">✅</button>
+                      <button type="button" onClick={() => handleResolve(c.id)} className="p-1 rounded hover:bg-black/10 flex items-center justify-center" title="Marquer résolu" aria-label="Marquer résolu">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" style={{ color: "var(--bpm-accent)" }} aria-hidden>
+                          <path d="M5 13l4 4L19 7" />
+                        </svg>
+                      </button>
                     )}
                   </div>
                 )}
@@ -299,6 +341,17 @@ export default function CommentairesSimulateurPage() {
         {/* Séparateur (P10) */}
         <div className="border-t pt-3 mt-2" style={{ borderColor: "var(--bpm-border)" }}>
           <p className="text-xs font-medium mb-2" style={{ color: "var(--bpm-text-secondary)" }}>Nouveau commentaire</p>
+          <p className="text-xs mb-2" style={{ color: "var(--bpm-text-secondary)" }}>Type :</p>
+          <div className="flex flex-wrap gap-2 mb-3">
+            {(Object.keys(COMMENT_TYPES) as (keyof typeof COMMENT_TYPES)[]).map((t) => (
+              <Chip
+                key={t}
+                label={COMMENT_TYPES[t].label}
+                variant={newCommentType === t ? "primary" : "default"}
+                onClick={() => setNewCommentType(t)}
+              />
+            ))}
+          </div>
           <div className="flex gap-2 items-end">
             <Textarea
               placeholder="Votre message… (Ctrl+Entrée pour envoyer)"
