@@ -173,11 +173,6 @@ export default function ContractsPage() {
   return (
     <div className="doc-page contracts-page">
       <div id="documentation">
-      <p className="mb-4" style={{ color: "var(--bpm-text-secondary)" }}>
-        <Link href="/modules/contracts/documentation" className="font-medium underline" style={{ color: "var(--bpm-accent-cyan)" }}>
-          Documentation complète (fonctionnement, installation, dépendances, paramétrage, API) →
-        </Link>
-      </p>
       <DocumentAnalysisImport
         title="Base contractuelle"
         description="Importez des documents PDF (contrats fournisseurs, CGV, analyses) pour générer automatiquement une synthèse actionnable grâce à Claude. Les analyses sont stockées en base de données et peuvent être réexploitées dans d'autres onglets."

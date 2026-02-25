@@ -72,6 +72,8 @@ export async function POST(req: Request) {
 
   const stream = new ReadableStream({
     async start(controller) {
+      // Premier octet immédiat pour éviter 504 (proxy/gateway timeout avant première réponse).
+      controller.enqueue(encoder.encode(`data: ${JSON.stringify({ type: "start" })}\n\n`));
       try {
         if (ollamaProvider) {
           const systemContent = context_from_modules

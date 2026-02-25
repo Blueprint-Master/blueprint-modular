@@ -163,10 +163,6 @@ function MyComponent() {
           <span className="doc-reading-time">⏱ 1 min</span>
         </div>
         <p className="mt-3 text-sm" style={{ color: "var(--bpm-text-secondary)" }}>
-          <Link href="/modules/notification/documentation" className="font-medium underline" style={{ color: "var(--bpm-accent-cyan)" }}>
-            Documentation complète (fonctionnement, installation, paramétrage, code) →
-          </Link>
-          {" · "}
           <Link href="/modules/notification/simulateur" className="font-medium underline" style={{ color: "var(--bpm-accent-cyan)" }}>
             Simulateur (tester les notifications)
           </Link>

@@ -1228,7 +1228,7 @@ function SandboxContent() {
                 const raw = data.message ?? "Erreur inconnue";
                 const friendly =
                   /network error|failed to fetch|fetch failed|econnrefused|econnreset|network request failed/i.test(raw)
-                    ? "Impossible de joindre le service de génération. Vérifiez que Ollama est démarré (http://localhost:11434) ou définissez AI_MOCK=true dans .env.local pour le mode démo."
+                    ? "Vérifiez qu'Ollama est démarré (http://localhost:11434). Sinon, définissez AI_MOCK=true dans .env.local pour le mode démo."
                     : raw;
                 setAiError(friendly);
               }
@@ -1242,7 +1242,7 @@ function SandboxContent() {
       const raw = err instanceof Error ? err.message : "Erreur réseau";
       const friendly =
         /network error|failed to fetch|fetch failed|econnrefused|econnreset|network request failed/i.test(raw)
-          ? "Impossible de joindre le service de génération. Vérifiez que Ollama est démarré (http://localhost:11434) ou définissez AI_MOCK=true dans .env.local pour le mode démo."
+          ? "Vérifiez qu'Ollama est démarré (http://localhost:11434). Sinon, définissez AI_MOCK=true dans .env.local pour le mode démo."
           : raw;
       setAiError(friendly);
       setCode("");
@@ -1521,6 +1521,9 @@ function SandboxContent() {
             >
               Décrivez la page que vous voulez générer
             </label>
+            <p className="text-xs mb-2" style={{ color: "var(--bpm-text-secondary)" }}>
+              Vérifiez qu&apos;Ollama est démarré (http://localhost:11434) pour la génération.
+            </p>
             <textarea
               value={aiDescription}
               onChange={(e) => setAiDescription(e.target.value)}

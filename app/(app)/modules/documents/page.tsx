@@ -133,11 +133,6 @@ export default function DocumentsPage() {
   return (
     <div className="documents-page doc-page">
       <div id="documentation">
-      <p className="mb-4" style={{ color: "var(--bpm-text-secondary)" }}>
-        <Link href="/modules/documents/documentation" className="font-medium underline" style={{ color: "var(--bpm-accent-cyan)" }}>
-          Documentation complète (fonctionnement, installation, dépendances, paramétrage, API) →
-        </Link>
-      </p>
       <DocumentAnalysisImport
         title="Analyse de documents"
         description="Importez des documents PDF (analyses, études, rapports) pour générer automatiquement une synthèse actionnable grâce à Claude. Les analyses sont stockées en base de données et peuvent être réexploitées dans d'autres onglets."

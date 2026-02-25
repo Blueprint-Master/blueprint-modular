@@ -48,8 +48,15 @@ export async function POST(req: Request) {
     );
   } catch (err) {
     const message = err instanceof Error ? err.message : "Erreur transcription";
-    const userMessage =
-      message.includes("localhost") || message.includes("9000")
+    const cause = err instanceof Error && "cause" in err ? (err.cause as { code?: string })?.code : undefined;
+    const isConnectionError =
+      /fetch failed|ECONNREFUSED|ENOTFOUND|ETIMEDOUT|ECONNRESET|network|unreachable/i.test(message) ||
+      cause === "ECONNREFUSED" ||
+      cause === "ENOTFOUND" ||
+      cause === "ETIMEDOUT";
+    const userMessage = isConnectionError
+      ? "Le service de transcription (Whisper) est indisponible. Vérifiez qu’il est démarré (WHISPER_SERVICE_URL dans .env, ex. http://localhost:9000)."
+      : message.includes("localhost") || message.includes("9000")
         ? "Le service de transcription est temporairement indisponible."
         : message;
     return new Response(JSON.stringify({ error: userMessage }), {

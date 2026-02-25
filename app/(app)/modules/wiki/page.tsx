@@ -130,11 +130,6 @@ export default function WikiPage() {
         <div className="doc-meta">
           <span className="doc-badge doc-badge-category">Module</span>
         </div>
-        <p className="mt-3" style={{ color: "var(--bpm-text-secondary)" }}>
-          <Link href="/modules/wiki/documentation" className="font-medium underline" style={{ color: "var(--bpm-accent-cyan)" }}>
-            Documentation complète (fonctionnement, installation, stockage, $ dans l&apos;assistant IA) →
-          </Link>
-        </p>
       </div>
       <div className="wiki-header">
         <h2 className="text-lg font-semibold mb-2" style={{ color: "var(--bpm-text-primary)" }}>Articles</h2>
