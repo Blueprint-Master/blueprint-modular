@@ -105,9 +105,10 @@ export default function WikiEditPage() {
       setTitle(guest.title);
       setContent(guest.content ?? "");
       setIsPublished(guest.isPublished ?? false);
-      setExcerpt((guest as { excerpt?: string }).excerpt ?? "");
-      setTags(Array.isArray((guest as { tags?: string[] }).tags) ? (guest as { tags: string[] }).tags : []);
-      setPinned((guest as { pinned?: boolean }).pinned ?? false);
+      const g = guest as { excerpt?: string; tags?: string[]; pinned?: boolean };
+      setExcerpt(g.excerpt ?? "");
+      setTags(Array.isArray(g.tags) ? g.tags : []);
+      setPinned(g.pinned ?? false);
       setIsGuestArticle(true);
       setLoading(false);
       return;
