@@ -8,19 +8,20 @@ export default function manifest(): MetadataRoute.Manifest {
     start_url: "/dashboard",
     scope: "/",
     display: "standalone",
+    display_override: ["window-controls-overlay"],
     orientation: "any",
     background_color: "#ffffff",
     theme_color: "#ffffff",
     lang: "fr",
     icons: [
       {
-        src: "/img/icon-pwa-192.png",
+        src: "/img/logo-bpm.png",
         sizes: "192x192",
         type: "image/png",
         purpose: "any",
       },
       {
-        src: "/img/icon-pwa-512.png",
+        src: "/img/logo-bpm.png",
         sizes: "512x512",
         type: "image/png",
         purpose: "maskable",

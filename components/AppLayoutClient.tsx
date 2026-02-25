@@ -75,12 +75,32 @@ function getBreadcrumbFromPathname(pathname: string): { label: string; href?: st
     const second = segments[1];
     const labels: Record<string, string> = {
       auth: "Auth",
-      notification: "Notification",
-      wiki: "Wiki",
-      ia: "IA",
-      veille: "Veille",
-      documents: "Analyse de documents",
+      "audit-log": "Audit / Log",
+      calendrier: "Calendrier",
+      "catalogue-produits": "Catalogue produits",
+      commentaires: "Commentaires",
+      connecteurs: "Connecteurs",
       contracts: "Base contractuelle",
+      documents: "Analyse de documents",
+      "devis-facturation": "Devis / Facturation",
+      "export-planifie": "Export planifié",
+      "formulaire-dynamique": "Formulaire dynamique",
+      ia: "IA",
+      "multi-langue": "Multi-langue",
+      notification: "Notification",
+      "notifications-ciblees": "Notifications ciblées",
+      rapports: "Rapports",
+      referentiels: "Référentiels",
+      "reservation-creneaux": "Réservation / Créneaux",
+      taches: "Tâches",
+      "tableau-blanc": "Tableau blanc",
+      "tableaux-de-bord": "Tableaux de bord",
+      templates: "Templates",
+      themes: "Thèmes",
+      veille: "Veille",
+      webhooks: "Webhooks",
+      wiki: "Wiki",
+      workflow: "Workflow",
       ibkr: "IBKR",
       "analyse-document": "Analyse de documents",
     };
@@ -115,7 +135,11 @@ function AppLayoutInner({ children }: { children: React.ReactNode }) {
   const collapsed = sidebar?.collapsed ?? false;
 
   return (
-    <div className="min-h-screen flex" style={{ background: "var(--bpm-bg-primary)", color: "var(--bpm-text-primary)" }}>
+    <div
+      className="app-layout-root min-h-screen flex"
+      style={{ background: "var(--bpm-bg-primary)", color: "var(--bpm-text-primary)" }}
+      data-sidebar-collapsed={collapsed ? "true" : "false"}
+    >
       {/* Bande grise à gauche : largeur = sidebar (64 ou 16) pour éviter bande blanche quand réduite */}
       <div
         className={`hidden md:block fixed top-0 left-0 bottom-0 -z-10 transition-[width] duration-200 ease-in-out ${collapsed ? "w-16" : "w-64"}`}
@@ -124,11 +148,11 @@ function AppLayoutInner({ children }: { children: React.ReactNode }) {
       />
       <Sidebar />
       <div
-        className={`flex-1 flex flex-col min-h-screen transition-[margin-left] duration-200 ease-in-out ${collapsed ? "md:ml-16" : "md:ml-64"}`}
+        className={`app-content-column flex-1 flex flex-col min-h-screen transition-[margin-left] duration-200 ease-in-out ${collapsed ? "md:ml-16" : "md:ml-64"}`}
       >
           {pathname !== "/dashboard" && (
             <header
-              className="sticky top-0 z-30 flex h-14 shrink-0 items-center justify-between px-3 sm:px-4 gap-2"
+              className="pwa-title-bar sticky top-0 z-30 flex h-14 shrink-0 items-center justify-between px-3 sm:px-4 gap-2"
               style={{ background: "var(--bpm-bg-primary)" }}
             >
               <nav aria-label="Fil d'Ariane" className="doc-breadcrumb doc-breadcrumb-header text-sm truncate min-w-0">

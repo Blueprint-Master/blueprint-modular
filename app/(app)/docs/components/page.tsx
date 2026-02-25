@@ -56,6 +56,11 @@ import {
   BarChart,
   AreaChart,
   ScatterChart,
+  Barcode,
+  QRCode,
+  NfcBadge,
+  Drawer,
+  Pagination,
 } from "@/components/bpm";
 import registry from "@/lib/generated/bpm-components.json";
 
@@ -126,6 +131,11 @@ const PREVIEW_BY_SLUG: Record<string, React.ReactNode> = {
   scatterchart: <ScatterChart data={[{ x: 1, y: 2 }, { x: 2, y: 3 }]} width={120} height={60} />,
   modal: <span className="text-sm text-[var(--bpm-text-secondary)]">Ouvrir une modal depuis la page doc.</span>,
   codeblock: <CodeBlock code={'print("hello")'} language="python" />,
+  barcode: <Barcode value="1234567890123" height={40} />,
+  qrcode: <QRCode value="https://blueprint-modular.com" size={80} />,
+  nfcbadge: <NfcBadge label="Scannable" variant="primary" />,
+  drawer: <PreviewBox><span className="text-sm" style={{ color: "var(--bpm-text-secondary)" }}>bpm.drawer (ouvrir avec state)</span></PreviewBox>,
+  pagination: <Pagination page={1} totalPages={5} onPageChange={() => {}} />,
 };
 
 function groupByCategory(components: ComponentEntry[]): { name: string; items: ComponentEntry[] }[] {

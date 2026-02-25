@@ -60,6 +60,35 @@ body {
   padding-bottom: env(safe-area-inset-bottom, 0);
 }
 
+/* PWA Window Controls Overlay : barre de titre dans la zone système (env + app-region) */
+:root {
+  --bpm-sidebar-width: 0;
+}
+@media (min-width: 768px) {
+  .app-layout-root[data-sidebar-collapsed="true"] { --bpm-sidebar-width: 4rem; }
+  .app-layout-root[data-sidebar-collapsed="false"] { --bpm-sidebar-width: 16rem; }
+}
+@media (display-mode: standalone) {
+  .pwa-title-bar {
+    position: fixed;
+    left: env(titlebar-area-x, 0);
+    top: env(titlebar-area-y, 0);
+    width: env(titlebar-area-width, 100%);
+    height: env(titlebar-area-height, 56px);
+    padding-left: var(--bpm-sidebar-width, 0);
+    -webkit-app-region: drag;
+    app-region: drag;
+  }
+  .pwa-title-bar button,
+  .pwa-title-bar a {
+    -webkit-app-region: no-drag;
+    app-region: no-drag;
+  }
+  .app-content-column {
+    padding-top: env(titlebar-area-height, 56px);
+  }
+}
+
 /* Table variants (striped / hover) — lignes impaires en gris plus clair que l'en-tête */
 .bpm-table-striped tbody tr:nth-of-type(odd) {
   background: var(--bpm-table-stripe);

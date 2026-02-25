@@ -52,6 +52,12 @@ bpm.highlightbox(value=1, label="Important", title="Titre")
 bpm.empty("Aucune donnée")
 bpm.jsonviewer(data='{"key": "value"}')
 bpm.grid(cols=3)
+bpm.barcode("1234567890128", format="EAN13")
+bpm.qrcode("https://example.com")
+bpm.nfcbadge("Scannable", variant="primary")
+bpm.drawer("Titre", "Contenu du tiroir")
+bpm.pagination(page=1, total=5, label="Page 1 sur 5")
+bpm.popover("Ouvrir", "Contenu du popover")
 
 Règles strictes :
 - Une seule instruction par ligne

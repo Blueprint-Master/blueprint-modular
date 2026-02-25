@@ -33,7 +33,7 @@ export function Stepper({
           return (
             <div
               key={id}
-              className={`flex items-start gap-3 ${isActive ? "bpm-stepper-step-active" : ""}`}
+              className={`relative flex items-start gap-3 ${isActive ? "bpm-stepper-step-active" : ""}`}
               role="listitem"
             >
               <button

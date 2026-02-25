@@ -395,6 +395,36 @@
       "name": "bpm.altair",
       "description": "Graphique Altair / Vega-Lite.",
       "category": "Graphiques"
+    },
+    {
+      "slug": "barcode",
+      "name": "bpm.barcode",
+      "description": "Code-barres (affichage EAN-13, Code 128, etc.).",
+      "category": "Identification & traçabilité"
+    },
+    {
+      "slug": "qrcode",
+      "name": "bpm.qrcode",
+      "description": "QR Code (URL, vCard, texte).",
+      "category": "Identification & traçabilité"
+    },
+    {
+      "slug": "nfcbadge",
+      "name": "bpm.nfcbadge",
+      "description": "Badge / tag NFC (affichage statut, ex. Scannable).",
+      "category": "Identification & traçabilité"
+    },
+    {
+      "slug": "drawer",
+      "name": "bpm.drawer",
+      "description": "Tiroir / panneau latéral (détail, formulaire, filtres).",
+      "category": "Feedback"
+    },
+    {
+      "slug": "pagination",
+      "name": "bpm.pagination",
+      "description": "Pagination (page, taille, total) pour listes et tableaux.",
+      "category": "Données & tableaux"
     }
   ]
 }

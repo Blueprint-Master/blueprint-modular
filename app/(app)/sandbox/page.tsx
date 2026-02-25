@@ -66,6 +66,11 @@ import {
   ScatterChart,
   Caption,
   Popover,
+  Barcode,
+  QRCode,
+  NfcBadge,
+  Drawer,
+  Pagination,
 } from "@/components/bpm";
 
 const DEFAULT_CODE = `bpm.title("Ma page", level=1)
@@ -84,6 +89,32 @@ function SandboxModalWrapper({ title, content, itemKey }: { title: string; conte
         {content}
       </Modal>
     </React.Fragment>
+  );
+}
+
+/** Wrapper pour bpm.drawer (état open local). */
+function SandboxDrawerWrapper({ title, content, itemKey }: { title: string; content: string; itemKey: number }) {
+  const [open, setOpen] = useState(false);
+  return (
+    <React.Fragment key={itemKey}>
+      <Button onClick={() => setOpen(true)}>Ouvrir le tiroir</Button>
+      <Drawer open={open} onClose={() => setOpen(false)} title={title}>
+        {content}
+      </Drawer>
+    </React.Fragment>
+  );
+}
+
+/** Prévisualisation drawer pour le sélecteur (état local). */
+function DrawerPreview() {
+  const [open, setOpen] = useState(false);
+  return (
+    <div style={{ padding: 16 }}>
+      <Button onClick={() => setOpen(true)}>Ouvrir le tiroir</Button>
+      <Drawer open={open} onClose={() => setOpen(false)} title="Détails">
+        <p style={{ color: "var(--bpm-text-secondary)", fontSize: 14 }}>Contenu du tiroir latéral.</p>
+      </Drawer>
+    </div>
   );
 }
 
@@ -443,6 +474,29 @@ function parseBpmLine(line: string, key: number): React.ReactNode {
     return <TopNav key={key} title={topnavMatch[1]} titleHref="#" items={navItems} />;
   }
 
+  // === NOUVEAUX (barcode, qrcode, nfcbadge, drawer, pagination) ===
+  const barcodeMatch = trimmed.match(/bpm\.barcode\s*\(\s*["']([^"']*)["']\s*(?:,\s*format\s*=\s*["'](EAN13|CODE128)["'])?\s*\)/);
+  if (barcodeMatch) {
+    const format = (barcodeMatch[2] as "EAN13" | "CODE128") ?? "CODE128";
+    return <Barcode key={key} value={barcodeMatch[1]} format={format} />;
+  }
+  const qrcodeMatch = trimmed.match(/bpm\.qrcode\s*\(\s*["']([^"']*)["']\s*\)/);
+  if (qrcodeMatch) return <QRCode key={key} value={qrcodeMatch[1]} size={128} />;
+  const nfcbadgeMatch = trimmed.match(/bpm\.nfcbadge\s*\(\s*["']([^"']*)["']\s*(?:,\s*variant\s*=\s*["'](\w+)["'])?\s*\)/);
+  if (nfcbadgeMatch) {
+    const variant = (nfcbadgeMatch[2] as "default" | "primary" | "success") ?? "default";
+    return <NfcBadge key={key} label={nfcbadgeMatch[1]} variant={variant} />;
+  }
+  const drawerMatch = trimmed.match(/bpm\.drawer\s*\(\s*["']([^"']*)["']\s*,\s*["']([^"']*)["']\s*\)/);
+  if (drawerMatch) return <SandboxDrawerWrapper key={key} itemKey={key} title={drawerMatch[1]} content={drawerMatch[2]} />;
+  const paginationMatch = trimmed.match(/bpm\.pagination\s*\(\s*page\s*=\s*(\d+)\s*,\s*total\s*=\s*(\d+)\s*(?:,\s*label\s*=\s*["']([^"']*)["'])?\s*\)/);
+  if (paginationMatch) {
+    const page = Math.max(1, parseInt(paginationMatch[1], 10));
+    const totalPages = Math.max(1, parseInt(paginationMatch[2], 10));
+    const label = paginationMatch[3];
+    return <Pagination key={key} page={page} totalPages={totalPages} onPageChange={() => {}} label={label} />;
+  }
+
   return null;
 }
 
@@ -579,6 +633,12 @@ const SANDBOX_COMPONENTS = [
   { value: "plotly", label: "bpm.plotly" },
   { value: "map", label: "bpm.map" },
   { value: "altair", label: "bpm.altair" },
+  { value: "barcode", label: "bpm.barcode" },
+  { value: "qrcode", label: "bpm.qrcode" },
+  { value: "nfcbadge", label: "bpm.nfcbadge" },
+  { value: "drawer", label: "bpm.drawer" },
+  { value: "pagination", label: "bpm.pagination" },
+  { value: "popover", label: "bpm.popover" },
 ] as const;
 
 const SANDBOX_MODULES = [
@@ -1240,6 +1300,46 @@ function SandboxContent() {
       return (
         <div style={{ padding: 16 }}>
           <AltairChart width={400} height={300} />
+        </div>
+      );
+    }
+    if (component === "barcode") {
+      return (
+        <div style={{ padding: 16 }}>
+          <Barcode value="1234567890128" format="EAN13" />
+        </div>
+      );
+    }
+    if (component === "qrcode") {
+      return (
+        <div style={{ padding: 16 }}>
+          <QRCode value="https://blueprint-modular.com" size={160} />
+        </div>
+      );
+    }
+    if (component === "nfcbadge") {
+      return (
+        <div style={{ padding: 16, display: "flex", gap: 8, flexWrap: "wrap" }}>
+          <NfcBadge label="Scannable" variant="default" />
+          <NfcBadge label="Actif" variant="primary" />
+          <NfcBadge label="Validé" variant="success" />
+        </div>
+      );
+    }
+    if (component === "drawer") return <DrawerPreview />;
+    if (component === "pagination") {
+      return (
+        <div style={{ padding: 16 }}>
+          <Pagination page={2} totalPages={5} onPageChange={() => {}} label="Page 2 sur 5" />
+        </div>
+      );
+    }
+    if (component === "popover") {
+      return (
+        <div style={{ padding: 16 }}>
+          <Popover trigger={<Button>Ouvrir</Button>}>
+            <p style={{ padding: 8, margin: 0 }}>Contenu du popover.</p>
+          </Popover>
         </div>
       );
     }

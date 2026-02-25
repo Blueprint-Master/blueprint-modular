@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useMemo } from "react";
 import {
   Title,
   Caption,
@@ -11,11 +11,7 @@ import {
   Table,
   Tabs,
   Input,
-  Textarea,
   Selectbox,
-  Checkbox,
-  Toggle,
-  Slider,
   Progress,
   Badge,
   Card,
@@ -23,184 +19,307 @@ import {
   Divider,
   LineChart,
   BarChart,
-  Spinner,
-  EmptyState,
   Grid,
   Chip,
   Stepper,
   Expander,
   StatusBox,
   Tooltip,
-  Empty,
+  EmptyState,
 } from "@/components/bpm";
 
-const DEMO_TABS = [
-  {
-    label: "Vue d’ensemble",
-    content: (
-      <div className="space-y-4">
-        <p style={{ color: "var(--bpm-text-secondary)", fontSize: "0.9375rem" }}>
-          Cette page utilise <strong>uniquement</strong> les composants <code>bpm.*</code> — comme une application tierce construite avec Blueprint Modular.
-        </p>
-        <Metric label="CA (k€)" value={142.5} delta={12.3} />
-        <Metric label="Commandes" value={1_248} />
-        <Metric label="Taux de conversion" value="3,2 %" />
-      </div>
-    ),
-  },
-  {
-    label: "Formulaires",
-    content: (
-      <div className="space-y-4 max-w-md">
-        <Input label="Nom" placeholder="Saisir un nom" value="" onChange={() => {}} />
-        <Textarea label="Commentaire" rows={3} value="" onChange={() => {}} placeholder="Votre message…" />
-        <Selectbox
-          label="Type"
-          options={[
-            { value: "a", label: "Option A" },
-            { value: "b", label: "Option B" },
-          ]}
-          value={null}
-          onChange={() => {}}
-          placeholder="Choisir…"
-        />
-        <Checkbox label="J’accepte les conditions" checked={false} onChange={() => {}} />
-        <Toggle value={false} onChange={() => {}} label="Notifications activées" />
-        <Slider value={50} min={0} max={100} onChange={() => {}} label="Volume" />
-      </div>
-    ),
-  },
-  {
-    label: "Données & feedback",
-    content: (
-      <div className="space-y-4">
-        <Message type="success">Opération enregistrée.</Message>
-        <Message type="warning">Vérifiez la date d’échéance.</Message>
-        <Progress value={65} max={100} label="Avancement" showValue />
-        <Spinner size="medium" text="Chargement…" />
-        <StatusBox label="Traitement en cours" state="running" defaultExpanded>
-          <p className="text-sm" style={{ color: "var(--bpm-text-secondary)" }}>Détails ou message additionnel.</p>
-        </StatusBox>
-      </div>
-    ),
-  },
+// ——— Données cohérentes pour toute la démo ———
+
+const COMMERCIAUX = [
+  { id: "m", nom: "Marie L.", objectif: 120, realise: 98 },
+  { id: "t", nom: "Thomas B.", objectif: 100, realise: 112 },
+  { id: "s", nom: "Sophie M.", objectif: 80, realise: 76 },
 ];
 
-const TABLE_COLUMNS = [
-  { key: "produit", label: "Produit" },
-  { key: "qté", label: "Qté" },
-  { key: "statut", label: "Statut" },
+const CLIENTS = [
+  { id: "1", client: "Acme Corp", contact: "Jean Dupont", ca: 42.5, statut: "Actif" },
+  { id: "2", client: "TechStart", contact: "Anne Martin", ca: 28.0, statut: "Actif" },
+  { id: "3", client: "GlobalSoft", contact: "Pierre Bernard", ca: 15.2, statut: "En attente" },
+  { id: "4", client: "DataLab", contact: "Marie Curie", ca: 56.8, statut: "Actif" },
+  { id: "5", client: "BuildCo", contact: "Luc Ferry", ca: 0, statut: "Prospect" },
 ];
 
-const TABLE_DATA = [
-  { id: "1", produit: "Commande A", qté: "12", statut: "En cours" },
-  { id: "2", produit: "Commande B", qté: "8", statut: "Livré" },
-  { id: "3", produit: "Commande C", qté: "24", statut: "En attente" },
+const COMMANDES = [
+  { id: "c1", ref: "CMD-2024-001", client: "Acme Corp", montant: 12_400, date: "15/01/2024", statut: "Livrée" },
+  { id: "c2", ref: "CMD-2024-002", client: "TechStart", montant: 8_200, date: "22/01/2024", statut: "En préparation" },
+  { id: "c3", ref: "CMD-2024-003", client: "DataLab", montant: 24_100, date: "28/01/2024", statut: "Validée" },
+  { id: "c4", ref: "CMD-2024-004", client: "GlobalSoft", montant: 5_600, date: "02/02/2024", statut: "En attente" },
 ];
 
-const LINE_DATA = [
-  { x: "Jan", y: 120 },
-  { x: "Fév", y: 150 },
-  { x: "Mar", y: 130 },
-  { x: "Avr", y: 180 },
+const PRODUITS = [
+  { id: "p1", nom: "Offre Starter", prix: "499 €", stock: "Illimité", type: "Abonnement" },
+  { id: "p2", nom: "Offre Pro", prix: "1 299 €", stock: "Illimité", type: "Abonnement" },
+  { id: "p3", nom: "Formation sur mesure", prix: "2 500 €", stock: "—", type: "Service" },
+  { id: "p4", nom: "Support premium", prix: "800 €/an", stock: "—", type: "Service" },
 ];
 
-const BAR_DATA = [
-  { x: "Alice", y: 90 },
-  { x: "Bob", y: 110 },
-  { x: "Charlie", y: 85 },
+const CA_MENSUEL = [
+  { x: "Sep", y: 98 },
+  { x: "Oct", y: 112 },
+  { x: "Nov", y: 105 },
+  { x: "Déc", y: 128 },
+  { x: "Jan", y: 142 },
+  { x: "Fév", y: 118 },
 ];
+
+const CA_PAR_COMMERCIAL = COMMERCIAUX.map((c) => ({ x: c.nom.split(" ")[0], y: c.realise }));
+
+// ——— Composant page ———
 
 export default function DemoPage() {
-  const [clickCount, setClickCount] = useState(0);
+  const [activeTab, setActiveTab] = useState(0);
+  const [searchClient, setSearchClient] = useState("");
+  const [filterStatut, setFilterStatut] = useState<string | null>(null);
+  const [stepperCommande, setStepperCommande] = useState(1);
+  const [showSyncSuccess, setShowSyncSuccess] = useState(false);
+
+  const clientsFiltres = useMemo(() => {
+    let list = [...CLIENTS];
+    if (searchClient.trim()) {
+      const q = searchClient.trim().toLowerCase();
+      list = list.filter((r) => (r.client + " " + r.contact).toLowerCase().includes(q));
+    }
+    if (filterStatut) list = list.filter((r) => r.statut === filterStatut);
+    return list;
+  }, [searchClient, filterStatut]);
+
+  const tabs: { label: string; content: React.ReactNode }[] = [
+    {
+      label: "Tableau de bord",
+      content: (
+        <div className="space-y-6">
+          <div className="grid gap-4" style={{ gridTemplateColumns: "repeat(auto-fill, minmax(180px, 1fr))" }}>
+            <Metric label="CA du mois (k€)" value={142} delta={8.2} />
+            <Metric label="Commandes" value={24} delta={2} />
+            <Metric label="Taux de conversion" value="3,4 %" />
+            <Metric label="Objectif trimestre" value="85 %" />
+          </div>
+          {showSyncSuccess && (
+            <Message type="success">
+              Données synchronisées avec le serveur.{" "}
+              <button
+                type="button"
+                onClick={() => setShowSyncSuccess(false)}
+                className="underline ml-1"
+                style={{ color: "inherit" }}
+              >
+                Masquer
+              </button>
+            </Message>
+          )}
+          <div className="grid gap-4" style={{ gridTemplateColumns: "repeat(auto-fill, minmax(320px, 1fr))" }}>
+            <Card title="Évolution du CA" variant="outlined">
+              <LineChart data={CA_MENSUEL} width={320} height={200} />
+            </Card>
+            <Card title="CA par commercial" variant="outlined">
+              <BarChart data={CA_PAR_COMMERCIAL} width={320} height={200} />
+            </Card>
+          </div>
+          <Panel variant="info" title="Objectif trimestre">
+            <Progress value={72} max={100} label="Progression équipe" showValue />
+          </Panel>
+          <StatusBox label="Synchronisation CRM" state="complete" defaultExpanded>
+            <p className="text-sm" style={{ color: "var(--bpm-text-secondary)" }}>
+              Dernière synchro : aujourd’hui, 14h32. Prochaine : dans 2 h.
+            </p>
+            <Button variant="secondary" className="mt-2" onClick={() => setShowSyncSuccess(true)}>
+              Forcer une synchro
+            </Button>
+          </StatusBox>
+        </div>
+      ),
+    },
+    {
+      label: "Clients",
+      content: (
+        <div className="space-y-4">
+          <div className="flex flex-wrap items-center gap-3">
+            <Input
+              label="Recherche"
+              placeholder="Client ou contact…"
+              value={searchClient}
+              onChange={(e) => setSearchClient(e.target.value)}
+            />
+            <Selectbox
+              label="Statut"
+              options={[
+                { value: "", label: "Tous" },
+                { value: "Actif", label: "Actif" },
+                { value: "Prospect", label: "Prospect" },
+                { value: "En attente", label: "En attente" },
+              ]}
+              value={filterStatut ?? ""}
+              onChange={(v) => setFilterStatut(v === "" ? null : v)}
+              placeholder="Statut"
+            />
+            {(searchClient || filterStatut) && (
+              <Chip
+                label="Effacer les filtres"
+                variant="primary"
+                onClick={() => {
+                  setSearchClient("");
+                  setFilterStatut(null);
+                }}
+              />
+            )}
+          </div>
+          <div className="overflow-x-auto">
+            {clientsFiltres.length > 0 ? (
+              <Table
+                columns={[
+                  { key: "client", label: "Client" },
+                  { key: "contact", label: "Contact" },
+                  { key: "ca", label: "CA (k€)", align: "right" },
+                  {
+                    key: "statut",
+                    label: "Statut",
+                    render: (_, row) => (
+                      <Badge variant={row.statut === "Actif" ? "primary" : "secondary"}>{String(row.statut)}</Badge>
+                    ),
+                  },
+                ]}
+                data={clientsFiltres}
+                striped
+                hover
+                onRowClick={(row) => console.log("Client", row)}
+              />
+            ) : (
+              <EmptyState title="Aucun client" description="Modifiez les filtres pour afficher des résultats." />
+            )}
+          </div>
+        </div>
+      ),
+    },
+    {
+      label: "Commandes",
+      content: (
+        <div className="space-y-6">
+          <Caption>Dernières commandes</Caption>
+          <Table
+            columns={[
+              { key: "ref", label: "Référence" },
+              { key: "client", label: "Client" },
+              { key: "montant", label: "Montant (€)", align: "right" },
+              { key: "date", label: "Date" },
+              {
+                key: "statut",
+                label: "Statut",
+                render: (_, row) => {
+                  const s = String(row.statut);
+                  const v = s === "Livrée" ? "primary" : s === "En préparation" ? "secondary" : "secondary";
+                  return <Badge variant={v}>{s}</Badge>;
+                },
+              },
+            ]}
+            data={COMMANDES}
+            striped
+            hover
+          />
+          <Divider />
+          <Expander title="Suivi d’une commande (exemple)" defaultExpanded>
+            <Stepper
+              steps={[
+                { id: "1", label: "Validation" },
+                { id: "2", label: "Préparation" },
+                { id: "3", label: "Livraison" },
+              ]}
+              currentStep={stepperCommande}
+              onStepClick={setStepperCommande}
+            />
+            <div className="mt-4">
+              <Progress
+                value={stepperCommande === 0 ? 0 : stepperCommande === 1 ? 50 : 100}
+                max={100}
+                label="Avancement CMD-2024-002"
+                showValue
+              />
+            </div>
+          </Expander>
+        </div>
+      ),
+    },
+    {
+      label: "Produits",
+      content: (
+        <div className="space-y-4">
+          <Panel variant="info" title="Catalogue">
+            Offres et services proposés aux clients. Les abonnements ont un stock illimité.
+          </Panel>
+          <div className="grid gap-4" style={{ gridTemplateColumns: "repeat(auto-fill, minmax(260px, 1fr))" }}>
+            {PRODUITS.map((p) => (
+              <Card key={p.id} title={p.nom} variant="outlined">
+                <div className="flex flex-wrap items-center gap-2 mt-1">
+                  <Badge variant="secondary">{p.type}</Badge>
+                  {p.stock !== "—" && (
+                    <Tooltip text="Stock disponible">
+                      <span>
+                        <Chip label={p.stock} />
+                      </span>
+                    </Tooltip>
+                  )}
+                </div>
+                <p className="mt-2 text-sm font-medium" style={{ color: "var(--bpm-accent-cyan)" }}>
+                  {p.prix}
+                </p>
+              </Card>
+            ))}
+          </div>
+        </div>
+      ),
+    },
+    {
+      label: "Équipe",
+      content: (
+        <div className="space-y-6">
+          <Caption>Performance des commerciaux ce mois</Caption>
+          <BarChart data={CA_PAR_COMMERCIAL} width={400} height={220} />
+          <Table
+            columns={[
+              { key: "nom", label: "Commercial" },
+              { key: "objectif", label: "Objectif (k€)", align: "right" },
+              { key: "realise", label: "Réalisé (k€)", align: "right" },
+              {
+                key: "pct",
+                label: "%",
+                align: "right",
+                render: (_, row) => {
+                  const o = Number(row.objectif);
+                  const r = Number(row.realise);
+                  const pct = o ? Math.round((r / o) * 100) : 0;
+                  return (
+                    <Badge variant={pct >= 100 ? "primary" : "secondary"}>
+                      {pct} %
+                    </Badge>
+                  );
+                },
+              },
+            ]}
+            data={COMMERCIAUX}
+            striped
+            hover
+          />
+        </div>
+      ),
+    },
+  ];
 
   return (
-    <div className="doc-page" style={{ maxWidth: 960, margin: "0 auto" }}>
+    <div className="doc-page" style={{ maxWidth: 1000, margin: "0 auto" }}>
       <Breadcrumb items={[{ label: "Demo", href: "/demo" }]} />
-      <Title level={1}>Demo bpm.*</Title>
+      <Title level={1}>Suivi commercial</Title>
       <p className="doc-description" style={{ marginTop: 8, marginBottom: 24 }}>
-        Application de démonstration construite uniquement avec les composants BPM — pour tester le rendu et les interactions comme un développeur tiers.
+        Démo d’une petite application de suivi commercial : tableau de bord, clients, commandes, produits et équipe.
+        Tout est construit avec les composants <code>bpm.*</code>.
       </p>
 
       <Divider />
 
-      <section style={{ marginTop: 24 }}>
-        <Title level={2}>Actions & panneaux</Title>
-        <div className="flex flex-wrap gap-3 mt-3">
-          <Button onClick={() => setClickCount((c) => c + 1)}>Bouton principal</Button>
-          <Button variant="secondary" onClick={() => setClickCount(0)}>Réinitialiser</Button>
-          <Button variant="outline">Outline</Button>
-          {clickCount > 0 && (
-            <Badge variant="primary">{clickCount} clic{clickCount > 1 ? "s" : ""}</Badge>
-          )}
-        </div>
-        <div className="grid gap-4 mt-4" style={{ gridTemplateColumns: "repeat(auto-fill, minmax(260px, 1fr))" }}>
-          <Panel variant="info" title="Info">Contenu du panneau info.</Panel>
-          <Panel variant="warning" title="Attention">Message d’avertissement.</Panel>
-          <Card title="Carte" variant="outlined">Contenu de la carte.</Card>
-        </div>
-      </section>
-
-      <section style={{ marginTop: 32 }}>
-        <Title level={2}>Onglets</Title>
-        <div className="mt-3">
-          <Tabs tabs={DEMO_TABS} defaultTab={0} />
-        </div>
-      </section>
-
-      <section style={{ marginTop: 32 }}>
-        <Title level={2}>Tableau</Title>
-        <div className="mt-3 overflow-x-auto">
-          <Table
-            columns={TABLE_COLUMNS}
-            data={TABLE_DATA}
-            striped
-            hover
-            onRowClick={(row) => console.log("Row clicked", row)}
-          />
-        </div>
-      </section>
-
-      <section style={{ marginTop: 32 }}>
-        <Title level={2}>Graphiques</Title>
-        <Grid cols={2} gap="1rem" className="mt-3">
-          <div>
-            <Caption>Ventes (linechart)</Caption>
-            <LineChart data={LINE_DATA} width={360} height={200} />
-          </div>
-          <div>
-            <Caption>Par commercial (barchart)</Caption>
-            <BarChart data={BAR_DATA} width={360} height={200} />
-          </div>
-        </Grid>
-      </section>
-
-      <section style={{ marginTop: 32 }}>
-        <Title level={2}>Autres composants</Title>
-        <div className="flex flex-wrap gap-2 mt-3">
-          <Chip label="Tag 1" variant="primary" />
-          <Chip label="Tag 2" />
-          <Tooltip text="Info au survol">
-            <span style={{ textDecoration: "underline", cursor: "help" }}>Survoler</span>
-          </Tooltip>
-        </div>
-        <div className="mt-4">
-          <Stepper steps={[{ id: "1", label: "Étape 1" }, { id: "2", label: "Étape 2" }, { id: "3", label: "Étape 3" }]} currentStep={1} />
-        </div>
-        <div className="mt-4">
-          <Expander title="Détails (expander)" defaultExpanded>
-            <p className="text-sm" style={{ color: "var(--bpm-text-secondary)" }}>Contenu dépliable.</p>
-          </Expander>
-        </div>
-        <div className="mt-4">
-          <EmptyState title="Aucune donnée" description="Exemple d’état vide." />
-        </div>
-        <div className="mt-4">
-          <Empty>
-            <span style={{ color: "var(--bpm-text-secondary)", fontSize: "0.875rem" }}>—</span>
-          </Empty>
-        </div>
-      </section>
+      <Tabs tabs={tabs} defaultTab={activeTab} onChange={setActiveTab} />
     </div>
   );
 }
