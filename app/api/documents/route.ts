@@ -95,7 +95,7 @@ Règles : supplier = partie qui fournit le service ; client = partie qui le reç
     const apiKey = process.env.ANTHROPIC_API_KEY;
     let parsed: Record<string, unknown> | null = null;
 
-    function extractJsonFromResponse(text: string): Record<string, unknown> | null {
+    const extractJsonFromResponse = (text: string): Record<string, unknown> | null => {
       if (!text || typeof text !== "string") return null;
       const stripped = text.replace(/^[\s\S]*?```(?:json)?\s*/i, "").replace(/\s*```[\s\S]*$/i, "").trim();
       const match = stripped.match(/\{[\s\S]*\}/);
@@ -105,7 +105,7 @@ Règles : supplier = partie qui fournit le service ; client = partie qui le reç
       } catch {
         return null;
       }
-    }
+    };
 
     if (rawText.length > 0) {
       if (apiKey) {
