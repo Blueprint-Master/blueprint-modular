@@ -116,9 +116,6 @@ export default function NotificationSimulateurPage() {
         <Link href="/modules/notification" className="text-sm font-medium hover:underline" style={linkStyle}>
           ← Retour au module Notification
         </Link>
-        <Link href="/modules/notification/documentation" className="text-sm font-medium hover:underline" style={linkStyle}>
-          Documentation →
-        </Link>
       </nav>
     </div>
   );

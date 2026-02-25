@@ -286,8 +286,10 @@ body {
 .documents-filters input { padding: 8px 12px; border: 1px solid var(--bpm-border); border-radius: 8px; width: 300px; max-width: 100%; font-size: 14px; background: var(--bpm-surface); color: var(--bpm-text-primary); box-sizing: border-box; }
 .documents-empty { text-align: center; padding: 64px 16px; color: var(--bpm-text-secondary); }
 .documents-empty .btn-primary { margin-top: 16px; }
-/* Table documents : défilement horizontal sur petit écran */
-.documents-page .bpm-table-wrapper { max-width: 100%; overflow-x: auto; -webkit-overflow-scrolling: touch; }
+/* Table documents : pas responsive — largeur fixe, défilement horizontal si besoin */
+.documents-page .bpm-table-wrapper { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+.documents-page .bpm-table-container,
+.documents-page .bpm-table { min-width: 900px; }
 @media (max-width: 640px) {
   .documents-page .doc-page-header + div [role="button"] { padding-left: 1rem; padding-right: 1rem; }
   .documents-page .doc-page-header + div [role="button"] p { font-size: 0.8125rem; }

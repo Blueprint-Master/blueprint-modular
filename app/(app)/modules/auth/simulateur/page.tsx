@@ -99,9 +99,6 @@ export default function AuthSimulateurPage() {
         <Link href="/modules/auth" className="text-sm font-medium hover:underline" style={linkStyle}>
           ← Retour au module Auth
         </Link>
-        <Link href="/modules/auth/documentation" className="text-sm font-medium hover:underline" style={linkStyle}>
-          Documentation →
-        </Link>
       </nav>
     </div>
   );

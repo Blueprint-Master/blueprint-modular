@@ -1,13 +1,12 @@
-import { getServerSession } from "next-auth";
-import { authOptions } from "@/lib/auth";
+import { getSessionOrTestUser } from "@/lib/auth";
 
 export const dynamic = "force-dynamic";
 
 const WHISPER_URL = process.env.WHISPER_SERVICE_URL ?? "http://localhost:9000";
 
 export async function POST(req: Request) {
-  const session = await getServerSession(authOptions);
-  if (!session?.user?.email) {
+  const result = await getSessionOrTestUser();
+  if (!result) {
     return new Response("Unauthorized", { status: 401 });
   }
 

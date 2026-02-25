@@ -92,7 +92,12 @@ export async function POST(req: Request) {
               encoder.encode(`data: ${JSON.stringify({ type: "done", discussion_id: savedId })}\n\n`)
             );
           } catch (vllmErr) {
-            const errMsg = vllmErr instanceof Error ? vllmErr.message : "vLLM error";
+            const raw = vllmErr instanceof Error ? vllmErr.message : String(vllmErr);
+            const isConnection =
+              /fetch|ECONNREFUSED|timeout|ETIMEDOUT|network|Failed to fetch/i.test(raw) || raw.startsWith("Ollama 5");
+            const errMsg = isConnection
+              ? "Impossible de joindre le service IA (Ollama). Vérifiez qu'Ollama est démarré (ex. http://localhost:11434) ou définissez AI_MOCK=true pour le mode démo."
+              : raw;
             controller.enqueue(encoder.encode(`data: ${JSON.stringify({ type: "error", message: errMsg })}\n\n`));
           }
           controller.close();

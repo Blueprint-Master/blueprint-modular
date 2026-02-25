@@ -236,7 +236,10 @@ export function AIChat({
     const text = inputText.trim();
     if (!text || isStreaming) return;
 
-    const providers = ["vllm"]; // Pour l'instant uniquement Qwen (vllm)
+    // Utiliser le provider sélectionné (vllm/qwen/mistral = Ollama, claude = Anthropic)
+    const provider = configuredProviders.some((p) => p.provider_name === activeProvider)
+      ? activeProvider
+      : "vllm";
 
     setInputText("");
     setAttachedFiles([]);
@@ -245,7 +248,7 @@ export function AIChat({
 
     const baseHistory = messages.slice(-10).map((m) => ({ role: m.role, content: m.content }));
     const userMsg: ChatMsg = { role: "user", content: text };
-    setMessages((prev) => [...prev, userMsg, { role: "assistant", content: "", provider: providers[0] }]);
+    setMessages((prev) => [...prev, userMsg, { role: "assistant", content: "", provider }]);
 
     const removeLastAssistant = () =>
       setMessages((prev) => (prev.length >= 2 && prev[prev.length - 1].role === "assistant" ? prev.slice(0, -1) : prev));
@@ -267,7 +270,7 @@ export function AIChat({
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           message: text,
-          provider_name: providers[0],
+          provider_name: provider,
           conversation_history: [...baseHistory, { role: "user", content: text }],
           discussion_id: currentDiscussionId ?? undefined,
           context_from_modules: contextFromModules,
@@ -281,7 +284,20 @@ export function AIChat({
         return;
       }
       if (!res.ok) {
-        removeLastAssistant();
+        const errBody = await res.text();
+        let errMsg = `Le service a répondu ${res.status}`;
+        try {
+          const j = JSON.parse(errBody);
+          if (typeof j?.error === "string") errMsg = j.error;
+        } catch {
+          if (errBody.slice(0, 100)) errMsg += ` — ${errBody.slice(0, 100)}`;
+        }
+        setMessages((prev) => {
+          const next = [...prev];
+          const last = next[next.length - 1];
+          if (last?.role === "assistant") next[next.length - 1] = { ...last, content: `*Erreur :* ${errMsg}` };
+          return next;
+        });
         setIsStreaming(false);
         return;
       }
@@ -330,7 +346,17 @@ export function AIChat({
         return next;
       });
     } catch (err) {
-      if ((err as Error).name !== "AbortError") removeLastAssistant();
+      if ((err as Error).name === "AbortError") {
+        removeLastAssistant();
+      } else {
+        const errMsg = err instanceof Error ? err.message : "Connexion ou timeout. Vérifiez que le service IA (Ollama) est démarré.";
+        setMessages((prev) => {
+          const next = [...prev];
+          const last = next[next.length - 1];
+          if (last?.role === "assistant") next[next.length - 1] = { ...last, content: `*Erreur :* ${errMsg}` };
+          return next;
+        });
+      }
     } finally {
       setIsStreaming(false);
       abortRef.current = null;
