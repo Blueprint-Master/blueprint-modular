@@ -352,7 +352,7 @@ Trouve le bloc des deux boutons de mode (celui qui contient "Par code" et "Par c
       </button>
       {aiGenerating && (
         <span className="text-xs" style={{ color: "var(--bpm-text-secondary)" }}>
-          Qwen2.5 génère votre page (~30-60s)…
+          Qwen3 génère votre page (~30-60s)…
         </span>
       )}
       {!aiGenerating && (

@@ -50,7 +50,7 @@ npx prisma migrate deploy
 
 # 2. Serveur IA pour l&apos;analyse des contrats (Ollama)
 ollama serve
-ollama pull qwen2.5:7b
+ollama pull qwen3:8b
 
 # 3. Lancer l&apos;app
 npm run dev
@@ -60,7 +60,7 @@ npm run dev
         language="bash"
       />
       <p className="mt-2 mb-4 text-sm" style={{ color: "var(--bpm-text-secondary)" }}>
-        Définir dans <code>.env</code> : <code>DATABASE_URL</code>, <code>AI_SERVER_URL</code> (ex. <code>http://localhost:11434</code>), <code>AI_MODEL</code> (ex. <code>qwen2.5:7b</code>). Sans Ollama : <code>AI_MOCK=true</code> (l&apos;upload fonctionne mais l&apos;analyse restera en erreur ou analyzing).
+        Définir dans <code>.env</code> : <code>DATABASE_URL</code>, <code>AI_SERVER_URL</code> (ex. <code>http://localhost:11434</code>), <code>AI_MODEL</code> (ex. <code>qwen3:8b</code>). Sans Ollama : <code>AI_MOCK=true</code> (l&apos;upload fonctionne mais l&apos;analyse restera en erreur ou analyzing).
       </p>
 
       <h3 className="text-base font-semibold mt-6 mb-2" style={{ color: "var(--bpm-text-primary)" }}>
@@ -70,13 +70,13 @@ npm run dev
         L&apos;analyse (métadonnées, risques, engagements) est effectuée par le client Ollama (<code>lib/ai/vllm-client</code>). Sans serveur, l&apos;upload fonctionne mais le statut restera en erreur ou analyzing. Pour activer l&apos;analyse :
       </p>
       <CodeBlock
-        code={`# Lancer Ollama et télécharger le modèle (ex. Qwen 2.5)
+        code={`# Lancer Ollama et télécharger le modèle (ex. Qwen3)
 ollama serve
-ollama pull qwen2.5:7b`}
+ollama pull qwen3:8b`}
         language="bash"
       />
       <p className="mt-2 mb-4 text-sm" style={{ color: "var(--bpm-text-secondary)" }}>
-        Dans <code>.env</code> : <code>AI_SERVER_URL=http://localhost:11434</code>, <code>AI_MODEL=qwen2.5:7b</code>. En dev sans serveur : <code>AI_MOCK=true</code> (les analyses échoueront ou seront mockées selon le code).
+        Dans <code>.env</code> : <code>AI_SERVER_URL=http://localhost:11434</code>, <code>AI_MODEL=qwen3:8b</code>. En dev sans serveur : <code>AI_MOCK=true</code> (les analyses échoueront ou seront mockées selon le code).
       </p>
 
       <h2 className="text-lg font-semibold mt-8 mb-2" style={{ color: "var(--bpm-text-primary)" }}>
@@ -98,7 +98,7 @@ ollama pull qwen2.5:7b`}
       </h2>
       <ul className="list-disc pl-6 mb-4 text-sm" style={{ color: "var(--bpm-text-secondary)" }}>
         <li><code>DATABASE_URL</code> — Connexion PostgreSQL (obligatoire).</li>
-        <li><code>AI_SERVER_URL</code>, <code>AI_MODEL</code> — Serveur Ollama pour l&apos;analyse (ex. <code>http://localhost:11434</code>, <code>qwen2.5:7b</code>).</li>
+        <li><code>AI_SERVER_URL</code>, <code>AI_MODEL</code> — Serveur Ollama pour l&apos;analyse (ex. <code>http://localhost:11434</code>, <code>qwen3:8b</code>).</li>
         <li><code>AI_MOCK</code> — <code>true</code> pour désactiver les appels réels (dév ; l&apos;analyse échouera ou sera mockée).</li>
         <li><strong>Workspace</strong> : à l&apos;upload, champ <code>workspace</code> (service1 | service2). Défaut : <code>service1</code>.</li>
         <li><strong>Type de contrat</strong> : <code>contractType</code> (supplier | cgv | other). Défaut : <code>other</code>.</li>

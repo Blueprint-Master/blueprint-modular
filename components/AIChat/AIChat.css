@@ -309,6 +309,13 @@
 .bpm-ai-chat-pj-button:hover:not(:disabled) { color: var(--bpm-accent-cyan); filter: brightness(0.96); }
 .bpm-ai-chat-pj-button:disabled { opacity: 0.5; cursor: not-allowed; }
 .bpm-ai-chat-pj-button svg { width: 24px; height: 24px; pointer-events: none; }
+.bpm-ai-chat-mic-wrap {
+  display: flex; align-items: center; justify-content: center; width: 36px; height: 36px; flex-shrink: 0;
+}
+.bpm-ai-chat-mic-wrap button {
+  width: 36px; height: 36px; min-width: 36px; min-height: 36px;
+}
+.bpm-ai-chat-mic-wrap button svg { width: 24px; height: 24px; pointer-events: none; }
 .bpm-ai-chat-send-arrow {
   display: flex; align-items: center; justify-content: center; width: 36px; height: 36px; padding: 0.5rem;
   border: none; border-radius: 8px; background: var(--bpm-accent-cyan); color: #fff; cursor: pointer; flex-shrink: 0;

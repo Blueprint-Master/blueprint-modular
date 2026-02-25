@@ -115,7 +115,7 @@ Ne retourne rien d'autre que ce JSON. Pas de texte avant ou après. Pas de balis
         const jsonMatch = jsonStr.match(/\{[\s\S]*\}/);
         parsed = jsonMatch ? (JSON.parse(jsonMatch[0]) as Record<string, unknown>) : null;
       } else {
-        // Fallback : analyse via Ollama (Qwen2.5) si pas de clé Anthropic
+        // Fallback : analyse via Ollama (Qwen3) si pas de clé Anthropic
         try {
           const { content } = await vllmClient.chat(
             [{ role: "user", content: `${extractPrompt}\n\n---\nDocument:\n${rawText.slice(0, 40000)}` }],

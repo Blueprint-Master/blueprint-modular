@@ -47,7 +47,7 @@ MIT
 
 # Application Next.js (ce dépôt)
 
-L’**application dashboard** Blueprint Modular est une app **Next.js 14** (App Router) avec authentification, modules métier (contrats, wiki, documents, IA) et couche IA locale (Ollama / Qwen2.5).
+L’**application dashboard** Blueprint Modular est une app **Next.js 14** (App Router) avec authentification, modules métier (contrats, wiki, documents, IA) et couche IA locale (Ollama / Qwen3).
 
 | Dossier / fichier | Rôle |
 |-------------------|------|

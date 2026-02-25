@@ -11,7 +11,7 @@ export type ChatMessage = { role: "user" | "assistant" | "system"; content: stri
 export interface VLLMChatOptions {
   timeout?: number;
   max_tokens?: number;
-  /** Override du modèle Ollama (ex. qwen2.5:7b, mistral:7b). */
+  /** Override du modèle Ollama (ex. qwen3:8b, mistral:7b). */
   model?: string;
 }
 

@@ -47,7 +47,7 @@ Accordion, Avatar, Badge, Breadcrumb, Button, Card, Checkbox, Chip, CodeBlock, C
 - **Serveur** : routes API utilisent **getServerSession(authOptions)** puis **Prisma** pour lire/écrire.
 - **Wiki** : GET/PUT/DELETE `/api/wiki`, `/api/wiki/[slug]` → modèle Prisma `WikiArticle`.
 - **Documents** : GET/POST/DELETE `/api/documents`, `/api/documents/[id]` → modèle Prisma `Document`.
-- **IA** : POST `/api/ai/chat` (stream SSE) → par défaut **Ollama** (Qwen2.5:7b) via `lib/ai/vllm-client.ts`, avec option de contexte modules ; **Anthropic** (Claude) disponible en fallback (`provider_name: "claude"`).
+- **IA** : POST `/api/ai/chat` (stream SSE) → par défaut **Ollama** (Qwen3:8b) via `lib/ai/vllm-client.ts`, avec option de contexte modules ; **Anthropic** (Claude) disponible en fallback (`provider_name: "claude"`).
 - Pas de store global type Redux ; état local + contexte (NotificationHistory, Theme).
 
 ---
@@ -78,7 +78,7 @@ Accordion, Avatar, Badge, Breadcrumb, Button, Card, Checkbox, Chip, CodeBlock, C
 - **Assistant contextuel** : étendre **AIChat** ou ajouter un panneau **AIAssistant** (sélecteur de modules, envoi du contexte au chat). Utiliser uniquement les composants bpm.*.
 - **Contrats** : modèle Prisma **Contract** avec champs requis + `extracted_data` JSON ; routes `/api/contracts/*` ; analyse IA côté serveur via **lib/ai/contract-analyzer.ts** (Ollama).
 - **Wiki** : étendre **WikiArticle** (category, tags, summary, ai_generated, workspace) ; route POST `/api/wiki/generate` (stream) ; composant **WikiAIGenerator** dans le module wiki existant.
-- **Ollama** : variable d’env `AI_SERVER_URL` ; en dev, mock si `AI_MOCK=true`. Modèle : `AI_MODEL` (ex. `qwen2.5:7b`).
+- **Ollama** : variable d’env `AI_SERVER_URL` ; en dev, mock si `AI_MOCK=true`. Modèle : `AI_MODEL` (ex. `qwen3:8b`).
 
 Ce rapport valide le démarrage du développement Phase 1.
 

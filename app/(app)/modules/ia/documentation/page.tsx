@@ -24,10 +24,11 @@ export default function IADocumentationPage() {
         Comment fonctionne le module IA
       </h2>
       <p className="mb-4" style={{ color: "var(--bpm-text-secondary)" }}>
-        Le module IA fournit un <strong>assistant conversationnel</strong> intégré à l&apos;app. Par défaut, les réponses sont générées par un modèle local via <strong>Ollama</strong> (ex. Qwen 2.5 7B). Le contexte envoyé au modèle peut inclure les données des modules <strong>Wiki</strong> et <strong>Documents</strong> : titres et contenu des articles wiki récents, liste des documents uploadés et métadonnées. L&apos;utilisateur choisit quels modules activer dans le panneau de contexte ; le client construit alors un bloc de texte à partir du registry des modules et l&apos;envoie en <code>context_from_modules</code> à l&apos;API. L&apos;historique des conversations est sauvegardé en base (AiConversation, AiMessage) ; chaque discussion peut être reprise, supprimée ou dupliquée.
+        Le module IA fournit un <strong>assistant conversationnel</strong> intégré à l&apos;app. Par défaut, les réponses sont générées par un modèle local via <strong>Ollama</strong> (ex. Qwen3 8B). Le contexte envoyé au modèle peut inclure les données des modules <strong>Wiki</strong> et <strong>Documents</strong> : titres et contenu des articles wiki récents, liste des documents uploadés et métadonnées. L&apos;utilisateur choisit quels modules activer dans le panneau de contexte ; le client construit alors un bloc de texte à partir du registry des modules et l&apos;envoie en <code>context_from_modules</code> à l&apos;API. L&apos;historique des conversations est sauvegardé en base (AiConversation, AiMessage) ; chaque discussion peut être reprise, supprimée ou dupliquée.
       </p>
       <ul className="list-disc pl-6 mb-4 text-sm" style={{ color: "var(--bpm-text-secondary)" }}>
-        <li><strong>Providers</strong> : vllm / Qwen et Mistral via Ollama ; Claude (Anthropic) si <code>ANTHROPIC_API_KEY</code> est défini. Les autres (OpenAI, Gemini, Grok) sont listés mais non implémentés.</li>
+        <li><strong>Providers</strong> : Qwen et Mistral via Ollama ; Claude (Anthropic) si <code>ANTHROPIC_API_KEY</code> est défini. Seuls ces providers sont implémentés.</li>
+        <li><strong>Transcription vocale (Whisper)</strong> : un bouton Micro dans la zone de saisie permet de dicter la question au lieu de la taper. L&apos;audio est envoyé à <code>POST /api/wiki/transcribe</code> (micro-service Whisper sur le VPS, port 9000) ; le texte transcrit est inséré dans la zone de saisie. Même service que pour le Wiki (nouvel article par dictée).</li>
         <li><strong>Streaming</strong> : les réponses sont streamées (Server-Sent Events) pour affichage progressif.</li>
         <li><strong>Prompts</strong> : le prompt système (lib/ai/prompt-templates) précise le rôle de l&apos;assistant (Blueprint Modular, français, pas de calcul ni d&apos;hypothèses). Si un contexte modules est fourni, il est injecté dans le prompt système.</li>
       </ul>
@@ -79,7 +80,7 @@ npx prisma migrate deploy`}
 
 # Lancer le serveur et télécharger le modèle :
 ollama serve
-ollama pull qwen2.5:7b
+ollama pull qwen3:8b
 
 # Optionnel — autre modèle :
 ollama pull mistral:7b`}
@@ -112,7 +113,7 @@ npx prisma migrate deploy
 
 # 3. Serveur Ollama (terminal dédié ou arrière-plan)
 ollama serve
-ollama pull qwen2.5:7b
+ollama pull qwen3:8b
 
 # 4. Lancer l&apos;app
 npm run dev
@@ -122,7 +123,7 @@ npm run dev
         language="bash"
       />
       <p className="mt-2 mb-4 text-sm" style={{ color: "var(--bpm-text-secondary)" }}>
-        Définir dans <code>.env</code> : <code>DATABASE_URL</code>, <code>NEXTAUTH_SECRET</code>, <code>NEXTAUTH_URL</code>, <code>AI_SERVER_URL</code> (ex. <code>http://localhost:11434</code>), <code>AI_MODEL</code> (ex. <code>qwen2.5:7b</code>). Sans Ollama : <code>AI_MOCK=true</code> pour des réponses simulées.
+        Définir dans <code>.env</code> : <code>DATABASE_URL</code>, <code>NEXTAUTH_SECRET</code>, <code>NEXTAUTH_URL</code>, <code>AI_SERVER_URL</code> (ex. <code>http://localhost:11434</code>), <code>AI_MODEL</code> (ex. <code>qwen3:8b</code>). Sans Ollama : <code>AI_MOCK=true</code> pour des réponses simulées.
       </p>
 
       <h2 className="text-lg font-semibold mt-8 mb-2" style={{ color: "var(--bpm-text-primary)" }}>
@@ -132,7 +133,7 @@ npm run dev
         L&apos;assistant peut utiliser plusieurs <strong>providers</strong>. Le choix se fait dans l&apos;interface (sélecteur de modèle) et/ou via les variables d&apos;environnement.
       </p>
       <ul className="list-disc pl-6 mb-4 text-sm" style={{ color: "var(--bpm-text-secondary)" }}>
-        <li><strong>Ollama (Qwen, Mistral)</strong> : par défaut, l&apos;app utilise le modèle configuré dans <code>AI_MODEL</code> (ex. <code>qwen2.5:7b</code>). Pour Qwen et Mistral spécifiquement, vous pouvez définir <code>AI_MODEL_QWEN</code> et <code>AI_MODEL_MISTRAL</code>. Téléchargez le modèle avec <code>ollama pull qwen2.5:7b</code> ou <code>ollama pull mistral:7b</code>, puis sélectionnez le provider correspondant dans l&apos;UI.</li>
+        <li><strong>Ollama (Qwen, Mistral)</strong> : par défaut, l&apos;app utilise le modèle configuré dans <code>AI_MODEL</code> (ex. <code>qwen3:8b</code>). Pour Qwen et Mistral spécifiquement, vous pouvez définir <code>AI_MODEL_QWEN</code> et <code>AI_MODEL_MISTRAL</code>. Téléchargez le modèle avec <code>ollama pull qwen3:8b</code> ou <code>ollama pull mistral:7b</code>, puis sélectionnez le provider correspondant dans l&apos;UI.</li>
         <li><strong>Claude (Anthropic)</strong> : définissez <code>ANTHROPIC_API_KEY</code> dans <code>.env</code>. Le provider « claude » devient disponible dans l&apos;assistant ; les requêtes sont envoyées à l&apos;API Anthropic au lieu d&apos;Ollama.</li>
         <li><strong>Mock</strong> : en développement sans serveur, <code>AI_MOCK=true</code> désactive les appels réels et renvoie une réponse factice (utile pour tester l&apos;UI).</li>
       </ul>
@@ -142,7 +143,7 @@ npm run dev
       </h2>
       <ul className="list-disc pl-6 mb-4 text-sm" style={{ color: "var(--bpm-text-secondary)" }}>
         <li><code>AI_SERVER_URL</code> — URL du serveur Ollama (ex. <code>http://localhost:11434</code> ou <code>http://vps:11434</code>).</li>
-        <li><code>AI_MODEL</code> — Modèle Ollama par défaut (ex. <code>qwen2.5:7b</code>).</li>
+        <li><code>AI_MODEL</code> — Modèle Ollama par défaut (ex. <code>qwen3:8b</code>).</li>
         <li><code>AI_MODEL_QWEN</code>, <code>AI_MODEL_MISTRAL</code> — Override par provider si besoin.</li>
         <li><code>AI_MOCK</code> — <code>true</code> pour désactiver les appels réels et renvoyer des réponses mockées (dév).</li>
         <li><code>AI_TIMEOUT</code> — Délai max en secondes (ex. 120).</li>
@@ -189,6 +190,7 @@ npm run dev
         <li><code>GET /api/ai/conversations/[id]/messages</code> — Détail des messages d&apos;une conversation (si exposé).</li>
         <li><code>GET /api/ai/health</code> — Santé du serveur Ollama (disponibilité, latence).</li>
         <li><code>GET /api/ai/providers</code> — Liste des providers (vllm, qwen, mistral, claude, etc.) et indicateur de configuration (ex. ANTHROPIC_API_KEY pour Claude).</li>
+        <li><code>POST /api/wiki/transcribe</code> — Transcription vocale (Whisper). Utilisée par le bouton Micro de la zone de saisie IA et par le Wiki (nouvel article par dictée). Body : <code>multipart/form-data</code> avec champ <code>audio</code> (fichier webm/mp4). Réponse : <code>{ transcription: string }</code>. Prérequis : micro-service Whisper démarré (ex. port 9000, variable <code>WHISPER_SERVICE_URL</code> dans <code>.env</code>).</li>
       </ul>
 
       <h2 className="text-lg font-semibold mt-8 mb-2" style={{ color: "var(--bpm-text-primary)" }}>

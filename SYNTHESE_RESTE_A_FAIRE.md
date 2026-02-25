@@ -79,7 +79,7 @@ Points d’attention issus du doc :
 ## 5. Migration Ollama (CURSOR_PROMPT_OLLAMA_MIGRATION.md)
 
 - **Statut** : procédure de migration vLLM → Ollama (config, `vllm-client`, `.env`).  
-- **Reste à faire** : rien de plus si la migration est déjà effectuée et que les vérifications passent (health check, chat simple, interface avec modèle « qwen2.5:7b »).  
+- **Reste à faire** : rien de plus si la migration est déjà effectuée et que les vérifications passent (health check, chat simple, interface avec modèle « qwen3:8b »).  
 - **À ne pas modifier** (rappels du doc) : `app/api/ai/chat/route.ts`, `app/api/ai/health/route.ts`, `AIAssistant.tsx`, `prompt-templates.ts`, `context-builder.ts`, `module-registry.ts`.
 
 ---

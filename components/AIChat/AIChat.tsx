@@ -7,6 +7,7 @@ import remarkGfm from "remark-gfm";
 import rehypeHighlight from "rehype-highlight";
 import { getDollarSuggestions } from "./ai-suggestions";
 import { moduleRegistry } from "@/lib/ai/module-registry";
+import { VoiceRecorder } from "@/components/ai/VoiceRecorder";
 import "./AIChat.css";
 
 const PROVIDER_ALIAS: Record<string, string> = {
@@ -646,6 +647,13 @@ export function AIChat({
                     <path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z" />
                   </svg>
                 </button>
+                <div className="bpm-ai-chat-mic-wrap">
+                  <VoiceRecorder
+                    iconOnly
+                    disabled={isStreaming}
+                    onTranscription={(text) => setInputText((prev) => (prev ? prev + " " + text : text))}
+                  />
+                </div>
                 <button
                   type="button"
                   className="bpm-ai-chat-send-arrow"

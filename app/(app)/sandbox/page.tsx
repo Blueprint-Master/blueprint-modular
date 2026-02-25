@@ -1570,7 +1570,7 @@ function SandboxContent() {
               {aiGenerating && (
                 <span className="inline-flex items-center gap-2" style={{ color: "var(--bpm-text-secondary)" }}>
                   <Spinner size="small" text="" className="shrink-0" />
-                  <span className="text-xs">Qwen2.5 génère votre page (~30-60s)…</span>
+                  <span className="text-xs">Qwen3 génère votre page (~30-60s)…</span>
                 </span>
               )}
               {!aiGenerating && (

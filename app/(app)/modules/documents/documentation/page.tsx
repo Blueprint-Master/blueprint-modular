@@ -51,7 +51,7 @@ npx prisma migrate deploy
 # Option A : Claude (définir ANTHROPIC_API_KEY dans .env)
 # Option B : Ollama (local ou VPS)
 ollama serve
-ollama pull qwen2.5:7b
+ollama pull qwen3:8b
 
 # 3. Lancer l&apos;app
 npm run dev
@@ -76,8 +76,8 @@ npm run dev
 
 # Option B — Ollama (local / VPS)
 ollama serve
-ollama pull qwen2.5:7b
-# .env : AI_SERVER_URL=http://localhost:11434, AI_MODEL=qwen2.5:7b`}
+ollama pull qwen3:8b
+# .env : AI_SERVER_URL=http://localhost:11434, AI_MODEL=qwen3:8b`}
         language="bash"
       />
 
@@ -101,7 +101,7 @@ ollama pull qwen2.5:7b
       <ul className="list-disc pl-6 mb-4 text-sm" style={{ color: "var(--bpm-text-secondary)" }}>
         <li><code>DATABASE_URL</code> — Connexion PostgreSQL (obligatoire).</li>
         <li><code>ANTHROPIC_API_KEY</code> — Clé API Anthropic pour l&apos;analyse via Claude (optionnel ; si absent, fallback Ollama).</li>
-        <li><code>AI_SERVER_URL</code>, <code>AI_MODEL</code> — Serveur Ollama pour l&apos;analyse (ex. <code>http://localhost:11434</code>, <code>qwen2.5:7b</code>).</li>
+        <li><code>AI_SERVER_URL</code>, <code>AI_MODEL</code> — Serveur Ollama pour l&apos;analyse (ex. <code>http://localhost:11434</code>, <code>qwen3:8b</code>).</li>
         <li><strong>Formats acceptés</strong> : PDF uniquement (côté API actuel).</li>
         <li><strong>Taille max</strong> : dépend du serveur (proxy). En cas d&apos;erreur 413, augmenter <code>client_max_body_size</code> (nginx) ou la limite côté Next.js si configurée.</li>
       </ul>

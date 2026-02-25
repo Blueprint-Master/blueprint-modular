@@ -1,4 +1,4 @@
-# 🔧 CURSOR PROMPT — Migration vLLM → Ollama (Qwen2.5:7b)
+# 🔧 CURSOR PROMPT — Migration vLLM → Ollama (Qwen3:8b)
 # Objectif : brancher Blueprint Modular sur Ollama local (VPS)
 # Durée estimée : 30 minutes
 
@@ -9,7 +9,7 @@
 Blueprint Modular est un framework Next.js 14 + TypeScript + Prisma.
 Le code IA existant est bien structuré mais pointe vers vLLM/Anthropic.
 On migre vers **Ollama** qui tourne sur le VPS à `http://145.239.199.236:11434`.
-Modèle actif : **qwen2.5:7b**
+Modèle actif : **qwen3:8b**
 
 L'API Ollama est différente de vLLM sur 3 points :
 - URL : `/api/chat` au lieu de `/v1/chat/completions`
@@ -27,7 +27,7 @@ Remplace le contenu ENTIER par :
 
 ```typescript
 /**
- * Configuration IA — Ollama local (Qwen2.5:7b).
+ * Configuration IA — Ollama local (Qwen3:8b).
  * AI_SERVER_URL dans .env pointe vers le VPS Ollama.
  * AI_MOCK=true pour développement sans serveur.
  */
@@ -37,7 +37,7 @@ export const AI_CONFIG = {
   mock: process.env.AI_MOCK === "true",
   timeout: parseInt(process.env.AI_TIMEOUT ?? "120", 10) * 1000,
   maxRetries: parseInt(process.env.AI_MAX_RETRIES ?? "2", 10),
-  model: process.env.AI_MODEL ?? "qwen2.5:7b",
+  model: process.env.AI_MODEL ?? "qwen3:8b",
 } as const;
 ```
 
@@ -301,7 +301,7 @@ Ajoute ou remplace ces variables :
 ```bash
 # Ollama — VPS OVH
 AI_SERVER_URL=http://145.239.199.236:11434
-AI_MODEL=qwen2.5:7b
+AI_MODEL=qwen3:8b
 AI_MOCK=false
 AI_TIMEOUT=120
 AI_MAX_RETRIES=2
@@ -333,7 +333,7 @@ GET http://localhost:3000/api/ai/health
 ```
 Doit retourner :
 ```json
-{ "available": true, "model": "qwen2.5:7b", "latencyMs": <nombre> }
+{ "available": true, "model": "qwen3:8b", "latencyMs": <nombre> }
 ```
 
 **2. Chat simple**
@@ -351,7 +351,7 @@ Doit retourner un stream SSE avec des chunks en français.
 **3. Interface**
 Ouvrir le dashboard → cliquer sur le bouton IA (✦) → vérifier :
 - Le point de statut est vert
-- Le modèle affiché est "qwen2.5:7b"
+- Le modèle affiché est "qwen3:8b"
 - Une question reçoit une réponse en français
 
 ---
@@ -368,6 +368,6 @@ Vérifier dans l'ordre :
 
 ## RÉSULTAT ATTENDU
 
-Après ces 3 modifications, Blueprint Modular sera entièrement connecté à Qwen2.5:7b via Ollama.
+Après ces 3 modifications, Blueprint Modular sera entièrement connecté à Qwen3:8b via Ollama.
 Zéro dépendance Anthropic pour l'assistant IA.
 L'API Anthropic reste disponible en fallback via provider_name="claude" si besoin.

@@ -83,16 +83,16 @@ npx prisma migrate deploy
         code={`# Installer Ollama (ex. sur Linux / WSL / macOS) :
 # https://ollama.com/download
 
-# Lancer Ollama et télécharger le modèle Qwen 2.5 (7B) :
+# Lancer Ollama et télécharger le modèle Qwen3 (8B) :
 ollama serve
-ollama pull qwen2.5:7b
+ollama pull qwen3:8b
 
 # L’app est configurée par défaut pour http://localhost:11434 (Ollama).
 # Sur un VPS, définir AI_SERVER_URL dans .env (ex. http://votre-vps:11434).`}
         language="bash"
       />
       <p className="mt-2 mb-4 text-sm" style={{ color: "var(--bpm-text-secondary)" }}>
-        Variables d&apos;environnement utiles : <code>AI_SERVER_URL</code> (URL du serveur Ollama), <code>AI_MODEL</code> (ex. <code>qwen2.5:7b</code>), <code>AI_MOCK=true</code> pour désactiver les appels réels en dev.
+        Variables d&apos;environnement utiles : <code>AI_SERVER_URL</code> (URL du serveur Ollama), <code>AI_MODEL</code> (ex. <code>qwen3:8b</code>), <code>AI_MOCK=true</code> pour désactiver les appels réels en dev.
       </p>
 
       <h3 className="text-base font-semibold mt-6 mb-2" style={{ color: "var(--bpm-text-primary)" }}>
@@ -120,7 +120,7 @@ npx prisma migrate deploy
 
 # 3. Serveur IA (Ollama) — dans un terminal dédié ou en arrière-plan
 ollama serve
-ollama pull qwen2.5:7b
+ollama pull qwen3:8b
 
 # 4. Lancer l&apos;app Next.js
 npm run dev
@@ -130,7 +130,7 @@ npm run dev
         language="bash"
       />
       <p className="mt-2 mb-4 text-sm" style={{ color: "var(--bpm-text-secondary)" }}>
-        Assurez-vous d&apos;avoir défini <code>DATABASE_URL</code>, <code>NEXTAUTH_SECRET</code>, <code>NEXTAUTH_URL</code> et, pour l&apos;IA, <code>AI_SERVER_URL</code> (ex. <code>http://localhost:11434</code>) et <code>AI_MODEL</code> (ex. <code>qwen2.5:7b</code>) dans <code>.env</code>. Sans serveur IA, vous pouvez mettre <code>AI_MOCK=true</code> pour utiliser des réponses simulées.
+        Assurez-vous d&apos;avoir défini <code>DATABASE_URL</code>, <code>NEXTAUTH_SECRET</code>, <code>NEXTAUTH_URL</code> et, pour l&apos;IA, <code>AI_SERVER_URL</code> (ex. <code>http://localhost:11434</code>) et <code>AI_MODEL</code> (ex. <code>qwen3:8b</code>) dans <code>.env</code>. Sans serveur IA, vous pouvez mettre <code>AI_MOCK=true</code> pour utiliser des réponses simulées.
       </p>
 
       <h2 className="text-lg font-semibold mt-8 mb-2" style={{ color: "var(--bpm-text-primary)" }}>
@@ -143,7 +143,7 @@ npm run dev
         <li><code>DATABASE_URL</code> — URL de connexion PostgreSQL (obligatoire pour le Wiki).</li>
         <li><code>NEXTAUTH_SECRET</code>, <code>NEXTAUTH_URL</code> — Authentification (requise pour créer / éditer des articles).</li>
         <li><code>AI_SERVER_URL</code> — URL du serveur Ollama (ex. <code>http://localhost:11434</code>).</li>
-        <li><code>AI_MODEL</code> — Modèle utilisé (ex. <code>qwen2.5:7b</code>).</li>
+        <li><code>AI_MODEL</code> — Modèle utilisé (ex. <code>qwen3:8b</code>).</li>
         <li><code>AI_MOCK</code> — <code>true</code> pour utiliser des réponses mockées sans serveur IA (dév).</li>
       </ul>
 

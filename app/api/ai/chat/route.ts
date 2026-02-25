@@ -58,7 +58,7 @@ export async function POST(req: Request) {
   const ollamaProvider = provider_name === "vllm" || provider_name === "qwen" || provider_name === "mistral";
   const ollamaModel =
     provider_name === "qwen"
-      ? process.env.AI_MODEL_QWEN ?? "qwen2.5:7b"
+      ? process.env.AI_MODEL_QWEN ?? "qwen3:8b"
       : provider_name === "mistral"
         ? process.env.AI_MODEL_MISTRAL ?? "mistral:7b"
         : undefined;

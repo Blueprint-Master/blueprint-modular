@@ -1,6 +1,6 @@
 /**
  * Templates de prompts — français, adaptés au contexte métier Blueprint Modular.
- * Modèle cible : Qwen2.5:7b via Ollama local.
+ * Modèle cible : Qwen3:8b via Ollama local.
  * Règle absolue : le LLM commente, jamais il ne calcule.
  */
 

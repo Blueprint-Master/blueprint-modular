@@ -8,7 +8,7 @@
 Blueprint Modular tourne sur un VPS OVH (Ubuntu 24.04).
 Le serveur IA est **Ollama** sur le même VPS, port 11434.
 Modèles installés :
-- `qwen2.5:7b` — modèle principal (meilleur français, raisonnement)
+- `qwen3:8b` — modèle principal (meilleur français, raisonnement)
 - `mistral:7b-instruct-q4_K_M` — modèle secondaire (backup)
 - `nomic-embed-text` — embeddings pour la recherche sémantique
 
@@ -36,14 +36,14 @@ en TypeScript/JavaScript AVANT d'être passés au LLM.
 **Ce qui manque / à améliorer :**
 
 Le `SYSTEM_PROMPT_BASE` dans `lib/ai/prompt-templates.ts` doit être enrichi
-pour mieux guider Qwen2.5 sur les usages métier Blueprint Modular.
+pour mieux guider Qwen3 sur les usages métier Blueprint Modular.
 
 Remplace le contenu de `lib/ai/prompt-templates.ts` par :
 
 ```typescript
 /**
  * Templates de prompts — français, adaptés au contexte métier Blueprint Modular.
- * Modèle cible : Qwen2.5:7b via Ollama local.
+ * Modèle cible : Qwen3:8b via Ollama local.
  * Règle absolue : le LLM commente, jamais il ne calcule.
  */
 
@@ -219,14 +219,14 @@ export const templates = {
 - `lib/ai/contract-analyzer.ts` ✅ (à vérifier/compléter)
 - `lib/contract-extract.ts` ✅ (extraction texte PDF/DOCX)
 
-**Modèle utilisé : `qwen2.5:7b`**
+**Modèle utilisé : `qwen3:8b`**
 
 **Règles d'implémentation :**
 
 1. L'analyse se déclenche à l'upload — jamais à chaque consultation
 2. Le résultat est stocké en base (champ `extracted_data` JSON dans Prisma)
 3. Le LLM reçoit le texte brut du contrat et retourne du JSON strict
-4. Parser robuste obligatoire — Qwen2.5 peut ajouter du texte autour du JSON
+4. Parser robuste obligatoire — Qwen3 peut ajouter du texte autour du JSON
 
 Dans `lib/ai/contract-analyzer.ts`, assure-toi que :
 
@@ -261,7 +261,7 @@ Ne jamais retourner des contrats d'un workspace dans une requête d'un autre.
 - `app/api/wiki/` ✅ (routes CRUD)
 - `app/(app)/modules/wiki/` ✅ (pages)
 
-**Modèle utilisé : `qwen2.5:7b`**
+**Modèle utilisé : `qwen3:8b`**
 
 **Nouvelle route à créer :**
 
@@ -293,7 +293,7 @@ Le frontend appelle `/api/ai/chat`, `/api/contracts/analyze`, `/api/wiki/generat
 Ces routes appellent Ollama en `http://localhost:11434` (loopback — même serveur).
 
 ### Modèle unique pour tous les usages Phase 1
-`qwen2.5:7b` pour tout : assistant, contrats, wiki.
+`qwen3:8b` pour tout : assistant, contrats, wiki.
 Le modèle est configuré dans `AI_CONFIG.model` dans `lib/ai/config.ts`.
 Pour changer de modèle, on change uniquement cette variable d'env.
 

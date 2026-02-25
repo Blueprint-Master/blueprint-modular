@@ -35,7 +35,7 @@ Ne commence le développement qu'après avoir produit ce rapport.
 Tu travailles sur **Blueprint Modular**, un framework React modulaire avec composants `bpm.*`.
 L'application est déployée sur `https://app.blueprint-modular.com/dashboard`.
 
-La **couche IA locale** est connectée à **Ollama** (modèle **Qwen2.5:7b** par défaut), pas OpenAI ni cloud — tout en local. Le client appelle Ollama via les API Routes Next.js (`app/api/ai/`), jamais depuis le frontend.
+La **couche IA locale** est connectée à **Ollama** (modèle **Qwen3:8b** par défaut), pas OpenAI ni cloud — tout en local. Le client appelle Ollama via les API Routes Next.js (`app/api/ai/`), jamais depuis le frontend.
 
 Variables d’environnement : `AI_SERVER_URL` (URL Ollama, ex. `http://localhost:11434`), `AI_MOCK=true` (dév sans serveur). Voir `lib/ai/config.ts`.
 

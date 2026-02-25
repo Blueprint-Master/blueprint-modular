@@ -9,6 +9,8 @@ interface VoiceRecorderProps {
   onError?: (error: string) => void;
   label?: string;
   disabled?: boolean;
+  /** Afficher uniquement l’icône micro (pour barre de saisie compacte). */
+  iconOnly?: boolean;
 }
 
 export function VoiceRecorder({
@@ -16,6 +18,7 @@ export function VoiceRecorder({
   onError,
   label = "Dicter",
   disabled = false,
+  iconOnly = false,
 }: VoiceRecorderProps) {
   const [state, setState] = useState<VoiceRecorderState>("idle");
   const mediaRecorderRef = useRef<MediaRecorder | null>(null);
@@ -105,14 +108,14 @@ export function VoiceRecorder({
       : state === "recording"
         ? "Arrêter"
         : "Transcription…";
-  const buttonText = state === "idle" ? label : buttonLabel;
+  const buttonText = iconOnly ? (state === "transcribing" ? "…" : null) : (state === "idle" ? label : buttonLabel);
 
   const buttonStyle: React.CSSProperties = {
     display: "flex",
     alignItems: "center",
     justifyContent: "center",
-    gap: 6,
-    padding: "8px 16px",
+    gap: iconOnly ? 0 : 6,
+    padding: iconOnly ? "0.5rem" : "8px 16px",
     borderRadius: 8,
     fontSize: 13,
     fontWeight: 500,
@@ -135,10 +138,13 @@ export function VoiceRecorder({
       onClick={handleClick}
       disabled={state === "transcribing" || disabled}
       style={buttonStyle}
-      aria-label={state === "idle" ? label : state === "recording" ? "Arrêter l'enregistrement" : "Transcription en cours"}
+      aria-label={state === "idle" ? (label || "Dicter") : state === "recording" ? "Arrêter l'enregistrement" : "Transcription en cours"}
+      title={state === "idle" ? "Dicter (Whisper)" : state === "recording" ? "Arrêter" : "Transcription…"}
     >
-      {state === "idle" && <MicIcon />}
-      {buttonText}
+      {(state === "idle" || state === "recording") && <MicIcon />}
+      {state === "transcribing" && (iconOnly ? "…" : "Transcription…")}
+      {state === "idle" && !iconOnly && label}
+      {state === "recording" && !iconOnly && "Arrêter"}
     </button>
   );
 }
