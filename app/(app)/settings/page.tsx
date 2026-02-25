@@ -315,7 +315,7 @@ export default function SettingsPage() {
                 <Input
                   label="Nom de l'assistant IA"
                   value={assistantName}
-                  onChange={(e) => setAssistantName(e.target.value)}
+                  onChange={(v) => setAssistantName(v)}
                   placeholder="Assistant"
                 />
                 <p className="text-sm mt-1" style={{ color: "var(--bpm-text-secondary)" }}>
