@@ -309,9 +309,11 @@ export default function CommentairesSimulateurPage() {
               className="flex-1 min-h-[60px] resize-y"
               disabled={sending}
             />
-            <Button size="small" onClick={handleSend} disabled={!canSend} style={{ alignSelf: "flex-end", minWidth: 88 }}>
-              {sending ? <> <Spinner size="small" /> Envoi…</> : "Envoyer"}
-            </Button>
+            <div style={{ alignSelf: "flex-end", minWidth: 88 }}>
+              <Button size="small" onClick={handleSend} disabled={!canSend}>
+                {sending ? <> <Spinner size="small" /> Envoi…</> : "Envoyer"}
+              </Button>
+            </div>
           </div>
           {error && (
             <p className="text-sm mt-2 flex items-center gap-2" style={{ color: "#e74c3c" }}>
