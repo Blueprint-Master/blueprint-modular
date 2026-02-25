@@ -683,6 +683,7 @@ export function AIChat({
                 <div className="bpm-ai-chat-mic-wrap">
                   <VoiceRecorder
                     iconOnly
+                    className="bpm-ai-chat-pj-button"
                     disabled={isStreaming}
                     onTranscription={(text) => setInputText((prev) => (prev ? prev + " " + text : text))}
                   />

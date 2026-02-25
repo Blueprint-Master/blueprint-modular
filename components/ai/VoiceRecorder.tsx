@@ -11,6 +11,8 @@ interface VoiceRecorderProps {
   disabled?: boolean;
   /** Afficher uniquement l’icône micro (pour barre de saisie compacte). */
   iconOnly?: boolean;
+  /** Classe CSS pour aligner le style sur un autre bouton (ex. même fond inactif). */
+  className?: string;
 }
 
 export function VoiceRecorder({
@@ -19,6 +21,7 @@ export function VoiceRecorder({
   label = "Dicter",
   disabled = false,
   iconOnly = false,
+  className,
 }: VoiceRecorderProps) {
   const [state, setState] = useState<VoiceRecorderState>("idle");
   const mediaRecorderRef = useRef<MediaRecorder | null>(null);
@@ -110,6 +113,7 @@ export function VoiceRecorder({
         : "Transcription…";
   const buttonText = iconOnly ? (state === "transcribing" ? "…" : null) : (state === "idle" ? label : buttonLabel);
 
+  const useClassBackground = Boolean(className);
   const buttonStyle: React.CSSProperties = {
     display: "flex",
     alignItems: "center",
@@ -122,18 +126,22 @@ export function VoiceRecorder({
     cursor: state === "transcribing" || disabled ? "not-allowed" : "pointer",
     border: "none",
     transition: "background 0.2s, color 0.2s",
-    background:
-      state === "recording"
-        ? "var(--bpm-accent)"
-        : state === "transcribing"
-          ? "var(--bpm-border)"
-          : "var(--bpm-bg-secondary)",
-    color:
-      state === "recording"
-        ? "#fff"
-        : state === "transcribing"
-          ? "var(--bpm-text-secondary)"
-          : "var(--bpm-text-primary)",
+    ...(useClassBackground && state !== "recording"
+      ? {}
+      : {
+          background:
+            state === "recording"
+              ? "var(--bpm-accent)"
+              : state === "transcribing"
+                ? "var(--bpm-border)"
+                : "var(--bpm-bg-secondary)",
+          color:
+            state === "recording"
+              ? "#fff"
+              : state === "transcribing"
+                ? "var(--bpm-text-secondary)"
+                : "var(--bpm-text-primary)",
+        }),
     animation: state === "recording" ? "pulse 1.5s infinite" : "none",
   };
 
@@ -142,6 +150,7 @@ export function VoiceRecorder({
       type="button"
       onClick={handleClick}
       disabled={state === "transcribing" || disabled}
+      className={className}
       style={buttonStyle}
       data-recording={state === "recording" ? "true" : undefined}
       aria-label={state === "idle" ? (label || "Dicter") : state === "recording" ? "Arrêter l'enregistrement" : "Transcription en cours"}

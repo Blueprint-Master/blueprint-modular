@@ -108,9 +108,10 @@ if [ -f "$REPO_DIR/package.json" ] && [ -f "$REPO_DIR/next.config.mjs" ]; then
     rm -rf .next
     npm run build
     mkdir -p .next/standalone/.next
-    cp -r .next/static .next/standalone/.next/ 2>/dev/null || true
-    cp -r .next/server .next/standalone/.next/ 2>/dev/null || true
-    cp -r public .next/standalone/ 2>/dev/null || true
+    # Obligatoire en mode standalone : CSS et assets (sans ça, le CSS n'est pas servi)
+    cp -r .next/static .next/standalone/.next/static
+    cp -r .next/server .next/standalone/.next/
+    cp -r public .next/standalone/public
     chmod +x deploy/run-app.sh
     if command -v pm2 >/dev/null 2>&1; then
       if pm2 describe "$APP_PM2_NAME" >/dev/null 2>&1; then

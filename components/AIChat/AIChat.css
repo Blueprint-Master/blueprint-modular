@@ -312,14 +312,12 @@
 .bpm-ai-chat-mic-wrap {
   display: flex; align-items: center; justify-content: center; width: 36px; height: 36px; flex-shrink: 0;
 }
+/* Micro : même classe bpm-ai-chat-pj-button que le + pour identique fond inactif */
 .bpm-ai-chat-mic-wrap button {
   width: 36px; height: 36px; min-width: 36px; min-height: 36px;
-  /* Aligné sur le bouton + : même fond/couleur inactif, accent au survol (override inline) */
-  background: var(--bpm-bg-secondary) !important;
-  color: var(--bpm-text-primary) !important;
 }
 .bpm-ai-chat-mic-wrap button:hover:not(:disabled) {
-  color: var(--bpm-accent-cyan) !important;
+  color: var(--bpm-accent-cyan);
   filter: brightness(0.96);
 }
 .bpm-ai-chat-mic-wrap button:active:not(:disabled) {
