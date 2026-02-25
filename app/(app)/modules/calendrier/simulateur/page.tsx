@@ -327,7 +327,18 @@ export default function CalendrierSimulateurPage() {
             </Button>
           </div>
           <p className="text-sm font-medium m-0 flex-1 min-w-0 truncate text-center px-2" style={{ color: "var(--bpm-text-primary)" }} title={formatTitle(view, focusDate)}>
-            {formatTitle(view, focusDate)}
+            {view === "semaine" ? (
+              <>
+                <span className="sm:hidden">S. {getISOWeekNumber(focusDate)}</span>
+                <span className="hidden sm:inline">{formatTitle(view, focusDate)}</span>
+              </>
+            ) : view === "mois" ? (
+              "Vue Mois"
+            ) : view === "jour" ? (
+              "Vue Jour"
+            ) : (
+              formatTitle(view, focusDate)
+            )}
           </p>
           <div className="w-4 flex-shrink-0 sm:w-10" />
         </div>
@@ -443,16 +454,22 @@ export default function CalendrierSimulateurPage() {
                 }}
               >
                 {/* Coin haut gauche : numéro de semaine + période (ex. Semaine 9 - du 23 févr.…) */}
+                {/* Coin haut gauche : S. 9 sur mobile, S. 9 - du 23 fév.… sur desktop */}
                 <div
                   className="py-1 pr-1 text-xs font-medium border-b border-r truncate flex items-center"
                   style={{ gridColumn: 1, gridRow: 1, borderColor: "var(--bpm-border)", color: "var(--bpm-text-secondary)", background: "var(--bpm-bg-secondary)" }}
                   title={formatTitle("semaine", focusDate)}
                 >
                   {(() => {
-                    const { start, end } = getWeekRange(focusDate);
+                    const { start } = getWeekRange(focusDate);
                     const weekNum = getISOWeekNumber(focusDate);
                     const fmt = (x: Date) => `${x.getDate()} ${MONTHS[x.getMonth()].slice(0, 3)}.`;
-                    return `S. ${weekNum} - du ${fmt(start)}…`;
+                    return (
+                      <>
+                        <span className="sm:hidden">S. {weekNum}</span>
+                        <span className="hidden sm:inline">S. {weekNum} - du {fmt(start)}…</span>
+                      </>
+                    );
                   })()}
                 </div>
                 {[0, 1, 2, 3, 4, 5, 6].map((dayOffset) => {
@@ -528,8 +545,14 @@ export default function CalendrierSimulateurPage() {
           {view === "mois" && (
             <div className="text-sm">
               <div className="inline-grid grid-cols-7 gap-1.5 text-center w-full max-w-full sm:max-w-[480px]">
-                <div className="col-span-7 text-sm font-semibold py-1.5 pb-2" style={{ color: "var(--bpm-text-primary)" }}>
-                  {MONTHS[month]} {year}
+                {Array.from({ length: startPad }, (_, i) => (
+                  <span key={`month-pad-${i}`} className="p-1.5" aria-hidden />
+                ))}
+                <div
+                  className="text-sm font-semibold py-1.5 pb-2 flex items-center justify-center"
+                  style={{ color: "var(--bpm-text-primary)", gridColumn: `${startPad + 1} / span ${7 - startPad}` }}
+                >
+                  {MONTHS[month].charAt(0).toUpperCase() + MONTHS[month].slice(1)} {year}
                 </div>
                 {WEEKDAYS_LABELS.map((d) => (
                   <span key={d} className="text-xs font-medium py-1" style={{ color: "var(--bpm-text-secondary)" }}>{d}</span>
