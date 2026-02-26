@@ -55,12 +55,14 @@ export function usePrompterAPI(apiKey: string | null = null) {
       question: string,
       slide: { id: number; title: string; script: string; notes?: string | null; kpis: string[] },
       lang: string = "fr",
-      onChunk: (chunk: string) => void
+      onChunk: (chunk: string) => void,
+      signal?: AbortSignal
     ) => {
       const response = await fetch(`${BASE_URL}/suggest-answer`, {
         method: "POST",
         headers: headersWithKey(apiKey, { "Content-Type": "application/json" }),
         body: JSON.stringify({ question, slide, lang }),
+        signal,
       });
       await readSSEStream(response, onChunk);
     },
@@ -71,12 +73,14 @@ export function usePrompterAPI(apiKey: string | null = null) {
     async (
       text: string,
       direction: "fr_to_en" | "en_to_fr" = "fr_to_en",
-      onChunk: (chunk: string) => void
+      onChunk: (chunk: string) => void,
+      signal?: AbortSignal
     ) => {
       const response = await fetch(`${BASE_URL}/translate`, {
         method: "POST",
         headers: headersWithKey(apiKey, { "Content-Type": "application/json" }),
         body: JSON.stringify({ text, direction }),
+        signal,
       });
       await readSSEStream(response, onChunk);
     },
@@ -88,7 +92,8 @@ export function usePrompterAPI(apiKey: string | null = null) {
       presentationTitle: string,
       slides: { id: number; title: string; script: string; notes?: string | null; kpis: string[] }[],
       questionsLogged: { question: string; answer: string; slide_title: string }[] = [],
-      onChunk: (chunk: string) => void
+      onChunk: (chunk: string) => void,
+      signal?: AbortSignal
     ) => {
       const response = await fetch(`${BASE_URL}/summarize`, {
         method: "POST",
@@ -98,6 +103,7 @@ export function usePrompterAPI(apiKey: string | null = null) {
           slides,
           questions_logged: questionsLogged,
         }),
+        signal,
       });
       await readSSEStream(response, onChunk);
     },

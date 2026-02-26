@@ -268,15 +268,15 @@ export default function WikiArticlePage() {
   }
 
   return (
-    <div className="flex flex-col lg:flex-row gap-6">
+    <div className="flex flex-col lg:flex-row gap-4">
       <main className="flex-1 min-w-0">
         {article.coverImage && (
-          <div className="mb-4 rounded-lg overflow-hidden border" style={{ borderColor: "var(--bpm-border)", maxHeight: 280 }}>
-            <img src={article.coverImage} alt="" className="w-full h-auto object-cover" style={{ maxHeight: 280 }} />
+          <div className="mb-2 rounded-lg overflow-hidden border" style={{ borderColor: "var(--bpm-border)", maxHeight: 200 }}>
+            <img src={article.coverImage} alt="" className="w-full h-auto object-cover" style={{ maxHeight: 200 }} />
           </div>
         )}
-        <div className="flex flex-wrap items-center justify-between gap-4 mb-4">
-          <h1 className="text-2xl font-bold" style={{ color: "var(--bpm-text-primary)" }}>
+        <div className="flex flex-wrap items-center justify-between gap-2 mb-1">
+          <h1 className="text-xl font-bold" style={{ color: "var(--bpm-text-primary)" }}>
             {article.title}
             {article.pinned && (
               <span className="ml-2 text-xs px-2 py-0.5 rounded font-normal" style={{ background: "var(--bpm-accent)", color: "#fff" }}>Épinglé</span>
@@ -333,7 +333,7 @@ export default function WikiArticlePage() {
           </div>
         </div>
 
-        <div className="flex flex-wrap gap-2 text-sm mb-4" style={{ color: "var(--bpm-text-secondary)" }}>
+        <div className="flex flex-wrap gap-2 text-sm mb-1" style={{ color: "var(--bpm-text-secondary)" }}>
           <span>Mis à jour le {new Date(article.updatedAt).toLocaleDateString("fr-FR")}</span>
           {(article.lastRevisedBy ?? article.author?.name) && <span> · {article.lastRevisedBy ?? article.author?.name}</span>}
           {article.readingTimeMinutes != null && <span> · {article.readingTimeMinutes} min</span>}
@@ -345,13 +345,13 @@ export default function WikiArticlePage() {
         </div>
 
         {article.excerpt && (
-          <p className="text-sm mb-4 rounded-lg p-3 border" style={{ borderColor: "var(--bpm-border)", background: "var(--bpm-bg-secondary)", color: "var(--bpm-text-secondary)" }}>
+          <p className="text-sm mb-2 rounded-lg p-2 border" style={{ borderColor: "var(--bpm-border)", background: "var(--bpm-bg-secondary)", color: "var(--bpm-text-secondary)" }}>
             {article.excerpt}
           </p>
         )}
 
         {Array.isArray(article.tags) && article.tags.length > 0 && (
-          <div className="flex flex-wrap gap-1 mb-4">
+          <div className="flex flex-wrap gap-1 mb-2">
             {article.tags.map((t) => (
               <Link key={t} href={`/modules/wiki?tag=${encodeURIComponent(t)}`} className="text-xs px-2 py-0.5 rounded hover:opacity-90" style={{ background: "var(--bpm-border)", color: "var(--bpm-text-secondary)" }}>
                 {t}
@@ -361,7 +361,7 @@ export default function WikiArticlePage() {
         )}
 
         <div
-          className="prose prose-sm max-w-none rounded-lg p-6 border wiki-article-content max-w-[720px]"
+          className="prose prose-sm max-w-none rounded-lg p-4 border wiki-article-content max-w-[720px]"
           style={{
             borderColor: "var(--bpm-border)",
             background: "var(--bpm-surface)",

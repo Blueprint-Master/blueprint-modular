@@ -191,10 +191,48 @@ const DEFAULT_PRES: PresState = {
   }],
 };
 
+const STORAGE_KEYS = { pres: "bpm-monitor-pres", cur: "bpm-monitor-cur", logged: "bpm-monitor-logged" };
+
+function loadPres(): PresState {
+  if (typeof window === "undefined") return DEFAULT_PRES;
+  try {
+    const raw = localStorage.getItem(STORAGE_KEYS.pres);
+    if (!raw) return DEFAULT_PRES;
+    const parsed = JSON.parse(raw) as PresState;
+    if (!parsed?.title || !Array.isArray(parsed?.slides) || parsed.slides.length === 0) return DEFAULT_PRES;
+    return parsed;
+  } catch {
+    return DEFAULT_PRES;
+  }
+}
+
+function loadCur(): number {
+  if (typeof window === "undefined") return 0;
+  try {
+    const v = localStorage.getItem(STORAGE_KEYS.cur);
+    const n = v != null ? parseInt(v, 10) : 0;
+    return Number.isFinite(n) && n >= 0 ? n : 0;
+  } catch {
+    return 0;
+  }
+}
+
+function loadLogged(): { question: string; answer: string; slide_title: string }[] {
+  if (typeof window === "undefined") return [];
+  try {
+    const raw = localStorage.getItem(STORAGE_KEYS.logged);
+    if (!raw) return [];
+    const parsed = JSON.parse(raw);
+    return Array.isArray(parsed) ? parsed.filter((e: unknown) => e && typeof e === "object" && "question" in e && "answer" in e && "slide_title" in e) : [];
+  } catch {
+    return [];
+  }
+}
+
 // ─── MAIN COMPONENT ───────────────────────────────────────────────────────────
 export default function Monitor() {
-  const [pres, setPres] = useState<PresState>(DEFAULT_PRES);
-  const [cur, setCur] = useState(0);
+  const [pres, setPres] = useState<PresState>(loadPres);
+  const [cur, setCur] = useState(loadCur);
   const [tab, setTab] = useState("script");
 
   // Questions IA (Q&R)
@@ -203,7 +241,8 @@ export default function Monitor() {
   const [aiResp, setAiResp] = useState("");
   const [aiErr, setAiErr] = useState("");
   const [loadAI, setLoadAI] = useState(false);
-  const [logged, setLogged] = useState<{ question: string; answer: string; slide_title: string }[]>([]);
+  const [logged, setLogged] = useState<{ question: string; answer: string; slide_title: string }[]>(loadLogged);
+  const abortRef = useRef<AbortController | null>(null);
 
   // Traduction
   const [tInput, setTInput] = useState("");
@@ -249,6 +288,18 @@ export default function Monitor() {
     if (typeof window === "undefined") return;
     localStorage.setItem("bpm-monitor-panel-opacity", String(panelOpacity));
   }, [panelOpacity]);
+
+  // Persistance état présentation / slide courante / questions loggées (P0 audit)
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    try {
+      localStorage.setItem(STORAGE_KEYS.pres, JSON.stringify(pres));
+      localStorage.setItem(STORAGE_KEYS.cur, String(cur));
+      localStorage.setItem(STORAGE_KEYS.logged, JSON.stringify(logged));
+    } catch {
+      // quota exceeded or disabled
+    }
+  }, [pres, cur, logged]);
 
   const slides = pres.slides;
   const slide = slides[cur] || slides[0];

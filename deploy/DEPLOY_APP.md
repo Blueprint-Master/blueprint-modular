@@ -83,3 +83,17 @@ Le module **Monitor** (téléprompte IA) appelle l’API `https://app.blueprint-
    ```
    Puis `sudo nginx -t && sudo systemctl reload nginx`.
 5. **Vérif** : `curl https://app.blueprint-modular.com/api/prompteur/health`
+
+## Erreur 413 (fichier trop volumineux) à l’import
+
+Si l’import PPTX (Monitor) ou un autre upload renvoie **413** avec un message du type « Fichier trop volumineux (18 Mo) » :
+
+1. **Nginx** (le plus souvent) : la limite par défaut est 1 Mo. Sur le VPS :
+   - Vérifier que le fichier `deploy/nginx.conf` du repo contient bien `client_max_body_size 100m;` dans le bloc `server { server_name app.blueprint-modular.com ... }` (et éventuellement dans `location /api/prompteur/`).
+   - Copier la config et recharger Nginx :
+     ```bash
+     sudo cp /home/ubuntu/blueprint-modular/deploy/nginx.conf /etc/nginx/sites-available/blueprint-modular
+     sudo nginx -t && sudo systemctl reload nginx
+     ```
+2. **Next.js** : `next.config.mjs` contient déjà `experimental.proxyClientMaxBodySize: "100mb"` pour les Route Handlers (proxy). Après modification, redéployer l’app (rebuild + PM2 restart).
+3. **Backend prompteur** : si Nginx envoie directement vers le service Python (port 8001), vérifier que le serveur (ex. Uvicorn) accepte des body > 1 Mo (souvent OK par défaut).

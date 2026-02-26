@@ -2,15 +2,19 @@
 
 État par rapport au CDC et aux compléments ITSM. Les **modèles Prisma** Phase 2/3 et infra sont déjà en place (migrations appliquées).
 
+**État actuel (mis à jour)** : Phase 1 complète (actifs, tickets, MAD). Phase 2 : contrats, mouvements, base de connaissances, changements — API + UI en place. Phase 3 : relations CI (API + bloc Dépendances fiche actif). Reste : cycle de vie, alertes contrats, escalade SLA, revue CAB, calendrier changements, vue graphe CMDB, RBAC, audit, sauvegardes.
+
+**Voir aussi** : [ASSET_MANAGER_AUDIT.md](ASSET_MANAGER_AUDIT.md) — audit complet (UI/UX, lacunes, propositions P1/P2/P3 : champs communs, liaison actif–ticket–contrat, dashboard alertes, cycle de vie, retour MAD, SLA visuel, import CSV, workflow CAB, SAM, QR code, recherche globale, audit trail, notifications).
+
 ---
 
-## Phase 1 (inventaire, tickets, MAD) — Partiellement fait
+## Phase 1 (inventaire, tickets, MAD) — Fait
 
 | Élément | État | Reste à faire |
 |--------|------|----------------|
-| **Inventaire actifs** | ✅ API + UI (liste, détail, création) | Affichage/édition du champ `lifecycleStage` sur la fiche actif ; filtres avancés |
-| **Tickets** | ✅ API GET en place, modèles OK | **UI** : liste des tickets (table + filtres), fiche détail ticket, création/édition, workflow statuts, liaison actif |
-| **Mises à disposition** | ✅ API GET en place, modèles OK | **UI** : liste des MAD, fiche détail, création/édition, signature/retour, lien ticket |
+| **Inventaire actifs** | ✅ API + UI (liste, détail, création) | Affichage/édition `lifecycleStage` ; filtres avancés |
+| **Tickets** | ✅ API CRUD + UI (liste + filtres, fiche, nouveau, statut/solution) | Suggestion articles KB à la création ; « Publier en KB » depuis ticket |
+| **Mises à disposition** | ✅ API CRUD + UI (liste + filtre statut, fiche, nouvelle MAD, statut/retour/signature) | — |
 
 ---
 
@@ -24,14 +28,13 @@ Modèles Prisma : `AssetContract`, `AssetMovement`, `KnowledgeArticle`, `ChangeR
 - [ ] **Audit** : à chaque transition, enregistrer une entrée dans `AuditLog` (avant/après, user, date).
 
 ### 2.2 Contrats et garanties (`AssetContract`)
-- [ ] **API** : CRUD `/api/asset-manager/contracts` (GET liste, GET/:id, POST, PUT, DELETE) avec `domainId`, lien actifs (JSON `assetIds`).
-- [ ] **UI** : liste des contrats, fiche détail, création/édition, champs (référence, type, dates, montant, préavis, alerte).
-- [ ] **Alertes** : job ou cron (ou vérification au chargement) pour « fin de garantie < 90 j », « fin de contrat < notice_days », affichage des alertes en tableau de bord ou bandeau.
+- [x] **API** : CRUD `/api/asset-manager/contracts` avec `domainId`, lien actifs.
+- [x] **UI** : liste des contrats, fiche détail, création/édition (référence, type, dates, montant, préavis).
+- [ ] **Alertes** : job ou vérification au chargement pour « fin de garantie < 90 j », « fin de contrat < notice_days », affichage tableau de bord ou bandeau.
 
 ### 2.3 Mouvements physiques (`AssetMovement`)
-- [ ] **API** : CRUD `/api/asset-manager/movements` (par actif : GET `?assetId=…` ou GET `/assets/:id/movements`).
-- [ ] **UI** : onglet **Historique** sur la fiche actif, composant type **bpm.timeline** listant les mouvements (réception, déploiement, transfert, retour, réparation, réforme).
-- [ ] Création d’un mouvement depuis la fiche actif (type, date, lieu/user source/cible, lien ticket optionnel).
+- [x] **API** : CRUD `/api/asset-manager/movements` (GET `?assetId=…` ou `?domainId=…`).
+- [x] **UI** : onglet **Historique** sur la fiche actif (timeline), création de mouvement depuis la fiche.
 
 ### 2.4 Escalade SLA (tickets)
 - [ ] **Config** : dans `domain.*.json`, ajouter `sla_escalation` (niveaux par priorité, `after_percent`, `action`, `message`).
@@ -39,27 +42,27 @@ Modèles Prisma : `AssetContract`, `AssetMovement`, `KnowledgeArticle`, `ChangeR
 - [ ] **Notifications** : branchement avec le module Notification BPM pour envoi des alertes d’escalade.
 
 ### 2.5 Base de connaissances (`KnowledgeArticle`)
-- [ ] **API** : CRUD `/api/asset-manager/knowledge` (liste, détail, création, édition, suppression) ; recherche par catégorie / type d’actif / tags.
-- [ ] **UI** : sous-module **Base de connaissances** (liste articles, fiche article Markdown, création/édition).
-- [ ] **Suggestion à la création de ticket** : lors de la saisie du titre/catégorie, appeler l’API pour suggérer des articles (matching catégorie + mots-clés).
-- [ ] **Bouton « Publier en base de connaissance »** sur un ticket résolu : préremplir un article depuis le ticket (titre, solution, lien `sourceTicketId`).
-- [ ] **Portail utilisateur** : page recherche d’articles (visibilité public) avant création de ticket ; notation utile / pas utile (`helpfulCount`, `notHelpfulCount`).
+- [x] **API** : CRUD `/api/asset-manager/knowledge` (liste, détail, création, édition, suppression) ; filtres catégorie / type d’actif / tags.
+- [x] **UI** : sous-module **Base de connaissances** (liste, fiche article, création/édition).
+- [ ] **Suggestion à la création de ticket** : suggérer des articles (catégorie + mots-clés).
+- [ ] **Bouton « Publier en base de connaissance »** sur un ticket résolu (préremplir article depuis ticket).
+- [ ] **Portail utilisateur** : recherche d’articles publics avant création de ticket ; notation utile / pas utile.
 
 ### 2.6 Gestion des changements (`ChangeRequest`)
-- [ ] **API** : CRUD `/api/asset-manager/changes` (liste, détail, POST, PUT, transitions de statut).
-- [ ] **Config domaine** : ajouter `change_management` dans `domain.*.json` (enabled, cab_group_id, standard_change_types, approval_mode, emergency_approvers).
-- [ ] **UI** : sous-module **Gestion des changements** — liste des demandes de changement, fiche détail (description, impact, plan de rollback, actifs/tickets liés), workflow (brouillon → soumis → revue CAB → approuvé/rejeté → planifié → en cours → terminé/échoué).
-- [ ] **Revue CAB** : écran ou modal pour les approbateurs (vote, commentaires), prise en compte du mode (unanime / majorité) et du type (standard / normal / emergency).
-- [ ] **Calendrier** : vue calendrier des changements planifiés (bpm.panel + composant calendrier) pour détecter les conflits de dates sur les mêmes actifs.
+- [x] **API** : CRUD `/api/asset-manager/changes` (liste, détail, POST, PUT, transitions de statut).
+- [ ] **Config domaine** : `change_management` dans `domain.*.json` (cab_group_id, standard_change_types, approval_mode).
+- [x] **UI** : sous-module **Gestion des changements** — liste, fiche détail (description, impact, rollback, statut modifiable).
+- [ ] **Revue CAB** : écran/modal approbateurs (vote, commentaires), mode unanime/majorité.
+- [ ] **Calendrier** : vue calendrier des changements planifiés (conflits de dates).
 
 ---
 
 ## Phase 3 — CMDB et reporting
 
 ### 3.1 CMDB — Relations entre actifs (`CIRelation`)
-- [ ] **API** : CRUD `/api/asset-manager/ci-relations` (liste par actif : GET `?sourceAssetId=…` ou `?targetAssetId=…`, POST, DELETE) ; types de relations définis dans la config domaine.
-- [ ] **UI fiche actif** : section **Dépendances / Cartographie** — liste des relations (source → cible, type), ajout/suppression de relation.
-- [ ] **Vue graphe** : composant **CMDBGraph** (React Flow ou D3) dans un bpm.panel : nœuds = actifs, arêtes = relations, `rootAssetId` + `depth` ; clic nœud → navigation vers fiche actif ; optionnel : surligner les CI impactés par un ticket ouvert (`highlightImpact`).
+- [x] **API** : CRUD `/api/asset-manager/ci-relations` (GET `?assetId=…` ou `?sourceAssetId=…`/`?targetAssetId=…`, POST, DELETE).
+- [x] **UI fiche actif** : section **Dépendances / Cartographie** — liste des relations, ajout/suppression.
+- [ ] **Vue graphe** : composant **CMDBGraph** (React Flow ou D3) : nœuds = actifs, arêtes = relations ; clic → fiche actif ; optionnel : surligner CI impactés par ticket.
 
 ### 3.2 Escalade avancée et reporting
 - [ ] Affiner les règles d’escalade et tableaux de bord (SLA par priorité, taux de résolution, etc.) si prévu au CDC.
@@ -87,17 +90,17 @@ Modèles Prisma : `AssetContract`, `AssetMovement`, `KnowledgeArticle`, `ChangeR
 
 ## Synthèse priorisation
 
-| Priorité | Contenu | Effort estimé |
-|----------|---------|----------------|
-| **P1** | UI Tickets (liste + fiche + création) | 2–3 j |
-| **P1** | UI Mises à disposition (liste + fiche + création) | 1–2 j |
-| **P2** | Cycle de vie (config + UI transition + AuditLog) | 1 j |
-| **P2** | Contrats (API + UI + alertes) | 1–2 j |
-| **P2** | Mouvements (API + onglet Historique timeline) | 1 j |
-| **P2** | Base de connaissances (API + UI + suggestion ticket) | 2–3 j |
-| **P2** | Gestion des changements (API + UI + workflow CAB + calendrier) | 3–4 j |
-| **P2** | Escalade SLA (config + job + notifications) | 1–2 j |
-| **P3** | CMDB (API relations + graphe) | 2–3 j |
-| **Infra** | RBAC + Audit (écriture + écran lecture) | 2 j |
+| Priorité | Contenu | État |
+|----------|---------|------|
+| ~~**P1**~~ | ~~UI Tickets (liste + fiche + création)~~ | ✅ Fait |
+| ~~**P1**~~ | ~~UI Mises à disposition (liste + fiche + création)~~ | ✅ Fait |
+| **P2** | Cycle de vie (config + UI transition + AuditLog) | À faire |
+| ~~**P2**~~ | ~~Contrats (API + UI)~~ | ✅ Fait ; alertes à faire |
+| ~~**P2**~~ | ~~Mouvements (API + onglet Historique)~~ | ✅ Fait |
+| ~~**P2**~~ | ~~Base de connaissances (API + UI)~~ | ✅ Fait ; suggestion ticket, publier depuis ticket à faire |
+| ~~**P2**~~ | ~~Gestion des changements (API + UI de base)~~ | ✅ Fait ; revue CAB + calendrier à faire |
+| **P2** | Escalade SLA (config + job + notifications) | À faire |
+| ~~**P3**~~ | ~~CMDB (API relations + UI Dépendances)~~ | ✅ Fait ; vue graphe à faire |
+| **Infra** | RBAC + Audit (écriture + écran lecture) | À faire |
 
 *Document généré à partir du CDC et des compléments ITSM — Blueprint Modular.*
