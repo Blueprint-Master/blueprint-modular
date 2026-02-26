@@ -96,6 +96,7 @@ export default function WikiPage() {
   const [sortOrder, setSortOrder] = useState<"asc" | "desc">("desc");
   const [page, setPage] = useState(1);
   const [allTags, setAllTags] = useState<{ tag: string; count: number }[]>([]);
+  const [selectedSlugs, setSelectedSlugs] = useState<Set<string>>(new Set());
 
   const hasActiveFilters = tagFilter !== null || statusFilter !== "" || search.trim() !== "";
 
@@ -155,6 +156,15 @@ export default function WikiPage() {
     fetchArticles();
   }, [fetchArticles]);
 
+  const toggleSelect = (slug: string) => {
+    setSelectedSlugs((prev) => {
+      const next = new Set(prev);
+      if (next.has(slug)) next.delete(slug);
+      else next.add(slug);
+      return next;
+    });
+  };
+
   const handleDelete = async (e: React.MouseEvent, slug: string) => {
     e.preventDefault();
     e.stopPropagation();
@@ -186,6 +196,27 @@ export default function WikiPage() {
       return new Date((b as { updatedAt?: string }).updatedAt ?? b.updatedAt).getTime() - new Date((a as { updatedAt?: string }).updatedAt ?? a.updatedAt).getTime();
     });
   const noResultsForFilters = hasActiveFilters && (session ? articles.length === 0 : filteredArticles.length === 0);
+
+  const toggleSelectAllDisplayed = () => {
+    const displayedSlugs = new Set(displayed.map((a) => a.slug));
+    const allSelected = displayed.every((a) => selectedSlugs.has(a.slug));
+    setSelectedSlugs((prev) => {
+      const next = new Set(prev);
+      if (allSelected) displayedSlugs.forEach((s) => next.delete(s));
+      else displayedSlugs.forEach((s) => next.add(s));
+      return next;
+    });
+  };
+
+  const exportSelectionZip = () => {
+    const slugs = Array.from(selectedSlugs);
+    if (slugs.length === 0) return;
+    const url = `/api/wiki/export/zip?slugs=${encodeURIComponent(slugs.join(","))}`;
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = `wiki-export-${new Date().toISOString().slice(0, 10)}.zip`;
+    a.click();
+  };
 
   return (
     <div className="wiki-page doc-page">
@@ -324,12 +355,40 @@ export default function WikiPage() {
             {displayed.length === 0 ? (
               <p>Aucun article dans cette section.</p>
             ) : (
-              <div className="wiki-article-list">
+              <>
+                {selectedSlugs.size > 0 && (
+                  <div className="flex flex-wrap items-center gap-2 mb-3 p-2 rounded border" style={{ borderColor: "var(--bpm-border)", background: "var(--bpm-bg-secondary)" }}>
+                    <span className="text-sm" style={{ color: "var(--bpm-text-primary)" }}>
+                      {selectedSlugs.size} article{selectedSlugs.size > 1 ? "s" : ""} sélectionné{selectedSlugs.size > 1 ? "s" : ""}
+                    </span>
+                    <Button type="button" size="small" onClick={exportSelectionZip}>
+                      Exporter en ZIP
+                    </Button>
+                    <button
+                      type="button"
+                      className="text-sm underline"
+                      style={{ color: "var(--bpm-text-secondary)" }}
+                      onClick={() => setSelectedSlugs(new Set())}
+                    >
+                      Tout désélectionner
+                    </button>
+                  </div>
+                )}
+                <div className="wiki-article-list">
                 {displayed.map((article) => {
                   const a = article as WikiArticle & { excerpt?: string; tags?: string[]; pinned?: boolean; wordCount?: number; readingTimeMinutes?: number; viewCount?: number; lastRevisedBy?: string };
                   return (
                   <div key={article.id} className="wiki-card flex flex-col gap-2">
                     <div className="flex justify-between items-start gap-3">
+                      <div className="flex items-start gap-2 min-w-0 flex-1">
+                        <input
+                          type="checkbox"
+                          checked={selectedSlugs.has(article.slug)}
+                          onChange={() => toggleSelect(article.slug)}
+                          onClick={(e) => e.stopPropagation()}
+                          aria-label={`Sélectionner ${article.title}`}
+                          className="mt-1 flex-shrink-0"
+                        />
                       <Link href={`/modules/wiki/${article.slug}`} className="min-w-0 flex-1 no-underline block" style={{ color: "inherit" }}>
                         <h3 className="flex items-center gap-2 flex-wrap">
                           {article.title}
@@ -358,7 +417,8 @@ export default function WikiPage() {
                             </span>
                           )}
                         </div>
-                      </Link>
+                          </Link>
+                      </div>
                       {article.canEdit && (
                         <div className="flex gap-2 flex-shrink-0 text-sm">
                           <Link
@@ -383,6 +443,17 @@ export default function WikiPage() {
                   </div>
                 );})}
               </div>
+              <div className="flex items-center gap-2 mt-2">
+                <button
+                  type="button"
+                  className="text-sm underline"
+                  style={{ color: "var(--bpm-text-secondary)" }}
+                  onClick={toggleSelectAllDisplayed}
+                >
+                  {displayed.every((a) => selectedSlugs.has(a.slug)) ? "Tout désélectionner" : "Tout sélectionner"} (cette page)
+                </button>
+              </div>
+              </>
             )}
           </main>
         </div>
