@@ -1783,7 +1783,7 @@ function SandboxContent() {
             </label>
             {aiHealth && !aiHealth.available && (
               <p className="text-xs mb-2" style={{ color: "var(--bpm-text-secondary)" }}>
-                Vérifiez qu'Ollama est démarré (ex. http://localhost:11434) ou définissez AI_MOCK=true dans .env pour le mode démo.
+                {"Vérifiez qu'Ollama est démarré (ex. http://localhost:11434) ou définissez AI_MOCK=true dans .env pour le mode démo."}
               </p>
             )}
             <textarea
