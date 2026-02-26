@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { getSessionOrTestUser } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
+import { writeAuditLog, getClientIpAndAgent } from "@/lib/asset-manager/audit";
 
 export const dynamic = "force-dynamic";
 
@@ -70,7 +71,20 @@ export async function PUT(request: Request, context: { params: Params }) {
   if (body.purchasePrice !== undefined) data.purchasePrice = body.purchasePrice;
   if (body.notes !== undefined) data.notes = body.notes?.trim() || null;
 
-  await prisma.asset.update({ where: { id }, data: data as never });
+  const updated = await prisma.asset.update({ where: { id }, data: data as never });
+  const { ipAddress, userAgent } = getClientIpAndAgent(request);
+  await writeAuditLog({
+    domainId: asset.domainId,
+    userId: result.user?.id ?? "anonymous",
+    action: "update",
+    resourceType: "asset",
+    resourceId: id,
+    beforeState: asset,
+    afterState: updated,
+    changedFields: Object.keys(data) as string[],
+    ipAddress,
+    userAgent,
+  });
 
   if (Array.isArray(body.attributes)) {
     await prisma.assetAttribute.deleteMany({ where: { assetId: id } });
@@ -88,11 +102,11 @@ export async function PUT(request: Request, context: { params: Params }) {
     }
   }
 
-  const updated = await prisma.asset.findUnique({
+  const withRelations = await prisma.asset.findUnique({
     where: { id },
     include: { attributes: true, createdBy: { select: { id: true, name: true, email: true } } },
   });
-  return NextResponse.json(updated);
+  return NextResponse.json(withRelations);
 }
 
 export async function DELETE(_request: Request, context: { params: Params }) {
@@ -102,6 +116,17 @@ export async function DELETE(_request: Request, context: { params: Params }) {
   const { id } = await resolveParams(context.params);
   const asset = await prisma.asset.findUnique({ where: { id } });
   if (!asset) return NextResponse.json({ error: "Actif introuvable" }, { status: 404 });
+  const { ipAddress, userAgent } = getClientIpAndAgent(_request);
+  await writeAuditLog({
+    domainId: asset.domainId,
+    userId: result.user?.id ?? "anonymous",
+    action: "delete",
+    resourceType: "asset",
+    resourceId: id,
+    beforeState: asset,
+    ipAddress,
+    userAgent,
+  });
   await prisma.asset.delete({ where: { id } });
   return NextResponse.json({ ok: true });
 }

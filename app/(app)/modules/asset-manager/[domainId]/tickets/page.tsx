@@ -154,6 +154,32 @@ export default function AssetManagerTicketsPage() {
               Suivi des tickets et demandes d&apos;intervention.
             </p>
           </div>
+          <Button
+            variant="outline"
+            size="small"
+            onClick={() => {
+              const headers = ["Référence", "Titre", "Statut", "Priorité", "Catégorie", "Ouvert le"];
+              const rows = filtered.map((t) => [
+                t.reference,
+                t.title,
+                STATUS_LABELS[t.status] ?? t.status,
+                getPriorityLabel(t.priorityId),
+                getCategoryLabel(t.categoryId),
+                t.openedAt ? new Date(t.openedAt).toLocaleDateString("fr-FR") : "",
+              ]);
+              const csv = [headers.join(";"), ...rows.map((r) => r.map((c) => `"${String(c).replace(/"/g, '""')}"`).join(";"))].join("\r\n");
+              const blob = new Blob(["\ufeff" + csv], { type: "text/csv;charset=utf-8" });
+              const url = URL.createObjectURL(blob);
+              const a = document.createElement("a");
+              a.href = url;
+              a.download = `tickets-${domainId}-${new Date().toISOString().slice(0, 10)}.csv`;
+              a.click();
+              URL.revokeObjectURL(url);
+            }}
+            disabled={filtered.length === 0}
+          >
+            Exporter CSV
+          </Button>
           <Link href={`/modules/asset-manager/${domainId}/tickets/new`}>
             <Button size="small">+ Nouveau ticket</Button>
           </Link>

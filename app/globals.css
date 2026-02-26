@@ -460,6 +460,156 @@ textarea.bpm-textarea:focus {
 .bpm-markdown .hljs { background: var(--bpm-code-bg); padding: 1rem; border-radius: 6px; border: 1px solid var(--bpm-code-border); overflow-x: auto; }
 .bpm-markdown pre code.hljs { padding: 0; background: transparent; }
 
+/* ========== Asset Manager — style inspiré Linear (composants BPM conservés) ========== */
+.asset-manager-page {
+  background: var(--bpm-bg-secondary);
+  min-height: 100%;
+}
+[data-theme="dark"] .asset-manager-page {
+  background: var(--bpm-bg-primary);
+}
+.asset-manager-page .doc-page {
+  padding: 24px 32px 48px;
+  margin: 0 auto;
+}
+.asset-manager-page .doc-page-header {
+  margin-bottom: 24px;
+}
+.asset-manager-page .doc-breadcrumb {
+  font-size: 11px;
+  letter-spacing: 0.02em;
+  color: var(--bpm-text-secondary);
+  margin-bottom: 6px;
+}
+.asset-manager-page .doc-breadcrumb a {
+  color: var(--bpm-text-secondary);
+  text-decoration: none;
+}
+.asset-manager-page .doc-breadcrumb a:hover {
+  color: var(--bpm-accent-cyan);
+}
+.asset-manager-page .doc-page-header h1 {
+  font-size: 1.5rem;
+  font-weight: 600;
+  letter-spacing: -0.025em;
+  margin: 0 0 4px;
+}
+.asset-manager-page .doc-description {
+  font-size: 13px;
+  color: var(--bpm-text-secondary);
+  margin: 0;
+  line-height: 1.5;
+}
+/* Panels : carte blanche, bordure légère, rayon 8px (style Linear) */
+.asset-manager-page [role="region"].rounded-lg {
+  background: var(--bpm-surface) !important;
+  border: 1px solid var(--bpm-border) !important;
+  border-left-width: 3px !important;
+  border-radius: 8px !important;
+  padding: 20px 24px !important;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04);
+}
+[data-theme="dark"] .asset-manager-page [role="region"].rounded-lg {
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+}
+/* Titre du panel : plus discret, pas d’icône ronde si on veut style Linear — on garde l’icône BPM mais on affine */
+.asset-manager-page [role="region"].rounded-lg > div:first-child {
+  margin-bottom: 16px;
+}
+.asset-manager-page [role="region"].rounded-lg > div:first-child .font-semibold {
+  font-size: 13px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--bpm-text-secondary);
+}
+/* Tableaux : bordures légères, hover discret (Linear) */
+.asset-manager-page .bpm-table-wrapper,
+.asset-manager-page .rounded-lg.border.overflow-hidden {
+  border-radius: 8px !important;
+  border: 1px solid var(--bpm-border) !important;
+  overflow: hidden;
+  background: var(--bpm-surface) !important;
+}
+.asset-manager-page .bpm-table thead th {
+  font-size: 11px !important;
+  font-weight: 600 !important;
+  text-transform: uppercase !important;
+  letter-spacing: 0.05em !important;
+  color: var(--bpm-text-secondary) !important;
+  padding: 10px 16px !important;
+  border-bottom: 1px solid var(--bpm-border) !important;
+  background: var(--bpm-bg-secondary) !important;
+}
+.asset-manager-page .bpm-table tbody td {
+  padding: 12px 16px !important;
+  border-bottom: 1px solid var(--bpm-border);
+  font-size: 13px;
+}
+.asset-manager-page .bpm-table tbody tr:hover td {
+  background: var(--bpm-bg-secondary);
+}
+.asset-manager-page .bpm-table tbody tr:last-child td {
+  border-bottom: none;
+}
+/* Métriques (dashboard) : cartes discrètes type Linear */
+.asset-manager-page .doc-page > .grid.mb-6 a.block {
+  display: block;
+  background: var(--bpm-surface);
+  border: 1px solid var(--bpm-border);
+  border-radius: 8px;
+  padding: 16px 20px;
+  transition: border-color 0.15s, box-shadow 0.15s;
+  text-decoration: none;
+  color: inherit;
+}
+.asset-manager-page .doc-page > .grid.mb-6 a.block:hover {
+  border-color: var(--bpm-accent-cyan);
+  box-shadow: 0 2px 8px rgba(0, 163, 226, 0.08);
+}
+.asset-manager-page .doc-page > .grid.mb-6 a.block > div {
+  border: none !important;
+}
+/* Pagination / liens de navigation */
+.asset-manager-page .doc-pagination {
+  margin-top: 32px;
+  padding-top: 20px;
+  border-top: 1px solid var(--bpm-border);
+}
+.asset-manager-page .doc-pagination a {
+  font-size: 13px;
+  font-weight: 500;
+}
+/* Boutons outline plus discrets */
+.asset-manager-page .bpm-btn-outline,
+.asset-manager-page button[class*="outline"] {
+  border-color: var(--bpm-border);
+  font-weight: 500;
+}
+.asset-manager-page .bpm-btn-outline:hover,
+.asset-manager-page button[class*="outline"]:hover {
+  border-color: var(--bpm-accent-cyan);
+  color: var(--bpm-accent-cyan);
+}
+/* Alertes (bandeau) : fond très léger */
+.asset-manager-page [role="region"].rounded-lg.border-l-4.border-\[var\(--bpm-accent-amber\)\],
+.asset-manager-page [role="region"].rounded-lg.border-\[#f59e0b\] {
+  border-left-color: #f59e0b !important;
+}
+/* Champs de formulaire dans les panels */
+.asset-manager-page [role="region"] input[type="text"],
+.asset-manager-page [role="region"] input[type="date"],
+.asset-manager-page [role="region"] textarea,
+.asset-manager-page [role="region"] select {
+  border-radius: 6px;
+  font-size: 13px;
+}
+@media (max-width: 768px) {
+  .asset-manager-page .doc-page {
+    padding: 16px 20px 32px;
+  }
+}
+
 /* Wiki — impression / export PDF (CDC Part 11) */
 @media print {
   .app-layout-root .pwa-title-bar,

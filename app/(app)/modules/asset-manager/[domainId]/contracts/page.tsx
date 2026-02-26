@@ -115,6 +115,33 @@ export default function AssetManagerContractsPage() {
               Garanties, maintenance, leasing, licences. Alertes fin de contrat.
             </p>
           </div>
+          <Button
+            variant="outline"
+            size="small"
+            onClick={() => {
+              const headers = ["Référence", "Libellé", "Type", "Fournisseur", "Début", "Fin", "Montant"];
+              const rows = filtered.map((c) => [
+                c.reference,
+                c.label,
+                TYPE_LABELS[c.type] ?? c.type,
+                c.supplier ?? "",
+                c.startDate ? new Date(c.startDate).toLocaleDateString("fr-FR") : "",
+                c.endDate ? new Date(c.endDate).toLocaleDateString("fr-FR") : "",
+                c.amount != null ? String(c.amount) : "",
+              ]);
+              const csv = [headers.join(";"), ...rows.map((r) => r.map((c) => `"${String(c).replace(/"/g, '""')}"`).join(";"))].join("\r\n");
+              const blob = new Blob(["\ufeff" + csv], { type: "text/csv;charset=utf-8" });
+              const url = URL.createObjectURL(blob);
+              const a = document.createElement("a");
+              a.href = url;
+              a.download = `contrats-${domainId}-${new Date().toISOString().slice(0, 10)}.csv`;
+              a.click();
+              URL.revokeObjectURL(url);
+            }}
+            disabled={filtered.length === 0}
+          >
+            Exporter CSV
+          </Button>
           <Link href={`/modules/asset-manager/${domainId}/contracts/new`}>
             <Button size="small">+ Nouveau contrat</Button>
           </Link>

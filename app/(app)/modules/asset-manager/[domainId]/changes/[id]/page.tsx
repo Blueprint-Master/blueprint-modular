@@ -122,6 +122,17 @@ export default function AssetManagerChangeDetailPage() {
         </p>
       </div>
 
+      {(change.status === "draft" || change.status === "submitted") && (
+        <Panel variant="info" title="Soumettre au CAB" className="mb-4">
+          <p className="text-sm mb-3" style={{ color: "var(--bpm-text-secondary)" }}>
+            Envoyer cette demande en revue CAB pour approbation.
+          </p>
+          <Button variant="primary" size="small" onClick={() => handleStatusChange("cab_review")} disabled={saving}>
+            Soumettre au CAB
+          </Button>
+        </Panel>
+      )}
+
       {change.status === "cab_review" && (
         <Panel variant="warning" title="Revue CAB" className="mb-4">
           <p className="text-sm mb-3" style={{ color: "var(--bpm-text-secondary)" }}>

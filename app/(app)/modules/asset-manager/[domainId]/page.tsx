@@ -225,7 +225,9 @@ export default function AssetManagerDomainPage() {
 
       <Panel variant="info" title={config.asset_label_plural}>
         <div className="flex justify-between items-center mb-4">
-          <span />
+          <Link href={`/modules/asset-manager/${domainId}/cmdb-graph`}>
+            <Button variant="outline" size="small">Cartographie CMDB</Button>
+          </Link>
           <Link href={`/modules/asset-manager/${domainId}/assets/new`}>
             <Button variant="primary">Nouvel actif</Button>
           </Link>
@@ -249,6 +251,9 @@ export default function AssetManagerDomainPage() {
       </Panel>
 
       <nav className="doc-pagination mt-8 flex flex-wrap gap-4">
+        <Link href={`/modules/asset-manager/${domainId}/audit`} style={{ color: "var(--bpm-accent-cyan)" }}>
+          Journal d&apos;audit
+        </Link>
         <Link href="/modules" style={{ color: "var(--bpm-accent-cyan)" }}>
           ← Retour aux modules
         </Link>

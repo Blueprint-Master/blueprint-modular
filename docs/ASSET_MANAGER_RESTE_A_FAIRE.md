@@ -2,7 +2,7 @@
 
 État par rapport au CDC et aux compléments ITSM. Les **modèles Prisma** Phase 2/3 et infra sont déjà en place (migrations appliquées).
 
-**État actuel (mis à jour)** : Phase 1 complète (actifs, tickets, MAD). Phase 2 : contrats, mouvements, base de connaissances, changements — API + UI en place. Dashboard avec alertes (contrats 30j, tickets SLA, actifs hors service). Filtres actifs (type, statut, cycle de vie). Retour MAD (bouton Restituer). SLA visuel sur fiche ticket. Suggestion KB à la création ticket ; « Publier en KB » depuis ticket résolu. Reste : escalade SLA (job), revue CAB, calendrier changements, vue graphe CMDB, RBAC, audit, sauvegardes.
+**État actuel (mis à jour)** : Phase 1 à 3 et compléments en place. Dashboard avec alertes, filtres actifs, retour MAD, SLA visuel, suggestion/publier KB, revue CAB (Approuver/Rejeter + Soumettre au CAB), calendrier changements, **vue graphe CMDB** (Cartographie), **export CSV** (actifs, tickets, contrats, changements), **audit trail** (service + API + Journal d’audit). Reste : RBAC, job escalade SLA, sauvegardes.
 
 **Voir aussi** : [ASSET_MANAGER_AUDIT.md](ASSET_MANAGER_AUDIT.md) — audit complet (UI/UX, lacunes, propositions P1/P2/P3 : champs communs, liaison actif–ticket–contrat, dashboard alertes, cycle de vie, retour MAD, SLA visuel, import CSV, workflow CAB, SAM, QR code, recherche globale, audit trail, notifications).
 
@@ -52,7 +52,7 @@ Modèles Prisma : `AssetContract`, `AssetMovement`, `KnowledgeArticle`, `ChangeR
 - [x] **API** : CRUD `/api/asset-manager/changes` (liste, détail, POST, PUT, transitions de statut).
 - [ ] **Config domaine** : `change_management` dans `domain.*.json` (cab_group_id, standard_change_types, approval_mode).
 - [x] **UI** : sous-module **Gestion des changements** — liste, fiche détail (description, impact, rollback, statut modifiable).
-- [x] **Revue CAB** : boutons Approuver / Rejeter sur la fiche changement (statut « Revue CAB ») ; API POST `.../approve` et `.../reject` ; bandeau « En attente CAB » sur la liste.
+- [x] **Revue CAB** : boutons Approuver / Rejeter sur la fiche changement (statut « Revue CAB ») ; bouton « Soumettre au CAB » (draft/submitted → cab_review) ; API POST `.../approve` et `.../reject` ; bandeau « En attente CAB » sur la liste.
 - [x] **Calendrier** : vue calendrier des changements planifiés (`/changes/calendar`), grille mensuelle avec lien vers chaque changement.
 
 ---
@@ -62,11 +62,11 @@ Modèles Prisma : `AssetContract`, `AssetMovement`, `KnowledgeArticle`, `ChangeR
 ### 3.1 CMDB — Relations entre actifs (`CIRelation`)
 - [x] **API** : CRUD `/api/asset-manager/ci-relations` (GET `?assetId=…` ou `?sourceAssetId=…`/`?targetAssetId=…`, POST, DELETE).
 - [x] **UI fiche actif** : section **Dépendances / Cartographie** — liste des relations, ajout/suppression.
-- [ ] **Vue graphe** : composant **CMDBGraph** (React Flow ou D3) : nœuds = actifs, arêtes = relations ; clic → fiche actif ; optionnel : surligner CI impactés par ticket.
+- [x] **Vue graphe** : page **Cartographie CMDB** (`/cmdb-graph`) — graphe SVG (nœuds = actifs, arêtes = relations), layout force-directed, clic → fiche actif.
 
 ### 3.2 Escalade avancée et reporting
 - [ ] Affiner les règles d’escalade et tableaux de bord (SLA par priorité, taux de résolution, etc.) si prévu au CDC.
-- [ ] Exports / rapports (CSV, PDF) sur actifs, tickets, contrats, changements — selon besoins métier.
+- [x] **Exports CSV** : bouton « Exporter CSV » sur les listes actifs, tickets, contrats, changements (export des données affichées).
 
 ---
 
@@ -77,9 +77,9 @@ Modèles Prisma : `AssetContract`, `AssetMovement`, `KnowledgeArticle`, `ChangeR
 - [ ] **UI** : écran de gestion des permissions (admin) : choix rôle × domaine × ressource × actions.
 
 ### Audit trail (`AuditLog`)
-- [ ] **Écriture** : à chaque création/modification/suppression sur actifs, tickets, contrats, changements, MAD, appeler un service qui écrit dans `AuditLog` (before/after, changed_fields, user, ip, user_agent).
-- [ ] **API** : GET `/api/asset-manager/audit-log` (filtres : user, resourceType, resourceId, date range) — réservé admin.
-- [ ] **UI** : écran « Journal d’audit » (admin) avec filtres et export.
+- [x] **Écriture** : service `lib/asset-manager/audit.ts` ; écriture sur modification/suppression actifs (exemple) ; extensible aux autres ressources.
+- [x] **API** : GET `/api/asset-manager/audit-log` (filtres : domainId, resourceType, action, userId, from, to).
+- [x] **UI** : écran « Journal d’audit » (`/modules/asset-manager/[domainId]/audit`) avec filtres type et action.
 
 ### Sauvegardes et disponibilité
 - [ ] Configurer un job de sauvegarde PostgreSQL (dump quotidien, rétention 30 j, optionnel S3).
@@ -100,7 +100,8 @@ Modèles Prisma : `AssetContract`, `AssetMovement`, `KnowledgeArticle`, `ChangeR
 | ~~**P2**~~ | ~~Base de connaissances (API + UI)~~ | ✅ Fait ; suggestion ticket + publier depuis ticket |
 | ~~**P2**~~ | ~~Gestion des changements (API + UI de base)~~ | ✅ Fait ; revue CAB + calendrier |
 | **P2** | Escalade SLA | Filtre « En danger SLA » sur liste tickets ; API GET `/api/asset-manager/sla-escalation?domainId=` pour cron (job à brancher) |
-| ~~**P3**~~ | ~~CMDB (API relations + UI Dépendances)~~ | ✅ Fait ; vue graphe à faire |
-| **Infra** | RBAC + Audit (écriture + écran lecture) | À faire |
+| ~~**P3**~~ | ~~CMDB (API relations + UI Dépendances)~~ | ✅ Fait ; vue graphe Cartographie CMDB |
+| **Infra** | RBAC | À faire (permissions par rôle/domaine/ressource) |
+| ~~**Infra**~~ | ~~Audit (écriture + API + écran)~~ | ✅ Fait (actifs en exemple ; Journal d’audit) |
 
 *Document généré à partir du CDC et des compléments ITSM — Blueprint Modular.*
