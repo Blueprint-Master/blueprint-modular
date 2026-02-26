@@ -110,8 +110,18 @@ export default function WikiPage() {
   const [search, setSearch] = useState("");
   const [loading, setLoading] = useState(true);
   const [selectedParent, setSelectedParent] = useState<string | null>(null);
+  const [expandedIds, setExpandedIds] = useState<Set<string>>(new Set());
 
   const openArticle = (slug: string) => router.push(`/modules/wiki/${slug}`);
+  const onToggle = (id: string) => {
+    setExpandedIds((prev) => {
+      const next = new Set(prev);
+      if (next.has(id)) next.delete(id);
+      else next.add(id);
+      return next;
+    });
+  };
+  const onAddChild = (parentId: string) => router.push(`/modules/wiki/new?parentId=${encodeURIComponent(parentId)}`);
 
   const [tagFilter, setTagFilter] = useState<string | null>(null);
   const [statusFilter, setStatusFilter] = useState<"" | "published" | "draft">("");
@@ -371,8 +381,11 @@ export default function WikiPage() {
                 key={node.id}
                 node={node}
                 selectedParent={selectedParent}
+                expandedIds={expandedIds}
+                onToggle={onToggle}
                 onSelect={setSelectedParent}
                 onOpenArticle={openArticle}
+                onAddChild={onAddChild}
               />
             ))}
           </aside>
