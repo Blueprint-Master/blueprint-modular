@@ -50,6 +50,7 @@ export function NotificationBell() {
   const [animActive, setAnimActive] = useState(false);
   const [showAll, setShowAll] = useState(false);
   const bellRef = useRef<HTMLDivElement>(null);
+  const mobileButtonRef = useRef<HTMLButtonElement>(null);
   const touchHandledRef = useRef(false);
 
   const [minLevel, setMinLevel] = useState<1 | 2 | 3>(() => {
@@ -130,20 +131,37 @@ export function NotificationBell() {
     }
   };
 
-  const toggle = () => {
-    if (!isOpen && !isClosing) setIsOpen(true);
-    else if (isOpen && !isClosing) requestClose();
-  };
+  const toggle = useCallback(() => {
+    setIsOpen((open) => {
+      if (!open && !isClosing) return true;
+      if (open && !isClosing) {
+        requestClose();
+        return open;
+      }
+      return open;
+    });
+  }, [isClosing, requestClose]);
 
-  /** Sur mobile/PWA en portrait, le click peut ne pas se déclencher (z-index, délai tactile).
-   * On force l'ouverture au touchEnd pour un comportement fiable. */
-  const handleMobileBellTouch = (e: React.TouchEvent) => {
-    e.preventDefault();
-    touchHandledRef.current = true;
-    toggle();
-  };
+  const toggleRef = useRef(toggle);
+  toggleRef.current = toggle;
+
+  /** Sur mobile, même problème que le burger doc : le click peut ne pas se déclencher ou être perdu.
+   * Écouteur natif touchend avec passive: false pour que preventDefault soit pris en compte (React attache souvent en passive). */
+  useEffect(() => {
+    if (!isMobile) return;
+    const btn = mobileButtonRef.current;
+    if (!btn) return;
+    const onTouchEnd = (e: TouchEvent) => {
+      e.preventDefault();
+      touchHandledRef.current = true;
+      toggleRef.current();
+    };
+    btn.addEventListener("touchend", onTouchEnd, { passive: false });
+    return () => btn.removeEventListener("touchend", onTouchEnd);
+  }, [isMobile]);
 
   const handleMobileBellClick = (e: React.MouseEvent) => {
+    e.stopPropagation();
     if (touchHandledRef.current) {
       touchHandledRef.current = false;
       e.preventDefault();
@@ -283,10 +301,10 @@ export function NotificationBell() {
     return (
       <>
         <button
+          ref={mobileButtonRef}
           type="button"
           className="dashboard-header-icon-btn notification-bell-mobile-btn"
           onClick={handleMobileBellClick}
-          onTouchEnd={handleMobileBellTouch}
           aria-label="Notifications"
         >
           <BellSvg />
