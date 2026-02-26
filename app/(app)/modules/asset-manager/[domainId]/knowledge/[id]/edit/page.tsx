@@ -87,7 +87,7 @@ export default function AssetManagerKnowledgeEditPage() {
     <div className="doc-page">
       <div className="doc-page-header mb-6">
         <nav className="doc-breadcrumb">
-          <Link href={`/modules/asset-manager/${domainId}/knowledge`} style={{ color: "var(--bpm-accent-cyan)" }}>Base de connaissances</Link> → {article.title} → Modifier
+          <Link href={`/modules/asset-manager/${domainId}/knowledge`} style={{ color: "var(--bpm-accent-cyan)" }}>Connaissances</Link> → {article.title} → Modifier
         </nav>
         <h1 className="text-2xl font-bold" style={{ color: "var(--bpm-text-primary)" }}>Modifier l&apos;article</h1>
       </div>
@@ -102,7 +102,7 @@ export default function AssetManagerKnowledgeEditPage() {
               onChange={(e) => setContent(e.target.value)}
               required
               rows={12}
-              className="w-full rounded border p-2 text-sm"
+              className="bpm-textarea w-full rounded-lg border px-3 py-2 text-sm resize-y"
               style={{ borderColor: "var(--bpm-border)", background: "var(--bpm-surface)", color: "var(--bpm-text-primary)" }}
             />
           </div>

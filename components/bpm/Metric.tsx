@@ -96,7 +96,7 @@ export function Metric({
       }}
       data-metric-name={name && name !== "" ? name : undefined}
     >
-      <div className={`flex items-center gap-2 ${compact ? "mb-0.5" : "mb-1"}`}>
+      <div className={`flex items-center gap-2 ${compact ? "mb-0.5" : "mb-1"}`} style={compact ? { marginBottom: "calc(0.125rem + 3px)" } : undefined}>
         {icon != null && (
           <span
             className="flex-shrink-0 flex items-center justify-center rounded"
@@ -114,9 +114,9 @@ export function Metric({
           )}
         </div>
       </div>
-      <div className={compact ? "text-lg font-bold" : "text-xl font-bold"}>{displayValue}</div>
+      <div className={compact ? "text-lg font-bold" : "text-xl font-bold"} style={compact ? { marginTop: 3 } : undefined}>{displayValue}</div>
       {(subtext != null && subtext !== "") && (
-        <div className={`${compact ? "text-xs mt-0.5" : "text-sm mt-1"}`} style={{ color: "var(--bpm-text-secondary)" }}>
+        <div className={`${compact ? "text-[11px]" : "text-sm mt-1"}`} style={{ color: "var(--bpm-text-secondary)", ...(compact ? { marginTop: "calc(0.125rem + 3px)" } : {}) }}>
           {subtext}
         </div>
       )}

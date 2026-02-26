@@ -174,13 +174,6 @@ export default function AssetManagerAssetsPage() {
     );
   }
 
-  const breadcrumbItems = [
-    { label: "Modules", href: "/modules" },
-    { label: "Gestion d'actifs", href: "/modules/asset-manager" },
-    { label: "Tableau de bord", href: `/modules/asset-manager/${domainId}` },
-    { label: config?.asset_label_plural ?? "Équipements" },
-  ];
-
   const exportCsv = () => {
     const headers = ["Référence", "Libellé", "Type", "Statut", "Cycle de vie"];
     const rows = assets.map((a) => [
@@ -203,7 +196,7 @@ export default function AssetManagerAssetsPage() {
   return (
     <div className="doc-page">
       <div className="doc-page-header">
-        <AssetManagerNav breadcrumbItems={breadcrumbItems} />
+        <AssetManagerNav />
         <div className="flex flex-wrap items-center justify-between gap-3 mt-1">
           <div>
             <h1 className="doc-page-title text-2xl font-semibold" style={{ color: "var(--bpm-text-primary)" }}>

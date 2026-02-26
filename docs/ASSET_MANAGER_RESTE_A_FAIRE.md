@@ -14,7 +14,7 @@
 |--------|------|----------------|
 | **Inventaire actifs** | ✅ API + UI (liste, détail, création) | ✅ `lifecycleStage` affiché/édité ; filtres type, statut, cycle de vie |
 | **Tickets** | ✅ API CRUD + UI (liste + filtres, fiche, nouveau, statut/solution) | ✅ Suggestion articles KB à la création ; ✅ « Publier en KB » depuis ticket résolu ; barre SLA sur fiche |
-| **Mises à disposition** | ✅ API CRUD + UI (liste + filtre statut, fiche, nouvelle MAD, statut/retour/signature) | ✅ Bouton « Restituer » (clôture MAD + actif remis en stock) |
+| **Mise à disposition** | ✅ API CRUD + UI (liste + filtre statut, fiche, nouvelle MAD, statut/retour/signature) | ✅ Bouton « Restituer » (clôture MAD + actif remis en stock) |
 
 ---
 
@@ -41,9 +41,9 @@ Modèles Prisma : `AssetContract`, `AssetMovement`, `KnowledgeArticle`, `ChangeR
 - [ ] **Job planifié** : tâche (cron / APScheduler / Vercel cron) toutes les 5 min : tickets ouverts → calcul % SLA → déclencher actions (notify_manager, reassign_group, notify_director, etc.).
 - [ ] **Notifications** : branchement avec le module Notification BPM pour envoi des alertes d’escalade.
 
-### 2.5 Base de connaissances (`KnowledgeArticle`)
+### 2.5 Connaissances (`KnowledgeArticle`)
 - [x] **API** : CRUD `/api/asset-manager/knowledge` (liste, détail, création, édition, suppression) ; filtres catégorie / type d’actif / tags.
-- [x] **UI** : sous-module **Base de connaissances** (liste, fiche article, création/édition).
+- [x] **UI** : sous-module **Connaissances** (liste, fiche article, création/édition).
 - [x] **Suggestion à la création de ticket** : articles de la même catégorie affichés sur le formulaire nouveau ticket.
 - [x] **Bouton « Publier en base de connaissance »** sur un ticket résolu (lien vers nouvel article avec titre + solution/description préremplis).
 - [ ] **Portail utilisateur** : recherche d’articles publics avant création de ticket ; notation utile / pas utile.
@@ -93,11 +93,11 @@ Modèles Prisma : `AssetContract`, `AssetMovement`, `KnowledgeArticle`, `ChangeR
 | Priorité | Contenu | État |
 |----------|---------|------|
 | ~~**P1**~~ | ~~UI Tickets (liste + fiche + création)~~ | ✅ Fait |
-| ~~**P1**~~ | ~~UI Mises à disposition (liste + fiche + création)~~ | ✅ Fait |
+| ~~**P1**~~ | ~~UI Mise à disposition (liste + fiche + création)~~ | ✅ Fait |
 | ~~**P2**~~ | ~~Cycle de vie (config + UI)~~ | ✅ Fait (config + filtre liste + fiche actif) |
 | ~~**P2**~~ | ~~Contrats (API + UI)~~ | ✅ Fait ; alertes dashboard 30j |
 | ~~**P2**~~ | ~~Mouvements (API + onglet Historique)~~ | ✅ Fait |
-| ~~**P2**~~ | ~~Base de connaissances (API + UI)~~ | ✅ Fait ; suggestion ticket + publier depuis ticket |
+| ~~**P2**~~ | ~~Connaissances (API + UI)~~ | ✅ Fait ; suggestion ticket + publier depuis ticket |
 | ~~**P2**~~ | ~~Gestion des changements (API + UI de base)~~ | ✅ Fait ; revue CAB + calendrier |
 | **P2** | Escalade SLA | Filtre « En danger SLA » sur liste tickets ; API GET `/api/asset-manager/sla-escalation?domainId=` pour cron (job à brancher) |
 | ~~**P3**~~ | ~~CMDB (API relations + UI Dépendances)~~ | ✅ Fait ; vue graphe Cartographie CMDB |

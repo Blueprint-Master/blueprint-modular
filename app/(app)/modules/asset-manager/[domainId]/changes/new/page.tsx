@@ -84,11 +84,11 @@ export default function AssetManagerChangeNewPage() {
           <Input label="Titre *" value={title} onChange={setTitle} required placeholder="Résumé du changement" />
           <div>
             <label className="block text-sm font-medium mb-1" style={{ color: "var(--bpm-text-secondary)" }}>Description *</label>
-            <textarea required value={description} onChange={(e) => setDescription(e.target.value)} rows={4} className="w-full rounded border p-2 text-sm" style={{ borderColor: "var(--bpm-border)", background: "var(--bpm-surface)", color: "var(--bpm-text-primary)" }} />
+            <textarea required value={description} onChange={(e) => setDescription(e.target.value)} rows={4} className="bpm-textarea w-full rounded-lg border px-3 py-2 text-sm resize-y" style={{ borderColor: "var(--bpm-border)", background: "var(--bpm-surface)", color: "var(--bpm-text-primary)" }} />
           </div>
           <div>
             <label className="block text-sm font-medium mb-1" style={{ color: "var(--bpm-text-secondary)" }}>Impact *</label>
-            <textarea required value={impact} onChange={(e) => setImpact(e.target.value)} rows={3} className="w-full rounded border p-2 text-sm" style={{ borderColor: "var(--bpm-border)", background: "var(--bpm-surface)", color: "var(--bpm-text-primary)" }} />
+            <textarea required value={impact} onChange={(e) => setImpact(e.target.value)} rows={3} className="bpm-textarea w-full rounded-lg border px-3 py-2 text-sm resize-y" style={{ borderColor: "var(--bpm-border)", background: "var(--bpm-surface)", color: "var(--bpm-text-primary)" }} />
           </div>
           <Selectbox
             label="Niveau de risque *"
@@ -103,7 +103,7 @@ export default function AssetManagerChangeNewPage() {
           />
           <div>
             <label className="block text-sm font-medium mb-1" style={{ color: "var(--bpm-text-secondary)" }}>Plan de rollback *</label>
-            <textarea required value={rollbackPlan} onChange={(e) => setRollbackPlan(e.target.value)} rows={3} className="w-full rounded border p-2 text-sm" style={{ borderColor: "var(--bpm-border)", background: "var(--bpm-surface)", color: "var(--bpm-text-primary)" }} />
+            <textarea required value={rollbackPlan} onChange={(e) => setRollbackPlan(e.target.value)} rows={3} className="bpm-textarea w-full rounded-lg border px-3 py-2 text-sm resize-y" style={{ borderColor: "var(--bpm-border)", background: "var(--bpm-surface)", color: "var(--bpm-text-primary)" }} />
           </div>
           <div className="flex gap-2 pt-2">
             <Button type="submit" size="small" disabled={saving}>{saving ? "Création…" : "Créer la demande"}</Button>

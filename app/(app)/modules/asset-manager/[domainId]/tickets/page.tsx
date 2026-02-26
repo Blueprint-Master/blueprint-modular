@@ -166,13 +166,6 @@ export default function AssetManagerTicketsPage() {
     );
   }
 
-  const breadcrumbItems = [
-    { label: "Modules", href: "/modules" },
-    { label: "Gestion d'actifs", href: "/modules/asset-manager" },
-    { label: "Tableau de bord", href: `/modules/asset-manager/${domainId}` },
-    { label: "Tickets" },
-  ];
-
   const getStatusBadgeColor = (status: string) => {
     if (status === "in_progress" || status === "assigned") return "#f59e0b";
     if (status === "resolved" || status === "closed") return "var(--bpm-accent-mint)";
@@ -203,7 +196,7 @@ export default function AssetManagerTicketsPage() {
   return (
     <div className="doc-page">
       <div className="doc-page-header">
-        <AssetManagerNav breadcrumbItems={breadcrumbItems} />
+        <AssetManagerNav />
         <div className="flex flex-wrap items-center justify-between gap-3 mt-1">
           <div>
             <h1 className="doc-page-title text-2xl font-semibold" style={{ color: "var(--bpm-text-primary)" }}>Tickets</h1>

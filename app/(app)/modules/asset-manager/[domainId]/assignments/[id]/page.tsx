@@ -169,7 +169,7 @@ export default function AssetManagerAssignmentDetailPage() {
               value={editConditionReturn}
               onChange={(e) => setEditConditionReturn(e.target.value)}
               rows={2}
-              className="w-full rounded border p-2 text-sm"
+              className="bpm-textarea w-full rounded-lg border px-3 py-2 text-sm resize-y"
               style={{ borderColor: "var(--bpm-border)", background: "var(--bpm-surface)", color: "var(--bpm-text-primary)" }}
             />
           </div>

@@ -66,7 +66,7 @@ Dans `domain.*.json` :
 
 Job planifié (toutes les 5 min) : vérifier tickets ouverts et déclencher les actions d’escalade.
 
-### Base de connaissances
+### Connaissances
 
 Modèle **`KnowledgeArticle`** (Prisma) :
 
@@ -186,7 +186,7 @@ Modèle **`AuditLog`** (Prisma) :
 |-------------|-------|---------|
 | **inventory** | 1 | Inventaire actifs, fiches, champs dynamiques |
 | **helpdesk** | 1 | Tickets, SLA, priorités, catégories |
-| **assignments** | 1 | Mises à disposition / affectations |
+| **assignments** | 1 | Mise à disposition / affectations |
 | **lifecycle** | 2 | Contrats, mouvements, cycle de vie, alertes |
 | **knowledge-base** | 2 | Articles KB, suggestion, « Publier depuis ticket » |
 | **change-management** | 2 | Demandes de changement, CAB, planning |

@@ -65,7 +65,7 @@ export default function AssetManagerKnowledgeDetailPage() {
       <div className="doc-page">
         <Panel variant="warning" title="Article introuvable">Cet article n&apos;existe pas ou vous n&apos;y avez pas accès.</Panel>
         <nav className="doc-pagination mt-6">
-          <Link href={`/modules/asset-manager/${domainId}/knowledge`} style={{ color: "var(--bpm-accent-cyan)" }}>← Base de connaissances</Link>
+          <Link href={`/modules/asset-manager/${domainId}/knowledge`} style={{ color: "var(--bpm-accent-cyan)" }}>← Connaissances</Link>
         </nav>
       </div>
     );
@@ -78,7 +78,7 @@ export default function AssetManagerKnowledgeDetailPage() {
           <Link href="/modules" style={{ color: "var(--bpm-accent-cyan)" }}>Modules</Link> →{" "}
           <Link href="/modules/asset-manager" style={{ color: "var(--bpm-accent-cyan)" }}>Gestion d&apos;actifs</Link> →{" "}
           <Link href={`/modules/asset-manager/${domainId}`} style={{ color: "var(--bpm-accent-cyan)" }}>Tableau de bord</Link> →{" "}
-          <Link href={`/modules/asset-manager/${domainId}/knowledge`} style={{ color: "var(--bpm-accent-cyan)" }}>Base de connaissances</Link> → {article.title}
+          <Link href={`/modules/asset-manager/${domainId}/knowledge`} style={{ color: "var(--bpm-accent-cyan)" }}>Connaissances</Link> → {article.title}
         </nav>
         <div className="flex flex-wrap items-center justify-between gap-4">
           <h1 className="text-2xl font-bold" style={{ color: "var(--bpm-text-primary)" }}>{article.title}</h1>
@@ -115,7 +115,7 @@ export default function AssetManagerKnowledgeDetailPage() {
       </div>
 
       <nav className="doc-pagination mt-8 flex flex-wrap gap-4">
-        <Link href={`/modules/asset-manager/${domainId}/knowledge`} style={{ color: "var(--bpm-accent-cyan)" }}>← Base de connaissances</Link>
+        <Link href={`/modules/asset-manager/${domainId}/knowledge`} style={{ color: "var(--bpm-accent-cyan)" }}>← Connaissances</Link>
         <Link href={`/modules/asset-manager/${domainId}`} style={{ color: "var(--bpm-accent-cyan)" }}>Tableau de bord</Link>
       </nav>
     </div>

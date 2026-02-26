@@ -106,11 +106,11 @@ export default function AssetManagerKnowledgePage() {
         <nav className="doc-breadcrumb">
           <Link href="/modules" style={{ color: "var(--bpm-accent-cyan)" }}>Modules</Link> →{" "}
           <Link href="/modules/asset-manager" style={{ color: "var(--bpm-accent-cyan)" }}>Gestion d&apos;actifs</Link> →{" "}
-          <Link href={`/modules/asset-manager/${domainId}`} style={{ color: "var(--bpm-accent-cyan)" }}>Tableau de bord</Link> → Base de connaissances
+          <Link href={`/modules/asset-manager/${domainId}`} style={{ color: "var(--bpm-accent-cyan)" }}>Tableau de bord</Link> → Connaissances
         </nav>
         <div className="flex flex-wrap items-center justify-between gap-4">
           <div>
-            <h1 className="text-2xl font-bold" style={{ color: "var(--bpm-text-primary)" }}>Base de connaissances</h1>
+            <h1 className="text-2xl font-bold" style={{ color: "var(--bpm-text-primary)" }}>Connaissances</h1>
             <p className="doc-description mt-1" style={{ color: "var(--bpm-text-secondary)" }}>
               Articles et procédures pour le support et la maintenance.
             </p>

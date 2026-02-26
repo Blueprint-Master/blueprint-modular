@@ -116,7 +116,7 @@ export default function AssetManagerTicketNewPage() {
               onChange={(e) => setDescription(e.target.value)}
               required
               rows={5}
-              className="w-full rounded border p-2 text-sm"
+              className="bpm-textarea w-full rounded-lg border px-3 py-2 text-sm resize-y"
               style={{ borderColor: "var(--bpm-border)", background: "var(--bpm-surface)", color: "var(--bpm-text-primary)" }}
               placeholder="Décrivez le problème ou la demande..."
             />

@@ -704,12 +704,19 @@ textarea.bpm-textarea:focus {
 .asset-manager-page .bpm-table tbody tr:hover .asset-manager-row-chevron {
   opacity: 1;
 }
+.asset-manager-page .asset-manager-cta-button {
+  display: inline-flex;
+}
 .asset-manager-page .asset-manager-cta-button button,
 .asset-manager-page .asset-manager-cta-button .rounded-lg {
   min-height: 40px;
   height: 40px;
+  min-width: 200px;
+  width: 200px;
   padding: 8px 16px;
   font-size: 13px;
+  box-sizing: border-box;
+  justify-content: center;
 }
 /* Dark mode : badges désaturés (Linear) */
 [data-theme="dark"] .asset-manager-page .asset-manager-status-badge {

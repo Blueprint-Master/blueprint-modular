@@ -160,18 +160,12 @@ export default function AssetManagerDomainPage() {
     statusId: a.statusId,
   }));
 
-  const breadcrumbItems = [
-    { label: "Modules", href: "/modules" },
-    { label: "Gestion d'actifs", href: "/modules/asset-manager" },
-    { label: "Tableau de bord" },
-  ];
-
   const iconSize = 18;
 
   return (
     <div className="doc-page">
       <div className="doc-page-header">
-        <AssetManagerNav breadcrumbItems={breadcrumbItems} />
+        <AssetManagerNav />
         <div className="flex flex-wrap items-center justify-between gap-3 mt-1">
           <div>
             <h1 className="doc-page-title text-2xl font-semibold" style={{ color: "var(--bpm-text-primary)" }}>
@@ -196,7 +190,7 @@ export default function AssetManagerDomainPage() {
             border={false}
             icon={<Monitor size={iconSize} />}
             accentColor={ACCENT.assets}
-            subtext={assets.length === 0 ? "Aucun actif enregistré" : "Dernière mise à jour : —"}
+            subtext={assets.length === 0 ? "Aucun actif enregistré" : "Mise à jour : —"}
           />
         </Link>
         <Link href={`/modules/asset-manager/${domainId}/tickets`} className="block">
@@ -207,7 +201,7 @@ export default function AssetManagerDomainPage() {
             border={false}
             icon={<Ticket size={iconSize} />}
             accentColor={ACCENT.tickets}
-            subtext={ticketCount === 0 ? "Aucun ticket" : "Dernière mise à jour : —"}
+            subtext={ticketCount === 0 ? "Aucun ticket" : "Mise à jour : —"}
           />
         </Link>
         <Link href={`/modules/asset-manager/${domainId}/assignments`} className="block">
@@ -218,7 +212,7 @@ export default function AssetManagerDomainPage() {
             border={false}
             icon={<UserCheck size={iconSize} />}
             accentColor={ACCENT.assignments}
-            subtext={assignmentCount === 0 ? "Aucune MAD" : "Dernière mise à jour : —"}
+            subtext={assignmentCount === 0 ? "Aucune MAD" : "Mise à jour : —"}
           />
         </Link>
         <Link href={`/modules/asset-manager/${domainId}/contracts`} className="block">
@@ -229,18 +223,18 @@ export default function AssetManagerDomainPage() {
             border={false}
             icon={<FileText size={iconSize} />}
             accentColor={ACCENT.contracts}
-            subtext={contractCount === 0 ? "Aucun contrat" : "Dernière mise à jour : —"}
+            subtext={contractCount === 0 ? "Aucun contrat" : "Mise à jour : —"}
           />
         </Link>
         <Link href={`/modules/asset-manager/${domainId}/knowledge`} className="block">
           <Metric
-            label="Base de connaissances"
+            label="Connaissances"
             value={knowledgeCount}
             compact
             border={false}
             icon={<BookOpen size={iconSize} />}
             accentColor={ACCENT.knowledge}
-            subtext={knowledgeCount === 0 ? "Aucun article" : "Dernière mise à jour : —"}
+            subtext={knowledgeCount === 0 ? "Aucun article" : "Mise à jour : —"}
           />
         </Link>
         <Link href={`/modules/asset-manager/${domainId}/changes`} className="block">
@@ -251,7 +245,7 @@ export default function AssetManagerDomainPage() {
             border={false}
             icon={<RefreshCw size={iconSize} />}
             accentColor={ACCENT.changes}
-            subtext={changeCount === 0 ? "Aucun changement" : "Dernière mise à jour : —"}
+            subtext={changeCount === 0 ? "Aucun changement" : "Mise à jour : —"}
           />
         </Link>
       </div>
@@ -310,7 +304,7 @@ export default function AssetManagerDomainPage() {
           <h2 className="text-sm font-semibold m-0" style={{ color: "var(--bpm-text-secondary)", letterSpacing: "0.04em" }}>
             {config.asset_label_plural}
           </h2>
-          <Link href={`/modules/asset-manager/${domainId}/cmdb-graph`}>
+          <Link href={`/modules/asset-manager/${domainId}/cmdb-graph`} className="asset-manager-cta-button">
             <Button variant="outline" size="small">Cartographie CMDB</Button>
           </Link>
         </div>

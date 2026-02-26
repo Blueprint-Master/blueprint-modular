@@ -1,16 +1,15 @@
 "use client";
 
-import Link from "next/link";
 import { usePathname, useParams } from "next/navigation";
-import { Tabs, Breadcrumb } from "@/components/bpm";
+import { Tabs } from "@/components/bpm";
 
 const SECTIONS = [
   { key: "dashboard", label: "Tableau de bord", path: "" },
   { key: "assets", label: "Équipements", path: "/assets" },
   { key: "tickets", label: "Tickets", path: "/tickets" },
-  { key: "assignments", label: "Mises à disposition", path: "/assignments" },
+  { key: "assignments", label: "Mise à disposition", path: "/assignments" },
   { key: "contracts", label: "Contrats", path: "/contracts" },
-  { key: "knowledge", label: "Base de connaissances", path: "/knowledge" },
+  { key: "knowledge", label: "Connaissances", path: "/knowledge" },
   { key: "changes", label: "Changements", path: "/changes" },
 ] as const;
 
@@ -23,11 +22,7 @@ function getSectionFromPath(pathname: string): string {
   return found ? found.key : "dashboard";
 }
 
-export function AssetManagerNav({
-  breadcrumbItems,
-}: {
-  breadcrumbItems: { label: string; href?: string }[];
-}) {
+export function AssetManagerNav() {
   const pathname = usePathname();
   const params = useParams();
   const domainId = typeof params?.domainId === "string" ? params.domainId : "";
@@ -47,14 +42,11 @@ export function AssetManagerNav({
   };
 
   return (
-    <>
-      <Breadcrumb items={breadcrumbItems} separator="›" className="mb-1" />
-      <Tabs
+    <Tabs
         tabs={tabs}
         defaultTab={tabIndex >= 0 ? tabIndex : 0}
         onChange={handleTabChange}
         className="mb-3"
       />
-    </>
   );
 }

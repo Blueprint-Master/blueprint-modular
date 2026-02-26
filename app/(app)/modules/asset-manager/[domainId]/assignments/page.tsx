@@ -97,13 +97,6 @@ export default function AssetManagerAssignmentsPage() {
     ...Object.entries(STATUS_LABELS).map(([id, label]) => ({ value: id, label })),
   ];
 
-  const breadcrumbItems = [
-    { label: "Modules", href: "/modules" },
-    { label: "Gestion d'actifs", href: "/modules/asset-manager" },
-    { label: "Tableau de bord", href: `/modules/asset-manager/${domainId}` },
-    { label: "Mises à disposition" },
-  ];
-
   const getStatusBadgeColor = (status: string) => {
     if (status === "active") return "var(--bpm-accent-mint)";
     if (status === "returned") return "#6b7280";
@@ -154,10 +147,10 @@ export default function AssetManagerAssignmentsPage() {
   return (
     <div className="doc-page">
       <div className="doc-page-header">
-        <AssetManagerNav breadcrumbItems={breadcrumbItems} />
+        <AssetManagerNav />
         <div className="flex flex-wrap items-center justify-between gap-3 mt-1">
           <div>
-            <h1 className="doc-page-title text-2xl font-semibold" style={{ color: "var(--bpm-text-primary)" }}>Mises à disposition</h1>
+            <h1 className="doc-page-title text-2xl font-semibold" style={{ color: "var(--bpm-text-primary)" }}>Mise à disposition</h1>
             <p className="doc-description mt-0.5" style={{ color: "var(--bpm-text-secondary)" }}>
               Suivi des mises à disposition d&apos;actifs.
             </p>

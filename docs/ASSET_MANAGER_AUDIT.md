@@ -2,7 +2,7 @@
 
 ## I. Synthèse de l'existant
 
-Le module couvre six sections accessibles depuis un tableau de bord central : **Équipements**, **Tickets**, **Mises à disposition (MAD)**, **Contrats & garanties**, **Base de connaissances**, et **Gestion des changements (CAB)**. Il repose sur une architecture JSON-driven particulièrement solide (domaines configurables, types d'actifs extensibles, numérotation automatique, SLA, cycle de vie, CMDB), mais l'interface n'expose qu'une fraction de cette richesse backend.
+Le module couvre six sections accessibles depuis un tableau de bord central : **Équipements**, **Tickets**, **Mise à disposition (MAD)**, **Contrats & garanties**, **Connaissances**, et **Gestion des changements (CAB)**. Il repose sur une architecture JSON-driven particulièrement solide (domaines configurables, types d'actifs extensibles, numérotation automatique, SLA, cycle de vie, CMDB), mais l'interface n'expose qu'une fraction de cette richesse backend.
 
 ---
 

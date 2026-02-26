@@ -159,12 +159,12 @@ export default function AssetManagerTicketDetailPage() {
       </Panel>
 
       {(ticket.status === "resolved" || ticket.status === "closed") && (
-        <Panel variant="info" title="Base de connaissances" className="mt-6">
+        <Panel variant="info" title="Connaissances" className="mt-6">
           <p className="text-sm mb-3" style={{ color: "var(--bpm-text-secondary)" }}>
-            Créez un article à partir de ce ticket pour enrichir la base de connaissances.
+            Créez un article à partir de ce ticket pour enrichir les connaissances.
           </p>
           <Link href={`/modules/asset-manager/${domainId}/knowledge/new?fromTicket=${ticket.id}`}>
-            <Button variant="outline" size="small">Publier en base de connaissance</Button>
+            <Button variant="outline" size="small">Publier en connaissances</Button>
           </Link>
         </Panel>
       )}
@@ -183,7 +183,7 @@ export default function AssetManagerTicketDetailPage() {
               value={editSolution}
               onChange={(e) => setEditSolution(e.target.value)}
               rows={4}
-              className="w-full rounded border p-2 text-sm"
+              className="bpm-textarea w-full rounded-lg border px-3 py-2 text-sm resize-y"
               style={{ borderColor: "var(--bpm-border)", background: "var(--bpm-surface)", color: "var(--bpm-text-primary)" }}
               placeholder="Décrire la solution..."
             />

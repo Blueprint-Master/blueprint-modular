@@ -90,7 +90,7 @@ export default function AssetManagerKnowledgeNewPage() {
           <Link href="/modules" style={{ color: "var(--bpm-accent-cyan)" }}>Modules</Link> →{" "}
           <Link href="/modules/asset-manager" style={{ color: "var(--bpm-accent-cyan)" }}>Gestion d&apos;actifs</Link> →{" "}
           <Link href={`/modules/asset-manager/${domainId}`} style={{ color: "var(--bpm-accent-cyan)" }}>Tableau de bord</Link> →{" "}
-          <Link href={`/modules/asset-manager/${domainId}/knowledge`} style={{ color: "var(--bpm-accent-cyan)" }}>Base de connaissances</Link> → Nouveau
+          <Link href={`/modules/asset-manager/${domainId}/knowledge`} style={{ color: "var(--bpm-accent-cyan)" }}>Connaissances</Link> → Nouveau
         </nav>
         <h1 className="text-2xl font-bold" style={{ color: "var(--bpm-text-primary)" }}>Nouvel article</h1>
         {fromTicketId && (
@@ -108,7 +108,7 @@ export default function AssetManagerKnowledgeNewPage() {
               onChange={(e) => setContent(e.target.value)}
               required
               rows={12}
-              className="w-full rounded border p-2 text-sm"
+              className="bpm-textarea w-full rounded-lg border px-3 py-2 text-sm resize-y"
               style={{ borderColor: "var(--bpm-border)", background: "var(--bpm-surface)", color: "var(--bpm-text-primary)" }}
               placeholder="Contenu en Markdown ou texte..."
             />
@@ -144,7 +144,7 @@ export default function AssetManagerKnowledgeNewPage() {
       </Panel>
 
       <nav className="doc-pagination mt-8 flex flex-wrap gap-4">
-        <Link href={`/modules/asset-manager/${domainId}/knowledge`} style={{ color: "var(--bpm-accent-cyan)" }}>← Base de connaissances</Link>
+        <Link href={`/modules/asset-manager/${domainId}/knowledge`} style={{ color: "var(--bpm-accent-cyan)" }}>← Connaissances</Link>
       </nav>
     </div>
   );
