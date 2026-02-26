@@ -277,12 +277,12 @@ export default function WikiPage() {
           </div>
         </div>
         <div className="wiki-header">
-        <h2 className="text-lg font-semibold mb-2" style={{ color: "var(--bpm-text-primary)" }}>Articles</h2>
+        <h2 className="text-base font-semibold mb-0" style={{ color: "var(--bpm-text-primary)" }}>Articles</h2>
         <Link href="/modules/wiki/new" className="btn-primary">
           + Nouvel article
         </Link>
       </div>
-      <div className="wiki-search flex flex-wrap items-center gap-2 mb-2">
+      <div className="wiki-search flex flex-wrap items-center gap-2">
         <input
           type="search"
           placeholder="Rechercher (titre, contenu, tags)..."
