@@ -9,7 +9,7 @@ import remarkGfm from "remark-gfm";
 import rehypeHighlight from "rehype-highlight";
 import rehypeRaw from "rehype-raw";
 import { rehypeWikiHashtags } from "@/lib/rehype-wiki-hashtags";
-import { Panel, Button } from "@/components/bpm";
+import { Panel, Button, Badge } from "@/components/bpm";
 import { useAssistant } from "@/lib/ai/assistant-context";
 import { getGuestArticleBySlug, getGuestWikiArticles, deleteGuestArticle } from "@/lib/wiki-guest";
 
