@@ -105,7 +105,7 @@ export default function AssetManagerTicketsPage() {
     {
       key: "assignee",
       label: "Assigné à",
-      render: (_: unknown, row: Ticket) => row.assignee?.name ?? "—",
+      render: (_: unknown, row: Record<string, unknown>) => (row as Ticket).assignee?.name ?? "—",
     },
   ];
 

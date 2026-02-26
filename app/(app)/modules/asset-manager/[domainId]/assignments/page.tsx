@@ -59,12 +59,15 @@ export default function AssetManagerAssignmentsPage() {
     {
       key: "asset",
       label: "Actif",
-      render: (_: unknown, row: Assignment) => row.asset ? `${row.asset.reference} — ${row.asset.label}` : "—",
+      render: (_: unknown, row: Record<string, unknown>) => {
+        const r = row as Assignment;
+        return r.asset ? `${r.asset.reference} — ${r.asset.label}` : "—";
+      },
     },
     {
       key: "assignee",
       label: "Bénéficiaire",
-      render: (_: unknown, row: Assignment) => row.assignee?.name ?? "—",
+      render: (_: unknown, row: Record<string, unknown>) => (row as Assignment).assignee?.name ?? "—",
     },
     {
       key: "status",
