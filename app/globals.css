@@ -367,17 +367,15 @@ textarea.bpm-textarea:focus {
   top: 0;
   z-index: 10;
   background: var(--bpm-bg-primary);
-  padding-top: 12px;
-  padding-bottom: 8px;
+  padding-top: 8px;
+  padding-bottom: 6px;
   margin-bottom: 0;
   border-bottom: 1px solid var(--bpm-border);
 }
-.wiki-page .doc-page-header { margin-bottom: 12px; }
-.wiki-page .doc-page-header h1 { font-size: 1.35rem; margin: 0 0 4px; }
-.wiki-page .doc-description { margin: 0 0 8px; font-size: 13px; }
-.wiki-page .doc-meta { margin-top: 4px; }
-.wiki-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
-.wiki-search { margin-bottom: 8px; }
+/* Masquer le bloc intro (Wiki + description + badge) pour maximiser la place pour la liste */
+.wiki-page .doc-page-header { display: none; }
+.wiki-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px; }
+.wiki-search { margin-bottom: 4px; }
 /* Figer l’en-tête Wiki (titre, Articles, recherche, tags) sous la barre app : coller sous le header h-14 */
 .app-main .wiki-sticky-header {
   top: 0;
@@ -391,7 +389,7 @@ textarea.bpm-textarea:focus {
 .wiki-body { flex: 1; min-height: 0; overflow: hidden; display: flex; flex-direction: column; }
 .wiki-loading, .wiki-empty { padding: 24px; color: var(--bpm-text-secondary); flex-shrink: 0; }
 .wiki-empty a { color: var(--bpm-accent-cyan); text-decoration: none; }
-.wiki-layout { display: grid; grid-template-columns: 260px 1fr; gap: 24px; margin-top: 12px; flex: 1; min-height: 0; overflow: hidden; }
+.wiki-layout { display: grid; grid-template-columns: 260px 1fr; gap: 24px; margin-top: 6px; flex: 1; min-height: 0; overflow: hidden; }
 .wiki-sidebar { border-right: 1px solid var(--bpm-border); padding-right: 24px; overflow-y: auto; min-height: 0; }
 .wiki-tree-node { padding: 6px 8px; border-radius: 6px; cursor: pointer; display: flex; gap: 8px; align-items: center; font-size: 14px; }
 .wiki-tree-node:hover { background: var(--bpm-border); }
