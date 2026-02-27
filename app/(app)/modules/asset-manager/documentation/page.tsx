@@ -24,7 +24,7 @@ export default function AssetManagerDocumentationPage() {
       </p>
 
       <p className="mb-6" style={{ color: "var(--bpm-text-secondary)" }}>
-        Le module ne code pas en dur les types d'actifs. Il s&apos;appuie sur un <strong>fichier de configuration JSON</strong> (<code>lib/asset-manager/config/</code>) qui décrit les types d&apos;actifs, leurs champs, les statuts, les catégories de tickets, les priorités et les règles de numérotation.
+        Le module ne code pas en dur les types d&apos;actifs. Il s&apos;appuie sur un <strong>fichier de configuration JSON</strong> (<code>lib/asset-manager/config/</code>) qui décrit les types d&apos;actifs, leurs champs, les statuts, les catégories de tickets, les priorités et les règles de numérotation.
       </p>
 
       <h2 className="text-lg font-semibold mt-8 mb-2" style={{ color: "var(--bpm-text-primary)" }}>
