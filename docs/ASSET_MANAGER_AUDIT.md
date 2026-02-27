@@ -1,4 +1,4 @@
-# Audit du module Gestion d'actifs — Blueprint Modular v0.1.21
+# Audit du module Gestion de parc — Blueprint Modular v0.1.21
 
 ## I. Synthèse de l'existant
 
@@ -131,7 +131,7 @@ Toutes les propositions restent dans le cadre des briques Blueprint Modular (com
 
 ## VII. Conclusion
 
-Le module Gestion d'actifs est construit sur une **architecture backend remarquablement solide** pour la v0.1.21 : config JSON extensible, multi-domaines, SLA, CMDB et cycle de vie pensés dès le départ. Le fossé entre la richesse de la config et l'interface est le principal point d'attention.
+Le module Gestion de parc est construit sur une **architecture backend remarquablement solide** pour la v0.1.21 : config JSON extensible, multi-domaines, SLA, CMDB et cycle de vie pensés dès le départ. Le fossé entre la richesse de la config et l'interface est le principal point d'attention.
 
 **Principe retenu** : "Formulaire court à la création, profondeur sur la fiche" — à pousser jusqu'au bout sur chaque entité. Les **priorités 1** (champs communs, liaisons actif–ticket–contrat, dashboard avec alertes) peuvent être traitées en un sprint et transformeront la valeur perçue du module. Les priorités 2 et 3 feront de Blueprint un outil ITSM sérieux, plus agréable que GLPI tout en restant plus léger et lisible.
 

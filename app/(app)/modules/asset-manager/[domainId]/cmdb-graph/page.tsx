@@ -155,7 +155,7 @@ export default function AssetManagerCmdbGraphPage() {
       <div className="doc-page-header mb-4">
         <nav className="doc-breadcrumb">
           <Link href="/modules" style={{ color: "var(--bpm-accent-cyan)" }}>Modules</Link> →{" "}
-          <Link href="/modules/asset-manager" style={{ color: "var(--bpm-accent-cyan)" }}>Gestion d&apos;actifs</Link> →{" "}
+          <Link href="/modules/asset-manager" style={{ color: "var(--bpm-accent-cyan)" }}>Gestion de parc</Link> →{" "}
           <Link href={`/modules/asset-manager/${domainId}`} style={{ color: "var(--bpm-accent-cyan)" }}>Tableau de bord</Link> → Cartographie CMDB
         </nav>
         <div className="flex flex-wrap items-center justify-between gap-4">

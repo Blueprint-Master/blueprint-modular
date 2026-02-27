@@ -85,7 +85,7 @@ export default function NewAssetPage() {
     <div className="doc-page">
       <div className="doc-page-header mb-6">
         <div className="doc-breadcrumb">
-          <Link href="/modules">Modules</Link> → <Link href="/modules/asset-manager">Gestion d’actifs</Link> →{" "}
+          <Link href="/modules">Modules</Link> → <Link href="/modules/asset-manager">Gestion de parc</Link> →{" "}
           <Link href={`/modules/asset-manager/${domainId}`}>{config.domain_label}</Link> → Nouvel actif
         </div>
         <h1 className="text-2xl font-bold" style={{ color: "var(--bpm-text-primary)" }}>

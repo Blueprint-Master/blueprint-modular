@@ -279,9 +279,9 @@ export default function AssetDetailPage() {
       <div className="doc-page">
         <div className="doc-page-header mb-6">
           <nav className="doc-breadcrumb">
-            <Link href="/modules">Modules</Link> → <Link href="/modules/asset-manager">Gestion d&apos;actifs</Link>
+            <Link href="/modules">Modules</Link> → <Link href="/modules/asset-manager">Gestion de parc</Link>
           </nav>
-          <h1 className="text-2xl font-bold" style={{ color: "var(--bpm-text-primary)" }}>Gestion d&apos;actifs</h1>
+          <h1 className="text-2xl font-bold" style={{ color: "var(--bpm-text-primary)" }}>Gestion de parc</h1>
         </div>
         <Panel variant="warning" title="Actif introuvable">
           L&apos;actif demandé n&apos;existe pas ou vous n&apos;y avez pas accès.
@@ -299,7 +299,7 @@ export default function AssetDetailPage() {
     <div className="doc-page">
       <div className="doc-page-header mb-6">
         <nav className="doc-breadcrumb">
-          <Link href="/modules">Modules</Link> → <Link href="/modules/asset-manager">Gestion d&apos;actifs</Link> →{" "}
+          <Link href="/modules">Modules</Link> → <Link href="/modules/asset-manager">Gestion de parc</Link> →{" "}
           <Link href={`/modules/asset-manager/${domainId}/assets`}>{config?.asset_label_plural ?? "Actifs"}</Link> → {asset.reference}
         </nav>
         <h1 className="text-2xl font-bold" style={{ color: "var(--bpm-text-primary)" }}>

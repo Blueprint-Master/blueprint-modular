@@ -31,10 +31,10 @@ export default function AssetManagerPage() {
       <div className="doc-page">
         <div className="doc-page-header mb-6">
           <nav className="doc-breadcrumb">
-            <Link href="/modules">Modules</Link> → Gestion d&apos;actifs
+            <Link href="/modules">Modules</Link> → Gestion de parc
           </nav>
           <h1 className="text-2xl font-bold" style={{ color: "var(--bpm-text-primary)" }}>
-            Gestion d&apos;actifs
+            Gestion de parc
           </h1>
           <p className="doc-description mt-1" style={{ color: "var(--bpm-text-secondary)" }}>
             Chargement…
@@ -51,10 +51,10 @@ export default function AssetManagerPage() {
     <div className="doc-page">
       <div className="doc-page-header mb-6">
         <nav className="doc-breadcrumb">
-          <Link href="/modules">Modules</Link> → Gestion d&apos;actifs
+          <Link href="/modules">Modules</Link> → Gestion de parc
         </nav>
         <h1 className="text-2xl font-bold" style={{ color: "var(--bpm-text-primary)" }}>
-          Gestion d&apos;actifs
+          Gestion de parc
         </h1>
         <p className="doc-description mt-1" style={{ color: "var(--bpm-text-secondary)" }}>
           Aucune configuration de domaine disponible.

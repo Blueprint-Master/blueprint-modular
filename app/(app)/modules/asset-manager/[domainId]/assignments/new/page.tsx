@@ -76,7 +76,7 @@ export default function AssetManagerAssignmentNewPage() {
     <div className="doc-page">
       <div className="doc-page-header mb-6">
         <nav className="doc-breadcrumb">
-          <Link href="/modules">Modules</Link> → <Link href="/modules/asset-manager">Gestion d&apos;actifs</Link> →{" "}
+          <Link href="/modules">Modules</Link> → <Link href="/modules/asset-manager">Gestion de parc</Link> →{" "}
           <Link href={`/modules/asset-manager/${domainId}`}>Tableau de bord</Link> →{" "}
           <Link href={`/modules/asset-manager/${domainId}/assignments`}>MAD</Link> → Nouvelle
         </nav>

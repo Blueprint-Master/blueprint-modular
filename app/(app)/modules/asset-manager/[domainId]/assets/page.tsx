@@ -161,9 +161,9 @@ export default function AssetManagerAssetsPage() {
       <div className="doc-page">
         <div className="doc-page-header mb-6">
           <nav className="doc-breadcrumb">
-            <Link href="/modules">Modules</Link> → Gestion d&apos;actifs
+            <Link href="/modules">Modules</Link> → Gestion de parc
           </nav>
-          <h1 className="text-2xl font-bold" style={{ color: "var(--bpm-text-primary)" }}>Gestion d&apos;actifs</h1>
+          <h1 className="text-2xl font-bold" style={{ color: "var(--bpm-text-primary)" }}>Gestion de parc</h1>
         </div>
         <Panel variant="warning" title="Configuration introuvable" />
         <nav className="doc-pagination mt-6">

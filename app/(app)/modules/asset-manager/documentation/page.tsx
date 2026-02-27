@@ -12,7 +12,7 @@ export default function AssetManagerDocumentationPage() {
         </nav>
         <h1 className="text-2xl font-bold" style={{ color: "var(--bpm-text-primary)" }}>Documentation — Gestion de parc</h1>
         <p className="doc-description mt-1" style={{ color: "var(--bpm-text-secondary)" }}>
-          Module de gestion d&apos;actifs, tickets et mise à Disposition. Tableau de bord, équipements, tickets, mise à Disposition, contrats, connaissances et changements.
+          Module de gestion de parc : actifs, tickets et mise à disposition. Tableau de bord, équipements, tickets, mise à Disposition, contrats, connaissances et changements.
         </p>
       </div>
 
@@ -24,7 +24,7 @@ export default function AssetManagerDocumentationPage() {
       </p>
 
       <p className="mb-6" style={{ color: "var(--bpm-text-secondary)" }}>
-        Le module ne code pas en dur les types d&apos;actifs. Il s&apos;appuie sur un <strong>fichier de configuration JSON</strong> (<code>lib/asset-manager/config/</code>) qui décrit les types d&apos;actifs, leurs champs, les statuts, les catégories de tickets, les priorités et les règles de numérotation.
+        Le module ne code pas en dur les types d'actifs. Il s&apos;appuie sur un <strong>fichier de configuration JSON</strong> (<code>lib/asset-manager/config/</code>) qui décrit les types d&apos;actifs, leurs champs, les statuts, les catégories de tickets, les priorités et les règles de numérotation.
       </p>
 
       <h2 className="text-lg font-semibold mt-8 mb-2" style={{ color: "var(--bpm-text-primary)" }}>

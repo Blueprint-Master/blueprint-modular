@@ -529,7 +529,7 @@ textarea.bpm-textarea:focus {
 
 /* ========== Gestion de parc — style inspiré Linear (composants BPM conservés) ========== */
 .asset-manager-page {
-  background: #F5F5F7;
+  background: #ffffff;
   min-height: 100%;
   width: 100%;
   max-width: 100vw;
@@ -541,7 +541,7 @@ textarea.bpm-textarea:focus {
   display: flex;
   flex-direction: column;
   flex: 1;
-  min-height: 0;
+  min-height: 100%;
 }
 [data-theme="dark"] .asset-manager-page {
   background: var(--bpm-bg-primary);
@@ -561,16 +561,35 @@ textarea.bpm-textarea:focus {
   align-self: stretch;
   border-right: 1px solid #E5E7EB;
   padding: 16px 12px;
-  background: var(--bpm-surface);
+  background: var(--bpm-bg-secondary);
   display: flex;
   flex-direction: column;
   min-height: 0;
   overflow-y: auto;
+  position: relative;
+}
+/* Barre verticale pleine hauteur de l'écran (comme la sidebar principale) */
+@media (min-width: 768px) {
+  .asset-manager-sidebar::after {
+    content: "";
+    position: fixed;
+    top: 0;
+    bottom: 0;
+    /* Bord gauche de la sidebar Gestion de parc (= limite avec la zone à gauche) */
+    left: var(--bpm-sidebar-width, 16rem);
+    width: 1px;
+    background: #E5E7EB;
+    pointer-events: none;
+    z-index: 5;
+  }
 }
 [data-theme="dark"] .asset-manager-sidebar {
   border-right-color: var(--bpm-border);
-  background: var(--bpm-surface);
+  background: var(--bpm-bg-secondary);
   box-shadow: inset 0 -1px 0 rgba(0,0,0,0.2);
+}
+[data-theme="dark"] .asset-manager-sidebar::after {
+  background: var(--bpm-border);
 }
 .asset-manager-sidebar-nav {
   display: flex;
@@ -590,7 +609,7 @@ textarea.bpm-textarea:focus {
   transition: background 0.15s, color 0.15s;
 }
 .asset-manager-sidebar-link:hover {
-  background: var(--bpm-bg-secondary);
+  background: var(--bpm-sidebar-hover-bg);
   color: var(--bpm-text-primary);
 }
 .asset-manager-sidebar-link--active {
