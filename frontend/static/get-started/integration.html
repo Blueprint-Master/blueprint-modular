@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Intégration (modules et composants) — Blueprint Modular</title>
+  <link rel="icon" href="../favicon.ico" />
+  <link rel="icon" type="image/png" href="../img/logo-bpm.png" />
+  <link rel="stylesheet" href="../doc.css" />
+  <link rel="manifest" href="../manifest.json" />
+  <meta name="theme-color" content="#2563eb" />
+  <meta name="description" content="Référence pour intégrer tous les modules et composants BPM dans une autre application (copie/sync, API, PyPI)." />
+</head>
+<body>
+  <nav class="doc-nav">
+    <a href="https://blueprint-modular.com/" class="brand"><img src="../img/logo-bpm-nom.jpg" alt="" class="brand-logo" /><span class="word-blueprint">Blueprint</span> <span class="word-modular">Modular</span></a>
+    <a href="../get-started/why-bpm.html">Pourquoi BPM</a>
+    <a href="../get-started/installation.html">Installation</a>
+    <a href="../components.html">Composants</a>
+    <a href="../api-reference/text.html">Référence API</a>
+    <a href="../deploy/concepts.html">Déployer</a>
+    <a href="https://blueprint-modular.com/modules.html">Modules</a>
+    <a href="../get-started/integration.html">Intégration</a>
+    <a href="../cheat-sheet.html">Aide-mémoire</a>
+    <a href="https://app.blueprint-modular.com/dashboard" class="doc-nav-app" target="_blank" rel="noopener">Ouvrir l'app</a>
+    <button class="nav-burger" aria-label="Menu" id="nav-burger-btn"><span></span><span></span><span></span></button>
+  </nav>
+  <div class="doc-layout">
+    <aside class="doc-sidebar">
+      <h3>Accueil</h3>
+      <a href="../index.html">Accueil</a>
+      <h3>Démarrage</h3>
+      <a href="why-bpm.html">Pourquoi BPM</a>
+      <a href="installation.html">Installation</a>
+      <a href="fundamentals.html">Fondamentaux</a>
+      <a href="first-app.html">Première app</a>
+      <a href="integration.html" class="active">Intégration (modules & composants)</a>
+      <h3>Composants</h3>
+      <a href="../components.html">Catalogue des composants</a>
+      <a href="../api-reference/text.html">Texte</a>
+      <a href="../api-reference/data.html">Données</a>
+      <a href="../api-reference/metrics.html">Métriques</a>
+      <a href="../api-reference/charts.html">Graphiques</a>
+      <a href="../api-reference/inputs.html">Saisie</a>
+      <a href="../api-reference/layout.html">Mise en page</a>
+      <a href="../api-reference/panels.html">Panneaux</a>
+      <a href="../api-reference/media.html">Médias</a>
+      <a href="../api-reference/status.html">Statut</a>
+      <a href="../api-reference/chat.html">Chat</a>
+      <a href="../api-reference/config.html">Config</a>
+      <a href="../api-reference/connection.html">Connexion aux données</a>
+      <h3>Modules</h3>
+      <a href="https://blueprint-modular.com/modules.html">Catalogue des modules</a>
+      <a href="../modules/wiki.html">Module Wiki</a>
+      <a href="../modules/ia.html">Module IA</a>
+      <a href="../modules/veille.html">Module Veille</a>
+      <a href="../modules/ibkr.html">Module IBKR</a>
+      <a href="../modules/analyse-document.html">Module Documents</a>
+      <h3>Déployer</h3>
+      <a href="../deploy/concepts.html">Concepts</a>
+      <a href="../deploy/platforms.html">Plateformes</a>
+      <h3>Connaissances</h3>
+      <a href="../knowledge-base/faq.html">FAQ</a>
+      <a href="../knowledge-base/troubleshooting.html">Dépannage</a>
+      <a href="../knowledge-base/reste-a-faire.html">Ce qu'il reste à faire</a>
+      <h3>Ressources</h3>
+      <a href="../cheat-sheet.html">Aide-mémoire</a>
+      <a href="../versions.html">Versions</a>
+    </aside>
+    <main class="doc-main">
+      <nav class="breadcrumb">
+        <a href="../index.html">Accueil</a> › <a href="integration.html">Démarrage</a> › Intégration
+      </nav>
+
+      <h1>Intégration : modules et composants</h1>
+      <p class="lead">Cette page est la <strong>référence publique</strong> pour intégrer les <strong>modules métier</strong> et les <strong>composants BPM</strong> de Blueprint Modular dans une autre application, sans accès au dépôt Git.</p>
+
+      <h2>Pour les utilisateurs du package PyPI</h2>
+      <p>Si vous avez installé <code>pip install blueprint-modular</code>, un fichier de référence est inclus dans le package. En Python :</p>
+      <pre><code class="language-python">import bpm
+# Chemin du fichier de référence (après installation)
+# import bpm; print(bpm.__path__[0])  → répertoire du package
+# Fichiers : integration-reference.md et manifest.json</code></pre>
+      <p>Le <code>manifest.json</code> contient l’URL de cette page et la liste des modules/composants. Voir aussi <a href="../versions.html">Versions</a>.</p>
+
+      <h2 id="modules">Tous les modules (UI)</h2>
+      <p>Chaque module est une section sous <code>app/(app)/modules/&lt;nom&gt;/</code> dans le dépôt source. Liste des modules disponibles :</p>
+      <table class="doc-table">
+        <thead>
+          <tr><th>Module</th><th>Description / sous-routes</th></tr>
+        </thead>
+        <tbody>
+          <tr><td><strong>asset-manager</strong></td><td>Gestion de parc : tableau de bord, actifs, tickets, MAD, contrats, connaissances, changements, CMDB, audit.</td></tr>
+          <tr><td><strong>auth</strong></td><td>Authentification.</td></tr>
+          <tr><td><strong>wiki</strong></td><td>Wiki : articles, révisions, commentaires, backlinks.</td></tr>
+          <tr><td><strong>documents</strong></td><td>Upload et analyse de documents.</td></tr>
+          <tr><td><strong>contracts</strong></td><td>Base contractuelle (contrats, CGV).</td></tr>
+          <tr><td><strong>newsletter</strong></td><td>Newsletter : paramètres, articles.</td></tr>
+          <tr><td><strong>ia</strong></td><td>Module IA (chat, conversations).</td></tr>
+          <tr><td><strong>monitor</strong></td><td>Monitor.</td></tr>
+          <tr><td><strong>commentaires</strong></td><td>Commentaires.</td></tr>
+          <tr><td><strong>calendrier</strong></td><td>Calendrier.</td></tr>
+          <tr><td><strong>tableau-blanc</strong></td><td>Tableau blanc.</td></tr>
+          <tr><td><strong>keep-screen-on</strong></td><td>Keep screen on.</td></tr>
+          <tr><td><strong>skeleton</strong></td><td>Skeleton.</td></tr>
+          <tr><td><strong>templates</strong></td><td>Templates.</td></tr>
+          <tr><td><strong>workflow</strong></td><td>Workflow.</td></tr>
+          <tr><td><strong>themes</strong></td><td>Thèmes.</td></tr>
+          <tr><td><strong>webhooks</strong></td><td>Webhooks.</td></tr>
+          <tr><td><strong>tableaux-de-bord</strong></td><td>Tableaux de bord.</td></tr>
+          <tr><td><strong>referentiels</strong></td><td>Référentiels.</td></tr>
+          <tr><td><strong>rapports</strong></td><td>Rapports.</td></tr>
+          <tr><td><strong>reservation-creneaux</strong></td><td>Réservation de créneaux.</td></tr>
+          <tr><td><strong>veille</strong></td><td>Veille.</td></tr>
+          <tr><td><strong>taches</strong></td><td>Tâches.</td></tr>
+          <tr><td><strong>formulaire-dynamique</strong></td><td>Formulaire dynamique.</td></tr>
+          <tr><td><strong>notification</strong></td><td>Notification.</td></tr>
+          <tr><td><strong>notifications-ciblees</strong></td><td>Notifications ciblées.</td></tr>
+          <tr><td><strong>connecteurs</strong></td><td>Connecteurs.</td></tr>
+          <tr><td><strong>devis-facturation</strong></td><td>Devis &amp; facturation.</td></tr>
+          <tr><td><strong>export-planifie</strong></td><td>Export planifié.</td></tr>
+          <tr><td><strong>multi-langue</strong></td><td>Multi-langue.</td></tr>
+          <tr><td><strong>catalogue-produits</strong></td><td>Catalogue produits.</td></tr>
+          <tr><td><strong>audit-log</strong></td><td>Journal d’audit.</td></tr>
+        </tbody>
+      </table>
+
+      <h2 id="api">API (routes backend)</h2>
+      <p>Les routes API sont exposées sous <code>app/api/</code>. Préfixes principaux :</p>
+      <table class="doc-table">
+        <thead>
+          <tr><th>Préfixe</th><th>Rôle</th></tr>
+        </thead>
+        <tbody>
+          <tr><td><code>auth/</code></td><td>NextAuth, register.</td></tr>
+          <tr><td><code>wiki/</code></td><td>Articles, révisions, commentaires, backlinks, export, semantic-search, tags.</td></tr>
+          <tr><td><code>documents/</code></td><td>Documents (CRUD, analyse).</td></tr>
+          <tr><td><code>contracts/</code></td><td>Base contractuelle (CRUD, search, reanalyze).</td></tr>
+          <tr><td><code>newsletter/</code></td><td>Settings, articles, archive.</td></tr>
+          <tr><td><code>ai/</code></td><td>Chat, conversations, messages, providers, health.</td></tr>
+          <tr><td><code>asset-manager/</code></td><td>Config, domains, assets, tickets, assignments, contracts, knowledge, changes, ci-relations, movements, audit-log, etc.</td></tr>
+          <tr><td><code>settings/</code></td><td>API keys.</td></tr>
+          <tr><td><code>sandbox/</code></td><td>Sandbox generate.</td></tr>
+          <tr><td><code>health/</code></td><td>Health check.</td></tr>
+        </tbody>
+      </table>
+
+      <h2 id="composants">Composants BPM (design system)</h2>
+      <p>Les composants sont dans <code>components/bpm/</code>. Exports principaux (liste non exhaustive) :</p>
+      <p>Accordion, AreaChart, Audio, Autocomplete, Avatar, Badge, BarChart, Barcode, Breadcrumb, Button, Card, Checkbox, Chip, CodeBlock, ColorPicker, Column, Container, DateInput, DateRangePicker, Divider, Drawer, Empty, EmptyState, Expander, FAB, FileUploader, Grid, HighlightBox, Html, Image, Input, JsonViewer, LineChart, LoadingBar, Map, Markdown, Message, Metric, Modal, NumberInput, NfcBadge, Pagination, Panel, PdfViewer, PlotlyChart, Popover, Progress, QRCode, RadioGroup, Rating, ScatterChart, Selectbox, Skeleton, Slider, Spinner, SpinnerDot, StatusBox, Stepper, Table, Tabs, Text, Textarea, Timeline, Title (Title1–4), Toast, Toggle, Tooltip, TopNav, Treeview, Video, Theme.</p>
+      <p>Point d’entrée dans le dépôt : <code>components/bpm/index.ts</code>. Styles : <code>app/globals.css</code> (variables <code>--bpm-*</code>, classes <code>.bpm-*</code>).</p>
+
+      <h2 id="copie-sync">Intégration par copie/sync</h2>
+      <p>Pour intégrer les modules et composants dans une autre application <strong>sans accès au dépôt</strong>, vous pouvez :</p>
+      <ul>
+        <li><strong>Appeler l’API</strong> d’une instance Blueprint Modular déployée (voir <a href="../deploy/platforms.html">Déployer</a>). Votre app envoie des requêtes HTTP vers les routes listées ci-dessus.</li>
+        <li><strong>Récupérer le code</strong> si vous avez accès au dépôt (clone, sous-module) : copier <code>app/(app)/modules/</code>, <code>app/api/</code>, <code>components/bpm/</code>, <code>lib/</code> (selon besoins), <code>prisma/schema.prisma</code> et migrations, et les parties de <code>app/globals.css</code> liées à BPM. Détails complets dans le fichier <code>INTEGRATION.md</code> à la racine du dépôt (visible uniquement avec accès au repo).</li>
+      </ul>
+      <p>Prérequis communs : base PostgreSQL (Prisma), variables d’environnement (<code>DATABASE_URL</code>, <code>NEXTAUTH_SECRET</code>, <code>NEXTAUTH_URL</code>), et selon les modules : config (ex. fichiers domaines pour la gestion de parc), voir la doc déployée et <code>docs/DATABASE.md</code> dans le dépôt.</p>
+
+      <nav class="doc-pagination">
+        <a class="prev" href="first-app.html">Précédent : Première app</a>
+        <a class="next" href="../components.html">Suivant : Composants</a>
+      </nav>
+
+      <section class="help-cta">
+        <p>Une question ? Consultez la <a href="../knowledge-base/faq.html">FAQ</a> et la <a href="../knowledge-base/reste-a-faire.html">Ce qu'il reste à faire</a>.</p>
+      </section>
+
+      <footer class="site-footer" style="margin-top:2rem;">
+        <div class="footer-links">
+          <a href="../index.html">Accueil</a>
+          <a href="../components.html">Composants</a>
+          <a href="https://blueprint-modular.com/modules.html">Modules</a>
+          <a href="../cheat-sheet.html">Aide-mémoire</a>
+          <a href="../versions.html">Versions</a>
+          <a href="../knowledge-base/faq.html">FAQ</a>
+        </div>
+        <div class="footer-meta">Blueprint Modular v0.1.24</div>
+      </footer>
+    </main>
+  </div>
+  <script src="../doc.js"></script>
+</body>
+</html>

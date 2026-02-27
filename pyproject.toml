@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "blueprint-modular"
-version = "0.1.23"
+version = "0.1.24"
 description = "Briques Python prêtes à l'emploi pour vos interfaces de données"
 readme = "README.md"
 requires-python = ">=3.9"
@@ -35,3 +35,6 @@ Documentation = "https://docs.blueprint-modular.com"
 [tool.setuptools.packages.find]
 where = ["."]
 include = ["bpm*"]
+
+[tool.setuptools.package-data]
+bpm = ["*.md", "*.json"]
