@@ -575,7 +575,7 @@ textarea.bpm-textarea:focus {
   flex-shrink: 0;
   align-self: stretch;
   border-right: 1px solid var(--bpm-sidebar-border);
-  padding: 16px 12px;
+  padding: 8px 12px;
   background: var(--bpm-sidebar-bg);
   color: var(--bpm-sidebar-text);
   font-size: 14px;
@@ -625,7 +625,7 @@ textarea.bpm-textarea:focus {
   flex: 1;
   min-height: 0;
   overflow-y: auto;
-  padding-top: 16px;
+  padding-top: 8px;
 }
 .asset-manager-sidebar-link {
   display: flex;
@@ -685,11 +685,6 @@ textarea.bpm-textarea:focus {
   min-height: 0;
   min-width: 0;
   overflow: hidden;
-}
-@media (min-width: 768px) {
-  .app-layout-root[data-secondary-sidebar-open="true"] .asset-manager-main-wrapper {
-    padding-left: 12px;
-  }
 }
 .asset-manager-page .doc-page {
   padding: 24px 32px 48px;
