@@ -404,9 +404,11 @@ export default function AssetDetailPage() {
                 placeholder="Commentaire"
               />
             </div>
+            <div className="mt-6">
             <Button type="submit" size="medium" variant="primary" disabled={savingMovement}>
               {savingMovement ? "Enregistrement…" : "Enregistrer le mouvement"}
             </Button>
+            </div>
               </form>
             </div>
           </Card>
@@ -525,9 +527,11 @@ export default function AssetDetailPage() {
                     options={Object.entries(RELATION_TYPE_LABELS).map(([value, label]) => ({ value, label }))}
                   />
                 </div>
+                <div className="mt-6">
                 <Button type="submit" size="medium" variant="primary" disabled={savingRelation || !newRelationTargetId}>
                   {savingRelation ? "Enregistrement…" : "Ajouter"}
                 </Button>
+                </div>
               </form>
             </div>
           </Card>

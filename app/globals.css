@@ -154,10 +154,10 @@ body {
 
 /* Table variants (striped / hover) — lignes impaires en gris plus clair que l'en-tête */
 .bpm-table-striped tbody tr:nth-of-type(odd) {
-  background: var(--bpm-table-stripe);
+  background: var(--bpm-surface);
 }
 .bpm-table-striped tbody tr:nth-of-type(even) {
-  background: var(--bpm-surface);
+  background: var(--bpm-table-stripe);
 }
 .bpm-table-hover tbody tr:hover {
   background: var(--bpm-bg-secondary);
@@ -578,21 +578,27 @@ textarea.bpm-textarea:focus {
   flex-shrink: 0;
   overflow: hidden;
   transition: width 250ms ease-out;
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
 }
 .asset-manager-sidebar-outer--open {
   width: 200px;
 }
-/* Desktop : sidebar secondaire fixe pleine hauteur (comme la sidebar principale, du haut de l'écran) */
+/* Quand la sidebar est dans le wrapper animé : rester dans le flux pour remplir le wrapper (pas de position fixed) */
 @media (min-width: 768px) {
-  .asset-manager-sidebar {
-    position: fixed;
-    top: 0;
-    bottom: 0;
-    left: var(--bpm-sidebar-width, 16rem);
-    width: 200px;
-    height: auto;
+  .asset-manager-sidebar-outer .asset-manager-sidebar {
+    position: relative;
+    left: auto;
+    top: auto;
+    bottom: auto;
+    width: 100%;
+    min-height: 100vh;
+    flex: 1;
     z-index: 40;
   }
+}
+@media (min-width: 768px) {
   .asset-manager-main-wrapper {
     margin-left: 200px;
   }
@@ -634,11 +640,10 @@ textarea.bpm-textarea:focus {
   background: var(--bpm-sidebar-hover-bg);
   color: var(--bpm-sidebar-text);
 }
-/* Même mise en avant que la sidebar principale : fond gris, texte par défaut */
+/* Même mise en avant que la sidebar principale : fond gris, texte par défaut (pas de gras) */
 .asset-manager-sidebar-link--active {
   background: var(--bpm-sidebar-active-bg);
   color: var(--bpm-sidebar-text);
-  font-weight: 500;
 }
 /* Corps principal : seul élément qui scrolle */
 .asset-manager-main {
@@ -715,6 +720,10 @@ textarea.bpm-textarea:focus {
   color: var(--bpm-text-secondary);
   margin: 0;
   line-height: 1.5;
+}
+/* Fiches (lecture et création) : pas de bordure grise sur les blocs (header, sections, formulaire) */
+.asset-manager-page .bpm-card {
+  border: none !important;
 }
 /* Panels : carte blanche, bordure légère, rayon 8px (style Linear) */
 .asset-manager-page [role="region"].rounded-lg {
@@ -880,13 +889,13 @@ textarea.bpm-textarea:focus {
   scroll-snap-align: start;
 }
 
-/* Boutons carousel (gauche / droite) */
+/* Boutons carousel (gauche / droite) : visibles au survol du container, forme ronde */
 .asset-manager-carousel-btn {
   position: absolute;
   top: 50%;
   transform: translateY(-50%);
-  width: 32px;
-  height: 32px;
+  width: 36px;
+  height: 36px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -899,8 +908,12 @@ textarea.bpm-textarea:focus {
   line-height: 1;
   cursor: pointer;
   z-index: 10;
-  transition: background 0.2s, border-color 0.2s, color 0.2s;
+  opacity: 0;
+  transition: opacity 0.2s, background 0.2s, border-color 0.2s, color 0.2s;
   box-shadow: 0 1px 3px rgba(0,0,0,0.06);
+}
+.asset-manager-metrics-carousel-container:hover .asset-manager-carousel-btn {
+  opacity: 1;
 }
 .asset-manager-carousel-btn:hover {
   background: var(--bpm-bg-secondary);
@@ -908,6 +921,7 @@ textarea.bpm-textarea:focus {
   color: var(--bpm-accent-cyan);
 }
 .asset-manager-carousel-btn:focus-visible {
+  opacity: 1;
   outline: 2px solid var(--bpm-accent-cyan);
   outline-offset: 2px;
 }
@@ -951,7 +965,7 @@ textarea.bpm-textarea:focus {
   box-sizing: border-box;
   justify-content: center;
 }
-.asset-manager-page button:not(.asset-manager-export-btn):not(.asset-manager-btn-compact) {
+.asset-manager-page button:not(.asset-manager-export-btn):not(.asset-manager-btn-compact):not(.asset-manager-equipment-filters__toggle) {
   min-height: auto;
   height: auto;
   padding: 8px 16px !important;

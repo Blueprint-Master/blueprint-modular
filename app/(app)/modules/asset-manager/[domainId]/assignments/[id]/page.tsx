@@ -191,7 +191,7 @@ export default function AssetManagerAssignmentDetailPage() {
               <span style={{ color: "var(--bpm-text-primary)" }}>Contrat signé</span>
             </label>
           </div>
-          <div className="mt-4">
+          <div className="mt-6">
             <Button variant="primary" size="medium" onClick={handleSave} disabled={saving}>
               {saving ? "Enregistrement…" : "Enregistrer"}
             </Button>

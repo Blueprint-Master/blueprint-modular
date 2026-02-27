@@ -201,7 +201,7 @@ export default function AssetManagerContractDetailPage() {
               placeholder="Notes"
             />
           </div>
-          <div className="mt-4">
+          <div className="mt-6">
             <Button variant="primary" size="medium" onClick={handleSave} disabled={saving}>
               {saving ? "Enregistrement…" : "Enregistrer"}
             </Button>

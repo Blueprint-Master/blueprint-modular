@@ -125,7 +125,7 @@ export default function AssetManagerKnowledgeEditPage() {
               { value: "public", label: "Public" },
             ]}
           />
-          <div className="flex gap-2 pt-2">
+          <div className="flex gap-2 mt-6">
             <Button type="submit" size="small" disabled={saving}>Enregistrer</Button>
             <Link href={`/modules/asset-manager/${domainId}/knowledge/${id}`}>
               <Button type="button" size="small" variant="outline">Annuler</Button>

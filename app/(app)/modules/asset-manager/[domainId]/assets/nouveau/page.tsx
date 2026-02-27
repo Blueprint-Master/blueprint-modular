@@ -195,7 +195,7 @@ export default function AssetManagerAssetNewPage() {
               {error}
             </p>
           )}
-          <div className="flex gap-2">
+          <div className="flex gap-2 mt-6">
             <Button type="submit" variant="primary" disabled={saving}>
               {saving ? "Création…" : "Créer"}
             </Button>

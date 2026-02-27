@@ -147,7 +147,7 @@ export default function AssetManagerAssignmentNewPage() {
           </section>
 
           <Divider thickness={1} color="var(--bpm-border)" className="my-4" />
-          <div className="flex gap-2">
+          <div className="flex gap-2 mt-6">
             <Button type="submit" size="small" disabled={saving || !assetId || !startDate}>
               {saving ? "Création…" : "Créer la MAD"}
             </Button>
