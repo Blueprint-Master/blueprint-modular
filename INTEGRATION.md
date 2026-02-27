@@ -4,6 +4,10 @@ Ce dépôt est la **source unique** pour l’ensemble des **modules métier** et
 
 **Dépôt source :** `https://github.com/remigit55/blueprint-modular` (ou chemin local vers ce dossier).
 
+**Sans accès Git :** tout développeur peut télécharger le **bundle zip** (modules + composants BPM + lib + prisma) depuis la doc :  
+**https://docs.blueprint-modular.com/downloads/blueprint-modules-latest.zip**  
+Aucun clone ni accès au dépôt nécessaire. Voir la page [Intégration (doc)](https://docs.blueprint-modular.com/get-started/integration.html#sans-git).
+
 ---
 
 ## 1. Tous les modules (UI + routes)

@@ -72,6 +72,9 @@ sudo cp -rf "$STATIC/get-started" "$DOCS_DIR/"
 sudo cp -rf "$STATIC/api-reference" "$DOCS_DIR/"
 sudo cp -rf "$STATIC/deploy" "$DOCS_DIR/"
 sudo cp -rf "$STATIC/knowledge-base" "$DOCS_DIR/"
+if [ -d "$STATIC/downloads" ]; then
+  sudo cp -rf "$STATIC/downloads" "$DOCS_DIR/"
+fi
 
 # Droits (lecture par le serveur web www-data/nginx)
 echo "--> Droits (ubuntu:ubuntu)..."
@@ -104,6 +107,12 @@ if [ -f "$REPO_DIR/package.json" ] && [ -f "$REPO_DIR/next.config.mjs" ]; then
     echo "    ⚠ .env manquant dans $REPO_DIR. Copiez deploy/app-env.example vers .env et renseignez DATABASE_URL, NEXTAUTH_*."
   else
     npm install
+    echo "    Génération du bundle blueprint-modules (zip pour devs sans accès Git)..."
+    node scripts/build-modules-bundle.cjs 2>/dev/null || true
+    if [ -d "$STATIC/downloads" ]; then
+      sudo cp -rf "$STATIC/downloads" "$DOCS_DIR/"
+      sudo chown -R ubuntu:ubuntu "$DOCS_DIR/downloads" 2>/dev/null || true
+    fi
     npx prisma generate
     npx prisma migrate deploy
     node prisma/seed-wiki-procedures.cjs || true

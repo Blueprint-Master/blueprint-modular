@@ -28,6 +28,9 @@ dist/
 .next/
 uploads/
 
+# Bundle modules (généré par scripts/build-modules-bundle.cjs, déployé sur la doc)
+frontend/static/downloads/*.zip
+
 # Python
 __pycache__/
 *.py[cod]

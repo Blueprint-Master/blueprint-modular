@@ -75,6 +75,15 @@
       <h1>Intégration : modules et composants</h1>
       <p class="lead">Cette page est la <strong>référence publique</strong> pour intégrer les <strong>modules métier</strong> et les <strong>composants BPM</strong> de Blueprint Modular dans une autre application, sans accès au dépôt Git.</p>
 
+      <h2 id="sans-git">Sans accès Git : télécharger le bundle</h2>
+      <p>Tout développeur peut récupérer les modules et composants <strong>sans avoir accès au dépôt</strong> en téléchargeant le zip officiel :</p>
+      <ul>
+        <li><strong>Dernière version :</strong> <a href="../downloads/blueprint-modules-latest.zip">blueprint-modules-latest.zip</a></li>
+        <li><strong>Version spécifique :</strong> <code>../downloads/blueprint-modules-vX.Y.Z.zip</code> (voir <a href="../versions.html">versions.html</a> pour la version actuelle)</li>
+      </ul>
+      <p>Le zip contient : <code>modules/</code> (tous les modules UI), <code>components/bpm/</code> (design system), <code>lib/</code>, <code>prisma/</code> (schéma et migrations), et un <code>README-BUNDLE.md</code> avec les instructions de copie dans votre projet. Aucun clone Git nécessaire.</p>
+      <p>Dans votre script de sync (ou manuellement) : téléchargez le zip depuis l’URL ci-dessus, décompressez, puis copiez les dossiers dans votre application comme indiqué dans le README du bundle.</p>
+
       <h2>Pour les utilisateurs du package PyPI</h2>
       <p>Si vous avez installé <code>pip install blueprint-modular</code>, un fichier de référence est inclus dans le package. En Python :</p>
       <pre><code class="language-python">import bpm
