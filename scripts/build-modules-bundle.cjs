@@ -64,6 +64,10 @@ Ce bundle contient les modules métier, composants BPM et dépendances nécessai
 4. Installez les dépendances npm si besoin (lucide-react, etc.) et exécutez \`npx prisma generate\`.
 
 Documentation complète : https://docs.blueprint-modular.com/get-started/integration.html
+
+## Licence et propriété intellectuelle
+
+Ce bundle est fourni sous licence MIT. Vous pouvez utiliser, modifier et intégrer le code dans vos projets (y compris commerciaux). Vous restez propriétaire de votre propre code ; la notice de licence et le copyright Blueprint Modular doivent être conservés sur les fichiers réutilisés. Détails : https://docs.blueprint-modular.com/get-started/integration.html#propriete-intellectuelle
 `;
 
 archive.append(readme, { name: "README-BUNDLE.md" });

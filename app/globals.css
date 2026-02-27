@@ -541,12 +541,13 @@ textarea.bpm-textarea:focus {
   display: flex;
   flex-direction: column;
   flex: 1;
-  min-height: 100%;
+  min-height: 0;
+  overflow: hidden;
 }
 [data-theme="dark"] .asset-manager-page {
   background: var(--bpm-bg-primary);
 }
-/* Layout avec sous-sidebar contextuelle : prend la hauteur restante, sidebar fixe à gauche */
+/* Layout avec sous-sidebar contextuelle : sidebar fixe pleine hauteur, corps scrollable */
 .asset-manager-layout {
   display: flex;
   min-height: 0;
@@ -565,17 +566,31 @@ textarea.bpm-textarea:focus {
   display: flex;
   flex-direction: column;
   min-height: 0;
-  overflow-y: auto;
+  overflow: hidden;
   position: relative;
 }
-/* Barre verticale pleine hauteur de l'écran (comme la sidebar principale) */
+/* Desktop : sidebar secondaire fixe pleine hauteur (comme la sidebar principale, du haut de l'écran) */
+@media (min-width: 768px) {
+  .asset-manager-sidebar {
+    position: fixed;
+    top: 0;
+    bottom: 0;
+    left: var(--bpm-sidebar-width, 16rem);
+    width: 200px;
+    height: auto;
+    z-index: 10;
+  }
+  .asset-manager-main-wrapper {
+    margin-left: 200px;
+  }
+}
+/* Barre verticale pleine hauteur de l'écran (alignée bord gauche sidebar) */
 @media (min-width: 768px) {
   .asset-manager-sidebar::after {
     content: "";
     position: fixed;
     top: 0;
     bottom: 0;
-    /* Bord gauche de la sidebar Gestion de parc (= limite avec la zone à gauche) */
     left: var(--bpm-sidebar-width, 16rem);
     width: 1px;
     background: #E5E7EB;

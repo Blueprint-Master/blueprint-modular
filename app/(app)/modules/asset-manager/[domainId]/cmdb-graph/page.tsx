@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useMemo } from "react";
+import { useState, useEffect, useMemo, useRef, useCallback } from "react";
 import Link from "next/link";
 import { useParams, useRouter } from "next/navigation";
 import { Panel, Spinner, Button } from "@/components/bpm";
@@ -91,6 +91,18 @@ export default function AssetManagerCmdbGraphPage() {
   const [relations, setRelations] = useState<RelationEdge[]>([]);
   const [loading, setLoading] = useState(true);
   const [size, setSize] = useState({ w: 900, h: 600 });
+  const [pan, setPan] = useState({ x: 0, y: 0 });
+  const [zoom, setZoom] = useState(1);
+  const [isPanning, setIsPanning] = useState(false);
+  const panStartRef = useRef({ x: 0, y: 0 });
+  const svgRef = useRef<SVGSVGElement>(null);
+  const zoomRef = useRef(zoom);
+  const panRef = useRef(pan);
+  zoomRef.current = zoom;
+  panRef.current = pan;
+
+  const ZOOM_MIN = 0.25;
+  const ZOOM_MAX = 3;
 
   useEffect(() => {
     if (!domainId) return;
@@ -142,6 +154,54 @@ export default function AssetManagerCmdbGraphPage() {
     return () => window.removeEventListener("resize", onResize);
   }, []);
 
+  const handlePanStart = useCallback((e: React.MouseEvent) => {
+    if (e.button !== 0) return;
+    e.preventDefault();
+    panStartRef.current = { x: e.clientX - pan.x, y: e.clientY - pan.y };
+    setIsPanning(true);
+  }, [pan.x, pan.y]);
+
+  useEffect(() => {
+    if (!isPanning) return;
+    const onMove = (e: MouseEvent) => {
+      setPan({ x: e.clientX - panStartRef.current.x, y: e.clientY - panStartRef.current.y });
+    };
+    const onUp = () => setIsPanning(false);
+    window.addEventListener("mousemove", onMove);
+    window.addEventListener("mouseup", onUp);
+    return () => {
+      window.removeEventListener("mousemove", onMove);
+      window.removeEventListener("mouseup", onUp);
+    };
+  }, [isPanning]);
+
+  const handleWheel = useCallback((e: WheelEvent) => {
+    const svg = svgRef.current;
+    if (!svg) return;
+    e.preventDefault();
+    const rect = svg.getBoundingClientRect();
+    const cursorX = e.clientX - rect.left;
+    const cursorY = e.clientY - rect.top;
+    const factor = 1 - e.deltaY * 0.002;
+    const z = zoomRef.current;
+    const p = panRef.current;
+    const newZoom = Math.max(ZOOM_MIN, Math.min(ZOOM_MAX, z * factor));
+    if (newZoom === z) return;
+    const ratio = newZoom / z;
+    setPan({
+      x: cursorX * (1 - ratio) + p.x * ratio,
+      y: cursorY * (1 - ratio) + p.y * ratio,
+    });
+    setZoom(newZoom);
+  }, []);
+
+  useEffect(() => {
+    const svg = svgRef.current;
+    if (!svg) return;
+    svg.addEventListener("wheel", handleWheel, { passive: false });
+    return () => svg.removeEventListener("wheel", handleWheel);
+  }, [handleWheel]);
+
   if (!domainId) {
     return (
       <div className="doc-page">
@@ -182,12 +242,20 @@ export default function AssetManagerCmdbGraphPage() {
       ) : (
         <Panel variant="info" title="Graphe des dépendances">
           <div className="overflow-auto rounded-lg border" style={{ borderColor: "var(--bpm-border)", background: "var(--bpm-bg-secondary)" }}>
-            <svg width={size.w} height={size.h} className="block">
+            <svg ref={svgRef} width={size.w} height={size.h} className="block" style={{ cursor: isPanning ? "grabbing" : "grab" }}>
               <defs>
                 <marker id="arrow" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
                   <path d="M0 0 L8 3 L0 6 Z" fill="var(--bpm-text-secondary)" />
                 </marker>
               </defs>
+              <rect
+                width={size.w}
+                height={size.h}
+                fill="transparent"
+                onMouseDown={handlePanStart}
+                style={{ cursor: isPanning ? "grabbing" : "grab" }}
+              />
+              <g transform={`translate(${pan.x}, ${pan.y}) scale(${zoom})`} style={{ pointerEvents: "none" }}>
               {relations.map((e) => {
                 const s = nodeById.get(e.sourceAssetId);
                 const t = nodeById.get(e.targetAssetId);
@@ -223,7 +291,7 @@ export default function AssetManagerCmdbGraphPage() {
                     fill="var(--bpm-accent-cyan)"
                     stroke="var(--bpm-bg)"
                     strokeWidth="2"
-                    style={{ cursor: "pointer" }}
+                    style={{ cursor: "pointer", pointerEvents: "auto" }}
                     onClick={() => router.push(`/modules/asset-manager/${domainId}/assets/${n.id}`)}
                   />
                   <text
@@ -236,6 +304,7 @@ export default function AssetManagerCmdbGraphPage() {
                   </text>
                 </g>
               ))}
+              </g>
             </svg>
           </div>
           <p className="text-xs mt-2" style={{ color: "var(--bpm-text-secondary)" }}>

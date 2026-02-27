@@ -35,6 +35,8 @@
       <a href="fundamentals.html">Fondamentaux</a>
       <a href="first-app.html">Première app</a>
       <a href="integration.html" class="active">Intégration (modules & composants)</a>
+      <a href="integration.html#utiliser-modules">→ Utiliser les modules</a>
+      <a href="integration.html#propriete-intellectuelle">→ Propriété intellectuelle</a>
       <h3>Composants</h3>
       <a href="../components.html">Catalogue des composants</a>
       <a href="../api-reference/text.html">Texte</a>
@@ -74,6 +76,35 @@
 
       <h1>Intégration : modules et composants</h1>
       <p class="lead">Cette page est la <strong>référence publique</strong> pour intégrer les <strong>modules métier</strong> et les <strong>composants BPM</strong> de Blueprint Modular dans une autre application, sans accès au dépôt Git.</p>
+
+      <h2 id="utiliser-modules">Ce qu’il faut faire pour utiliser les modules</h2>
+      <p>En tant que développeur ou utilisateur, voici les étapes pour intégrer les modules Blueprint Modular dans votre propre application :</p>
+      <ol class="doc-steps">
+        <li><strong>Télécharger le bundle</strong> — Récupérez l’archive officielle : <a href="../downloads/blueprint-modules-latest.zip">blueprint-modules-latest.zip</a> (ou une version figée <code>blueprint-modules-vX.Y.Z.zip</code> depuis <a href="../versions.html">versions.html</a>). Aucun compte ni accès Git requis.</li>
+        <li><strong>Décompresser</strong> — Ouvrez le zip dans un répertoire temporaire. Vous obtenez les dossiers <code>modules/</code>, <code>components/bpm/</code>, <code>lib/</code>, <code>prisma/</code> et le <code>README-BUNDLE.md</code>.</li>
+        <li><strong>Copier dans votre projet</strong> — Collez les dossiers dans votre application Next.js (ou équivalent) :
+          <ul>
+            <li><code>modules/*</code> → par ex. <code>app/(app)/modules/blueprint/</code> (ou votre structure de routes)</li>
+            <li><code>components/bpm/</code> → <code>components/bpm/</code></li>
+            <li><code>lib/*</code> → <code>lib/</code> (en fusionnant avec vos fichiers existants si besoin)</li>
+            <li>Extraits de <code>prisma/schema.prisma</code> → fusionnez les modèles dans votre <code>schema.prisma</code> (voir <a href="#api">API</a> et doc BDD).</li>
+          </ul>
+        </li>
+        <li><strong>Configurer l’environnement</strong> — Définissez au minimum <code>DATABASE_URL</code>, <code>NEXTAUTH_SECRET</code>, <code>NEXTAUTH_URL</code>. Selon les modules : config domaines (Gestion de parc), <code>AI_SERVER_URL</code> (module IA), etc. Voir la doc de chaque module et <code>.env.example</code> dans le dépôt source.</li>
+        <li><strong>Base de données</strong> — Exécutez <code>npx prisma generate</code>, puis <code>npx prisma migrate deploy</code> (ou fusionnez les migrations selon votre stratégie). Les tables utilisées par chaque module sont décrites dans la documentation déployée (DATABASE.md dans le dépôt).</li>
+        <li><strong>Styles</strong> — Copiez les parties utiles de <code>app/globals.css</code> (variables <code>--bpm-*</code>, classes <code>.bpm-*</code>, éventuellement <code>.asset-manager-page</code> si vous utilisez la Gestion de parc).</li>
+        <li><strong>Navigation</strong> — Adaptez votre menu ou layout pour pointer vers les routes des modules copiés (ex. <code>/modules/asset-manager/...</code>, <code>/modules/wiki</code>).</li>
+      </ol>
+      <p>Pour une liste détaillée des modules et des routes API, voir les sections <a href="#modules">Tous les modules (UI)</a> et <a href="#api">API (routes backend)</a> ci-dessous.</p>
+
+      <h2 id="propriete-intellectuelle">Propriété intellectuelle et licence</h2>
+      <p>Blueprint Modular (code des modules, composants BPM, librairies livrées dans le bundle ou le package PyPI) est distribué sous <strong>licence MIT</strong>. En utilisant les modules vous acceptez les termes de cette licence.</p>
+      <ul>
+        <li><strong>Ce que vous pouvez faire</strong> : utiliser, modifier, fusionner, publier et distribuer le code Blueprint Modular dans vos propres projets (y compris commerciaux). Vous restez propriétaire du code que vous écrivez ; l’intégration de nos modules dans votre application ne transfère pas la propriété de votre code à Blueprint Modular.</li>
+        <li><strong>Ce que vous devez faire</strong> : conserver la notice de licence et le copyright Blueprint Modular sur les fichiers que vous réutilisez tels quels (ou sur les parties dérivées, selon la MIT). Une mention dans votre documentation ou un fichier NOTICE est recommandée (ex. « Ce projet inclut des modules Blueprint Modular, licence MIT »).</li>
+        <li><strong>Pas de garantie</strong> : le logiciel est fourni « tel quel », sans garantie d’aucune sorte. Utilisation sous votre responsabilité.</li>
+      </ul>
+      <p>Pour les textes complets de la licence MIT, consultez le fichier <code>LICENSE</code> à la racine du dépôt source ou du package PyPI. En cas de doute sur un usage commercial ou la propriété intellectuelle, adressez-vous au mainteneur du projet (voir la doc ou le dépôt).</p>
 
       <h2 id="sans-git">Sans accès Git : télécharger le bundle</h2>
       <p>Tout développeur peut récupérer les modules et composants <strong>sans avoir accès au dépôt</strong> en téléchargeant le zip officiel :</p>

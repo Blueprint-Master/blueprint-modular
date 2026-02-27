@@ -8,6 +8,8 @@ Ce dépôt est la **source unique** pour l’ensemble des **modules métier** et
 **https://docs.blueprint-modular.com/downloads/blueprint-modules-latest.zip**  
 Aucun clone ni accès au dépôt nécessaire. Voir la page [Intégration (doc)](https://docs.blueprint-modular.com/get-started/integration.html#sans-git).
 
+**Pour un utilisateur/développeur :** la doc publique décrit pas à pas [comment utiliser les modules](https://docs.blueprint-modular.com/get-started/integration.html#utiliser-modules) (télécharger le bundle, copier, configurer, BDD, styles, navigation) et [propriété intellectuelle / licence MIT](https://docs.blueprint-modular.com/get-started/integration.html#propriete-intellectuelle) (ce que vous pouvez faire, ce que vous devez faire, pas de garantie).
+
 ---
 
 ## 1. Tous les modules (UI + routes)
