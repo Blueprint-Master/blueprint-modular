@@ -12,6 +12,16 @@ Le package est disponible sur [PyPI](https://pypi.org/project/blueprint-modular/
 pip install blueprint-modular
 ```
 
+### Tout ce qui doit être installé
+
+- **Runtime Python** : Python 3.9+, pip, puis `pip install blueprint-modular`.
+- **Application dashboard** (Next.js, modules) : Node.js, npm, PostgreSQL, Prisma. Voir [docs/DATABASE.md](docs/DATABASE.md) et la [documentation](https://docs.blueprint-modular.com).
+- **Modèles d’IA** (module IA, analyse de documents, sandbox) : installer [Ollama](https://ollama.com), puis au moins un modèle, par exemple :
+  ```bash
+  ollama pull qwen3:8b
+  ```
+  Autres modèles possibles : `qwen2.5:7b`, `mistral:7b-instruct`, `llama3.2:3b`. Configurer `AI_SERVER_URL` et optionnellement `AI_MODEL` dans `.env.local`. Détails : [Documentation – Installation](https://docs.blueprint-modular.com/get-started/installation.html) et module IA.
+
 ## Utilisation rapide
 
 ```bash

@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="fr">
 <head>
   <meta charset="UTF-8" />
@@ -71,7 +71,28 @@
 
       <h1>Installation</h1>
 
-      <h2>Prérequis</h2>
+      <h2>Tout ce qui doit être installé</h2>
+      <p>Selon ce que vous utilisez :</p>
+      <ul>
+        <li><strong>Runtime Python</strong> (<code>bpm run</code>) : Python 3.9+, pip, puis <code>pip install blueprint-modular</code>.</li>
+        <li><strong>Application dashboard</strong> (Next.js, modules Wiki, IA, Documents, Gestion de parc, etc.) : Node.js, npm, PostgreSQL, Prisma (via <code>npm install</code> et <code>npx prisma migrate deploy</code>). Voir <a href="https://github.com/remigit55/blueprint-modular/blob/master/docs/DATABASE.md">docs/DATABASE.md</a> et <a href="../deploy/platforms.html">Déployer</a>.</li>
+        <li><strong>Modules IA</strong> (assistant chat, analyse de documents, sandbox par IA) : serveur <strong>Ollama</strong> + au moins un <strong>modèle de langage</strong>. Voir la section <a href="#modeles-ia">Modèles d’IA</a> ci-dessous.</li>
+      </ul>
+
+      <h2 id="modeles-ia">Modèles d’IA (Ollama)</h2>
+      <p>Pour le module IA, l’analyse de documents et le sandbox « Par IA », l’application utilise par défaut <strong>Ollama</strong> en local. Il faut installer Ollama puis télécharger au moins un modèle.</p>
+      <ol>
+        <li>Installer Ollama : <a href="https://ollama.com" target="_blank" rel="noopener">ollama.com</a> (Linux, macOS, Windows).</li>
+        <li>Lancer le service Ollama (souvent automatique après installation).</li>
+        <li>Télécharger un modèle recommandé (un seul suffit pour démarrer) :
+          <pre><code class="language-bash">ollama pull qwen3:8b</code></pre>
+          Autres modèles possibles : <code>ollama pull qwen2.5:7b</code>, <code>ollama pull mistral:7b-instruct</code>, <code>ollama pull llama3.2:3b</code>.
+        </li>
+        <li>Configurer l’app : dans <code>.env.local</code>, définir <code>AI_SERVER_URL=http://localhost:11434</code> (ou l’URL de votre serveur Ollama) et optionnellement <code>AI_MODEL=qwen3:8b</code>. En développement sans Ollama : <code>AI_MOCK=true</code>.</li>
+      </ol>
+      <p>Détails et alternatives (Claude, OpenAI) : <a href="../modules/ia.html">Module IA</a> et documentation dans l’app (<code>/modules/ia/documentation</code>).</p>
+
+      <h2>Prérequis (runtime Python)</h2>
       <ul>
         <li><strong>Python 3.9+</strong></li>
         <li>pip à jour : <code>pip install --upgrade pip</code></li>
@@ -83,7 +104,7 @@
       <pre><code class="language-bash">pip install blueprint-modular</code></pre>
 
       <h2>Installation depuis les sources</h2>
-      <p>Le dépôt GitHub est <strong>privé</strong>. Pour utiliser Blueprint Modular, utilisez <code>pip install blueprint-modular</code> (ci-dessus). L?installation depuis les sources (<code>git clone</code> puis <code>pip install -e .</code>) ne concerne que les personnes ayant accès au dépôt (contributeurs, équipe interne).</p>
+      <p>Le dépôt GitHub est <strong>privé</strong>. Pour utiliser Blueprint Modular, utilisez <code>pip install blueprint-modular</code> (ci-dessus). L'installation depuis les sources (<code>git clone</code> puis <code>pip install -e .</code>) ne concerne que les personnes ayant accès au dépôt (contributeurs, équipe interne).</p>
       <p>Si vous avez accès : <code>git clone</code> du dépôt, puis <code>cd blueprint-modular</code> et <code>pip install -e .</code> (avec un venv recommandé).</p>
 
       <h2>Lancer une app</h2>
@@ -99,7 +120,7 @@
 
       <nav class="doc-pagination">
         <span></span>
-        <a class="next" href="fundamentals.html">Suivant : Fondamentaux ?</a>
+        <a class="next" href="fundamentals.html">Suivant : Fondamentaux</a>
       </nav>
 
       <section class="whats-next">
@@ -107,6 +128,7 @@
         <ul>
           <li><a href="fundamentals.html">Fondamentaux</a>  —  Le modèle mental BPM, refs, décorateurs</li>
           <li><a href="first-app.html">Première app</a>  —  Créer un dashboard pas à pas</li>
+          <li><a href="../modules/ia.html">Module IA</a>  —  Chat, modèles Ollama (Qwen, Mistral), configuration</li>
           <li><a href="../components.html">Catalogue des composants</a></li>
         </ul>
       </section>
@@ -125,7 +147,7 @@
           <a href="../knowledge-base/faq.html">FAQ</a>
           <a href="../knowledge-base/reste-a-faire.html">Ce qu'il reste à faire</a>
         </div>
-        <div class="footer-meta">Blueprint Modular v0.1.21</div>
+        <div class="footer-meta">Blueprint Modular v0.1.22</div>
       </footer>
     </main>
   </div>

@@ -4,7 +4,7 @@ import { useState, useEffect } from "react";
 import Link from "next/link";
 import { useParams, useRouter } from "next/navigation";
 import { BookOpen } from "lucide-react";
-import { Table, Spinner, Panel, Button, Selectbox, EmptyState } from "@/components/bpm";
+import { Table, Spinner, Panel, Button, Chip, EmptyState } from "@/components/bpm";
 
 type KnowledgeArticle = {
   id: string;
@@ -116,20 +116,31 @@ export default function AssetManagerKnowledgePage() {
               Articles et procédures pour le support et la maintenance.
             </p>
           </div>
-          <Link href={`/modules/asset-manager/${domainId}/knowledge/new`}>
-            <Button size="small">+ Nouvel article</Button>
+          <Link href={`/modules/asset-manager/${domainId}/knowledge/new`} className="asset-manager-cta-button">
+            <Button variant="primary" size="small">+ Nouvel article</Button>
           </Link>
         </div>
       </div>
 
-      <div className="flex flex-wrap gap-4 mb-4">
-        <Selectbox
-          label="Catégorie"
-          value={filterCategory}
-          onChange={(v) => setFilterCategory(String(v))}
-          options={categoryOptions}
-          placeholder="Toutes"
-        />
+      <div className="asset-manager-equipment-filters">
+        <div className="asset-manager-equipment-filters__row">
+          <span className="asset-manager-equipment-filters__label">Catégorie</span>
+          <div className="asset-manager-equipment-filters__chips">
+            {categoryOptions.map((opt) => {
+              const isActive = filterCategory === opt.value;
+              const isReset = opt.value === "";
+              return (
+                <Chip
+                  key={opt.value || "all"}
+                  label={opt.label}
+                  variant={isActive ? "primary" : "default"}
+                  onClick={() => setFilterCategory(isActive ? "" : opt.value)}
+                  className={`${isActive ? "asset-manager-chip-active" : ""} ${isReset ? "asset-manager-chip-reset" : ""}`}
+                />
+              );
+            })}
+          </div>
+        </div>
       </div>
 
       {loading ? (

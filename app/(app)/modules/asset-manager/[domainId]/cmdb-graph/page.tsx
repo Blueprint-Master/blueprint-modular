@@ -162,7 +162,7 @@ export default function AssetManagerCmdbGraphPage() {
           <h1 className="text-2xl font-bold" style={{ color: "var(--bpm-text-primary)" }}>
             Cartographie CMDB
           </h1>
-          <Link href={`/modules/asset-manager/${domainId}/assets`}>
+          <Link href={`/modules/asset-manager/${domainId}/assets`} className="asset-manager-cta-button">
             <Button size="small" variant="outline">Liste des actifs</Button>
           </Link>
         </div>

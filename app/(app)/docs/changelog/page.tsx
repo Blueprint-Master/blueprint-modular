@@ -2,6 +2,15 @@ import Link from "next/link";
 
 const ENTRIES = [
   {
+    version: "0.1.22",
+    date: "2025-02-27",
+    items: [
+      "Gestion de parc : filtres homogènes (Tickets, MAD, Contrats, Connaissances, Changements, Audit), boutons alignés sur le Wiki",
+      "Sidebar gestion de parc fixe, seul le corps scrolle ; tag statut « Nouveau » lisible (contraste)",
+      "Doc installation : prérequis complets et modèles IA (Ollama, qwen3:8b) ; tableaux bordure fine 1px",
+    ],
+  },
+  {
     version: "0.1.21",
     date: "2025-02-26",
     items: [

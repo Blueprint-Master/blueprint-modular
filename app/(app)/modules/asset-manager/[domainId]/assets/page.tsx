@@ -204,21 +204,9 @@ export default function AssetManagerAssetsPage() {
               Liste des actifs avec filtres par type et statut.
             </p>
           </div>
-          <div className="flex items-center gap-2">
-            <Button
-              variant="outline"
-              size="small"
-              onClick={exportCsv}
-              disabled={assets.length === 0}
-              className="asset-manager-export-btn-header"
-            >
-              <Download size={18} className="shrink-0" />
-              <span className="asset-manager-export-label">Exporter</span>
-            </Button>
-            <Link href={`/modules/asset-manager/${domainId}/assets/nouveau`} className="asset-manager-cta-button">
-              <Button variant="primary" size="small">+ Nouvel actif</Button>
-            </Link>
-          </div>
+          <Link href={`/modules/asset-manager/${domainId}/assets/nouveau`} className="asset-manager-cta-button">
+            <Button variant="primary" size="small">+ Nouvel actif</Button>
+          </Link>
         </div>
       </div>
 
@@ -276,6 +264,18 @@ export default function AssetManagerAssetsPage() {
               );
             })}
           </div>
+        </div>
+        <div className="flex justify-end mt-2">
+          <button
+            type="button"
+            onClick={exportCsv}
+            disabled={assets.length === 0}
+            className="asset-manager-export-btn flex items-center justify-center w-8 h-8 rounded-lg border"
+            style={{ borderColor: "var(--bpm-border)", background: "var(--bpm-surface)", color: "var(--bpm-text-secondary)" }}
+            title="Exporter CSV"
+          >
+            <Download size={18} />
+          </button>
         </div>
       </div>
 

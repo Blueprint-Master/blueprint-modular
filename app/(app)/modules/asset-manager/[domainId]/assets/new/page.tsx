@@ -133,9 +133,7 @@ export default function NewAssetPage() {
               {saving ? "Création…" : "Créer"}
             </Button>
             <Link href={`/modules/asset-manager/${domainId}`}>
-              <Button type="button" variant="secondary">
-                Annuler
-              </Button>
+              <Button type="button" variant="outline">Annuler</Button>
             </Link>
           </div>
         </form>

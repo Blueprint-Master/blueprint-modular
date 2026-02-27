@@ -4,7 +4,7 @@ import { useState, useEffect } from "react";
 import Link from "next/link";
 import { useParams, useRouter, useSearchParams } from "next/navigation";
 import { Download, RefreshCw } from "lucide-react";
-import { Table, Spinner, Panel, Button, Selectbox, EmptyState } from "@/components/bpm";
+import { Table, Spinner, Panel, Button, Chip, EmptyState } from "@/components/bpm";
 
 type ChangeRequest = {
   id: string;
@@ -116,55 +116,74 @@ export default function AssetManagerChangesPage() {
             </p>
           </div>
           <div className="flex flex-wrap items-center gap-2">
-            <Button
-              variant="outline"
-              size="small"
-              onClick={() => {
-                const headers = ["Référence", "Titre", "Type", "Statut", "Risque", "Début prévu"];
-                const rows = changes.map((c) => [
-                  c.reference,
-                  c.title,
-                  TYPE_LABELS[c.type] ?? c.type,
-                  STATUS_LABELS[c.status] ?? c.status,
-                  RISK_LABELS[c.riskLevel] ?? c.riskLevel,
-                  c.plannedStart ? new Date(c.plannedStart).toLocaleDateString("fr-FR") : "",
-                ]);
-                const csv = [headers.join(";"), ...rows.map((r) => r.map((c) => `"${String(c).replace(/"/g, '""')}"`).join(";"))].join("\r\n");
-                const blob = new Blob(["\ufeff" + csv], { type: "text/csv;charset=utf-8" });
-                const url = URL.createObjectURL(blob);
-                const a = document.createElement("a");
-                a.href = url;
-                a.download = `changements-${domainId}-${new Date().toISOString().slice(0, 10)}.csv`;
-                a.click();
-                URL.revokeObjectURL(url);
-              }}
-              disabled={changes.length === 0}
-              className="asset-manager-export-btn-header"
-            >
-              <Download size={18} className="shrink-0" />
-              <span className="asset-manager-export-label">Exporter</span>
-            </Button>
-            <Link href={`/modules/asset-manager/${domainId}/changes/calendar`}>
+            <Link href={`/modules/asset-manager/${domainId}/changes/calendar`} className="asset-manager-cta-button">
               <Button size="small" variant="outline">Calendrier</Button>
             </Link>
-            <Link href={`/modules/asset-manager/${domainId}/changes/new`}>
-              <Button size="small">+ Nouvelle demande</Button>
+            <Link href={`/modules/asset-manager/${domainId}/changes/new`} className="asset-manager-cta-button">
+              <Button variant="primary" size="small">+ Nouvelle demande</Button>
             </Link>
           </div>
         </div>
       </div>
 
-      <div className="flex flex-wrap gap-4 mb-4">
-        <Selectbox label="Statut" value={filterStatus} onChange={(v) => setFilterStatus(String(v))} options={statusOptions} placeholder="Tous" />
-        {!loading && changes.filter((c) => c.status === "cab_review").length > 0 && !filterStatus && (
-          <Link
-            href={`/modules/asset-manager/${domainId}/changes?status=cab_review`}
-            className="rounded px-3 py-1.5 text-sm font-medium"
-            style={{ background: "var(--bpm-accent-amber, #f59e0b)", color: "#fff" }}
+      <div className="asset-manager-equipment-filters">
+        <div className="asset-manager-equipment-filters__row">
+          <span className="asset-manager-equipment-filters__label">Statut</span>
+          <div className="asset-manager-equipment-filters__chips">
+            {statusOptions.map((opt) => {
+              const isActive = filterStatus === opt.value;
+              const isReset = opt.value === "";
+              return (
+                <Chip
+                  key={opt.value || "all"}
+                  label={opt.label}
+                  variant={isActive ? "primary" : "default"}
+                  onClick={() => setFilterStatus(isActive ? "" : opt.value)}
+                  className={`${isActive ? "asset-manager-chip-active" : ""} ${isReset ? "asset-manager-chip-reset" : ""}`}
+                />
+              );
+            })}
+          </div>
+          {!loading && changes.filter((c) => c.status === "cab_review").length > 0 && !filterStatus && (
+            <Link
+              href={`/modules/asset-manager/${domainId}/changes?status=cab_review`}
+              className="rounded px-3 py-1.5 text-sm font-medium flex-shrink-0"
+              style={{ background: "var(--bpm-accent-amber, #f59e0b)", color: "#fff" }}
+            >
+              {changes.filter((c) => c.status === "cab_review").length} en attente CAB
+            </Link>
+          )}
+        </div>
+        <div className="flex justify-end mt-2">
+          <button
+            type="button"
+            onClick={() => {
+              const headers = ["Référence", "Titre", "Type", "Statut", "Risque", "Début prévu"];
+              const rows = changes.map((c) => [
+                c.reference,
+                c.title,
+                TYPE_LABELS[c.type] ?? c.type,
+                STATUS_LABELS[c.status] ?? c.status,
+                RISK_LABELS[c.riskLevel] ?? c.riskLevel,
+                c.plannedStart ? new Date(c.plannedStart).toLocaleDateString("fr-FR") : "",
+              ]);
+              const csv = [headers.join(";"), ...rows.map((r) => r.map((c) => `"${String(c).replace(/"/g, '""')}"`).join(";"))].join("\r\n");
+              const blob = new Blob(["\ufeff" + csv], { type: "text/csv;charset=utf-8" });
+              const url = URL.createObjectURL(blob);
+              const a = document.createElement("a");
+              a.href = url;
+              a.download = `changements-${domainId}-${new Date().toISOString().slice(0, 10)}.csv`;
+              a.click();
+              URL.revokeObjectURL(url);
+            }}
+            disabled={changes.length === 0}
+            className="asset-manager-export-btn flex items-center justify-center w-8 h-8 rounded-lg border"
+            style={{ borderColor: "var(--bpm-border)", background: "var(--bpm-surface)", color: "var(--bpm-text-secondary)" }}
+            title="Exporter CSV"
           >
-            {changes.filter((c) => c.status === "cab_review").length} en attente CAB
-          </Link>
-        )}
+            <Download size={18} />
+          </button>
+        </div>
       </div>
 
       {loading ? (

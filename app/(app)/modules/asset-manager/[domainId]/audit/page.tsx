@@ -4,7 +4,7 @@ import { useState, useEffect } from "react";
 import Link from "next/link";
 import { useParams } from "next/navigation";
 import { ClipboardList } from "lucide-react";
-import { Panel, Spinner, Selectbox, Table, EmptyState } from "@/components/bpm";
+import { Panel, Spinner, Chip, Table, EmptyState } from "@/components/bpm";
 
 type AuditEntry = {
   id: string;
@@ -128,19 +128,43 @@ export default function AssetManagerAuditPage() {
         </p>
       </div>
 
-      <div className="flex flex-wrap gap-4 mb-4">
-        <Selectbox
-          label="Type de ressource"
-          value={filterType}
-          onChange={(v) => setFilterType(String(v))}
-          options={typeOptions}
-        />
-        <Selectbox
-          label="Action"
-          value={filterAction}
-          onChange={(v) => setFilterAction(String(v))}
-          options={actionOptions}
-        />
+      <div className="asset-manager-equipment-filters">
+        <div className="asset-manager-equipment-filters__row">
+          <span className="asset-manager-equipment-filters__label">Type de ressource</span>
+          <div className="asset-manager-equipment-filters__chips">
+            {typeOptions.map((opt) => {
+              const isActive = filterType === opt.value;
+              const isReset = opt.value === "";
+              return (
+                <Chip
+                  key={opt.value || "all"}
+                  label={opt.label}
+                  variant={isActive ? "primary" : "default"}
+                  onClick={() => setFilterType(isActive ? "" : opt.value)}
+                  className={`${isActive ? "asset-manager-chip-active" : ""} ${isReset ? "asset-manager-chip-reset" : ""}`}
+                />
+              );
+            })}
+          </div>
+        </div>
+        <div className="asset-manager-equipment-filters__row">
+          <span className="asset-manager-equipment-filters__label">Action</span>
+          <div className="asset-manager-equipment-filters__chips">
+            {actionOptions.map((opt) => {
+              const isActive = filterAction === opt.value;
+              const isReset = opt.value === "";
+              return (
+                <Chip
+                  key={opt.value || "all"}
+                  label={opt.label}
+                  variant={isActive ? "primary" : "default"}
+                  onClick={() => setFilterAction(isActive ? "" : opt.value)}
+                  className={`${isActive ? "asset-manager-chip-active" : ""} ${isReset ? "asset-manager-chip-reset" : ""}`}
+                />
+              );
+            })}
+          </div>
+        </div>
       </div>
 
       {loading ? (

@@ -175,7 +175,7 @@ body {
   background: rgba(26, 75, 143, 0.35);
 }
 
-/* Tableaux BPM responsives : scroll horizontal sur mobile/PWA, touch-friendly */
+/* Tableaux BPM responsives : scroll horizontal sur mobile/PWA, touch-friendly ; bordure fine 1px comme la sidebar, pas d’ombre */
 .bpm-table-wrapper {
   max-width: 100%;
   min-width: 0;
@@ -185,6 +185,7 @@ body {
   overscroll-behavior-x: contain;
   border: 1px solid var(--bpm-border);
   border-radius: 8px;
+  box-shadow: none;
 }
 .bpm-table-container {
   min-width: 0;
@@ -535,27 +536,36 @@ textarea.bpm-textarea:focus {
   overflow-x: hidden;
   box-sizing: border-box;
 }
+/* Sidebar fixe, seul le corps scrolle (quand le layout avec sidebar est présent) */
+.asset-manager-page:has(.asset-manager-layout) {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-height: 0;
+}
 [data-theme="dark"] .asset-manager-page {
   background: var(--bpm-bg-primary);
 }
-/* Layout avec sous-sidebar contextuelle */
+/* Layout avec sous-sidebar contextuelle : prend la hauteur restante, sidebar fixe à gauche */
 .asset-manager-layout {
   display: flex;
   min-height: 0;
   flex: 1;
   min-width: 0;
   max-width: 100%;
-  overflow-x: hidden;
+  overflow: hidden;
 }
 .asset-manager-sidebar {
   width: 200px;
   flex-shrink: 0;
+  align-self: stretch;
   border-right: 1px solid #E5E7EB;
   padding: 16px 12px;
   background: var(--bpm-surface);
   display: flex;
   flex-direction: column;
   min-height: 0;
+  overflow-y: auto;
 }
 [data-theme="dark"] .asset-manager-sidebar {
   border-right-color: var(--bpm-border);
@@ -596,9 +606,11 @@ textarea.bpm-textarea:focus {
   flex-direction: column;
   gap: 2px;
 }
+/* Corps principal : seul élément qui scrolle */
 .asset-manager-main {
   flex: 1;
   min-width: 0;
+  min-height: 0;
   max-width: 100%;
   overflow-x: hidden;
   overflow-y: auto;
@@ -676,11 +688,12 @@ textarea.bpm-textarea:focus {
   letter-spacing: 0.04em;
   color: var(--bpm-text-secondary);
 }
-/* Tableaux : en-têtes font-weight 500 (semi-bold), pas full caps ; hover #F8F9FA */
+/* Tableaux : bordure fine 1px comme la sidebar, pas d’ombre */
 .asset-manager-page .bpm-table-wrapper,
 .asset-manager-page .rounded-lg.border.overflow-hidden {
-  border-radius: 12px !important;
+  border-radius: 8px !important;
   border: 1px solid var(--bpm-border) !important;
+  box-shadow: none !important;
   overflow-x: auto;
   overflow-y: auto;
   -webkit-overflow-scrolling: touch;
@@ -820,16 +833,43 @@ textarea.bpm-textarea:focus {
 .asset-manager-page .asset-manager-cta-button {
   display: inline-flex;
 }
+/* CTA et tous les boutons : mêmes dimensions et police que le bouton « + Nouvel article » du Wiki (.btn-primary) */
 .asset-manager-page .asset-manager-cta-button button,
 .asset-manager-page .asset-manager-cta-button .rounded-lg {
-  min-height: 40px;
-  height: 40px;
+  min-height: auto;
+  height: auto;
   min-width: 200px;
   width: 200px;
   padding: 8px 16px;
-  font-size: 13px;
+  font-size: 14px;
+  font-weight: 500;
+  font-family: inherit;
   box-sizing: border-box;
   justify-content: center;
+}
+.asset-manager-page button:not(.asset-manager-export-btn):not(.asset-manager-btn-compact) {
+  min-height: auto;
+  height: auto;
+  padding: 8px 16px !important;
+  font-size: 14px !important;
+  font-weight: 500;
+  font-family: inherit;
+  border-radius: 8px;
+  box-sizing: border-box;
+}
+.asset-manager-page a:has(> button) {
+  display: inline-flex;
+}
+.asset-manager-page a:has(> button) > button {
+  min-width: 0;
+  width: auto;
+}
+/* Boutons inline compacts (ex. Supprimer dans une liste) */
+.asset-manager-page button.asset-manager-btn-compact {
+  min-height: 32px;
+  height: 32px;
+  padding: 4px 10px !important;
+  font-size: 12px !important;
 }
 /* Dark mode : badges désaturés (Linear) */
 [data-theme="dark"] .asset-manager-page .asset-manager-status-badge {
@@ -987,9 +1027,9 @@ textarea.bpm-textarea:focus {
   background: #e5e7eb;
 }
 .asset-manager-page .asset-manager-equipment-filters .bpm-chip.asset-manager-chip-active {
-  background: #eff6ff !important;
-  border-color: #bfdbfe !important;
-  color: #1d4ed8 !important;
+  background: rgba(0, 163, 226, 0.12) !important;
+  border-color: var(--bpm-accent-light, #b2ebf2) !important;
+  color: var(--bpm-accent-cyan) !important;
   font-weight: 500;
 }
 .asset-manager-page .asset-manager-equipment-filters .bpm-chip.asset-manager-chip-reset {
@@ -1001,9 +1041,9 @@ textarea.bpm-textarea:focus {
   background: #f9fafb;
 }
 .asset-manager-page .asset-manager-equipment-filters .bpm-chip.asset-manager-chip-reset.asset-manager-chip-active {
-  background: #eff6ff !important;
-  border-color: #bfdbfe !important;
-  color: #1d4ed8 !important;
+  background: rgba(0, 163, 226, 0.12) !important;
+  border-color: var(--bpm-accent-light, #b2ebf2) !important;
+  color: var(--bpm-accent-cyan) !important;
 }
 @media (max-width: 767px) {
   .asset-manager-page .asset-manager-equipment-filters__row {

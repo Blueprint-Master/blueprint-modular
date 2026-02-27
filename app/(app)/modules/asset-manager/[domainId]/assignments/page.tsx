@@ -101,7 +101,7 @@ export default function AssetManagerAssignmentsPage() {
     if (status === "returned") return "#6b7280";
     if (status === "overdue") return "#ef4444";
     if (status === "cancelled") return "#6b7280";
-    return "var(--bpm-bg-secondary)";
+    return "#4b5563"; /* fallback gris lisible (texte blanc) */
   };
 
   const exportCsv = () => {
@@ -159,17 +159,26 @@ export default function AssetManagerAssignmentsPage() {
         </div>
       </div>
 
-      <div className="asset-manager-filters flex flex-wrap items-center gap-2 overflow-x-auto">
-        {statusOptions.map((opt) => (
-          <Chip
-            key={opt.value}
-            label={opt.label}
-            variant={filterStatus === opt.value ? "primary" : "default"}
-            onClick={() => setFilterStatus(opt.value)}
-            className={filterStatus === opt.value ? "asset-manager-chip-active" : ""}
-          />
-        ))}
-        <div className="ml-auto flex-shrink-0">
+      <div className="asset-manager-equipment-filters">
+        <div className="asset-manager-equipment-filters__row">
+          <span className="asset-manager-equipment-filters__label">Statut</span>
+          <div className="asset-manager-equipment-filters__chips">
+            {statusOptions.map((opt) => {
+              const isActive = filterStatus === opt.value;
+              const isReset = opt.value === "";
+              return (
+                <Chip
+                  key={opt.value || "all"}
+                  label={opt.label}
+                  variant={isActive ? "primary" : "default"}
+                  onClick={() => setFilterStatus(isActive ? "" : opt.value)}
+                  className={`${isActive ? "asset-manager-chip-active" : ""} ${isReset ? "asset-manager-chip-reset" : ""}`}
+                />
+              );
+            })}
+          </div>
+        </div>
+        <div className="flex justify-end mt-2">
           <button
             type="button"
             onClick={exportCsv}

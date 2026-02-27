@@ -575,7 +575,7 @@ export default function AssetDetailPage() {
                   <Link href={`/modules/asset-manager/${domainId}/assets/${other.id}`} className="font-medium" style={{ color: "var(--bpm-accent-cyan)" }}>
                     {other.reference} — {other.label}
                   </Link>
-                  <Button size="small" variant="outline" onClick={() => handleDeleteRelation(rel.id)} className="ml-auto text-xs">
+                  <Button size="small" variant="outline" onClick={() => handleDeleteRelation(rel.id)} className="ml-auto asset-manager-btn-compact">
                     Supprimer
                   </Button>
                 </li>

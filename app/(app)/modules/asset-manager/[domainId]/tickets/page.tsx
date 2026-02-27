@@ -166,10 +166,11 @@ export default function AssetManagerTicketsPage() {
   }
 
   const getStatusBadgeColor = (status: string) => {
+    if (status === "new") return "#4b5563"; /* gris foncé pour contraste (Nouveau) */
     if (status === "in_progress" || status === "assigned") return "#f59e0b";
     if (status === "resolved" || status === "closed") return "var(--bpm-accent-mint)";
     if (status === "on_hold") return "#6b7280";
-    return "var(--bpm-bg-secondary)";
+    return "#4b5563"; /* fallback gris lisible */
   };
 
   const exportCsv = () => {
@@ -208,34 +209,57 @@ export default function AssetManagerTicketsPage() {
         </div>
       </div>
 
-      <div className="asset-manager-filters flex flex-wrap items-center gap-2 overflow-x-auto">
-        {statusOptions.map((opt) => (
-          <Chip
-            key={opt.value}
-            label={opt.label}
-            variant={filterStatus === opt.value ? "primary" : "default"}
-            onClick={() => setFilterStatus(opt.value)}
-            className={filterStatus === opt.value ? "asset-manager-chip-active" : ""}
-          />
-        ))}
-        {priorityOptions.map((opt) => (
-          <Chip
-            key={opt.value}
-            label={opt.label}
-            variant={filterPriority === opt.value ? "primary" : "default"}
-            onClick={() => setFilterPriority(opt.value)}
-            className={filterPriority === opt.value ? "asset-manager-chip-active" : ""}
-          />
-        ))}
+      <div className="asset-manager-equipment-filters">
+        <div className="asset-manager-equipment-filters__row">
+          <span className="asset-manager-equipment-filters__label">Statut</span>
+          <div className="asset-manager-equipment-filters__chips">
+            {statusOptions.map((opt) => {
+              const isActive = filterStatus === opt.value;
+              const isReset = opt.value === "";
+              return (
+                <Chip
+                  key={opt.value || "all"}
+                  label={opt.label}
+                  variant={isActive ? "primary" : "default"}
+                  onClick={() => setFilterStatus(isActive ? "" : opt.value)}
+                  className={`${isActive ? "asset-manager-chip-active" : ""} ${isReset ? "asset-manager-chip-reset" : ""}`}
+                />
+              );
+            })}
+          </div>
+        </div>
+        <div className="asset-manager-equipment-filters__row">
+          <span className="asset-manager-equipment-filters__label">Priorité</span>
+          <div className="asset-manager-equipment-filters__chips">
+            {priorityOptions.map((opt) => {
+              const isActive = filterPriority === opt.value;
+              const isReset = opt.value === "";
+              return (
+                <Chip
+                  key={opt.value || "all"}
+                  label={opt.label}
+                  variant={isActive ? "primary" : "default"}
+                  onClick={() => setFilterPriority(isActive ? "" : opt.value)}
+                  className={`${isActive ? "asset-manager-chip-active" : ""} ${isReset ? "asset-manager-chip-reset" : ""}`}
+                />
+              );
+            })}
+          </div>
+        </div>
         {slaRiskCount > 0 && (
-          <Chip
-            label={`${slaRiskCount} en danger SLA`}
-            variant={filterSlaRisk ? "primary" : "default"}
-            onClick={() => setFilterSlaRisk((v) => !v)}
-            className={filterSlaRisk ? "asset-manager-chip-active" : ""}
-          />
+          <div className="asset-manager-equipment-filters__row">
+            <span className="asset-manager-equipment-filters__label">SLA</span>
+            <div className="asset-manager-equipment-filters__chips">
+              <Chip
+                label={`${slaRiskCount} en danger SLA`}
+                variant={filterSlaRisk ? "primary" : "default"}
+                onClick={() => setFilterSlaRisk((v) => !v)}
+                className={filterSlaRisk ? "asset-manager-chip-active" : ""}
+              />
+            </div>
+          </div>
         )}
-        <div className="ml-auto flex-shrink-0">
+        <div className="flex justify-end mt-2">
           <button
             type="button"
             onClick={exportCsv}
