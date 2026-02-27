@@ -18,6 +18,8 @@ export default function AssetManagerChangeNewPage() {
   const [riskLevel, setRiskLevel] = useState("medium");
   const [rollbackPlan, setRollbackPlan] = useState("");
   const [type, setType] = useState("normal");
+  const [plannedStart, setPlannedStart] = useState("");
+  const [plannedEnd, setPlannedEnd] = useState("");
 
   useEffect(() => {
     if (!domainId) return;
@@ -43,6 +45,8 @@ export default function AssetManagerChangeNewPage() {
         impact: impact.trim(),
         riskLevel,
         rollbackPlan: rollbackPlan.trim(),
+        plannedStart: plannedStart.trim() || null,
+        plannedEnd: plannedEnd.trim() || null,
       }),
     })
       .then((r) => (r.ok ? r.json() : null))
@@ -101,6 +105,28 @@ export default function AssetManagerChangeNewPage() {
               { value: "critical", label: "Critique" },
             ]}
           />
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div>
+              <label className="block text-sm font-medium mb-1" style={{ color: "var(--bpm-text-secondary)" }}>Début prévu</label>
+              <input
+                type="date"
+                value={plannedStart}
+                onChange={(e) => setPlannedStart(e.target.value)}
+                className="w-full rounded-lg border px-3 py-2 text-sm"
+                style={{ borderColor: "var(--bpm-border)", background: "var(--bpm-surface)", color: "var(--bpm-text-primary)" }}
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-medium mb-1" style={{ color: "var(--bpm-text-secondary)" }}>Fin prévue</label>
+              <input
+                type="date"
+                value={plannedEnd}
+                onChange={(e) => setPlannedEnd(e.target.value)}
+                className="w-full rounded-lg border px-3 py-2 text-sm"
+                style={{ borderColor: "var(--bpm-border)", background: "var(--bpm-surface)", color: "var(--bpm-text-primary)" }}
+              />
+            </div>
+          </div>
           <div>
             <label className="block text-sm font-medium mb-1" style={{ color: "var(--bpm-text-secondary)" }}>Plan de rollback *</label>
             <textarea required value={rollbackPlan} onChange={(e) => setRollbackPlan(e.target.value)} rows={3} className="bpm-textarea w-full rounded-lg border px-3 py-2 text-sm resize-y" style={{ borderColor: "var(--bpm-border)", background: "var(--bpm-surface)", color: "var(--bpm-text-primary)" }} />

@@ -45,6 +45,8 @@ export async function POST(request: Request) {
     impact: string;
     riskLevel: string;
     rollbackPlan: string;
+    plannedStart?: string | null;
+    plannedEnd?: string | null;
     assetsImpacted?: string[] | null;
     ticketsLinked?: string[] | null;
   };
@@ -71,6 +73,8 @@ export async function POST(request: Request) {
       impact: body.impact.trim(),
       riskLevel: body.riskLevel,
       rollbackPlan: body.rollbackPlan.trim(),
+      plannedStart: body.plannedStart ? new Date(body.plannedStart) : null,
+      plannedEnd: body.plannedEnd ? new Date(body.plannedEnd) : null,
       assetsImpacted: body.assetsImpacted?.length ? JSON.stringify(body.assetsImpacted) : null,
       ticketsLinked: body.ticketsLinked?.length ? JSON.stringify(body.ticketsLinked) : null,
       requesterId: userId,
