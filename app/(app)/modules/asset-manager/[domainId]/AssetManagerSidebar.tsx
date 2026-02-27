@@ -149,14 +149,6 @@ export function AssetManagerSidebar({ domainId }: { domainId: string }) {
           );
         })}
       </nav>
-      <div className="asset-manager-sidebar-footer">
-        <Link href="/modules" className="asset-manager-sidebar-link">
-          Retour aux modules
-        </Link>
-        <Link href="/modules/asset-manager/documentation" className="asset-manager-sidebar-link">
-          Documentation
-        </Link>
-      </div>
     </aside>
   );
 }

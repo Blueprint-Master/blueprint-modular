@@ -3,7 +3,7 @@
 import { useState, useEffect, useCallback } from "react";
 import Link from "next/link";
 import { useParams } from "next/navigation";
-import { Panel, Button, Spinner, Selectbox, Input, Badge, Card, EmptyState, Metric } from "@/components/bpm";
+import { Panel, Button, Spinner, Selectbox, Input, Badge, Card, Divider, EmptyState, Metric } from "@/components/bpm";
 import { FicheHeader, FicheSectionCard, FicheFieldGrid, FicheNav, FicheSkeleton } from "@/components/fiche";
 import type { DomainConfig } from "@/lib/asset-manager/get-domain-config";
 
@@ -335,6 +335,7 @@ export default function AssetDetailPage() {
         />
       </FicheSectionCard>
 
+      <Divider thickness={1} color="var(--bpm-border)" className="my-4" />
       {config?.asset_types && asset.attributes.length > 0 && (
         <FicheSectionCard title="Caractéristiques" className="mt-4">
           <FicheFieldGrid
@@ -355,6 +356,7 @@ export default function AssetDetailPage() {
         </FicheSectionCard>
       )}
 
+      <Divider thickness={1} color="var(--bpm-border)" className="my-4" />
       <FicheSectionCard title="Historique des mouvements" className="mt-4">
         <div className="flex flex-wrap items-center justify-between gap-2 mb-4">
           <Metric label="Mouvements" value={movements.length} border={false} />
@@ -438,6 +440,7 @@ export default function AssetDetailPage() {
         )}
       </FicheSectionCard>
 
+      <Divider thickness={1} color="var(--bpm-border)" className="my-4" />
       <FicheSectionCard title="Tickets" className="mt-4">
         {loadingTickets ? (
           <div className="flex justify-center py-4">
@@ -465,6 +468,7 @@ export default function AssetDetailPage() {
         )}
       </FicheSectionCard>
 
+      <Divider thickness={1} color="var(--bpm-border)" className="my-4" />
       <FicheSectionCard title="Contrats" className="mt-4">
         {loadingContracts ? (
           <div className="flex justify-center py-4">
@@ -494,6 +498,7 @@ export default function AssetDetailPage() {
         )}
       </FicheSectionCard>
 
+      <Divider thickness={1} color="var(--bpm-border)" className="my-4" />
       <FicheSectionCard title="Dépendances / Cartographie" className="mt-4">
         <div className="flex flex-wrap items-center justify-between gap-2 mb-4">
           <Metric label="Relations" value={relations.length} border={false} />
@@ -561,19 +566,15 @@ export default function AssetDetailPage() {
       </FicheSectionCard>
 
       {asset.notes && (
-        <FicheSectionCard title="Notes" className="mt-4">
-          <p className="text-sm whitespace-pre-wrap" style={{ color: "var(--bpm-text-primary)" }}>{asset.notes}</p>
-        </FicheSectionCard>
+        <>
+          <Divider thickness={1} color="var(--bpm-border)" className="my-4" />
+            <FicheSectionCard title="Notes" className="mt-4">
+            <p className="text-sm whitespace-pre-wrap" style={{ color: "var(--bpm-text-primary)" }}>{asset.notes}</p>
+          </FicheSectionCard>
+        </>
       )}
 
-      <FicheNav
-        backLink={`/modules/asset-manager/${domainId}/assets`}
-        backLabel="← Liste des actifs"
-        secondaryLinks={[
-          { href: `/modules/asset-manager/${domainId}`, label: "Tableau de bord" },
-          { href: "/modules/asset-manager/documentation", label: "Documentation" },
-        ]}
-      />
+      <FicheNav backLink={`/modules/asset-manager/${domainId}/assets`} backLabel="← Liste des actifs" />
     </div>
   );
 }

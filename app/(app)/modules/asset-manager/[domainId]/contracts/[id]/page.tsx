@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import { useParams } from "next/navigation";
-import { Panel, Button, Spinner, Selectbox, Input, Badge, Card } from "@/components/bpm";
+import { Panel, Button, Spinner, Selectbox, Input, Badge, Card, Divider } from "@/components/bpm";
 import { FicheHeader, FicheSectionCard, FicheFieldGrid, FicheNav, FicheSkeleton } from "@/components/fiche";
 
 type AssetContract = {
@@ -129,6 +129,7 @@ export default function AssetManagerContractDetailPage() {
         }
       />
 
+      <Divider thickness={1} color="var(--bpm-border)" className="my-4" />
       <Card variant="outlined" className="mt-4">
         <div className="bpm-card-body p-4">
           <h3 className="text-base font-semibold mb-3" style={{ color: "var(--bpm-text-primary)" }}>Détail du contrat</h3>
@@ -208,14 +209,7 @@ export default function AssetManagerContractDetailPage() {
         </div>
       </Card>
 
-      <FicheNav
-        backLink={`/modules/asset-manager/${domainId}/contracts`}
-        backLabel="← Liste des contrats"
-        secondaryLinks={[
-          { href: `/modules/asset-manager/${domainId}`, label: "Tableau de bord" },
-          { href: "/modules/asset-manager/documentation", label: "Documentation" },
-        ]}
-      />
+      <FicheNav backLink={`/modules/asset-manager/${domainId}/contracts`} backLabel="← Liste des contrats" />
     </div>
   );
 }

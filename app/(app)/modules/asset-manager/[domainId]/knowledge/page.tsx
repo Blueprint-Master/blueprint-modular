@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import { useParams, useRouter } from "next/navigation";
-import { BookOpen } from "lucide-react";
+import { BookOpen, ChevronDown, ChevronUp } from "lucide-react";
 import { Table, Spinner, Panel, Button, Chip, EmptyState } from "@/components/bpm";
 
 type KnowledgeArticle = {
@@ -38,6 +38,7 @@ export default function AssetManagerKnowledgePage() {
   const [config, setConfig] = useState<{ domain_label?: string } | null>(null);
   const [loading, setLoading] = useState(true);
   const [filterCategory, setFilterCategory] = useState("");
+  const [filtersOpen, setFiltersOpen] = useState(false);
 
   useEffect(() => {
     if (!domainId) {
@@ -122,23 +123,36 @@ export default function AssetManagerKnowledgePage() {
         </div>
       </div>
 
-      <div className="asset-manager-equipment-filters">
-        <div className="asset-manager-equipment-filters__row">
-          <span className="asset-manager-equipment-filters__label">Catégorie</span>
-          <div className="asset-manager-equipment-filters__chips">
-            {categoryOptions.map((opt) => {
-              const isActive = filterCategory === opt.value;
-              const isReset = opt.value === "";
-              return (
-                <Chip
-                  key={opt.value || "all"}
-                  label={opt.label}
-                  variant={isActive ? "primary" : "default"}
-                  onClick={() => setFilterCategory(isActive ? "" : opt.value)}
-                  className={`${isActive ? "asset-manager-chip-active" : ""} ${isReset ? "asset-manager-chip-reset" : ""}`}
-                />
-              );
-            })}
+      <div className={`asset-manager-equipment-filters ${!filtersOpen ? "asset-manager-equipment-filters--collapsed" : ""}`}>
+        <button
+          type="button"
+          onClick={() => setFiltersOpen((v) => !v)}
+          className="asset-manager-equipment-filters__toggle"
+          aria-expanded={filtersOpen}
+          aria-controls="asset-manager-filters-knowledge"
+          id="asset-manager-filters-toggle-knowledge"
+        >
+          <span className="asset-manager-equipment-filters__label">Filtres</span>
+          {filtersOpen ? <ChevronUp size={18} aria-hidden /> : <ChevronDown size={18} aria-hidden />}
+        </button>
+        <div id="asset-manager-filters-knowledge" role="region" aria-labelledby="asset-manager-filters-toggle-knowledge" hidden={!filtersOpen}>
+          <div className="asset-manager-equipment-filters__row">
+            <span className="asset-manager-equipment-filters__label">Catégorie</span>
+            <div className="asset-manager-equipment-filters__chips">
+              {categoryOptions.map((opt) => {
+                const isActive = filterCategory === opt.value;
+                const isReset = opt.value === "";
+                return (
+                  <Chip
+                    key={opt.value || "all"}
+                    label={opt.label}
+                    variant={isActive ? "primary" : "default"}
+                    onClick={() => setFilterCategory(isActive ? "" : opt.value)}
+                    className={`${isActive ? "asset-manager-chip-active" : ""} ${isReset ? "asset-manager-chip-reset" : ""}`}
+                  />
+                );
+              })}
+            </div>
           </div>
         </div>
       </div>

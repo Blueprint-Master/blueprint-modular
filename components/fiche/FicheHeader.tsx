@@ -14,7 +14,7 @@ export interface FicheHeaderProps {
 export function FicheHeader({ breadcrumb, title, subtitle, className = "" }: FicheHeaderProps) {
   return (
     <>
-      <Card variant="elevated" className={className}>
+      <Card variant="outlined" className={className}>
         <nav className="doc-breadcrumb mb-2" aria-label="Fil d'Ariane">
           {breadcrumb}
         </nav>

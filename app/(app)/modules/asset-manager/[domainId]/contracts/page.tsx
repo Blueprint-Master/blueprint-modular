@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import { useParams, useRouter } from "next/navigation";
-import { Download, FileText } from "lucide-react";
+import { Download, FileText, ChevronDown, ChevronUp } from "lucide-react";
 import { Table, Spinner, Panel, Button, Chip, EmptyState } from "@/components/bpm";
 
 type AssetContract = {
@@ -36,6 +36,7 @@ export default function AssetManagerContractsPage() {
   const [config, setConfig] = useState<{ domain_label?: string } | null>(null);
   const [loading, setLoading] = useState(true);
   const [filterType, setFilterType] = useState("");
+  const [filtersOpen, setFiltersOpen] = useState(false);
 
   useEffect(() => {
     if (!domainId) {
@@ -122,23 +123,36 @@ export default function AssetManagerContractsPage() {
         </div>
       </div>
 
-      <div className="asset-manager-equipment-filters">
-        <div className="asset-manager-equipment-filters__row">
-          <span className="asset-manager-equipment-filters__label">Type</span>
-          <div className="asset-manager-equipment-filters__chips">
-            {typeOptions.map((opt) => {
-              const isActive = filterType === opt.value;
-              const isReset = opt.value === "";
-              return (
-                <Chip
-                  key={opt.value || "all"}
-                  label={opt.label}
-                  variant={isActive ? "primary" : "default"}
-                  onClick={() => setFilterType(isActive ? "" : opt.value)}
-                  className={`${isActive ? "asset-manager-chip-active" : ""} ${isReset ? "asset-manager-chip-reset" : ""}`}
-                />
-              );
-            })}
+      <div className={`asset-manager-equipment-filters ${!filtersOpen ? "asset-manager-equipment-filters--collapsed" : ""}`}>
+        <button
+          type="button"
+          onClick={() => setFiltersOpen((v) => !v)}
+          className="asset-manager-equipment-filters__toggle"
+          aria-expanded={filtersOpen}
+          aria-controls="asset-manager-filters-contracts"
+          id="asset-manager-filters-toggle-contracts"
+        >
+          <span className="asset-manager-equipment-filters__label">Filtres</span>
+          {filtersOpen ? <ChevronUp size={18} aria-hidden /> : <ChevronDown size={18} aria-hidden />}
+        </button>
+        <div id="asset-manager-filters-contracts" role="region" aria-labelledby="asset-manager-filters-toggle-contracts" hidden={!filtersOpen}>
+          <div className="asset-manager-equipment-filters__row">
+            <span className="asset-manager-equipment-filters__label">Type</span>
+            <div className="asset-manager-equipment-filters__chips">
+              {typeOptions.map((opt) => {
+                const isActive = filterType === opt.value;
+                const isReset = opt.value === "";
+                return (
+                  <Chip
+                    key={opt.value || "all"}
+                    label={opt.label}
+                    variant={isActive ? "primary" : "default"}
+                    onClick={() => setFilterType(isActive ? "" : opt.value)}
+                    className={`${isActive ? "asset-manager-chip-active" : ""} ${isReset ? "asset-manager-chip-reset" : ""}`}
+                  />
+                );
+              })}
+            </div>
           </div>
         </div>
       </div>

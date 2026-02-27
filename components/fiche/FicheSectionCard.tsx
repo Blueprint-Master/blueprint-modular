@@ -16,7 +16,7 @@ export interface FicheSectionCardProps {
 export function FicheSectionCard({
   title,
   children,
-  variant = "elevated",
+  variant = "outlined",
   className = "",
   role = "region",
   "aria-label": ariaLabel,

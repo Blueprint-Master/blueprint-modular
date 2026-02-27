@@ -35,7 +35,7 @@ export default function AssetManagerAssetsPage() {
   const [filterType, setFilterType] = useState("");
   const [filterStatus, setFilterStatus] = useState("");
   const [filterLifecycle, setFilterLifecycle] = useState("");
-  const [filtersOpen, setFiltersOpen] = useState(true);
+  const [filtersOpen, setFiltersOpen] = useState(false);
 
   useEffect(() => {
     setFilterType(searchParams.get("assetTypeId") ?? "");

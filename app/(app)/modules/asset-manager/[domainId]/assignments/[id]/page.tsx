@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import { useParams } from "next/navigation";
-import { Panel, Button, Spinner, Selectbox, Badge, Card } from "@/components/bpm";
+import { Panel, Button, Spinner, Selectbox, Badge, Card, Divider } from "@/components/bpm";
 import { FicheHeader, FicheSectionCard, FicheFieldGrid, FicheNav, FicheSkeleton } from "@/components/fiche";
 
 type Assignment = {
@@ -142,14 +142,17 @@ export default function AssetManagerAssignmentDetailPage() {
       />
 
       {assignment.status === "active" && (
-        <FicheSectionCard title="Restituer l'actif" className="mt-4">
-          <p className="text-sm mb-3" style={{ color: "var(--bpm-text-secondary)" }}>
-            Clôture la MAD, enregistre la date de retour et remet l{"'"}actif en stock.
-          </p>
-          <Button variant="primary" size="medium" onClick={handleReturn} disabled={returning}>
-            {returning ? "En cours…" : "Restituer l'actif"}
-          </Button>
-        </FicheSectionCard>
+        <>
+          <FicheSectionCard title="Restituer l'actif" className="mt-4">
+            <p className="text-sm mb-3" style={{ color: "var(--bpm-text-secondary)" }}>
+              Clôture la MAD, enregistre la date de retour et remet l{"'"}actif en stock.
+            </p>
+            <Button variant="primary" size="medium" onClick={handleReturn} disabled={returning}>
+              {returning ? "En cours…" : "Restituer l'actif"}
+            </Button>
+          </FicheSectionCard>
+          <Divider thickness={1} color="var(--bpm-border)" className="my-4" />
+        </>
       )}
 
       <FicheSectionCard title="Informations" className="mt-4">
@@ -167,6 +170,7 @@ export default function AssetManagerAssignmentDetailPage() {
         />
       </FicheSectionCard>
 
+      <Divider thickness={1} color="var(--bpm-border)" className="my-4" />
       <Card variant="outlined" className="mt-4">
         <div className="bpm-card-body p-4">
           <h3 className="text-base font-semibold mb-3" style={{ color: "var(--bpm-text-primary)" }}>Modifier</h3>
@@ -195,11 +199,7 @@ export default function AssetManagerAssignmentDetailPage() {
         </div>
       </Card>
 
-      <FicheNav
-        backLink={`/modules/asset-manager/${domainId}/assignments`}
-        backLabel="← Liste des MAD"
-        secondaryLinks={[{ href: `/modules/asset-manager/${domainId}`, label: "Tableau de bord" }]}
-      />
+      <FicheNav backLink={`/modules/asset-manager/${domainId}/assignments`} backLabel="← Liste des MAD" />
     </div>
   );
 }

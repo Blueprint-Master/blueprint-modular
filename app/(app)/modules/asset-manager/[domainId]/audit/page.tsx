@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import { useParams } from "next/navigation";
-import { ClipboardList } from "lucide-react";
+import { ClipboardList, ChevronDown, ChevronUp } from "lucide-react";
 import { Panel, Spinner, Chip, Table, EmptyState } from "@/components/bpm";
 
 type AuditEntry = {
@@ -41,6 +41,7 @@ export default function AssetManagerAuditPage() {
   const [loading, setLoading] = useState(true);
   const [filterType, setFilterType] = useState("");
   const [filterAction, setFilterAction] = useState("");
+  const [filtersOpen, setFiltersOpen] = useState(false);
 
   useEffect(() => {
     if (!domainId) return;
@@ -128,41 +129,54 @@ export default function AssetManagerAuditPage() {
         </p>
       </div>
 
-      <div className="asset-manager-equipment-filters">
-        <div className="asset-manager-equipment-filters__row">
-          <span className="asset-manager-equipment-filters__label">Type de ressource</span>
-          <div className="asset-manager-equipment-filters__chips">
-            {typeOptions.map((opt) => {
-              const isActive = filterType === opt.value;
-              const isReset = opt.value === "";
-              return (
-                <Chip
-                  key={opt.value || "all"}
-                  label={opt.label}
-                  variant={isActive ? "primary" : "default"}
-                  onClick={() => setFilterType(isActive ? "" : opt.value)}
-                  className={`${isActive ? "asset-manager-chip-active" : ""} ${isReset ? "asset-manager-chip-reset" : ""}`}
-                />
-              );
-            })}
+      <div className={`asset-manager-equipment-filters ${!filtersOpen ? "asset-manager-equipment-filters--collapsed" : ""}`}>
+        <button
+          type="button"
+          onClick={() => setFiltersOpen((v) => !v)}
+          className="asset-manager-equipment-filters__toggle"
+          aria-expanded={filtersOpen}
+          aria-controls="asset-manager-filters-audit"
+          id="asset-manager-filters-toggle-audit"
+        >
+          <span className="asset-manager-equipment-filters__label">Filtres</span>
+          {filtersOpen ? <ChevronUp size={18} aria-hidden /> : <ChevronDown size={18} aria-hidden />}
+        </button>
+        <div id="asset-manager-filters-audit" role="region" aria-labelledby="asset-manager-filters-toggle-audit" hidden={!filtersOpen}>
+          <div className="asset-manager-equipment-filters__row">
+            <span className="asset-manager-equipment-filters__label">Type de ressource</span>
+            <div className="asset-manager-equipment-filters__chips">
+              {typeOptions.map((opt) => {
+                const isActive = filterType === opt.value;
+                const isReset = opt.value === "";
+                return (
+                  <Chip
+                    key={opt.value || "all"}
+                    label={opt.label}
+                    variant={isActive ? "primary" : "default"}
+                    onClick={() => setFilterType(isActive ? "" : opt.value)}
+                    className={`${isActive ? "asset-manager-chip-active" : ""} ${isReset ? "asset-manager-chip-reset" : ""}`}
+                  />
+                );
+              })}
+            </div>
           </div>
-        </div>
-        <div className="asset-manager-equipment-filters__row">
-          <span className="asset-manager-equipment-filters__label">Action</span>
-          <div className="asset-manager-equipment-filters__chips">
-            {actionOptions.map((opt) => {
-              const isActive = filterAction === opt.value;
-              const isReset = opt.value === "";
-              return (
-                <Chip
-                  key={opt.value || "all"}
-                  label={opt.label}
-                  variant={isActive ? "primary" : "default"}
-                  onClick={() => setFilterAction(isActive ? "" : opt.value)}
-                  className={`${isActive ? "asset-manager-chip-active" : ""} ${isReset ? "asset-manager-chip-reset" : ""}`}
-                />
-              );
-            })}
+          <div className="asset-manager-equipment-filters__row">
+            <span className="asset-manager-equipment-filters__label">Action</span>
+            <div className="asset-manager-equipment-filters__chips">
+              {actionOptions.map((opt) => {
+                const isActive = filterAction === opt.value;
+                const isReset = opt.value === "";
+                return (
+                  <Chip
+                    key={opt.value || "all"}
+                    label={opt.label}
+                    variant={isActive ? "primary" : "default"}
+                    onClick={() => setFilterAction(isActive ? "" : opt.value)}
+                    className={`${isActive ? "asset-manager-chip-active" : ""} ${isReset ? "asset-manager-chip-reset" : ""}`}
+                  />
+                );
+              })}
+            </div>
           </div>
         </div>
       </div>

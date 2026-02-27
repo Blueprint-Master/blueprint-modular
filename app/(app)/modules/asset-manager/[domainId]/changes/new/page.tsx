@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import { useParams, useRouter } from "next/navigation";
-import { Panel, Button, Spinner, Input, Selectbox } from "@/components/bpm";
+import { Card, Caption, Divider, Button, Spinner, Input, Selectbox } from "@/components/bpm";
 
 export default function AssetManagerChangeNewPage() {
   const params = useParams();
@@ -71,72 +71,89 @@ export default function AssetManagerChangeNewPage() {
           <Link href={`/modules/asset-manager/${domainId}/changes`} style={{ color: "var(--bpm-accent-cyan)" }}>Changements</Link> → Nouvelle demande
         </nav>
         <h1 className="text-2xl font-bold" style={{ color: "var(--bpm-text-primary)" }}>Nouvelle demande de changement</h1>
+        <Caption>Remplissez les informations ci-dessous.</Caption>
       </div>
 
-      <Panel variant="info" title="Créer une demande">
-        <form onSubmit={handleSubmit} className="space-y-4">
-          <Selectbox
-            label="Type"
-            value={type}
-            onChange={(v) => setType(String(v))}
-            options={[
-              { value: "standard", label: "Standard" },
-              { value: "normal", label: "Normal" },
-              { value: "emergency", label: "Urgent" },
-            ]}
-          />
-          <Input label="Titre *" value={title} onChange={setTitle} required placeholder="Résumé du changement" />
-          <div>
-            <label className="block text-sm font-medium mb-1" style={{ color: "var(--bpm-text-secondary)" }}>Description *</label>
-            <textarea required value={description} onChange={(e) => setDescription(e.target.value)} rows={4} className="bpm-textarea w-full rounded-lg border px-3 py-2 text-sm resize-y" style={{ borderColor: "var(--bpm-border)", background: "var(--bpm-surface)", color: "var(--bpm-text-primary)" }} />
-          </div>
-          <div>
-            <label className="block text-sm font-medium mb-1" style={{ color: "var(--bpm-text-secondary)" }}>Impact *</label>
-            <textarea required value={impact} onChange={(e) => setImpact(e.target.value)} rows={3} className="bpm-textarea w-full rounded-lg border px-3 py-2 text-sm resize-y" style={{ borderColor: "var(--bpm-border)", background: "var(--bpm-surface)", color: "var(--bpm-text-primary)" }} />
-          </div>
-          <Selectbox
-            label="Niveau de risque *"
-            value={riskLevel}
-            onChange={(v) => setRiskLevel(String(v))}
-            options={[
-              { value: "low", label: "Faible" },
-              { value: "medium", label: "Moyen" },
-              { value: "high", label: "Élevé" },
-              { value: "critical", label: "Critique" },
-            ]}
-          />
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+      <Card variant="outlined">
+        <form onSubmit={handleSubmit} className="space-y-0">
+          <section className="space-y-4" aria-label="Type et risque">
+            <Selectbox
+              label="Type"
+              value={type}
+              onChange={(v) => setType(String(v))}
+              options={[
+                { value: "standard", label: "Standard" },
+                { value: "normal", label: "Normal" },
+                { value: "emergency", label: "Urgent" },
+              ]}
+            />
+            <Selectbox
+              label="Niveau de risque *"
+              value={riskLevel}
+              onChange={(v) => setRiskLevel(String(v))}
+              options={[
+                { value: "low", label: "Faible" },
+                { value: "medium", label: "Moyen" },
+                { value: "high", label: "Élevé" },
+                { value: "critical", label: "Critique" },
+              ]}
+            />
+          </section>
+
+          <Divider thickness={1} color="var(--bpm-border)" className="my-4" label="Description" />
+          <section className="space-y-4" aria-label="Description">
+            <Input label="Titre *" value={title} onChange={setTitle} required placeholder="Résumé du changement" />
             <div>
-              <label className="block text-sm font-medium mb-1" style={{ color: "var(--bpm-text-secondary)" }}>Début prévu</label>
-              <input
-                type="date"
-                value={plannedStart}
-                onChange={(e) => setPlannedStart(e.target.value)}
-                className="w-full rounded-lg border px-3 py-2 text-sm"
-                style={{ borderColor: "var(--bpm-border)", background: "var(--bpm-surface)", color: "var(--bpm-text-primary)" }}
-              />
+              <label className="block text-sm font-medium mb-1" style={{ color: "var(--bpm-text-secondary)" }}>Description *</label>
+              <textarea required value={description} onChange={(e) => setDescription(e.target.value)} rows={4} className="bpm-textarea w-full rounded-lg border px-3 py-2 text-sm resize-y" style={{ borderColor: "var(--bpm-border)", background: "var(--bpm-surface)", color: "var(--bpm-text-primary)" }} />
             </div>
             <div>
-              <label className="block text-sm font-medium mb-1" style={{ color: "var(--bpm-text-secondary)" }}>Fin prévue</label>
-              <input
-                type="date"
-                value={plannedEnd}
-                onChange={(e) => setPlannedEnd(e.target.value)}
-                className="w-full rounded-lg border px-3 py-2 text-sm"
-                style={{ borderColor: "var(--bpm-border)", background: "var(--bpm-surface)", color: "var(--bpm-text-primary)" }}
-              />
+              <label className="block text-sm font-medium mb-1" style={{ color: "var(--bpm-text-secondary)" }}>Impact *</label>
+              <textarea required value={impact} onChange={(e) => setImpact(e.target.value)} rows={3} className="bpm-textarea w-full rounded-lg border px-3 py-2 text-sm resize-y" style={{ borderColor: "var(--bpm-border)", background: "var(--bpm-surface)", color: "var(--bpm-text-primary)" }} />
             </div>
-          </div>
-          <div>
-            <label className="block text-sm font-medium mb-1" style={{ color: "var(--bpm-text-secondary)" }}>Plan de rollback *</label>
-            <textarea required value={rollbackPlan} onChange={(e) => setRollbackPlan(e.target.value)} rows={3} className="bpm-textarea w-full rounded-lg border px-3 py-2 text-sm resize-y" style={{ borderColor: "var(--bpm-border)", background: "var(--bpm-surface)", color: "var(--bpm-text-primary)" }} />
-          </div>
-          <div className="flex gap-2 pt-2">
+          </section>
+
+          <Divider thickness={1} color="var(--bpm-border)" className="my-4" label="Planification" />
+          <section className="space-y-4" aria-label="Planification">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div>
+                <label className="block text-sm font-medium mb-1" style={{ color: "var(--bpm-text-secondary)" }}>Début prévu</label>
+                <input
+                  type="date"
+                  value={plannedStart}
+                  onChange={(e) => setPlannedStart(e.target.value)}
+                  className="w-full rounded-lg border px-3 py-2 text-sm"
+                  style={{ borderColor: "var(--bpm-border)", background: "var(--bpm-surface)", color: "var(--bpm-text-primary)" }}
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium mb-1" style={{ color: "var(--bpm-text-secondary)" }}>Fin prévue</label>
+                <input
+                  type="date"
+                  value={plannedEnd}
+                  onChange={(e) => setPlannedEnd(e.target.value)}
+                  className="w-full rounded-lg border px-3 py-2 text-sm"
+                  style={{ borderColor: "var(--bpm-border)", background: "var(--bpm-surface)", color: "var(--bpm-text-primary)" }}
+                />
+              </div>
+            </div>
+          </section>
+
+          <Divider thickness={1} color="var(--bpm-border)" className="my-4" label="Rollback" />
+          <section className="space-y-4" aria-label="Plan de rollback">
+            <div>
+              <label className="block text-sm font-medium mb-1" style={{ color: "var(--bpm-text-secondary)" }}>Plan de rollback *</label>
+              <textarea required value={rollbackPlan} onChange={(e) => setRollbackPlan(e.target.value)} rows={3} className="bpm-textarea w-full rounded-lg border px-3 py-2 text-sm resize-y" style={{ borderColor: "var(--bpm-border)", background: "var(--bpm-surface)", color: "var(--bpm-text-primary)" }} />
+            </div>
+          </section>
+
+          <Divider thickness={1} color="var(--bpm-border)" className="my-4" />
+          <div className="flex gap-2">
             <Button type="submit" size="small" disabled={saving}>{saving ? "Création…" : "Créer la demande"}</Button>
             <Link href={`/modules/asset-manager/${domainId}/changes`}><Button type="button" size="small" variant="outline">Annuler</Button></Link>
           </div>
         </form>
-      </Panel>
+      </Card>
 
       <nav className="doc-pagination mt-8 flex flex-wrap gap-4">
         <Link href={`/modules/asset-manager/${domainId}/changes`} style={{ color: "var(--bpm-accent-cyan)" }}>← Changements</Link>

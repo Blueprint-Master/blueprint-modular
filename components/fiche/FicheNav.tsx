@@ -22,7 +22,7 @@ export interface FicheNavProps {
 export function FicheNav({ backLink, backLabel, secondaryLinks = [], className = "" }: FicheNavProps) {
   return (
     <nav className={`doc-pagination mt-8 flex flex-wrap gap-3 ${className}`.trim()} aria-label="Navigation de fin de page">
-      <Link href={backLink}>
+      <Link href={backLink} className="fiche-nav-back-link">
         <Button variant="outline" size="medium">
           {backLabel}
         </Button>

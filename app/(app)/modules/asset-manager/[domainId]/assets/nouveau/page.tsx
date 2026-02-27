@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import { useParams, useRouter } from "next/navigation";
-import { Panel, Button, Input, Selectbox } from "@/components/bpm";
+import { Card, Caption, Divider, Button, Input, Selectbox } from "@/components/bpm";
 
 interface DomainConfig {
   domain_id: string;
@@ -106,79 +106,92 @@ export default function AssetManagerAssetNewPage() {
         <h1 className="text-2xl font-bold" style={{ color: "var(--bpm-text-primary)" }}>
           Nouvel {config.asset_label_singular.toLowerCase()}
         </h1>
+        <Caption>Remplissez les informations ci-dessous.</Caption>
       </div>
 
-      <Panel variant="info" title="Création">
-        <form onSubmit={handleSubmit} className="space-y-4">
-          <div>
-            <label className="block text-sm font-medium mb-1" style={{ color: "var(--bpm-text-primary)" }}>
-              Type *
-            </label>
-            <Selectbox
-              options={typeOptions}
-              value={assetTypeId}
-              onChange={(v) => setAssetTypeId(v ?? "")}
-              placeholder="Choisir le type"
-            />
-          </div>
-          <div>
-            <label className="block text-sm font-medium mb-1" style={{ color: "var(--bpm-text-primary)" }}>
-              Libellé *
-            </label>
-            <Input value={label} onChange={setLabel} placeholder="Nom de l'actif" required />
-          </div>
-          <div>
-            <label className="block text-sm font-medium mb-1" style={{ color: "var(--bpm-text-primary)" }}>
-              Statut *
-            </label>
-            <Selectbox
-              options={statusOptions}
-              value={statusId}
-              onChange={(v) => setStatusId(v ?? "")}
-              placeholder="Statut"
-            />
-          </div>
-          {fields.map((f) => (
-            <div key={f.key}>
+      <Card variant="outlined">
+        <form onSubmit={handleSubmit} className="space-y-0">
+          <section className="space-y-4" aria-label="Identification">
+            <div>
               <label className="block text-sm font-medium mb-1" style={{ color: "var(--bpm-text-primary)" }}>
-                {f.label}
+                Type *
               </label>
-              {f.type === "select" ? (
-                <Selectbox
-                  options={[{ value: "", label: "—" }, ...(f.options ?? []).map((o) => ({ value: o, label: o }))]}
-                  value={String(attributes[f.key] ?? "")}
-                  onChange={(v) => setAttributes((prev) => ({ ...prev, [f.key]: v ?? "" }))}
-                />
-              ) : f.type === "number" ? (
-                <Input
-                  type="text"
-                  value={String(attributes[f.key] ?? "")}
-                  onChange={(v) => setAttributes((prev) => ({ ...prev, [f.key]: v === "" ? "" : Number(v) }))}
-                  placeholder={f.label}
-                />
-              ) : f.type === "date" ? (
-                <input
-                  type="date"
-                  value={String(attributes[f.key] ?? "")}
-                  onChange={(e) => setAttributes((prev) => ({ ...prev, [f.key]: e.target.value }))}
-                  className="w-full px-3 py-2 rounded-lg border text-sm"
-                  style={{
-                    borderColor: "var(--bpm-border)",
-                    background: "var(--bpm-bg-primary)",
-                    color: "var(--bpm-text-primary)",
-                  }}
-                />
-              ) : (
-                <Input
-                  value={String(attributes[f.key] ?? "")}
-                  onChange={(v) => setAttributes((prev) => ({ ...prev, [f.key]: v }))}
-                  placeholder={f.label}
-                />
-              )}
+              <Selectbox
+                options={typeOptions}
+                value={assetTypeId}
+                onChange={(v) => setAssetTypeId(v ?? "")}
+                placeholder="Choisir le type"
+              />
             </div>
-          ))}
+            <div>
+              <label className="block text-sm font-medium mb-1" style={{ color: "var(--bpm-text-primary)" }}>
+                Libellé *
+              </label>
+              <Input value={label} onChange={setLabel} placeholder="Nom de l'actif" required />
+            </div>
+            <div>
+              <label className="block text-sm font-medium mb-1" style={{ color: "var(--bpm-text-primary)" }}>
+                Statut *
+              </label>
+              <Selectbox
+                options={statusOptions}
+                value={statusId}
+                onChange={(v) => setStatusId(v ?? "")}
+                placeholder="Statut"
+              />
+            </div>
+          </section>
+
+          {fields.length > 0 && (
+            <>
+              <Divider thickness={1} color="var(--bpm-border)" className="my-4" label="Caractéristiques" />
+              <section className="space-y-4" aria-label="Caractéristiques">
+                {fields.map((f) => (
+                  <div key={f.key}>
+                    <label className="block text-sm font-medium mb-1" style={{ color: "var(--bpm-text-primary)" }}>
+                      {f.label}
+                    </label>
+                    {f.type === "select" ? (
+                      <Selectbox
+                        options={[{ value: "", label: "—" }, ...(f.options ?? []).map((o) => ({ value: o, label: o }))]}
+                        value={String(attributes[f.key] ?? "")}
+                        onChange={(v) => setAttributes((prev) => ({ ...prev, [f.key]: v ?? "" }))}
+                      />
+                    ) : f.type === "number" ? (
+                      <Input
+                        type="text"
+                        value={String(attributes[f.key] ?? "")}
+                        onChange={(v) => setAttributes((prev) => ({ ...prev, [f.key]: v === "" ? "" : Number(v) }))}
+                        placeholder={f.label}
+                      />
+                    ) : f.type === "date" ? (
+                      <input
+                        type="date"
+                        value={String(attributes[f.key] ?? "")}
+                        onChange={(e) => setAttributes((prev) => ({ ...prev, [f.key]: e.target.value }))}
+                        className="w-full px-3 py-2 rounded-lg border text-sm"
+                        style={{
+                          borderColor: "var(--bpm-border)",
+                          background: "var(--bpm-bg-primary)",
+                          color: "var(--bpm-text-primary)",
+                        }}
+                      />
+                    ) : (
+                      <Input
+                        value={String(attributes[f.key] ?? "")}
+                        onChange={(v) => setAttributes((prev) => ({ ...prev, [f.key]: v }))}
+                        placeholder={f.label}
+                      />
+                    )}
+                  </div>
+                ))}
+              </section>
+            </>
+          )}
+
+          <Divider thickness={1} color="var(--bpm-border)" className="my-4" />
           {error && (
-            <p className="text-sm" style={{ color: "var(--bpm-accent)" }}>
+            <p className="text-sm mb-4" style={{ color: "var(--bpm-accent)" }}>
               {error}
             </p>
           )}
@@ -191,7 +204,7 @@ export default function AssetManagerAssetNewPage() {
             </Link>
           </div>
         </form>
-      </Panel>
+      </Card>
 
       <nav className="doc-pagination mt-8">
         <Link href={`/modules/asset-manager/${domainId}/assets`} style={{ color: "var(--bpm-accent-cyan)" }}>

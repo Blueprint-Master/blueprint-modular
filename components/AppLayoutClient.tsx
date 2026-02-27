@@ -1,6 +1,7 @@
 "use client";
 
 import { usePathname } from "next/navigation";
+import { useState, useEffect, useRef } from "react";
 import { Sidebar } from "@/components/Sidebar";
 import { NotificationBell } from "@/components/NotificationBell";
 import { AIAssistant } from "@/components/ai/AIAssistant";
@@ -9,6 +10,7 @@ import { AssistantProvider } from "@/lib/ai/assistant-context";
 import { APP_VERSION } from "@/lib/version";
 import { AIHeaderProvider, useAIHeader } from "@/contexts/AIHeaderContext";
 import { SidebarProvider, useSidebar } from "@/contexts/SidebarContext";
+import { AssetManagerSidebar } from "@/app/(app)/modules/asset-manager/[domainId]/AssetManagerSidebar";
 
 const ASSISTANT_NAME = "Assistant";
 
@@ -57,11 +59,41 @@ function AIHeaderIconButtons() {
   );
 }
 
+const ASSET_MANAGER_PATH = /^\/modules\/asset-manager\/([^/]+)/;
+const SECONDARY_SIDEBAR_TRANSITION_MS = 250;
+
 function AppLayoutInner({ children }: { children: React.ReactNode }) {
   const sidebar = useSidebar();
   const collapsed = sidebar?.collapsed ?? false;
   const pathname = usePathname();
-  const hasSecondarySidebar = /^\/modules\/asset-manager\/[^/]+/.test(pathname ?? "");
+  const hasSecondarySidebar = ASSET_MANAGER_PATH.test(pathname ?? "");
+  const domainId = (pathname ?? "").match(ASSET_MANAGER_PATH)?.[1] ?? "";
+
+  const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [isClosing, setIsClosing] = useState(false);
+  const prevHasSecondary = useRef(hasSecondarySidebar);
+
+  useEffect(() => {
+    if (hasSecondarySidebar) {
+      prevHasSecondary.current = true;
+      const raf = requestAnimationFrame(() => setSidebarOpen(true));
+      return () => cancelAnimationFrame(raf);
+    }
+    if (prevHasSecondary.current) {
+      prevHasSecondary.current = false;
+      setIsClosing(true);
+      const raf = requestAnimationFrame(() => setSidebarOpen(false));
+      const t = setTimeout(() => setIsClosing(false), SECONDARY_SIDEBAR_TRANSITION_MS);
+      return () => {
+        cancelAnimationFrame(raf);
+        clearTimeout(t);
+      };
+    }
+    setSidebarOpen(false);
+  }, [hasSecondarySidebar]);
+
+  const showSecondarySidebar = hasSecondarySidebar || isClosing;
+  const secondarySidebarMargin = sidebarOpen && showSecondarySidebar;
 
   return (
     <div
@@ -76,11 +108,20 @@ function AppLayoutInner({ children }: { children: React.ReactNode }) {
         aria-hidden
       />
       <Sidebar />
+      {/* Sidebar secondaire Gestion de parc : rendue ici pour animer ouverture/fermeture */}
+      {showSecondarySidebar && domainId && (
+        <div
+          className={`asset-manager-sidebar-outer hidden md:block overflow-hidden ${secondarySidebarMargin ? "asset-manager-sidebar-outer--open" : ""}`}
+          aria-hidden={!sidebarOpen}
+        >
+          <AssetManagerSidebar domainId={domainId} />
+        </div>
+      )}
       <div
         className={`app-content-column flex-1 flex flex-col min-h-screen transition-[margin-left] duration-200 ease-in-out ${collapsed ? "md:ml-16" : "md:ml-64"}`}
       >
           <header
-            className={`pwa-title-bar sticky top-0 z-30 max-md:z-50 flex h-14 shrink-0 items-center justify-end px-3 sm:px-4 gap-2 ${hasSecondarySidebar ? "app-header-with-secondary-sidebar" : ""}`}
+            className="pwa-title-bar sticky top-0 z-30 max-md:z-50 flex h-14 shrink-0 items-center justify-end px-3 sm:px-4 gap-2"
             style={{ background: "var(--bpm-bg-primary)" }}
           >
             <div className="flex items-center gap-1 flex-shrink-0" style={{ color: "var(--bpm-text-primary)" }}>

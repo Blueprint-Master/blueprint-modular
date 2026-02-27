@@ -3,7 +3,7 @@
 import { useState, useEffect, useCallback } from "react";
 import Link from "next/link";
 import { useParams, useRouter } from "next/navigation";
-import { Download, Ticket as TicketIcon } from "lucide-react";
+import { Download, Ticket as TicketIcon, ChevronDown, ChevronUp } from "lucide-react";
 import { Table, Spinner, Panel, Button, Chip, EmptyState } from "@/components/bpm";
 
 type Ticket = {
@@ -43,6 +43,7 @@ export default function AssetManagerTicketsPage() {
   const [filterStatus, setFilterStatus] = useState("");
   const [filterPriority, setFilterPriority] = useState("");
   const [filterSlaRisk, setFilterSlaRisk] = useState(false);
+  const [filtersOpen, setFiltersOpen] = useState(false);
 
   const fetchTickets = useCallback(() => {
     if (!domainId) return;
@@ -209,56 +210,69 @@ export default function AssetManagerTicketsPage() {
         </div>
       </div>
 
-      <div className="asset-manager-equipment-filters">
-        <div className="asset-manager-equipment-filters__row">
-          <span className="asset-manager-equipment-filters__label">Statut</span>
-          <div className="asset-manager-equipment-filters__chips">
-            {statusOptions.map((opt) => {
-              const isActive = filterStatus === opt.value;
-              const isReset = opt.value === "";
-              return (
-                <Chip
-                  key={opt.value || "all"}
-                  label={opt.label}
-                  variant={isActive ? "primary" : "default"}
-                  onClick={() => setFilterStatus(isActive ? "" : opt.value)}
-                  className={`${isActive ? "asset-manager-chip-active" : ""} ${isReset ? "asset-manager-chip-reset" : ""}`}
-                />
-              );
-            })}
-          </div>
-        </div>
-        <div className="asset-manager-equipment-filters__row">
-          <span className="asset-manager-equipment-filters__label">Priorité</span>
-          <div className="asset-manager-equipment-filters__chips">
-            {priorityOptions.map((opt) => {
-              const isActive = filterPriority === opt.value;
-              const isReset = opt.value === "";
-              return (
-                <Chip
-                  key={opt.value || "all"}
-                  label={opt.label}
-                  variant={isActive ? "primary" : "default"}
-                  onClick={() => setFilterPriority(isActive ? "" : opt.value)}
-                  className={`${isActive ? "asset-manager-chip-active" : ""} ${isReset ? "asset-manager-chip-reset" : ""}`}
-                />
-              );
-            })}
-          </div>
-        </div>
-        {slaRiskCount > 0 && (
+      <div className={`asset-manager-equipment-filters ${!filtersOpen ? "asset-manager-equipment-filters--collapsed" : ""}`}>
+        <button
+          type="button"
+          onClick={() => setFiltersOpen((v) => !v)}
+          className="asset-manager-equipment-filters__toggle"
+          aria-expanded={filtersOpen}
+          aria-controls="asset-manager-filters-tickets"
+          id="asset-manager-filters-toggle-tickets"
+        >
+          <span className="asset-manager-equipment-filters__label">Filtres</span>
+          {filtersOpen ? <ChevronUp size={18} aria-hidden /> : <ChevronDown size={18} aria-hidden />}
+        </button>
+        <div id="asset-manager-filters-tickets" role="region" aria-labelledby="asset-manager-filters-toggle-tickets" hidden={!filtersOpen}>
           <div className="asset-manager-equipment-filters__row">
-            <span className="asset-manager-equipment-filters__label">SLA</span>
+            <span className="asset-manager-equipment-filters__label">Statut</span>
             <div className="asset-manager-equipment-filters__chips">
-              <Chip
-                label={`${slaRiskCount} en danger SLA`}
-                variant={filterSlaRisk ? "primary" : "default"}
-                onClick={() => setFilterSlaRisk((v) => !v)}
-                className={filterSlaRisk ? "asset-manager-chip-active" : ""}
-              />
+              {statusOptions.map((opt) => {
+                const isActive = filterStatus === opt.value;
+                const isReset = opt.value === "";
+                return (
+                  <Chip
+                    key={opt.value || "all"}
+                    label={opt.label}
+                    variant={isActive ? "primary" : "default"}
+                    onClick={() => setFilterStatus(isActive ? "" : opt.value)}
+                    className={`${isActive ? "asset-manager-chip-active" : ""} ${isReset ? "asset-manager-chip-reset" : ""}`}
+                  />
+                );
+              })}
             </div>
           </div>
-        )}
+          <div className="asset-manager-equipment-filters__row">
+            <span className="asset-manager-equipment-filters__label">Priorité</span>
+            <div className="asset-manager-equipment-filters__chips">
+              {priorityOptions.map((opt) => {
+                const isActive = filterPriority === opt.value;
+                const isReset = opt.value === "";
+                return (
+                  <Chip
+                    key={opt.value || "all"}
+                    label={opt.label}
+                    variant={isActive ? "primary" : "default"}
+                    onClick={() => setFilterPriority(isActive ? "" : opt.value)}
+                    className={`${isActive ? "asset-manager-chip-active" : ""} ${isReset ? "asset-manager-chip-reset" : ""}`}
+                  />
+                );
+              })}
+            </div>
+          </div>
+          {slaRiskCount > 0 && (
+            <div className="asset-manager-equipment-filters__row">
+              <span className="asset-manager-equipment-filters__label">SLA</span>
+              <div className="asset-manager-equipment-filters__chips">
+                <Chip
+                  label={`${slaRiskCount} en danger SLA`}
+                  variant={filterSlaRisk ? "primary" : "default"}
+                  onClick={() => setFilterSlaRisk((v) => !v)}
+                  className={filterSlaRisk ? "asset-manager-chip-active" : ""}
+                />
+              </div>
+            </div>
+          )}
+        </div>
       </div>
 
       {loading ? (

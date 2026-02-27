@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import { useParams, useRouter, useSearchParams } from "next/navigation";
-import { Download, RefreshCw } from "lucide-react";
+import { Download, RefreshCw, ChevronDown, ChevronUp } from "lucide-react";
 import { Table, Spinner, Panel, Button, Chip, EmptyState } from "@/components/bpm";
 
 type ChangeRequest = {
@@ -53,6 +53,7 @@ export default function AssetManagerChangesPage() {
   const [config, setConfig] = useState<unknown>(null);
   const [loading, setLoading] = useState(true);
   const [filterStatus, setFilterStatus] = useState(() => searchParams.get("status") ?? "");
+  const [filtersOpen, setFiltersOpen] = useState(false);
 
   useEffect(() => {
     setFilterStatus(searchParams.get("status") ?? "");
@@ -126,33 +127,46 @@ export default function AssetManagerChangesPage() {
         </div>
       </div>
 
-      <div className="asset-manager-equipment-filters">
-        <div className="asset-manager-equipment-filters__row">
-          <span className="asset-manager-equipment-filters__label">Statut</span>
-          <div className="asset-manager-equipment-filters__chips">
-            {statusOptions.map((opt) => {
-              const isActive = filterStatus === opt.value;
-              const isReset = opt.value === "";
-              return (
-                <Chip
-                  key={opt.value || "all"}
-                  label={opt.label}
-                  variant={isActive ? "primary" : "default"}
-                  onClick={() => setFilterStatus(isActive ? "" : opt.value)}
-                  className={`${isActive ? "asset-manager-chip-active" : ""} ${isReset ? "asset-manager-chip-reset" : ""}`}
-                />
-              );
-            })}
+      <div className={`asset-manager-equipment-filters ${!filtersOpen ? "asset-manager-equipment-filters--collapsed" : ""}`}>
+        <button
+          type="button"
+          onClick={() => setFiltersOpen((v) => !v)}
+          className="asset-manager-equipment-filters__toggle"
+          aria-expanded={filtersOpen}
+          aria-controls="asset-manager-filters-changes"
+          id="asset-manager-filters-toggle-changes"
+        >
+          <span className="asset-manager-equipment-filters__label">Filtres</span>
+          {filtersOpen ? <ChevronUp size={18} aria-hidden /> : <ChevronDown size={18} aria-hidden />}
+        </button>
+        <div id="asset-manager-filters-changes" role="region" aria-labelledby="asset-manager-filters-toggle-changes" hidden={!filtersOpen}>
+          <div className="asset-manager-equipment-filters__row">
+            <span className="asset-manager-equipment-filters__label">Statut</span>
+            <div className="asset-manager-equipment-filters__chips">
+              {statusOptions.map((opt) => {
+                const isActive = filterStatus === opt.value;
+                const isReset = opt.value === "";
+                return (
+                  <Chip
+                    key={opt.value || "all"}
+                    label={opt.label}
+                    variant={isActive ? "primary" : "default"}
+                    onClick={() => setFilterStatus(isActive ? "" : opt.value)}
+                    className={`${isActive ? "asset-manager-chip-active" : ""} ${isReset ? "asset-manager-chip-reset" : ""}`}
+                  />
+                );
+              })}
+            </div>
+            {!loading && changes.filter((c) => c.status === "cab_review").length > 0 && !filterStatus && (
+              <Link
+                href={`/modules/asset-manager/${domainId}/changes?status=cab_review`}
+                className="rounded px-3 py-1.5 text-sm font-medium flex-shrink-0"
+                style={{ background: "var(--bpm-accent-amber, #f59e0b)", color: "#fff" }}
+              >
+                {changes.filter((c) => c.status === "cab_review").length} en attente CAB
+              </Link>
+            )}
           </div>
-          {!loading && changes.filter((c) => c.status === "cab_review").length > 0 && !filterStatus && (
-            <Link
-              href={`/modules/asset-manager/${domainId}/changes?status=cab_review`}
-              className="rounded px-3 py-1.5 text-sm font-medium flex-shrink-0"
-              style={{ background: "var(--bpm-accent-amber, #f59e0b)", color: "#fff" }}
-            >
-              {changes.filter((c) => c.status === "cab_review").length} en attente CAB
-            </Link>
-          )}
         </div>
       </div>
 

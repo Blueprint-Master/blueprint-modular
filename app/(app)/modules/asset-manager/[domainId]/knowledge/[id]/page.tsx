@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import { useParams } from "next/navigation";
-import { Panel, Button, Spinner, Badge, Metric } from "@/components/bpm";
+import { Panel, Button, Spinner, Badge, Metric, Divider } from "@/components/bpm";
 import { FicheHeader, FicheSectionCard, FicheNav, FicheSkeleton } from "@/components/fiche";
 
 type KnowledgeArticle = {
@@ -100,6 +100,7 @@ export default function AssetManagerKnowledgeDetailPage() {
         </Link>
       </div>
 
+      <Divider thickness={1} color="var(--bpm-border)" className="my-4" />
       <FicheSectionCard title="Contenu" className="mt-4">
         <div
           className="prose prose-sm max-w-none"
@@ -115,11 +116,7 @@ export default function AssetManagerKnowledgeDetailPage() {
         />
       </FicheSectionCard>
 
-      <FicheNav
-        backLink={`/modules/asset-manager/${domainId}/knowledge`}
-        backLabel="← Connaissances"
-        secondaryLinks={[{ href: `/modules/asset-manager/${domainId}`, label: "Tableau de bord" }]}
-      />
+      <FicheNav backLink={`/modules/asset-manager/${domainId}/knowledge`} backLabel="← Connaissances" />
     </div>
   );
 }

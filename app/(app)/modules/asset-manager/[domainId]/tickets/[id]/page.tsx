@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import { useParams } from "next/navigation";
-import { Panel, Button, Spinner, Selectbox, Badge, Card, Progress } from "@/components/bpm";
+import { Panel, Button, Spinner, Selectbox, Badge, Card, Divider, Progress } from "@/components/bpm";
 import { FicheHeader, FicheSectionCard, FicheFieldGrid, FicheNav, FicheSkeleton } from "@/components/fiche";
 
 type Ticket = {
@@ -139,21 +139,24 @@ export default function AssetManagerTicketDetailPage() {
       />
 
       {isOpen && (
-        <FicheSectionCard title="SLA" className="mt-4">
-          <Progress
-            value={Math.min(100, slaPercent)}
-            max={100}
-            label={`Temps consommé (objectif : ${slaHours} h)`}
-            showValue
-          />
-          <div className="mt-2">
-            {slaExceeded ? (
-              <Badge variant="error">SLA dépassé</Badge>
-            ) : (
-              <Badge variant="success">SLA OK</Badge>
-            )}
-          </div>
-        </FicheSectionCard>
+        <>
+          <FicheSectionCard title="SLA" className="mt-4">
+            <Progress
+              value={Math.min(100, slaPercent)}
+              max={100}
+              label={`Temps consommé (objectif : ${slaHours} h)`}
+              showValue
+            />
+            <div className="mt-2">
+              {slaExceeded ? (
+                <Badge variant="error">SLA dépassé</Badge>
+              ) : (
+                <Badge variant="success">SLA OK</Badge>
+              )}
+            </div>
+          </FicheSectionCard>
+          <Divider thickness={1} color="var(--bpm-border)" className="my-4" />
+        </>
       )}
 
       <FicheSectionCard title="Informations" className="mt-4">
@@ -173,6 +176,7 @@ export default function AssetManagerTicketDetailPage() {
         </div>
       </FicheSectionCard>
 
+      <Divider thickness={1} color="var(--bpm-border)" className="my-4" />
       {(ticket.status === "resolved" || ticket.status === "closed") && (
         <FicheSectionCard title="Connaissances" className="mt-4">
           <p className="text-sm mb-3" style={{ color: "var(--bpm-text-secondary)" }}>
@@ -184,6 +188,7 @@ export default function AssetManagerTicketDetailPage() {
         </FicheSectionCard>
       )}
 
+      <Divider thickness={1} color="var(--bpm-border)" className="my-4" />
       <Card variant="outlined" className="mt-4">
         <div className="bpm-card-body p-4">
           <h3 className="text-base font-semibold mb-3" style={{ color: "var(--bpm-text-primary)" }}>Modifier le ticket</h3>
@@ -214,11 +219,7 @@ export default function AssetManagerTicketDetailPage() {
         </div>
       </Card>
 
-      <FicheNav
-        backLink={`/modules/asset-manager/${domainId}/tickets`}
-        backLabel="← Liste des tickets"
-        secondaryLinks={[{ href: `/modules/asset-manager/${domainId}`, label: "Tableau de bord" }]}
-      />
+      <FicheNav backLink={`/modules/asset-manager/${domainId}/tickets`} backLabel="← Liste des tickets" />
     </div>
   );
 }

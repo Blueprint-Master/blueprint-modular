@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import { useParams, useRouter } from "next/navigation";
-import { Panel, Button, Spinner, Selectbox } from "@/components/bpm";
+import { Card, Caption, Divider, Button, Spinner, Selectbox } from "@/components/bpm";
 
 type Asset = { id: string; reference: string; label: string };
 type User = { id: string; name: string | null; email: string | null };
@@ -80,61 +80,74 @@ export default function AssetManagerAssignmentNewPage() {
           <Link href={`/modules/asset-manager/${domainId}`}>Tableau de bord</Link> →{" "}
           <Link href={`/modules/asset-manager/${domainId}/assignments`}>MAD</Link> → Nouvelle
         </nav>
-        <h1 className="text-2xl font-bold" style={{ color: "var(--bpm-text-primary)" }}>Nouvelle mise à Disposition</h1>
+        <h1 className="text-2xl font-bold" style={{ color: "var(--bpm-text-primary)" }}>Nouvelle mise à disposition</h1>
+        <Caption>Remplissez les informations ci-dessous.</Caption>
       </div>
 
-      <Panel variant="info" title="Créer une MAD">
-        <form onSubmit={handleSubmit} className="space-y-4">
-          <Selectbox
-            label="Actif *"
-            value={assetId}
-            onChange={(v) => setAssetId(v)}
-            options={[{ value: "", label: "Sélectionner un actif" }, ...assetOptions]}
-            required
-          />
-          <div>
-            <label className="block text-sm font-medium mb-1" style={{ color: "var(--bpm-text-secondary)" }}>Bénéficiaire</label>
-            <p className="text-sm" style={{ color: "var(--bpm-text-primary)" }}>{currentUser?.name ?? currentUser?.email ?? "Vous (session)"}</p>
-            <input type="hidden" name="assigneeId" value={assigneeId} />
-          </div>
-          <Selectbox
-            label="Type"
-            value={assignmentType}
-            onChange={(v) => setAssignmentType(v)}
-            options={[{ value: "temporary", label: "Temporaire" }, { value: "permanent", label: "Permanent" }]}
-          />
-          <div>
-            <label className="block text-sm font-medium mb-1" style={{ color: "var(--bpm-text-secondary)" }}>Date de début *</label>
-            <input
-              type="date"
-              value={startDate}
-              onChange={(e) => setStartDate(e.target.value)}
+      <Card variant="outlined">
+        <form onSubmit={handleSubmit} className="space-y-0">
+          <section className="space-y-4" aria-label="Attribution">
+            <Selectbox
+              label="Actif *"
+              value={assetId}
+              onChange={(v) => setAssetId(v)}
+              options={[{ value: "", label: "Sélectionner un actif" }, ...assetOptions]}
               required
-              className="rounded border p-2 text-sm"
-              style={{ borderColor: "var(--bpm-border)", background: "var(--bpm-surface)", color: "var(--bpm-text-primary)" }}
             />
-          </div>
-          <div>
-            <label className="block text-sm font-medium mb-1" style={{ color: "var(--bpm-text-secondary)" }}>Date de fin prévue</label>
-            <input
-              type="date"
-              value={expectedEndDate}
-              onChange={(e) => setExpectedEndDate(e.target.value)}
-              className="rounded border p-2 text-sm"
-              style={{ borderColor: "var(--bpm-border)", background: "var(--bpm-surface)", color: "var(--bpm-text-primary)" }}
+            <div>
+              <label className="block text-sm font-medium mb-1" style={{ color: "var(--bpm-text-secondary)" }}>Bénéficiaire</label>
+              <p className="text-sm m-0" style={{ color: "var(--bpm-text-primary)" }}>{currentUser?.name ?? currentUser?.email ?? "Vous (session)"}</p>
+              <input type="hidden" name="assigneeId" value={assigneeId} />
+            </div>
+            <Selectbox
+              label="Type"
+              value={assignmentType}
+              onChange={(v) => setAssignmentType(v)}
+              options={[{ value: "temporary", label: "Temporaire" }, { value: "permanent", label: "Permanent" }]}
             />
-          </div>
-          <div>
-            <label className="block text-sm font-medium mb-1" style={{ color: "var(--bpm-text-secondary)" }}>Motif (optionnel)</label>
-            <textarea
-              value={reason}
-              onChange={(e) => setReason(e.target.value)}
-              rows={2}
-              className="bpm-textarea w-full rounded-lg border px-3 py-2 text-sm resize-y"
-              style={{ borderColor: "var(--bpm-border)", background: "var(--bpm-surface)", color: "var(--bpm-text-primary)" }}
-            />
-          </div>
-          <div className="flex gap-2 pt-2">
+          </section>
+
+          <Divider thickness={1} color="var(--bpm-border)" className="my-4" label="Période" />
+          <section className="space-y-4" aria-label="Période">
+            <div>
+              <label className="block text-sm font-medium mb-1" style={{ color: "var(--bpm-text-secondary)" }}>Date de début *</label>
+              <input
+                type="date"
+                value={startDate}
+                onChange={(e) => setStartDate(e.target.value)}
+                required
+                className="rounded border p-2 text-sm w-full"
+                style={{ borderColor: "var(--bpm-border)", background: "var(--bpm-surface)", color: "var(--bpm-text-primary)" }}
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-medium mb-1" style={{ color: "var(--bpm-text-secondary)" }}>Date de fin prévue</label>
+              <input
+                type="date"
+                value={expectedEndDate}
+                onChange={(e) => setExpectedEndDate(e.target.value)}
+                className="rounded border p-2 text-sm w-full"
+                style={{ borderColor: "var(--bpm-border)", background: "var(--bpm-surface)", color: "var(--bpm-text-primary)" }}
+              />
+            </div>
+          </section>
+
+          <Divider thickness={1} color="var(--bpm-border)" className="my-4" label="Motif" />
+          <section className="space-y-4" aria-label="Motif">
+            <div>
+              <label className="block text-sm font-medium mb-1" style={{ color: "var(--bpm-text-secondary)" }}>Motif (optionnel)</label>
+              <textarea
+                value={reason}
+                onChange={(e) => setReason(e.target.value)}
+                rows={2}
+                className="bpm-textarea w-full rounded-lg border px-3 py-2 text-sm resize-y"
+                style={{ borderColor: "var(--bpm-border)", background: "var(--bpm-surface)", color: "var(--bpm-text-primary)" }}
+              />
+            </div>
+          </section>
+
+          <Divider thickness={1} color="var(--bpm-border)" className="my-4" />
+          <div className="flex gap-2">
             <Button type="submit" size="small" disabled={saving || !assetId || !startDate}>
               {saving ? "Création…" : "Créer la MAD"}
             </Button>
@@ -143,7 +156,7 @@ export default function AssetManagerAssignmentNewPage() {
             </Link>
           </div>
         </form>
-      </Panel>
+      </Card>
 
       <nav className="doc-pagination mt-8">
         <Link href={`/modules/asset-manager/${domainId}/assignments`} style={{ color: "var(--bpm-accent-cyan)" }}>← Liste des MAD</Link>

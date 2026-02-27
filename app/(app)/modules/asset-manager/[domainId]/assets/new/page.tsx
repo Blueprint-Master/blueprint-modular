@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import { useParams, useRouter } from "next/navigation";
-import { Panel, Button, Input, Selectbox, Spinner } from "@/components/bpm";
+import { Card, Caption, Divider, Button, Input, Selectbox, Spinner } from "@/components/bpm";
 import type { DomainConfig } from "@/lib/asset-manager/get-domain-config";
 
 export default function NewAssetPage() {
@@ -91,40 +91,44 @@ export default function NewAssetPage() {
         <h1 className="text-2xl font-bold" style={{ color: "var(--bpm-text-primary)" }}>
           Nouvel {config.asset_label_singular.toLowerCase()}
         </h1>
+        <Caption>Remplissez les informations ci-dessous.</Caption>
       </div>
 
-      <Panel variant="info" title="Création">
-        <form onSubmit={handleSubmit} className="space-y-4">
-          <div>
-            <label className="block text-sm font-medium mb-1" style={{ color: "var(--bpm-text-primary)" }}>
-              Type *
-            </label>
-            <Selectbox
-              options={typeOptions}
-              value={assetTypeId}
-              onChange={(v) => setAssetTypeId(v ?? "")}
-              placeholder="Type"
-            />
-          </div>
-          <div>
-            <label className="block text-sm font-medium mb-1" style={{ color: "var(--bpm-text-primary)" }}>
-              Libellé *
-            </label>
-            <Input value={label} onChange={setLabel} placeholder="Libellé" required />
-          </div>
-          <div>
-            <label className="block text-sm font-medium mb-1" style={{ color: "var(--bpm-text-primary)" }}>
-              Statut
-            </label>
-            <Selectbox
-              options={statusOptions}
-              value={statusId}
-              onChange={(v) => setStatusId(v ?? "")}
-              placeholder="Statut"
-            />
-          </div>
+      <Card variant="outlined">
+        <form onSubmit={handleSubmit} className="space-y-0">
+          <section className="space-y-4" aria-label="Identification">
+            <div>
+              <label className="block text-sm font-medium mb-1" style={{ color: "var(--bpm-text-primary)" }}>
+                Type *
+              </label>
+              <Selectbox
+                options={typeOptions}
+                value={assetTypeId}
+                onChange={(v) => setAssetTypeId(v ?? "")}
+                placeholder="Type"
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-medium mb-1" style={{ color: "var(--bpm-text-primary)" }}>
+                Libellé *
+              </label>
+              <Input value={label} onChange={setLabel} placeholder="Libellé" required />
+            </div>
+            <div>
+              <label className="block text-sm font-medium mb-1" style={{ color: "var(--bpm-text-primary)" }}>
+                Statut
+              </label>
+              <Selectbox
+                options={statusOptions}
+                value={statusId}
+                onChange={(v) => setStatusId(v ?? "")}
+                placeholder="Statut"
+              />
+            </div>
+          </section>
+          <Divider thickness={1} color="var(--bpm-border)" className="my-4" />
           {error && (
-            <p className="text-sm" style={{ color: "var(--bpm-accent)" }}>
+            <p className="text-sm mb-4" style={{ color: "var(--bpm-accent)" }}>
               {error}
             </p>
           )}
@@ -137,7 +141,7 @@ export default function NewAssetPage() {
             </Link>
           </div>
         </form>
-      </Panel>
+      </Card>
     </div>
   );
 }

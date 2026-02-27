@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef, useCallback } from "react";
 import Link from "next/link";
 import { useParams } from "next/navigation";
 import { Monitor, Ticket, UserCheck, FileText, BookOpen, RefreshCw } from "lucide-react";
@@ -139,6 +139,17 @@ export default function AssetManagerDomainPage() {
     return map[c] ?? map.gray;
   };
 
+  const metricsCarouselRef = useRef<HTMLDivElement>(null);
+  const scrollCarousel = useCallback((direction: "left" | "right") => {
+    if (metricsCarouselRef.current) {
+      const scrollAmount = 280;
+      metricsCarouselRef.current.scrollBy({
+        left: direction === "left" ? -scrollAmount : scrollAmount,
+        behavior: "smooth",
+      });
+    }
+  }, []);
+
   if (loading) {
     return (
       <div className="doc-page flex justify-center py-12">
@@ -208,7 +219,7 @@ export default function AssetManagerDomainPage() {
               Gestion de parc
             </h1>
             <p className="doc-description mt-0.5" style={{ color: "var(--bpm-text-secondary)" }}>
-              {config.asset_label_plural}, tickets et {config.assignment_label}s. Tableau de bord et accès rapides.
+              {config.asset_label_plural}, Tickets et {config.assignment_label}s. Tableau de bord et accès rapides.
             </p>
           </div>
           <Link href={`/modules/asset-manager/${domainId}/assets/nouveau`} className="asset-manager-cta-button">
@@ -217,77 +228,108 @@ export default function AssetManagerDomainPage() {
         </div>
       </div>
 
-      <div className="grid gap-4 grid-cols-2 md:grid-cols-3 xl:grid-cols-6 mb-6 asset-manager-metrics-grid">
-        <Link href={`/modules/asset-manager/${domainId}/assets`} className="block min-w-0 overflow-hidden">
-          <Metric
-            label={config.asset_label_plural}
-            value={assets.length}
-            compact
-            border={false}
-            icon={<Monitor size={iconSize} />}
-            accentColor={ACCENT.assets}
-            subtext={assets.length === 0 ? "Aucun actif enregistré" : `Mise à jour : ${formatLastUpdated(lastUpdated.assets)}`}
-          />
-        </Link>
-        <Link href={`/modules/asset-manager/${domainId}/tickets`} className="block min-w-0 overflow-hidden">
-          <Metric
-            label={`${config.ticket_label_singular}s`}
-            value={ticketCount}
-            compact
-            border={false}
-            icon={<Ticket size={iconSize} />}
-            accentColor={ACCENT.tickets}
-            subtext={ticketCount === 0 ? "Aucun ticket" : `Mise à jour : ${formatLastUpdated(lastUpdated.tickets)}`}
-          />
-        </Link>
-        <Link href={`/modules/asset-manager/${domainId}/assignments`} className="block min-w-0 overflow-hidden">
-          <Metric
-            label={`${config.assignment_label}s`}
-            value={assignmentCount}
-            compact
-            border={false}
-            icon={<UserCheck size={iconSize} />}
-            accentColor={ACCENT.assignments}
-            subtext={assignmentCount === 0 ? "Aucune MAD" : `Mise à jour : ${formatLastUpdated(lastUpdated.assignments)}`}
-          />
-        </Link>
-        <Link href={`/modules/asset-manager/${domainId}/contracts`} className="block min-w-0 overflow-hidden">
-          <Metric
-            label="Contrats"
-            value={contractCount}
-            compact
-            border={false}
-            icon={<FileText size={iconSize} />}
-            accentColor={ACCENT.contracts}
-            subtext={contractCount === 0 ? "Aucun contrat" : `Mise à jour : ${formatLastUpdated(lastUpdated.contracts)}`}
-          />
-        </Link>
-        <Link href={`/modules/asset-manager/${domainId}/knowledge`} className="block min-w-0 overflow-hidden">
-          <Metric
-            label="Connaissances"
-            value={knowledgeCount}
-            compact
-            border={false}
-            icon={<BookOpen size={iconSize} />}
-            accentColor={ACCENT.knowledge}
-            subtext={knowledgeCount === 0 ? "Aucun article" : `Mise à jour : ${formatLastUpdated(lastUpdated.knowledge)}`}
-          />
-        </Link>
-        <Link href={`/modules/asset-manager/${domainId}/changes`} className="block min-w-0 overflow-hidden">
-          <Metric
-            label="Changements"
-            value={changeCount}
-            compact
-            border={false}
-            icon={<RefreshCw size={iconSize} />}
-            accentColor={ACCENT.changes}
-            subtext={changeCount === 0 ? "Aucun changement" : `Mise à jour : ${formatLastUpdated(lastUpdated.changes)}`}
-          />
-        </Link>
+      <div className="asset-manager-metrics-carousel-container mb-6">
+        <button
+          type="button"
+          className="asset-manager-carousel-btn asset-manager-carousel-btn--left"
+          onClick={() => scrollCarousel("left")}
+          aria-label="Défiler vers la gauche"
+        >
+          ←
+        </button>
+        <div className="asset-manager-metrics-carousel" ref={metricsCarouselRef} role="region" aria-label="Métriques du tableau de bord">
+          <Link href={`/modules/asset-manager/${domainId}/assets`} className="block min-w-0 overflow-hidden asset-manager-metrics-grid">
+            <Metric
+              label={config.asset_label_plural}
+              value={assets.length}
+              compact
+              border={false}
+              icon={<Monitor size={iconSize} />}
+              accentColor={ACCENT.assets}
+              subtext={assets.length === 0 ? "Aucun actif enregistré" : `Mise à jour : ${formatLastUpdated(lastUpdated.assets)}`}
+            />
+          </Link>
+          <Link href={`/modules/asset-manager/${domainId}/tickets`} className="block min-w-0 overflow-hidden asset-manager-metrics-grid">
+            <Metric
+              label={`${config.ticket_label_singular}s`}
+              value={ticketCount}
+              compact
+              border={false}
+              icon={<Ticket size={iconSize} />}
+              accentColor={ACCENT.tickets}
+              subtext={ticketCount === 0 ? "Aucun ticket" : `Mise à jour : ${formatLastUpdated(lastUpdated.tickets)}`}
+            />
+          </Link>
+          <Link href={`/modules/asset-manager/${domainId}/assignments`} className="block min-w-0 overflow-hidden asset-manager-metrics-grid">
+            <Metric
+              label={`${config.assignment_label}s`}
+              value={assignmentCount}
+              compact
+              border={false}
+              icon={<UserCheck size={iconSize} />}
+              accentColor={ACCENT.assignments}
+              subtext={assignmentCount === 0 ? "Aucune MAD" : `Mise à jour : ${formatLastUpdated(lastUpdated.assignments)}`}
+            />
+          </Link>
+          <Link href={`/modules/asset-manager/${domainId}/contracts`} className="block min-w-0 overflow-hidden asset-manager-metrics-grid">
+            <Metric
+              label="Contrats"
+              value={contractCount}
+              compact
+              border={false}
+              icon={<FileText size={iconSize} />}
+              accentColor={ACCENT.contracts}
+              subtext={contractCount === 0 ? "Aucun contrat" : `Mise à jour : ${formatLastUpdated(lastUpdated.contracts)}`}
+            />
+          </Link>
+          <Link href={`/modules/asset-manager/${domainId}/knowledge`} className="block min-w-0 overflow-hidden asset-manager-metrics-grid">
+            <Metric
+              label="Connaissances"
+              value={knowledgeCount}
+              compact
+              border={false}
+              icon={<BookOpen size={iconSize} />}
+              accentColor={ACCENT.knowledge}
+              subtext={knowledgeCount === 0 ? "Aucun article" : `Mise à jour : ${formatLastUpdated(lastUpdated.knowledge)}`}
+            />
+          </Link>
+          <Link href={`/modules/asset-manager/${domainId}/changes`} className="block min-w-0 overflow-hidden asset-manager-metrics-grid">
+            <Metric
+              label="Changements"
+              value={changeCount}
+              compact
+              border={false}
+              icon={<RefreshCw size={iconSize} />}
+              accentColor={ACCENT.changes}
+              subtext={changeCount === 0 ? "Aucun changement" : `Mise à jour : ${formatLastUpdated(lastUpdated.changes)}`}
+            />
+          </Link>
+        </div>
+        <button
+          type="button"
+          className="asset-manager-carousel-btn asset-manager-carousel-btn--right"
+          onClick={() => scrollCarousel("right")}
+          aria-label="Défiler vers la droite"
+        >
+          →
+        </button>
       </div>
 
       {(alerts.contractsExpiring30 > 0 || alerts.ticketsSlaRisk > 0 || alerts.assetsOutOfService > 0) && (
-        <Panel variant="warning" title="Alertes" className="mb-6">
+        <div
+          className="rounded-xl border overflow-hidden mb-6"
+          style={{
+            background: "var(--bpm-surface)",
+            border: "1px solid var(--bpm-border)",
+            borderRadius: 12,
+            padding: 16,
+          }}
+          role="region"
+          aria-label="Alertes"
+        >
+          <h2 className="text-sm font-semibold m-0 mb-3" style={{ color: "var(--bpm-text-secondary)", letterSpacing: "0.04em" }}>
+            Alertes
+          </h2>
           <div className="grid gap-4 grid-cols-1 md:grid-cols-3 text-sm">
             {alerts.contractsExpiring30 > 0 && (
               <Link
@@ -322,7 +364,7 @@ export default function AssetManagerDomainPage() {
               </Link>
             )}
           </div>
-        </Panel>
+        </div>
       )}
 
       <div

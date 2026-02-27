@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import { useParams } from "next/navigation";
-import { Panel, Button, Spinner, Selectbox, Badge } from "@/components/bpm";
+import { Panel, Button, Spinner, Selectbox, Badge, Divider } from "@/components/bpm";
 import { FicheHeader, FicheSectionCard, FicheFieldGrid, FicheNav, FicheSkeleton } from "@/components/fiche";
 
 type ChangeRequest = {
@@ -185,18 +185,23 @@ export default function AssetManagerChangeDetailPage() {
       />
 
       {(change.status === "draft" || change.status === "submitted") && (
-        <FicheSectionCard title="Soumettre au CAB" className="mb-4">
-          <p className="text-sm mb-3" style={{ color: "var(--bpm-text-secondary)" }}>
-            Envoyer cette demande en revue CAB pour approbation.
-          </p>
-          <Button variant="primary" size="small" onClick={() => handleStatusChange("cab_review")} disabled={saving}>
-            Soumettre au CAB
-          </Button>
-        </FicheSectionCard>
+        <>
+          <FicheSectionCard title="Soumettre au CAB" className="mb-4">
+            <p className="text-sm mb-3" style={{ color: "var(--bpm-text-secondary)" }}>
+              Envoyer cette demande en revue CAB pour approbation.
+            </p>
+            <Button variant="primary" size="small" onClick={() => handleStatusChange("cab_review")} disabled={saving}>
+              Soumettre au CAB
+            </Button>
+          </FicheSectionCard>
+          <Divider thickness={1} color="var(--bpm-border)" className="my-4" />
+        </>
       )}
 
       {change.status === "cab_review" && (
-        <FicheSectionCard title="Revue CAB" className="mb-4">
+        <>
+          <Divider thickness={1} color="var(--bpm-border)" className="my-4" />
+          <FicheSectionCard title="Revue CAB" className="mb-4">
           <p className="text-sm mb-3" style={{ color: "var(--bpm-text-secondary)" }}>
             Approuvez ou rejetez cette demande de changement.
           </p>
@@ -220,8 +225,10 @@ export default function AssetManagerChangeDetailPage() {
             </Button>
           </div>
         </FicheSectionCard>
+        </>
       )}
 
+      <Divider thickness={1} color="var(--bpm-border)" className="my-4" />
       <FicheSectionCard title="Détail de la demande" className="mb-6">
         <FicheFieldGrid
           withDividers
@@ -273,11 +280,7 @@ export default function AssetManagerChangeDetailPage() {
         </div>
       </FicheSectionCard>
 
-      <FicheNav
-        backLink={`/modules/asset-manager/${domainId}/changes`}
-        backLabel="← Changements"
-        secondaryLinks={[{ href: `/modules/asset-manager/${domainId}`, label: "Tableau de bord" }]}
-      />
+      <FicheNav backLink={`/modules/asset-manager/${domainId}/changes`} backLabel="← Changements" />
     </div>
   );
 }

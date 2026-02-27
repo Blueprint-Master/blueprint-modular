@@ -240,8 +240,19 @@ export default function AssetManagerCmdbGraphPage() {
           Aucun actif dans ce domaine. Créez des actifs et des relations depuis les fiches actifs.
         </Panel>
       ) : (
-        <Panel variant="info" title="Graphe des dépendances">
-          <div className="overflow-auto rounded-lg border" style={{ borderColor: "var(--bpm-border)", background: "var(--bpm-bg-secondary)" }}>
+        <div
+          className="rounded-xl border overflow-hidden"
+          style={{
+            background: "var(--bpm-surface)",
+            border: "1px solid var(--bpm-border)",
+          }}
+          role="region"
+          aria-label="Graphe des dépendances"
+        >
+          <h2 className="text-sm font-semibold m-0 px-4 py-3" style={{ color: "var(--bpm-text-secondary)", letterSpacing: "0.04em" }}>
+            Graphe des dépendances
+          </h2>
+          <div className="overflow-auto rounded-lg border mx-4 mb-4" style={{ borderColor: "var(--bpm-border)", background: "var(--bpm-bg-secondary)" }}>
             <svg ref={svgRef} width={size.w} height={size.h} className="block" style={{ cursor: isPanning ? "grabbing" : "grab" }}>
               <defs>
                 <marker id="arrow" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
@@ -307,10 +318,10 @@ export default function AssetManagerCmdbGraphPage() {
               </g>
             </svg>
           </div>
-          <p className="text-xs mt-2" style={{ color: "var(--bpm-text-secondary)" }}>
+          <p className="text-xs mt-2 px-4 pb-4" style={{ color: "var(--bpm-text-secondary)" }}>
             {nodes.length} actif(s), {relations.length} relation(s)
           </p>
-        </Panel>
+        </div>
       )}
 
       <nav className="doc-pagination mt-8 flex flex-wrap gap-4">

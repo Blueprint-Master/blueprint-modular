@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import { useParams, useRouter } from "next/navigation";
-import { Panel, Button, Spinner, Input, Selectbox } from "@/components/bpm";
+import { Card, Caption, Divider, Button, Spinner, Input, Selectbox } from "@/components/bpm";
 
 type DomainConfig = {
   ticket_types?: string[];
@@ -104,64 +104,81 @@ export default function AssetManagerTicketNewPage() {
           <Link href={`/modules/asset-manager/${domainId}/tickets`}>Tickets</Link> → Nouveau
         </nav>
         <h1 className="text-2xl font-bold" style={{ color: "var(--bpm-text-primary)" }}>Nouveau ticket</h1>
+        <Caption>Remplissez les informations ci-dessous.</Caption>
       </div>
 
-      <Panel variant="info" title="Créer un ticket">
-        <form onSubmit={handleSubmit} className="space-y-4">
-          <Input label="Titre" value={title} onChange={(value) => setTitle(value)} required placeholder="Résumé du problème ou de la demande" />
-          <div>
-            <label className="block text-sm font-medium mb-1" style={{ color: "var(--bpm-text-secondary)" }}>Description *</label>
-            <textarea
-              value={description}
-              onChange={(e) => setDescription(e.target.value)}
-              required
-              rows={5}
-              className="bpm-textarea w-full rounded-lg border px-3 py-2 text-sm resize-y"
-              style={{ borderColor: "var(--bpm-border)", background: "var(--bpm-surface)", color: "var(--bpm-text-primary)" }}
-              placeholder="Décrivez le problème ou la demande..."
-            />
-          </div>
-          {typeOptions.length > 0 && (
-            <Selectbox label="Type" value={typeId} onChange={(v) => setTypeId(String(v))} options={[{ value: "", label: "—" }, ...typeOptions]} />
-          )}
-          {priorityOptions.length > 0 && (
-            <Selectbox label="Priorité" value={priorityId} onChange={(v) => setPriorityId(String(v))} options={priorityOptions} />
-          )}
-          {categoryOptions.length > 0 && (
-            <Selectbox label="Catégorie" value={categoryId} onChange={(v) => setCategoryId(String(v))} options={categoryOptions} />
-          )}
-          {subcategoryOptions.length > 0 && (
-            <Selectbox label="Sous-catégorie" value={subcategory} onChange={(v) => setSubcategory(String(v))} options={[{ value: "", label: "—" }, ...subcategoryOptions]} />
-          )}
-          {assets.length > 0 && (
-            <Selectbox
-              label="Actif concerné"
-              value={assetId}
-              onChange={(v) => setAssetId(String(v))}
-              options={[{ value: "", label: "— Aucun" }, ...assets.map((a) => ({ value: a.id, label: `${a.reference} — ${a.label}` }))]}
-            />
-          )}
-          {suggestedArticles.length > 0 && (
-            <div className="rounded-lg border p-3" style={{ borderColor: "var(--bpm-border)", background: "var(--bpm-bg-secondary)" }}>
-              <div className="text-sm font-medium mb-2" style={{ color: "var(--bpm-text-secondary)" }}>Articles susceptibles de vous aider</div>
-              <ul className="space-y-1 text-sm">
-                {suggestedArticles.map((a) => (
-                  <li key={a.id}>
-                    <Link
-                      href={`/modules/asset-manager/${domainId}/knowledge/${a.id}`}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="hover:underline"
-                      style={{ color: "var(--bpm-accent-cyan)" }}
-                    >
-                      {a.title}
-                    </Link>
-                  </li>
-                ))}
-              </ul>
+      <Card variant="outlined">
+        <form onSubmit={handleSubmit} className="space-y-0">
+          <section className="space-y-4" aria-label="Demande">
+            <Input label="Titre" value={title} onChange={(value) => setTitle(value)} required placeholder="Résumé du problème ou de la demande" />
+            <div>
+              <label className="block text-sm font-medium mb-1" style={{ color: "var(--bpm-text-secondary)" }}>Description *</label>
+              <textarea
+                value={description}
+                onChange={(e) => setDescription(e.target.value)}
+                required
+                rows={5}
+                className="bpm-textarea w-full rounded-lg border px-3 py-2 text-sm resize-y"
+                style={{ borderColor: "var(--bpm-border)", background: "var(--bpm-surface)", color: "var(--bpm-text-primary)" }}
+                placeholder="Décrivez le problème ou la demande..."
+              />
             </div>
+          </section>
+
+          {(typeOptions.length > 0 || priorityOptions.length > 0 || categoryOptions.length > 0 || subcategoryOptions.length > 0 || assets.length > 0) && (
+            <>
+              <Divider thickness={1} color="var(--bpm-border)" className="my-4" label="Classification" />
+              <section className="space-y-4" aria-label="Classification">
+                {typeOptions.length > 0 && (
+                  <Selectbox label="Type" value={typeId} onChange={(v) => setTypeId(String(v))} options={[{ value: "", label: "—" }, ...typeOptions]} />
+                )}
+                {priorityOptions.length > 0 && (
+                  <Selectbox label="Priorité" value={priorityId} onChange={(v) => setPriorityId(String(v))} options={priorityOptions} />
+                )}
+                {categoryOptions.length > 0 && (
+                  <Selectbox label="Catégorie" value={categoryId} onChange={(v) => setCategoryId(String(v))} options={categoryOptions} />
+                )}
+                {subcategoryOptions.length > 0 && (
+                  <Selectbox label="Sous-catégorie" value={subcategory} onChange={(v) => setSubcategory(String(v))} options={[{ value: "", label: "—" }, ...subcategoryOptions]} />
+                )}
+                {assets.length > 0 && (
+                  <Selectbox
+                    label="Actif concerné"
+                    value={assetId}
+                    onChange={(v) => setAssetId(String(v))}
+                    options={[{ value: "", label: "— Aucun" }, ...assets.map((a) => ({ value: a.id, label: `${a.reference} — ${a.label}` }))]}
+                  />
+                )}
+              </section>
+            </>
           )}
-          <div className="flex gap-2 pt-2">
+
+          {suggestedArticles.length > 0 && (
+            <>
+              <Divider thickness={1} color="var(--bpm-border)" className="my-4" label="Aide" />
+              <section className="rounded-lg border p-3" style={{ borderColor: "var(--bpm-border)", background: "var(--bpm-bg-secondary)" }} aria-label="Articles susceptibles de vous aider">
+                <div className="text-sm font-medium mb-2" style={{ color: "var(--bpm-text-secondary)" }}>Articles susceptibles de vous aider</div>
+                <ul className="space-y-1 text-sm">
+                  {suggestedArticles.map((a) => (
+                    <li key={a.id}>
+                      <Link
+                        href={`/modules/asset-manager/${domainId}/knowledge/${a.id}`}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="hover:underline"
+                        style={{ color: "var(--bpm-accent)" }}
+                      >
+                        {a.title}
+                      </Link>
+                    </li>
+                  ))}
+                </ul>
+              </section>
+            </>
+          )}
+
+          <Divider thickness={1} color="var(--bpm-border)" className="my-4" />
+          <div className="flex gap-2">
             <Button type="submit" size="small" disabled={saving || !title.trim() || !description.trim()}>
               {saving ? "Création…" : "Créer le ticket"}
             </Button>
@@ -170,7 +187,7 @@ export default function AssetManagerTicketNewPage() {
             </Link>
           </div>
         </form>
-      </Panel>
+      </Card>
 
       <nav className="doc-pagination mt-8">
         <Link href={`/modules/asset-manager/${domainId}/tickets`} style={{ color: "var(--bpm-accent-cyan)" }}>← Liste des tickets</Link>

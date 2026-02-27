@@ -563,17 +563,24 @@ textarea.bpm-textarea:focus {
   border-right: 1px solid var(--bpm-sidebar-border);
   padding: 16px 12px;
   background: var(--bpm-sidebar-bg);
+  color: var(--bpm-sidebar-text);
+  font-size: 14px;
+  font-family: inherit;
   display: flex;
   flex-direction: column;
   min-height: 0;
   overflow: hidden;
   position: relative;
 }
-/* Barre d'en-tête : s'arrête à droite de la sidebar secondaire (ne la coupe pas) */
-@media (min-width: 768px) {
-  .app-header-with-secondary-sidebar {
-    margin-left: 200px;
-  }
+/* Wrapper sidebar secondaire : animation ouverture (0 → 200px) / fermeture (200px → 0) */
+.asset-manager-sidebar-outer {
+  width: 0;
+  flex-shrink: 0;
+  overflow: hidden;
+  transition: width 250ms ease-out;
+}
+.asset-manager-sidebar-outer--open {
+  width: 200px;
 }
 /* Desktop : sidebar secondaire fixe pleine hauteur (comme la sidebar principale, du haut de l'écran) */
 @media (min-width: 768px) {
@@ -584,7 +591,7 @@ textarea.bpm-textarea:focus {
     left: var(--bpm-sidebar-width, 16rem);
     width: 200px;
     height: auto;
-    z-index: 10;
+    z-index: 40;
   }
   .asset-manager-main-wrapper {
     margin-left: 200px;
@@ -609,8 +616,9 @@ textarea.bpm-textarea:focus {
   align-items: center;
   gap: 10px;
   padding: 8px 10px;
-  font-size: 13px;
-  color: var(--bpm-text-secondary);
+  font-size: 14px;
+  font-weight: 400;
+  color: var(--bpm-sidebar-text);
   text-decoration: none;
   border-radius: 6px;
   transition: background 0.15s, color 0.15s;
@@ -624,20 +632,13 @@ textarea.bpm-textarea:focus {
 }
 .asset-manager-sidebar-link:hover {
   background: var(--bpm-sidebar-hover-bg);
-  color: var(--bpm-text-primary);
+  color: var(--bpm-sidebar-text);
 }
+/* Même mise en avant que la sidebar principale : fond gris, texte par défaut */
 .asset-manager-sidebar-link--active {
-  background: rgba(0, 163, 226, 0.1);
-  color: var(--bpm-accent-cyan);
+  background: var(--bpm-sidebar-active-bg);
+  color: var(--bpm-sidebar-text);
   font-weight: 500;
-}
-.asset-manager-sidebar-footer {
-  margin-top: 16px;
-  padding-top: 12px;
-  border-top: 1px solid var(--bpm-border);
-  display: flex;
-  flex-direction: column;
-  gap: 2px;
 }
 /* Corps principal : seul élément qui scrolle */
 .asset-manager-main {
@@ -783,11 +784,12 @@ textarea.bpm-textarea:focus {
 .asset-manager-page .bpm-table tbody tr:last-child td {
   border-bottom: none;
 }
-/* Métriques (dashboard) : cartes compactes, bordure 12px */
+/* Métriques (dashboard) : cartes compactes, bordure 12px — grille historique et carousel */
 .asset-manager-page .asset-manager-metrics-grid {
   align-items: stretch;
 }
 .asset-manager-page .asset-manager-metrics-grid a.block,
+.asset-manager-page .asset-manager-metrics-carousel a.asset-manager-metrics-grid,
 .asset-manager-page .doc-page > .grid.mb-6 a.block {
   display: flex;
   flex-direction: column;
@@ -804,11 +806,13 @@ textarea.bpm-textarea:focus {
   overflow: hidden;
 }
 .asset-manager-page .asset-manager-metrics-grid a.block:hover,
+.asset-manager-page .asset-manager-metrics-carousel a.asset-manager-metrics-grid:hover,
 .asset-manager-page .doc-page > .grid.mb-6 a.block:hover {
   border-color: var(--bpm-accent-cyan);
   box-shadow: 0 2px 8px rgba(0, 163, 226, 0.08);
 }
 .asset-manager-page .asset-manager-metrics-grid a.block > div,
+.asset-manager-page .asset-manager-metrics-carousel a.asset-manager-metrics-grid > div,
 .asset-manager-page .doc-page > .grid.mb-6 a.block > div {
   border: none !important;
   min-width: 0;
@@ -820,57 +824,108 @@ textarea.bpm-textarea:focus {
 }
 /* Chiffres des stat cards : plus marqués (audit Linear) */
 .asset-manager-page .asset-manager-metrics-grid a.block div.text-lg,
-.asset-manager-page .asset-manager-metrics-grid a.block div.text-xl {
+.asset-manager-page .asset-manager-metrics-grid a.block div.text-xl,
+.asset-manager-page .asset-manager-metrics-carousel a.asset-manager-metrics-grid div.text-lg,
+.asset-manager-page .asset-manager-metrics-carousel a.asset-manager-metrics-grid div.text-xl {
   font-size: 1.75rem;
   font-weight: 700;
   letter-spacing: -0.02em;
-  margin-top: 6px !important; /* +3px entre titre et nombre */
+  margin-top: 6px !important;
 }
-/* +3px entre nombre et date (Mise à jour) */
-.asset-manager-page .asset-manager-metrics-grid a.block > div > div.text-\[11px\] {
+.asset-manager-page .asset-manager-metrics-grid a.block > div > div.text-\[11px\],
+.asset-manager-page .asset-manager-metrics-carousel a.asset-manager-metrics-grid > div > div.text-\[11px\] {
   margin-top: calc(0.125rem + 6px) !important;
 }
-/* Dark mode : cartes avec box-shadow au lieu de bordure seule */
+/* Dark mode : cartes */
 [data-theme="dark"] .asset-manager-page .asset-manager-metrics-grid a.block,
+[data-theme="dark"] .asset-manager-page .asset-manager-metrics-carousel a.asset-manager-metrics-grid,
 [data-theme="dark"] .asset-manager-page .doc-page > .grid.mb-6 a.block {
   box-shadow: 0 0 0 1px rgba(255,255,255,0.08);
   border-color: transparent;
 }
 [data-theme="dark"] .asset-manager-page .asset-manager-metrics-grid a.block:hover,
+[data-theme="dark"] .asset-manager-page .asset-manager-metrics-carousel a.asset-manager-metrics-grid:hover,
 [data-theme="dark"] .asset-manager-page .doc-page > .grid.mb-6 a.block:hover {
   box-shadow: 0 0 0 1px rgba(0,163,226,0.35);
 }
-/* Colonnes avec largeur min pour éviter troncature et sauts de mise en page */
-@media (min-width: 768px) and (max-width: 1279px) {
-  .asset-manager-page .asset-manager-metrics-grid {
-    grid-template-columns: repeat(3, minmax(180px, 1fr));
-  }
+
+/* Carousel des tuiles métriques (évite le débordement, comme beam-consulting) */
+.asset-manager-metrics-carousel-container {
+  position: relative;
+  width: 100%;
+  overflow: visible;
+  padding: 0;
+  margin: 0;
 }
-@media (min-width: 1280px) {
-  .asset-manager-page .asset-manager-metrics-grid {
-    grid-template-columns: repeat(6, minmax(160px, 1fr));
-  }
+.asset-manager-metrics-carousel {
+  display: flex;
+  flex-direction: row;
+  gap: 16px;
+  overflow-x: auto;
+  scroll-behavior: smooth;
+  scroll-snap-type: x mandatory;
+  padding: 8px 40px;
+  margin: 0;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+  -webkit-overflow-scrolling: touch;
 }
-/* Mobile : carousel horizontal pour stat cards */
-@media (max-width: 767px) {
-  .asset-manager-page .asset-manager-metrics-grid,
-  .asset-manager-page .doc-page > .grid.mb-6 {
-    display: flex;
-    flex-wrap: nowrap;
-    overflow-x: auto;
-    scroll-snap-type: x mandatory;
-    -webkit-overflow-scrolling: touch;
-    gap: 12px;
-    padding-bottom: 8px;
-    margin-bottom: 24px;
-  }
-  .asset-manager-page .asset-manager-metrics-grid a.block,
-  .asset-manager-page .doc-page > .grid.mb-6 a.block {
-    min-width: 160px;
-    flex: 0 0 auto;
-    height: auto;
-    scroll-snap-align: start;
-  }
+.asset-manager-metrics-carousel::-webkit-scrollbar {
+  display: none;
+}
+.asset-manager-page .asset-manager-metrics-carousel a.asset-manager-metrics-grid {
+  flex: 0 0 auto;
+  min-width: 200px;
+  max-width: 240px;
+  scroll-snap-align: start;
+}
+
+/* Boutons carousel (gauche / droite) */
+.asset-manager-carousel-btn {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  border: 1px solid var(--bpm-border);
+  border-radius: 50%;
+  background: var(--bpm-surface);
+  color: var(--bpm-text-primary);
+  font-size: 14px;
+  line-height: 1;
+  cursor: pointer;
+  z-index: 10;
+  transition: background 0.2s, border-color 0.2s, color 0.2s;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.06);
+}
+.asset-manager-carousel-btn:hover {
+  background: var(--bpm-bg-secondary);
+  border-color: var(--bpm-accent-cyan);
+  color: var(--bpm-accent-cyan);
+}
+.asset-manager-carousel-btn:focus-visible {
+  outline: 2px solid var(--bpm-accent-cyan);
+  outline-offset: 2px;
+}
+.asset-manager-carousel-btn--left {
+  left: 0;
+}
+.asset-manager-carousel-btn--right {
+  right: 0;
+}
+[data-theme="dark"] .asset-manager-carousel-btn {
+  background: var(--bpm-surface);
+  border-color: rgba(255,255,255,0.15);
+  color: var(--bpm-text-primary);
+}
+[data-theme="dark"] .asset-manager-carousel-btn:hover {
+  background: var(--bpm-bg-secondary);
+  border-color: var(--bpm-accent-cyan);
+  color: var(--bpm-accent-cyan);
 }
 /* Ligne tableau : chevron au survol */
 .asset-manager-row-chevron {
@@ -944,6 +999,15 @@ textarea.bpm-textarea:focus {
 .asset-manager-page .doc-pagination a {
   font-size: 13px;
   font-weight: 500;
+}
+/* Lien « Retour » en bas de fiche : pas de soulignement ni couleur bleue, le bouton gère le style */
+.doc-pagination a.fiche-nav-back-link {
+  text-decoration: none;
+  color: inherit;
+}
+.doc-pagination a.fiche-nav-back-link:hover {
+  text-decoration: none;
+  color: inherit;
 }
 /* Boutons outline plus discrets */
 .asset-manager-page .bpm-btn-outline,
@@ -1044,8 +1108,9 @@ textarea.bpm-textarea:focus {
   gap: 8px;
   margin-bottom: 16px;
 }
+/* Même padding que non collapsed pour que le titre FILTRES ne bouge pas à l'ouverture/fermeture */
 .asset-manager-page .asset-manager-equipment-filters--collapsed {
-  padding: 8px 16px;
+  padding: 12px 16px;
 }
 .asset-manager-page .asset-manager-equipment-filters__toggle {
   display: flex;
@@ -1073,6 +1138,12 @@ textarea.bpm-textarea:focus {
   outline: 2px solid var(--bpm-accent-cyan);
   outline-offset: 2px;
   border-radius: 4px;
+}
+/* Titre "Filtres" : aligné à gauche comme TYPE / STATUT, sans barre verticale */
+.asset-manager-page .asset-manager-equipment-filters__toggle .asset-manager-equipment-filters__label {
+  width: 110px;
+  border-right: none;
+  padding-right: 0;
 }
 .asset-manager-page .asset-manager-equipment-filters__row {
   display: flex;

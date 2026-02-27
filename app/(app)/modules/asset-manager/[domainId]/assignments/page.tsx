@@ -3,7 +3,7 @@
 import { useState, useEffect, useCallback } from "react";
 import Link from "next/link";
 import { useParams, useRouter } from "next/navigation";
-import { Download, UserCheck } from "lucide-react";
+import { Download, UserCheck, ChevronDown, ChevronUp } from "lucide-react";
 import { Table, Spinner, Button, Chip, EmptyState } from "@/components/bpm";
 
 type Assignment = {
@@ -32,6 +32,7 @@ export default function AssetManagerAssignmentsPage() {
   const [assignments, setAssignments] = useState<Assignment[]>([]);
   const [loading, setLoading] = useState(true);
   const [filterStatus, setFilterStatus] = useState("");
+  const [filtersOpen, setFiltersOpen] = useState(false);
 
   const fetchAssignments = useCallback(() => {
     if (!domainId) return;
@@ -159,23 +160,36 @@ export default function AssetManagerAssignmentsPage() {
         </div>
       </div>
 
-      <div className="asset-manager-equipment-filters">
-        <div className="asset-manager-equipment-filters__row">
-          <span className="asset-manager-equipment-filters__label">Statut</span>
-          <div className="asset-manager-equipment-filters__chips">
-            {statusOptions.map((opt) => {
-              const isActive = filterStatus === opt.value;
-              const isReset = opt.value === "";
-              return (
-                <Chip
-                  key={opt.value || "all"}
-                  label={opt.label}
-                  variant={isActive ? "primary" : "default"}
-                  onClick={() => setFilterStatus(isActive ? "" : opt.value)}
-                  className={`${isActive ? "asset-manager-chip-active" : ""} ${isReset ? "asset-manager-chip-reset" : ""}`}
-                />
-              );
-            })}
+      <div className={`asset-manager-equipment-filters ${!filtersOpen ? "asset-manager-equipment-filters--collapsed" : ""}`}>
+        <button
+          type="button"
+          onClick={() => setFiltersOpen((v) => !v)}
+          className="asset-manager-equipment-filters__toggle"
+          aria-expanded={filtersOpen}
+          aria-controls="asset-manager-filters-assignments"
+          id="asset-manager-filters-toggle-assignments"
+        >
+          <span className="asset-manager-equipment-filters__label">Filtres</span>
+          {filtersOpen ? <ChevronUp size={18} aria-hidden /> : <ChevronDown size={18} aria-hidden />}
+        </button>
+        <div id="asset-manager-filters-assignments" role="region" aria-labelledby="asset-manager-filters-toggle-assignments" hidden={!filtersOpen}>
+          <div className="asset-manager-equipment-filters__row">
+            <span className="asset-manager-equipment-filters__label">Statut</span>
+            <div className="asset-manager-equipment-filters__chips">
+              {statusOptions.map((opt) => {
+                const isActive = filterStatus === opt.value;
+                const isReset = opt.value === "";
+                return (
+                  <Chip
+                    key={opt.value || "all"}
+                    label={opt.label}
+                    variant={isActive ? "primary" : "default"}
+                    onClick={() => setFilterStatus(isActive ? "" : opt.value)}
+                    className={`${isActive ? "asset-manager-chip-active" : ""} ${isReset ? "asset-manager-chip-reset" : ""}`}
+                  />
+                );
+              })}
+            </div>
           </div>
         </div>
       </div>

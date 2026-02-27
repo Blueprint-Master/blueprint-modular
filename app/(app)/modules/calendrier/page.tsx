@@ -53,16 +53,87 @@ function SimuContent() {
   );
 }
 
-function CalendarMonthView() {
-  const [viewDate, setViewDate] = useState(() => {
-    const d = new Date();
-    return { year: d.getFullYear(), month: d.getMonth() };
-  });
+/** Grille du mois (Lun–Dim, cellules avec numéro de jour). */
+function useMonthGrid(viewDate: { year: number; month: number }) {
   const firstDay = new Date(viewDate.year, viewDate.month, 1);
   const lastDay = new Date(viewDate.year, viewDate.month + 1, 0);
   const startPad = firstDay.getDay() === 0 ? 6 : firstDay.getDay() - 1;
   const daysInMonth = lastDay.getDate();
   const totalCells = Math.ceil((startPad + daysInMonth) / 7) * 7;
+  return { startPad, daysInMonth, totalCells };
+}
+
+/** Format desktop : même mise en page que le calendrier Gestion de parc. */
+function DesktopCalendarView() {
+  const [viewDate, setViewDate] = useState(() => {
+    const d = new Date();
+    return { year: d.getFullYear(), month: d.getMonth() };
+  });
+  const { startPad, daysInMonth, totalCells } = useMonthGrid(viewDate);
+  const monthLabel = new Date(viewDate.year, viewDate.month).toLocaleDateString("fr-FR", { month: "long", year: "numeric" });
+  const prevMonth = () => setViewDate((v) => (v.month === 0 ? { year: v.year - 1, month: 11 } : { year: v.year, month: v.month - 1 }));
+  const nextMonth = () => setViewDate((v) => (v.month === 11 ? { year: v.year + 1, month: 0 } : { year: v.year, month: v.month + 1 }));
+
+  return (
+    <>
+      <div className="doc-page-header mb-6">
+        <div className="flex flex-wrap items-center justify-between gap-4">
+          <h1 className="text-2xl font-bold" style={{ color: "var(--bpm-text-primary)" }}>
+            Calendrier
+          </h1>
+          <div className="flex items-center gap-2">
+            <Button size="small" variant="outline" onClick={prevMonth} aria-label="Mois précédent">←</Button>
+            <span className="capitalize font-medium min-w-[180px] text-center" style={{ color: "var(--bpm-text-primary)" }}>
+              {monthLabel}
+            </span>
+            <Button size="small" variant="outline" onClick={nextMonth} aria-label="Mois suivant">→</Button>
+          </div>
+        </div>
+        <p className="doc-description mt-1" style={{ color: "var(--bpm-text-secondary)" }}>
+          Agenda jour / semaine / mois, événements et rappels. <Link href="/modules/calendrier/simulateur" className="underline" style={{ color: "var(--bpm-accent-cyan)" }}>Ouvrir le simulateur</Link> pour les vues détaillées.
+        </p>
+      </div>
+      <Panel variant="info" title="Vue mensuelle">
+        <div className="grid grid-cols-7 gap-px rounded-lg overflow-hidden calendar-month-grid" style={{ background: "var(--bpm-border)" }}>
+          {["Lun", "Mar", "Mer", "Jeu", "Ven", "Sam", "Dim"].map((day) => (
+            <div
+              key={day}
+              className="p-2 text-center text-xs font-medium"
+              style={{ background: "var(--bpm-sidebar-bg)", color: "var(--bpm-text-secondary)" }}
+            >
+              {day}
+            </div>
+          ))}
+          {Array.from({ length: totalCells }, (_, i) => {
+            const dayNum = i - startPad + 1;
+            const isCurrentMonth = dayNum >= 1 && dayNum <= daysInMonth;
+            return (
+              <div
+                key={i}
+                className="min-h-[80px] flex flex-col calendar-month-cell"
+                style={{
+                  background: isCurrentMonth ? "var(--bpm-bg-primary)" : "var(--bpm-sidebar-bg)",
+                  color: isCurrentMonth ? "var(--bpm-text-primary)" : "var(--bpm-text-secondary)",
+                }}
+              >
+                <span className="calendar-month-day-num text-xs font-medium">{isCurrentMonth ? dayNum : ""}</span>
+                <div className="flex-1 space-y-0.5 overflow-auto" />
+              </div>
+            );
+          })}
+        </div>
+      </Panel>
+    </>
+  );
+}
+
+/** Format mobile/PWA : format mensuel actuel (Panel VUE MENSUELLE + grille). */
+function MobileCalendarMonthView() {
+  const [viewDate, setViewDate] = useState(() => {
+    const d = new Date();
+    return { year: d.getFullYear(), month: d.getMonth() };
+  });
+  const { startPad, daysInMonth, totalCells } = useMonthGrid(viewDate);
   const monthLabel = new Date(viewDate.year, viewDate.month).toLocaleDateString("fr-FR", { month: "long", year: "numeric" });
   const prevMonth = () => setViewDate((v) => (v.month === 0 ? { year: v.year - 1, month: 11 } : { year: v.year, month: v.month - 1 }));
   const nextMonth = () => setViewDate((v) => (v.month === 11 ? { year: v.year + 1, month: 0 } : { year: v.year, month: v.month + 1 }));
@@ -125,7 +196,7 @@ export default function CalendrierModulePage() {
     <div className="doc-page">
       <div className="doc-page-header">
         <div className="doc-breadcrumb"><Link href="/modules">Modules</Link> → Calendrier</div>
-        <h1>Calendrier</h1>
+        {isMobile ? <h1>Calendrier</h1> : <h1 className="sr-only">Calendrier</h1>}
         <p className="doc-description">Agenda jour / semaine / mois, événements et rappels. Testez dans le Simulateur.</p>
         <div className="doc-meta"><span className="doc-badge doc-badge-category">Contenu & productivité</span></div>
         {isMobile ? (
@@ -135,9 +206,9 @@ export default function CalendrierModulePage() {
         ) : null}
       </div>
       {isMobile ? (
-        <Tabs tabs={[{ label: "Documentation", content: docContent }, { label: "Simulateur", content: <SimuContent /> }]} defaultTab={0} />
+        <Tabs tabs={[{ label: "Documentation", content: docContent }, { label: "Simulateur", content: <SimuContent /> }, { label: "Mois", content: <MobileCalendarMonthView /> }]} defaultTab={2} />
       ) : (
-        <CalendarMonthView />
+        <DesktopCalendarView />
       )}
     </div>
   );

@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import { useParams, useRouter, useSearchParams } from "next/navigation";
-import { Panel, Button, Spinner, Input, Selectbox } from "@/components/bpm";
+import { Card, Caption, Divider, Button, Spinner, Input, Selectbox } from "@/components/bpm";
 
 const CATEGORY_OPTIONS = [
   { value: "procedure", label: "Procédure" },
@@ -93,46 +93,54 @@ export default function AssetManagerKnowledgeNewPage() {
           <Link href={`/modules/asset-manager/${domainId}/knowledge`} style={{ color: "var(--bpm-accent-cyan)" }}>Connaissances</Link> → Nouveau
         </nav>
         <h1 className="text-2xl font-bold" style={{ color: "var(--bpm-text-primary)" }}>Nouvel article</h1>
-        {fromTicketId && (
-          <p className="text-sm mt-1" style={{ color: "var(--bpm-text-secondary)" }}>Prérempli depuis le ticket</p>
-        )}
+        <Caption>
+          {fromTicketId ? "Prérempli depuis le ticket. Remplissez les informations ci-dessous." : "Remplissez les informations ci-dessous."}
+        </Caption>
       </div>
 
-      <Panel variant="info" title="Créer un article">
-        <form onSubmit={handleSubmit} className="space-y-4">
-          <Input label="Titre *" value={title} onChange={setTitle} required placeholder="Titre de l'article" />
-          <div>
-            <label className="block text-sm font-medium mb-1" style={{ color: "var(--bpm-text-secondary)" }}>Contenu *</label>
-            <textarea
-              value={content}
-              onChange={(e) => setContent(e.target.value)}
-              required
-              rows={12}
-              className="bpm-textarea w-full rounded-lg border px-3 py-2 text-sm resize-y"
-              style={{ borderColor: "var(--bpm-border)", background: "var(--bpm-surface)", color: "var(--bpm-text-primary)" }}
-              placeholder="Contenu en Markdown ou texte..."
-            />
-          </div>
-          <Selectbox label="Catégorie" value={categoryId} onChange={(v) => setCategoryId(String(v))} options={CATEGORY_OPTIONS} />
-          {config?.asset_types && config.asset_types.length > 0 && (
+      <Card variant="outlined">
+        <form onSubmit={handleSubmit} className="space-y-0">
+          <section className="space-y-4" aria-label="Article">
+            <Input label="Titre *" value={title} onChange={setTitle} required placeholder="Titre de l'article" />
+            <div>
+              <label className="block text-sm font-medium mb-1" style={{ color: "var(--bpm-text-secondary)" }}>Contenu *</label>
+              <textarea
+                value={content}
+                onChange={(e) => setContent(e.target.value)}
+                required
+                rows={12}
+                className="bpm-textarea w-full rounded-lg border px-3 py-2 text-sm resize-y"
+                style={{ borderColor: "var(--bpm-border)", background: "var(--bpm-surface)", color: "var(--bpm-text-primary)" }}
+                placeholder="Contenu en Markdown ou texte..."
+              />
+            </div>
+          </section>
+
+          <Divider thickness={1} color="var(--bpm-border)" className="my-4" label="Métadonnées" />
+          <section className="space-y-4" aria-label="Métadonnées">
+            <Selectbox label="Catégorie" value={categoryId} onChange={(v) => setCategoryId(String(v))} options={CATEGORY_OPTIONS} />
+            {config?.asset_types && config.asset_types.length > 0 && (
+              <Selectbox
+                label="Type d'actif (optionnel)"
+                value={assetTypeId}
+                onChange={(v) => setAssetTypeId(String(v))}
+                options={[{ value: "", label: "—" }, ...config.asset_types.map((t) => ({ value: t.id, label: t.label }))]}
+              />
+            )}
+            <Input label="Tags (séparés par des virgules)" value={tagsStr} onChange={setTagsStr} placeholder="ex: imprimante, erreur, papier" />
             <Selectbox
-              label="Type d'actif (optionnel)"
-              value={assetTypeId}
-              onChange={(v) => setAssetTypeId(String(v))}
-              options={[{ value: "", label: "—" }, ...config.asset_types.map((t) => ({ value: t.id, label: t.label }))]}
+              label="Visibilité"
+              value={visibility}
+              onChange={(v) => setVisibility(v as "technicians_only" | "public")}
+              options={[
+                { value: "technicians_only", label: "Techniciens uniquement" },
+                { value: "public", label: "Public" },
+              ]}
             />
-          )}
-          <Input label="Tags (séparés par des virgules)" value={tagsStr} onChange={setTagsStr} placeholder="ex: imprimante, erreur, papier" />
-          <Selectbox
-            label="Visibilité"
-            value={visibility}
-            onChange={(v) => setVisibility(v as "technicians_only" | "public")}
-            options={[
-              { value: "technicians_only", label: "Techniciens uniquement" },
-              { value: "public", label: "Public" },
-            ]}
-          />
-          <div className="flex gap-2 pt-2">
+          </section>
+
+          <Divider thickness={1} color="var(--bpm-border)" className="my-4" />
+          <div className="flex gap-2">
             <Button type="submit" size="small" disabled={saving || !title.trim() || !content.trim()}>
               {saving ? "Création…" : "Créer l'article"}
             </Button>
@@ -141,7 +149,7 @@ export default function AssetManagerKnowledgeNewPage() {
             </Link>
           </div>
         </form>
-      </Panel>
+      </Card>
 
       <nav className="doc-pagination mt-8 flex flex-wrap gap-4">
         <Link href={`/modules/asset-manager/${domainId}/knowledge`} style={{ color: "var(--bpm-accent-cyan)" }}>← Connaissances</Link>
