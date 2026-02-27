@@ -181,6 +181,8 @@ body {
   overflow-y: auto;
   -webkit-overflow-scrolling: touch;
   overscroll-behavior-x: contain;
+  border: 1px solid var(--bpm-border);
+  border-radius: 8px;
 }
 .bpm-table-container {
   min-width: 0;
@@ -190,6 +192,11 @@ body {
   min-width: 0;
   width: 100%;
   table-layout: auto;
+  border: none;
+}
+.bpm-table thead th,
+.bpm-table tbody td {
+  border: 1px solid var(--bpm-border) !important;
 }
 /* Opt-in pour en-têtes de colonnes qui ne doivent pas passer à la ligne */
 .bpm-table-th--nowrap {
@@ -661,7 +668,7 @@ textarea.bpm-textarea:focus {
 .asset-manager-page .bpm-table-wrapper,
 .asset-manager-page .rounded-lg.border.overflow-hidden {
   border-radius: 12px !important;
-  border: 1px solid #E5E7EB !important;
+  border: 1px solid var(--bpm-border) !important;
   overflow-x: auto;
   overflow-y: auto;
   -webkit-overflow-scrolling: touch;
