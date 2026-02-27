@@ -144,7 +144,7 @@ export default function AssetManagerAssignmentDetailPage() {
       {assignment.status === "active" && (
         <FicheSectionCard title="Restituer l'actif" className="mt-4">
           <p className="text-sm mb-3" style={{ color: "var(--bpm-text-secondary)" }}>
-            Clôture la MAD, enregistre la date de retour et remet l'actif en stock.
+            Clôture la MAD, enregistre la date de retour et remet l{"'"}actif en stock.
           </p>
           <Button variant="primary" size="medium" onClick={handleReturn} disabled={returning}>
             {returning ? "En cours…" : "Restituer l'actif"}
