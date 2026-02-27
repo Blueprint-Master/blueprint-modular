@@ -38,7 +38,17 @@ export type DomainConfig = {
   lifecycle_stages?: { id: string; label: string; terminal?: boolean }[];
 };
 
-const CONFIG_DIR = path.join(process.cwd(), "lib", "asset-manager", "config");
+const CONFIG_SUBPATH = path.join("lib", "asset-manager", "config");
+
+/** Chemins possibles pour config (cwd = app, ou en standalone .next/standalone ; fallback = repo root). */
+function getConfigPaths(): string[] {
+  const cwd = process.cwd();
+  return [
+    path.join(cwd, CONFIG_SUBPATH),
+    path.join(cwd, "..", "..", CONFIG_SUBPATH),
+  ];
+}
+
 const KNOWN_DOMAINS = ["it", "maintenance"] as const;
 
 export function getDomainIds(): string[] {
@@ -49,11 +59,15 @@ export function getDomainConfig(domainId: string): DomainConfig | null {
   if (!domainId || !KNOWN_DOMAINS.includes(domainId as (typeof KNOWN_DOMAINS)[number])) {
     return null;
   }
-  try {
-    const filePath = path.join(CONFIG_DIR, `domain.${domainId}.json`);
-    const raw = readFileSync(filePath, "utf-8");
-    return JSON.parse(raw) as DomainConfig;
-  } catch {
-    return null;
+  const fileName = `domain.${domainId}.json`;
+  for (const configDir of getConfigPaths()) {
+    try {
+      const filePath = path.join(configDir, fileName);
+      const raw = readFileSync(filePath, "utf-8");
+      return JSON.parse(raw) as DomainConfig;
+    } catch {
+      continue;
+    }
   }
+  return null;
 }
