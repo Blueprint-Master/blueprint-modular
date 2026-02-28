@@ -8,7 +8,7 @@ Page projet : https://pypi.org/project/blueprint-modular/
 ## Option 1 : Trusted Publishing (en place, sans token)
 
 1. **Sur PyPI** : section **Publishing** → Trusted publisher configuré avec :
-   - **Owner :** `remigit55`
+   - **Owner :** `Blueprint-Modular` (ou le propriétaire du dépôt GitHub)
    - **Repository name :** `blueprint-modular`
    - **Workflow name :** `workflow.yml`
    - **Environment name (optional) :** laisser vide ou `pypi` (le workflow n’utilise pas d’environnement GitHub)

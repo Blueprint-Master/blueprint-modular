@@ -1,7 +1,7 @@
 # Publication sur PyPI via Trusted Publishing (sans token).
-# Prérequis : sur PyPI, ajouter un "Trusted publisher" avec :
-#   Owner: remigit55, Repository: blueprint-modular,
-#   Workflow: workflow.yml, Environment: pypi (optionnel)
+# Prérequis : sur PyPI, section Publishing → Trusted publisher avec :
+#   Owner: Blueprint-Modular (ou le propriétaire du dépôt GitHub),
+#   Repository: blueprint-modular, Workflow: workflow.yml
 # Déclenchement : push d'un tag v* (ex. git tag v0.1.0 && git push origin v0.1.0)
 
 name: Publish to PyPI
@@ -50,4 +50,4 @@ jobs:
       - name: Publish to PyPI
         uses: pypa/gh-action-pypi-publish@release/v1
         with:
-          packages-dir: .
+          packages-dir: dist
