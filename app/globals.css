@@ -602,6 +602,13 @@ textarea.bpm-textarea:focus {
   width: var(--bpm-secondary-sidebar-width);
   padding-top: 56px;
 }
+/* Mobile : masquer la sidebar secondaire (display:flex du bloc écrase Tailwind .hidden) */
+@media (max-width: 767px) {
+  .asset-manager-sidebar-outer {
+    display: none !important;
+    width: 0 !important;
+  }
+}
 /* Quand la sidebar est dans le wrapper animé : rester dans le flux pour remplir le wrapper (pas de position fixed) */
 @media (min-width: 768px) {
   .asset-manager-sidebar-outer .asset-manager-sidebar {

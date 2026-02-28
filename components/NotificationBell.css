@@ -358,6 +358,8 @@
 .notification-overlay .notification-popup,
 .notification-overlay-portal .notification-popup {
   position: relative !important;
+  top: auto;
+  right: auto;
   z-index: 1 !important;
   width: 400px;
   max-width: calc(100vw - 116px);
