@@ -394,6 +394,18 @@ def _nodes_to_html(nodes: list) -> str:
           }});
           nav.appendChild(ol);
           root.appendChild(nav);
+        }} else if (n.type === 'ai_response') {{
+          const wrap = document.createElement('div');
+          wrap.className = 'bpm-ai-response';
+          wrap.style.background = 'linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%)';
+          wrap.style.borderLeft = '4px solid #0284c7';
+          wrap.style.padding = '1rem 1.25rem';
+          wrap.style.borderRadius = '8px';
+          wrap.style.margin = '1rem 0';
+          wrap.style.whiteSpace = 'pre-wrap';
+          wrap.style.fontSize = '0.9375rem';
+          wrap.textContent = n.props.content || '';
+          root.appendChild(wrap);
         }} else if (n.type === 'stepper') {{
           const wrap = document.createElement('div');
           wrap.className = 'bpm-stepper';
@@ -528,11 +540,17 @@ def main() -> None:
     run_parser.add_argument("--host", default="127.0.0.1", help="Host (défaut: 127.0.0.1)")
     init_parser = sub.add_parser("init", help="Scaffolder une app vide")
     init_parser.add_argument("--name", default="mon-app", help="Nom du projet (défaut: mon-app)")
+    setup_parser = sub.add_parser("setup", help="Installer et configurer Ollama (IA locale)")
+    setup_parser.add_argument("--model", default=None, help="Modèle Ollama (défaut: BPM_DEFAULT_MODEL ou llama3.2)")
     args = parser.parse_args()
     if args.command == "run":
         run(args.file, port=args.port, host=args.host)
     elif args.command == "init":
         init(args.name)
+    elif args.command == "setup":
+        from bpm.setup import run_setup
+        from bpm import ollama
+        run_setup(model=args.model or ollama.DEFAULT_MODEL)
     else:
         parser.print_help()
 

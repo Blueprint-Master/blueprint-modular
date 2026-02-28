@@ -3,7 +3,7 @@ BPM — Blueprint Modular runtime.
 Registry $ (refs réactives) et @ (inscription / décorateurs).
 APIs composants (title, button, write, metric, etc.) pour bpm run app.py.
 """
-__version__ = "0.1.30"
+__version__ = "0.1.31"
 
 from typing import Any, Callable, Optional, TypeVar
 
@@ -291,6 +291,43 @@ def set_page_config(
     _node("page_config", page_title=page_title, layout=layout, **kwargs)
 
 
+# --- IA locale (Ollama) ---
+
+def chat(
+    messages: list[dict[str, str]],
+    model: Optional[str] = None,
+    stream: bool = False,
+) -> str:
+    """Envoie des messages à Ollama et retourne la réponse. Nécessite Ollama (bpm setup)."""
+    from bpm import ollama
+    return ollama.chat(messages, model=model or ollama.DEFAULT_MODEL, stream=stream)
+
+
+def ask(prompt: str, model: Optional[str] = None) -> str:
+    """Pose une question à l'IA locale (Ollama) et retourne la réponse."""
+    from bpm import ollama
+    return ollama.generate(prompt, model=model or ollama.DEFAULT_MODEL)
+
+
+def summarize(text: str, model: Optional[str] = None) -> str:
+    """Résume le texte avec l'IA locale (Ollama)."""
+    from bpm import ollama
+    prompt = f"Résume le texte suivant de façon concise.\n\n{text}"
+    return ollama.generate(prompt, model=model or ollama.DEFAULT_MODEL)
+
+
+def analyze(text: str, model: Optional[str] = None) -> str:
+    """Analyse le texte (thèmes, points clés, ton) avec l'IA locale (Ollama)."""
+    from bpm import ollama
+    prompt = f"Analyse le texte suivant : thèmes, points clés, ton.\n\n{text}"
+    return ollama.generate(prompt, model=model or ollama.DEFAULT_MODEL)
+
+
+def ai_block(content: str) -> None:
+    """Affiche un bloc de réponse IA (rendu HTML dédié dans bpm run)."""
+    _node("ai_response", content=content)
+
+
 # --- Registry @ : stockage par nom ---
 _REGISTRY: dict[str, Any] = {}
 
@@ -369,6 +406,11 @@ def cache_data(fn: F) -> F:
 
 __all__ = [
     "set_page_config",
+    "chat",
+    "ask",
+    "summarize",
+    "analyze",
+    "ai_block",
     "register",
     "get_registered",
     "ref",
