@@ -85,6 +85,7 @@
 html {
   background: var(--bpm-bg-primary);
   color: var(--bpm-text-primary);
+  scrollbar-gutter: stable;
 }
 
 body {
@@ -687,6 +688,16 @@ textarea.bpm-textarea:focus {
 }
 .asset-manager-mobile-tabs .bpm-tabs-header {
   padding-left: 4px;
+}
+/* Mobile : ne pas afficher la scrollbar verticale (ni horizontale) sur les onglets */
+@media (max-width: 639px) {
+  .asset-manager-mobile-tabs .bpm-tabs-header {
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+  }
+  .asset-manager-mobile-tabs .bpm-tabs-header::-webkit-scrollbar {
+    display: none;
+  }
 }
 .asset-manager-page .asset-manager-main-wrapper {
   display: flex;
