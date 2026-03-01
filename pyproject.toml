@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "blueprint-modular"
-version = "0.1.31"
+version = "0.1.32"
 description = "Briques Python prêtes à l'emploi pour vos interfaces de données"
 readme = "README.md"
 requires-python = ">=3.9"
@@ -37,4 +37,4 @@ where = ["."]
 include = ["bpm*"]
 
 [tool.setuptools.package-data]
-bpm = ["*.md", "*.json"]
+bpm = ["static/**/*", "frontend/src/**/*", "frontend/index.html", "frontend/package.json", "frontend/vite.config.ts", "frontend/tsconfig.json"]

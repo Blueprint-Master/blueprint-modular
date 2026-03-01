@@ -538,13 +538,22 @@ def main() -> None:
     run_parser.add_argument("file", nargs="?", default="app.py", help="Fichier Python (défaut: app.py)")
     run_parser.add_argument("--port", "-p", type=int, default=8501, help="Port (défaut: 8501)")
     run_parser.add_argument("--host", default="127.0.0.1", help="Host (défaut: 127.0.0.1)")
+    build_parser = sub.add_parser("build", help="Builder le frontend React (bpm/frontend/)")
     init_parser = sub.add_parser("init", help="Scaffolder une app vide")
     init_parser.add_argument("--name", default="mon-app", help="Nom du projet (défaut: mon-app)")
     setup_parser = sub.add_parser("setup", help="Installer et configurer Ollama (IA locale)")
     setup_parser.add_argument("--model", default=None, help="Modèle Ollama (défaut: BPM_DEFAULT_MODEL ou llama3.2)")
     args = parser.parse_args()
     if args.command == "run":
-        run(args.file, port=args.port, host=args.host)
+        from bpm.server import run as server_run
+        server_run(args.file, port=args.port, host=args.host)
+    elif args.command == "build":
+        import subprocess
+        import pathlib
+        frontend = pathlib.Path(__file__).parent / "frontend"
+        subprocess.run(["npm", "install"], cwd=frontend, check=True)
+        subprocess.run(["npm", "run", "build"], cwd=frontend, check=True)
+        print("✅ Frontend buildé dans bpm/static/")
     elif args.command == "init":
         init(args.name)
     elif args.command == "setup":
