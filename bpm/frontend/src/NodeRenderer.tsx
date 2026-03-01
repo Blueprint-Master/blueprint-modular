@@ -34,6 +34,17 @@ export function NodeRenderer({ node, onAction }: Props) {
     case 'caption':
       return <p style={{ color: 'var(--bpm-text-secondary)', fontSize: '0.875rem' }}>{String(props.text)}</p>
 
+    case 'metrics_row': {
+      const metrics = (props.metrics as Node[]) || []
+      return (
+        <div className="bpm-metrics-row">
+          {metrics.map((m, i) => (
+            <NodeRenderer key={i} node={m} onAction={onAction} />
+          ))}
+        </div>
+      )
+    }
+
     case 'metric': {
       const delta = props.delta as number | undefined
       const isPos = delta !== undefined && delta >= 0

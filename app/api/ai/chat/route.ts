@@ -1,8 +1,7 @@
 import { getSessionOrTestUser } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
-import Anthropic from "@anthropic-ai/sdk";
-import { vllmClient } from "@/lib/ai/vllm-client";
-import { SYSTEM_PROMPT_WITH_CONTEXT } from "@/lib/ai/prompt-templates";
+import { getProvider, type ChatMessage } from "@/lib/ai/providers";
+import { SYSTEM_PROMPT_BASE } from "@/lib/ai/prompt-templates";
 
 export const dynamic = "force-dynamic";
 
@@ -47,118 +46,89 @@ export async function POST(req: Request) {
     conversation_history = [],
     discussion_id,
     context_from_modules,
+    page_context,
+    mode,
   } = body as {
     message?: string;
     provider_name?: "claude" | "openai" | "gemini" | "grok" | "vllm" | "qwen" | "mistral";
     conversation_history?: { role: string; content: string }[];
     discussion_id?: string;
     context_from_modules?: string;
+    /** Contexte de la page (composants BPM), fourni par le client via bpmComponentRegistry.buildSystemPromptContext() */
+    page_context?: string;
+    /** "builder" = pas de system prompt assistant (génération code). Sinon = assistant. */
+    mode?: string;
   };
 
-  const ollamaProvider = provider_name === "vllm" || provider_name === "qwen" || provider_name === "mistral";
-  const ollamaModel =
-    provider_name === "qwen"
-      ? process.env.AI_MODEL_QWEN ?? "qwen3:8b"
-      : provider_name === "mistral"
-        ? process.env.AI_MODEL_MISTRAL ?? "mistral:7b"
-        : undefined;
+  const providerConfig =
+    provider_name === "claude"
+      ? { type: "claude" as const }
+      : provider_name === "openai"
+        ? { type: "openai" as const }
+        : provider_name === "qwen"
+          ? { type: "ollama" as const, model: process.env.AI_MODEL_QWEN ?? "qwen3:8b" }
+          : provider_name === "mistral"
+            ? { type: "ollama" as const, model: process.env.AI_MODEL_MISTRAL ?? "mistral:7b" }
+            : undefined;
 
   if (!message || typeof message !== "string") {
     return new Response(JSON.stringify({ error: "message required" }), { status: 400 });
   }
+
+  if (provider_name === "gemini" || provider_name === "grok") {
+    return new Response(
+      JSON.stringify({ error: `Provider ${provider_name} not implemented` }),
+      { status: 400 }
+    );
+  }
+
+  const provider = getProvider(providerConfig);
+  const systemPrompt =
+    mode === "builder"
+      ? undefined
+      : (() => {
+          const combined = [context_from_modules, page_context]
+            .filter(Boolean)
+            .join("\n\n");
+          return combined
+            ? `${SYSTEM_PROMPT_BASE}\n\nContexte :\n---\n${combined}\n---`
+            : SYSTEM_PROMPT_BASE;
+        })();
+  const messages: ChatMessage[] = [
+    ...conversation_history.map((m) => ({ role: m.role as "user" | "assistant", content: m.content })),
+    { role: "user", content: message },
+  ];
 
   const encoder = new TextEncoder();
   let fullResponse = "";
 
   const stream = new ReadableStream({
     async start(controller) {
-      // Premier octet immédiat pour éviter 504 (proxy/gateway timeout avant première réponse).
       controller.enqueue(encoder.encode(`data: ${JSON.stringify({ type: "start" })}\n\n`));
       try {
-        if (ollamaProvider) {
-          const systemContent = context_from_modules
-            ? SYSTEM_PROMPT_WITH_CONTEXT(context_from_modules)
-            : undefined;
-          const messages = [
-            ...(systemContent ? [{ role: "system" as const, content: systemContent }] : []),
-            ...conversation_history.map((m) => ({ role: m.role as "user" | "assistant", content: m.content })),
-            { role: "user" as const, content: message },
-          ];
-          try {
-            await vllmClient.chatStream(messages, (chunk) => {
-              fullResponse += chunk;
-              controller.enqueue(encoder.encode(`data: ${JSON.stringify({ type: "chunk", t: chunk })}\n\n`));
-            }, ollamaModel ? { model: ollamaModel } : {});
-            const savedId = await saveConversationTurn(user.id, discussion_id, message, fullResponse, provider_name);
-            controller.enqueue(
-              encoder.encode(`data: ${JSON.stringify({ type: "done", discussion_id: savedId })}\n\n`)
-            );
-          } catch (vllmErr) {
-            const raw = vllmErr instanceof Error ? vllmErr.message : String(vllmErr);
-            const isConnection =
-              /fetch|ECONNREFUSED|timeout|ETIMEDOUT|network|Failed to fetch/i.test(raw) || raw.startsWith("Ollama 5");
-            const errMsg = isConnection
-              ? "Impossible de joindre le service IA (Ollama). Vérifiez qu'Ollama est démarré (ex. http://localhost:11434) ou définissez AI_MOCK=true pour le mode démo."
-              : raw;
-            controller.enqueue(encoder.encode(`data: ${JSON.stringify({ type: "error", message: errMsg })}\n\n`));
-          }
-          controller.close();
-          return;
-        }
-        if (provider_name === "claude") {
-          const apiKey = process.env.ANTHROPIC_API_KEY;
-          if (!apiKey) {
-            controller.enqueue(
-              encoder.encode(
-                `data: ${JSON.stringify({ type: "error", message: "ANTHROPIC_API_KEY not configured" })}\n\n`
-              )
-            );
-            controller.close();
-            return;
-          }
-          const client = new Anthropic({ apiKey });
-          const response = await client.messages.create({
-            model: "claude-sonnet-4-20250514",
-            max_tokens: 4096,
-            messages: [
-              ...conversation_history.map((m: { role: string; content: string }) => ({
-                role: m.role as "user" | "assistant",
-                content: m.content,
-              })),
-              { role: "user", content: message },
-            ],
-            stream: true,
-          });
-
-          for await (const event of response) {
-            if (
-              event.type === "content_block_delta" &&
-              "delta" in event &&
-              typeof (event as { delta?: { text?: string } }).delta?.text === "string"
-            ) {
-              const chunk = (event as { delta: { text: string } }).delta.text;
-              fullResponse += chunk;
-              controller.enqueue(
-                encoder.encode(`data: ${JSON.stringify({ type: "chunk", t: chunk })}\n\n`)
-              );
-            }
-          }
-          const savedId = await saveConversationTurn(user.id, discussion_id, message, fullResponse, provider_name);
-          controller.enqueue(
-            encoder.encode(`data: ${JSON.stringify({ type: "done", discussion_id: savedId })}\n\n`)
-          );
-        } else {
-          controller.enqueue(
-            encoder.encode(
-              `data: ${JSON.stringify({ type: "error", message: `Provider ${provider_name} not implemented` })}\n\n`
-            )
-          );
-        }
-      } catch (err) {
-        const msg = err instanceof Error ? err.message : "Unknown error";
-        controller.enqueue(
-          encoder.encode(`data: ${JSON.stringify({ type: "error", message: msg })}\n\n`)
+        await provider.chatStream(messages, (chunk) => {
+          fullResponse += chunk;
+          controller.enqueue(encoder.encode(`data: ${JSON.stringify({ type: "chunk", t: chunk })}\n\n`));
+        }, systemPrompt);
+        const savedId = await saveConversationTurn(
+          user.id,
+          discussion_id,
+          message,
+          fullResponse,
+          provider.getProviderName()
         );
+        controller.enqueue(
+          encoder.encode(`data: ${JSON.stringify({ type: "done", discussion_id: savedId })}\n\n`)
+        );
+      } catch (err) {
+        const raw = err instanceof Error ? err.message : String(err);
+        const isConnection =
+          /fetch|ECONNREFUSED|timeout|ETIMEDOUT|network|Failed to fetch|Ollama 5/i.test(raw);
+        const errMsg =
+          isConnection && provider.getProviderName() === "ollama"
+            ? "Impossible de joindre le service IA (Ollama). Vérifiez qu'Ollama est démarré (ex. http://localhost:11434) ou définissez AI_MOCK=true pour le mode démo."
+            : raw;
+        controller.enqueue(encoder.encode(`data: ${JSON.stringify({ type: "error", message: errMsg })}\n\n`));
       } finally {
         controller.close();
       }

@@ -56,6 +56,26 @@ export default function App() {
     </div>
   )
 
+  // Grouper les métriques consécutives en une seule ligne
+  const displayNodes = React.useMemo(() => {
+    const out: Node[] = []
+    let i = 0
+    while (i < nodes.length) {
+      if (nodes[i].type === 'metric') {
+        const metrics: Node[] = []
+        while (i < nodes.length && nodes[i].type === 'metric') {
+          metrics.push(nodes[i])
+          i++
+        }
+        out.push({ type: 'metrics_row', props: { metrics } })
+      } else {
+        out.push(nodes[i])
+        i++
+      }
+    }
+    return out
+  }, [nodes])
+
   return (
     <div className="bpm-runtime">
       <header className="bpm-runtime-header">
@@ -74,7 +94,7 @@ export default function App() {
         </button>
       </header>
       <main className="bpm-runtime-main">
-        {nodes.map((node, i) => (
+        {displayNodes.map((node, i) => (
           <NodeRenderer key={i} node={node} onAction={handleAction} />
         ))}
       </main>

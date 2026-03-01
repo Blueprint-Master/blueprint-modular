@@ -1,6 +1,7 @@
 "use client";
 
 import React from "react";
+import { useBPMContext } from "@/lib/ai/context";
 
 /** Locales courants pour le format nombre (ex. "fr-FR" → 1 000,50, "en-US" → 1,000.50). */
 export type MetricValueLocale = "fr-FR" | "en-US" | "de-DE" | string;
@@ -32,6 +33,8 @@ export interface MetricProps {
   accentColor?: string | null;
   /** Mode compact : hauteur réduite (~80px), padding et typo plus serrés. */
   compact?: boolean;
+  /** Si true, expose cette métrique au contexte IA. */
+  trackContext?: boolean;
 }
 
 export function Metric({
@@ -51,6 +54,7 @@ export function Metric({
   subtext = null,
   accentColor = null,
   compact = false,
+  trackContext = false,
 }: MetricProps) {
   const symbols: Record<string, string> = {
     EUR: "€",
@@ -83,6 +87,11 @@ export function Metric({
   const hasDelta = deltaNum != null && !Number.isNaN(deltaNum);
   const positive = hasDelta && deltaType !== "aucun" && (deltaType === "inverse" ? deltaNum < 0 : deltaNum > 0);
   const negative = hasDelta && deltaType !== "aucun" && (deltaType === "inverse" ? deltaNum > 0 : deltaNum < 0);
+
+  useBPMContext(
+    { type: "metric", label, value: displayValue },
+    trackContext === true
+  );
 
   return (
     <div

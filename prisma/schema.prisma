@@ -17,6 +17,7 @@ model User {
   updatedAt DateTime @updatedAt
 
   apiKeys              ApiKey[]
+  orgMemberships       OrgMember[]
   wikiArticles         WikiArticle[]     @relation("Author")
   documents            Document[]
   contracts            Contract[]
@@ -27,6 +28,77 @@ model User {
   ticketsAssigned      Ticket[]          @relation("TicketAssignee")
   assignmentsAssigned  Assignment[]      @relation("AssignmentAssignee")
   assignmentsAsTech    Assignment[]      @relation("AssignmentTechnician")
+}
+
+model Organization {
+  id          String    @id @default(cuid())
+  name        String
+  slug        String    @unique
+  plan        String    @default("free") // free | pro | enterprise
+  settings    Json?
+  createdAt   DateTime  @default(now()) @map("created_at")
+  updatedAt   DateTime  @updatedAt @map("updated_at")
+
+  members         OrgMember[]
+  workspaces      Workspace[]
+  wikis           WikiArticle[]
+  documents       Document[]
+  contracts       Contract[]
+  aiConversations AiConversation[]
+  generatedApps   GeneratedApp[]
+}
+
+model OrgMember {
+  id             String       @id @default(cuid())
+  userId         String       @map("user_id")
+  organizationId String       @map("organization_id")
+  role           String       @default("member") // owner | admin | member
+  createdAt      DateTime     @default(now()) @map("created_at")
+
+  user         User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+  organization Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, organizationId])
+  @@index([organizationId])
+}
+
+model Workspace {
+  id             String   @id @default(cuid())
+  name           String
+  slug           String
+  organizationId String  @map("organization_id")
+  settings       Json?
+  createdAt      DateTime @default(now()) @map("created_at")
+  updatedAt      DateTime @updatedAt @map("updated_at")
+
+  organization      Organization   @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  assets            Asset[]
+  tickets           Ticket[]
+  assignments       Assignment[]
+  assetContracts    AssetContract[]
+  knowledgeArticles KnowledgeArticle[]
+  changeRequests    ChangeRequest[]
+
+  @@unique([organizationId, slug])
+  @@index([organizationId])
+}
+
+model GeneratedApp {
+  id             String    @id @default(cuid())
+  title          String
+  description    String?   @db.Text
+  code           String    @db.Text
+  schema         Json?
+  organizationId String    @map("organization_id")
+  previewUrl     String?   @map("preview_url")
+  expiresAt      DateTime? @map("expires_at")
+  exported       Boolean   @default(false)
+  createdAt      DateTime  @default(now()) @map("created_at")
+  updatedAt      DateTime  @updatedAt @map("updated_at")
+
+  organization Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+
+  @@index([organizationId])
 }
 
 enum Role {
@@ -52,6 +124,7 @@ model WikiArticle {
   slug               String    @unique
   parentId           String?
   authorId           String
+  organizationId     String?   @map("organization_id")
   isPublished        Boolean   @default(false)
   createdAt          DateTime  @default(now())
   updatedAt          DateTime  @updatedAt
@@ -70,6 +143,7 @@ model WikiArticle {
   parent             WikiArticle?   @relation("WikiHierarchy", fields: [parentId], references: [id])
   children           WikiArticle[]  @relation("WikiHierarchy")
   author             User          @relation("Author", fields: [authorId], references: [id], onDelete: Cascade)
+  organization       Organization? @relation(fields: [organizationId], references: [id], onDelete: SetNull)
   revisions          WikiRevision[]
   comments           WikiComment[]
   backlinksFrom      WikiBacklink[] @relation("WikiBacklinkSource")
@@ -116,6 +190,7 @@ model Document {
   mimeType       String
   filePath       String?
   uploadedById   String
+  organizationId String?  @map("organization_id")
   analysisStatus String   @default("pending")
   supplier       String?
   client         String?
@@ -128,13 +203,15 @@ model Document {
   rawText        String?  @db.Text
   createdAt      DateTime @default(now())
   uploadedBy     User     @relation(fields: [uploadedById], references: [id], onDelete: Cascade)
+  organization   Organization? @relation(fields: [organizationId], references: [id], onDelete: SetNull)
 }
 
 model Contract {
   id                String    @id @default(cuid())
   title             String
   contractType      String    @map("contract_type")   // 'supplier' | 'cgv' | 'other'
-  workspace         String    // 'nxtfood' | 'beam'
+  workspace         String    // 'nxtfood' | 'beam' (legacy)
+  organizationId    String?   @map("organization_id")
   filePath          String    @map("file_path")
   fileHash          String    @map("file_hash")
   originalFilename  String    @map("original_filename")
@@ -149,16 +226,19 @@ model Contract {
   updatedAt         DateTime  @updatedAt @map("updated_at")
   uploadedById      String    @map("uploaded_by_id")
   uploadedBy        User      @relation(fields: [uploadedById], references: [id], onDelete: Cascade)
+  organization      Organization? @relation(fields: [organizationId], references: [id], onDelete: SetNull)
 }
 
 model AiConversation {
-  id        String   @id @default(cuid())
-  userId    String
-  preview   String?
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-  messages  AiMessage[]
+  id             String   @id @default(cuid())
+  userId         String
+  organizationId String?  @map("organization_id")
+  preview        String?
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+  user           User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  organization   Organization? @relation(fields: [organizationId], references: [id], onDelete: SetNull)
+  messages       AiMessage[]
 }
 
 model AiMessage {
@@ -194,6 +274,7 @@ model NewsletterArticle {
 model Asset {
   id              String    @id @default(cuid())
   domainId        String    @map("domain_id")
+  workspaceId     String?   @map("workspace_id")
   assetTypeId     String    @map("asset_type_id")
   reference       String    @unique
   label           String
@@ -213,6 +294,7 @@ model Asset {
   createdAt       DateTime  @default(now()) @map("created_at")
   updatedAt       DateTime  @updatedAt @map("updated_at")
   createdBy       User      @relation("AssetCreatedBy", fields: [createdById], references: [id], onDelete: Cascade)
+  workspace       Workspace? @relation(fields: [workspaceId], references: [id], onDelete: SetNull)
   attributes       AssetAttribute[]
   tickets         Ticket[]  @relation("TicketAsset")
   assignments     Assignment[]
@@ -237,6 +319,7 @@ model AssetAttribute {
 model Ticket {
   id                String    @id @default(cuid())
   domainId          String    @map("domain_id")
+  workspaceId       String?   @map("workspace_id")
   reference         String    @unique
   typeId            String    @map("type_id")
   title             String
@@ -260,6 +343,7 @@ model Ticket {
   createdAt         DateTime  @default(now()) @map("created_at")
   updatedAt         DateTime  @updatedAt @map("updated_at")
   asset             Asset?    @relation("TicketAsset", fields: [assetId], references: [id], onDelete: SetNull)
+  workspace         Workspace? @relation(fields: [workspaceId], references: [id], onDelete: SetNull)
   requester         User      @relation("TicketRequester", fields: [requesterId], references: [id], onDelete: Cascade)
   assignee          User?     @relation("TicketAssignee", fields: [assigneeId], references: [id], onDelete: SetNull)
   assignments       Assignment[]
@@ -270,6 +354,7 @@ model Ticket {
 model Assignment {
   id               String    @id @default(cuid())
   domainId         String    @map("domain_id")
+  workspaceId      String?   @map("workspace_id")
   reference        String    @unique
   assignmentType   String    @map("assignment_type") // permanent | temporary
   assetId          String    @map("asset_id")
@@ -290,6 +375,7 @@ model Assignment {
   createdAt        DateTime  @default(now()) @map("created_at")
   updatedAt        DateTime  @updatedAt @map("updated_at")
   asset            Asset     @relation(fields: [assetId], references: [id], onDelete: Cascade)
+  workspace        Workspace? @relation(fields: [workspaceId], references: [id], onDelete: SetNull)
   assignee         User      @relation("AssignmentAssignee", fields: [assigneeId], references: [id], onDelete: Cascade)
   technician       User?     @relation("AssignmentTechnician", fields: [technicianId], references: [id], onDelete: SetNull)
   ticket           Ticket?   @relation(fields: [ticketId], references: [id], onDelete: SetNull)
@@ -302,6 +388,7 @@ model Assignment {
 model AssetContract {
   id              String    @id @default(cuid())
   domainId        String    @map("domain_id")
+  workspaceId     String?   @map("workspace_id")
   reference       String
   type            String    // garantie | maintenance | leasing | credit_bail | licence
   label           String
@@ -317,6 +404,7 @@ model AssetContract {
   alertDaysBefore Int       @default(30) @map("alert_days_before")
   createdAt       DateTime  @default(now()) @map("created_at")
   updatedAt       DateTime  @updatedAt @map("updated_at")
+  workspace       Workspace? @relation(fields: [workspaceId], references: [id], onDelete: SetNull)
   @@index([domainId])
   @@index([endDate])
 }
@@ -343,6 +431,7 @@ model AssetMovement {
 model KnowledgeArticle {
   id               String    @id @default(cuid())
   domainId         String    @map("domain_id")
+  workspaceId      String?   @map("workspace_id")
   title            String
   slug             String
   content          String    @db.Text
@@ -359,6 +448,7 @@ model KnowledgeArticle {
   publishedAt      DateTime? @map("published_at")
   createdAt        DateTime  @default(now()) @map("created_at")
   updatedAt        DateTime  @updatedAt @map("updated_at")
+  workspace        Workspace? @relation(fields: [workspaceId], references: [id], onDelete: SetNull)
   @@unique([domainId, slug])
   @@index([domainId])
   @@index([categoryId])
@@ -367,6 +457,7 @@ model KnowledgeArticle {
 model ChangeRequest {
   id                      String    @id @default(cuid())
   domainId                String    @map("domain_id")
+  workspaceId             String?   @map("workspace_id")
   reference               String    @unique
   type                    String    // standard | normal | emergency
   title                   String
@@ -389,6 +480,7 @@ model ChangeRequest {
   postImplementationReview String?  @map("post_implementation_review") @db.Text
   createdAt               DateTime  @default(now()) @map("created_at")
   updatedAt               DateTime  @updatedAt @map("updated_at")
+  workspace               Workspace? @relation(fields: [workspaceId], references: [id], onDelete: SetNull)
   @@index([domainId])
   @@index([status])
   @@index([plannedStart])

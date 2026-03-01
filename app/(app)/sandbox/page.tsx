@@ -244,11 +244,16 @@ function parseBpmLine(line: string, key: number): React.ReactNode {
   }
   const captionMatch = trimmed.match(/bpm\.caption\s*\(\s*["']([^"']*)["']\s*\)/);
   if (captionMatch) return <Caption key={key}>{captionMatch[1]}</Caption>;
-  const highlightboxMatch = trimmed.match(/bpm\.highlightbox\s*\(\s*["']([^"']*)["']\s*(?:,\s*variant\s*=\s*["'](\w+)["'])?\s*\)/);
+  const highlightboxMatch = trimmed.match(/bpm\.highlightbox\s*\(\s*value\s*=\s*(-?\d+(?:\.\d+)?)\s*,\s*label\s*=\s*["']([^"']*)["']\s*(?:,\s*title\s*=\s*["']([^"']*)["'])?\s*\)/);
   if (highlightboxMatch) {
-    const title = highlightboxMatch[1];
-    const label = highlightboxMatch[2] ?? "Info";
-    return <HighlightBox key={key} value={1} label={label} title={title} />;
+    return (
+      <HighlightBox
+        key={key}
+        value={parseFloat(highlightboxMatch[1])}
+        label={highlightboxMatch[2]}
+        title={highlightboxMatch[3] ?? highlightboxMatch[2]}
+      />
+    );
   }
   const jsonviewerMatch = trimmed.match(/bpm\.jsonviewer\s*\(\s*["']([^"']*)["']\s*\)/);
   if (jsonviewerMatch) {
@@ -313,13 +318,14 @@ function parseBpmLine(line: string, key: number): React.ReactNode {
     const label = progressMatch[2];
     return <Progress key={key} value={value} max={100} label={label} showValue />;
   }
-  const skeletonMatch = trimmed.match(/bpm\.skeleton\s*\(\s*lines\s*=\s*(\d+)\s*\)/);
+  const skeletonMatch = trimmed.match(/bpm\.skeleton\s*\(\s*(?:variant\s*=\s*["'](\w+)["'])?\s*(?:,?\s*lines\s*=\s*(\d+))?\s*\)/);
   if (skeletonMatch) {
-    const lines = Math.max(1, parseInt(skeletonMatch[1], 10));
+    const variant = (skeletonMatch[1] as "text" | "rectangular" | "circular") ?? "text";
+    const lines = skeletonMatch[2] ? parseInt(skeletonMatch[2], 10) : 3;
     return (
-      <div key={key} className="flex flex-col gap-2">
-        {Array.from({ length: lines }, (_, i) => (
-          <Skeleton key={i} variant="text" width={i === lines - 1 && lines > 1 ? "85%" : "100%"} />
+      <div key={key} style={{ display: "flex", flexDirection: "column", gap: 8 }}>
+        {Array.from({ length: lines }).map((_, i) => (
+          <Skeleton key={i} variant={variant} />
         ))}
       </div>
     );
@@ -359,6 +365,12 @@ function parseBpmLine(line: string, key: number): React.ReactNode {
   }
   const dateinputMatch = trimmed.match(/bpm\.dateinput\s*\(\s*["']([^"']*)["']\s*\)/);
   if (dateinputMatch) return <DateInput key={key} label={dateinputMatch[1]} value="" onChange={() => {}} />;
+  const selectboxNamedMatch = trimmed.match(/bpm\.selectbox\s*\(\s*["']([^"']*)["']\s*,\s*options\s*=\s*["']([^"']*)["']\s*\)/);
+  if (selectboxNamedMatch) {
+    const options = selectboxNamedMatch[2].split(",").map((s) => s.trim()).filter(Boolean);
+    const selectOptions = options.map((o) => ({ value: o, label: o }));
+    return <Selectbox key={key} label={selectboxNamedMatch[1]} options={selectOptions} value="" onChange={() => {}} />;
+  }
   const selectboxMatch = trimmed.match(/bpm\.selectbox\s*\(\s*["']([^"']*)["']\s*,\s*["']([^"']*)["']\s*\)/);
   if (selectboxMatch) {
     const options = selectboxMatch[2].split(/\s*\|\s*/).map((s) => s.trim()).filter(Boolean);
@@ -515,6 +527,39 @@ function parseBpmLine(line: string, key: number): React.ReactNode {
     return <Pagination key={key} page={page} totalPages={totalPages} onPageChange={() => {}} label={label} />;
   }
 
+  const gridMatch = trimmed.match(/bpm\.grid\s*\(\s*cols\s*=\s*(\d+)\s*\)/);
+  if (gridMatch) return <Grid key={key} cols={parseInt(gridMatch[1], 10) as 2 | 3 | 4} />;
+
+  const columnMatch = trimmed.match(/bpm\.column\s*\(\s*["']([^"']*)["']\s*\)/);
+  if (columnMatch) return <Column key={key}>{columnMatch[1]}</Column>;
+
+  const textMatch = trimmed.match(/bpm\.text\s*\(\s*["']([^"']*)["']\s*\)/);
+  if (textMatch) return <Text key={key}>{textMatch[1]}</Text>;
+
+  const daterangepickerMatch = trimmed.match(/bpm\.daterangepicker\s*\(\s*["']([^"']*)["']\s*\)/);
+  if (daterangepickerMatch) return <DateRangePicker key={key} label={daterangepickerMatch[1]} start={null} end={null} onChange={() => {}} />;
+
+  const timeinputMatch = trimmed.match(/bpm\.timeinput\s*\(\s*["']([^"']*)["']\s*\)/);
+  if (timeinputMatch) return <TimeInput key={key} label={timeinputMatch[1]} value={null} onChange={() => {}} />;
+
+  const unknownMatch = trimmed.match(/^bpm\.(\w+)\s*\(/);
+  if (unknownMatch) {
+    return (
+      <div
+        key={key}
+        style={{
+          padding: "8px 12px",
+          borderRadius: 6,
+          border: "1px dashed var(--bpm-border)",
+          color: "var(--bpm-text-secondary)",
+          fontSize: 13,
+          fontFamily: "monospace",
+        }}
+      >
+        ⚠ Composant <strong>bpm.{unknownMatch[1]}</strong> non reconnu dans la Sandbox
+      </div>
+    );
+  }
   return null;
 }
 

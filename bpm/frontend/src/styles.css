@@ -100,9 +100,15 @@ html, body {
   gap: 16px;
 }
 
-/* Metric */
+/* Métriques : disposition en ligne */
+.bpm-metrics-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
 .bpm-metric-card {
-  display: inline-flex;
+  display: flex;
   flex-direction: column;
   padding: 16px 20px;
   background: var(--bpm-surface);
@@ -155,6 +161,8 @@ html, body {
 
 /* Button */
 .btn-primary {
+  width: auto;
+  align-self: flex-start;
   background: var(--bpm-accent);
   color: white;
   border: none;

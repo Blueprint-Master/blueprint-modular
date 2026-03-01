@@ -2,6 +2,7 @@
 
 import React, { useState, useMemo } from "react";
 import { useIsMobile } from "@/hooks/useIsMobile";
+import { useBPMContext } from "@/lib/ai/context";
 import type { MetricValueLocale } from "./Metric";
 
 export interface TableColumn {
@@ -35,6 +36,8 @@ export interface TableProps {
   valueGrouping?: boolean;
   /** Largeur minimale du tableau en px (déclenche le scroll horizontal dans le wrapper si conteneur plus étroit). Non défini = pas de min-width. */
   minWidth?: number;
+  /** Si true, expose ce tableau au contexte IA. */
+  trackContext?: boolean;
 }
 
 function getSortValue(val: unknown): string | number {
@@ -86,8 +89,22 @@ export function Table({
   valueDecimals = 0,
   valueGrouping = true,
   minWidth,
+  trackContext = false,
 }: TableProps) {
   const isMobile = useIsMobile(768);
+
+  useBPMContext(
+    {
+      type: "table",
+      label: name ?? "Tableau",
+      data: data,
+      metadata: {
+        columns: columns.map((c) => (typeof c.label === "string" ? c.label : c.key)),
+        rowCount: data.length,
+      },
+    },
+    trackContext === true
+  );
   const [sortColumn, setSortColumn] = useState<string | null>(defaultSortColumn);
   const [sortDirection, setSortDirection] = useState<"asc" | "desc">(defaultSortDirection);
 
