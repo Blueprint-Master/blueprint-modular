@@ -11,7 +11,7 @@ const nextConfig = {
   },
   async rewrites() {
     return [
-      { source: "/favicon.ico", destination: "/img/icon-pwa-512.png" },
+      { source: "/favicon.ico", destination: "/img/logo-bpm.png" },
     ];
   },
   experimental: {

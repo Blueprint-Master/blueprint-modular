@@ -1,5 +1,7 @@
 import type { MetadataRoute } from "next";
 
+const FAVICON_V = typeof process !== "undefined" && process.env?.NEXT_PUBLIC_FAVICON_V ? `?v=${process.env.NEXT_PUBLIC_FAVICON_V}` : "";
+
 export default function manifest(): MetadataRoute.Manifest {
   return {
     name: "Blueprint Modular",
@@ -15,13 +17,13 @@ export default function manifest(): MetadataRoute.Manifest {
     lang: "fr",
     icons: [
       {
-        src: "/img/icon-pwa-192.png",
+        src: `/img/logo-bpm.png${FAVICON_V}`,
         sizes: "192x192",
         type: "image/png",
         purpose: "any",
       },
       {
-        src: "/img/icon-pwa-512.png",
+        src: `/img/logo-bpm.png${FAVICON_V}`,
         sizes: "512x512",
         type: "image/png",
         purpose: "maskable",
