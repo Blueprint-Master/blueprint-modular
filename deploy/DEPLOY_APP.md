@@ -70,6 +70,29 @@ En prod, **blueprint-modular.com** et **docs.blueprint-modular.com** servent la 
 - **Ce qui prouve que le déploiement a bien pris en compte la Phase 0** : l’app **charge sans erreur 500** (tables `Organization`, `Workspace` présentes) ; Wiki, Contrats, Dashboard et autres modules fonctionnent comme avant.
 - **Optionnel** : si tu as exécuté `npx tsx prisma/seed-organizations.ts` sur le VPS après `migrate deploy`, l’organisation par défaut « My Organization » existe en base (pour usage futur par l’app ou l’API).
 
+## Phase 1 — Déploiement et validation (dashboard production NXTFOOD)
+
+Après un `git pull` (ou après avoir exécuté `./deploy/deploy-from-git.sh`) pour une version Phase 1 :
+
+1. **Sur le VPS**, dans le répertoire du repo (ex. `~/blueprint-modular`) :
+   ```bash
+   git pull origin master
+   npx prisma migrate deploy
+   npm run seed:production
+   pm2 restart blueprint-app
+   ```
+   Ou en une commande (après `chmod +x deploy/phase1-post-deploy.sh` si besoin) : `./deploy/phase1-post-deploy.sh`
+
+2. **Vérifier** que l’organisation par défaut existe (sinon lancer d’abord `npm run seed:wiki` ou le seed organisations si vous l’utilisez). Le seed production s’attache à l’org dont le slug est `DEFAULT_ORG_SLUG` (défaut : `default`).
+
+3. **Checklist validation Phase 1** :
+   | Test | Attendu |
+   |------|---------|
+   | https://app.blueprint-modular.com/demo/production | Dashboard public sans login, onglets Vue globale / Lignes / Alertes |
+   | Sandbox → « Charger exemple Production » → « Générer » | Code BPM production généré (TRS, métriques, tableaux) |
+   | `GET /api/production/metrics` (avec session) | JSON avec `globalTRS`, `bestLine`, `worstLine`, `trsEvolution`, etc. |
+   | `GET /api/demo/screenshot` | `{ "status": "not_implemented", "message": "Puppeteer non installé" }` — 501 |
+
 ## Service Prompteur API (optionnel, module Monitor)
 
 Le module **Monitor** (téléprompte IA) appelle l’API `https://app.blueprint-modular.com/api/prompteur/*`. En prod, Nginx proxy cette voie vers un service Python séparé (port 8001).
