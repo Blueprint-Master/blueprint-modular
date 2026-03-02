@@ -17,10 +17,11 @@ export const metadata: Metadata = {
   manifest: "/manifest",
   icons: {
     icon: [
+      { url: "/img/icon-pwa-192.png", type: "image/png", sizes: "192x192" },
+      { url: "/img/icon-pwa-512.png", type: "image/png", sizes: "512x512" },
       { url: "/favicon.svg", type: "image/svg+xml" },
-      { url: "/img/logo-bpm.png", type: "image/png" },
     ],
-    apple: "/img/logo-bpm.png",
+    apple: "/img/icon-pwa-192.png",
   },
   themeColor: [
     { media: "(prefers-color-scheme: light)", color: "#ffffff" },
