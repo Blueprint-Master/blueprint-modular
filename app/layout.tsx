@@ -9,7 +9,7 @@ import { PwaSwRegister } from "@/components/PwaSwRegister";
 
 const BASE_URL = process.env.NEXT_PUBLIC_APP_URL ?? "https://app.blueprint-modular.com";
 const DEFAULT_DESC = "Briques Python/React pour vos interfaces métier. Sans HTML ni JavaScript.";
-const FAVICON_QUERY = `?v=${APP_VERSION}`;
+const FAVICON_QUERY = `?v=${process.env.NEXT_PUBLIC_FAVICON_V ?? APP_VERSION}`;
 
 export const metadata: Metadata = {
   metadataBase: new URL(BASE_URL),

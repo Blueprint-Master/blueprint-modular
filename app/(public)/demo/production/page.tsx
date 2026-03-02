@@ -22,22 +22,63 @@ function parsePeriod(s: string | null): DemoPeriod {
   return "30d";
 }
 
+function DemoUnavailableFallback() {
+  return (
+    <div
+      className="min-h-[40vh] flex items-center justify-center px-4"
+      style={{ background: "var(--bpm-bg-primary, #ffffff)" }}
+    >
+      <div
+        className="rounded-lg border p-6 max-w-md w-full text-center"
+        style={{
+          borderColor: "var(--bpm-border)",
+          background: "var(--bpm-bg-primary)",
+          color: "var(--bpm-text-primary)",
+        }}
+      >
+        <h2 className="text-lg font-semibold mb-2">Démo indisponible</h2>
+        <p className="text-sm mb-4" style={{ color: "var(--bpm-text-secondary)" }}>
+          Le serveur n&apos;a pas pu charger les données. Vérifiez la base de données ou réessayez plus tard.
+        </p>
+        <div className="flex flex-wrap gap-3 justify-center">
+          <Link
+            href="/demo/production"
+            className="px-4 py-2 rounded text-sm font-medium underline"
+            style={{ color: "var(--bpm-accent-cyan)" }}
+          >
+            Réessayer
+          </Link>
+          <Link
+            href="/"
+            className="px-4 py-2 rounded text-sm font-medium underline"
+            style={{ color: "var(--bpm-accent-cyan)" }}
+          >
+            Retour à l&apos;accueil
+          </Link>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 export default async function DemoProductionPage({
   searchParams,
 }: {
   searchParams?: Promise<{ period?: string }> | { period?: string };
 }) {
-  const raw = searchParams != null
-    ? typeof (searchParams as Promise<unknown>).then === "function"
-      ? await (searchParams as Promise<{ period?: string }>)
-      : (searchParams as { period?: string })
-    : {};
-  const period = parsePeriod(raw?.period ?? null);
+  let period: DemoPeriod = "30d";
   let data: Awaited<ReturnType<typeof getCachedDemoProductionData>>;
+
   try {
+    const raw = searchParams != null
+      ? typeof (searchParams as Promise<unknown>).then === "function"
+        ? await (searchParams as Promise<{ period?: string }>)
+        : (searchParams as { period?: string })
+      : {};
+    period = parsePeriod(raw?.period ?? null);
     data = await getCachedDemoProductionData(period);
   } catch {
-    data = { metrics: null, lines: [], alerts: [] };
+    return <DemoUnavailableFallback />;
   }
 
   const metrics = data.metrics;

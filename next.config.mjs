@@ -1,9 +1,18 @@
 /** @type {import('next').NextConfig} */
+// Cache-buster favicon à chaque build (force le rafraîchissement navigateur)
 const nextConfig = {
   reactStrictMode: true,
   output: "standalone",
+  env: {
+    NEXT_PUBLIC_FAVICON_V: String(Date.now()),
+  },
   async redirects() {
     return [];
+  },
+  async rewrites() {
+    return [
+      { source: "/favicon.ico", destination: "/img/icon-pwa-512.png" },
+    ];
   },
   experimental: {
     serverActions: {
