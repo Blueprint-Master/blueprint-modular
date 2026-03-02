@@ -148,3 +148,5 @@ export type { DrawerProps } from "./Drawer";
 export { Pagination } from "./Pagination";
 export type { PaginationProps } from "./Pagination";
 export { OfflineIndicator } from "./OfflineIndicator";
+export { AssistantPanel } from "./AssistantPanel";
+export type { AssistantPanelProps } from "./AssistantPanel";

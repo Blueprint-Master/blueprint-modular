@@ -77,7 +77,9 @@ import {
   Pagination,
   useToast,
   Html,
+  AssistantPanel,
 } from "@/components/bpm";
+import { useBPMPage } from "@/lib/ai/context";
 
 const DEFAULT_CODE = `bpm.title("Ma page", level=1)
 bpm.metric("CA", "142 500")
@@ -151,7 +153,7 @@ function parseBpmLine(line: string, key: number): React.ReactNode {
   if (metricMatch) {
     const delta = metricMatch[3] != null ? parseFloat(metricMatch[3]) : undefined;
     const border = metricMatch[4] === undefined || metricMatch[4] === "True";
-    return <Metric key={key} label={metricMatch[1]} value={metricMatch[2]} delta={delta} border={border} />;
+    return <Metric key={key} label={metricMatch[1]} value={metricMatch[2]} delta={delta} border={border} trackContext />;
   }
 
   const buttonMatch = trimmed.match(/bpm\.button\s*\(\s*["']([^"']*)["']\s*(?:,\s*variant\s*=\s*["'](\w+)["'])?\s*(?:,\s*size\s*=\s*["'](\w+)["'])?\s*(?:,\s*disabled\s*=\s*(true|True|false|False))?\s*\)/);
@@ -430,7 +432,7 @@ function parseBpmLine(line: string, key: number): React.ReactNode {
         headers.forEach((h, i) => { obj[h] = cells[i] ?? ""; });
         return obj;
       });
-      return <Table key={key} columns={columns} data={data} />;
+      return <Table key={key} columns={columns} data={data} trackContext />;
     }
   }
   const accordionMatch = trimmed.match(/bpm\.accordion\s*\(\s*["']([^"']*)["']\s*\)/);
@@ -750,6 +752,12 @@ function SandboxContent() {
     const prefix = completionPrefix.toLowerCase();
     return SANDBOX_COMPONENTS.filter((c) => c.value.toLowerCase().startsWith(prefix)).slice(0, 14);
   }, [completionPrefix]);
+
+  const isProductionDashboard = useMemo(
+    () => /production|trs|usine|ligne|fabrication/i.test(code) || /production|trs|usine|ligne|fabrication/i.test(aiDescription),
+    [code, aiDescription]
+  );
+  useBPMPage(isProductionDashboard ? "production" : "app", isProductionDashboard ? "Dashboard Production" : undefined);
 
   useEffect(() => {
     setCompletionIndex((i) => Math.min(i, Math.max(0, completionList.length - 1)));
@@ -1859,7 +1867,24 @@ function SandboxContent() {
                 ⚠ {aiError}
               </p>
             )}
-            <div className="flex items-center gap-3">
+            <div className="flex flex-wrap items-center gap-3">
+              <button
+                type="button"
+                onClick={() =>
+                  setAiDescription(
+                    "Crée un dashboard de suivi de production avec TRS par ligne, évolution sur 30 jours, alertes actives et taux de pertes matière"
+                  )
+                }
+                disabled={aiGenerating}
+                className="px-3 py-2 rounded-lg text-sm font-medium border transition"
+                style={{
+                  borderColor: "var(--bpm-border)",
+                  background: "var(--bpm-bg-secondary)",
+                  color: "var(--bpm-text-primary)",
+                }}
+              >
+                Charger exemple Production
+              </button>
               <button
                 type="button"
                 onClick={generateFromAI}
@@ -1904,6 +1929,7 @@ function SandboxContent() {
           </div>
         )}
       </div>
+      {isProductionDashboard && mode === "code" && <AssistantPanel title="Assistant Production" />}
     </div>
   );
 }

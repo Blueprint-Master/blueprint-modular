@@ -10,20 +10,36 @@ export async function POST(req: Request) {
     return new Response(JSON.stringify({ error: "description required" }), { status: 400 });
   }
 
+  const isProduction = /production|trs|usine|ligne|fabrication/i.test(description);
   const encoder = new TextEncoder();
+
   const stream = new ReadableStream({
     async start(controller) {
       controller.enqueue(
         encoder.encode(
-          `data: ${JSON.stringify({ type: "start", message: "Connexion au modèle…" })}\n\n`
+          `data: ${JSON.stringify({ type: "start", message: isProduction ? "Template production…" : "Connexion au modèle…" })}\n\n`
         )
       );
       try {
-        await builderAI.stream(description, (chunk) => {
-          controller.enqueue(
-            encoder.encode(`data: ${JSON.stringify({ type: "chunk", t: chunk })}\n\n`)
-          );
-        });
+        if (isProduction) {
+          const output = await builderAI.generateFromTemplate("production", description);
+          const code = output.code ?? "";
+          const lines = code.split("\n");
+          for (let i = 0; i < lines.length; i++) {
+            const chunk = (i === 0 ? "" : "\n") + lines[i];
+            if (chunk) {
+              controller.enqueue(
+                encoder.encode(`data: ${JSON.stringify({ type: "chunk", t: chunk })}\n\n`)
+              );
+            }
+          }
+        } else {
+          await builderAI.stream(description, (chunk) => {
+            controller.enqueue(
+              encoder.encode(`data: ${JSON.stringify({ type: "chunk", t: chunk })}\n\n`)
+            );
+          });
+        }
         controller.enqueue(
           encoder.encode(`data: ${JSON.stringify({ type: "done" })}\n\n`)
         );

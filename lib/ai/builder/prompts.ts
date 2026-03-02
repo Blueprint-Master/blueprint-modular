@@ -64,7 +64,29 @@ Règles strictes :
 - Pour les graphiques, génère 4-6 points de données cohérents
 - Commence toujours par bpm.title() pour nommer la page
 - Pour une appli multi-onglets : utilise bpm.tabs("Label1 | Label2 | Label3") puis, pour chaque onglet, les lignes bpm.* correspondantes en les séparant par une ligne vide (la première série de lignes = onglet 1, ligne vide, deuxième série = onglet 2, etc.). N'utilise PAS bpm.tabview (n'existe pas).
-- Maximum 15 lignes de code`;
+- Maximum 15 lignes de code
+
+## DONNÉES PRODUCTION DISPONIBLES (dashboard usine / TRS)
+Endpoints : GET /api/production/lines (liste lignes + TRS du jour), GET /api/production/lines/[id] (détail + historique), GET /api/production/metrics?period=7d|30d|90d (métriques globales), GET /api/production/alerts (alertes actives).
+Fonctions de calcul (lib/compute) : calculate_trs, calculate_availability, calculate_performance, calculate_quality, calculate_loss_rate.
+Composants recommandés : bpm.metric() pour TRS/Dispo/Perf/Qualité, bpm.linechart() pour évolution TRS, bpm.table() pour listes (syntaxe "Col1,Col2;val1,val2"), bpm.badge() pour statuts (variant success|warning|error), bpm.panel() pour alertes (variant="warning"), bpm.tabs() pour Vue globale | Lignes | Alertes, bpm.progress() pour barres TRS.
+
+## TEMPLATES VALIDÉS
+Exemple de référence pour un dashboard production (à adapter selon le prompt utilisateur, pas à recopier tel quel) :
+bpm.title("Dashboard Production", level=1)
+bpm.tabs("Vue globale | Lignes | Alertes")
+bpm.metric("TRS global", "74.2 %", delta=1.2, border=True)
+bpm.metric("Disponibilité", "88.1 %", border=True)
+bpm.metric("Performance", "86.5 %", border=True)
+bpm.metric("Qualité", "97.3 %", border=True)
+bpm.linechart("Lun,72;Mar,74;Mer,73;Jeu,75;Ven,74")
+bpm.progress(value=74, max=100, label="TRS cible 80%")
+bpm.title("Lignes", level=2)
+bpm.badge("EXT-A", variant="success")
+bpm.metric("EXT-A TRS", "76.2 %", border=True)
+bpm.table("Ligne,TRS,Statut;EXT-A,76.2%,actif;EXT-B,73.1%,actif;FORM-1,68.4%,maintenance;COND-1,79.0%,actif")
+bpm.title("Alertes", level=2)
+bpm.panel("TRS sous seuil", "Ligne FORM-1 : TRS à 68.4% (seuil 70%).", variant="warning")`;
 
 export interface BuilderOutput {
   code: string;

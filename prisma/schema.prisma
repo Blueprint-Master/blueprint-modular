@@ -46,6 +46,9 @@ model Organization {
   contracts       Contract[]
   aiConversations AiConversation[]
   generatedApps   GeneratedApp[]
+  productionLines    ProductionLine[]
+  productionSessions ProductionSession[]
+  productionAlerts   ProductionAlert[]
 }
 
 model OrgMember {
@@ -533,4 +536,76 @@ model Permission {
   actions   String[] @default([]) // read | create | update | delete | approve
   @@unique([roleId, domainId, resource])
   @@index([roleId])
+}
+
+// --- Production NXTFOOD (Phase 1 — dashboard suivi production) ---
+
+model ProductionLine {
+  id             String   @id @default(cuid())
+  name           String
+  code           String   // ex: EXT-A, COND-2
+  status         String   @default("active") // active | maintenance | stopped
+  theoreticalRate Float   @map("theoretical_rate") // cadence théorique unités/heure
+  organizationId String   @map("organization_id")
+  createdAt      DateTime @default(now()) @map("created_at")
+
+  sessions     ProductionSession[]
+  alerts       ProductionAlert[]
+  organization Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+
+  @@index([organizationId])
+}
+
+model ProductionSession {
+  id               String    @id @default(cuid())
+  lineId           String    @map("line_id")
+  startedAt        DateTime  @map("started_at")
+  endedAt          DateTime? @map("ended_at")
+
+  availableTime    Float     @map("available_time") // minutes disponibles
+  stopsTime        Float     @map("stops_time") // minutes arrêt total
+  plannedStops     Float     @map("planned_stops")
+  unplannedStops   Float     @map("unplanned_stops")
+
+  totalParts       Int       @map("total_parts")
+  goodParts        Int       @map("good_parts")
+  rejectedParts    Int       @map("rejected_parts")
+
+  rawMaterialUsed  Float     @map("raw_material_used") // kg
+  rawMaterialLost  Float     @map("raw_material_lost") // kg
+
+  operatorName     String?   @map("operator_name")
+  shift            String?   // matin | après-midi | nuit
+  notes            String?   @db.Text
+
+  organizationId   String    @map("organization_id")
+  createdAt        DateTime  @default(now()) @map("created_at")
+
+  line             ProductionLine  @relation(fields: [lineId], references: [id], onDelete: Cascade)
+  organization     Organization    @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+
+  @@index([lineId])
+  @@index([organizationId])
+  @@index([startedAt])
+}
+
+model ProductionAlert {
+  id             String    @id @default(cuid())
+  lineId         String    @map("line_id")
+  type           String    // trs_low | loss_high | line_stopped | quality_issue
+  severity       String    // info | warning | critical
+  message        String    @db.Text
+  value          Float?
+  threshold      Float?
+  acknowledgedAt DateTime?  @map("acknowledged_at")
+  acknowledgedBy String?   @map("acknowledged_by")
+  organizationId String    @map("organization_id")
+  createdAt      DateTime  @default(now()) @map("created_at")
+
+  line           ProductionLine @relation(fields: [lineId], references: [id], onDelete: Cascade)
+  organization   Organization   @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+
+  @@index([lineId])
+  @@index([organizationId])
+  @@index([createdAt])
 }
