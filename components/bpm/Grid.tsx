@@ -19,6 +19,7 @@ export function Grid({
   const isObj = typeof cols === "object" && cols !== null;
   const n = isObj ? 1 : (cols as number);
   const style: React.CSSProperties = {
+    display: "grid",
     gap: gapVal,
     gridTemplateColumns: `repeat(${n}, minmax(0, 1fr))`,
   };

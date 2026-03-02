@@ -1,12 +1,22 @@
 import Link from "next/link";
 import { getCachedDemoProductionData } from "@/lib/demo-production-data";
 import { DemoProductionDashboard } from "./DemoProductionDashboard";
+import { DemoErrorBoundary } from "./DemoErrorBoundary";
 
 export const dynamic = "force-dynamic";
 export const revalidate = 3600;
 
 export default async function DemoProductionPage() {
-  const data = await getCachedDemoProductionData();
+  let data;
+  try {
+    data = await getCachedDemoProductionData();
+  } catch (e) {
+    data = {
+      metrics: null,
+      lines: [],
+      alerts: [],
+    };
+  }
 
   return (
     <div className="min-h-screen" style={{ background: "var(--bpm-bg-secondary, #f5f5f5)" }}>
@@ -66,7 +76,9 @@ export default async function DemoProductionPage() {
       </div>
 
       <main className="max-w-6xl mx-auto px-4 py-6">
-        <DemoProductionDashboard data={data} />
+        <DemoErrorBoundary>
+          <DemoProductionDashboard data={data} />
+        </DemoErrorBoundary>
       </main>
     </div>
   );

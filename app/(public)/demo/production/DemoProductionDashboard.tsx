@@ -1,5 +1,6 @@
 "use client";
 
+import dynamic from "next/dynamic";
 import {
   Title,
   Tabs,
@@ -11,9 +12,13 @@ import {
   Panel,
   Grid,
   Column,
-  AssistantPanel,
 } from "@/components/bpm";
 import { DEMO_ANSWERS } from "./demo-answers";
+
+const AssistantPanel = dynamic(
+  () => import("@/components/bpm").then((m) => ({ default: m.AssistantPanel })),
+  { ssr: false }
+);
 
 type MetricsData = {
   globalTRS: number;
@@ -54,61 +59,66 @@ type DemoData = {
 };
 
 export function DemoProductionDashboard({ data }: { data: DemoData }) {
-  const { metrics, lines, alerts } = data;
+  const metrics = data?.metrics ?? null;
+  const lines = Array.isArray(data?.lines) ? data.lines : [];
+  const alerts = Array.isArray(data?.alerts) ? data.alerts : [];
 
   const vueGlobale = (
     <div className="space-y-6">
       <Title level={1}>Dashboard Production</Title>
       {metrics && (
         <>
-          <Grid>
+          <Grid cols={4}>
             <Column>
               <Metric
                 label="TRS global"
-                value={`${metrics.globalTRS} %`}
+                value={`${Number(metrics.globalTRS) || 0} %`}
                 border
               />
             </Column>
             <Column>
               <Metric
                 label="Meilleure ligne"
-                value={metrics.bestLine.name}
-                subtext={`${metrics.bestLine.trs} %`}
+                value={metrics.bestLine?.name ?? "—"}
+                subtext={metrics.bestLine != null ? `${metrics.bestLine.trs} %` : undefined}
                 border
               />
             </Column>
             <Column>
               <Metric
                 label="Ligne à surveiller"
-                value={metrics.worstLine.name}
-                subtext={`${metrics.worstLine.trs} %`}
+                value={metrics.worstLine?.name ?? "—"}
+                subtext={metrics.worstLine != null ? `${metrics.worstLine.trs} %` : undefined}
                 border
               />
             </Column>
             <Column>
               <Metric
                 label="Pièces produites"
-                value={metrics.totalProduction.toLocaleString("fr-FR")}
+                value={Number(metrics.totalProduction).toLocaleString("fr-FR")}
                 border
               />
             </Column>
           </Grid>
           <Progress
-            value={metrics.globalTRS}
-            max={metrics.trsTarget}
-            label={`TRS cible ${metrics.trsTarget} %`}
+            value={Number(metrics.globalTRS) || 0}
+            max={Number(metrics.trsTarget) || 100}
+            label={`Objectif TRS : ${metrics.trsTarget ?? 80} %`}
+            showValue
           />
-          {metrics.trsEvolution.length > 0 && (
-            <div>
+          {Array.isArray(metrics.trsEvolution) && metrics.trsEvolution.length > 0 && (
+            <div style={{ minHeight: 240 }}>
               <Title level={2}>Évolution TRS (30 jours)</Title>
-              <LineChart
-                data={metrics.trsEvolution.map((d) => ({
-                  x: d.date.slice(5),
-                  y: d.trs,
-                }))}
-                width={700}
-                height={220}
-              />
+              <div style={{ width: "100%", maxWidth: 700, height: 220 }}>
+                <LineChart
+                  data={metrics.trsEvolution.map((d) => ({
+                    x: typeof d.date === "string" ? d.date.slice(5) : String(d.date),
+                    y: Number(d.trs) || 0,
+                  }))}
+                  width={700}
+                  height={220}
+                />
+              </div>
             </div>
           )}
         </>

@@ -190,7 +190,7 @@ export function AssistantPanel({
                   className="text-sm prose prose-sm max-w-none"
                   style={{ color: "var(--bpm-text-primary)" }}
                 >
-                  <Markdown text={answer} />
+                  <Markdown text={answer ?? ""} />
                 </div>
               </div>
             )}
