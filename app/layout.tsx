@@ -15,7 +15,13 @@ export const metadata: Metadata = {
   description: DEFAULT_DESC,
   applicationName: "Blueprint Modular",
   manifest: "/manifest",
-  icons: { icon: "/img/logo-bpm.png", apple: "/img/logo-bpm.png" },
+  icons: {
+    icon: [
+      { url: "/favicon.svg", type: "image/svg+xml" },
+      { url: "/img/logo-bpm.png", type: "image/png" },
+    ],
+    apple: "/img/logo-bpm.png",
+  },
   themeColor: [
     { media: "(prefers-color-scheme: light)", color: "#ffffff" },
     { media: "(prefers-color-scheme: dark)", color: "#1a1a1a" },

@@ -239,18 +239,30 @@ async function fetchDemoProductionData(period: DemoPeriod = "30d") {
 }
 
 export async function getCachedDemoProductionData(period: DemoPeriod = "30d") {
-  return unstable_cache(
-    fetchDemoProductionData,
-    ["demo-production-data", period],
-    { revalidate: 3600 }
-  )(period);
+  try {
+    return await unstable_cache(
+      fetchDemoProductionData,
+      ["demo-production-data", period],
+      { revalidate: 3600 }
+    )(period);
+  } catch {
+    return {
+      metrics: null,
+      lines: [],
+      alerts: [],
+    };
+  }
 }
 
 export type LineWithMetrics = Awaited<ReturnType<typeof fetchDemoProductionData>>["lines"][number];
 
 export async function getCachedDemoLines(period: DemoPeriod = "30d") {
-  const data = await getCachedDemoProductionData(period);
-  return data.lines;
+  try {
+    const data = await getCachedDemoProductionData(period);
+    return data.lines;
+  } catch {
+    return [];
+  }
 }
 
 export type DemoAlert = {
@@ -300,11 +312,15 @@ export async function getCachedDemoAlerts(
   status?: "active" | "all",
   severity?: string
 ) {
-  return unstable_cache(
-    () => fetchDemoAlerts(status ?? "active", severity),
-    ["demo-alerts", status ?? "active", severity ?? "all"],
-    { revalidate: 3600 }
-  )();
+  try {
+    return await unstable_cache(
+      () => fetchDemoAlerts(status ?? "active", severity),
+      ["demo-alerts", status ?? "active", severity ?? "all"],
+      { revalidate: 3600 }
+    )();
+  } catch {
+    return [];
+  }
 }
 
 export type DemoLineDetail = {
@@ -444,9 +460,13 @@ export async function getCachedDemoLineDetail(
   lineCode: string,
   period: DemoPeriod = "30d"
 ): Promise<DemoLineDetail | null> {
-  return unstable_cache(
-    () => fetchDemoLineDetail(lineCode, period),
-    ["demo-line-detail", lineCode, period],
-    { revalidate: 3600 }
-  )();
+  try {
+    return await unstable_cache(
+      () => fetchDemoLineDetail(lineCode, period),
+      ["demo-line-detail", lineCode, period],
+      { revalidate: 3600 }
+    )();
+  } catch {
+    return null;
+  }
 }

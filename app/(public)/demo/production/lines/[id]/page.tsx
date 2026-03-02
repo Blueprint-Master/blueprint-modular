@@ -26,11 +26,15 @@ export default async function DemoLineDetailPage({
   searchParams,
 }: {
   params: Promise<{ id: string }>;
-  searchParams: Promise<{ period?: string }>;
+  searchParams?: Promise<{ period?: string }> | { period?: string };
 }) {
   const { id: lineCode } = await params;
-  const { period: periodParam } = await searchParams;
-  const period = parsePeriod(periodParam ?? null);
+  const rawSp = searchParams != null
+    ? typeof (searchParams as Promise<unknown>).then === "function"
+      ? await (searchParams as Promise<{ period?: string }>)
+      : (searchParams as { period?: string })
+    : {};
+  const period = parsePeriod(rawSp?.period ?? null);
   let detail;
   try {
     detail = await getCachedDemoLineDetail(lineCode, period);

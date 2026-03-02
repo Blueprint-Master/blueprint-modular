@@ -13,10 +13,14 @@ function parsePeriod(s: string | null): DemoPeriod {
 export default async function DemoLinesPage({
   searchParams,
 }: {
-  searchParams: Promise<{ period?: string }>;
+  searchParams?: Promise<{ period?: string }> | { period?: string };
 }) {
-  const params = await searchParams;
-  const period = parsePeriod(params.period ?? null);
+  const raw = searchParams != null
+    ? typeof (searchParams as Promise<unknown>).then === "function"
+      ? await (searchParams as Promise<{ period?: string }>)
+      : (searchParams as { period?: string })
+    : {};
+  const period = parsePeriod(raw?.period ?? null);
   let lines: LineWithMetrics[] = [];
   try {
     lines = await getCachedDemoLines(period);
