@@ -1,6 +1,6 @@
 {
   "name": "create-bpm",
-  "version": "0.1.32",
+  "version": "0.1.33",
   "description": "Create a Blueprint Modular app",
   "bin": {
     "create-bpm": "index.js",
