@@ -102,7 +102,7 @@ if [ -f "$REPO_DIR/package.json" ] && [ -f "$REPO_DIR/next.config.mjs" ]; then
   cd "$REPO_DIR"
   mkdir -p public/img
   if [ -f "Logo-BPM-nom.jpg" ]; then cp -f Logo-BPM-nom.jpg public/img/logo-bpm-nom.jpg; fi
-  if [ -f "Logo BPM.png" ]; then cp -f "Logo BPM.png" public/img/logo-bpm-nom.png; fi
+  if [ -f "Logo BPM.png" ]; then cp -f "Logo BPM.png" public/img/logo-bpm-nom.png; cp -f "Logo BPM.png" public/img/logo-bpm.png; fi
   if [ ! -f .env ]; then
     echo "    ⚠ .env manquant dans $REPO_DIR. Copiez deploy/app-env.example vers .env et renseignez DATABASE_URL, NEXTAUTH_*."
   else
