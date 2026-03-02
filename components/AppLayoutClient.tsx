@@ -146,9 +146,6 @@ function AppLayoutInner({ children }: { children: React.ReactNode }) {
                 <a href="/dashboard" className="hover:underline" style={{ color: "var(--bpm-color-link)" }}>Accueil</a>
               </span>
             </div>
-            <p className="mt-2 text-xs max-w-[1400px] mx-auto" style={{ color: "var(--bpm-text-secondary)" }}>
-              Fait avec Blueprint Modular — briques Python/React pour vos interfaces métier.
-            </p>
           </footer>
         </div>
       <AssistantProvider>

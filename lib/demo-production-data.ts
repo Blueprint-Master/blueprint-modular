@@ -288,6 +288,7 @@ export type DemoAlert = {
 };
 
 async function fetchDemoAlerts(
+  period: DemoPeriod = "30d",
   status: "active" | "all" = "active",
   severity?: string
 ) {
@@ -295,8 +296,13 @@ async function fetchDemoAlerts(
     where: { slug: DEFAULT_ORG_SLUG },
   });
   if (!org) return [];
+  const days = daysForPeriod(period);
+  const from = new Date();
+  from.setDate(from.getDate() - days);
+  from.setHours(0, 0, 0, 0);
   const where: Record<string, unknown> = {
     organizationId: org.id,
+    createdAt: { gte: from },
     ...(status === "active" ? { acknowledgedAt: null } : {}),
     ...(severity && severity !== "all" ? { severity } : {}),
   };
@@ -319,13 +325,14 @@ async function fetchDemoAlerts(
 }
 
 export async function getCachedDemoAlerts(
+  period: DemoPeriod = "30d",
   status?: "active" | "all",
   severity?: string
 ) {
   try {
     return await unstable_cache(
-      () => fetchDemoAlerts(status ?? "active", severity),
-      ["demo-alerts", status ?? "active", severity ?? "all"],
+      () => fetchDemoAlerts(period, status ?? "active", severity),
+      ["demo-alerts", period, status ?? "active", severity ?? "all"],
       { revalidate: 3600 }
     )();
   } catch {

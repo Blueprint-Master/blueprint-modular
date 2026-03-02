@@ -37,10 +37,11 @@ export function DemoNav() {
             tab.href === "/demo/production"
               ? base === "/demo/production"
               : pathname.startsWith(tab.href);
+          const href = `${tab.href}${period ? `?period=${period}` : ""}`;
           return (
             <Link
               key={tab.href}
-              href={tab.href}
+              href={href}
               className="rounded px-3 py-2 text-sm font-medium transition"
               style={{
                 background: isActive ? "var(--bpm-accent-cyan)" : "transparent",

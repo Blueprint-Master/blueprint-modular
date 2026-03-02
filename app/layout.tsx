@@ -19,7 +19,6 @@ export const metadata: Metadata = {
     icon: [
       { url: "/img/icon-pwa-192.png", type: "image/png", sizes: "192x192" },
       { url: "/img/icon-pwa-512.png", type: "image/png", sizes: "512x512" },
-      { url: "/favicon.svg", type: "image/svg+xml" },
     ],
     apple: "/img/icon-pwa-192.png",
   },
@@ -53,6 +52,7 @@ export default function RootLayout({
   return (
     <html lang="fr" dir="ltr" suppressHydrationWarning>
       <head>
+        <link rel="icon" href="/img/icon-pwa-192.png" type="image/png" sizes="192x192" />
         <meta charSet="utf-8" />
         <meta name="apple-mobile-web-app-capable" content="yes" />
         <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />

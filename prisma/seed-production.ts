@@ -133,7 +133,7 @@ async function main() {
 
   await prisma.productionSession.createMany({ data: sessions });
 
-  // 15-20 alertes variées (types : trs_low, loss_high, line_stopped, quality_issue)
+  // Alertes sur les 100 derniers jours pour tester les filtres 7j / 30j / 90j
   const alertTypes = [
     "trs_low",
     "loss_high",
@@ -156,9 +156,10 @@ async function main() {
     value: number | null;
     threshold: number | null;
     organizationId: string;
+    createdAt: Date;
   }> = [];
 
-  for (let i = 0; i < 18; i++) {
+  for (let i = 0; i < 55; i++) {
     const line = createdLines[i % createdLines.length];
     const type = alertTypes[randomInt(0, alertTypes.length - 1)];
     const severity =
@@ -173,6 +174,12 @@ async function main() {
           : null;
     const threshold = type === "trs_low" ? 70 : type === "loss_high" ? 5 : null;
 
+    // Répartir les alertes sur les 100 derniers jours (quelques-unes acquittées)
+    const daysAgo = randomInt(0, 99);
+    const createdAt = new Date(now);
+    createdAt.setDate(createdAt.getDate() - daysAgo);
+    createdAt.setHours(randomInt(8, 18), randomInt(0, 59), 0, 0);
+
     alertsToCreate.push({
       lineId: line.id,
       type,
@@ -181,6 +188,7 @@ async function main() {
       value: value ?? null,
       threshold: threshold ?? null,
       organizationId: orgId,
+      createdAt,
     });
   }
 
