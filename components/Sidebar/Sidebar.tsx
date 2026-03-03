@@ -147,8 +147,8 @@ export function Sidebar() {
         onMouseEnter={() => setSidebarHovered(true)}
         onMouseLeave={() => setSidebarHovered(false)}
       >
-        {/* Header : titre .Modular + collapse (aligné .Maker : 25px, padding 4px 0 8px, min-h 40px) */}
-        <div className={`flex items-center shrink-0 pt-1 pb-2 min-h-[40px] ${collapsed ? "justify-center" : "justify-between gap-2 pl-3 pr-0"}`}>
+        {/* Header : titre .Modular + collapse (aligné .Maker : même gauche que les items, 25px, espace sous le titre) */}
+        <div className={`flex items-center shrink-0 pt-1 min-h-[40px] ${collapsed ? "justify-center pb-2" : "justify-between gap-2 pl-3 pr-0 pb-4"}`}>
           {!collapsed && (
             <Link
               href="/dashboard"
@@ -169,15 +169,15 @@ export function Sidebar() {
           </button>
         </div>
 
-        {/* Liens principaux (aligné .Maker : gap 2px, item padding 8px 12px, gap icon–texte 10px, 14px) */}
+        {/* Liens principaux (aligné .Maker : gap 2px entre items, padding 8px 12px, 10px entre icône et texte) */}
         <nav className="flex-1 overflow-y-auto flex flex-col gap-0.5 min-h-0" aria-label="Navigation principale">
           {navItems.map((item) => (
             <NavIcon key={item.href} href={item.href} label={item.label} icon={item.icon} />
           ))}
         </nav>
 
-        {/* Bas : thème, utilisateur, déconnexion (mêmes marges .Maker) */}
-        <div className="pt-2 pb-0 px-2 border-t shrink-0 space-y-1" style={{ borderColor: "var(--bpm-sidebar-border)" }}>
+        {/* Bas : thème, utilisateur, déconnexion */}
+        <div className="pt-3 pb-2 px-2 border-t shrink-0 space-y-2" style={{ borderColor: "var(--bpm-sidebar-border)" }}>
           <button
             type="button"
             className="flex items-center gap-2.5 w-full py-2 px-3 rounded-[6px] hover:bg-[var(--bpm-sidebar-hover-bg)] transition-[background-color] duration-150 ease-out text-[14px]"
