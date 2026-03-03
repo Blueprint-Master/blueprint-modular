@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import React, { useState, useMemo, useCallback } from "react";
 import Link from "next/link";
@@ -300,9 +300,10 @@ export default function CalendrierSimulateurPage() {
   const dayEvents = eventsForDay(focusKey);
   const dayLanes = useMemo(() => computeLanes(dayEvents), [dayEvents]);
   const maxLaneDay = dayEvents.length ? Math.max(...Array.from(dayLanes.values())) + 1 : 1;
+  const totalCells = Math.ceil((startPad + daysInMonth) / 7) * 7;
+  const monthLabel = new Date(year, month).toLocaleDateString("fr-FR", { month: "long", year: "numeric" });
 
-
-  /** Desktop : affichage mensuel « grand calendrier » (format de l’ancienne page /calendrier, hors Panel). */
+  /** Bloc désactivé : ancien rendu desktop-only (mois seul, sans onglets). Conservé pour référence. */
   if (false) {
     return (
       <div className="doc-page">
