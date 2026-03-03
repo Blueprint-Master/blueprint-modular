@@ -22,12 +22,13 @@ Le JSON doit respecter exactement ce schéma :
 
 Composants BPM disponibles : Accordion, AreaChart, Audio, Autocomplete, Avatar, Badge,
 BarChart, Breadcrumb, Button, Caption, Card, Checkbox, Chip, CodeBlock, ColorPicker,
-Column, Container, DateInput, DateRangePicker, Divider, Empty, EmptyState, Expander,
-FAB, FileUploader, Grid, HighlightBox, Html, Image, Input, JsonViewer, LineChart,
-Map, Markdown, Message, Metric, Modal, NumberInput, Panel, PdfViewer, PlotlyChart,
-Popover, Progress, RadioGroup, Rating, ScatterChart, Selectbox, Skeleton, Slider,
-Spinner, SpinnerDot, StatusBox, Stepper, Table, Tabs, Text, Textarea, Theme,
-TimeInput, Timeline, Title, Toast, Toggle, Tooltip, TopNav, Treeview, Video
+Column, Container, CrudPage, DateInput, DateRangePicker, Divider, Empty, EmptyState,
+Expander, FAB, FileUploader, Grid, HighlightBox, Html, Image, Input, JsonViewer,
+LineChart, Map, Markdown, Message, Metric, Modal, NumberInput, Panel, PdfViewer,
+PlotlyChart, Popover, Progress, RadioGroup, Rating, ScatterChart, Selectbox,
+Skeleton, Slider, Spinner, SpinnerDot, StatusBox, Stepper, Table, Tabs, Text,
+Textarea, Theme, TimeInput, Timeline, Title, Toast, Toggle, Tooltip, TopNav,
+Treeview, Video
 
 Modules BPM disponibles : auth, contracts, wiki, notifications, documents, veille,
 calendar, crud-advanced, file-manager, analytics`;

@@ -150,3 +150,5 @@ export type { PaginationProps } from "./Pagination";
 export { OfflineIndicator } from "./OfflineIndicator";
 export { AssistantPanel } from "./AssistantPanel";
 export type { AssistantPanelProps } from "./AssistantPanel";
+export { CrudPage } from "./CrudPage";
+export type { CrudPageProps, CrudColumn, CrudField } from "./CrudPage";

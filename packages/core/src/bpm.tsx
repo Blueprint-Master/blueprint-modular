@@ -23,6 +23,7 @@ import {
   Checkbox,
   Chip,
   CodeBlock,
+  CrudPage,
   ColorPicker,
   Column,
   Container,
@@ -85,6 +86,8 @@ import {
   Treeview,
   Video,
 } from "../../../components/bpm";
+
+export type { CrudPageProps, CrudColumn, CrudField } from "../../../components/bpm";
 
 // --- Types locaux (Page, Title, Metric, Table, Chat) avec props sémantiques optionnelles ---
 
@@ -389,6 +392,7 @@ export const bpm = {
   checkbox: Checkbox,
   chip: Chip,
   codeBlock: CodeBlock,
+  crud: CrudPage,
   colorPicker: ColorPicker,
   column: Column,
   container: Container,

@@ -614,7 +614,7 @@ export default function CalendrierSimulateurPage() {
       <EventFormModal open={formOpen} onClose={() => setFormOpen(false)} onSubmit={handleAddEvent} defaultDate={focusKey} />
 
       <p className="mt-6 text-sm" style={{ color: "var(--bpm-text-secondary)" }}>
-        <Link href="/modules/calendrier" className="font-medium underline" style={{ color: "var(--bpm-accent-cyan)" }}>← Retour au module Calendrier</Link>
+        <Link href="/modules/calendrier" className="font-medium underline" style={{ color: "var(--bpm-accent-cyan)" }}>← Retour au Calendrier</Link>
       </p>
     </div>
   );

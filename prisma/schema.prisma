@@ -29,6 +29,7 @@ model User {
   assignmentsAssigned  Assignment[]      @relation("AssignmentAssignee")
   assignmentsAsTech    Assignment[]      @relation("AssignmentTechnician")
   notifications        Notification[]
+  calendarEvents       CalendarEvent[]
 }
 
 model Notification {
@@ -45,6 +46,24 @@ model Notification {
 
   @@index([userId])
   @@index([userId, readAt])
+}
+
+model CalendarEvent {
+  id          String    @id @default(cuid())
+  userId      String    @map("user_id")
+  title       String
+  startAt     DateTime  @map("start_at")
+  endAt       DateTime  @map("end_at")
+  allDay      Boolean   @default(false) @map("all_day")
+  description String?   @db.Text
+  color       String?   // ex. #3b82f6 ou nom CSS
+  createdAt   DateTime  @default(now()) @map("created_at")
+  updatedAt   DateTime  @updatedAt @map("updated_at")
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([userId, startAt])
 }
 
 model Organization {

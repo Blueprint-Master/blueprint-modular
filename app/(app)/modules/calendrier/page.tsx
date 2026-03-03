@@ -63,8 +63,8 @@ function useMonthGrid(viewDate: { year: number; month: number }) {
   return { startPad, daysInMonth, totalCells };
 }
 
-/** Format desktop : même mise en page que le calendrier Gestion de parc. */
-function DesktopCalendarView() {
+/** Grand calendrier mensuel — même mise en page que le calendrier Gestion de parc (desktop). */
+function GrandCalendrierMensuel() {
   const [viewDate, setViewDate] = useState(() => {
     const d = new Date();
     return { year: d.getFullYear(), month: d.getMonth() };
@@ -75,117 +75,43 @@ function DesktopCalendarView() {
   const nextMonth = () => setViewDate((v) => (v.month === 11 ? { year: v.year + 1, month: 0 } : { year: v.year, month: v.month + 1 }));
 
   return (
-    <>
-      <div className="doc-page-header mb-6">
-        <div className="flex flex-wrap items-center justify-between gap-4">
-          <h1 className="text-2xl font-bold" style={{ color: "var(--bpm-text-primary)" }}>
-            Calendrier
-          </h1>
-          <div className="flex items-center gap-2">
-            <Button size="small" variant="outline" onClick={prevMonth} aria-label="Mois précédent">←</Button>
-            <span className="capitalize font-medium min-w-[180px] text-center" style={{ color: "var(--bpm-text-primary)" }}>
-              {monthLabel}
-            </span>
-            <Button size="small" variant="outline" onClick={nextMonth} aria-label="Mois suivant">→</Button>
+    <Panel variant="info" title="Vue mensuelle">
+      <div className="grid grid-cols-7 gap-px rounded-lg overflow-hidden calendar-month-grid" style={{ background: "var(--bpm-border)" }}>
+        {["Lun", "Mar", "Mer", "Jeu", "Ven", "Sam", "Dim"].map((day) => (
+          <div
+            key={day}
+            className="p-2 text-center text-xs font-medium"
+            style={{ background: "var(--bpm-sidebar-bg)", color: "var(--bpm-text-secondary)" }}
+          >
+            {day}
           </div>
-        </div>
-        <p className="doc-description mt-1" style={{ color: "var(--bpm-text-secondary)" }}>
-          Agenda jour / semaine / mois, événements et rappels. <Link href="/modules/calendrier/simulateur" className="underline" style={{ color: "var(--bpm-accent-cyan)" }}>Ouvrir le simulateur</Link> pour les vues détaillées.
-        </p>
-      </div>
-      <Panel variant="info" title="Vue mensuelle">
-        <div className="grid grid-cols-7 gap-px rounded-lg overflow-hidden calendar-month-grid" style={{ background: "var(--bpm-border)" }}>
-          {["Lun", "Mar", "Mer", "Jeu", "Ven", "Sam", "Dim"].map((day) => (
+        ))}
+        {Array.from({ length: totalCells }, (_, i) => {
+          const dayNum = i - startPad + 1;
+          const isCurrentMonth = dayNum >= 1 && dayNum <= daysInMonth;
+          return (
             <div
-              key={day}
-              className="p-2 text-center text-xs font-medium"
-              style={{ background: "var(--bpm-sidebar-bg)", color: "var(--bpm-text-secondary)" }}
+              key={i}
+              className="min-h-[80px] flex flex-col calendar-month-cell"
+              style={{
+                background: isCurrentMonth ? "var(--bpm-bg-primary)" : "var(--bpm-sidebar-bg)",
+                color: isCurrentMonth ? "var(--bpm-text-primary)" : "var(--bpm-text-secondary)",
+              }}
             >
-              {day}
+              <span className="calendar-month-day-num text-xs font-medium">{isCurrentMonth ? dayNum : ""}</span>
+              <div className="flex-1 space-y-0.5 overflow-auto" />
             </div>
-          ))}
-          {Array.from({ length: totalCells }, (_, i) => {
-            const dayNum = i - startPad + 1;
-            const isCurrentMonth = dayNum >= 1 && dayNum <= daysInMonth;
-            return (
-              <div
-                key={i}
-                className="min-h-[80px] flex flex-col calendar-month-cell"
-                style={{
-                  background: isCurrentMonth ? "var(--bpm-bg-primary)" : "var(--bpm-sidebar-bg)",
-                  color: isCurrentMonth ? "var(--bpm-text-primary)" : "var(--bpm-text-secondary)",
-                }}
-              >
-                <span className="calendar-month-day-num text-xs font-medium">{isCurrentMonth ? dayNum : ""}</span>
-                <div className="flex-1 space-y-0.5 overflow-auto" />
-              </div>
-            );
-          })}
-        </div>
-      </Panel>
-    </>
-  );
-}
-
-/** Format mobile/PWA : format mensuel actuel (Panel VUE MENSUELLE + grille). */
-function MobileCalendarMonthView() {
-  const [viewDate, setViewDate] = useState(() => {
-    const d = new Date();
-    return { year: d.getFullYear(), month: d.getMonth() };
-  });
-  const { startPad, daysInMonth, totalCells } = useMonthGrid(viewDate);
-  const monthLabel = new Date(viewDate.year, viewDate.month).toLocaleDateString("fr-FR", { month: "long", year: "numeric" });
-  const prevMonth = () => setViewDate((v) => (v.month === 0 ? { year: v.year - 1, month: 11 } : { year: v.year, month: v.month - 1 }));
-  const nextMonth = () => setViewDate((v) => (v.month === 11 ? { year: v.year + 1, month: 0 } : { year: v.year, month: v.month + 1 }));
-
-  return (
-    <>
-      <div className="flex flex-wrap items-center justify-between gap-4 mb-4">
-        <div>
-          <h2 className="text-lg font-semibold m-0" style={{ color: "var(--bpm-text-primary)" }}>Vue mensuelle</h2>
-          <p className="text-sm m-0 mt-1" style={{ color: "var(--bpm-text-secondary)" }}>
-            Agenda du mois. <Link href="/modules/calendrier/simulateur" className="underline" style={{ color: "var(--bpm-accent-cyan)" }}>Ouvrir le simulateur</Link> pour les événements jour / semaine / mois.
-          </p>
-        </div>
-        <div className="flex items-center gap-2">
-          <Button size="small" variant="outline" onClick={prevMonth} aria-label="Mois précédent">←</Button>
-          <span className="capitalize font-medium min-w-[180px] text-center" style={{ color: "var(--bpm-text-primary)" }}>
-            {monthLabel}
-          </span>
-          <Button size="small" variant="outline" onClick={nextMonth} aria-label="Mois suivant">→</Button>
-        </div>
+          );
+        })}
       </div>
-      <Panel variant="info" title="VUE MENSUELLE">
-        <div className="grid grid-cols-7 gap-px rounded-lg overflow-hidden calendar-month-grid" style={{ background: "var(--bpm-border)" }}>
-          {["Lun", "Mar", "Mer", "Jeu", "Ven", "Sam", "Dim"].map((day) => (
-            <div
-              key={day}
-              className="p-2 text-center text-xs font-medium"
-              style={{ background: "var(--bpm-sidebar-bg)", color: "var(--bpm-text-secondary)" }}
-            >
-              {day}
-            </div>
-          ))}
-          {Array.from({ length: totalCells }, (_, i) => {
-            const dayNum = i - startPad + 1;
-            const isCurrentMonth = dayNum >= 1 && dayNum <= daysInMonth;
-            return (
-              <div
-                key={i}
-                className="min-h-[80px] flex flex-col calendar-month-cell"
-                style={{
-                  background: isCurrentMonth ? "var(--bpm-bg-primary)" : "var(--bpm-sidebar-bg)",
-                  color: isCurrentMonth ? "var(--bpm-text-primary)" : "var(--bpm-text-secondary)",
-                }}
-              >
-                <span className="calendar-month-day-num text-xs font-medium">{isCurrentMonth ? dayNum : ""}</span>
-                <div className="flex-1 overflow-auto" />
-              </div>
-            );
-          })}
-        </div>
-      </Panel>
-    </>
+      <div className="flex items-center justify-center gap-2 mt-4">
+        <Button size="small" variant="outline" onClick={prevMonth} aria-label="Mois précédent">←</Button>
+        <span className="capitalize font-medium min-w-[180px] text-center" style={{ color: "var(--bpm-text-primary)" }}>
+          {monthLabel}
+        </span>
+        <Button size="small" variant="outline" onClick={nextMonth} aria-label="Mois suivant">→</Button>
+      </div>
+    </Panel>
   );
 }
 
@@ -205,10 +131,33 @@ export default function CalendrierModulePage() {
           </p>
         ) : null}
       </div>
+
       {isMobile ? (
-        <Tabs tabs={[{ label: "Documentation", content: docContent }, { label: "Simulateur", content: <SimuContent /> }, { label: "Mois", content: <MobileCalendarMonthView /> }]} defaultTab={2} />
+        <Tabs
+          tabs={[
+            { label: "Documentation", content: docContent },
+            { label: "Simulateur", content: <SimuContent /> },
+            { label: "Mois", content: <GrandCalendrierMensuel /> },
+          ]}
+          defaultTab={2}
+        />
       ) : (
-        <DesktopCalendarView />
+        <>
+          <div className="doc-page-header mb-6">
+            <div className="flex flex-wrap items-center justify-between gap-4">
+              <h2 className="text-xl font-bold" style={{ color: "var(--bpm-text-primary)" }}>
+                Calendrier
+              </h2>
+              <Link href="/modules/calendrier/simulateur" className="font-medium underline" style={{ color: "var(--bpm-accent-cyan)" }}>
+                Vues jour / semaine / mois (simulateur)
+              </Link>
+            </div>
+            <p className="doc-description mt-1" style={{ color: "var(--bpm-text-secondary)" }}>
+              Agenda jour / semaine / mois, événements et rappels.
+            </p>
+          </div>
+          <GrandCalendrierMensuel />
+        </>
       )}
     </div>
   );
