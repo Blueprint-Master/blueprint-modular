@@ -8,7 +8,7 @@ export default function CalendrierDocumentationPage() {
     <div className="doc-page">
       <div className="doc-page-header">
         <nav className="doc-breadcrumb">
-          <Link href="/modules">Modules</Link> → <Link href="/modules/calendrier">Calendrier</Link> → Documentation
+          <Link href="/modules">Modules</Link> → <Link href="/modules/calendrier/simulateur">Calendrier</Link> → Documentation
         </nav>
         <h1>Documentation — Calendrier</h1>
         <p className="doc-description">
@@ -91,7 +91,7 @@ bpm.title("Agenda")
       </p>
 
       <p className="mt-8 text-sm" style={{ color: "var(--bpm-text-secondary)" }}>
-        <Link href="/modules/calendrier" className="font-medium underline" style={{ color: "var(--bpm-accent-cyan)" }}>← Retour au Calendrier</Link>
+        <Link href="/modules/calendrier/simulateur" className="font-medium underline" style={{ color: "var(--bpm-accent-cyan)" }}>← Retour au Calendrier</Link>
       </p>
     </div>
   );

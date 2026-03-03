@@ -30,7 +30,7 @@ const MODULES_BY_CATEGORY: Record<(typeof CATEGORY_ORDER)[number], ModuleEntry[]
     { href: "/modules/auth", label: "Auth", description: "Authentification Google & e-mail, gestion de sessions et whitelist utilisateurs.", icon: Shield, simulatorAndDoc: true },
   ],
   "Contenu & productivité": [
-    { href: "/modules/calendrier", label: "Calendrier", description: "Agenda jour / semaine / mois, événements et rappels.", icon: Calendar, simulatorAndDoc: true, simulateurHref: "/modules/calendrier/simulateur" },
+    { href: "/modules/calendrier/simulateur", label: "Calendrier", description: "Agenda jour / semaine / mois, événements et rappels.", icon: Calendar, simulatorAndDoc: true, simulateurHref: "/modules/calendrier/simulateur" },
     { href: "/modules/commentaires", label: "Commentaires", description: "Commentaires et annotations sur une entité (document, ligne, projet).", icon: MessageSquare, simulatorAndDoc: true },
     { href: "/modules/skeleton", label: "Skeleton", description: "Assemblages de bpm.skeleton pour un chargement de page complet (header, métriques, tableau).", icon: LayoutDashboard, simulatorAndDoc: true },
     { href: "/modules/tableau-blanc", label: "Tableau blanc", description: "Post-it et zones de texte pour rétros ou ateliers.", icon: StickyNote, simulatorAndDoc: true },
