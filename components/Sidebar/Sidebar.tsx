@@ -110,7 +110,7 @@ export function Sidebar() {
         style={compact ? undefined : { background: isActive ? "var(--bpm-sidebar-active-bg)" : "transparent" }}
         title={compact ? label : undefined}
       >
-        <span className={compact ? "shrink-0" : "bpm-sidebar-icon-wrap"}>
+        <span className={compact ? "shrink-0 inline-flex items-center justify-center w-5 h-5" : "bpm-sidebar-icon-wrap"}>
           <Icon className="w-5 h-5" style={{ width: 20, height: 20 }} />
         </span>
         {showLabel && <span className={compact ? "text-xs font-normal truncate max-w-full text-center" : "bpm-sidebar-item-label"}>{label}</span>}

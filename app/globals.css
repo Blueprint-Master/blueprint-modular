@@ -355,12 +355,23 @@ html[data-theme="dark"] .bpm-app-sidebar .bpm-sidebar-footer-wrap {
   }
 }
 
-/* Barre de navigation mobile / PWA : liens cliquables sans délai */
+/* Barre de navigation mobile / PWA : liens cliquables sans délai, icône + label centrés */
 .bpm-mobile-nav-bar a {
   touch-action: manipulation;
   -webkit-tap-highlight-color: transparent;
   min-height: 44px;
   min-width: 44px;
+}
+.bpm-mobile-nav-bar .bpm-sidebar-item {
+  display: flex !important;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  min-width: 0;
+}
+.bpm-mobile-nav-bar .bpm-sidebar-item span:last-child {
+  width: 100%;
 }
 
 /* Table variants (striped / hover) — lignes impaires en gris plus clair que l'en-tête */
