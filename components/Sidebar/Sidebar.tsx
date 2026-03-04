@@ -106,7 +106,7 @@ export function Sidebar() {
     return (
       <Link
         href={href}
-        className={`bpm-sidebar-item ${compact ? "flex-col gap-0.5 py-2 min-w-0 rounded-lg flex-1 basis-0 justify-center" : ""}`}
+        className={`bpm-sidebar-item ${compact ? "flex-col gap-0.5 py-2 min-w-0 rounded-lg flex-1 basis-0 justify-center items-center" : ""}`}
         style={compact ? undefined : { background: isActive ? "var(--bpm-sidebar-active-bg)" : "transparent" }}
         title={compact ? label : undefined}
       >

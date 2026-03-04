@@ -88,11 +88,19 @@ import {
 } from "../../../components/bpm";
 
 export type { CrudPageProps, CrudColumn, CrudField } from "../../../components/bpm";
-export type { TableColumn, TableProps as TablePropsBpm } from "../../../components/bpm/Table";
-import type { TableColumn as TableColumnType } from "../../../components/bpm/Table";
+export type { TableProps as TablePropsBpm } from "../../../components/bpm/Table";
+
+/** Colonne pour bpm.table — API documentée. */
+export interface TableColumn {
+  key: string;
+  label: string;
+  type?: "text" | "number" | "date" | "badge" | "boolean";
+  sortable?: boolean;
+}
 export type { TabsProps, TabItem, TabsItems } from "../../../components/bpm/Tabs";
 import type { TabsItems } from "../../../components/bpm/Tabs";
 export type { MetricProps as MetricPropsBpm } from "../../../components/bpm/Metric";
+import type { SpinnerProps } from "../../../components/bpm/Spinner";
 export type { SpinnerProps as SpinnerPropsBpm, SpinnerSize } from "../../../components/bpm/Spinner";
 
 /** Wrapper : (props) => createElement(Component, props) — API toujours en objet */
@@ -122,7 +130,7 @@ export interface MetricProps {
 }
 
 export interface TableProps {
-  columns?: TableColumnType[];
+  columns?: TableColumn[];
   data: Record<string, unknown>[];
   onRowClick?: (row: Record<string, unknown>) => void;
   searchable?: boolean;
@@ -470,7 +478,7 @@ export const bpm = {
   selectbox: wrap(Selectbox),
   skeleton: wrap(Skeleton),
   slider: wrap(Slider),
-  spinner: wrap(Spinner),
+  spinner: (arg?: SpinnerProps) => React.createElement(Spinner, arg ?? {}),
   spinnerDot: wrap(SpinnerDot),
   statusBox: wrap(StatusBox),
   stepper: wrap(Stepper),
