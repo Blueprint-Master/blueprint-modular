@@ -80,7 +80,7 @@ def parse_props_interface(source: str, interface_name: str) -> list[dict]:
     # Trouver le bloc de l'interface
     pattern = re.compile(
         r"export\s+interface\s+" + re.escape(interface_name) +
-        r"\s*(?:extends\s+\S+)?\s*\{([^}]+)\}",
+        r"\s*(?:extends\s+[^{]+)?\s*\{([^}]+)\}",
         re.DOTALL
     )
     m = pattern.search(source)
