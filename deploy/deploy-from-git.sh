@@ -51,6 +51,7 @@ sudo cp -rf "$STATIC/img" "$VITRINE_DIR/" 2>/dev/null || true
 sudo cp -rf "$STATIC/js" "$VITRINE_DIR/" 2>/dev/null || true
 sudo cp -rf "$STATIC/modules" "$VITRINE_DIR/"
 sudo cp -f "$REPO_DIR/public/llms.txt" "$VITRINE_DIR/" 2>/dev/null || true
+sudo cp -f "$REPO_DIR/public/llms-core.txt" "$VITRINE_DIR/" 2>/dev/null || true
 
 # --- Documentation (tout le contenu doc) ---
 echo "--> Documentation → $DOCS_DIR"
