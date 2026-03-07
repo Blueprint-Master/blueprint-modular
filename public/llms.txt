@@ -1,16 +1,522 @@
-# Blueprint Modular
+# Blueprint Modular — Agent Context File
+# Version : 0.1.43
+# URL canonique : https://blueprint-modular.com/llms.txt
+# Usage : injecter ce fichier en contexte avant toute génération bpm.*
 
-Blueprint Modular is a Python/React framework for building business interfaces without HTML or JavaScript. Developers import components from bpm and the framework handles rendering.
+## RÈGLES ABSOLUES
 
-## Framework
-- Components: bpm.metric, bpm.table, bpm.title, bpm.toggle, bpm.panel, bpm.tabs, bpm.button, bpm.modal
-- Modules: wiki, ia (AI chat), documents (contract analysis), veille (monitoring), ibkr (Interactive Brokers)
-- Installation: pip install blueprint-modular or git clone https://github.com/remigit55/blueprint-modular
-- Documentation: https://blueprint-modular.com/docs
+IMPORT: import { bpm } from '@blueprint-modular/core'
+INTERDIT: import { bpm.modal } — JAMAIS de destructuring
+INTERDIT: bpm.toast() dans les apps générées — utiliser bpm.badge position:fixed
+INTERDIT: JSX dans data[] de bpm.table — utiliser renderCell dans columns
+INTERDIT: div custom comme parent direct de bpm.metric — casse le responsive
+INTERDIT: size:'md' ou size:'sm' — toujours 'small'|'medium'|'large'
+INTERDIT: prop weight sur bpm.text — utiliser style={{ fontWeight: 600 }}
+INTERDIT: prop value sur bpm.toggle — utiliser prop value (booléen)
+MODALES: TOUJOURS à l'intérieur du return(), jamais après bpm.container()
+GRAPHIQUES: TOUJOURS bpm.plotlyChart — jamais bpm.lineChart/barChart/areaChart
+MÉTRIQUES: TOUJOURS dans bpm.metricRow — jamais dans div grid/flex fixe
+SPINNER: size 'small'|'medium'|'large' UNIQUEMENT — jamais 'md' ni 'sm'
 
-## Key concepts
-- bpm components map directly to Python function calls
-- No HTML/CSS/JS knowledge required
-- Built-in dark/light mode, mobile responsive
-- Module system for extending functionality
-- AI assistant integrated (Claude, GPT, Gemini, Grok)
+---
+
+## LAYOUT
+
+### bpm.container
+bpm.container({ children*, className? })
+PARENT: racine de page ou section principale
+EXEMPLE: bpm.container({ children: <>{bpm.title1({children:'Dashboard'})}</> })
+
+### bpm.grid
+bpm.grid({ cols?, gap?, children?, className? })
+- cols: number | { xs?,sm?,md?,lg? } (défaut:1)
+- gap: number|string (défaut:'1rem')
+EXEMPLE: bpm.grid({ cols:3, gap:'1.5rem', children: <>{cards}</> })
+
+### bpm.column
+bpm.column({ columns?, gap?, children?, className? })
+- columns: number 1-12 (défaut:2)
+- gap: number|string (défaut:'1rem')
+EXEMPLE: bpm.column({ columns:2, children: <>{left}{right}</> })
+
+### bpm.card
+bpm.card({ title?, subtitle?, children?, actions?, variant?, inverted?, className? })
+- variant: 'default'|'elevated'|'outlined' (défaut:'default')
+- inverted: boolean — fond sombre texte blanc
+PARENT: bpm.grid | bpm.column | bpm.container
+EXEMPLE: bpm.card({ title:'Clients', variant:'elevated', children: <>{content}</> })
+
+### bpm.panel
+bpm.panel({ variant?, title?, icon?, inverted?, children?, className? })
+- variant: 'info'|'success'|'warning'|'error' (défaut:'info')
+- inverted: boolean — style Executive Summary fond sombre
+EXEMPLE: bpm.panel({ variant:'warning', title:'Attention', children: <p>Message</p> })
+
+### bpm.tabs
+bpm.tabs({ tabs*, defaultTab?, onChange?, className? })
+- tabs: Array<{ label:string, content:ReactNode, key?:string|number }>
+- defaultTab: number (défaut:0)
+EXEMPLE:
+  bpm.tabs({ tabs:[
+    { label:'Dashboard', content:<DashboardView /> },
+    { label:'Liste', content:<ListView /> },
+  ], defaultTab:0 })
+
+### bpm.expander
+bpm.expander({ title*, children*, defaultExpanded?, className? })
+EXEMPLE: bpm.expander({ title:'Détails', children:<p>Contenu</p>, defaultExpanded:false })
+
+### bpm.accordion
+bpm.accordion({ sections?, allowMultiple?, defaultOpenIds?, className? })
+- sections: Array<{ id?,title:ReactNode, content:ReactNode }>
+EXEMPLE: bpm.accordion({ sections:[{title:'Q1',content:<p>Réponse</p>}] })
+
+### bpm.drawer
+bpm.drawer({ children*, open*, onClose*, title?, side?, width?, className? })
+- open: boolean (OBLIGATOIRE)
+- onClose: ()=>void (OBLIGATOIRE)
+- side: 'left'|'right' (défaut:'right')
+- width: number|string (défaut:360)
+EXEMPLE: {open && bpm.drawer({ open, onClose:()=>setOpen(false), title:'Détails', children:<Form /> })}
+
+### bpm.modal
+bpm.modal({ isOpen*, onClose*, title*, children*, size? })
+- isOpen: boolean (OBLIGATOIRE)
+- onClose: ()=>void (OBLIGATOIRE)
+- title: string (OBLIGATOIRE)
+- size: 'small'|'medium'|'large' (défaut:'medium')
+RÈGLE: {isOpen && bpm.modal({ isOpen:true, onClose, title:'...', children:<>...</> })}
+RÈGLE: TOUJOURS à l'intérieur du return() — JAMAIS après le return()
+ASSOCIÉ: bpm.button (déclencheur), bpm.input/selectbox (formulaire dans modal)
+
+---
+
+## DONNÉES & MÉTRIQUES
+
+### bpm.metricRow
+bpm.metricRow({ children*, className? })
+- children: un ou plusieurs bpm.metric()
+RÈGLE: TOUJOURS utiliser pour regrouper les KPIs — JAMAIS div grid/flex fixe
+PARENT: haut de page, section résumé
+EXEMPLE:
+  bpm.metricRow({ children: <>
+    {bpm.metric({ label:'CA', value:'1,2M€', delta:8, deltaLabel:'vs N-1' })}
+    {bpm.metric({ label:'Marge', value:'34%', delta:-2 })}
+    {bpm.metric({ label:'Clients', value:142 })}
+  </> })
+
+### bpm.metric
+bpm.metric({ label*, value*, delta?, deltaLabel?, icon?, className? })
+- label: string (OBLIGATOIRE)
+- value: string|number (OBLIGATOIRE)
+- delta: number — positif=vert, négatif=rouge (logique higher_is_better par défaut)
+- deltaLabel: string — ex: 'vs mois dernier'
+PARENT: bpm.metricRow (standard) | bpm.card (KPI isolé)
+INTERDIT: div custom comme parent direct
+ASSOCIÉ: bpm.metricRow, bpm.badge (statut), bpm.plotlyChart (tendance)
+EXEMPLE: bpm.metric({ label:'TRS', value:'74%', delta:-3, deltaLabel:'vs semaine dernière' })
+
+### bpm.table
+bpm.table({ columns?, data*, searchable?, pagination?, onRowClick?, className? })
+- columns: Array<{ key:string, label:string, sortable?,
+           align?:'left'|'center'|'right', renderCell?:(value,row)=>ReactNode }>
+- data: Array<Record<string,unknown>> (OBLIGATOIRE)
+- searchable: boolean
+- pagination: boolean
+RÈGLE: JAMAIS de JSX dans data[] — utiliser renderCell dans la colonne
+ASSOCIÉ: bpm.badge (statut), bpm.button (actions), bpm.emptyState (liste vide)
+EXEMPLE:
+  bpm.table({
+    columns:[
+      { key:'nom', label:'Nom', sortable:true },
+      { key:'statut', label:'Statut',
+        renderCell:(v)=>bpm.badge({ children:v, variant:v==='Actif'?'success':'default' }) },
+      { key:'actions', label:'',
+        renderCell:(_,row)=>bpm.button({ children:'Éditer', size:'small', onClick:()=>handleEdit(row) }) }
+    ],
+    data:items, searchable:true, pagination:true
+  })
+
+### bpm.plotlyChart
+bpm.plotlyChart({ data*, layout?, config?, height? })
+- data: Plotly trace[] (OBLIGATOIRE)
+- layout: Partial<Plotly.Layout>
+- height: number (défaut:400)
+RÈGLE: TOUJOURS bpm.plotlyChart pour les graphiques — JAMAIS bpm.lineChart/barChart/areaChart
+PARENT: bpm.card | bpm.container
+EXEMPLE:
+  bpm.plotlyChart({
+    data:[{ x:labels, y:values, type:'bar', marker:{ color:'var(--bpm-accent)' } }],
+    layout:{ title:'Ventes par mois', xaxis:{ title:'Mois' }, yaxis:{ title:'€' } },
+    height:350
+  })
+
+### bpm.progress
+bpm.progress({ value*, max?, label?, showValue? })
+- value: number (OBLIGATOIRE)
+- max: number (défaut:100)
+EXEMPLE: bpm.progress({ value:65, label:'Avancement', showValue:true })
+
+### bpm.timeline
+bpm.timeline({ items?, className? })
+- items: Array<{ id?,title*:ReactNode, description?,date?,status?:'done'|'current'|'upcoming' }>
+EXEMPLE:
+  bpm.timeline({ items:[
+    { title:'Commande reçue', date:'01/03', status:'done' },
+    { title:'En production', date:'03/03', status:'current' },
+    { title:'Livraison', date:'07/03', status:'upcoming' },
+  ]})
+
+### bpm.stepper
+bpm.stepper({ steps?, currentStep?, onStepClick?, className? })
+- steps: Array<{ id?,label*:string, optional?,content? }>
+- currentStep: number (défaut:0)
+EXEMPLE:
+  bpm.stepper({
+    steps:[{label:'Infos'},{label:'Validation'},{label:'Confirmation'}],
+    currentStep:step, onStepClick:setStep
+  })
+
+---
+
+## FORMULAIRES
+
+### bpm.input
+bpm.input({ value*, onChange*, label?, placeholder?, type?, disabled?, className? })
+- value: string (OBLIGATOIRE)
+- onChange: (value:string)=>void (OBLIGATOIRE)
+PARENT: bpm.modal | bpm.card | bpm.container
+EXEMPLE: bpm.input({ label:'Nom', value:form.nom, onChange:(v)=>setForm({...form,nom:v}) })
+
+### bpm.numberInput
+bpm.numberInput({ value*, onChange*, label?, min?, max?, step?, disabled? })
+- value: number|null (OBLIGATOIRE)
+- onChange: (value:number|null)=>void (OBLIGATOIRE)
+EXEMPLE: bpm.numberInput({ label:'Quantité', value:form.qty, onChange:(v)=>setForm({...form,qty:v}), min:0 })
+
+### bpm.textarea
+bpm.textarea({ value*, onChange*, label?, placeholder?, disabled? })
+EXEMPLE: bpm.textarea({ label:'Notes', value:form.notes, onChange:(v)=>setForm({...form,notes:v}) })
+
+### bpm.selectbox
+bpm.selectbox({ options*, value*, onChange*, label?, placeholder?, required?, disabled? })
+- options: string[] | Array<{ value:string, label:string }>
+- value: string|null (OBLIGATOIRE)
+- onChange: (value:string)=>void (OBLIGATOIRE)
+EXEMPLE:
+  bpm.selectbox({ label:'Statut',
+    options:[{value:'active',label:'Actif'},{value:'closed',label:'Fermé'}],
+    value:statut, onChange:setStatut })
+
+### bpm.dateInput
+bpm.dateInput({ value?, onChange?, label?, disabled?, min?, max?, help? })
+- value: Date|string|null
+- onChange: (value:Date|null)=>void
+EXEMPLE: bpm.dateInput({ label:'Date de livraison', value:form.date, onChange:(v)=>setForm({...form,date:v}) })
+
+### bpm.toggle
+bpm.toggle({ value?, onChange?, label?, disabled?, className? })
+- value: boolean (OBLIGATOIRE — PAS "checked")
+- onChange: (checked:boolean)=>void
+INTERDIT: prop checked — utiliser value
+EXEMPLE: bpm.toggle({ label:'Actif', value:form.actif, onChange:(v)=>setForm({...form,actif:v}) })
+
+### bpm.checkbox
+bpm.checkbox({ checked?, onChange?, label?, disabled? })
+EXEMPLE: bpm.checkbox({ label:'Accepter les CGU', checked:form.cgu, onChange:(v)=>setForm({...form,cgu:v}) })
+
+### bpm.radioGroup
+bpm.radioGroup({ options*, value*, onChange*, label? })
+- options: Array<{ value:string, label:string }>
+EXEMPLE: bpm.radioGroup({ label:'Priorité', options:[{value:'low',label:'Basse'},{value:'high',label:'Haute'}], value:prio, onChange:setPrio })
+
+### bpm.slider
+bpm.slider({ value?, min?, max?, step?, onChange?, label?, disabled? })
+- min: number (défaut:0), max: number (défaut:100), step: number (défaut:1)
+EXEMPLE: bpm.slider({ label:'Seuil alerte', value:seuil, min:0, max:100, onChange:setSeuil })
+
+### bpm.fileUploader
+bpm.fileUploader({ onUpload?, accept?, multiple?, label? })
+EXEMPLE: bpm.fileUploader({ label:'Importer CSV', accept:'.csv', onUpload:(files)=>handleFiles(files) })
+
+---
+
+## ACTIONS & NAVIGATION
+
+### bpm.button
+bpm.button({ children*, onClick?, variant?, size?, disabled?, fullWidth?, className? })
+- children: ReactNode (OBLIGATOIRE — PAS "label")
+- variant: 'primary'|'secondary'|'outline' (défaut:'primary')
+- size: 'small'|'medium'|'large' (défaut:'medium')
+EXEMPLE: bpm.button({ children:'Enregistrer', variant:'primary', onClick:handleSave })
+
+### bpm.fab
+bpm.fab({ onClick*, icon?, label?, position?, className? })
+EXEMPLE: bpm.fab({ onClick:()=>setOpen(true), label:'Ajouter' })
+
+### bpm.breadcrumb
+bpm.breadcrumb({ items*, className? })
+- items: Array<{ label:string, href?:string }>
+EXEMPLE: bpm.breadcrumb({ items:[{label:'Accueil',href:'/dashboard'},{label:'Clients'}] })
+
+### bpm.topNav
+bpm.topNav({ title*, titleHref?, items?, className? })
+- items: Array<{ label:string, href:string, active?:boolean }>
+EXEMPLE: bpm.topNav({ title:'App', items:[{label:'Dashboard',href:'#dashboard'},{label:'Liste',href:'#liste'}] })
+
+### bpm.pagination
+bpm.pagination({ page*, totalPages*, onPageChange*, className? })
+EXEMPLE: bpm.pagination({ page:currentPage, totalPages:10, onPageChange:setCurrentPage })
+
+---
+
+## FEEDBACK & ÉTAT
+
+### bpm.badge
+bpm.badge({ children*, variant?, className? })
+- children: ReactNode (OBLIGATOIRE)
+- variant: 'default'|'success'|'warning'|'error'|'info'|'primary'
+ASSOCIÉ: bpm.table renderCell, bpm.metric
+EXEMPLE: bpm.badge({ children:'Actif', variant:'success' })
+
+### bpm.chip
+bpm.chip({ label*, onRemove?, variant?, className? })
+- label: ReactNode (OBLIGATOIRE — PAS "children")
+- variant: 'default'|'primary'|'outline'
+EXEMPLE: bpm.chip({ label:'Urgent', variant:'primary', onRemove:()=>removeTag(t) })
+
+### bpm.spinner
+bpm.spinner({ size?, variant?, text?, neutral? })
+- size: 'small'|'medium'|'large' (défaut:'medium')
+- variant: 'circle'|'dot'|'wheel'|'pulse'|'bars'|'dualRing'|... (défaut:'circle')
+INTERDIT: size:'md' ou size:'sm'
+EXEMPLE: bpm.spinner({ size:'medium' })
+
+### bpm.skeleton
+bpm.skeleton({ width?, height?, className? })
+EXEMPLE: bpm.skeleton({ width:'100%', height:40 })
+
+### bpm.emptyState
+bpm.emptyState({ title?, description?, icon?, action?, className? })
+- action: ReactNode — PAS de prop children
+INTERDIT: prop children sur bpm.emptyState
+EXEMPLE: bpm.emptyState({ title:'Aucun résultat', description:'Modifiez vos filtres',
+  action:bpm.button({ children:'Réinitialiser', onClick:resetFilters }) })
+
+### bpm.statusBox
+bpm.statusBox({ status*, message?, className? })
+EXEMPLE: bpm.statusBox({ status:'success', message:'Enregistrement réussi' })
+
+### bpm.message
+bpm.message({ children*, variant?, className? })
+EXEMPLE: bpm.message({ children:'Opération réussie', variant:'success' })
+
+### bpm.highlightBox
+bpm.highlightBox({ number?, label?, title?, moment?, rtb?, cible?, children?, className? })
+EXEMPLE: bpm.highlightBox({ number:'01', label:'Objectif', title:'Croissance', children:<p>Détail</p> })
+
+### bpm.loadingBar
+bpm.loadingBar({ loading*, className? })
+EXEMPLE: bpm.loadingBar({ loading:isLoading })
+
+### bpm.tooltip
+bpm.tooltip({ children*, content*, position? })
+EXEMPLE: bpm.tooltip({ content:'Aide contextuelle', children:bpm.badge({ children:'?' }) })
+
+### bpm.popover
+bpm.popover({ trigger*, content*, placement? })
+EXEMPLE: bpm.popover({ trigger:bpm.button({ children:'Options' }), content:<Menu /> })
+
+---
+
+## TYPOGRAPHIE
+
+### bpm.title / title1 / title2 / title3 / title4
+bpm.title({ children* })
+bpm.title1({ children* }) — h1
+bpm.title2({ children* }) — h2
+bpm.title3({ children* }) — h3
+bpm.title4({ children* }) — h4
+EXEMPLE: bpm.title2({ children:'Liste des clients' })
+
+### bpm.text
+bpm.text({ children*, style? })
+INTERDIT: prop weight — utiliser style={{ fontWeight:600 }}
+EXEMPLE: bpm.text({ children:'Description', style:{ fontWeight:600 } })
+
+### bpm.caption
+bpm.caption({ children*, className? })
+EXEMPLE: bpm.caption({ children:'Dernière mise à jour : 01/03/2026' })
+
+### bpm.markdown
+bpm.markdown({ children*, className? })
+EXEMPLE: bpm.markdown({ children:'## Titre\n\nParagraphe avec **gras**.' })
+
+### bpm.codeBlock
+bpm.codeBlock({ code*, language?, className? })
+EXEMPLE: bpm.codeBlock({ code:'const x = 1;', language:'typescript' })
+
+---
+
+## MÉDIAS & VISUALISATION
+
+### bpm.image
+bpm.image({ src*, alt?, width?, height?, className? })
+EXEMPLE: bpm.image({ src:'/img/logo.png', alt:'Logo', width:120 })
+
+### bpm.video
+bpm.video({ src*, poster?, autoPlay?, controls?, className? })
+EXEMPLE: bpm.video({ src:'/demo.mp4', controls:true })
+
+### bpm.audio
+bpm.audio({ src*, controls?, className? })
+EXEMPLE: bpm.audio({ src:'/audio.mp3', controls:true })
+
+### bpm.pdfViewer
+bpm.pdfViewer({ url*, height?, className? })
+EXEMPLE: bpm.pdfViewer({ url:'/doc.pdf', height:600 })
+
+### bpm.map
+bpm.map({ center*, zoom?, markers?, height?, className? })
+EXEMPLE: bpm.map({ center:[48.85,2.35], zoom:12, height:400 })
+
+### bpm.qrCode
+bpm.qrCode({ value*, size?, className? })
+EXEMPLE: bpm.qrCode({ value:'https://blueprint-modular.com', size:128 })
+
+### bpm.barcode
+bpm.barcode({ value*, format?, className? })
+EXEMPLE: bpm.barcode({ value:'123456789', format:'CODE128' })
+
+---
+
+## AUTRES
+
+### bpm.avatar
+bpm.avatar({ src?, name?, size?, className? })
+EXEMPLE: bpm.avatar({ name:'Jean Dupont', size:'medium' })
+
+### bpm.divider
+bpm.divider({ className? })
+EXEMPLE: bpm.divider({})
+
+### bpm.rating
+bpm.rating({ value*, onChange?, max?, readOnly? })
+EXEMPLE: bpm.rating({ value:4, max:5, onChange:setRating })
+
+### bpm.autocomplete
+bpm.autocomplete({ options*, value*, onChange*, label?, placeholder? })
+EXEMPLE: bpm.autocomplete({ label:'Client', options:clients, value:selected, onChange:setSelected })
+
+### bpm.colorPicker
+bpm.colorPicker({ value*, onChange*, label? })
+EXEMPLE: bpm.colorPicker({ label:'Couleur', value:color, onChange:setColor })
+
+### bpm.jsonViewer
+bpm.jsonViewer({ data*, collapsed?, className? })
+EXEMPLE: bpm.jsonViewer({ data:apiResponse, collapsed:1 })
+
+### bpm.treeview
+bpm.treeview({ nodes*, onSelect?, className? })
+EXEMPLE: bpm.treeview({ nodes:tree, onSelect:(node)=>setSelected(node) })
+
+---
+
+## PATTERN FORMULAIRE COMPLET (few-shot de référence)
+
+```typescript
+'use client'
+import { useState } from 'react'
+import { bpm } from '@blueprint-modular/core'
+
+interface Item { id: number; nom: string; statut: string; valeur: number }
+
+export default function Page() {
+  const [items, setItems] = useState<Item[]>([])
+  const [isOpen, setIsOpen] = useState(false)
+  const [saving, setSaving] = useState(false)
+  const [form, setForm] = useState({ nom: '', statut: 'active', valeur: 0 })
+
+  const handleSave = async () => {
+    setSaving(true)
+    await fetch('/api/items', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(form)
+    })
+    setSaving(false)
+    setIsOpen(false)
+  }
+
+  return bpm.container({ children: <>
+    {bpm.metricRow({ children: <>
+      {bpm.metric({ label:'Total', value:items.length })}
+      {bpm.metric({ label:'Actifs', value:items.filter(i=>i.statut==='active').length })}
+    </> })}
+
+    {bpm.button({ children:'Ajouter', onClick:()=>setIsOpen(true) })}
+
+    {bpm.table({
+      columns:[
+        { key:'nom', label:'Nom', sortable:true },
+        { key:'statut', label:'Statut',
+          renderCell:(v)=>bpm.badge({ children:String(v), variant:v==='active'?'success':'default' }) },
+        { key:'valeur', label:'Valeur €', align:'right' }
+      ],
+      data:items, searchable:true, pagination:true
+    })}
+
+    {isOpen && bpm.modal({ isOpen:true, onClose:()=>setIsOpen(false), title:'Nouvel item',
+      children: <>
+        {bpm.input({ label:'Nom', value:form.nom, onChange:(v)=>setForm({...form,nom:v}) })}
+        {bpm.selectbox({ label:'Statut',
+          options:[{value:'active',label:'Actif'},{value:'closed',label:'Fermé'}],
+          value:form.statut, onChange:(v)=>setForm({...form,statut:v}) })}
+        {bpm.numberInput({ label:'Valeur (€)', value:form.valeur, onChange:(v)=>setForm({...form,valeur:v??0}) })}
+        {bpm.button({ children: saving ? bpm.spinner({size:'small'}) : 'Enregistrer',
+          onClick:handleSave, disabled:saving })}
+      </>
+    })}
+  </> })
+}
+```
+
+---
+
+## ROUTES API — App Router obligatoire
+
+```typescript
+// app/api/items/route.ts
+import { NextResponse } from 'next/server'
+
+export async function GET() {
+  return NextResponse.json({ items: [] })
+}
+
+export async function POST(request: Request) {
+  const body = await request.json()
+  return NextResponse.json({ success: true, data: body })
+}
+```
+
+INTERDIT: NextApiRequest / NextApiResponse / export default dans app/api/
+INTERDIT: import depuis 'next' — utiliser 'next/server'
+
+---
+
+## PACKAGE.JSON MINIMUM
+
+```json
+{
+  "dependencies": {
+    "@blueprint-modular/core": "0.1.43",
+    "next": "15.x",
+    "react": "^18",
+    "react-dom": "^18",
+    "plotly.js": "^2",
+    "react-plotly.js": "^2"
+  }
+}
+```
+
+INTERDIT: version @blueprint-modular/core antérieure à 0.1.43
