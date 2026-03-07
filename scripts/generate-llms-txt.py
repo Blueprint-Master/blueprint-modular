@@ -80,14 +80,24 @@ def parse_props_interface(source: str, interface_name: str) -> list[dict]:
     # Trouver le bloc de l'interface
     pattern = re.compile(
         r"export\s+interface\s+" + re.escape(interface_name) +
-        r"\s*(?:extends\s+[^{]+)?\s*\{([^}]+)\}",
+        r"\s*(?:extends\s+[^{]+)?\s*\{",
         re.DOTALL
     )
     m = pattern.search(source)
     if not m:
         return []
 
-    body = m.group(1)
+    # Parser qui compte les accolades pour gérer les JSDoc avec {} imbriqués
+    start = m.end()
+    depth = 1
+    i = start
+    while i < len(source) and depth > 0:
+        if source[i] == "{":
+            depth += 1
+        elif source[i] == "}":
+            depth -= 1
+        i += 1
+    body = source[start:i-1]
     props = []
     # Parser ligne par ligne avec JSDoc précédent
     lines = body.splitlines()
