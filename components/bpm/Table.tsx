@@ -27,10 +27,6 @@ export interface TableProps {
   hover?: boolean;
   /** Callback au clic sur une ligne. */
   onRowClick?: (row: Record<string, unknown>) => void;
-  /** Ajoute une barre de recherche au-dessus du tableau. */
-  searchable?: boolean;
-  /** Active la pagination. */
-  pagination?: boolean;
   defaultSortColumn?: string | null;
   defaultSortDirection?: "asc" | "desc";
   name?: string | null;
