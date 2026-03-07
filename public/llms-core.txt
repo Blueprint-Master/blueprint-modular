@@ -1,0 +1,153 @@
+# Blueprint Modular — Agent Context File (CORE)
+# Version : 0.1.43
+# Date    : 2026-03-07
+# Format compact pour modèles locaux (Qwen, Mistral)
+# Composants essentiels uniquement — référence complète : blueprint-modular.com/llms.txt
+
+## IMPORT
+import { bpm } from '@blueprint-modular/core'
+INTERDIT : import { bpm.modal } ou tout destructuring
+
+## RÈGLES ABSOLUES
+- Modal : {isOpen && bpm.modal({ isOpen:true, onClose, title, children })} — TOUJOURS dans return()
+- Graphiques : bpm.plotlyChart UNIQUEMENT
+- Métriques : bpm.metricRow({ children: <> {bpm.metric(...)} </> })
+- Spinner : size 'small'|'medium'|'large' — jamais 'md'/'sm'
+- Toggle : prop value (booléen) — jamais checked
+- Routes : App Router — NextResponse de 'next/server' — jamais NextApiRequest
+
+
+## COMPOSANTS ESSENTIELS
+
+bpm.badge({
+  children*: React.ReactNode
+  variant?: BadgeVariant
+  className?: string
+})
+
+bpm.button({
+  children*: React.ReactNode
+  onClick?: () => void
+  variant?: "primary" | "secondary" | "outline"
+  size?: "small" | "medium" | "large"
+  disabled?: boolean
+})
+
+bpm.card({
+  title?: React.ReactNode
+  subtitle?: React.ReactNode
+  image?: string
+  imageAlt?: string
+})
+
+bpm.container({
+  children*: React.ReactNode
+  className?: string
+  style?: React.CSSProperties
+})
+
+bpm.input({
+  label?: string
+  value?: string
+  onChange?: (value: string) => void
+  placeholder?: string
+})
+
+bpm.metric({
+  label*: string
+  value*: string | number
+  delta?: number | string | null
+  name?: string | null
+  deltaType?: "aucun" | "normal" | "inverse"
+  help?: string | null
+})
+
+bpm.metricRow({
+  children*: React.ReactNode
+  className?: string
+})
+
+bpm.modal({
+  isOpen*: boolean
+  onClose*: () => void
+  children*: React.ReactNode
+  title?: React.ReactNode
+  size?: ModalSize
+  showCloseButton?: boolean
+})
+
+bpm.numberInput({
+  label?: string
+  value?: number | null
+  onChange?: (value: number | null) => void
+  min?: number | null
+})
+
+bpm.plotlyChart({
+  data?: object[]
+  layout?: object
+  config?: object
+  height?: number
+})
+
+bpm.selectbox({
+  label?: string
+  options?: SelectboxOption[]
+  value?: string | null
+  onChange?: (value: string) => void
+})
+
+bpm.spinner({
+  text?: string
+  size?: SpinnerSize
+  variant?: SpinnerVariant
+  neutral?: boolean
+})
+
+bpm.table({
+  columns*: TableColumn[]
+  data*: Record<string, unknown>[]
+  striped?: boolean
+  hover?: boolean
+  onRowClick?: (row: Record<string, unknown>) => void
+  defaultSortColumn?: string | null
+})
+
+bpm.tabs({
+  tabs?: TabsItems
+  defaultTab?: number
+  onChange?: (index: number) => void
+  className?: string
+})
+
+
+## PATTERN MODAL OBLIGATOIRE
+```tsx
+const [isOpen, setIsOpen] = useState(false)
+const [form, setForm] = useState({ nom: '', valeur: 0 })
+const [saving, setSaving] = useState(false)
+
+const handleSave = async () => {
+  setSaving(true)
+  try {
+    const res = await fetch('/api/items', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(form),
+    })
+    if (!res.ok) throw new Error('Erreur serveur')
+    setIsOpen(false)
+  } catch (e) { console.error(e) }
+  finally { setSaving(false) }
+}
+
+// Dans return() :
+{isOpen && bpm.modal({ isOpen: true, onClose: () => setIsOpen(false), title: 'Créer',
+  children: (
+    <>
+      {bpm.input({ label: 'Nom', value: form.nom, onChange: (v) => setForm({ ...form, nom: v }) })}
+      {bpm.button({ children: saving ? '...' : 'Enregistrer', onClick: handleSave, disabled: saving })}
+    </>
+  )
+})}
+```
