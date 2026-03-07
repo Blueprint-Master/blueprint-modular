@@ -10,6 +10,7 @@ export interface TableColumn {
   label: React.ReactNode;
   align?: "left" | "center" | "right";
   className?: string;
+  /** Renderer personnalisé. Reçoit la valeur brute et la ligne complète. Alias llms.txt : renderCell */
   render?: (value: unknown, row: Record<string, unknown>) => React.ReactNode;
   /** Décimales pour cette colonne (surcharge valueDecimals du tableau). */
   decimals?: number;
@@ -18,11 +19,18 @@ export interface TableColumn {
 }
 
 export interface TableProps {
+  /** Définition des colonnes — obligatoire. */
   columns: TableColumn[];
+  /** Tableau de données — obligatoire. INTERDIT : JSX dans data[], utiliser render dans TableColumn. */
   data: Record<string, unknown>[];
   striped?: boolean;
   hover?: boolean;
+  /** Callback au clic sur une ligne. */
   onRowClick?: (row: Record<string, unknown>) => void;
+  /** Ajoute une barre de recherche au-dessus du tableau. */
+  searchable?: boolean;
+  /** Active la pagination. */
+  pagination?: boolean;
   defaultSortColumn?: string | null;
   defaultSortDirection?: "asc" | "desc";
   name?: string | null;

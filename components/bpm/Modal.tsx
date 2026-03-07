@@ -7,11 +7,16 @@ const MODAL_PORTAL_ZINDEX = 100000;
 
 export type ModalSize = "small" | "medium" | "large";
 
+/** Modal dialog. PATTERN : {isOpen && bpm.modal({ isOpen:true, onClose, title, children })} — TOUJOURS dans return(), jamais après. */
 export interface ModalProps {
+  /** Contrôle l'affichage. PATTERN OBLIGATOIRE : {isOpen && bpm.modal({ isOpen:true, ... })} */
   isOpen: boolean;
+  /** Callback de fermeture — obligatoire. */
   onClose: () => void;
   title?: React.ReactNode;
+  /** Contenu du modal. */
   children: React.ReactNode;
+  /** Largeur : small=400px, medium=600px, large=800px. */
   size?: ModalSize;
   showCloseButton?: boolean;
 }
