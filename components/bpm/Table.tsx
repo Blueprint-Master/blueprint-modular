@@ -163,9 +163,11 @@ export function Table({
 
   return (
     <div
-      className={`bpm-table-wrapper overflow-auto max-h-[calc(100vh-220px)] md:max-h-[calc(100vh-350px)] rounded-lg border ${className}`}
+      className={`bpm-table-wrapper overflow-auto max-h-[calc(100vh-220px)] md:max-h-[calc(100vh-350px)] ${className}`}
       style={{
-        borderColor: "var(--bpm-border)",
+        border: "1px solid var(--bpm-border)",
+        borderRadius: "8px",
+        overflow: "hidden",
         backgroundColor: "var(--bpm-surface)",
       }}
       data-name={name ?? undefined}
