@@ -147,6 +147,8 @@ export { NfcBadge } from "./NfcBadge";
 export type { NfcBadgeProps } from "./NfcBadge";
 export { Drawer } from "./Drawer";
 export type { DrawerProps } from "./Drawer";
+export { Gps } from "./Gps";
+export type { GpsProps, GpsStatus } from "./Gps";
 export { Pagination } from "./Pagination";
 export type { PaginationProps } from "./Pagination";
 export { OfflineIndicator } from "./OfflineIndicator";
