@@ -35,14 +35,14 @@ export function Skeleton({
   shimmer = false,
   rounded = "md",
 }: SkeletonProps) {
-  const style: React.CSSProperties = {};
+  const style: React.CSSProperties = { maxWidth: "100%" };
   if (width != null) style.width = typeof width === "number" ? `${width}px` : width;
   if (height != null) style.height = typeof height === "number" ? `${height}px` : height;
   const roundClass = variant === "circular" ? "rounded-full" : roundedClass[rounded];
   const animationClass = shimmer ? "bpm-skeleton--shimmer" : animated ? "animate-pulse" : "";
   return (
     <span
-      className={`bpm-skeleton inline-block ${animationClass} ${roundClass} ${className}`.trim()}
+      className={`bpm-skeleton block ${animationClass} ${roundClass} ${className}`.trim()}
       style={{
         ...style,
         background: "var(--bpm-skeleton-bg, var(--bpm-bg-secondary))",
