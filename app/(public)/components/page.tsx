@@ -597,7 +597,7 @@ export default function ComponentsPage() {
               <Rating value={4} max={5} onChange={() => {}} />
             </DemoCard>
             <DemoCard label="bpm.fileUploader" wide>
-              <FileUploader label="Importer un fichier" onUpload={() => {}} />
+              <FileUploader label="Importer un fichier" onFiles={() => {}} />
             </DemoCard>
           </Grid>
         </section>
