@@ -48,6 +48,15 @@ export function DateInput({
         style={{ borderColor: "var(--bpm-border)", background: "var(--bpm-bg-primary)", color: "var(--bpm-text-primary)" }}
         value={toInputValue(value)}
         onChange={handleChange}
+        onFocus={(e) => {
+          e.target.style.outline = "none";
+          e.target.style.borderColor = "var(--bpm-accent)";
+          e.target.style.boxShadow = "0 0 0 2px var(--bpm-accent-alpha, rgba(0,163,226,0.2))";
+        }}
+        onBlur={(e) => {
+          e.target.style.borderColor = "var(--bpm-border)";
+          e.target.style.boxShadow = "none";
+        }}
         disabled={disabled}
         min={toInputValue(min) || undefined}
         max={toInputValue(max) || undefined}

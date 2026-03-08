@@ -47,7 +47,16 @@ export function Autocomplete(props: AutocompleteProps) {
         type="text"
         value={value}
         onChange={(e) => { if (onChange) onChange(e.target.value); setOpen(true); }}
-        onFocus={() => setOpen(true)}
+        onFocus={(e) => {
+          e.target.style.outline = "none";
+          e.target.style.borderColor = "var(--bpm-accent)";
+          e.target.style.boxShadow = "0 0 0 2px var(--bpm-accent-alpha, rgba(0,163,226,0.2))";
+          setOpen(true);
+        }}
+        onBlur={(e) => {
+          e.target.style.borderColor = "var(--bpm-border)";
+          e.target.style.boxShadow = "none";
+        }}
         placeholder={placeholder}
         className="w-full px-3 py-2 rounded-lg border text-sm"
         style={{ background: "var(--bpm-bg-primary)", borderColor: "var(--bpm-border)", color: "var(--bpm-text-primary)" }}
