@@ -1,6 +1,6 @@
 # Blueprint Modular — Agent Context File
 # Version : 0.1.43
-# Date    : 2026-03-07
+# Date    : 2026-03-08
 # URL canonique : https://blueprint-modular.com/llms.txt
 #
 # Ce fichier est la référence machine de @blueprint-modular/core.
@@ -48,22 +48,24 @@ INTERDIT : import { bpm.modal } ou tout autre destructuring
 
 ### bpm.avatar
 ```
-  src?: string | null
-  alt?: string
-  initials?: string
-  size?: AvatarSize
+  src?: string | null  — URL de l'image de l'avatar.
+  alt?: string  — Texte alternatif (accessibilité).
+  initials?: string  — Initiales affichées si pas d'image. Ex. "JD".
+  size?: AvatarSize  — Taille de l'avatar. Valeurs : 'small' | 'medium' | 'large'. Default: 'medium'.
   className?: string
-  variant?: "default" | "sidebar"  — Affiche l'avatar dans un bloc type sidebar : avatar + name + subtitle, optionnellement bouton déconnexion
-  name?: string  — Nom affiché à côté de l'avatar (variant sidebar)
-  subtitle?: string  — Sous-titre (ex. email) sous le nom (variant sidebar)
-  onLogout?: () => void  — Callback déconnexion (variant sidebar) ; si fourni, affiche un bouton
-  logoutLabel?: string  — Libellé du bouton déconnexion (variant sidebar)
+  variant?: "default" | "sidebar"  — Affiche l'avatar dans un bloc type sidebar : avatar + name + subtitle, optionnellement bouton déconnexion. Valeurs : 'default' | 'sidebar'. Default: 'default'.
+  name?: string  — Nom affiché à côté de l'avatar (variant sidebar).
+  subtitle?: string  — Sous-titre (ex. email) sous le nom (variant sidebar).
+  onLogout?: () => void  — Callback déconnexion (variant sidebar) ; si fourni, affiche un bouton.
+  logoutLabel?: string  — Libellé du bouton déconnexion (variant sidebar). Default: 'Se déconnecter'.
+  editable?: boolean  — Active le mode édition : overlay crayon au survol, file picker au clic.
+  onImageChange?: (file: File) => void  — Callback appelé avec le File sélectionné.
 ```
 
 ### bpm.badge
 ```
   children*: React.ReactNode
-  variant?: BadgeVariant
+  variant?: BadgeVariant  — Style / couleur du badge. Valeurs : 'default' | 'primary' | 'success' | 'warning' | 'error'. Default: 'default'.
   className?: string
 ```
 
@@ -76,13 +78,13 @@ INTERDIT : import { bpm.modal } ou tout autre destructuring
 
 ### bpm.button
 ```
-  children*: React.ReactNode
-  onClick?: () => void
-  variant?: "primary" | "secondary" | "outline"
-  size?: "small" | "medium" | "large"
-  disabled?: boolean
+  children*: React.ReactNode  — Contenu du bouton — obligatoire.
+  onClick?: () => void  — Handler clic.
+  variant?: "primary" | "secondary" | "outline"  — Style visuel. Default: 'primary'.
+  size?: "small" | "medium" | "large"  — Taille. Default: 'medium'.
+  disabled?: boolean  — Désactive le bouton.
   type?: "button" | "submit"
-  fullWidth?: boolean
+  fullWidth?: boolean  — Bouton pleine largeur.
   className?: string
 ```
 
@@ -243,9 +245,34 @@ INTERDIT : import { bpm.modal } ou tout autre destructuring
   label?: string
 ```
 
+### bpm.gps
+```
+  label?: string  — Titre affiché au-dessus du bloc.
+  showMap?: boolean  — Afficher une carte Leaflet. Default: true.
+  onLocation?: (coords: { lat: number  — Callback appelé quand la position est obtenue (mode display).
+  height?: number  — Hauteur de la carte en px. Default: 300.
+  className?: string
+  mode?: "display" | "picker"  — Mode : 'display' = affichage position, 'picker' = sélection d'un point sur la carte. Default: 'display'.
+  value?: { lat: number  — Position courante (mode picker).
+  onChange?: (coords: { lat: number  — Callback à chaque déplacement du marker ou clic sur la carte (mode picker).
+```
+
+### bpm.gpsMap
+```
+  mode*: "display" | "picker"
+  center*: { lat: number
+  markerPosition*: { lat: number
+  onMarkerChange?: (lat: number, lng: number) => void
+  onMapClick?: (lat: number, lng: number) => void
+  height*: number
+```
+
 ### bpm.grid
 ```
   cols?: number | { xs?: number
+  gap?: number | string
+  className?: string
+  children?: React.ReactNode
 ```
 
 ### bpm.highlightBox
@@ -280,12 +307,12 @@ INTERDIT : import { bpm.modal } ou tout autre destructuring
 
 ### bpm.input
 ```
-  label?: string
-  value?: string
-  onChange?: (value: string) => void
+  label?: string  — Label affiché au-dessus du champ.
+  value?: string  — Valeur contrôlée.
+  onChange?: (value: string) => void  — Callback — reçoit la valeur string, pas un Event. Ex: (v) => setValue(v)
   placeholder?: string
-  type?: "text" | "email" | "password" | "number" | "search" | "date"
-  disabled?: boolean
+  type?: "text" | "email" | "password" | "number" | "search" | "date"  — Type HTML. Default: 'text'.
+  disabled?: boolean  — Désactive le champ.
   className?: string
 ```
 
@@ -304,9 +331,9 @@ INTERDIT : import { bpm.modal } ou tout autre destructuring
 
 ### bpm.metric
 ```
-  label*: string
-  value*: string | number
-  delta?: number | string | null
+  label*: string  — Libellé affiché au-dessus de la valeur.
+  value*: string | number  — Valeur principale (string ou number).
+  delta?: number | string | null  — Variation affichée. Format string (ex. "+12%") ou number.
   name?: string | null  — Nom optionnel pour référencer la métrique dans le chat IA : $metric:name ou @name
   deltaType?: "aucun" | "normal" | "inverse"  — Aucun = pas de couleur, normal = + vert / - rouge, inverse = + rouge / - vert
   help?: string | null
@@ -330,12 +357,13 @@ INTERDIT : import { bpm.modal } ou tout autre destructuring
 ```
 
 ### bpm.modal
+Modal dialog. PATTERN : {isOpen && bpm.modal({ isOpen:true, onClose, title, children })} — TOUJOURS dans return(), jamais après.
 ```
-  isOpen*: boolean
-  onClose*: () => void
+  isOpen*: boolean  — Contrôle l'affichage. PATTERN OBLIGATOIRE : {isOpen && bpm.modal({ isOpen:true, ... })}
+  onClose*: () => void  — Callback de fermeture — obligatoire.
   title?: React.ReactNode
-  children*: React.ReactNode
-  size?: ModalSize
+  children*: React.ReactNode  — Contenu du modal.
+  size?: ModalSize  — Largeur : small=400px, medium=600px, large=800px.
   showCloseButton?: boolean
 ```
 
@@ -356,7 +384,7 @@ INTERDIT : import { bpm.modal } ou tout autre destructuring
 ```
   page*: number  — Page courante (1-based).
   totalPages*: number  — Nombre total de pages.
-  onPageChange*: (page: number) => void  — Callback au changement de page.
+  onPageChange*: (page: number) => void  — Callback au changement de page. Reçoit le numéro de page.
   pageSize?: number  — Taille de page (optionnel, pour affichage).
   totalItems?: number  — Nombre total d’éléments (optionnel).
   label?: string  — Libellé optionnel (ex. "Page 1 sur 5").
@@ -375,10 +403,10 @@ INTERDIT : import { bpm.modal } ou tout autre destructuring
 
 ### bpm.plotlyChart
 ```
-  data?: object[]
-  layout?: object
-  config?: object
-  height?: number
+  data?: object[]  — Tableau de traces Plotly (ex. [{type:'bar', x:[], y:[]}]). Obligatoire.
+  layout?: object  — Config layout Plotly (title, xaxis, yaxis, etc.).
+  config?: object  — Config Plotly (responsive, displayModeBar, etc.).
+  height?: number  — Hauteur en pixels. Default: 400.
   width?: number | string
   className?: string
   iframeSrc?: string
@@ -433,10 +461,10 @@ INTERDIT : import { bpm.modal } ou tout autre destructuring
 
 ### bpm.selectbox
 ```
-  label?: string
-  options?: SelectboxOption[]
-  value?: string | null
-  onChange?: (value: string) => void
+  label?: string  — Label affiché au-dessus.
+  options?: SelectboxOption[]  — Liste d'options. Format : string[] ou [{value, label}].
+  value?: string | null  — Valeur sélectionnée (contrôlé).
+  onChange?: (value: string) => void  — Callback — reçoit la valeur string sélectionnée.
   disabled?: boolean
   help?: string | null
   placeholder?: string
@@ -489,11 +517,11 @@ INTERDIT : import { bpm.modal } ou tout autre destructuring
 
 ### bpm.table
 ```
-  columns*: TableColumn[]
-  data*: Record<string, unknown>[]
+  columns*: TableColumn[]  — Définition des colonnes — obligatoire.
+  data*: Record<string, unknown>[]  — Tableau de données — obligatoire. INTERDIT : JSX dans data[], utiliser render dans TableColumn.
   striped?: boolean
   hover?: boolean
-  onRowClick?: (row: Record<string, unknown>) => void
+  onRowClick?: (row: Record<string, unknown>) => void  — Callback au clic sur une ligne.
   defaultSortColumn?: string | null
   defaultSortDirection?: "asc" | "desc"
   name?: string | null
@@ -505,11 +533,12 @@ INTERDIT : import { bpm.modal } ou tout autre destructuring
   minWidth?: number  — Largeur minimale du tableau en px (déclenche le scroll horizontal dans le wrapper si conteneur plus étroit). Non défini = pas de min-width.
   trackContext?: boolean  — Si true, expose ce tableau au contexte IA.
 ```
+INTERDIT : Tableau de données — obligatoire. INTERDIT : JSX dans data[], utiliser render dans TableColumn. */
 
 ### bpm.tabs
 ```
-  tabs?: TabsItems
-  defaultTab?: number
+  tabs?: TabsItems  — Onglets : tableau de { label, content } ou chaînes (label uniquement).
+  defaultTab?: number  — Index de l'onglet actif au montage. Default: 0.
   onChange?: (index: number) => void
   className?: string
 ```
