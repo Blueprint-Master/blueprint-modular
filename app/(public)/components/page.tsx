@@ -223,7 +223,7 @@ export default function ComponentsPage() {
               <Chip label="Étiquette" />
             </DemoCard>
             <DemoCard label="bpm.statusBox">
-              <StatusBox label="Connecté" state="complete" />
+              <StatusBox label="Connecté" state="complete" defaultExpanded={false} />
             </DemoCard>
             <DemoCard label="bpm.progress">
               <Progress value={65} max={100} label="Progression" showValue />
@@ -400,6 +400,7 @@ export default function ComponentsPage() {
                 label="Chiffre d'affaires"
                 value="142 500 €"
                 delta={12}
+                currency="%"
               />
             </DemoCard>
             <DemoCard label="bpm.metricRow" wide>
@@ -580,7 +581,7 @@ export default function ComponentsPage() {
           <Title2 style={{ marginBottom: 16 }}>Médias & Utilitaires</Title2>
           <Grid cols={2} gap={16}>
             <DemoCard label="bpm.avatar">
-              <Avatar name="Jean Dupont" size="medium" />
+              <Avatar initials="JD" size="medium" />
             </DemoCard>
             <DemoCard label="bpm.image" wide>
               <Image
