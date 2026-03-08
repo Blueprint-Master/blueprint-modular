@@ -3,6 +3,7 @@
 import React from "react";
 
 export interface ButtonProps {
+  /** PARENT: partout — composant universel. INTERDIT: onClick absent sur variant primary. ASSOCIÉ: bpm.modal (déclencheur), bpm.input (submit formulaire), bpm.table (action ligne). */
   /** Contenu du bouton — obligatoire. */
   children: React.ReactNode;
   /** Handler clic. */

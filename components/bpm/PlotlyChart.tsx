@@ -5,6 +5,7 @@ import dynamic from "next/dynamic";
 const Plot = dynamic(() => import("react-plotly.js"), { ssr: false });
 
 export interface PlotlyChartProps {
+  /** PARENT: bpm.panel | bpm.card | bpm.tabs (contenu onglet). INTERDIT: données vides [] passées à data — utiliser chartsReady guard. ASSOCIÉ: bpm.metric (contexte chiffre), bpm.selectbox (filtre période), bpm.dateRangePicker. */
   /** Tableau de traces Plotly (ex. [{type:'bar', x:[], y:[]}]). Obligatoire. */
   data?: object[];
   /** Config layout Plotly (title, xaxis, yaxis, etc.). */

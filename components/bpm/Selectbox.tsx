@@ -6,6 +6,7 @@ import { createPortal } from "react-dom";
 export type SelectboxOption = string | { value: string; label: string };
 
 export interface SelectboxProps {
+  /** PARENT: bpm.panel | bpm.modal (formulaire) | bpm.card. INTERDIT: options=[] sans placeholder — UI bloquée. ASSOCIÉ: bpm.input (filtres combinés), bpm.table (filtre colonne), bpm.button. */
   /** Label affiché au-dessus. */
   label?: string;
   /** Liste d'options. Format : string[] ou [{value, label}]. */

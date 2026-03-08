@@ -7,6 +7,7 @@ import { useBPMContext } from "@/lib/ai/context";
 export type MetricValueLocale = "fr-FR" | "en-US" | "de-DE" | string;
 
 export interface MetricProps {
+  /** PARENT: bpm.metricRow (standard) | bpm.grid | bpm.card (isolé). INTERDIT: div custom comme parent — casse le responsive. ASSOCIÉ: bpm.badge (statut), bpm.plotlyChart (tendance), bpm.metricRow. */
   /** Libellé affiché au-dessus de la valeur. */
   label: string;
   /** Valeur principale (string ou number). */

@@ -5,6 +5,7 @@ import React from "react";
 export type BadgeVariant = "default" | "primary" | "success" | "warning" | "error";
 
 export interface BadgeProps {
+  /** PARENT: bpm.table (colonne statut) | bpm.metric | bpm.card. INTERDIT: texte long >20 chars — utiliser bpm.chip. ASSOCIÉ: bpm.table, bpm.metric, bpm.statusBox. */
   children: React.ReactNode;
   /** Style / couleur du badge. Valeurs : 'default' | 'primary' | 'success' | 'warning' | 'error'. Default: 'default'. */
   variant?: BadgeVariant;

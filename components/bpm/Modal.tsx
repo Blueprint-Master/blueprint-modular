@@ -9,6 +9,7 @@ export type ModalSize = "small" | "medium" | "large";
 
 /** Modal dialog. PATTERN : {isOpen && bpm.modal({ isOpen:true, onClose, title, children })} — TOUJOURS dans return(), jamais après. */
 export interface ModalProps {
+  /** PARENT: dans le return() de la page — jamais dans un sous-composant. INTERDIT: bpm.modal imbriqué dans un autre bpm.modal. ASSOCIÉ: bpm.button (déclencheur), bpm.input (formulaire), bpm.selectbox. */
   /** Contrôle l'affichage. PATTERN OBLIGATOIRE : {isOpen && bpm.modal({ isOpen:true, ... })} */
   isOpen: boolean;
   /** Callback de fermeture — obligatoire. */

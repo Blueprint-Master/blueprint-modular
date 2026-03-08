@@ -3,6 +3,7 @@
 import React, { useId } from "react";
 
 export interface InputProps extends Omit<React.InputHTMLAttributes<HTMLInputElement>, "value" | "onChange"> {
+  /** PARENT: bpm.modal (formulaire) | bpm.panel | bpm.card. INTERDIT: onChange absent sur champ contrôlé. ASSOCIÉ: bpm.button (submit), bpm.selectbox (filtres), bpm.modal. */
   /** Label affiché au-dessus du champ. */
   label?: string;
   /** Valeur contrôlée. */
