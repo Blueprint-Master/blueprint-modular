@@ -51,7 +51,6 @@ import {
   Modal,
   NumberInput,
   NfcBadge,
-  OfflineIndicator,
   Pagination,
   Panel,
   PdfViewer,
@@ -90,15 +89,6 @@ import {
 
 export type { CrudPageProps, CrudColumn, CrudField } from "../../../components/bpm";
 export type { MetricRowProps } from "../../../components/bpm";
-export type { TableProps as TablePropsBpm } from "../../../components/bpm/Table";
-
-/** Colonne pour bpm.table — API documentée. */
-export interface TableColumn {
-  key: string;
-  label: string;
-  type?: "text" | "number" | "date" | "badge" | "boolean";
-  sortable?: boolean;
-}
 export type { TabsProps, TabItem, TabsItems } from "../../../components/bpm/Tabs";
 import type { TabsItems } from "../../../components/bpm/Tabs";
 export type { MetricProps as MetricPropsBpm } from "../../../components/bpm/Metric";
@@ -111,7 +101,7 @@ function wrap<P extends object>(Component: React.ComponentType<P>) {
   return (props: P) => React.createElement(Component, props);
 }
 
-// --- Types locaux (Page, Title, Metric, Table, Chat) — API explicite en objet ---
+// --- Types locaux (Page, Title, Chat) — API explicite en objet ---
 
 export interface PageProps {
   children: React.ReactNode;
@@ -119,27 +109,6 @@ export interface PageProps {
 
 export interface TitleProps {
   children: React.ReactNode;
-}
-
-export interface MetricProps {
-  label: string;
-  value: number | string;
-  delta?: number | string;
-  semantic?: string;
-  domain?: string;
-  threshold?: number;
-  unit?: string;
-  direction?: "higher_is_better" | "lower_is_better";
-}
-
-export interface TableProps {
-  columns?: TableColumn[];
-  data: Record<string, unknown>[];
-  onRowClick?: (row: Record<string, unknown>) => void;
-  searchable?: boolean;
-  pagination?: boolean;
-  semantic?: string;
-  domain?: string;
 }
 
 interface ChatProps {
@@ -169,96 +138,6 @@ function Title({ children }: TitleProps) {
     <h1 style={{ fontSize: "1.75rem", fontWeight: 700, marginBottom: "1.5rem" }}>
       {children}
     </h1>
-  );
-}
-
-function Metric({
-  label,
-  value,
-  delta,
-}: MetricProps) {
-  const isPositive = delta !== undefined && Number(delta) >= 0;
-  return (
-    <div
-      style={{
-        display: "inline-block",
-        padding: "1rem 1.5rem",
-        margin: "0.5rem",
-        background: "#f8fafc",
-        border: "1px solid #e2e8f0",
-        borderRadius: 12,
-        minWidth: 140,
-      }}
-    >
-      <div style={{ fontSize: "0.8rem", color: "#64748b", marginBottom: 4 }}>
-        {label}
-      </div>
-      <div style={{ fontSize: "1.5rem", fontWeight: 700 }}>{value}</div>
-      {delta !== undefined && (
-        <div
-          style={{
-            fontSize: "0.85rem",
-            color: isPositive ? "#16a34a" : "#dc2626",
-          }}
-        >
-          {isPositive ? "▲" : "▼"} {delta}
-        </div>
-      )}
-    </div>
-  );
-}
-
-function Table({ data, columns: _columns }: TableProps) {
-  if (!data?.length) return null;
-  const keys = Object.keys(data[0]);
-  const cols = _columns?.length
-    ? _columns.map((c) => ({ key: c.key, label: c.label ?? c.key }))
-    : keys.map((key) => ({ key, label: key }));
-  return (
-    <table
-      style={{
-        width: "100%",
-        borderCollapse: "collapse",
-        margin: "1rem 0",
-      }}
-    >
-      <thead>
-        <tr>
-          {cols.map((c) => (
-            <th
-              key={c.key}
-              style={{
-                textAlign: "left",
-                padding: "0.5rem 0.75rem",
-                background: "#f1f5f9",
-                borderBottom: "2px solid #e2e8f0",
-                fontSize: "0.85rem",
-                fontWeight: 600,
-              }}
-            >
-              {c.label}
-            </th>
-          ))}
-        </tr>
-      </thead>
-      <tbody>
-        {data.map((row, i) => (
-          <tr key={i} style={{ borderBottom: "1px solid #f1f5f9" }}>
-            {cols.map((c) => (
-              <td
-                key={c.key}
-                style={{
-                  padding: "0.5rem 0.75rem",
-                  fontSize: "0.9rem",
-                }}
-              >
-                {String(row[c.key] ?? "")}
-              </td>
-            ))}
-          </tr>
-        ))}
-      </tbody>
-    </table>
   );
 }
 
@@ -420,9 +299,7 @@ export const bpm = {
   title2: wrap(Title2),
   title3: wrap(Title3),
   title4: wrap(Title4),
-  metric: wrap<MetricProps>(Metric),
   metricRow: wrap<MetricRowProps>(MetricRow),
-  table: wrap<TableProps>(Table),
   chat: wrap<ChatProps>(Chat),
   accordion: wrap(Accordion),
   altairChart: wrap(AltairChart),
@@ -468,7 +345,6 @@ export const bpm = {
   modal: wrap(Modal),
   numberInput: wrap(NumberInput),
   nfcBadge: wrap(NfcBadge),
-  offlineIndicator: wrap(OfflineIndicator),
   pagination: wrap(Pagination),
   panel: wrap(Panel),
   pdfViewer: wrap(PdfViewer),
