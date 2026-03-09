@@ -2,7 +2,7 @@
 set -e
 cd /home/ubuntu/blueprint-modular
 git pull origin master
-npm ci
+npm install
 rm -rf .next
 npm run build
 cp -r .next/static .next/standalone/.next/
