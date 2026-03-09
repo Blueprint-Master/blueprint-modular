@@ -9,6 +9,18 @@ export interface ExpanderProps {
   className?: string;
 }
 
+/**
+ * @component bpm.expander
+ * @description Bloc dépliable avec titre pour masquer/afficher du contenu (détails, annexes).
+ * @example
+ * bpm.expander({ title: "Détails techniques", defaultExpanded: false, children: "..." })
+ * @props
+ * - title (ReactNode) — Titre du bloc (visible quand replié).
+ * - children (ReactNode) — Contenu dépliable.
+ * - defaultExpanded (boolean, optionnel) — Ouvert au montage. Default: false.
+ * - className (string, optionnel) — Classes CSS.
+ * @usage Détails commande, annexes contrat, section technique.
+ */
 export function Expander({
   title,
   children,

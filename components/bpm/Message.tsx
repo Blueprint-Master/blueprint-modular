@@ -17,6 +17,17 @@ const typeStyles: Record<MessageType, { bg: string; border: string }> = {
   error: { bg: "rgba(239,68,68,0.15)", border: "#ef4444" },
 };
 
+/**
+ * @component bpm.message
+ * @description Bandeau de message contextuel (succès, avertissement, erreur) pour retours utilisateur après action.
+ * @example
+ * bpm.message({ type: "success", children: "Devis enregistré et envoyé au client." })
+ * @props
+ * - type ('info' | 'success' | 'warning' | 'error', optionnel) — Type de message. Default: 'info'.
+ * - children (ReactNode) — Texte du message.
+ * - className (string, optionnel) — Classes CSS.
+ * @usage Retour après enregistrement, validation formulaire, erreur API.
+ */
 export function Message({
   type = "info",
   children,

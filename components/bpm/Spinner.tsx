@@ -32,6 +32,19 @@ const wheelSizeMap = { small: "w-5 h-5 border-[3px]", medium: "w-8 h-8 border-[4
 const accentColor = (neutral: boolean) =>
   neutral ? "var(--bpm-text-secondary)" : "var(--bpm-accent)";
 
+/**
+ * @component bpm.spinner
+ * @description Indicateur de chargement (cercle, points, barres…) pendant une requête ou traitement asynchrone.
+ * @example
+ * bpm.spinner({ text: "Chargement des commandes...", size: "medium" })
+ * @props
+ * - text (string, optionnel) — Texte sous le spinner. Default: 'Chargement...'.
+ * - size ('small' | 'medium' | 'large', optionnel) — Taille. Default: 'medium'.
+ * - variant (string, optionnel) — Style d'animation (circle, dot, wheel…). Default: 'circle'.
+ * - neutral (boolean, optionnel) — Couleur grise au lieu de l'accent. Default: false.
+ * - className (string, optionnel) — Classes CSS.
+ * @usage Chargement de données, soumission formulaire, synchronisation.
+ */
 export function Spinner({
   text = "Chargement...",
   size = "medium",

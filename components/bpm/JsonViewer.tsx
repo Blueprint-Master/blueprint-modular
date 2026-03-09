@@ -87,7 +87,18 @@ function JsonNode({
   );
 }
 
-/** Affichage JSON repliable (équivalent st.json). */
+/**
+ * @component bpm.jsonViewer
+ * @description Affiche un objet JSON de façon repliable et lisible pour debug ou inspection de réponses API.
+ * @example
+ * bpm.jsonViewer({ data: { contrat: "Premium", ca: 125000 }, defaultExpandedLevel: 1 })
+ * @props
+ * - data (unknown) — Objet ou chaîne JSON à afficher.
+ * - defaultExpandedLevel (number, optionnel) — Niveaux ouverts par défaut (0 = tout replié). Default: 1.
+ * - maxHeight (number, optionnel) — Hauteur max en px avec scroll. Default: 400.
+ * - className (string, optionnel) — Classes CSS.
+ * @usage Inspection de payload API, logs structurés, configuration.
+ */
 export function JsonViewer({
   data,
   defaultExpandedLevel = 1,

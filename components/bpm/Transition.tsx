@@ -32,6 +32,20 @@ function wait(ms: number): Promise<void> {
   return new Promise((r) => setTimeout(r, ms));
 }
 
+/**
+ * @component bpm.transition
+ * @description Conteneur de vues avec transition animée (fade, shimmer, border, grid) pour wizard ou carrousel.
+ * @example
+ * bpm.transition({ activeIndex: 0, variant: "fade", children: [<Vue1 />, <Vue2 />] })
+ * @props
+ * - activeIndex (number) — Index de la vue affichée (0-based).
+ * - variant ('fade' | 'shimmer' | 'border' | 'grid', optionnel) — Type de transition. Default: 'fade'.
+ * - children (ReactNode[]) — Une entrée par vue.
+ * - duration (number, optionnel) — Durée transition ms. Default: 380.
+ * - onTransitionEnd (function, optionnel) — Callback fin de transition.
+ * - className (string, optionnel) — Classes CSS.
+ * @usage Wizard de saisie, carrousel d'étapes, changement de vue.
+ */
 export function Transition({
   activeIndex,
   variant = "fade",

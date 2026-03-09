@@ -16,6 +16,18 @@ export interface StepperProps {
   className?: string;
 }
 
+/**
+ * @component bpm.stepper
+ * @description Indicateur d'etapes (workflow, onboarding) avec etape courante et navigation optionnelle.
+ * @example
+ * bpm.stepper({ steps: [{ label: "Infos" }, { label: "Validation" }], currentStep: 0, onStepClick: setStep })
+ * @props
+ * - steps (StepperStep[], optionnel) — Liste des etapes (label, optional, content). Default: [].
+ * - currentStep (number, optionnel) — Index etape active (0-based). Default: 0.
+ * - onStepClick (function, optionnel) — Callback (index: number) au clic sur une etape.
+ * - className (string, optionnel) — Classes CSS.
+ * @usage Wizard de saisie, processus de validation, onboarding.
+ */
 export function Stepper({
   steps = [],
   currentStep = 0,

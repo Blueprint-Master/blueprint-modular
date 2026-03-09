@@ -12,6 +12,16 @@ export interface MarkdownProps {
   className?: string;
 }
 
+/**
+ * @component bpm.markdown
+ * @description Affiche du contenu formaté en Markdown (titres, listes, gras, code) pour notices et documentation métier.
+ * @example
+ * bpm.markdown({ text: "## Procédure\n\n1. Valider le devis\n2. Envoyer au client." })
+ * @props
+ * - text (string) — Contenu Markdown (utiliser `---` pour une ligne horizontale).
+ * - className (string, optionnel) — Classes CSS.
+ * @usage Notices, FAQ, procédures, documentation produit.
+ */
 export function Markdown({ text, className = "" }: MarkdownProps) {
   return (
     <div

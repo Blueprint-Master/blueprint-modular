@@ -10,7 +10,18 @@ export interface TextProps {
   style?: React.CSSProperties;
 }
 
-/** Texte simple (équivalent st.write / st.text). */
+/**
+ * @component bpm.text
+ * @description Affiche un paragraphe ou bloc de texte dans une page ou un formulaire (équivalent st.write / st.text).
+ * @example
+ * bpm.text({ children: "Chiffre d'affaires Q3 : 1,2 M€." })
+ * @props
+ * - children (ReactNode) — Contenu texte à afficher.
+ * - mono (boolean, optionnel) — Police monospace. Default: false.
+ * - className (string, optionnel) — Classes CSS.
+ * - style (object, optionnel) — Styles inline.
+ * @usage Corps de texte dans rapports, fiches produit, messages d'aide.
+ */
 export function Text({ children, mono = false, className = "", style = {} }: TextProps) {
   return (
     <span

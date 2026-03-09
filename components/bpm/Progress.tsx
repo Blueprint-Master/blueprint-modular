@@ -10,6 +10,19 @@ export interface ProgressProps {
   className?: string;
 }
 
+/**
+ * @component bpm.progress
+ * @description Barre de progression (value/max) pour avancement de tâche ou objectif (ex. TRS cible).
+ * @example
+ * bpm.progress({ value: 74, max: 100, label: "TRS cible 80%", showValue: true })
+ * @props
+ * - value (number, optionnel) — Valeur actuelle. Default: 0.
+ * - max (number, optionnel) — Valeur max. Default: 1.
+ * - label (string, optionnel) — Libelle au-dessus.
+ * - showValue (boolean, optionnel) — Afficher le pourcentage. Default: true.
+ * - className (string, optionnel) — Classes CSS.
+ * @usage Avancement commande, TRS ligne, objectif commercial.
+ */
 export function Progress({
   value = 0,
   max = 1,

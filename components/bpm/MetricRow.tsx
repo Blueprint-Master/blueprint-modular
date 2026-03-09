@@ -6,6 +6,16 @@ export interface MetricRowProps {
   className?: string;
 }
 
+/**
+ * @component bpm.metricRow
+ * @description Ligne horizontale de KPIs (bpm.metric) pour tableaux de bord et résumés chiffrés.
+ * @example
+ * bpm.metricRow({ children: <> {bpm.metric({ label: "CA", value: "142 500 €" })} {bpm.metric({ label: "Marge", value: "28%" })} </> })
+ * @props
+ * - children (ReactNode) — Un ou plusieurs bpm.metric.
+ * - className (string, optionnel) — Classes CSS.
+ * @usage Dashboard, résumé commande, indicateurs ligne de production.
+ */
 export function MetricRow({ children, className = "" }: MetricRowProps) {
   return (
     <div

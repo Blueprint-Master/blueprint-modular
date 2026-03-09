@@ -20,6 +20,20 @@ const variantBorder: Record<string, string> = {
   error: "#ef4444",
 };
 
+/**
+ * @component bpm.panel
+ * @description Bloc d'information, alerte ou résumé encadré (type notice ou executive summary) pour mettre en avant un message métier.
+ * @example
+ * bpm.panel({ variant: "warning", title: "TRS sous seuil", children: "Ligne FORM-1 : 68,4%." })
+ * @props
+ * - variant ('info' | 'success' | 'warning' | 'error', optionnel) — Type visuel. Default: 'info'.
+ * - title (ReactNode, optionnel) — Titre du panneau.
+ * - icon (string | false, optionnel) — Icône ou false pour masquer.
+ * - inverted (boolean, optionnel) — Fond sombre. Default: false.
+ * - children (ReactNode, optionnel) — Contenu.
+ * - className (string, optionnel) — Classes CSS.
+ * @usage Alertes production, notices légales, résumés chiffrés.
+ */
 export function Panel({
   variant = "info",
   title = null,

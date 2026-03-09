@@ -8,6 +8,17 @@ export interface CaptionProps {
   style?: React.CSSProperties;
 }
 
+/**
+ * @component bpm.caption
+ * @description Légende ou texte secondaire sous un bloc (graphique, carte, champ) pour contexte métier.
+ * @example
+ * bpm.caption({ children: "Données CA 2024 — source DGFiP." })
+ * @props
+ * - children (ReactNode) — Texte de la légende.
+ * - className (string, optionnel) — Classes CSS.
+ * - style (object, optionnel) — Styles inline.
+ * @usage Légendes de graphiques, sources de données, hints sous champs.
+ */
 export function Caption({ children, className = "", style = {} }: CaptionProps) {
   return (
     <p

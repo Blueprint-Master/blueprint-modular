@@ -13,6 +13,22 @@ export interface SliderProps {
   className?: string;
 }
 
+/**
+ * @component bpm.slider
+ * @description Curseur de saisie numerique (min-max) pour volume, pourcentage, seuil.
+ * @example
+ * bpm.slider({ label: "Volume", value: 70, min: 0, max: 100, onChange: setVolume })
+ * @props
+ * - value (number, optionnel) — Valeur courante.
+ * - min (number, optionnel) — Minimum. Default: 0.
+ * - max (number, optionnel) — Maximum. Default: 100.
+ * - step (number, optionnel) — Pas. Default: 1.
+ * - onChange (function, optionnel) — Callback (value: number).
+ * - label (string, optionnel) — Libelle au-dessus.
+ * - disabled (boolean, optionnel) — Default: false.
+ * - className (string, optionnel) — Classes CSS.
+ * @usage Parametres volume, seuil TRS, pourcentage objectif.
+ */
 export function Slider({
   value,
   min = 0,

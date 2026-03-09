@@ -14,6 +14,22 @@ export interface TextareaProps extends Omit<React.TextareaHTMLAttributes<HTMLTex
   className?: string;
 }
 
+/**
+ * @component bpm.textarea
+ * @description Champ de saisie multiligne pour commentaires, description, notes métier.
+ * @example
+ * bpm.textarea({ label: "Commentaire", value: comment, onChange: setComment, rows: 4 })
+ * @props
+ * - label (string, optionnel) — Libellé au-dessus du champ.
+ * - value (string, optionnel) — Valeur contrôlée.
+ * - onChange (function, optionnel) — Callback (value: string).
+ * - placeholder (string, optionnel) — Texte indicatif.
+ * - rows (number, optionnel) — Nombre de lignes visibles. Default: 4.
+ * - disabled (boolean, optionnel) — Désactive le champ. Default: false.
+ * - inverted (boolean, optionnel) — Fond sombre. Default: false.
+ * - className (string, optionnel) — Classes CSS.
+ * @usage Commentaire de commande, description produit, notes internes.
+ */
 export function Textarea({
   label,
   value = "",

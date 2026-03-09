@@ -10,6 +10,19 @@ export interface CheckboxProps {
   className?: string;
 }
 
+/**
+ * @component bpm.checkbox
+ * @description Case a cocher pour choix binaire (acceptation CGU, option activée).
+ * @example
+ * bpm.checkbox({ label: "J'accepte les conditions", checked: false, onChange: setAccepted })
+ * @props
+ * - label (ReactNode, optionnel) — Libelle a cote de la case.
+ * - checked (boolean, optionnel) — Etat coché. Default: false.
+ * - onChange (function, optionnel) — Callback (checked: boolean).
+ * - disabled (boolean, optionnel) — Default: false.
+ * - className (string, optionnel) — Classes CSS.
+ * @usage CGU, options formulaire, filtres liste.
+ */
 export function Checkbox({
   label,
   checked = false,

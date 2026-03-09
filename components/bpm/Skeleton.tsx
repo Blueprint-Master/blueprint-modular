@@ -19,6 +19,21 @@ export interface SkeletonProps {
   rounded?: SkeletonRounded;
 }
 
+/**
+ * @component bpm.skeleton
+ * @description Placeholder anime (rectangles, cercles) pendant le chargement de contenu pour eviter layout shift.
+ * @example
+ * bpm.skeleton({ width: 200, height: 20, variant: "text" })
+ * @props
+ * - variant ('rectangular' | 'circular' | 'text', optionnel) — Forme. Default: 'rectangular'.
+ * - width (number | string, optionnel) — Largeur.
+ * - height (number | string, optionnel) — Hauteur.
+ * - className (string, optionnel) — Classes CSS.
+ * - animated (boolean, optionnel) — Animation pulse. Default: true.
+ * - shimmer (boolean, optionnel) — Animation shimmer. Default: false.
+ * - rounded ('sm' | 'md' | 'lg' | 'full', optionnel) — Bords arrondis. Default: 'md'.
+ * @usage Chargement liste, fiche produit, tableau.
+ */
 const roundedClass: Record<SkeletonRounded, string> = {
   sm: "rounded-sm",
   md: "rounded",

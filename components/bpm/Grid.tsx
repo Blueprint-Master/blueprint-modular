@@ -9,6 +9,18 @@ export interface GridProps {
   children?: React.ReactNode;
 }
 
+/**
+ * @component bpm.grid
+ * @description Grille responsive pour aligner des cartes, métriques ou champs (layout dashboard).
+ * @example
+ * bpm.grid({ cols: 3, gap: 16, children: <> ... </> })
+ * @props
+ * - cols (number | object, optionnel) — Nombre de colonnes ou breakpoints. Default: 1.
+ * - gap (number | string, optionnel) — Espacement entre cellules. Default: '1rem'.
+ * - children (ReactNode, optionnel) — Contenu des cellules.
+ * - className (string, optionnel) — Classes CSS.
+ * @usage Dashboard KPIs, grille de cartes produit, formulaire multi-colonnes.
+ */
 export function Grid({
   cols = 1,
   gap = "1rem",

@@ -8,6 +8,17 @@ export interface CodeBlockProps {
   className?: string;
 }
 
+/**
+ * @component bpm.codeBlock
+ * @description Affiche un bloc de code avec coloration syntaxique et bouton Copier pour documentation technique ou procédures.
+ * @example
+ * bpm.codeBlock({ code: "npm install @blueprint-modular/core", language: "bash" })
+ * @props
+ * - code (string) — Contenu du bloc de code.
+ * - language (string, optionnel) — Langage pour coloration (bash, json, typescript…). Default: 'text'.
+ * - className (string, optionnel) — Classes CSS.
+ * @usage Documentation API, procédures d'installation, exemples de requêtes.
+ */
 export function CodeBlock({ code, language = "text", className = "" }: CodeBlockProps) {
   const [copied, setCopied] = useState(false);
 

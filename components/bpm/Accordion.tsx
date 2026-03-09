@@ -15,6 +15,18 @@ export interface AccordionProps {
   className?: string;
 }
 
+/**
+ * @component bpm.accordion
+ * @description Liste de sections repliables (FAQ, procedures) avec une ou plusieurs ouvertes.
+ * @example
+ * bpm.accordion({ sections: [{ title: "Livraison", content: "Delai 48h." }] })
+ * @props
+ * - sections (AccordionSection[], optionnel) — title et content par section. Default: [].
+ * - allowMultiple (boolean, optionnel) — Plusieurs sections ouvertes. Default: false.
+ * - defaultOpenIds (string[], optionnel) — IDs sections ouvertes au montage. Default: [].
+ * - className (string, optionnel) — Classes CSS.
+ * @usage FAQ, procedures, aide par theme.
+ */
 export function Accordion({
   sections = [],
   allowMultiple = false,

@@ -31,6 +31,25 @@ export interface TitleProps extends Omit<React.HTMLAttributes<HTMLHeadingElement
   onLogoClick?: () => void;
 }
 
+/**
+ * @component bpm.title
+ * @description Titre de page ou de section avec niveaux 1–4 pour structurer rapports et tableaux de bord.
+ * @example
+ * bpm.title({ children: "Dashboard Production", level: 1 })
+ * @props
+ * - children (ReactNode) — Texte du titre.
+ * - level (1 | 2 | 3 | 4, optionnel) — Niveau hiérarchique. Default: 1.
+ * - size (string, optionnel) — Surcharge taille (ex. "1.5rem").
+ * - bold (boolean | number, optionnel) — Gras.
+ * - color (string, optionnel) — Couleur texte.
+ * - bar (boolean, optionnel) — Barre verticale à gauche. Default: false.
+ * - barColor (string, optionnel) — Couleur de la barre.
+ * - inverted (boolean, optionnel) — Fond sombre. Default: false.
+ * - logoUrl (string, optionnel) — URL logo (level 1).
+ * - onLogoClick (function, optionnel) — Clic sur le logo.
+ * - className, style (optionnel) — Reste des props.
+ * @usage En-têtes de page, titres de section, rapports.
+ */
 export function Title({
   children,
   level = 1,

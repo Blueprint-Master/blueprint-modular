@@ -12,6 +12,19 @@ export interface DividerProps {
   className?: string;
 }
 
+/**
+ * @component bpm.divider
+ * @description Ligne de separation horizontale ou verticale (optionnellement avec libelle) entre blocs.
+ * @example
+ * bpm.divider({ label: "ou", orientation: "horizontal" })
+ * @props
+ * - label (string, optionnel) — Texte centre sur la ligne.
+ * - orientation ('horizontal' | 'vertical', optionnel) — Sens. Default: 'horizontal'.
+ * - thickness (number, optionnel) — Epaisseur en px. Default: 1.
+ * - color (string, optionnel) — Couleur CSS. Default: var(--bpm-border).
+ * - className (string, optionnel) — Classes CSS.
+ * @usage Separation de sections, separateur ou dans formulaire.
+ */
 export function Divider({
   label,
   orientation = "horizontal",

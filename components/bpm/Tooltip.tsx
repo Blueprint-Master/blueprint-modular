@@ -23,6 +23,19 @@ export interface TooltipProps {
   textColor?: string | null;
 }
 
+/**
+ * @component bpm.tooltip
+ * @description Info-bulle au survol d'un élément (bouton, icône) pour aide contextuelle.
+ * @example
+ * bpm.tooltip({ text: "Exporter en PDF", children: <button>Export</button> })
+ * @props
+ * - text (string) — Texte du tooltip.
+ * - children (ReactNode) — Élément déclencheur (bouton, icône).
+ * - position (string, optionnel) — Placement (top, bottom, left, right…). Default: 'top'.
+ * - backgroundColor (string, optionnel) — Fond du tooltip.
+ * - textColor (string, optionnel) — Couleur du texte.
+ * @usage Aide sur boutons, explication de champs, raccourcis.
+ */
 export function Tooltip({
   text,
   children,

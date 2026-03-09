@@ -11,6 +11,19 @@ export interface StatusBoxProps {
   className?: string;
 }
 
+/**
+ * @component bpm.statusBox
+ * @description Affiche le statut d'une opération ou d'un service (en cours, terminé, erreur) avec zone dépliable pour détails.
+ * @example
+ * bpm.statusBox({ label: "Synchronisation CRM", state: "complete", defaultExpanded: false })
+ * @props
+ * - label (string) — Libellé du statut affiché (ex. "Connecté", "Synchronisation en cours").
+ * - state ('running' | 'complete' | 'error', optionnel) — État affiché. Default: 'running'.
+ * - children (ReactNode, optionnel) — Contenu dépliable sous le bandeau.
+ * - defaultExpanded (boolean, optionnel) — Ouvrir la zone dépliable au montage. Default: true.
+ * - className (string, optionnel) — Classes CSS additionnelles.
+ * @usage Indicateur de statut pour tableaux de bord, synchronisation données, connexion API.
+ */
 export function StatusBox(p: StatusBoxProps) {
   const { label, state = "running", children, defaultExpanded = true, className = "" } = p;
   const [expanded, setExpanded] = useState(defaultExpanded);

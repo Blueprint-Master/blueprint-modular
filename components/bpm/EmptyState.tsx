@@ -10,6 +10,19 @@ export interface EmptyStateProps {
   className?: string;
 }
 
+/**
+ * @component bpm.emptyState
+ * @description État vide centré avec titre, description et action (bouton) quand une liste ou recherche n'a aucun résultat.
+ * @example
+ * bpm.emptyState({ title: "Aucune commande", description: "Créez votre première commande.", action: <Button>Nouvelle commande</Button> })
+ * @props
+ * - title (string, optionnel) — Titre. Default: 'Aucune donnée'.
+ * - description (ReactNode, optionnel) — Texte explicatif.
+ * - icon (ReactNode, optionnel) — Icône au-dessus du titre.
+ * - action (ReactNode, optionnel) — Bouton ou lien d'action.
+ * - className (string, optionnel) — Classes CSS.
+ * @usage Liste vide, recherche sans résultat, premier usage.
+ */
 export function EmptyState({
   title = "Aucune donnée",
   description,

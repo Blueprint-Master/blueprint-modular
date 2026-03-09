@@ -10,6 +10,19 @@ export interface ToggleProps {
   className?: string;
 }
 
+/**
+ * @component bpm.toggle
+ * @description Interrupteur on/off pour activer ou désactiver une option (notifications, mode maintenance).
+ * @example
+ * bpm.toggle({ label: "Notifications email", value: true, onChange: (v) => setNotif(v) })
+ * @props
+ * - label (ReactNode, optionnel) — Libellé à côté du toggle.
+ * - value (boolean, optionnel) — État coché. Default: false.
+ * - onChange (function, optionnel) — Callback (checked: boolean).
+ * - disabled (boolean, optionnel) — Désactive le toggle. Default: false.
+ * - className (string, optionnel) — Classes CSS.
+ * @usage Paramètres utilisateur, options de module, activation de fonctionnalité.
+ */
 export function Toggle({
   label,
   value = false,

@@ -17,6 +17,23 @@ export interface CardProps {
   className?: string;
 }
 
+/**
+ * @component bpm.card
+ * @description Carte de contenu avec titre, image optionnelle et zone d'actions pour fiches produit ou résumés.
+ * @example
+ * bpm.card({ title: "Contrat Premium", subtitle: "Renouvellement mars 2025", children: "..." })
+ * @props
+ * - title (ReactNode, optionnel) — Titre de la carte.
+ * - subtitle (ReactNode, optionnel) — Sous-titre.
+ * - image (string, optionnel) — URL image en en-tête.
+ * - imageAlt (string, optionnel) — Texte alternatif image.
+ * - children (ReactNode, optionnel) — Contenu principal.
+ * - actions (ReactNode, optionnel) — Boutons ou liens en pied.
+ * - variant ('default' | 'elevated' | 'outlined', optionnel) — Style. Default: 'default'.
+ * - inverted (boolean, optionnel) — Fond sombre. Default: false.
+ * - className (string, optionnel) — Classes CSS.
+ * @usage Fiches produit, résumés contrat, cartes dashboard.
+ */
 export function Card({
   title,
   subtitle,

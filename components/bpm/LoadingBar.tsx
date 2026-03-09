@@ -28,6 +28,20 @@ export interface LoadingBarProps {
 const BLOCK_COUNT = 12;
 const DOT_COUNT = 14;
 
+/**
+ * @component bpm.loadingBar
+ * @description Barre de progression horizontale (déterminée ou indéterminée) pour chargement de tâches.
+ * @example
+ * bpm.loadingBar({ variant: "sweep", value: 65, size: "default" })
+ * @props
+ * - variant (string, optionnel) — Style (sweep, blocks, iso…). Default: 'sweep'.
+ * - value (number, optionnel) — 0–100 pour barre déterminée. Omit = indéterminé.
+ * - size ('thin' | 'default' | 'thick', optionnel) — Hauteur. Default: 'default'.
+ * - animated (boolean, optionnel) — Animation. Default: true.
+ * - className (string, optionnel) — Classes CSS.
+ * - aria-label (string, optionnel) — Accessibilité.
+ * @usage Import en cours, génération de rapport, upload fichier.
+ */
 export function LoadingBar({
   variant = "sweep",
   value,
