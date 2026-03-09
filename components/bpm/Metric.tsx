@@ -75,11 +75,11 @@ export function Metric({
       maximumFractionDigits: decimals,
       useGrouping: valueGrouping,
     });
-  const formatDelta = (d: number) => {
+  const formatDelta = (d: number, forcePercent = false) => {
     if (typeof d !== "number" || !Number.isFinite(d)) return "";
     const sign = d > 0 ? "+" : d < 0 ? "-" : "";
     const fmt = formatWithLocale(Math.abs(d), deltaDecimals);
-    if (currency === "%") return `${sign}${fmt}%`;
+    if (forcePercent || currency === "%") return `${sign}${fmt}%`;
     if (!currency || currency === "") return `${sign}${fmt}`;
     return `${sign}${fmt} ${sym}`;
   };
@@ -87,7 +87,9 @@ export function Metric({
     typeof value === "number"
       ? formatWithLocale(value, valueDecimals)
       : value;
-  const deltaNum = typeof delta === "string" ? parseFloat(delta) : delta;
+  const deltaStr = typeof delta === "string" ? delta.trim() : "";
+  const deltaIsPercent = deltaStr.endsWith("%");
+  const deltaNum = typeof delta === "string" ? parseFloat(delta.replace(/,/g, ".").replace(/%/g, "")) : delta;
   const hasDelta = deltaNum != null && !Number.isNaN(deltaNum);
   const positive = hasDelta && deltaType !== "aucun" && (deltaType === "inverse" ? deltaNum < 0 : deltaNum > 0);
   const negative = hasDelta && deltaType !== "aucun" && (deltaType === "inverse" ? deltaNum > 0 : deltaNum < 0);
@@ -139,7 +141,7 @@ export function Metric({
         {hasDelta ? (
           <>
             {deltaNum! > 0 ? "▲" : deltaNum! < 0 ? "▼" : "—"}
-            {formatDelta(deltaNum!)}
+            {formatDelta(deltaNum!, deltaIsPercent)}
           </>
         ) : (
           "\u00A0"
