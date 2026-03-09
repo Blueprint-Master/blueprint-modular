@@ -22,11 +22,13 @@ export default defineConfig({
       fileName: (format) => format === 'es' ? 'index.mjs' : 'index.js',
     },
     rollupOptions: {
-      external: ['react', 'react-dom', 'react-plotly.js', 'plotly.js'],
+      external: ['react', 'react-dom', 'react/jsx-runtime', 'react/jsx-dev-runtime', 'react-plotly.js', 'plotly.js'],
       output: {
         globals: {
           react: 'React',
           'react-dom': 'ReactDOM',
+          'react/jsx-runtime': 'ReactJSXRuntime',
+          'react/jsx-dev-runtime': 'ReactJSXRuntime',
         },
         assetFileNames: (assetInfo) => {
           const name = assetInfo.name || '';
