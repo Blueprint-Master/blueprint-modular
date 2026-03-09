@@ -17,6 +17,8 @@ export interface SkeletonProps {
   shimmer?: boolean;
   /** Contrôle le rayon des bords (ignoré si variant === "circular"). */
   rounded?: SkeletonRounded;
+  /** Nombre de lignes de skeleton empilées (variant text). Default: 1. */
+  lines?: number;
 }
 
 /**
@@ -32,6 +34,7 @@ export interface SkeletonProps {
  * - animated (boolean, optionnel) — Animation pulse. Default: true.
  * - shimmer (boolean, optionnel) — Animation shimmer. Default: false.
  * - rounded ('sm' | 'md' | 'lg' | 'full', optionnel) — Bords arrondis. Default: 'md'.
+ * - lines (number, optionnel) — Nombre de lignes empilées. Default: 1.
  * @usage Chargement liste, fiche produit, tableau.
  * @context PARENT: bpm.panel | bpm.card. ASSOCIATED: bpm.spinner, bpm.table. FORBIDDEN: aucun.
  */
@@ -50,13 +53,14 @@ export function Skeleton({
   animated = true,
   shimmer = false,
   rounded = "md",
+  lines = 1,
 }: SkeletonProps) {
-  const style: React.CSSProperties = { maxWidth: "100%" };
+  const style: React.CSSProperties = { width: "100%", maxWidth: "100%", display: "block" };
   if (width != null) style.width = typeof width === "number" ? `${width}px` : width;
   if (height != null) style.height = typeof height === "number" ? `${height}px` : height;
   const roundClass = variant === "circular" ? "rounded-full" : roundedClass[rounded];
   const animationClass = shimmer ? "bpm-skeleton--shimmer" : animated ? "animate-pulse" : "";
-  return (
+  const single = (
     <span
       className={`bpm-skeleton block ${animationClass} ${roundClass} ${className}`.trim()}
       style={{
@@ -65,5 +69,23 @@ export function Skeleton({
       }}
       aria-hidden
     />
+  );
+  if (lines <= 1) return single;
+  const lineHeight = height ?? 16;
+  const lineStyle = { ...style, height: typeof lineHeight === "number" ? `${lineHeight}px` : lineHeight };
+  return (
+    <span className="bpm-skeleton-lines block" style={{ display: "flex", flexDirection: "column", gap: 8, width: "100%", maxWidth: "100%" }}>
+      {Array.from({ length: lines }, (_, i) => (
+        <span
+          key={i}
+          className={`bpm-skeleton block ${animationClass} ${roundClass}`.trim()}
+          style={{
+            ...lineStyle,
+            background: "var(--bpm-skeleton-bg, var(--bpm-bg-secondary))",
+          }}
+          aria-hidden
+        />
+      ))}
+    </span>
   );
 }

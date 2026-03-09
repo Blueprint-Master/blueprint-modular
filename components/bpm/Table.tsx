@@ -43,6 +43,8 @@ export interface TableProps {
   minWidth?: number;
   /** Si true, expose ce tableau au contexte IA. */
   trackContext?: boolean;
+  /** Message affiché quand data est vide. Default: "Aucune donnée disponible". */
+  emptyMessage?: string;
 }
 
 function getSortValue(val: unknown): string | number {
@@ -95,6 +97,7 @@ export function Table({
   valueGrouping = true,
   minWidth,
   trackContext = false,
+  emptyMessage = "Aucune donnée disponible",
 }: TableProps) {
   const isMobile = useIsMobile(768);
 
@@ -213,7 +216,18 @@ export function Table({
             </tr>
           </thead>
           <tbody>
-            {sortedData.map((row, rowIdx) => (
+            {sortedData.length === 0 ? (
+              <tr>
+                <td
+                  colSpan={columns.length}
+                  className="px-4 py-12 text-center text-sm"
+                  style={{ color: "var(--bpm-text-secondary)", borderColor: "var(--bpm-border)" }}
+                >
+                  <span style={{ display: "inline-block", marginBottom: 8, fontSize: 24 }} aria-hidden>—</span>
+                  <div>{emptyMessage}</div>
+                </td>
+              </tr>
+            ) : sortedData.map((row, rowIdx) => (
               <tr
                 key={keyColumn && row[keyColumn] != null ? String(row[keyColumn]) : rowIdx}
                 onClick={() => onRowClick?.(row)}
