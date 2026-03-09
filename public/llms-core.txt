@@ -1,6 +1,6 @@
 # Blueprint Modular — Agent Context File (CORE)
 # Version : 0.1.43
-# Date    : 2026-03-08
+# Date    : 2026-03-09
 # Format compact pour modèles locaux (Qwen, Mistral)
 # Composants essentiels uniquement — référence complète : blueprint-modular.com/llms.txt
 
