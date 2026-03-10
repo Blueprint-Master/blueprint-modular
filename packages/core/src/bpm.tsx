@@ -1,6 +1,6 @@
 /**
  * @blueprint-modular/core — objet bpm unifié.
- * Réexporte tous les composants de components/bpm (sauf Metric, Table, Title, Page, Chat gardés locaux).
+ * Réexporte tous les composants de components/bpm (sauf Title, Page, Chat gardés locaux).
  * Build : depuis la racine du repo, avec alias @ → repo root.
  */
 import React from "react";
@@ -47,6 +47,7 @@ import {
   Map,
   Markdown,
   Message,
+  Metric,
   MetricRow,
   Modal,
   NumberInput,
@@ -68,6 +69,7 @@ import {
   SpinnerDot,
   StatusBox,
   Stepper,
+  Table,
   Tabs,
   Text,
   Textarea,
@@ -309,6 +311,8 @@ export const bpm = {
   title3: wrap(Title3),
   title4: wrap(Title4),
   metricRow: wrap<MetricRowProps>(MetricRow),
+  metric: wrap(Metric),
+  table: wrap(Table),
   chat: wrap<ChatProps>(Chat),
   accordion: wrap(Accordion),
   altairChart: wrap(AltairChart),
