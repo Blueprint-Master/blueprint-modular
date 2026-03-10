@@ -1,4 +1,7 @@
 /* Variables BPM — tête du CSS généré (@blueprint-modular/core) */
+/* Material Symbols (weight 200) pour bpm.pageLayout — https://fonts.google.com/icons */
+@import url("https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,200,0,0&display=block");
+
 :root {
   --bpm-accent: #2563eb;
   --bpm-accent-hover: #1d4ed8;
