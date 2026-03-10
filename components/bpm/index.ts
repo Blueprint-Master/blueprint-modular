@@ -6,6 +6,8 @@ export { Button } from "./Button";
 export type { ButtonProps } from "./Button";
 export { Panel } from "./Panel";
 export type { PanelProps } from "./Panel";
+export { PageLayout } from "./PageLayout";
+export type { PageLayoutProps, SidebarItem } from "./PageLayout";
 export { CodeBlock } from "./CodeBlock";
 export type { CodeBlockProps } from "./CodeBlock";
 export { Text } from "./Text";
