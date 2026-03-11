@@ -1,6 +1,6 @@
 # Blueprint Modular — Agent Context File
 # Version : 0.1.43
-# Date    : 2026-03-09
+# Date    : 2026-03-11
 # URL canonique : https://blueprint-modular.com/llms.txt
 #
 # Ce fichier est la référence machine de @blueprint-modular/core.
@@ -28,7 +28,7 @@ INTERDIT : import { bpm.modal } ou tout autre destructuring
 
 ## COMPOSANTS
 
-### bpm.accordion
+## bpm.accordion
 ```
   sections?: AccordionSection[]
   allowMultiple?: boolean
@@ -36,7 +36,33 @@ INTERDIT : import { bpm.modal } ou tout autre destructuring
   className?: string
 ```
 
-### bpm.autocomplete
+## bpm.altairChart
+```
+  spec?: Record<string, unknown>  — Spécification Vega-Lite / Altair (JSON). À fournir côté app.
+  iframeSrc?: string  — Ou URL d'un fichier JSON ou d'une vue compilée.
+  width?: number | string
+  height?: number | string
+  className?: string
+```
+
+## bpm.areaChart
+```
+  data*: AreaChartDatum[]
+  width?: number
+  height?: number
+  color?: string
+  className?: string
+```
+
+## bpm.audio
+```
+  src*: string
+  controls?: boolean
+  loop?: boolean
+  className?: string
+```
+
+## bpm.autocomplete
 ```
   label?: string
   placeholder?: string
@@ -46,7 +72,7 @@ INTERDIT : import { bpm.modal } ou tout autre destructuring
   className?: string
 ```
 
-### bpm.avatar
+## bpm.avatar
 ```
   src?: string | null  — URL de l'image de l'avatar.
   alt?: string  — Texte alternatif (accessibilité).
@@ -62,21 +88,41 @@ INTERDIT : import { bpm.modal } ou tout autre destructuring
   onImageChange?: (file: File) => void  — Callback appelé avec le File sélectionné.
 ```
 
-### bpm.badge
+## bpm.badge
 ```
   children*: React.ReactNode  — PARENT: bpm.table (colonne statut) | bpm.metric | bpm.card. INTERDIT: texte long >20 chars — utiliser bpm.chip. ASSOCIÉ: bpm.table, bpm.metric, bpm.statusBox.
   variant?: BadgeVariant  — Style / couleur du badge. Valeurs : 'default' | 'primary' | 'success' | 'warning' | 'error'. Default: 'default'.
   className?: string
 ```
 
-### bpm.breadcrumb
+## bpm.barChart
+```
+  data*: BarChartDatum[]
+  width?: number
+  height?: number
+  color?: string
+  className?: string
+```
+
+## bpm.barcode
+```
+  value*: string
+  format?: "EAN13" | "CODE128"
+  height?: number
+  width?: number
+  lineColor?: string
+  background?: string
+  className?: string
+```
+
+## bpm.breadcrumb
 ```
   items?: BreadcrumbItem[]
   separator?: string
   className?: string
 ```
 
-### bpm.button
+## bpm.button
 ```
   children*: React.ReactNode  — Contenu du bouton — obligatoire.
   onClick?: () => void  — Handler clic.
@@ -88,14 +134,14 @@ INTERDIT : import { bpm.modal } ou tout autre destructuring
   className?: string
 ```
 
-### bpm.caption
+## bpm.caption
 ```
   children*: React.ReactNode
   className?: string
   style?: React.CSSProperties
 ```
 
-### bpm.card
+## bpm.card
 ```
   title?: React.ReactNode
   subtitle?: React.ReactNode
@@ -108,7 +154,18 @@ INTERDIT : import { bpm.modal } ou tout autre destructuring
   className?: string
 ```
 
-### bpm.checkbox
+## bpm.chatInterface
+```
+  messages*: ChatMessage[]
+  onSend*: (content: string) => void
+  isLoading?: boolean
+  placeholder?: string
+  systemContext?: string  — Contexte système affiché en haut si défini.
+  height?: string
+  className?: string
+```
+
+## bpm.checkbox
 ```
   label?: React.ReactNode
   checked?: boolean
@@ -117,7 +174,7 @@ INTERDIT : import { bpm.modal } ou tout autre destructuring
   className?: string
 ```
 
-### bpm.chip
+## bpm.chip
 ```
   label*: React.ReactNode
   onDelete?: () => void
@@ -127,14 +184,34 @@ INTERDIT : import { bpm.modal } ou tout autre destructuring
   className?: string
 ```
 
-### bpm.codeBlock
+## bpm.codeBlock
 ```
   code*: string
   language?: string
   className?: string
 ```
 
-### bpm.column
+## bpm.codeEditor
+```
+  value*: string
+  onChange*: (value: string) => void
+  language?: string
+  readOnly?: boolean
+  height?: string | number
+  placeholder?: string
+  className?: string
+```
+
+## bpm.colorPicker
+```
+  label?: string
+  value?: string
+  onChange?: (value: string) => void
+  help?: string | null
+  disabled?: boolean
+```
+
+## bpm.column
 ```
   columns?: number  — Nombre de colonnes (1, 2, 3, 4, etc.).
   gap?: number | string  — Espacement entre les colonnes (CSS, ex. "1rem", 16).
@@ -142,14 +219,27 @@ INTERDIT : import { bpm.modal } ou tout autre destructuring
   children?: React.ReactNode
 ```
 
-### bpm.container
+## bpm.confirmModal
+```
+  isOpen*: boolean
+  onConfirm*: () => void
+  onCancel*: () => void
+  title*: string
+  message*: string
+  confirmLabel?: string
+  cancelLabel?: string
+  variant?: ConfirmModalVariant
+  isLoading?: boolean
+```
+
+## bpm.container
 ```
   children*: React.ReactNode
   className?: string
   style?: React.CSSProperties
 ```
 
-### bpm.crudPage
+## bpm.crud
 ```
   title*: string
   endpoint*: string
@@ -160,7 +250,18 @@ INTERDIT : import { bpm.modal } ou tout autre destructuring
   idKey?: string  — Champ utilisé comme identifiant pour GET/PUT/DELETE (défaut: "id").
 ```
 
-### bpm.dateInput
+## bpm.dataExplorer
+```
+  data*: Record<string, unknown>[]
+  columns?: ColumnDef[]
+  title?: string
+  searchable?: boolean
+  exportable?: boolean
+  pageSize?: number
+  className?: string
+```
+
+## bpm.dateInput
 ```
   label?: string
   value?: Date | string | null
@@ -171,7 +272,7 @@ INTERDIT : import { bpm.modal } ou tout autre destructuring
   max?: Date | string | null
 ```
 
-### bpm.dateRangePicker
+## bpm.dateRangePicker
 ```
   label?: string
   start?: Date | string | null
@@ -182,7 +283,17 @@ INTERDIT : import { bpm.modal } ou tout autre destructuring
   max?: Date | string | null
 ```
 
-### bpm.divider
+## bpm.diffViewer
+```
+  original*: string
+  modified*: string
+  language?: string
+  mode?: "split" | "unified"
+  title?: { original?: string
+  className?: string
+```
+
+## bpm.divider
 ```
   label?: string
   orientation?: "horizontal" | "vertical"
@@ -191,7 +302,7 @@ INTERDIT : import { bpm.modal } ou tout autre destructuring
   className?: string
 ```
 
-### bpm.drawer
+## bpm.drawer
 ```
   children*: React.ReactNode
   open*: boolean
@@ -202,14 +313,14 @@ INTERDIT : import { bpm.modal } ou tout autre destructuring
   className?: string
 ```
 
-### bpm.empty
+## bpm.empty
 ```
   children?: React.ReactNode
   className?: string
   style?: React.CSSProperties
 ```
 
-### bpm.emptyState
+## bpm.emptyState
 ```
   title?: string
   description?: React.ReactNode
@@ -218,7 +329,7 @@ INTERDIT : import { bpm.modal } ou tout autre destructuring
   className?: string
 ```
 
-### bpm.expander
+## bpm.expander
 ```
   title*: React.ReactNode
   children*: React.ReactNode
@@ -226,7 +337,7 @@ INTERDIT : import { bpm.modal } ou tout autre destructuring
   className?: string
 ```
 
-### bpm.fAB
+## bpm.fab
 ```
   icon?: React.ReactNode
   label?: string
@@ -235,7 +346,17 @@ INTERDIT : import { bpm.modal } ou tout autre destructuring
   className?: string
 ```
 
-### bpm.fileUploader
+## bpm.filePreview
+```
+  url*: string
+  filename*: string
+  mimeType?: string
+  height?: string | number
+  showDownload?: boolean
+  className?: string
+```
+
+## bpm.fileUploader
 ```
   accept?: string
   multiple?: boolean
@@ -245,7 +366,17 @@ INTERDIT : import { bpm.modal } ou tout autre destructuring
   label?: string
 ```
 
-### bpm.gps
+## bpm.filterPanel
+```
+  filters*: FilterConfig[]  — Liste des filtres à afficher.
+  values?: Record<string, unknown>  — Valeurs courantes (clé = filter.key).
+  onChange*: (key: string, value: unknown) => void  — Callback à chaque changement d'un filtre.
+  onReset*: () => void  — Callback réinitialisation.
+  orientation?: "horizontal" | "vertical"  — Disposition : horizontal (flex row) ou vertical (colonne 240px).
+  collapsible?: boolean  — Afficher un bouton pour replier le panneau (avec badge si filtres actifs).
+```
+
+## bpm.gps
 ```
   label?: string  — Titre affiché au-dessus du bloc.
   showMap?: boolean  — Afficher une carte Leaflet. Default: true.
@@ -257,17 +388,7 @@ INTERDIT : import { bpm.modal } ou tout autre destructuring
   onChange?: (coords: { lat: number  — Callback à chaque déplacement du marker ou clic sur la carte (mode picker).
 ```
 
-### bpm.gpsMap
-```
-  mode*: "display" | "picker"
-  center*: { lat: number
-  markerPosition*: { lat: number
-  onMarkerChange?: (lat: number, lng: number) => void
-  onMapClick?: (lat: number, lng: number) => void
-  height*: number
-```
-
-### bpm.grid
+## bpm.grid
 ```
   cols?: number | { xs?: number
   gap?: number | string
@@ -275,7 +396,7 @@ INTERDIT : import { bpm.modal } ou tout autre destructuring
   children?: React.ReactNode
 ```
 
-### bpm.highlightBox
+## bpm.highlightBox
 ```
   value*: number  — Numéro affiché dans la barre gauche (ex. 1)
   label*: string  — Texte sous le numéro dans la barre (ex. "DAILY")
@@ -287,14 +408,14 @@ INTERDIT : import { bpm.modal } ou tout autre destructuring
   className?: string
 ```
 
-### bpm.html
+## bpm.html
 ```
   html*: string  — HTML brut à afficher (équivalent st.html). À n'utiliser qu'avec du contenu de confiance ou sanitized.
   className?: string
   style?: React.CSSProperties
 ```
 
-### bpm.image
+## bpm.image
 ```
   src*: string
   alt*: string
@@ -305,7 +426,7 @@ INTERDIT : import { bpm.modal } ou tout autre destructuring
   className?: string
 ```
 
-### bpm.input
+## bpm.input
 ```
   label?: string  — Label affiché au-dessus du champ.
   value?: string  — Valeur contrôlée.
@@ -316,20 +437,77 @@ INTERDIT : import { bpm.modal } ou tout autre destructuring
   className?: string
 ```
 
-### bpm.markdown
+## bpm.jsonEditor
+```
+  value*: string
+  onChange*: (value: string, isValid: boolean) => void
+  readOnly?: boolean
+  height?: string | number
+  showValidation?: boolean
+  className?: string
+```
+
+## bpm.jsonViewer
+```
+  data*: unknown  — Objet ou chaîne JSON à afficher.
+  defaultExpandedLevel?: number  — Nombre de niveaux ouverts par défaut (0 = tout replié).
+  maxHeight?: number  — Hauteur max en px pour scroll.
+  className?: string
+```
+
+## bpm.labelValue
+```
+  label*: string
+  value*: string | number | React.ReactNode
+  orientation?: "horizontal" | "vertical"
+  size?: "sm" | "md" | "lg"
+  valueStyle?: "default" | "bold" | "accent" | "muted"
+  copyable?: boolean
+  className?: string
+```
+
+## bpm.lineChart
+```
+  data*: LineChartDatum[]
+  width?: number
+  height?: number
+  color?: string
+  className?: string
+```
+
+## bpm.loadingBar
+```
+  variant?: LoadingBarVariant  — Variant visuel (sweep, blocks, iso, stacked, arc, dots).
+  value?: number  — Pour les barres déterminées (ex. iso) : 0–100. Non fourni = indéterminé.
+  size?: "thin" | "default" | "thick"  — Hauteur : thin (6px), default (8px), thick (12px).
+  animated?: boolean  — Désactive l'animation (utile pour screenshots ou prefers-reduced-motion).
+  className?: string
+```
+
+## bpm.map
+```
+  iframeSrc?: string
+  lat?: number
+  lng?: number
+  width?: number | string
+  height?: number | string
+  className?: string
+```
+
+## bpm.markdown
 ```
   text*: string  — Contenu Markdown. Utilisez `---` sur une ligne pour une ligne horizontale (hr).
   className?: string
 ```
 
-### bpm.message
+## bpm.message
 ```
   type?: MessageType
   children*: React.ReactNode
   className?: string
 ```
 
-### bpm.metric
+## bpm.metric
 ```
   label*: string  — Libellé affiché au-dessus de la valeur.
   value*: string | number  — Valeur principale (string ou number).
@@ -350,13 +528,7 @@ INTERDIT : import { bpm.modal } ou tout autre destructuring
   trackContext?: boolean  — Si true, expose cette métrique au contexte IA.
 ```
 
-### bpm.metricRow
-```
-  children*: React.ReactNode
-  className?: string
-```
-
-### bpm.modal
+## bpm.modal
 Modal dialog. PATTERN : {isOpen && bpm.modal({ isOpen:true, onClose, title, children })} — TOUJOURS dans return(), jamais après.
 ```
   isOpen*: boolean  — Contrôle l'affichage. PATTERN OBLIGATOIRE : {isOpen && bpm.modal({ isOpen:true, ... })}
@@ -367,7 +539,34 @@ Modal dialog. PATTERN : {isOpen && bpm.modal({ isOpen:true, onClose, title, chil
   showCloseButton?: boolean
 ```
 
-### bpm.numberInput
+## bpm.modelSelector
+```
+  models*: ModelOption[]
+  selected*: string
+  onChange*: (modelId: string) => void
+  showCapabilities?: boolean
+  className?: string
+```
+
+## bpm.nfcBadge
+```
+  label?: string
+  variant?: "default" | "primary" | "success"
+  className?: string
+```
+
+## bpm.notificationCenter
+```
+  notifications*: NotificationItem[]
+  onRead*: (id: string) => void
+  onReadAll*: () => void
+  onDelete?: (id: string) => void
+  maxVisible?: number
+  trigger?: React.ReactNode  — Élément déclencheur (bouton cloche par défaut).
+  className?: string
+```
+
+## bpm.numberInput
 ```
   label?: string
   value?: number | null
@@ -380,7 +579,19 @@ Modal dialog. PATTERN : {isOpen && bpm.modal({ isOpen:true, onClose, title, chil
   placeholder?: string
 ```
 
-### bpm.pagination
+## bpm.pageLayout
+```
+  title*: string
+  items*: SidebarItem[]
+  currentItem*: string
+  onNavigate*: (key: string) => void
+  children*: React.ReactNode
+  defaultCollapsed?: boolean
+  theme?: "light" | "dark"  — Thème courant (optionnel). Si fourni avec onThemeChange, affiche le bouton thème en bas de la sidebar (aligné .Maker).
+  onThemeChange?: (theme: "light" | "dark") => void  — Callback changement de thème (clair ↔ sombre). Affiche le bouton thème en bas si défini.
+```
+
+## bpm.pagination
 ```
   page*: number  — Page courante (1-based).
   totalPages*: number  — Nombre total de pages.
@@ -391,7 +602,7 @@ Modal dialog. PATTERN : {isOpen && bpm.modal({ isOpen:true, onClose, title, chil
   className?: string
 ```
 
-### bpm.panel
+## bpm.panel
 ```
   variant?: "info" | "success" | "warning" | "error"  — PARENT: page directe | bpm.grid | bpm.tabs (contenu onglet). INTERDIT: bpm.panel imbriqué trop profond (max 2 niveaux). ASSOCIÉ: bpm.title, bpm.metric, bpm.table, bpm.plotlyChart.
   title?: string | null
@@ -401,7 +612,16 @@ Modal dialog. PATTERN : {isOpen && bpm.modal({ isOpen:true, onClose, title, chil
   className?: string
 ```
 
-### bpm.plotlyChart
+## bpm.pdfViewer
+```
+  src*: string
+  title?: string
+  width?: number | string
+  height?: number | string
+  className?: string
+```
+
+## bpm.plotlyChart
 ```
   data?: object[]  — Tableau de traces Plotly (ex. [{type:'bar', x:[], y:[]}]). Obligatoire.
   layout?: object  — Config layout Plotly (title, xaxis, yaxis, etc.).
@@ -412,7 +632,7 @@ Modal dialog. PATTERN : {isOpen && bpm.modal({ isOpen:true, onClose, title, chil
   iframeSrc?: string
 ```
 
-### bpm.popover
+## bpm.popover
 ```
   trigger*: React.ReactNode
   children*: React.ReactNode
@@ -420,7 +640,7 @@ Modal dialog. PATTERN : {isOpen && bpm.modal({ isOpen:true, onClose, title, chil
   className?: string
 ```
 
-### bpm.progress
+## bpm.progress
 ```
   value?: number
   max?: number
@@ -429,7 +649,21 @@ Modal dialog. PATTERN : {isOpen && bpm.modal({ isOpen:true, onClose, title, chil
   className?: string
 ```
 
-### bpm.qRCode
+## bpm.promptInput
+```
+  value*: string
+  onChange*: (value: string) => void
+  onSubmit*: (value: string) => void
+  placeholder?: string
+  isLoading?: boolean
+  maxLength?: number
+  showTokenCount?: boolean
+  minRows?: number
+  maxRows?: number
+  className?: string
+```
+
+## bpm.qrCode
 ```
   value*: string
   size?: number
@@ -438,7 +672,7 @@ Modal dialog. PATTERN : {isOpen && bpm.modal({ isOpen:true, onClose, title, chil
   className?: string
 ```
 
-### bpm.radioGroup
+## bpm.radioGroup
 ```
   name?: string
   label?: string
@@ -450,7 +684,7 @@ Modal dialog. PATTERN : {isOpen && bpm.modal({ isOpen:true, onClose, title, chil
   className?: string
 ```
 
-### bpm.rating
+## bpm.rating
 ```
   value?: number
   max?: number
@@ -459,7 +693,27 @@ Modal dialog. PATTERN : {isOpen && bpm.modal({ isOpen:true, onClose, title, chil
   size?: "small" | "medium" | "large"
 ```
 
-### bpm.selectbox
+## bpm.scatterChart
+```
+  data*: ScatterChartDatum[]
+  width?: number
+  height?: number
+  color?: string
+  radius?: number
+  className?: string
+```
+
+## bpm.scrollContainer
+```
+  children*: React.ReactNode
+  height?: string | number  — Hauteur du conteneur (défaut '100%').
+  maxHeight?: string | number  — Hauteur max pour limiter le scroll.
+  direction?: "vertical" | "horizontal" | "both"  — Direction du scroll (défaut 'vertical').
+  hideScrollbar?: boolean  — Masquer la scrollbar visuelle (défaut false).
+  className?: string
+```
+
+## bpm.selectbox
 ```
   label?: string  — Label affiché au-dessus.
   options?: SelectboxOption[]  — Liste d'options. Format : string[] ou [{value, label}].
@@ -471,7 +725,19 @@ Modal dialog. PATTERN : {isOpen && bpm.modal({ isOpen:true, onClose, title, chil
   required?: boolean
 ```
 
-### bpm.slider
+## bpm.skeleton
+```
+  variant?: SkeletonVariant
+  width?: number | string
+  height?: number | string
+  className?: string
+  animated?: boolean  — Désactive l'animation pulse (utile pour screenshots, tests, prefers-reduced-motion).
+  shimmer?: boolean  — Animation shimmer (dégradé balayant) en alternative au pulse.
+  rounded?: SkeletonRounded  — Contrôle le rayon des bords (ignoré si variant === "circular").
+  lines?: number  — Nombre de lignes de skeleton empilées (variant text). Default: 1.
+```
+
+## bpm.slider
 ```
   value?: number
   min?: number
@@ -483,7 +749,7 @@ Modal dialog. PATTERN : {isOpen && bpm.modal({ isOpen:true, onClose, title, chil
   className?: string
 ```
 
-### bpm.spinner
+## bpm.spinner
 ```
   text?: string
   size?: SpinnerSize
@@ -492,22 +758,23 @@ Modal dialog. PATTERN : {isOpen && bpm.modal({ isOpen:true, onClose, title, chil
   className?: string
 ```
 
-### bpm.spinnerDot
+## bpm.spinnerDot
 ```
   className?: string
   size?: "small" | "medium" | "large"  — Taille : small (16px), medium (24px), large (32px).
 ```
 
-### bpm.statusBox
+## bpm.statusBox
 ```
   label*: string
   state?: "running" | "complete" | "error"
   children?: React.ReactNode
   defaultExpanded?: boolean
+  compact?: boolean  — Réduit le padding pour contextes denses.
   className?: string
 ```
 
-### bpm.stepper
+## bpm.stepper
 ```
   steps?: StepperStep[]
   currentStep?: number
@@ -515,7 +782,15 @@ Modal dialog. PATTERN : {isOpen && bpm.modal({ isOpen:true, onClose, title, chil
   className?: string
 ```
 
-### bpm.table
+## bpm.streamingText
+```
+  content*: string  — Texte courant (s'allonge au fil du stream).
+  isStreaming?: boolean  — Affiche le curseur clignotant quand true.
+  renderMarkdown?: boolean  — Passe le contenu dans bpm.markdown (défaut true).
+  className?: string
+```
+
+## bpm.table
 ```
   columns*: TableColumn[]  — Définition des colonnes — obligatoire.
   data*: Record<string, unknown>[]  — Tableau de données — obligatoire. INTERDIT : JSX dans data[], utiliser render dans TableColumn.
@@ -532,10 +807,11 @@ Modal dialog. PATTERN : {isOpen && bpm.modal({ isOpen:true, onClose, title, chil
   valueGrouping?: boolean  — Séparateur de milliers (true = 1 000,50).
   minWidth?: number  — Largeur minimale du tableau en px (déclenche le scroll horizontal dans le wrapper si conteneur plus étroit). Non défini = pas de min-width.
   trackContext?: boolean  — Si true, expose ce tableau au contexte IA.
+  emptyMessage?: string  — Message affiché quand data est vide. Default: "Aucune donnée disponible".
 ```
 INTERDIT : Tableau de données — obligatoire. INTERDIT : JSX dans data[], utiliser render dans TableColumn. */
 
-### bpm.tabs
+## bpm.tabs
 ```
   tabs?: TabsItems  — Onglets : tableau de { label, content } ou chaînes (label uniquement).
   defaultTab?: number  — Index de l'onglet actif au montage. Default: 0.
@@ -543,7 +819,7 @@ INTERDIT : Tableau de données — obligatoire. INTERDIT : JSX dans data[], util
   className?: string
 ```
 
-### bpm.text
+## bpm.text
 ```
   children*: React.ReactNode
   mono?: boolean  — Style inline comme st.text (monospace).
@@ -551,7 +827,7 @@ INTERDIT : Tableau de données — obligatoire. INTERDIT : JSX dans data[], util
   style?: React.CSSProperties
 ```
 
-### bpm.textarea
+## bpm.textarea
 ```
   label?: string
   value?: string
@@ -563,7 +839,7 @@ INTERDIT : Tableau de données — obligatoire. INTERDIT : JSX dans data[], util
   className?: string
 ```
 
-### bpm.theme
+## bpm.theme
 ```
   variant?: ThemeVariant  — Type de contrôle : interrupteur (toggle) ou liste (select).
   label?: React.ReactNode  — Label à côté du toggle (variant toggle uniquement).
@@ -572,7 +848,7 @@ INTERDIT : Tableau de données — obligatoire. INTERDIT : JSX dans data[], util
   className?: string
 ```
 
-### bpm.timeInput
+## bpm.timeInput
 ```
   label?: string
   value?: Date | string | null
@@ -582,13 +858,33 @@ INTERDIT : Tableau de données — obligatoire. INTERDIT : JSX dans data[], util
   max?: string
 ```
 
-### bpm.timeline
+## bpm.timeline
 ```
   items?: TimelineItem[]
   className?: string
 ```
 
-### bpm.title
+## bpm.title1
+Composant bpm.title1 — voir @blueprint-modular/core ou BPM_API.md.
+```
+```
+
+## bpm.title2
+Composant bpm.title2 — voir @blueprint-modular/core ou BPM_API.md.
+```
+```
+
+## bpm.title3
+Composant bpm.title3 — voir @blueprint-modular/core ou BPM_API.md.
+```
+```
+
+## bpm.title4
+Composant bpm.title4 — voir @blueprint-modular/core ou BPM_API.md.
+```
+```
+
+## bpm.titleBpm
 ```
   children*: React.ReactNode
   level?: 1 | 2 | 3 | 4
@@ -603,16 +899,12 @@ INTERDIT : Tableau de données — obligatoire. INTERDIT : JSX dans data[], util
   onLogoClick?: () => void
 ```
 
-### bpm.toggle
+## bpm.toast
+Composant bpm.toast — interface non parsée (voir BPM_API.md).
 ```
-  label?: React.ReactNode
-  value?: boolean
-  onChange?: (checked: boolean) => void
-  disabled?: boolean
-  className?: string
 ```
 
-### bpm.tooltip
+## bpm.tooltip
 ```
   text*: string
   children*: React.ReactNode
@@ -621,7 +913,7 @@ INTERDIT : Tableau de données — obligatoire. INTERDIT : JSX dans data[], util
   textColor?: string | null  — Couleur du texte du tooltip (hex, rgb ou nom CSS). Par défaut : var(--bpm-bg-primary).
 ```
 
-### bpm.topNav
+## bpm.topNav
 ```
   title?: React.ReactNode
   titleHref?: string
@@ -629,13 +921,22 @@ INTERDIT : Tableau de données — obligatoire. INTERDIT : JSX dans data[], util
   className?: string
 ```
 
-### bpm.transition
+## bpm.treeview
 ```
-  activeIndex*: number  — Index de la page / vue active (0-based).
-  variant?: TransitionVariant  — Variant de transition : fade (slide), shimmer, border, grid.
-  children*: ReactNode[]  — Enfants : tableau de nœuds (une « page » par entrée).
-  duration?: number  — Durée de la transition fade (ms). Défaut 380.
-  onTransitionEnd?: () => void  — Callback à la fin de la transition.
+  nodes?: TreeviewNode[]
+  onSelect?: (node: TreeviewNode) => void
+  selectedId?: string | null
+  className?: string
+```
+
+## bpm.video
+```
+  src*: string
+  controls?: boolean
+  loop?: boolean
+  muted?: boolean
+  width?: number
+  height?: number
   className?: string
 ```
 

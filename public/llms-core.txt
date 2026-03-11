@@ -1,6 +1,6 @@
 # Blueprint Modular — Agent Context File (CORE)
 # Version : 0.1.43
-# Date    : 2026-03-09
+# Date    : 2026-03-11
 # Format compact pour modèles locaux (Qwen, Mistral)
 # Composants essentiels uniquement — référence complète : blueprint-modular.com/llms.txt
 
@@ -60,11 +60,6 @@ bpm.metric({
   name?: string | null
   deltaType?: "aucun" | "normal" | "inverse"
   help?: string | null
-})
-
-bpm.metricRow({
-  children*: React.ReactNode
-  className?: string
 })
 
 bpm.modal({

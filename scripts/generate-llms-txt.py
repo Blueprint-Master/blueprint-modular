@@ -41,13 +41,9 @@ CORE_COMPONENTS = {
     "tabs", "spinner", "pageHeader", "container", "card",
 }
 
-# Composants à exclure (trop spécialisés ou non recommandés en génération)
-EXCLUDE = {
-    "altairChart", "areaChart", "barChart", "lineChart", "scatterChart",
-    "assistantPanel", "audio", "video", "map", "nfcBadge", "offlineIndicator",
-    "pdfViewer", "qrCode", "barcode", "colorPicker", "jsonViewer",
-    "treeview", "toast", "fab", "loadingBar", "skeleton",
-}
+# Plus d'exclusion globale : le barrel est la source de vérité.
+# Tous les composants exportés dans bpm.tsx sont inclus dans llms.txt.
+EXCLUDE = set()
 
 # ---------------------------------------------------------------------------
 # Parser
@@ -177,6 +173,29 @@ def parse_component_file(path: Path) -> dict | None:
 def bpm_name(comp_name: str) -> str:
     """Button → button, MetricRow → metricRow, PlotlyChart → plotlyChart"""
     return comp_name[0].lower() + comp_name[1:]
+
+
+def pascal_case(bpm_name: str) -> str:
+    """button → Button, chatInterface → ChatInterface (camelCase → PascalCase)"""
+    return bpm_name[0].upper() + bpm_name[1:] if bpm_name else ""
+
+
+def extract_barrel_components(bpm_tsx_path: Path) -> list[str]:
+    """
+    Extrait la liste des noms bpm.* depuis le barrel (source de vérité).
+    Retourne les noms camelCase : ['accordion', 'altairChart', ...].
+    """
+    source = bpm_tsx_path.read_text(encoding="utf-8", errors="ignore")
+    names = []
+    # wrap(Component) → nom = clé de l'objet bpm
+    for m in re.finditer(r"^\s+(\w+):\s*wrap\s*\(", source, re.MULTILINE):
+        names.append(m.group(1))
+    # Cas spéciaux non wrap() : spinner, tabs
+    if "spinner:" in source and "spinner" not in names:
+        names.append("spinner")
+    if "tabs:" in source and "tabs" not in names:
+        names.append("tabs")
+    return sorted(set(names))
 
 
 # ---------------------------------------------------------------------------
@@ -311,8 +330,8 @@ export async function POST(req: Request) {
 
 
 def format_component_full(comp: dict) -> str:
-    name = bpm_name(comp["name"])
-    lines = [f"### bpm.{name}"]
+    name = comp.get("bpm_name") or bpm_name(comp["name"])
+    lines = [f"## bpm.{name}"]
     if comp["doc"]:
         lines.append(comp["doc"])
     lines.append("```")
@@ -327,7 +346,7 @@ def format_component_full(comp: dict) -> str:
 
 
 def format_component_core(comp: dict) -> str:
-    name = bpm_name(comp["name"])
+    name = comp.get("bpm_name") or bpm_name(comp["name"])
     required = [p for p in comp["props"] if p["required"]]
     optional = [p for p in comp["props"] if not p["required"]][:4]  # max 4 optionnels
     parts = [f"bpm.{name}({{"]
@@ -352,24 +371,65 @@ def main():
     version = get_version()
     today   = date.today().isoformat()
 
-    # --- Collecter les composants ---
-    components = []
-    skipped    = []
+    # --- Barrel = source de vérité : extraire les noms bpm.* ---
+    barrel_names = extract_barrel_components(BPM_TSX)
+    if args.verbose:
+        print(f"Barrel : {len(barrel_names)} composants")
 
-    for tsx_file in sorted(COMP_DIR.glob("*.tsx")):
+    # --- Pour chaque nom barrel, résoudre le fichier et parser ---
+    components = []
+    skipped = []
+    seen_files = set()
+
+    for bpm_key in barrel_names:
+        if bpm_key in EXCLUDE:
+            skipped.append(bpm_key)
+            continue
+        # Mapping barrel key → nom de fichier (PascalCase)
+        file_stem = pascal_case(bpm_key)
+        # Cas particuliers (alias ou nom différent)
+        alias_map = {
+            "titleBpm": "Title",
+            "crud": "CrudPage",
+            "selectbox": "Selectbox",
+            "nfcBadge": "NfcBadge",
+            "qrCode": "QRCode",
+            "fab": "FAB",
+            "html": "Html",
+            "empty": "Empty",
+        }
+        file_stem = alias_map.get(bpm_key, file_stem)
+        tsx_file = COMP_DIR / f"{file_stem}.tsx"
+        if not tsx_file.exists():
+            # Composant sans fichier dédié ou nom différent : entrée minimale
+            components.append({
+                "name": file_stem,
+                "bpm_name": bpm_key,
+                "props": [],
+                "doc": f"Composant bpm.{bpm_key} — voir @blueprint-modular/core ou BPM_API.md.",
+                "anti_patterns": [],
+            })
+            if args.verbose:
+                print(f"  [MIN] bpm.{bpm_key} — pas de fichier {tsx_file.name}")
+            continue
         comp = parse_component_file(tsx_file)
         if comp is None:
-            skipped.append(tsx_file.stem)
+            components.append({
+                "name": file_stem,
+                "bpm_name": bpm_key,
+                "props": [],
+                "doc": f"Composant bpm.{bpm_key} — interface non parsée (voir BPM_API.md).",
+                "anti_patterns": [],
+            })
+            if args.verbose:
+                print(f"  [MIN] bpm.{bpm_key} — interface non parsée")
             continue
-        name = bpm_name(comp["name"])
-        if name in EXCLUDE:
-            skipped.append(name)
-            continue
+        comp["bpm_name"] = bpm_key
         components.append(comp)
         if args.verbose:
-            print(f"  [OK] bpm.{name} — {len(comp['props'])} props")
+            print(f"  [OK] bpm.{bpm_key} — {len(comp['props'])} props")
 
-    print(f"Parsés : {len(components)} composants ({len(skipped)} exclus/ignorés)")
+    print(f"Générés : {len(components)} composants ({len(skipped)} exclus)")
 
     # --- Générer llms.txt complet ---
     full_lines = [HEADER_FULL.format(version=version, date=today)]
@@ -381,7 +441,7 @@ def main():
     full_content = "\n".join(full_lines)
 
     # --- Générer llms-core.txt compact ---
-    core_comps = [c for c in components if bpm_name(c["name"]) in CORE_COMPONENTS]
+    core_comps = [c for c in components if (c.get("bpm_name") or bpm_name(c["name"])) in CORE_COMPONENTS]
     core_lines = [HEADER_CORE.format(version=version, date=today)]
     core_lines.append("## COMPOSANTS ESSENTIELS\n")
     for comp in core_comps:
