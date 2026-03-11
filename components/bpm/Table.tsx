@@ -170,7 +170,7 @@ export function Table({
       className={`bpm-table-wrapper overflow-auto max-h-[calc(100vh-220px)] md:max-h-[calc(100vh-350px)] ${className}`}
       style={{
         border: "1px solid var(--bpm-border)",
-        borderRadius: "8px",
+        borderRadius: "var(--bpm-radius)",
         boxShadow: "none",
         overflow: "hidden",
         backgroundColor: "var(--bpm-surface)",
@@ -224,7 +224,7 @@ export function Table({
                   className="px-4 py-12 text-center text-sm"
                   style={{ color: "var(--bpm-text-secondary)", borderColor: "var(--bpm-border)" }}
                 >
-                  <span style={{ display: "inline-block", marginBottom: 8, fontSize: 24 }} aria-hidden>—</span>
+                  <span style={{ display: "inline-block", marginBottom: 8, fontSize: "var(--bpm-font-size-lg)" }} aria-hidden>—</span>
                   <div>{emptyMessage}</div>
                 </td>
               </tr>

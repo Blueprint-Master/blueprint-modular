@@ -126,14 +126,12 @@ export function LoadingBar({
           <svg className="bpm-loadingbar-arc-svg" viewBox="0 0 600 28" aria-hidden>
             <defs>
               <linearGradient id={gradId} x1="0%" y1="0%" x2="100%" y2="0%">
-                <stop offset="0%" stopColor="var(--bpm-accent, #1264C8)" />
-                <stop offset="40%" stopColor="var(--bpm-accent-light, #18A0FB)" />
-                <stop offset="70%" stopColor="#00C6FB" />
-                <stop offset="100%" stopColor="var(--bpm-accent-cyan, #00E0C5)" />
+                <stop offset="0%" stopColor="var(--bpm-accent)" />
+                <stop offset="100%" stopColor="var(--bpm-accent)" />
               </linearGradient>
               <linearGradient id={grad2Id} x1="0%" y1="0%" x2="100%" y2="0%">
-                <stop offset="0%" stopColor="var(--bpm-accent, #1264C8)" stopOpacity={0.15} />
-                <stop offset="100%" stopColor="var(--bpm-accent-cyan, #00E0C5)" stopOpacity={0.15} />
+                <stop offset="0%" stopColor="var(--bpm-accent)" stopOpacity={0.15} />
+                <stop offset="100%" stopColor="var(--bpm-accent)" stopOpacity={0.15} />
               </linearGradient>
             </defs>
             <rect x={0} y={10} width={600} height={8} rx={4} fill={`url(#${grad2Id})`} />

@@ -77,7 +77,7 @@ export function Title({
       : typeof boldProp === "boolean"
         ? boldProp ? 700 : 400
         : boldProp;
-  const color = inverted ? "#fff" : (colorProp ?? "var(--bpm-text-primary)");
+  const color = inverted ? "var(--bpm-accent-contrast)" : (colorProp ?? "var(--bpm-text)");
 
   const content = (
     <>

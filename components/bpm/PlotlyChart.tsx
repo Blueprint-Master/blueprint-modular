@@ -37,7 +37,7 @@ class ChartBoundary extends React.Component<
             alignItems: "center",
             justifyContent: "center",
             color: "var(--bpm-text-secondary)",
-            fontSize: 13,
+            fontSize: "var(--bpm-font-size-base)",
           }}
         >
           Graphique indisponible
@@ -72,7 +72,7 @@ export function PlotlyChart(props: PlotlyChartProps) {
           width: w,
           height: h,
           border: 0,
-          borderRadius: 8,
+          borderRadius: "var(--bpm-radius)",
           background: "var(--bpm-bg-secondary)",
         }}
       />
@@ -101,9 +101,9 @@ export function PlotlyChart(props: PlotlyChartProps) {
           alignItems: "center",
           justifyContent: "center",
           color: "var(--bpm-text-secondary)",
-          fontSize: 13,
+          fontSize: "var(--bpm-font-size-base)",
           background: "var(--bpm-bg-secondary)",
-          borderRadius: 8,
+          borderRadius: "var(--bpm-radius)",
         }}
       >
         Aucune donnée à afficher

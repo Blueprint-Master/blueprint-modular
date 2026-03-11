@@ -70,9 +70,9 @@ export function FilterPanel({
   };
 
   const labelStyle: React.CSSProperties = {
-    fontSize: 12,
+    fontSize: "var(--bpm-font-size-sm)",
     fontWeight: 600,
-    color: "var(--bpm-text-secondary)",
+    color: "var(--bpm-text-muted)",
     marginBottom: 4,
     display: "block",
   };
@@ -82,8 +82,8 @@ export function FilterPanel({
     border: "1px solid var(--bpm-border)",
     borderRadius: "var(--bpm-radius-sm)",
     background: "var(--bpm-bg-primary)",
-    color: "var(--bpm-text-primary)",
-    fontSize: 14,
+    color: "var(--bpm-text)",
+    fontSize: "var(--bpm-font-size-base)",
     minWidth: orientation === "vertical" ? "100%" : 120,
   };
 
@@ -92,8 +92,8 @@ export function FilterPanel({
     border: "1px solid var(--bpm-border)",
     borderRadius: "var(--bpm-radius-sm)",
     background: "var(--bpm-bg-primary)",
-    color: "var(--bpm-text-secondary)",
-    fontSize: 14,
+    color: "var(--bpm-text-muted)",
+    fontSize: "var(--bpm-font-size-base)",
     cursor: "pointer",
   };
 
@@ -139,7 +139,7 @@ export function FilterPanel({
             {opts.map((o) => {
               const checked = selected.includes(o.value);
               return (
-                <label key={o.value} style={{ display: "flex", alignItems: "center", gap: 6, fontSize: 14, color: "var(--bpm-text-primary)", cursor: "pointer" }}>
+                <label key={o.value} style={{ display: "flex", alignItems: "center", gap: 6, fontSize: "var(--bpm-font-size-base)", color: "var(--bpm-text)", cursor: "pointer" }}>
                   <input
                     type="checkbox"
                     checked={checked}
@@ -169,7 +169,7 @@ export function FilterPanel({
               value={range.start ?? ""}
               onChange={(e) => onChange(f.key, { ...range, start: e.target.value || undefined })}
             />
-            <span style={{ color: "var(--bpm-text-secondary)", fontSize: 14 }}>–</span>
+            <span style={{ color: "var(--bpm-text-muted)", fontSize: "var(--bpm-font-size-base)" }}>–</span>
             <input
               type="date"
               style={{ ...inputStyle, flex: 1 }}
@@ -237,7 +237,7 @@ export function FilterPanel({
           >
             {collapsed ? "Filtres" : "Filtres"}
             {activeCount > 0 && (
-              <span style={{ marginLeft: 8, background: "var(--bpm-accent)", color: "var(--bpm-accent-contrast)", padding: "2px 8px", borderRadius: 4, fontSize: 12 }}>
+              <span style={{ marginLeft: 8, background: "var(--bpm-accent)", color: "var(--bpm-accent-contrast)", padding: "2px 8px", borderRadius: "var(--bpm-radius-sm)", fontSize: "var(--bpm-font-size-sm)" }}>
                 {activeCount}
               </span>
             )}

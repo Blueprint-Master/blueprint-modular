@@ -16,7 +16,7 @@ export interface AreaChartProps {
 }
 
 export function AreaChart(p: AreaChartProps) {
-  const { data, width = 400, height = 200, color = "var(--bpm-accent-cyan)", className = "" } = p;
+  const { data, width = 400, height = 200, color = "var(--bpm-accent)", className = "" } = p;
   const path = useMemo(() => {
     if (!data.length) return "";
     const xs = data.map((d, i) => (typeof d.x === "number" ? d.x : Number(d.x) || i));
@@ -39,7 +39,7 @@ export function AreaChart(p: AreaChartProps) {
     const bottom = height - pad;
     return line + "L" + lastX + "," + bottom + "L" + firstX + "," + bottom + "Z";
   }, [data, width, height]);
-  if (!data.length) return <div className={"bpm-area-chart w-full max-w-full " + className} style={{ aspectRatio: `${width}/${height}`, maxWidth: width, background: "var(--bpm-bg-secondary)", borderRadius: 8 }} />;
+  if (!data.length) return <div className={"bpm-area-chart w-full max-w-full " + className} style={{ aspectRatio: `${width}/${height}`, maxWidth: width, background: "var(--bpm-bg-secondary)", borderRadius: "var(--bpm-radius)" }} />;
   return (
     <div className="w-full max-w-full overflow-hidden" style={{ aspectRatio: `${width}/${height}` }}>
       <svg viewBox={`0 0 ${width} ${height}`} className={"bpm-area-chart " + className} style={{ width: "100%", height: "auto" }} preserveAspectRatio="xMidYMid meet">

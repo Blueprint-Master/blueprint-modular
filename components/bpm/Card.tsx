@@ -51,11 +51,12 @@ export function Card({
 }: CardProps) {
   return (
     <div
-      className={`bpm-card rounded-lg overflow-hidden ${inverted ? "bpm-card-inverted" : ""} ${className}`.trim()}
+      className={`bpm-card overflow-hidden ${inverted ? "bpm-card-inverted" : ""} ${className}`.trim()}
       style={{
         background: inverted ? undefined : "var(--bpm-surface)",
         border: variant === "outlined" && !inverted ? "1px solid var(--bpm-border)" : "none",
-        boxShadow: variant === "elevated" && !inverted ? "0 4px 12px rgba(0,0,0,0.08)" : "none",
+        borderRadius: "var(--bpm-radius)",
+        boxShadow: variant === "elevated" && !inverted ? "var(--bpm-shadow)" : "none",
       }}
     >
       {image && (
@@ -66,7 +67,7 @@ export function Card({
       {(title != null || subtitle != null || actions != null || children != null) && (
         <div className="bpm-card-body p-4">
           {title != null && (
-            <h3 className="bpm-card-title text-lg font-semibold m-0 mb-1" style={!inverted ? { color: "var(--bpm-text-primary)" } : undefined}>
+            <h3 className="bpm-card-title text-lg font-semibold m-0 mb-1" style={!inverted ? { color: "var(--bpm-text)" } : undefined}>
               {title}
             </h3>
           )}

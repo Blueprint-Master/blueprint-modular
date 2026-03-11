@@ -14,10 +14,10 @@ export interface PanelProps {
 }
 
 const variantBorder: Record<string, string> = {
-  info: "var(--bpm-accent-cyan)",
-  success: "var(--bpm-accent-mint)",
-  warning: "#f59e0b",
-  error: "#ef4444",
+  info: "var(--bpm-accent)",
+  success: "var(--bpm-success)",
+  warning: "var(--bpm-warning)",
+  error: "var(--bpm-error)",
 };
 
 /**
@@ -51,11 +51,12 @@ export function Panel({
 
   return (
     <div
-      className={`rounded-lg border-l-4 p-4 ${inverted ? "bpm-panel-inverted" : ""} ${className}`}
+      className={`border-l-4 p-4 ${inverted ? "bpm-panel-inverted" : ""} ${className}`}
       style={{
         background: inverted ? undefined : "var(--bpm-bg-secondary)",
         borderColor,
-        color: inverted ? undefined : "var(--bpm-text-primary)",
+        color: inverted ? undefined : "var(--bpm-text)",
+        borderRadius: "var(--bpm-radius)",
       }}
       role="region"
       aria-label={title ?? `Panneau ${variant}`}

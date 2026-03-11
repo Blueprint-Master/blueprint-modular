@@ -71,7 +71,7 @@ export function ConfirmModal({
         alignItems: "center",
         justifyContent: "center",
         padding: 24,
-        background: "rgba(0,0,0,0.5)",
+        background: "var(--bpm-overlay-bg)",
       }}
       onClick={handleBackdropClick}
     >
@@ -80,7 +80,7 @@ export function ConfirmModal({
         style={{
           background: "var(--bpm-bg-primary)",
           borderRadius: "var(--bpm-radius)",
-          boxShadow: "0 4px 12px rgba(0,0,0,0.15)",
+          boxShadow: "var(--bpm-shadow)",
           maxWidth: 420,
           width: "100%",
           overflow: "hidden",
@@ -92,18 +92,21 @@ export function ConfirmModal({
         <div
           className="bpm-confirm-modal-header"
           style={{
-            padding: "12px 16px",
+            padding: "16px 20px",
             borderBottom: "1px solid var(--bpm-border)",
             background: "var(--bpm-bg-secondary)",
+            fontWeight: 600,
+            fontSize: "var(--bpm-font-size-lg)",
+            color: "var(--bpm-text)",
           }}
         >
           <h2
             id="confirm-modal-title"
             style={{
               margin: 0,
-              fontSize: 18,
+              fontSize: "var(--bpm-font-size-lg)",
               fontWeight: 600,
-              color: "var(--bpm-text-primary)",
+              color: "var(--bpm-text)",
             }}
           >
             {title}
@@ -118,8 +121,8 @@ export function ConfirmModal({
           <p
             style={{
               margin: 0,
-              fontSize: 14,
-              color: "var(--bpm-text-secondary)",
+              fontSize: "var(--bpm-font-size-base)",
+              color: "var(--bpm-text-muted)",
               lineHeight: 1.5,
             }}
           >
@@ -147,7 +150,7 @@ export function ConfirmModal({
               borderRadius: "var(--bpm-radius)",
               background: "transparent",
               color: "var(--bpm-text-primary)",
-              fontSize: 14,
+              fontSize: "var(--bpm-font-size-base)",
               fontWeight: 500,
               cursor: isLoading ? "not-allowed" : "pointer",
               opacity: isLoading ? 0.7 : 1,
@@ -166,7 +169,7 @@ export function ConfirmModal({
               borderRadius: "var(--bpm-radius)",
               background: styles.buttonBg,
               color: styles.buttonColor,
-              fontSize: 14,
+              fontSize: "var(--bpm-font-size-base)",
               fontWeight: 600,
               cursor: isLoading ? "not-allowed" : "pointer",
               opacity: isLoading ? 0.8 : 1,

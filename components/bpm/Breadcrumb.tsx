@@ -28,7 +28,7 @@ export function Breadcrumb({
             <li key={i} className="flex items-center gap-1">
               {i > 0 && <span className="opacity-60" aria-hidden>{separator}</span>}
               {item.href != null && !isLast ? (
-                <Link href={item.href} className="underline" style={{ color: "var(--bpm-accent-cyan)" }}>
+                <Link href={item.href} className="underline" style={{ color: "var(--bpm-accent)" }}>
                   {item.label}
                 </Link>
               ) : (

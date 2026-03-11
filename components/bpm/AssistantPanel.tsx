@@ -108,8 +108,8 @@ export function AssistantPanel({
         onClick={() => setOpen(!open)}
         className="fixed bottom-20 right-6 z-50 flex h-12 w-12 items-center justify-center rounded-full shadow-lg md:bottom-6"
         style={{
-          background: "var(--bpm-accent-cyan)",
-          color: "#fff",
+          background: "var(--bpm-accent)",
+          color: "var(--bpm-accent-contrast)",
         }}
         aria-label={open ? "Fermer l'assistant" : "Ouvrir l'assistant Production"}
       >
@@ -135,7 +135,7 @@ export function AssistantPanel({
               type="button"
               onClick={() => setOpen(false)}
               className="text-sm underline"
-              style={{ color: "var(--bpm-accent-cyan)" }}
+              style={{ color: "var(--bpm-accent)" }}
             >
               Fermer
             </button>
@@ -155,8 +155,8 @@ export function AssistantPanel({
                   className="rounded-full px-3 py-1.5 text-sm border transition"
                   style={{
                     borderColor: "var(--bpm-border)",
-                    background: selectedQuestion === q ? "var(--bpm-accent-cyan)" : "var(--bpm-bg-secondary)",
-                    color: selectedQuestion === q ? "#fff" : "var(--bpm-text-primary)",
+                    background: selectedQuestion === q ? "var(--bpm-accent)" : "var(--bpm-bg-secondary)",
+                    color: selectedQuestion === q ? "var(--bpm-accent-contrast)" : "var(--bpm-text)",
                   }}
                 >
                   {q}

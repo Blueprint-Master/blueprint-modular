@@ -71,7 +71,7 @@ export function Textarea({
         onFocus={(e) => {
           e.target.style.outline = "none";
           e.target.style.borderColor = "var(--bpm-accent)";
-          e.target.style.boxShadow = "0 0 0 2px var(--bpm-accent-alpha, rgba(0,163,226,0.2))";
+          e.target.style.boxShadow = "var(--bpm-focus-ring)";
         }}
         onBlur={(e) => {
           e.target.style.borderColor = "var(--bpm-border)";

@@ -16,7 +16,7 @@ export interface BarChartProps {
 }
 
 export function BarChart(p: BarChartProps) {
-  const { data, width = 400, height = 200, color = "var(--bpm-accent-cyan)", className = "" } = p;
+  const { data, width = 400, height = 200, color = "var(--bpm-accent)", className = "" } = p;
   const bars = useMemo(() => {
     if (!data.length) return [];
     const ys = data.map((d) => d.y);
@@ -32,7 +32,7 @@ export function BarChart(p: BarChartProps) {
     }));
   }, [data, width, height]);
   if (!data.length) {
-    return <div className={"bpm-bar-chart w-full max-w-full " + className} style={{ aspectRatio: `${width}/${height}`, maxWidth: width, background: "var(--bpm-bg-secondary)", borderRadius: 8 }} />;
+    return <div className={"bpm-bar-chart w-full max-w-full " + className} style={{ aspectRatio: `${width}/${height}`, maxWidth: width, background: "var(--bpm-bg-secondary)", borderRadius: "var(--bpm-radius)" }} />;
   }
   return (
     <div className="w-full max-w-full overflow-hidden" style={{ aspectRatio: `${width}/${height}` }}>

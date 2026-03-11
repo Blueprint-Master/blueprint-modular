@@ -85,7 +85,7 @@ export function FilePreview(props: FilePreviewProps) {
           padding: 24,
           background: "var(--bpm-bg-secondary)",
           color: "var(--bpm-error)",
-          fontSize: 14,
+          fontSize: "var(--bpm-font-size-base)",
         }}
       >
         bpm.filePreview : url et filename sont requis.
@@ -123,7 +123,7 @@ export function FilePreview(props: FilePreviewProps) {
               display: "inline-block",
               marginTop: 8,
               padding: "8px 12px",
-              fontSize: 14,
+              fontSize: "var(--bpm-font-size-base)",
               color: "var(--bpm-accent)",
             }}
           >
@@ -162,7 +162,7 @@ export function FilePreview(props: FilePreviewProps) {
               display: "inline-block",
               marginTop: 8,
               padding: "8px 12px",
-              fontSize: 14,
+              fontSize: "var(--bpm-font-size-base)",
               color: "var(--bpm-accent)",
             }}
           >
@@ -208,7 +208,7 @@ export function FilePreview(props: FilePreviewProps) {
               display: "inline-block",
               marginTop: 8,
               padding: "8px 12px",
-              fontSize: 14,
+              fontSize: "var(--bpm-font-size-base)",
               color: "var(--bpm-accent)",
             }}
           >
@@ -230,10 +230,10 @@ export function FilePreview(props: FilePreviewProps) {
         textAlign: "center",
       }}
     >
-      <div style={{ fontSize: 48, color: "var(--bpm-text-muted)", marginBottom: 8 }}>
+      <div style={{ fontSize: "var(--bpm-font-size-xl)", color: "var(--bpm-text-muted)", marginBottom: 8 }}>
         📄
       </div>
-      <div style={{ fontSize: 14, color: "var(--bpm-text-primary)", marginBottom: 8 }}>
+      <div style={{ fontSize: "var(--bpm-font-size-base)", color: "var(--bpm-text)", marginBottom: 8 }}>
         {filename}
       </div>
       {showDownload && (
@@ -246,7 +246,7 @@ export function FilePreview(props: FilePreviewProps) {
             borderRadius: "var(--bpm-radius-sm)",
             background: "var(--bpm-accent)",
             color: "var(--bpm-accent-contrast)",
-            fontSize: 14,
+            fontSize: "var(--bpm-font-size-base)",
             textDecoration: "none",
           }}
         >

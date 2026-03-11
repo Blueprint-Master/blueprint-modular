@@ -94,7 +94,7 @@ export function LabelValue({
                 background: "transparent",
                 color: "var(--bpm-text-muted)",
                 cursor: "pointer",
-                fontSize: 12,
+                fontSize: "var(--bpm-font-size-sm)",
               }}
             >
               {copied ? "Copié" : "Copier"}
@@ -130,7 +130,7 @@ export function LabelValue({
               background: "transparent",
               color: "var(--bpm-text-muted)",
               cursor: "pointer",
-              fontSize: 12,
+              fontSize: "var(--bpm-font-size-sm)",
             }}
           >
             {copied ? "Copié" : "Copier"}

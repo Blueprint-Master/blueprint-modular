@@ -50,7 +50,7 @@ function formatCell(value: unknown, type: ColumnDef["type"]): React.ReactNode {
           padding: "2px 8px",
           borderRadius: "var(--bpm-radius-sm)",
           background: "var(--bpm-bg-tertiary)",
-          fontSize: 12,
+          fontSize: "var(--bpm-font-size-sm)",
         }}
       >
         {String(value)}
@@ -148,7 +148,7 @@ export function DataExplorer({
           }}
         >
           {title && (
-            <h3 style={{ margin: 0, fontSize: 16, fontWeight: 600, color: "var(--bpm-text-primary)" }}>
+            <h3 style={{ margin: 0, fontSize: "var(--bpm-font-size-lg)", fontWeight: 600, color: "var(--bpm-text)" }}>
               {title}
             </h3>
           )}
@@ -170,7 +170,7 @@ export function DataExplorer({
                 borderRadius: "var(--bpm-radius-sm)",
                 background: "var(--bpm-bg-primary)",
                 color: "var(--bpm-text-primary)",
-                fontSize: 14,
+                fontSize: "var(--bpm-font-size-base)",
                 cursor: "pointer",
               }}
             >
@@ -184,7 +184,7 @@ export function DataExplorer({
           style={{
             width: "100%",
             borderCollapse: "collapse",
-            fontSize: 14,
+            fontSize: "var(--bpm-font-size-base)",
             color: "var(--bpm-text-primary)",
           }}
         >

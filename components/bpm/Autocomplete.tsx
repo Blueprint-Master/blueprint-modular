@@ -50,7 +50,7 @@ export function Autocomplete(props: AutocompleteProps) {
         onFocus={(e) => {
           e.target.style.outline = "none";
           e.target.style.borderColor = "var(--bpm-accent)";
-          e.target.style.boxShadow = "0 0 0 2px var(--bpm-accent-alpha, rgba(0,163,226,0.2))";
+          e.target.style.boxShadow = "var(--bpm-focus-ring)";
           setOpen(true);
         }}
         onBlur={(e) => {
@@ -67,7 +67,7 @@ export function Autocomplete(props: AutocompleteProps) {
             <li
               key={opt.value}
               className="px-3 py-2 rounded cursor-pointer text-sm"
-              style={{ background: i === highlight ? "var(--bpm-accent-cyan)" : "transparent", color: i === highlight ? "#fff" : "var(--bpm-text-primary)" }}
+              style={{ background: i === highlight ? "var(--bpm-accent)" : "transparent", color: i === highlight ? "var(--bpm-accent-contrast)" : "var(--bpm-text)" }}
               onMouseDown={() => select(opt)}
               onMouseEnter={() => setHighlight(i)}
             >

@@ -123,7 +123,7 @@ export function Avatar({
               position: "absolute",
               inset: 0,
               borderRadius: "inherit",
-              background: "rgba(0,0,0,0.4)",
+              background: "var(--bpm-overlay-bg)",
               display: "flex",
               alignItems: "center",
               justifyContent: "center",
@@ -137,7 +137,7 @@ export function Avatar({
             onFocus={(e) => { e.currentTarget.style.opacity = "1"; }}
             onBlur={(e) => { e.currentTarget.style.opacity = "0"; }}
           >
-            <span style={{ color: "#fff", fontSize: iconSize }}>✎</span>
+            <span style={{ color: "var(--bpm-accent-contrast)", fontSize: iconSize }}>✎</span>
           </span>
         </span>
       );

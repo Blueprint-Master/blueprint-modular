@@ -42,9 +42,9 @@ function JsonNode({
     return (
       <div className="flex gap-2 flex-wrap" style={{ paddingLeft: `${level * 12}px` }}>
         {name != null && (
-          <span style={{ color: "var(--bpm-accent-cyan)" }}>&quot;{name}&quot;:</span>
+          <span style={{ color: "var(--bpm-accent)" }}>&quot;{name}&quot;:</span>
         )}
-        <span style={{ color: value === null ? "var(--bpm-text-secondary)" : "var(--bpm-accent-mint)" }}>
+        <span style={{ color: value === null ? "var(--bpm-text-muted)" : "var(--bpm-success)" }}>
           {formatValue(value)}
         </span>
       </div>
@@ -64,7 +64,7 @@ function JsonNode({
       >
         <span className="shrink-0 w-4">{open ? "▼" : "▶"}</span>
         {name != null && (
-          <span style={{ color: "var(--bpm-accent-cyan)" }}>&quot;{name}&quot;:</span>
+          <span style={{ color: "var(--bpm-accent)" }}>&quot;{name}&quot;:</span>
         )}
         <span style={{ color: "var(--bpm-text-secondary)" }}>
           {isArr ? `[${len}]` : `{${len}}`}

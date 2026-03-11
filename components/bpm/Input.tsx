@@ -37,7 +37,7 @@ export function Input({
         <label
           htmlFor={id}
           className="bpm-input-label block text-sm font-medium mb-1"
-          style={{ color: "var(--bpm-text-primary)" }}
+          style={{ color: "var(--bpm-text)", fontSize: "var(--bpm-font-size-base)" }}
         >
           {label}
         </label>
@@ -45,11 +45,13 @@ export function Input({
       <input
         id={id}
         type={type}
-        className="bpm-input w-full px-3 py-2 rounded-lg border text-sm min-h-[44px]"
+        className="bpm-input w-full px-3 py-2 border min-h-[44px]"
         style={{
           borderColor: "var(--bpm-border)",
           background: "var(--bpm-bg-primary)",
-          color: "var(--bpm-text-primary)",
+          color: "var(--bpm-text)",
+          borderRadius: "var(--bpm-radius)",
+          fontSize: "var(--bpm-font-size-base)",
         }}
         value={value}
         onChange={(e) => onChange?.(e.target.value)}
@@ -58,7 +60,7 @@ export function Input({
         onFocus={(e) => {
           e.target.style.outline = "none";
           e.target.style.borderColor = "var(--bpm-accent)";
-          e.target.style.boxShadow = "0 0 0 2px var(--bpm-accent-alpha, rgba(0,163,226,0.2))";
+          e.target.style.boxShadow = "var(--bpm-focus-ring)";
         }}
         onBlur={(e) => {
           e.target.style.borderColor = "var(--bpm-border)";

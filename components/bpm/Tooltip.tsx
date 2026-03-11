@@ -98,13 +98,16 @@ export function Tooltip({
 
   const tooltipEl = visible && text && (
     <div
-      className="bpm-tooltip-popover fixed z-[10002] px-3 py-2 rounded text-sm max-w-[380px] min-w-[140px] shadow-lg pointer-events-none"
+      className="bpm-tooltip-popover fixed z-[10002] px-3 py-2 max-w-[380px] min-w-[140px] pointer-events-none"
       style={{
         left: coords.left,
         top: coords.top,
         transform: getTransform(),
-        background: backgroundColor ?? "var(--bpm-text-primary)",
+        background: backgroundColor ?? "var(--bpm-text)",
         color: textColor ?? "var(--bpm-bg-primary)",
+        borderRadius: "var(--bpm-radius)",
+        fontSize: "var(--bpm-font-size-sm)",
+        boxShadow: "var(--bpm-shadow)",
       }}
     >
       {text}

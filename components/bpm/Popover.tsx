@@ -27,8 +27,8 @@ export function Popover(p: PopoverProps) {
       <div onClick={() => setOpen((o) => !o)} className="cursor-pointer">{trigger}</div>
       {open && (
         <div
-          className={"absolute z-50 rounded-lg border shadow-lg p-2 min-w-[120px] " + pos}
-          style={{ borderColor: "var(--bpm-border)", background: "var(--bpm-bg-primary)", color: "var(--bpm-text-primary)" }}
+          className={"absolute z-50 border p-2 min-w-[120px] " + pos}
+          style={{ borderColor: "var(--bpm-border)", background: "var(--bpm-bg-primary)", color: "var(--bpm-text)", borderRadius: "var(--bpm-radius)", boxShadow: "var(--bpm-shadow)" }}
         >
           {children}
         </div>

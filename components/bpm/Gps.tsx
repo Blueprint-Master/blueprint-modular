@@ -94,7 +94,7 @@ export function Gps({
       className={`bpm-gps ${className}`.trim()}
       style={{
         border: "1px solid var(--bpm-border)",
-        borderRadius: 8,
+        borderRadius: "var(--bpm-radius)",
         overflow: "hidden",
         background: "var(--bpm-bg-primary)",
       }}
@@ -121,10 +121,10 @@ export function Gps({
               disabled={status === "loading"}
               style={{
                 padding: "8px 16px",
-                borderRadius: 8,
+                borderRadius: "var(--bpm-radius)",
                 border: "none",
                 background: "var(--bpm-accent)",
-                color: "#fff",
+                color: "var(--bpm-accent-contrast)",
                 fontSize: "0.875rem",
                 fontWeight: 500,
                 cursor: status === "loading" ? "wait" : "pointer",
@@ -150,13 +150,13 @@ export function Gps({
             </p>
           )}
           {mode === "display" && status === "error" && errorMessage && (
-            <p style={{ margin: 0, fontSize: "0.875rem", color: "var(--bpm-error, #dc2626)" }}>
+            <p style={{ margin: 0, fontSize: "var(--bpm-font-size-sm)", color: "var(--bpm-error)" }}>
               {errorMessage}
             </p>
           )}
         </div>
         {showMap && (
-          <div style={{ width: "100%", height: height, borderRadius: 8, overflow: "hidden" }}>
+          <div style={{ width: "100%", height: height, borderRadius: "var(--bpm-radius)", overflow: "hidden" }}>
             <LeafletMap
               mode={mode}
               center={

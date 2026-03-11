@@ -28,8 +28,8 @@ export function Timeline({ items = [], className = "" }: TimelineProps) {
               <div
                 className="w-4 h-4 rounded-full border-2"
                 style={{
-                  background: isDone || isCurrent ? "var(--bpm-accent-cyan)" : "transparent",
-                  borderColor: isDone || isCurrent ? "var(--bpm-accent-cyan)" : "var(--bpm-border)",
+                  background: isDone || isCurrent ? "var(--bpm-accent)" : "transparent",
+                  borderColor: isDone || isCurrent ? "var(--bpm-accent)" : "var(--bpm-border)",
                 }}
               />
               {i < items.length - 1 && (

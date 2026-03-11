@@ -31,7 +31,7 @@ export function Drawer({ children, open, onClose, title, side = "right", width =
 
   return (
     <>
-      <div className={"bpm-drawer-backdrop " + className} style={{ position: "fixed", inset: 0, background: "rgba(0,0,0,0.4)", zIndex: 9998 }} onClick={onClose} aria-hidden />
+      <div className={"bpm-drawer-backdrop " + className} style={{ position: "fixed", inset: 0, background: "var(--bpm-overlay-bg)", zIndex: 9998 }} onClick={onClose} aria-hidden />
       <div
         className={"bpm-drawer " + className}
         role="dialog"
@@ -46,15 +46,15 @@ export function Drawer({ children, open, onClose, title, side = "right", width =
           background: "var(--bpm-bg-primary)",
           borderLeft: side === "right" ? "1px solid var(--bpm-border)" : "none",
           borderRight: side === "left" ? "1px solid var(--bpm-border)" : "none",
-          boxShadow: "0 0 24px rgba(0,0,0,0.15)",
+          boxShadow: "var(--bpm-shadow)",
           zIndex: 9999,
           display: "flex",
           flexDirection: "column",
           overflow: "hidden",
         }}
       >
-        <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: 16, borderBottom: "1px solid var(--bpm-border)", flexShrink: 0 }}>
-          {title != null ? (typeof title === "string" ? <span style={{ fontWeight: 600, color: "var(--bpm-text-primary)" }}>{title}</span> : title) : <span />}
+        <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "16px 20px", borderBottom: "1px solid var(--bpm-border)", flexShrink: 0, fontWeight: 600, fontSize: "var(--bpm-font-size-lg)", color: "var(--bpm-text)" }}>
+          {title != null ? (typeof title === "string" ? <span style={{ fontWeight: 600, fontSize: "var(--bpm-font-size-lg)", color: "var(--bpm-text)" }}>{title}</span> : title) : <span />}
           <button type="button" onClick={onClose} aria-label="Fermer" style={{ background: "none", border: "none", cursor: "pointer", color: "var(--bpm-text-secondary)", padding: 4 }}>
             <svg width={20} height={20} viewBox="0 0 24 24" fill="currentColor"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z" /></svg>
           </button>

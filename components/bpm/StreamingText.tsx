@@ -36,7 +36,7 @@ export function StreamingText({
         renderMarkdown ? (
           <Markdown text={content} />
         ) : (
-          <div style={{ whiteSpace: "pre-wrap", fontSize: 14, lineHeight: 1.6 }}>{content}</div>
+          <div style={{ whiteSpace: "pre-wrap", fontSize: "var(--bpm-font-size-base)", lineHeight: 1.6 }}>{content}</div>
         )
       ) : null}
       {isStreaming && (

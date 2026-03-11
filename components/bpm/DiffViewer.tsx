@@ -93,7 +93,7 @@ export function DiffViewer({
           border: "1px solid var(--bpm-border)",
           borderRadius: "var(--bpm-radius-sm)",
           overflow: "hidden",
-          fontSize: 13,
+          fontSize: "var(--bpm-font-size-base)",
           background: "var(--bpm-bg-primary)",
         }}
       >
@@ -125,11 +125,11 @@ export function DiffViewer({
                   padding: "0 12px",
                   background:
                     line.kind === "add"
-                      ? "rgba(0,128,0,0.12)"
+                      ? "var(--bpm-diff-add-bg)"
                       : line.kind === "remove"
-                        ? "rgba(200,0,0,0.12)"
+                        ? "var(--bpm-diff-remove-bg)"
                         : "transparent",
-                  color: "var(--bpm-text-primary)",
+                  color: "var(--bpm-text)",
                 }}
               >
                 <span
@@ -187,11 +187,11 @@ export function DiffViewer({
                 padding: "0 12px",
                 background:
                   line.kind === "add"
-                    ? "rgba(0,128,0,0.12)"
+                    ? "var(--bpm-diff-add-bg)"
                     : line.kind === "remove"
-                      ? "rgba(200,0,0,0.12)"
+                      ? "var(--bpm-diff-remove-bg)"
                       : "transparent",
-                color: "var(--bpm-text-primary)",
+                color: "var(--bpm-text)",
                 whiteSpace: "pre",
                 wordBreak: "break-all",
               }}
@@ -211,7 +211,7 @@ export function DiffViewer({
         border: "1px solid var(--bpm-border)",
         borderRadius: "var(--bpm-radius-sm)",
         overflow: "hidden",
-        fontSize: 13,
+        fontSize: "var(--bpm-font-size-base)",
         background: "var(--bpm-bg-primary)",
       }}
     >
@@ -222,7 +222,7 @@ export function DiffViewer({
             borderBottom: "1px solid var(--bpm-border)",
             background: "var(--bpm-bg-secondary)",
             padding: "8px 12px",
-            fontSize: 12,
+            fontSize: "var(--bpm-font-size-sm)",
             fontWeight: 600,
             color: "var(--bpm-text-secondary)",
           }}

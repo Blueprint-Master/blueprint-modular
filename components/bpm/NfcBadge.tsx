@@ -14,11 +14,11 @@ export function NfcBadge({ label = "Scannable", variant = "default", className =
     alignItems: "center",
     gap: 6,
     padding: "4px 10px",
-    borderRadius: 6,
-    fontSize: 12,
+    borderRadius: "var(--bpm-radius)",
+    fontSize: "var(--bpm-font-size-sm)",
     fontWeight: 500,
-    background: variant === "primary" ? "var(--bpm-accent-cyan)" : variant === "success" ? "var(--bpm-accent-mint)" : "var(--bpm-bg-secondary)",
-    color: variant === "default" ? "var(--bpm-text-primary)" : "#fff",
+    background: variant === "primary" ? "var(--bpm-accent)" : variant === "success" ? "var(--bpm-success)" : "var(--bpm-bg-secondary)",
+    color: variant === "default" ? "var(--bpm-text)" : "var(--bpm-accent-contrast)",
     border: "1px solid var(--bpm-border)",
   };
   return (

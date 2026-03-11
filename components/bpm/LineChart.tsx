@@ -10,7 +10,7 @@ import React, { useMemo } from "react";export interface LineChartDatum {
   color?: string;
   className?: string;
 }export function LineChart(p: LineChartProps) {
-  const { data, width = 400, height = 200, color = "var(--bpm-accent-cyan)", className = "" } = p;
+  const { data, width = 400, height = 200, color = "var(--bpm-accent)", className = "" } = p;
   const path = useMemo(() => {
     if (!data.length) return "";
     const xs = data.map((d, i) => (typeof d.x === "number" ? d.x : Number(d.x) || i));
@@ -28,7 +28,7 @@ import React, { useMemo } from "react";export interface LineChartDatum {
     const yScale = (v: number) => height - pad - ((v - minY) / rangeY) * h;
     return "M" + data.map((_, i) => xScale(xs[i]) + "," + yScale(ys[i])).join("L");
   }, [data, width, height]);
-  if (!data.length) return <div className={"bpm-line-chart w-full max-w-full " + className} style={{ aspectRatio: `${width}/${height}`, maxWidth: width, background: "var(--bpm-bg-secondary)", borderRadius: 8 }} />;
+  if (!data.length) return <div className={"bpm-line-chart w-full max-w-full " + className} style={{ aspectRatio: `${width}/${height}`, maxWidth: width, background: "var(--bpm-bg-secondary)", borderRadius: "var(--bpm-radius)" }} />;
   return (
     <div className="w-full max-w-full overflow-hidden" style={{ aspectRatio: `${width}/${height}` }}>
       <svg viewBox={`0 0 ${width} ${height}`} className={"bpm-line-chart " + className} style={{ width: "100%", height: "auto", overflow: "visible" }} preserveAspectRatio="xMidYMid meet">

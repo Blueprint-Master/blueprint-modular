@@ -67,7 +67,7 @@ export function ChatInterface({
         <div
           style={{
             padding: 12,
-            fontSize: 12,
+            fontSize: "var(--bpm-font-size-sm)",
             color: "var(--bpm-text-muted)",
             borderBottom: "1px solid var(--bpm-border)",
             background: "var(--bpm-bg-secondary)",
@@ -107,7 +107,7 @@ export function ChatInterface({
                 maxWidth: "80%",
                 padding: "10px 14px",
                 borderRadius: "var(--bpm-radius-md)",
-                fontSize: 14,
+                fontSize: "var(--bpm-font-size-base)",
                 lineHeight: 1.5,
                 background:
                   m.role === "user" ? "var(--bpm-accent)" : "var(--bpm-surface)",
@@ -129,7 +129,7 @@ export function ChatInterface({
               alignItems: "center",
               gap: 12,
               color: "var(--bpm-text-muted)",
-              fontSize: 14,
+              fontSize: "var(--bpm-font-size-base)",
             }}
           >
             <Avatar size="small" initials="IA" />

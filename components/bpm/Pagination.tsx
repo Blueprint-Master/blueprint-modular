@@ -43,7 +43,7 @@ export function Pagination({
         aria-label="Page précédente"
         style={{
           padding: "6px 12px",
-          borderRadius: 6,
+          borderRadius: "var(--bpm-radius)",
           border: "1px solid var(--bpm-border)",
           background: "var(--bpm-bg-primary)",
           color: "var(--bpm-text-primary)",
@@ -63,7 +63,7 @@ export function Pagination({
         aria-label="Page suivante"
         style={{
           padding: "6px 12px",
-          borderRadius: 6,
+          borderRadius: "var(--bpm-radius)",
           border: "1px solid var(--bpm-border)",
           background: "var(--bpm-bg-primary)",
           color: "var(--bpm-text-primary)",

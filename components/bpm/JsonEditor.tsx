@@ -97,7 +97,7 @@ export function JsonEditor({
           border: `1px solid ${validation.valid ? "var(--bpm-border)" : "var(--bpm-error)"}`,
           borderRadius: "var(--bpm-radius-sm)",
           fontFamily: "ui-monospace, monospace",
-          fontSize: 13,
+          fontSize: "var(--bpm-font-size-base)",
           lineHeight: 1.5,
           color: "var(--bpm-text-primary)",
           background: "var(--bpm-bg-primary)",
@@ -108,7 +108,7 @@ export function JsonEditor({
       {showValidation && (
         <div
           style={{
-            fontSize: 12,
+            fontSize: "var(--bpm-font-size-sm)",
             color: validation.valid ? "var(--bpm-success)" : "var(--bpm-error)",
           }}
         >

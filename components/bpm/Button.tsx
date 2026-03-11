@@ -36,13 +36,15 @@ export function Button({
   return (
     <button
       type={type}
-      className={`rounded-lg font-medium transition ${sizeClass} ${fullWidth ? "w-full" : ""} ${className}`}
+      className={`font-medium ${sizeClass} ${fullWidth ? "w-full" : ""} ${className}`}
       style={{
         background: isPrimary ? "var(--bpm-accent)" : "transparent",
-        color: isPrimary ? "var(--bpm-accent-contrast)" : "var(--bpm-text-primary)",
+        color: isPrimary ? "var(--bpm-accent-contrast)" : "var(--bpm-text)",
         border: variant === "outline" ? "1px solid var(--bpm-border)" : "none",
+        borderRadius: "var(--bpm-radius)",
         opacity: disabled ? 0.6 : 1,
         cursor: disabled ? "not-allowed" : "pointer",
+        transition: "var(--bpm-transition)",
       }}
       onClick={onClick}
       disabled={disabled}

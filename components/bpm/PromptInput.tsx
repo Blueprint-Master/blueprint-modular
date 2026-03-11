@@ -99,7 +99,7 @@ export function PromptInput({
           outline: "none",
           resize: "none",
           fontFamily: "inherit",
-          fontSize: 14,
+          fontSize: "var(--bpm-font-size-base)",
           lineHeight: LINE_HEIGHT_PX / 14,
           color: "var(--bpm-text-primary)",
           background: "transparent",
@@ -116,7 +116,7 @@ export function PromptInput({
           background: "var(--bpm-bg-secondary)",
         }}
       >
-        <span style={{ fontSize: 12, color: "var(--bpm-text-muted)" }}>
+        <span style={{ fontSize: "var(--bpm-font-size-sm)", color: "var(--bpm-text-muted)" }}>
           {maxLength != null && `${value.length} / ${maxLength}`}
           {showTokenCount && tokenCount != null && (maxLength != null ? " · " : "")}
           {showTokenCount && tokenCount != null && `~${tokenCount} tokens`}

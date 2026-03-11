@@ -29,7 +29,7 @@ export function Rating(props: RatingProps) {
             onClick={() => onChange && onChange(star)}
             className={"p-0.5 rounded transition-opacity " + (sizeClasses[size] || sizeClasses.medium)}
             style={{
-              color: filled ? "var(--bpm-accent-cyan)" : "var(--bpm-border)",
+              color: filled ? "var(--bpm-accent)" : "var(--bpm-border)",
               cursor: disabled ? "default" : "pointer",
             }}
             aria-pressed={filled}

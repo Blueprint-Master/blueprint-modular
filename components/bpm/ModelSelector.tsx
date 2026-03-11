@@ -45,22 +45,21 @@ export function ModelSelector({
     const update = () => {
       if (!triggerRef.current) return;
       const rect = triggerRef.current.getBoundingClientRect();
-      const radius = "var(--bpm-radius-md, 8px)";
-      setDropdownStyle({
-        position: "fixed",
-        top: rect.bottom + 4,
-        left: rect.left,
-        minWidth: Math.max(280, rect.width),
-        maxWidth: typeof window !== "undefined" ? Math.min(400, window.innerWidth - rect.left - 16) : 400,
-        maxHeight: typeof window !== "undefined" ? Math.min(320, window.innerHeight - rect.bottom - 16) : 320,
-        overflowY: "auto",
-        overflowX: "hidden",
-        border: "1px solid var(--bpm-border)",
-        borderRadius: radius,
-        background: "var(--bpm-bg-primary)",
-        boxShadow: "0 8px 24px rgba(0,0,0,0.12)",
-        zIndex: 9999,
-      });
+        setDropdownStyle({
+          position: "fixed",
+          top: rect.bottom + 4,
+          left: rect.left,
+          minWidth: Math.max(280, rect.width),
+          maxWidth: typeof window !== "undefined" ? Math.min(400, window.innerWidth - rect.left - 16) : 400,
+          maxHeight: typeof window !== "undefined" ? Math.min(320, window.innerHeight - rect.bottom - 16) : 320,
+          overflowY: "auto",
+          overflowX: "hidden",
+          border: "1px solid var(--bpm-border)",
+          borderRadius: "var(--bpm-radius)",
+          background: "var(--bpm-bg-primary)",
+          boxShadow: "var(--bpm-shadow)",
+          zIndex: 9999,
+        });
     };
     const t = setTimeout(update, 10);
     window.addEventListener("scroll", update, true);
@@ -101,7 +100,7 @@ export function ModelSelector({
                 <div
                   style={{
                     padding: "8px 12px",
-                    fontSize: 11,
+                    fontSize: "var(--bpm-font-size-sm)",
                     fontWeight: 600,
                     color: "var(--bpm-text-muted)",
                     textTransform: "uppercase",
@@ -124,9 +123,9 @@ export function ModelSelector({
                       textAlign: "left",
                       padding: "10px 12px",
                       border: "none",
-                      background: m.id === selected ? "var(--bpm-accent-light)" : "transparent",
-                      color: "var(--bpm-text-primary)",
-                      fontSize: 14,
+                      background: m.id === selected ? "var(--bpm-accent-soft)" : "transparent",
+                      color: "var(--bpm-text)",
+                      fontSize: "var(--bpm-font-size-base)",
                       cursor: "pointer",
                     }}
                   >
@@ -138,7 +137,7 @@ export function ModelSelector({
                           flexWrap: "wrap",
                           gap: 4,
                           marginTop: 4,
-                          fontSize: 11,
+                          fontSize: "var(--bpm-font-size-sm)",
                           color: "var(--bpm-text-muted)",
                         }}
                       >
@@ -147,7 +146,7 @@ export function ModelSelector({
                             key={c}
                             style={{
                               padding: "2px 6px",
-                              borderRadius: 4,
+                              borderRadius: "var(--bpm-radius-sm)",
                               background: "var(--bpm-bg-tertiary)",
                             }}
                           >
@@ -159,7 +158,7 @@ export function ModelSelector({
                             title="Fenêtre de contexte : nombre de tokens que le modèle peut traiter en une fois"
                             style={{
                               padding: "2px 6px",
-                              borderRadius: 4,
+                              borderRadius: "var(--bpm-radius-sm)",
                               background: "var(--bpm-bg-tertiary)",
                             }}
                           >
@@ -194,8 +193,8 @@ export function ModelSelector({
           border: "1px solid var(--bpm-border)",
           borderRadius: "var(--bpm-radius-sm)",
           background: "var(--bpm-bg-primary)",
-          color: "var(--bpm-text-primary)",
-          fontSize: 14,
+          color: "var(--bpm-text)",
+          fontSize: "var(--bpm-font-size-base)",
           cursor: "pointer",
           minWidth: 180,
         }}

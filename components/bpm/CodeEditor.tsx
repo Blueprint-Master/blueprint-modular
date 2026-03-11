@@ -36,7 +36,7 @@ export function CodeEditor({
         border: "1px solid var(--bpm-border)",
         borderRadius: "var(--bpm-radius-sm)",
         fontFamily: "ui-monospace, monospace",
-        fontSize: 13,
+        fontSize: "var(--bpm-font-size-base)",
         lineHeight: 1.5,
         color: "var(--bpm-text-primary)",
         background: "var(--bpm-bg-primary)",

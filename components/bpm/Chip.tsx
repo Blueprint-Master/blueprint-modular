@@ -24,13 +24,15 @@ export function Chip({
   const isClickable = Boolean(onClick && !disabled);
   return (
     <span
-      className={`bpm-chip inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-medium ${
+      className={`bpm-chip inline-flex items-center gap-1 px-2.5 py-1 font-medium ${
         isClickable ? "cursor-pointer" : ""
       } ${disabled ? "opacity-60" : ""} ${className}`.trim()}
       style={{
         background: variant === "primary" ? "var(--bpm-accent)" : "var(--bpm-bg-secondary)",
-        color: variant === "primary" ? "var(--bpm-accent-contrast)" : "var(--bpm-text-primary)",
+        color: variant === "primary" ? "var(--bpm-accent-contrast)" : "var(--bpm-text)",
         border: variant === "outline" ? "1px solid var(--bpm-border)" : "none",
+        borderRadius: "var(--bpm-radius)",
+        fontSize: "var(--bpm-font-size-sm)",
       }}
       role={onDelete ? "button" : undefined}
       onClick={disabled ? undefined : onClick}

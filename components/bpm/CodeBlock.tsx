@@ -35,7 +35,7 @@ export function CodeBlock({ code, language = "text", className = "" }: CodeBlock
         className={`p-4 rounded-lg overflow-x-auto text-sm ${className}`}
         style={{
           background: "var(--bpm-code-bg)",
-          border: "1px solid var(--bpm-code-border)",
+          border: "1px solid var(--bpm-border)",
           color: "var(--bpm-text-primary)",
         }}
       >

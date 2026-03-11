@@ -55,7 +55,7 @@ export function Stepper({
                 style={{
                   borderColor: isPast || isActive ? "var(--bpm-accent)" : "var(--bpm-border)",
                   background: isPast ? "var(--bpm-accent)" : "var(--bpm-bg-primary)",
-                  color: isPast || isActive ? "#fff" : "var(--bpm-text-secondary)",
+                  color: isPast || isActive ? "var(--bpm-accent-contrast)" : "var(--bpm-text-muted)",
                 }}
                 onClick={isClickable ? () => onStepClick(i) : undefined}
                 disabled={!isClickable}

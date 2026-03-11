@@ -114,7 +114,7 @@ export function PageLayout({
         >
           <span
             style={{
-              fontSize: 18,
+              fontSize: "var(--bpm-font-size-lg)",
               fontWeight: 600,
               color: "var(--bpm-text)",
               paddingLeft: isCollapsed ? 0 : 12,
@@ -141,7 +141,7 @@ export function PageLayout({
               height: 32,
               padding: 0,
               border: "none",
-              borderRadius: 6,
+              borderRadius: "var(--bpm-radius)",
               background: "transparent",
               color: "var(--bpm-text-secondary)",
               cursor: "pointer",
@@ -194,9 +194,9 @@ export function PageLayout({
                   color: isActive ? "var(--bpm-accent)" : "var(--bpm-text-secondary)",
                   cursor: "pointer",
                   font: "inherit",
-                  fontSize: 14,
+                  fontSize: "var(--bpm-font-size-base)",
                   marginLeft: isCollapsed ? 0 : -2,
-                  borderRadius: 6,
+                  borderRadius: "var(--bpm-radius)",
                   boxSizing: "border-box",
                   transition: "background-color 0.15s ease",
                 }}
@@ -249,12 +249,12 @@ export function PageLayout({
                 minWidth: isCollapsed ? 32 : undefined,
                 height: 32,
                 border: "none",
-                borderRadius: 6,
+                borderRadius: "var(--bpm-radius)",
                 background: "transparent",
                 color: "var(--bpm-text-secondary)",
                 cursor: "pointer",
                 font: "inherit",
-                fontSize: 14,
+                fontSize: "var(--bpm-font-size-base)",
                 boxSizing: "border-box",
                 transition: "background-color 0.15s ease",
               }}

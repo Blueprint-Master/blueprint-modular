@@ -46,12 +46,12 @@ export function OfflineIndicator() {
         alignItems: "center",
         gap: 8,
         padding: "4px 10px",
-        borderRadius: 6,
-        background: online ? "var(--bpm-surface)" : "#fef3c7",
+        borderRadius: "var(--bpm-radius)",
+        background: online ? "var(--bpm-surface)" : "var(--bpm-warning-soft)",
         border: "1px solid",
-        borderColor: online ? "var(--bpm-border)" : "#f59e0b",
-        fontSize: 12,
-        color: online ? "var(--bpm-text-secondary)" : "#92400e",
+        borderColor: online ? "var(--bpm-border)" : "var(--bpm-warning)",
+        fontSize: "var(--bpm-font-size-sm)",
+        color: online ? "var(--bpm-text-muted)" : "var(--bpm-warning-text)",
       }}
     >
       <span>{online ? "🔄" : "⚠️"}</span>
@@ -67,11 +67,11 @@ export function OfflineIndicator() {
           disabled={syncing}
           style={{
             padding: "2px 8px",
-            borderRadius: 4,
+            borderRadius: "var(--bpm-radius-sm)",
             border: "1px solid var(--bpm-border)",
             background: "var(--bpm-bg-secondary)",
             cursor: syncing ? "not-allowed" : "pointer",
-            fontSize: 11,
+            fontSize: "var(--bpm-font-size-sm)",
           }}
         >
           {syncing ? "Sync…" : "Synchroniser"}

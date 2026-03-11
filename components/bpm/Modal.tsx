@@ -73,31 +73,36 @@ export function Modal({
       }`}
       style={{
         zIndex: MODAL_PORTAL_ZINDEX,
-        backgroundColor: "rgba(0,0,0,0.5)",
+        backgroundColor: "var(--bpm-overlay-bg)",
       }}
       onClick={handleBackdropClick}
     >
       <div
-        className={`bpm-modal flex flex-col max-h-[90vh] overflow-hidden rounded-lg shadow-lg transition-all ${sizeClasses[size]} ${
+        className={`bpm-modal flex flex-col max-h-[90vh] overflow-hidden transition-all ${sizeClasses[size]} ${
           !isOpen ? "opacity-0 scale-95 pointer-events-none" : ""
         }`}
         style={{
           zIndex: MODAL_PORTAL_ZINDEX + 1,
           background: "var(--bpm-surface)",
           color: "var(--bpm-text-primary)",
+          borderRadius: "var(--bpm-radius)",
+          boxShadow: "var(--bpm-shadow)",
         }}
         onClick={(e) => e.stopPropagation()}
       >
         <div
-          className="bpm-modal-header flex justify-between items-center px-4 py-3 border-b flex-shrink-0"
+          className="bpm-modal-header flex justify-between items-center border-b flex-shrink-0"
           style={{
-            background: "var(--bpm-sidebar-bg)",
-            borderColor: "var(--bpm-sidebar-border)",
-            color: "var(--bpm-sidebar-text)",
+            padding: "16px 20px",
+            background: "var(--bpm-bg-secondary)",
+            borderColor: "var(--bpm-border)",
+            color: "var(--bpm-text)",
+            fontWeight: 600,
+            fontSize: "var(--bpm-font-size-lg)",
           }}
         >
           {title != null && (
-            <h3 className="bpm-modal-title m-0 text-lg font-semibold" style={{ color: "var(--bpm-sidebar-text)" }}>
+            <h3 className="bpm-modal-title m-0" style={{ color: "var(--bpm-text)", fontWeight: 600, fontSize: "var(--bpm-font-size-lg)" }}>
               {title}
             </h3>
           )}
@@ -107,7 +112,7 @@ export function Modal({
               className="bpm-modal-close w-8 h-8 flex items-center justify-center text-2xl leading-none rounded transition-colors hover:opacity-80"
               onClick={handleCloseClick}
               aria-label="Fermer"
-              style={{ color: "var(--bpm-sidebar-text)", background: "transparent", border: "none" }}
+              style={{ color: "var(--bpm-text)", background: "transparent", border: "none" }}
             >
               ×
             </button>

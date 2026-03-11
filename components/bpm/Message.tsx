@@ -11,10 +11,10 @@ export interface MessageProps {
 }
 
 const typeStyles: Record<MessageType, { bg: string; border: string }> = {
-  info: { bg: "rgba(0,163,224,0.1)", border: "var(--bpm-accent-cyan)" },
-  success: { bg: "rgba(69,208,158,0.15)", border: "var(--bpm-accent-mint)" },
-  warning: { bg: "rgba(245,158,11,0.15)", border: "#f59e0b" },
-  error: { bg: "rgba(239,68,68,0.15)", border: "#ef4444" },
+  info: { bg: "var(--bpm-accent-soft)", border: "var(--bpm-accent)" },
+  success: { bg: "var(--bpm-success-soft)", border: "var(--bpm-success)" },
+  warning: { bg: "var(--bpm-warning-soft)", border: "var(--bpm-warning)" },
+  error: { bg: "var(--bpm-error-soft)", border: "var(--bpm-error)" },
 };
 
 /**

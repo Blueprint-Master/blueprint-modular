@@ -20,7 +20,7 @@ export function SpinnerDot({ className = "", size = "medium" }: SpinnerDotProps)
       className={`bpm-spinner-dot rounded-full border-solid border-t-transparent animate-spin ${sizeMap[size]} ${className}`}
       style={{
         borderColor: "var(--bpm-border)",
-        borderTopColor: "var(--bpm-accent-cyan)",
+        borderTopColor: "var(--bpm-accent)",
       }}
       aria-hidden
     />

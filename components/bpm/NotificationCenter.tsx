@@ -24,7 +24,7 @@ export interface NotificationCenterProps {
 }
 
 const BellIcon = () => (
-  <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#1f1f1f">
+  <svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 -960 960 960" width="24" fill="currentColor" style={{ color: "var(--bpm-text)" }}>
     <path d="M200-209.23v-40h64.62v-316.92q0-78.39 49.61-137.89 49.62-59.5 125.77-74.11V-800q0-16.67 11.64-28.33Q463.28-840 479.91-840t28.36 11.67Q520-816.67 520-800v21.85q76.15 14.61 125.77 74.11 49.61 59.5 49.61 137.89v316.92H760v40H200Zm280-286.15Zm-.14 390.76q-26.71 0-45.59-18.98-18.89-18.98-18.89-45.63h129.24q0 26.85-19.03 45.73-19.02 18.88-45.73 18.88ZM304.62-249.23h350.76v-316.92q0-72.93-51.23-124.16-51.23-51.23-124.15-51.23-72.92 0-124.15 51.23-51.23 51.23-51.23 124.16v316.92Z" />
   </svg>
 );
@@ -88,16 +88,16 @@ export function NotificationCenter({
             minWidth: 15,
             height: 18,
             padding: "1px 4px",
-            borderRadius: 8,
+            borderRadius: "var(--bpm-radius-sm)",
             background: "var(--bpm-error)",
             color: "var(--bpm-accent-contrast)",
-            fontSize: 9,
+            fontSize: "var(--bpm-font-size-sm)",
             fontWeight: 700,
             display: "flex",
             alignItems: "center",
             justifyContent: "center",
-            border: "1px solid white",
-            boxShadow: "0 0 0 1px rgba(0,0,0,0.1)",
+            border: "1px solid var(--bpm-border)",
+            boxShadow: "var(--bpm-shadow)",
           }}
         >
           {unreadCount > 99 ? "99+" : unreadCount}
@@ -131,9 +131,9 @@ export function NotificationCenter({
               maxWidth: "calc(100vw - 40px)",
               maxHeight: 600,
               border: "1px solid var(--bpm-border)",
-              borderRadius: 8,
+              borderRadius: "var(--bpm-radius)",
               background: "var(--bpm-bg-primary)",
-              boxShadow: "0 4px 12px rgba(0,0,0,0.15)",
+              boxShadow: "var(--bpm-shadow)",
               display: "flex",
               flexDirection: "column",
               overflow: "hidden",
@@ -144,12 +144,15 @@ export function NotificationCenter({
                 display: "flex",
                 alignItems: "center",
                 justifyContent: "space-between",
-                padding: "12px 16px",
+                padding: "16px 20px",
                 borderBottom: "1px solid var(--bpm-border)",
                 background: "var(--bpm-bg-secondary)",
+                fontWeight: 600,
+                fontSize: "var(--bpm-font-size-lg)",
+                color: "var(--bpm-text)",
               }}
             >
-              <span style={{ fontWeight: 600, fontSize: 18, color: "var(--bpm-text-primary)", margin: 0 }}>
+              <span style={{ fontWeight: 600, fontSize: "var(--bpm-font-size-lg)", color: "var(--bpm-text)", margin: 0 }}>
                 Notifications
               </span>
               {unreadCount > 0 && (
@@ -158,9 +161,9 @@ export function NotificationCenter({
                   onClick={() => { onReadAll(); }}
                   style={{
                     padding: "4px 8px",
-                    fontSize: 14,
+                    fontSize: "var(--bpm-font-size-base)",
                     border: "none",
-                    borderRadius: 4,
+                    borderRadius: "var(--bpm-radius-sm)",
                     background: "transparent",
                     color: "var(--bpm-text-secondary)",
                     cursor: "pointer",
@@ -179,7 +182,7 @@ export function NotificationCenter({
                     <div
                       style={{
                         padding: "8px 16px",
-                        fontSize: 11,
+                        fontSize: "var(--bpm-font-size-sm)",
                         fontWeight: 600,
                         color: "var(--bpm-text-muted)",
                         textTransform: "uppercase",
@@ -215,8 +218,8 @@ export function NotificationCenter({
                         <div
                           style={{
                             fontWeight: n.read ? 400 : 600,
-                            fontSize: 14,
-                            color: "var(--bpm-text-primary)",
+                            fontSize: "var(--bpm-font-size-base)",
+                            color: "var(--bpm-text)",
                           }}
                         >
                           {n.title}
@@ -224,8 +227,8 @@ export function NotificationCenter({
                         {n.message && (
                           <div
                             style={{
-                              fontSize: 12,
-                              color: "var(--bpm-text-secondary)",
+                              fontSize: "var(--bpm-font-size-sm)",
+                              color: "var(--bpm-text-muted)",
                               marginTop: 4,
                             }}
                           >
@@ -234,7 +237,7 @@ export function NotificationCenter({
                         )}
                         <div
                           style={{
-                            fontSize: 11,
+                            fontSize: "var(--bpm-font-size-sm)",
                             color: "var(--bpm-text-muted)",
                             marginTop: 4,
                           }}
@@ -248,9 +251,9 @@ export function NotificationCenter({
                             style={{
                               marginTop: 8,
                               padding: "2px 8px",
-                              fontSize: 11,
+                              fontSize: "var(--bpm-font-size-sm)",
                               border: "none",
-                              borderRadius: 4,
+                              borderRadius: "var(--bpm-radius-sm)",
                               background: "transparent",
                               color: "var(--bpm-error)",
                               cursor: "pointer",
@@ -270,7 +273,7 @@ export function NotificationCenter({
                     padding: 24,
                     textAlign: "center",
                     color: "var(--bpm-text-muted)",
-                    fontSize: 14,
+                    fontSize: "var(--bpm-font-size-base)",
                   }}
                 >
                   Aucune notification
