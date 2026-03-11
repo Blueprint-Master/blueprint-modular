@@ -737,22 +737,18 @@ h2, .bpm-h2 {
   left: 0.75rem;
 }
 
-/* Card & metric : profondeur, ombre double, hover lift subtil */
-.bpm-card:not(.bpm-card-inverted),
-.bpm-metric {
+/* Card : profondeur, ombre double, hover lift subtil (metric sans ombre) */
+.bpm-card:not(.bpm-card-inverted) {
   box-shadow:
     0 1px 3px rgba(0, 0, 0, 0.06),
     0 4px 16px rgba(0, 0, 0, 0.08);
   transition: var(--bpm-transition);
-}
-.bpm-card:not(.bpm-card-inverted) {
   border: 1px solid rgba(0, 0, 0, 0.06) !important;
 }
 [data-theme="dark"] .bpm-card:not(.bpm-card-inverted) {
   border-color: rgba(255, 255, 255, 0.08) !important;
 }
-.bpm-card:not(.bpm-card-inverted):hover,
-.bpm-metric:hover {
+.bpm-card:not(.bpm-card-inverted):hover {
   box-shadow:
     0 2px 6px rgba(0, 0, 0, 0.07),
     0 8px 24px rgba(0, 0, 0, 0.11);
