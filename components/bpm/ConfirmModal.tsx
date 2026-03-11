@@ -132,7 +132,7 @@ export function ConfirmModal({
         <div
           style={{
             display: "flex",
-            justifyContent: "space-between",
+            justifyContent: "flex-end",
             alignItems: "center",
             gap: 12,
             padding: "16px 24px",
@@ -140,25 +140,6 @@ export function ConfirmModal({
             background: "var(--bpm-bg-primary)",
           }}
         >
-          <button
-            type="button"
-            className="bpm-confirm-modal-cancel"
-            onClick={onCancel}
-            disabled={isLoading}
-            style={{
-              padding: "8px 16px",
-              border: "1px solid var(--bpm-border)",
-              borderRadius: "var(--bpm-radius)",
-              background: "transparent",
-              color: "var(--bpm-text-primary)",
-              fontSize: "var(--bpm-font-size-base)",
-              fontWeight: 500,
-              cursor: isLoading ? "not-allowed" : "pointer",
-              opacity: isLoading ? 0.7 : 1,
-            }}
-          >
-            {cancelLabel}
-          </button>
           <button
             type="button"
             className="bpm-confirm-modal-confirm"
@@ -177,6 +158,25 @@ export function ConfirmModal({
             }}
           >
             {isLoading ? "..." : confirmLabel}
+          </button>
+          <button
+            type="button"
+            className="bpm-confirm-modal-cancel"
+            onClick={onCancel}
+            disabled={isLoading}
+            style={{
+              padding: "8px 16px",
+              border: "1px solid var(--bpm-border)",
+              borderRadius: "var(--bpm-radius)",
+              background: "transparent",
+              color: "var(--bpm-text-primary)",
+              fontSize: "var(--bpm-font-size-base)",
+              fontWeight: 500,
+              cursor: isLoading ? "not-allowed" : "pointer",
+              opacity: isLoading ? 0.7 : 1,
+            }}
+          >
+            {cancelLabel}
           </button>
         </div>
       </div>

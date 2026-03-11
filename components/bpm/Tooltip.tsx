@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, useLayoutEffect } from "react";
 import { createPortal } from "react-dom";
 
 export type TooltipPlacement =
@@ -91,10 +91,14 @@ export function Tooltip({
   };
 
   const show = () => {
+    updatePosition();
     setVisible(true);
-    requestAnimationFrame(updatePosition);
   };
   const hide = () => setVisible(false);
+
+  useLayoutEffect(() => {
+    if (visible) updatePosition();
+  }, [visible]);
 
   const tooltipEl = visible && text && (
     <div

@@ -2,6 +2,7 @@
 
 import React, { useMemo, useState } from "react";
 import { Input } from "./Input";
+import { Button } from "./Button";
 import { Pagination } from "./Pagination";
 
 export interface ColumnDef {
@@ -161,21 +162,9 @@ export function DataExplorer({
             />
           )}
           {exportable && (
-            <button
-              type="button"
-              onClick={handleExportCsv}
-              style={{
-                padding: "8px 12px",
-                border: "1px solid var(--bpm-border)",
-                borderRadius: "var(--bpm-radius-sm)",
-                background: "var(--bpm-bg-primary)",
-                color: "var(--bpm-text-primary)",
-                fontSize: "var(--bpm-font-size-base)",
-                cursor: "pointer",
-              }}
-            >
+            <Button type="button" variant="outline" size="small" onClick={handleExportCsv}>
               Exporter CSV
-            </button>
+            </Button>
           )}
         </div>
       )}

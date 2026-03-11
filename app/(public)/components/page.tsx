@@ -101,6 +101,9 @@ import {
   Toast,
 } from "@/components/bpm";
 
+/** Valeur hex pour props qui n'acceptent pas var() (ex. ColorPicker, Plotly), alignée avec --bpm-accent. */
+const BPM_ACCENT_HEX = "#00a3e2";
+
 const DEMO_CARD_STYLE: React.CSSProperties = {
   background: "var(--bpm-bg)",
   border: "1px solid var(--bpm-border)",
@@ -409,7 +412,7 @@ export default function ComponentsPage() {
             <DemoCard label="bpm.colorPicker">
               <ColorPicker
                 label="Couleur"
-                value="#00a3e2"
+                value={BPM_ACCENT_HEX}
                 onChange={() => {}}
               />
             </DemoCard>
@@ -600,7 +603,7 @@ export default function ComponentsPage() {
                     type: "bar",
                     x: ["Jan", "Fév", "Mar", "Avr", "Mai"],
                     y: [42, 58, 51, 67, 73],
-                    marker: { color: "#00a3e2" },
+                    marker: { color: BPM_ACCENT_HEX },
                   },
                 ]}
                 layout={{ title: "Ventes mensuelles" }}
@@ -818,11 +821,11 @@ export default function ComponentsPage() {
             <DemoCard label="bpm.toast">
               <Toast
                 id={1}
-                message="Exemple de notification toast"
                 type="success"
-                title={null}
-                pageName={null}
-                pageIcon={null}
+                pageName="Composants"
+                pageIcon='<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" width="16" height="16"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg>'
+                title="Opération réussie"
+                message="Exemple de notification toast avec header (icône, intitulé), titre et descriptif."
                 onClose={() => {}}
               />
             </DemoCard>
