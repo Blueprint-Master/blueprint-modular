@@ -1,5 +1,5 @@
 # Blueprint Modular — Agent Context File
-# Version : 0.1.43
+# Version : 0.1.52
 # Date    : 2026-03-11
 # URL canonique : https://blueprint-modular.com/llms.txt
 #

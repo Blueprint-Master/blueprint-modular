@@ -184,7 +184,7 @@ Blueprint Modular is used in production at [NXTFOOD](https://nxtfood.fr) (food p
 | Styling | CSS Modules + Tailwind CSS |
 | Charts | Plotly.js |
 | Package | `@blueprint-modular/core` on npm |
-| Version | 0.1.43 |
+| Version | 0.1.52 |
 
 ---
 

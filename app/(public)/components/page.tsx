@@ -624,7 +624,7 @@ export default function ComponentsPage() {
                 data={{
                   id: 1,
                   name: "Blueprint",
-                  version: "0.1.50",
+                  version: "0.1.52",
                   active: true,
                 }}
               />
