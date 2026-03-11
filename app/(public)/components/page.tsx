@@ -84,6 +84,21 @@ import {
   OfflineIndicator,
   AssistantPanel,
   CrudPage,
+  ChatInterface,
+  ConfirmModal,
+  DataExplorer,
+  DiffViewer,
+  FilePreview,
+  FilterPanel,
+  JsonEditor,
+  LabelValue,
+  ModelSelector,
+  NotificationCenter,
+  PageLayout,
+  PromptInput,
+  ScrollContainer,
+  StreamingText,
+  Toast,
 } from "@/components/bpm";
 
 const DEMO_CARD_STYLE: React.CSSProperties = {
@@ -124,7 +139,7 @@ const SECTIONS = [
   { id: "specialized", label: "Spécialisés" },
 ];
 
-const COMPONENT_COUNT = 83;
+const COMPONENT_COUNT = 94;
 
 export default function ComponentsPage() {
   const [modalOpen, setModalOpen] = useState(false);
@@ -148,6 +163,15 @@ export default function ComponentsPage() {
   const [dateRangeEnd, setDateRangeEnd] = useState<Date | null>(null);
   const [timeVal, setTimeVal] = useState<Date | null>(null);
   const [transitionIndex, setTransitionIndex] = useState(0);
+  const [confirmModalOpen, setConfirmModalOpen] = useState(false);
+  const [promptInputVal, setPromptInputVal] = useState("");
+  const [jsonEditorVal, setJsonEditorVal] = useState('{"name": "Démo", "count": 42}');
+  const [filterValues, setFilterValues] = useState<Record<string, unknown>>({});
+  const [chatMessages, setChatMessages] = useState<{ id: string; role: "user" | "assistant" | "system"; content: string; timestamp?: Date }[]>([
+    { id: "1", role: "user", content: "Bonjour", timestamp: new Date() },
+    { id: "2", role: "assistant", content: "Bonjour, comment puis-je vous aider ?", timestamp: new Date() },
+  ]);
+  const [modelSelectorId, setModelSelectorId] = useState("gpt-4o");
 
   return (
     <div style={{ background: "#f8fafc", minHeight: "100vh", paddingBottom: 80, paddingTop: 0 }}>
@@ -401,6 +425,26 @@ export default function ComponentsPage() {
                 onChange={setAutocompleteVal}
               />
             </DemoCard>
+            <DemoCard label="bpm.filterPanel" wide>
+              <FilterPanel
+                filters={[
+                  { key: "status", label: "Statut", type: "select", options: [{ value: "actif", label: "Actif" }, { value: "inactif", label: "Inactif" }] },
+                  { key: "search", label: "Recherche", type: "text" },
+                ]}
+                values={filterValues}
+                onChange={(key, value) => setFilterValues((prev) => ({ ...prev, [key]: value }))}
+                onReset={() => setFilterValues({})}
+              />
+            </DemoCard>
+            <DemoCard label="bpm.promptInput" wide>
+              <PromptInput
+                value={promptInputVal}
+                onChange={setPromptInputVal}
+                onSubmit={(v) => { setPromptInputVal(""); console.log("Submit:", v); }}
+                placeholder="Posez une question..."
+                showTokenCount
+              />
+            </DemoCard>
             <DemoCard label="bpm.dateRangePicker">
               <DateRangePicker
                 label="Période"
@@ -479,6 +523,38 @@ export default function ComponentsPage() {
                 <Caption>Conteneur vide (bpm.empty) — espace réservé ou zone minimale.</Caption>
               </Empty>
             </DemoCard>
+            <DemoCard label="bpm.pageLayout" wide>
+              <div style={{ height: 280, border: "1px solid var(--bpm-border)", borderRadius: 8, overflow: "hidden" }}>
+                <PageLayout
+                  title="Démo"
+                  items={[
+                    { key: "dashboard", label: "Dashboard", icon: "dashboard" },
+                    { key: "settings", label: "Paramètres", icon: "settings" },
+                  ]}
+                  currentItem="dashboard"
+                  onNavigate={() => {}}
+                >
+                  <div style={{ padding: 16 }}>
+                    <Text>Contenu principal.</Text>
+                  </div>
+                </PageLayout>
+              </div>
+            </DemoCard>
+            <DemoCard label="bpm.scrollContainer" wide>
+              <ScrollContainer maxHeight={180} hideScrollbar={false}>
+                <div style={{ padding: 8 }}>
+                  {[1, 2, 3, 4, 5, 6, 7, 8].map((i) => (
+                    <div key={i} style={{ padding: "8px 0", borderBottom: "1px solid var(--bpm-border)" }}>
+                      <Text>Ligne de contenu {i}</Text>
+                    </div>
+                  ))}
+                </div>
+              </ScrollContainer>
+            </DemoCard>
+            <DemoCard label="bpm.labelValue">
+              <LabelValue label="Email" value="user@example.com" copyable />
+              <LabelValue label="Statut" value="Actif" valueStyle="accent" orientation="horizontal" />
+            </DemoCard>
           </Grid>
         </section>
 
@@ -540,12 +616,15 @@ export default function ComponentsPage() {
                 ]}
               />
             </DemoCard>
+            <DemoCard label="bpm.streamingText" wide>
+              <StreamingText content="Texte affiché progressivement. **Markdown** pris en charge." isStreaming={false} />
+            </DemoCard>
             <DemoCard label="bpm.jsonViewer" wide>
               <JsonViewer
                 data={{
                   id: 1,
                   name: "Blueprint",
-                  version: "0.1.43",
+                  version: "0.1.50",
                   active: true,
                 }}
               />
@@ -725,6 +804,38 @@ export default function ComponentsPage() {
                 <Text>Contenu du popover.</Text>
               </Popover>
             </DemoCard>
+            <DemoCard label="bpm.confirmModal" wide>
+              <Button onClick={() => setConfirmModalOpen(true)}>Ouvrir confirmation</Button>
+              <ConfirmModal
+                isOpen={confirmModalOpen}
+                onConfirm={() => setConfirmModalOpen(false)}
+                onCancel={() => setConfirmModalOpen(false)}
+                title="Confirmer l'action"
+                message="Êtes-vous sûr de vouloir continuer ?"
+                variant="danger"
+              />
+            </DemoCard>
+            <DemoCard label="bpm.toast">
+              <Toast
+                id={1}
+                message="Exemple de notification toast"
+                type="success"
+                title={null}
+                pageName={null}
+                pageIcon={null}
+                onClose={() => {}}
+              />
+            </DemoCard>
+            <DemoCard label="bpm.notificationCenter" wide>
+              <NotificationCenter
+                notifications={[
+                  { id: "1", title: "Info", message: "Notification exemple", timestamp: new Date(), read: false, type: "info" },
+                  { id: "2", title: "Succès", timestamp: new Date(Date.now() - 3600000), read: true, type: "success" },
+                ]}
+                onRead={(id) => console.log("Read", id)}
+                onReadAll={() => {}}
+              />
+            </DemoCard>
             <DemoCard label="bpm.fab">
               <div
                 style={{
@@ -804,6 +915,13 @@ export default function ComponentsPage() {
                 height={300}
               />
             </DemoCard>
+            <DemoCard label="bpm.filePreview" wide>
+              <FilePreview
+                url="https://picsum.photos/400/200"
+                filename="image.jpg"
+                height={200}
+              />
+            </DemoCard>
           </Grid>
 
           {/* Section GPS (après Médias) */}
@@ -828,6 +946,51 @@ export default function ComponentsPage() {
         <section id="specialized" style={{ marginBottom: 48 }}>
           <Title2 style={{ marginBottom: 16 }}>Spécialisés</Title2>
           <Grid cols={1} gap={16}>
+            <DemoCard label="bpm.diffViewer" wide>
+              <DiffViewer
+                original="function old() {\n  return 1;\n}"
+                modified="function new() {\n  return 2;\n}"
+                mode="split"
+                language="javascript"
+              />
+            </DemoCard>
+            <DemoCard label="bpm.modelSelector" wide>
+              <ModelSelector
+                models={[
+                  { id: "gpt-4o", label: "GPT-4o", provider: "OpenAI", capabilities: ["chat", "vision"], contextWindow: 128000 },
+                  { id: "claude-3", label: "Claude 3", provider: "Anthropic", capabilities: ["chat"], contextWindow: 200000 },
+                ]}
+                selected={modelSelectorId}
+                onChange={setModelSelectorId}
+              />
+            </DemoCard>
+            <DemoCard label="bpm.dataExplorer" wide>
+              <DataExplorer
+                data={[
+                  { nom: "Alice", statut: "Actif", montant: 1200 },
+                  { nom: "Bob", statut: "Inactif", montant: 800 },
+                ]}
+                searchable
+                exportable
+                pageSize={5}
+              />
+            </DemoCard>
+            <DemoCard label="bpm.chatInterface" wide>
+              <ChatInterface
+                messages={chatMessages}
+                onSend={(content) => setChatMessages((prev) => [...prev, { id: String(Date.now()), role: "user", content, timestamp: new Date() }])}
+                placeholder="Écrivez un message..."
+                height="280px"
+              />
+            </DemoCard>
+            <DemoCard label="bpm.jsonEditor" wide>
+              <JsonEditor
+                value={jsonEditorVal}
+                onChange={(v) => setJsonEditorVal(v)}
+                height={200}
+                showValidation
+              />
+            </DemoCard>
             <DemoCard label="bpm.offlineIndicator" wide>
               <OfflineIndicator />
             </DemoCard>

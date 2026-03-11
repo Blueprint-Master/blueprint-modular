@@ -91,8 +91,8 @@
       "category": "Mise en page"
     },
     {
-      "slug": "highlight-box",
-      "name": "bpm.highlight-box",
+      "slug": "highlightbox",
+      "name": "bpm.highlightbox",
       "description": "Carte avec barre latérale (numéro + label) et contenu structuré (titre, moment, RTB, cible).",
       "category": "Mise en page"
     },
@@ -142,12 +142,6 @@
       "slug": "button",
       "name": "bpm.button",
       "description": "Bouton d'action (primary, secondary, outline).",
-      "category": "Interaction"
-    },
-    {
-      "slug": "toggle",
-      "name": "bpm.toggle",
-      "description": "Interrupteur on/off.",
       "category": "Interaction"
     },
     {
@@ -283,12 +277,6 @@
       "category": "Navigation"
     },
     {
-      "slug": "sidebar",
-      "name": "bpm.sidebar",
-      "description": "Décorateur pour définir le contenu de la barre latérale.",
-      "category": "Navigation"
-    },
-    {
       "slug": "audio",
       "name": "bpm.audio",
       "description": "Lecteur audio.",
@@ -373,8 +361,8 @@
       "category": "Média"
     },
     {
-      "slug": "pdf",
-      "name": "bpm.pdf",
+      "slug": "pdfviewer",
+      "name": "bpm.pdfviewer",
       "description": "Visualiseur PDF (iframe).",
       "category": "Média"
     },
@@ -385,8 +373,8 @@
       "category": "Interaction"
     },
     {
-      "slug": "plotly",
-      "name": "bpm.plotly",
+      "slug": "plotlychart",
+      "name": "bpm.plotlychart",
       "description": "Graphique Plotly (iframe ou placeholder).",
       "category": "Graphiques"
     },
@@ -397,8 +385,8 @@
       "category": "Média"
     },
     {
-      "slug": "altair",
-      "name": "bpm.altair",
+      "slug": "altairchart",
+      "name": "bpm.altairchart",
       "description": "Graphique Altair / Vega-Lite.",
       "category": "Graphiques"
     },
@@ -427,16 +415,136 @@
       "category": "Mise en page"
     },
     {
-      "slug": "transition",
-      "name": "bpm.transition",
-      "description": "Transition entre vues (fade, shimmer, border, grid).",
-      "category": "Mise en page"
-    },
-    {
       "slug": "pagination",
       "name": "bpm.pagination",
       "description": "Pagination (page, taille, total) pour listes et tableaux.",
       "category": "Affichage de données"
+    },
+    {
+      "slug": "filterpanel",
+      "name": "bpm.filterPanel",
+      "description": "Panneau de filtres (select, multiselect, daterange, text, toggle).",
+      "category": "Interaction"
+    },
+    {
+      "slug": "confirmmodal",
+      "name": "bpm.confirmModal",
+      "description": "Modal de confirmation pour actions destructives (danger, warning, info).",
+      "category": "Mise en page"
+    },
+    {
+      "slug": "toast",
+      "name": "bpm.toast",
+      "description": "Notification éphémère (success, error, info, warning).",
+      "category": "Feedback"
+    },
+    {
+      "slug": "pagelayout",
+      "name": "bpm.pageLayout",
+      "description": "Layout avec sidebar repliable, titre et zone de contenu.",
+      "category": "Mise en page"
+    },
+    {
+      "slug": "scrollcontainer",
+      "name": "bpm.scrollContainer",
+      "description": "Conteneur avec défilement interne (hauteur max, scrollbar optionnelle).",
+      "category": "Mise en page"
+    },
+    {
+      "slug": "labelvalue",
+      "name": "bpm.labelValue",
+      "description": "Paire label / valeur (orientation, taille, copyable).",
+      "category": "Affichage de données"
+    },
+    {
+      "slug": "spinnerdot",
+      "name": "bpm.spinnerDot",
+      "description": "Indicateur de chargement (points).",
+      "category": "Feedback"
+    },
+    {
+      "slug": "titlebpm",
+      "name": "bpm.titleBpm",
+      "description": "Titre (alias bpm.title, niveaux 1 à 4).",
+      "category": "Affichage de données"
+    },
+    {
+      "slug": "markdown",
+      "name": "bpm.markdown",
+      "description": "Rendu Markdown sécurisé.",
+      "category": "Affichage de données"
+    },
+    {
+      "slug": "codeeditor",
+      "name": "bpm.codeEditor",
+      "description": "Éditeur de code (textarea avec valeur, onChange, readOnly).",
+      "category": "Utilitaires"
+    },
+    {
+      "slug": "crud",
+      "name": "bpm.crud",
+      "description": "Page CRUD (liste, formulaire, colonnes, champs, endpoint).",
+      "category": "Utilitaires"
+    },
+    {
+      "slug": "gps",
+      "name": "bpm.gps",
+      "description": "Affichage ou sélection de position GPS (carte, picker).",
+      "category": "Média"
+    },
+    {
+      "slug": "jsoneditor",
+      "name": "bpm.jsonEditor",
+      "description": "Éditeur JSON avec validation et formatage.",
+      "category": "Utilitaires"
+    },
+    {
+      "slug": "notificationcenter",
+      "name": "bpm.notificationCenter",
+      "description": "Centre de notifications (historique, lu/non lu, popover).",
+      "category": "Feedback"
+    },
+    {
+      "slug": "filepreview",
+      "name": "bpm.filePreview",
+      "description": "Aperçu de fichier (image, PDF, texte/code).",
+      "category": "Média"
+    },
+    {
+      "slug": "dataexplorer",
+      "name": "bpm.dataExplorer",
+      "description": "Explorateur de données (table, recherche, tri, pagination, export CSV).",
+      "category": "IA & Spécialisés"
+    },
+    {
+      "slug": "chatinterface",
+      "name": "bpm.chatInterface",
+      "description": "Interface de chat (messages, saisie, streaming).",
+      "category": "IA & Spécialisés"
+    },
+    {
+      "slug": "promptinput",
+      "name": "bpm.promptInput",
+      "description": "Champ de saisie pour prompt IA (auto-resize, Cmd+Enter, tokens).",
+      "category": "IA & Spécialisés"
+    },
+    {
+      "slug": "streamingtext",
+      "name": "bpm.streamingText",
+      "description": "Affichage de texte en flux (curseur, option Markdown).",
+      "category": "IA & Spécialisés"
+    },
+    {
+      "slug": "diffviewer",
+      "name": "bpm.diffViewer",
+      "description": "Visualisation de diff texte/code (split ou unified).",
+      "category": "IA & Spécialisés"
+    },
+    {
+      "slug": "modelselector",
+      "name": "bpm.modelSelector",
+      "description": "Sélecteur de modèle IA (par fournisseur, capacités).",
+      "category": "IA & Spécialisés"
     }
   ]
 }
