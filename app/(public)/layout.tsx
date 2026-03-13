@@ -12,6 +12,7 @@ export default function PublicLayout({ children }: { children: React.ReactNode }
 :root {
   --bpm-bg-primary: #ffffff;
   --bpm-bg-secondary: #f0f0f0;
+  --bpm-bg: #f0f0f0;
   --bpm-surface: #ffffff;
   --bpm-text-primary: #333;
   --bpm-text-secondary: #666;

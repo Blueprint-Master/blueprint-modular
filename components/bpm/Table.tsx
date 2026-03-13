@@ -173,7 +173,8 @@ export function Table({
         borderRadius: "var(--bpm-radius)",
         boxShadow: "none",
         outline: "none",
-        overflow: "hidden",
+        overflowX: "auto",
+        overflowY: "auto",
         backgroundColor: "var(--bpm-bg-primary)",
       }}
       data-name={name ?? undefined}
