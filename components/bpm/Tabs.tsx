@@ -51,19 +51,20 @@ export function Tabs({
   return (
     <div className={`bpm-tabs-container w-full ${className}`}>
       <div
-        className="bpm-tabs-header flex items-stretch gap-0 overflow-x-auto overflow-y-hidden border-b"
-        style={{ borderColor: "var(--bpm-border)" }}
+        className="bpm-tabs-header flex items-stretch gap-0 overflow-x-auto overflow-y-hidden"
+        style={{ borderBottom: "1px solid var(--bpm-border)" }}
       >
         {normalizedTabs.map((tab, index) => (
           <button
             key={tab.key ?? index}
             type="button"
-            className={`bpm-tab-button inline-flex items-center py-3 px-2 text-sm whitespace-nowrap flex-shrink-0 border-b transition-colors ${
+            className={`bpm-tab-button inline-flex items-center py-3 px-2 text-sm whitespace-nowrap flex-shrink-0 transition-colors ${
               activeTab === index ? "bpm-tab-active font-medium" : ""
             }`}
             style={{
-              borderBottomWidth: activeTab === index ? 4 : 1,
-              marginBottom: activeTab === index ? -3 : 0,
+              borderBottomWidth: activeTab === index ? 3 : 1,
+              borderBottomStyle: "solid",
+              marginBottom: activeTab === index ? -2 : 0,
               borderBottomColor:
                 activeTab === index ? "var(--bpm-accent)" : "transparent",
               color:
@@ -77,11 +78,7 @@ export function Tabs({
             <span className="bpm-tab-button-text">{tab.label}</span>
           </button>
         ))}
-        <div
-          className="flex-1 min-w-px border-b"
-          style={{ borderBottomColor: "var(--bpm-border)" }}
-          aria-hidden
-        />
+        <div className="flex-1 min-w-px" aria-hidden />
       </div>
       <div className="bpm-tabs-content py-4 w-full overflow-x-hidden">
         {activeContent}
