@@ -16,13 +16,19 @@ export default defineConfig({
   ],
   build: {
     lib: {
-      entry: resolve(__dirname, 'src/index.ts'),
+      entry: {
+        index: resolve(__dirname, 'src/index.ts'),
+        'schema/index': resolve(__dirname, 'src/schema/index.ts'),
+      },
       name: 'BlueprintModular',
       formats: ['es', 'cjs'],
-      fileName: (format) => format === 'es' ? 'index.mjs' : 'index.js',
+      fileName: (format, entryName) => {
+        const ext = format === 'es' ? 'mjs' : 'js';
+        return entryName === 'schema/index' ? `schema/index.${ext}` : `index.${ext}`;
+      },
     },
     rollupOptions: {
-      external: ['react', 'react-dom', 'react/jsx-runtime', 'react/jsx-dev-runtime', 'react-plotly.js', 'plotly.js'],
+      external: ['react', 'react-dom', 'react/jsx-runtime', 'react/jsx-dev-runtime', 'react-plotly.js', 'plotly.js', 'zod'],
       output: {
         globals: {
           react: 'React',
