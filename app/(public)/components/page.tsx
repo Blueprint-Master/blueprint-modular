@@ -219,7 +219,12 @@ export default function ComponentsPage() {
     const s = (props.size as string) ?? "md";
     const variant = v === "ghost" || v === "link" ? "outline" : v === "destructive" ? "primary" : v;
     const size = s === "sm" ? "small" : s === "lg" ? "large" : "medium";
-    const children = props.children ?? (props["aria-label"] as string) ?? "…";
+    const fallbackChildren: React.ReactNode =
+      props.children != null
+        ? (props.children as React.ReactNode)
+        : typeof props["aria-label"] === "string"
+          ? props["aria-label"]
+          : "…";
     return (
       <Button
         variant={variant === "primary" ? "primary" : variant === "secondary" ? "secondary" : "outline"}
@@ -229,7 +234,7 @@ export default function ComponentsPage() {
         type={(props.type as "button" | "submit") ?? "button"}
         onClick={typeof props.onClick === "function" ? (props.onClick as () => void) : undefined}
       >
-        {props.loading ? (typeof props.children === "string" ? props.children : "...") : children}
+        {props.loading ? (typeof props.children === "string" ? props.children : "...") : fallbackChildren}
       </Button>
     );
   };
