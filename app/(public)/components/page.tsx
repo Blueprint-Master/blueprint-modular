@@ -205,14 +205,34 @@ export default function ComponentsPage() {
   const [segValue, setSegValue] = useState<string>("week");
   const [bpmCore, setBpmCore] = useState<{ button: (props: Record<string, unknown>) => React.ReactNode } | null>(null);
   useEffect(() => {
-    import("@blueprint-modular/core").then((m) => setBpmCore(m.bpm));
+    import("@blueprint-modular/core")
+      .then((m) => setBpmCore(m.bpm))
+      .catch(() => setBpmCore(null));
   }, []);
   const triggerLoading = (key: string) => {
     setButtonLoading((p) => ({ ...p, [key]: true }));
     setTimeout(() => setButtonLoading((p) => ({ ...p, [key]: false })), 2000);
   };
-  const coreButton = (props: Record<string, unknown>): React.ReactNode =>
-    bpmCore ? bpmCore.button(props) : <span style={{ display: "inline-block", minWidth: 40, height: 32, borderRadius: 4, background: "var(--bpm-bg-secondary)" }} />;
+  const coreButton = (props: Record<string, unknown>): React.ReactNode => {
+    if (bpmCore?.button) return bpmCore.button(props);
+    const v = (props.variant as string) ?? "primary";
+    const s = (props.size as string) ?? "md";
+    const variant = v === "ghost" || v === "link" ? "outline" : v === "destructive" ? "primary" : v;
+    const size = s === "sm" ? "small" : s === "lg" ? "large" : "medium";
+    const children = props.children ?? (props["aria-label"] as string) ?? "…";
+    return (
+      <Button
+        variant={variant === "primary" ? "primary" : variant === "secondary" ? "secondary" : "outline"}
+        size={size}
+        disabled={!!props.disabled}
+        fullWidth={!!props.fullWidth}
+        type={(props.type as "button" | "submit") ?? "button"}
+        onClick={typeof props.onClick === "function" ? (props.onClick as () => void) : undefined}
+      >
+        {props.loading ? (typeof props.children === "string" ? props.children : "...") : children}
+      </Button>
+    );
+  };
 
   return (
     <div style={{ background: "#fff", minHeight: "100vh", paddingBottom: 80, paddingTop: 0 }}>
