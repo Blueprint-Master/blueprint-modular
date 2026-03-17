@@ -14,6 +14,8 @@ export type ButtonSize = "sm" | "md" | "lg";
 export interface ButtonProps {
   variant?: ButtonVariant;
   size?: ButtonSize;
+  /** Dans une toolbar : ghost avec hover surface + shadow (aligné bpm-button.jsx TB) */
+  raised?: boolean;
   icon?: string | null;
   iconRight?: string | null;
   loading?: boolean;
@@ -25,10 +27,11 @@ export interface ButtonProps {
   type?: "button" | "submit" | "reset";
 }
 
+/* Aligné bpm-button.jsx : radius 6px sm/md, 8px lg (référence) */
 const SIZES: Record<ButtonSize, { height: number; padding: string; fontSize: number; gap: number; borderRadius: string }> = {
-  sm: { height: 32, padding: "0 12px", fontSize: 13, gap: 5, borderRadius: "var(--bpm-radius-sm, 4px)" },
-  md: { height: 36, padding: "0 16px", fontSize: 14, gap: 6, borderRadius: "var(--bpm-radius, 8px)" },
-  lg: { height: 44, padding: "0 20px", fontSize: 15, gap: 7, borderRadius: "var(--bpm-radius-lg, 12px)" },
+  sm: { height: 32, padding: "0 12px", fontSize: 13, gap: 5, borderRadius: "6px" },
+  md: { height: 36, padding: "0 16px", fontSize: 14, gap: 6, borderRadius: "6px" },
+  lg: { height: 44, padding: "0 20px", fontSize: 15, gap: 7, borderRadius: "8px" },
 };
 
 const ICON_SIZE: Record<ButtonSize, number> = { sm: 14, md: 16, lg: 18 };
@@ -39,35 +42,36 @@ type VariantStyle = {
   active: React.CSSProperties;
 };
 
+/* Variants alignés bpm-button.jsx (référence) */
 const VARIANTS: Record<ButtonVariant, VariantStyle> = {
   primary: {
     base: {
       background: "var(--bpm-accent)",
-      color: "var(--bpm-accent-contrast, #fff)",
+      color: "var(--bpm-text-inverse, #fff)",
       border: "1px solid var(--bpm-accent-hover)",
-      boxShadow: "var(--bpm-shadow-sm, 0 1px 2px rgba(0,0,0,0.08))",
+      boxShadow: "var(--shadow-xs, 0 1px 2px rgba(0,0,0,0.08))",
     },
     hover: { background: "var(--bpm-accent-hover)" },
-    active: { background: "var(--bpm-accent-hover)" },
+    active: { background: "var(--bpm-accent-active, var(--bpm-accent-hover))" },
   },
   secondary: {
     base: {
-      background: "var(--bpm-surface)",
+      background: "var(--bpm-surface, #fff)",
       color: "var(--bpm-text-primary)",
-      border: "1px solid var(--bpm-border)",
-      boxShadow: "var(--bpm-shadow-sm, 0 1px 2px rgba(0,0,0,0.08))",
+      border: "1px solid var(--bpm-border-strong, var(--bpm-border))",
+      boxShadow: "var(--shadow-xs, 0 1px 2px rgba(0,0,0,0.08))",
     },
-    hover: { background: "var(--bpm-bg-secondary)" },
-    active: { background: "var(--bpm-bg-tertiary)" },
+    hover: { background: "var(--bpm-surface-raised, var(--bpm-bg-secondary))" },
+    active: { background: "#e9ecef" },
   },
   outline: {
     base: {
       background: "transparent",
       color: "var(--bpm-accent)",
-      border: "1px solid var(--bpm-accent-light, #b2ebf2)",
+      border: "1px solid var(--bpm-accent-border, var(--bpm-accent-light))",
     },
-    hover: { background: "var(--bpm-accent-soft, rgba(0,163,226,0.12))", borderColor: "var(--bpm-accent)" },
-    active: { background: "var(--bpm-accent-soft, rgba(0,163,226,0.2))" },
+    hover: { background: "var(--bpm-accent-light, var(--bpm-accent-soft))", borderColor: "var(--bpm-accent)" },
+    active: { background: "#dbeafe" },
   },
   ghost: {
     base: {
@@ -75,18 +79,18 @@ const VARIANTS: Record<ButtonVariant, VariantStyle> = {
       color: "var(--bpm-text-secondary)",
       border: "1px solid transparent",
     },
-    hover: { background: "var(--bpm-bg-secondary)", color: "var(--bpm-text-primary)" },
-    active: { background: "var(--bpm-bg-tertiary)" },
+    hover: { background: "var(--bpm-surface-raised, var(--bpm-bg-secondary))", color: "var(--bpm-text-primary)" },
+    active: { background: "#e9ecef" },
   },
   destructive: {
     base: {
       background: "var(--bpm-error)",
-      color: "#fff",
-      border: "1px solid var(--bpm-error-hover, var(--bpm-error))",
-      boxShadow: "var(--bpm-shadow-sm, 0 1px 2px rgba(0,0,0,0.08))",
+      color: "var(--bpm-text-inverse, #fff)",
+      border: "1px solid var(--bpm-error-hover)",
+      boxShadow: "var(--shadow-xs, 0 1px 2px rgba(0,0,0,0.08))",
     },
     hover: { background: "var(--bpm-error-hover)" },
-    active: { background: "var(--bpm-error-hover)" },
+    active: { background: "#991b1b" },
   },
   link: {
     base: {
@@ -99,6 +103,21 @@ const VARIANTS: Record<ButtonVariant, VariantStyle> = {
     hover: { color: "var(--bpm-accent-hover)" },
     active: {},
   },
+};
+
+/** ghost-raised (référence TB) : hover surface + shadow pour toolbar */
+const GHOST_RAISED: VariantStyle = {
+  base: {
+    background: "transparent",
+    color: "var(--bpm-text-secondary)",
+    border: "1px solid transparent",
+  },
+  hover: {
+    background: "var(--bpm-surface)",
+    color: "var(--bpm-text-primary)",
+    boxShadow: "var(--shadow-xs, 0 1px 2px rgba(0,0,0,0.08))",
+  },
+  active: { background: "#f1f3f5" },
 };
 
 function Spinner({ size = 14 }: { size: number }) {
@@ -177,6 +196,7 @@ const SPINNER_STYLE = `
 export function Button({
   variant = "primary",
   size = "md",
+  raised = false,
   icon = null,
   iconRight = null,
   loading = false,
@@ -191,7 +211,8 @@ export function Button({
   const [pressed, setPressed] = useState(false);
   const [focused, setFocused] = useState(false);
 
-  const vDef = VARIANTS[variant] ?? VARIANTS.primary;
+  const vDef =
+    variant === "ghost" && raised ? GHOST_RAISED : (VARIANTS[variant] ?? VARIANTS.primary);
   const sDef = SIZES[size] ?? SIZES.md;
   const iconSize = ICON_SIZE[size] ?? 16;
   const isIconOnly = children == null || (typeof children === "string" && children.trim() === "");

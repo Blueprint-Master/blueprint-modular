@@ -260,6 +260,35 @@ export default function ComponentsPage() {
         </button>
       );
     }
+    if (v === "ghost" && props.raised) {
+      return (
+        <button
+          type={(props.type as "button" | "submit") ?? "button"}
+          disabled={!!props.disabled || !!props.loading}
+          onClick={typeof props.onClick === "function" ? (props.onClick as () => void) : undefined}
+          style={{
+            ...common,
+            background: "transparent",
+            color: "var(--bpm-text-secondary)",
+            border: "1px solid transparent",
+          }}
+          onMouseEnter={(e) => {
+            if (!props.disabled && !props.loading) {
+              e.currentTarget.style.background = "var(--bpm-surface)";
+              e.currentTarget.style.color = "var(--bpm-text-primary)";
+              e.currentTarget.style.boxShadow = "var(--shadow-xs, 0 1px 2px rgba(0,0,0,0.08))";
+            }
+          }}
+          onMouseLeave={(e) => {
+            e.currentTarget.style.background = "transparent";
+            e.currentTarget.style.color = "var(--bpm-text-secondary)";
+            e.currentTarget.style.boxShadow = "none";
+          }}
+        >
+          {label}
+        </button>
+      );
+    }
     const variant = v === "ghost" || v === "link" ? "outline" : v;
     const btnVariant = variant === "primary" ? "primary" : variant === "secondary" ? "secondary" : "outline";
     return (
@@ -427,8 +456,16 @@ export default function ComponentsPage() {
               </div>
             </DemoCard>
             <DemoCard label="Compositions — segmented" wide>
-              <div style={{ display: "inline-flex", borderRadius: "var(--bpm-radius)", border: "1px solid var(--bpm-border)", overflow: "hidden" }}>
-                {(["day", "week", "month"] as const).map((val) => (
+              <div
+                style={{
+                  display: "inline-flex",
+                  borderRadius: "6px",
+                  border: "1px solid var(--bpm-border-strong, var(--bpm-border))",
+                  overflow: "hidden",
+                  boxShadow: "var(--shadow-xs, 0 1px 2px rgba(0,0,0,0.08))",
+                }}
+              >
+                {(["day", "week", "month"] as const).map((val, i) => (
                   <button
                     key={val}
                     type="button"
@@ -440,11 +477,11 @@ export default function ComponentsPage() {
                       fontFamily: "inherit",
                       fontWeight: 500,
                       border: "none",
-                      borderRight: val !== "month" ? "1px solid var(--bpm-border)" : "none",
+                      borderRight: i < 2 ? "1px solid var(--bpm-border-strong, var(--bpm-border))" : "none",
                       cursor: "pointer",
                       outline: "none",
                       background: segValue === val ? "var(--bpm-text-primary)" : "var(--bpm-surface)",
-                      color: segValue === val ? "var(--bpm-accent-contrast, #fff)" : "var(--bpm-text-secondary)",
+                      color: segValue === val ? "var(--bpm-text-inverse, #fff)" : "var(--bpm-text-secondary)",
                       transition: "background 0.12s, color 0.12s",
                     }}
                   >
@@ -460,23 +497,24 @@ export default function ComponentsPage() {
                   alignItems: "center",
                   gap: 2,
                   padding: 4,
-                  borderRadius: "var(--bpm-radius-lg)",
-                  background: "var(--bpm-bg-secondary)",
+                  borderRadius: "8px",
+                  background: "var(--bpm-surface-raised, var(--bpm-bg-secondary))",
                   border: "1px solid var(--bpm-border)",
+                  boxShadow: "var(--shadow-xs, 0 1px 2px rgba(0,0,0,0.08))",
                 }}
               >
-                {coreButton({ variant: "ghost", size: "sm", icon: "format_bold", "aria-label": "Gras" })}
-                {coreButton({ variant: "ghost", size: "sm", icon: "format_italic", "aria-label": "Italique" })}
-                {coreButton({ variant: "ghost", size: "sm", icon: "format_underlined", "aria-label": "Souligné" })}
-                <span style={{ width: 1, height: 18, background: "var(--bpm-border)", margin: "0 3px" }} />
-                {coreButton({ variant: "ghost", size: "sm", icon: "format_align_left", "aria-label": "Gauche" })}
-                {coreButton({ variant: "ghost", size: "sm", icon: "format_align_center", "aria-label": "Centre" })}
-                {coreButton({ variant: "ghost", size: "sm", icon: "format_align_right", "aria-label": "Droite" })}
-                <span style={{ width: 1, height: 18, background: "var(--bpm-border)", margin: "0 3px" }} />
-                {coreButton({ variant: "ghost", size: "sm", icon: "format_list_bulleted", "aria-label": "Liste" })}
-                {coreButton({ variant: "ghost", size: "sm", icon: "link", "aria-label": "Lien" })}
-                {coreButton({ variant: "ghost", size: "sm", icon: "image", "aria-label": "Image" })}
-                <span style={{ width: 1, height: 18, background: "var(--bpm-border)", margin: "0 3px" }} />
+                {coreButton({ variant: "ghost", size: "sm", raised: true, icon: "format_bold", "aria-label": "Gras" })}
+                {coreButton({ variant: "ghost", size: "sm", raised: true, icon: "format_italic", "aria-label": "Italique" })}
+                {coreButton({ variant: "ghost", size: "sm", raised: true, icon: "format_underlined", "aria-label": "Souligné" })}
+                <span style={{ width: 1, height: 18, background: "var(--bpm-border-strong, var(--bpm-border))", margin: "0 3px", borderRadius: 1 }} />
+                {coreButton({ variant: "ghost", size: "sm", raised: true, icon: "format_align_left", "aria-label": "Gauche" })}
+                {coreButton({ variant: "ghost", size: "sm", raised: true, icon: "format_align_center", "aria-label": "Centre" })}
+                {coreButton({ variant: "ghost", size: "sm", raised: true, icon: "format_align_right", "aria-label": "Droite" })}
+                <span style={{ width: 1, height: 18, background: "var(--bpm-border-strong, var(--bpm-border))", margin: "0 3px", borderRadius: 1 }} />
+                {coreButton({ variant: "ghost", size: "sm", raised: true, icon: "format_list_bulleted", "aria-label": "Liste" })}
+                {coreButton({ variant: "ghost", size: "sm", raised: true, icon: "link", "aria-label": "Lien" })}
+                {coreButton({ variant: "ghost", size: "sm", raised: true, icon: "image", "aria-label": "Image" })}
+                <span style={{ width: 1, height: 18, background: "var(--bpm-border-strong, var(--bpm-border))", margin: "0 3px", borderRadius: 1 }} />
                 {coreButton({ variant: "destructive", size: "sm", icon: "delete", "aria-label": "Supprimer" })}
               </div>
             </DemoCard>
@@ -487,20 +525,21 @@ export default function ComponentsPage() {
                   alignItems: "center",
                   gap: 2,
                   padding: 4,
-                  borderRadius: "var(--bpm-radius-lg)",
-                  background: "var(--bpm-bg-secondary)",
+                  borderRadius: "8px",
+                  background: "var(--bpm-surface-raised, var(--bpm-bg-secondary))",
                   border: "1px solid var(--bpm-border)",
+                  boxShadow: "var(--shadow-xs, 0 1px 2px rgba(0,0,0,0.08))",
                 }}
               >
-                {coreButton({ variant: "ghost", size: "sm", icon: "filter_list", "aria-label": "Filtrer" })}
-                {coreButton({ variant: "ghost", size: "sm", icon: "sort", "aria-label": "Trier" })}
-                {coreButton({ variant: "ghost", size: "sm", icon: "search", "aria-label": "Rechercher" })}
-                <span style={{ width: 1, height: 18, background: "var(--bpm-border)", margin: "0 3px" }} />
-                {coreButton({ variant: "ghost", size: "sm", icon: "download", "aria-label": "Exporter" })}
-                {coreButton({ variant: "ghost", size: "sm", icon: "print", "aria-label": "Imprimer" })}
-                <span style={{ width: 1, height: 18, background: "var(--bpm-border)", margin: "0 3px" }} />
-                {coreButton({ variant: "ghost", size: "sm", icon: "view_column", "aria-label": "Colonnes" })}
-                {coreButton({ variant: "ghost", size: "sm", icon: "density_medium", "aria-label": "Densité" })}
+                {coreButton({ variant: "ghost", size: "sm", raised: true, icon: "filter_list", "aria-label": "Filtrer" })}
+                {coreButton({ variant: "ghost", size: "sm", raised: true, icon: "sort", "aria-label": "Trier" })}
+                {coreButton({ variant: "ghost", size: "sm", raised: true, icon: "search", "aria-label": "Rechercher" })}
+                <span style={{ width: 1, height: 18, background: "var(--bpm-border-strong, var(--bpm-border))", margin: "0 3px", borderRadius: 1 }} />
+                {coreButton({ variant: "ghost", size: "sm", raised: true, icon: "download", "aria-label": "Exporter" })}
+                {coreButton({ variant: "ghost", size: "sm", raised: true, icon: "print", "aria-label": "Imprimer" })}
+                <span style={{ width: 1, height: 18, background: "var(--bpm-border-strong, var(--bpm-border))", margin: "0 3px", borderRadius: 1 }} />
+                {coreButton({ variant: "ghost", size: "sm", raised: true, icon: "view_column", "aria-label": "Colonnes" })}
+                {coreButton({ variant: "ghost", size: "sm", raised: true, icon: "density_medium", "aria-label": "Densité" })}
               </div>
             </DemoCard>
             <DemoCard label="Compositions — strip nav" wide>
