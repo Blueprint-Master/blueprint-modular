@@ -73,6 +73,7 @@
   --bpm-success: #16a34a;
   --bpm-warning: #d97706;
   --bpm-error: #dc2626;
+  --bpm-error-hover: #b91c1c;
   --bpm-success-soft: rgba(22, 163, 74, 0.15);
   --bpm-warning-soft: rgba(217, 119, 6, 0.15);
   --bpm-error-soft: rgba(220, 38, 38, 0.15);
@@ -113,6 +114,7 @@
   --bpm-success: #22c55e;
   --bpm-warning: #f59e0b;
   --bpm-error: #ef4444;
+  --bpm-error-hover: #dc2626;
   --bpm-success-soft: rgba(34, 197, 94, 0.2);
   --bpm-warning-soft: rgba(245, 158, 11, 0.2);
   --bpm-error-soft: rgba(239, 68, 68, 0.2);

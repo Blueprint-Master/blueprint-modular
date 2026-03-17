@@ -217,24 +217,61 @@ export default function ComponentsPage() {
     if (bpmCore?.button) return bpmCore.button(props);
     const v = (props.variant as string) ?? "primary";
     const s = (props.size as string) ?? "md";
-    const variant = v === "ghost" || v === "link" ? "outline" : v === "destructive" ? "primary" : v;
-    const size = s === "sm" ? "small" : s === "lg" ? "large" : "medium";
+    const sizeMap = { sm: 32, md: 36, lg: 44 } as const;
+    const h = sizeMap[s as keyof typeof sizeMap] ?? 36;
+    const fontSize = s === "sm" ? 13 : s === "lg" ? 15 : 14;
+    const padding = s === "sm" ? "0 12px" : s === "lg" ? "0 20px" : "0 16px";
     const fallbackChildren: React.ReactNode =
       props.children != null
         ? (props.children as React.ReactNode)
         : typeof props["aria-label"] === "string"
           ? props["aria-label"]
           : "…";
+    const label = props.loading ? (typeof props.children === "string" ? props.children : "...") : fallbackChildren;
+    const common = {
+      height: h,
+      padding,
+      fontSize,
+      fontFamily: "inherit",
+      fontWeight: 500,
+      borderRadius: "var(--bpm-radius)",
+      cursor: props.disabled || props.loading ? "not-allowed" : "pointer",
+      opacity: props.disabled ? 0.42 : 1,
+      width: props.fullWidth ? "100%" : "auto",
+      border: "none",
+      outline: "none",
+      transition: "background 0.12s ease, color 0.12s ease",
+    } as const;
+    if (v === "destructive") {
+      return (
+        <button
+          type={(props.type as "button" | "submit") ?? "button"}
+          disabled={!!props.disabled || !!props.loading}
+          onClick={typeof props.onClick === "function" ? (props.onClick as () => void) : undefined}
+          style={{
+            ...common,
+            background: "var(--bpm-error)",
+            color: "#fff",
+            border: "1px solid var(--bpm-error-hover)",
+            boxShadow: "0 1px 2px rgba(0,0,0,0.08)",
+          }}
+        >
+          {label}
+        </button>
+      );
+    }
+    const variant = v === "ghost" || v === "link" ? "outline" : v;
+    const btnVariant = variant === "primary" ? "primary" : variant === "secondary" ? "secondary" : "outline";
     return (
       <Button
-        variant={variant === "primary" ? "primary" : variant === "secondary" ? "secondary" : "outline"}
-        size={size}
+        variant={btnVariant}
+        size={s === "sm" ? "small" : s === "lg" ? "large" : "medium"}
         disabled={!!props.disabled}
         fullWidth={!!props.fullWidth}
         type={(props.type as "button" | "submit") ?? "button"}
         onClick={typeof props.onClick === "function" ? (props.onClick as () => void) : undefined}
       >
-        {props.loading ? (typeof props.children === "string" ? props.children : "...") : fallbackChildren}
+        {label}
       </Button>
     );
   };

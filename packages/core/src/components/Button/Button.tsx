@@ -82,11 +82,11 @@ const VARIANTS: Record<ButtonVariant, VariantStyle> = {
     base: {
       background: "var(--bpm-error)",
       color: "#fff",
-      border: "1px solid var(--bpm-error)",
+      border: "1px solid var(--bpm-error-hover, var(--bpm-error))",
       boxShadow: "var(--bpm-shadow-sm, 0 1px 2px rgba(0,0,0,0.08))",
     },
-    hover: { background: "var(--bpm-error-text, #b30d0d)" },
-    active: { background: "var(--bpm-error-text, #b30d0d)" },
+    hover: { background: "var(--bpm-error-hover)" },
+    active: { background: "var(--bpm-error-hover)" },
   },
   link: {
     base: {
