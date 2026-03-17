@@ -95,7 +95,7 @@ export default function DocHighlightboxPage() {
 
       <h2 className="text-lg font-semibold mt-8 mb-2">Exemples</h2>
       <CodeBlock code={'bpm.highlightBox(value=1, label="DAILY", title="Produit phare")'} language="python" />
-      <CodeBlock code={'bpm.highlightBox(value=2, label="WEEKLY", title="Objectif", moment_description="ce mois", bar_color="#00a3e2")'} language="python" />
+      <CodeBlock code={'bpm.highlightBox(value=2, label="WEEKLY", title="Objectif", moment_description="ce mois", bar_color="#048dc3")'} language="python" />
 
       <nav className="doc-pagination">
         {prev ? <Link href={"/docs/components/" + prev}>← bpm.{prev}</Link> : <span />}

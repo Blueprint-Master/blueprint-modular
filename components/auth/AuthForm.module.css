@@ -159,7 +159,7 @@
 
 .formGroup input:focus {
   outline: none;
-  border-color: var(--bpm-accent, #00a3e2);
+  border-color: var(--bpm-accent, #048dc3);
   box-shadow: 0 0 0 3px rgba(26, 75, 143, 0.12);
 }
 
@@ -200,7 +200,7 @@
 }
 
 .submitButton {
-  background: var(--bpm-accent, #00a3e2);
+  background: var(--bpm-accent, #048dc3);
   color: #fff;
   border: none;
 }
@@ -249,7 +249,7 @@
 
 .footerLink:hover {
   text-decoration: underline;
-  color: var(--bpm-accent, #00a3e2);
+  color: var(--bpm-accent, #048dc3);
 }
 
 .footerSep {
@@ -270,5 +270,5 @@
 }
 
 .terms a:hover {
-  color: var(--bpm-accent, #00a3e2);
+  color: var(--bpm-accent, #048dc3);
 }

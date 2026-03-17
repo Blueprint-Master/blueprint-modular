@@ -241,7 +241,6 @@ export function Button({
     ...vDef.base,
     ...(hovered && !disabled && !loading ? vDef.hover : {}),
     ...(pressed && !disabled ? { ...vDef.active, transform: "scale(0.97)" } : {}),
-    ...(focused ? { boxShadow: `0 0 0 3px ${ACCENT}40` } : {}),
     ...styleProp,
   };
 

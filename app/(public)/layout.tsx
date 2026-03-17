@@ -16,8 +16,8 @@ export default function PublicLayout({ children }: { children: React.ReactNode }
   --bpm-surface: #ffffff;
   --bpm-text-primary: #333;
   --bpm-text-secondary: #666;
-  --bpm-accent: #00a3e2;
-  --bpm-accent-cyan: #00a3e2;
+  --bpm-accent: #048dc3;
+  --bpm-accent-cyan: #048dc3;
   --bpm-border: rgb(237, 237, 237);
   --bpm-accent-mint: #45d09e;
 }

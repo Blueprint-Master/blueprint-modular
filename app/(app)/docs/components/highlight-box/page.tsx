@@ -7,7 +7,7 @@ import { getPrevNext } from "@/lib/docPages";
 
 const BAR_COLORS: { value: string; label: string }[] = [
   { value: "#212121", label: "Noir (défaut)" },
-  { value: "#00a3e2", label: "Bleu accent" },
+  { value: "#048dc3", label: "Bleu accent" },
   { value: "#1a4b8f", label: "Bleu foncé" },
   { value: "#0d9488", label: "Teal" },
   { value: "#15803d", label: "Vert" },
@@ -179,7 +179,7 @@ export default function DocHighlightBoxPage() {
       />
       <h2 className="text-lg font-semibold mt-6 mb-2">Avec couleur de barre</h2>
       <CodeBlock
-        code={'bpm.highlight_box(value=1, label="DAILY", title="Mon produit", bar_color="#00a3e2")'}
+        code={'bpm.highlight_box(value=1, label="DAILY", title="Mon produit", bar_color="#048dc3")'}
         language="python"
       />
 

@@ -122,7 +122,7 @@ export default function DocTitlePage() {
                 type="text"
                 value={barColor}
                 onChange={(e) => setBarColor(e.target.value)}
-                placeholder="ex. #00a3e2, #1d1d1f"
+                placeholder="ex. #048dc3, #1d1d1f"
               />
             </div>
           )}
@@ -133,7 +133,7 @@ export default function DocTitlePage() {
                 type="text"
                 value={invertedBackground}
                 onChange={(e) => setInvertedBackground(e.target.value)}
-                placeholder="ex. #1d1d1f, #00a3e2"
+                placeholder="ex. #1d1d1f, #048dc3"
               />
             </div>
           )}
@@ -163,8 +163,8 @@ export default function DocTitlePage() {
       <CodeBlock code={'bpm.title(level=3, content="Sous-titre", size="1.5rem", bold=True, color="var(--bpm-accent)")'} language="python" />
       <CodeBlock code={'bpm.title(level=2, content="Quel go-to-market ? 3 scénarios évalués", bar=True)'} language="python" />
       <CodeBlock code={'bpm.title(level=3, content="SCÉNARIO 2", inverted=True)'} language="python" />
-      <CodeBlock code={'bpm.title(level=2, content="Titre", bar=True, bar_color="#00a3e2")'} language="python" />
-      <CodeBlock code={'bpm.title(level=3, content="Badge", inverted=True, inverted_background="#00a3e2")'} language="python" />
+      <CodeBlock code={'bpm.title(level=2, content="Titre", bar=True, bar_color="#048dc3")'} language="python" />
+      <CodeBlock code={'bpm.title(level=3, content="Badge", inverted=True, inverted_background="#048dc3")'} language="python" />
       <nav className="doc-pagination">
         {prev ? <Link href={"/docs/components/" + prev}>← bpm.{prev}</Link> : <span />}
         {next ? <Link href={"/docs/components/" + next}>bpm.{next} →</Link> : <span />}

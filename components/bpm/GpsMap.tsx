@@ -55,7 +55,7 @@ export function GpsMap({
     if (markerPosition) {
       const icon = L.divIcon({
         className: "bpm-gps-marker",
-        html: "<div style=\"width:24px;height:24px;background:var(--bpm-accent,#00a3e2);border:2px solid #fff;border-radius:50%;box-shadow:0 1px 4px rgba(0,0,0,0.3)\"></div>",
+        html: "<div style=\"width:24px;height:24px;background:var(--bpm-accent,#048dc3);border:2px solid #fff;border-radius:50%;box-shadow:0 1px 4px rgba(0,0,0,0.3)\"></div>",
         iconSize: [24, 24],
         iconAnchor: [12, 12],
       });

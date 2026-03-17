@@ -61,7 +61,7 @@ export default function DocTooltipPage() {
               type="text"
               value={backgroundColor}
               onChange={(e) => setBackgroundColor(e.target.value)}
-              placeholder="ex. #1d1d1f, #00a3e2"
+              placeholder="ex. #1d1d1f, #048dc3"
             />
           </div>
           <div className="sandbox-control-group">
@@ -91,7 +91,7 @@ export default function DocTooltipPage() {
       </table>
       <h2 className="text-lg font-semibold mt-8 mb-2">Exemples</h2>
       <CodeBlock code={'bpm.tooltip(content="Aide", placement="top", trigger=bpm.button("?"))'} language="python" />
-      <CodeBlock code={'bpm.tooltip(content="Aide", background_color="#00a3e2", text_color="#fff")'} language="python" />
+      <CodeBlock code={'bpm.tooltip(content="Aide", background_color="#048dc3", text_color="#fff")'} language="python" />
       <nav className="doc-pagination">
         {prev ? <Link href={"/docs/components/" + prev}>← bpm.{prev}</Link> : <span />}
         {next ? <Link href={"/docs/components/" + next}>bpm.{next} →</Link> : <span />}

@@ -102,7 +102,7 @@ import {
 } from "@/components/bpm";
 
 /** Valeur hex pour props qui n'acceptent pas var() (ex. ColorPicker, Plotly), alignée avec --bpm-accent. */
-const BPM_ACCENT_HEX = "#00a3e2";
+const BPM_ACCENT_HEX = "#048dc3";
 
 const DEMO_CARD_STYLE: React.CSSProperties = {
   background: "var(--bpm-bg)",
@@ -933,9 +933,9 @@ export default function ComponentsPage() {
                 }}
               >
                 <div style={{ display: "flex", alignItems: "center", gap: 24 }}>
-                  <div style={{ width: 36, height: 36, borderRadius: 6, background: "#00a3e2", color: "#fff", display: "flex", alignItems: "center", justifyContent: "center", fontWeight: 700, fontSize: 18 }}>B</div>
+                  <div style={{ width: 36, height: 36, borderRadius: 6, background: "#048dc3", color: "#fff", display: "flex", alignItems: "center", justifyContent: "center", fontWeight: 700, fontSize: 18 }}>B</div>
                   <div style={{ display: "flex", alignItems: "center", gap: 4 }}>
-                    <Button variant="ghost" size="small" icon="dashboard" style={{ background: "var(--bpm-bg-secondary)", borderLeft: "3px solid #00a3e2", borderRadius: 4 }}>Dashboard</Button>
+                    <Button variant="ghost" size="small" icon="dashboard" style={{ background: "var(--bpm-bg-secondary)", borderLeft: "3px solid #048dc3", borderRadius: 4 }}>Dashboard</Button>
                     <Button variant="ghost" size="small" icon="folder">Projects</Button>
                     <Button variant="ghost" size="small" icon="bar_chart">Analytics</Button>
                     <Button variant="ghost" size="small" icon="settings">Settings</Button>

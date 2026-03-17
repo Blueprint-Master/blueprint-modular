@@ -32,12 +32,12 @@
   --bpm-text-primary: #333;
   --bpm-text-secondary: #666;
   --bpm-text-muted: #666;
-  --bpm-accent: #00a3e2;
-  --bpm-accent-hover: #0082b8;
+  --bpm-accent: #048dc3;
+  --bpm-accent-hover: #0376a3;
   --bpm-accent-contrast: #ffffff;
-  --bpm-accent-cyan: #00a3e2;
-  --bpm-color-link: #00a3e2;
-  --bpm-color-link-hover: #0082b8;
+  --bpm-accent-cyan: #048dc3;
+  --bpm-color-link: #048dc3;
+  --bpm-color-link-hover: #0376a3;
   --bpm-accent-mint: #45d09e;
   --bpm-accent-light: #eff6ff;
   --bpm-radius: 8px;
@@ -53,7 +53,7 @@
   --shadow-xs: 0 1px 2px rgba(0, 0, 0, 0.08);
   --bpm-shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.08), 0 1px 2px rgba(0, 0, 0, 0.04);
   --bpm-shadow-md: 0 4px 16px rgba(0, 0, 0, 0.12), 0 2px 4px rgba(0, 0, 0, 0.06);
-  --bpm-focus-ring: 0 0 0 3px rgba(0, 163, 226, 0.4);
+  --bpm-focus-ring: 0 0 0 3px rgba(4, 141, 195, 0.4);
   --bpm-bg-app: #f7f8fa;
   /* Sidebar : couleurs d’origine (ne pas reprendre .Maker) ; mise en page alignée via le composant */
   --bpm-sidebar-bg: #f7f7f7;
@@ -67,8 +67,8 @@
   --bpm-border-strong: #c8cdd6;
   --bpm-surface: #ffffff;
   --bpm-surface-raised: #f4f5f7;
-  --bpm-accent-border: #b3e0f4;
-  --bpm-accent-active: #008bc4;
+  --bpm-accent-border: #7ec8e3;
+  --bpm-accent-active: #025f82;
   --bpm-text-inverse: #ffffff;
   --bpm-code-bg: #f5f5f5;
   --bpm-code-border: rgb(237, 237, 237);
@@ -87,7 +87,7 @@
   --bpm-success-text: #0d6b2c;
   --bpm-warning-text: #8a5a00;
   --bpm-error-text: #b30d0d;
-  --bpm-accent-soft: rgba(0, 163, 226, 0.12);
+  --bpm-accent-soft: rgba(4, 141, 195, 0.12);
   /* Popups (modal, drawer, tooltip, popover, toast) — ombre visible cf myportfolio */
   --bpm-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
   --bpm-overlay-bg: rgba(0, 0, 0, 0.5);
@@ -131,7 +131,7 @@
   --bpm-success-text: #6ee7b7;
   --bpm-warning-text: #fcd34d;
   --bpm-error-text: #fca5a5;
-  --bpm-accent-soft: rgba(0, 163, 226, 0.15);
+  --bpm-accent-soft: rgba(4, 141, 195, 0.15);
   --bpm-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
   --bpm-overlay-bg: rgba(0, 0, 0, 0.6);
 }
@@ -895,7 +895,6 @@ h2, .bpm-h2 {
 .bpm-btn:focus-visible,
 .bpm-button:focus-visible {
   outline: none;
-  box-shadow: 0 0 0 3px rgba(19, 121, 231, 0.18);
 }
 
 /* Champs de saisie : focus ring accent */
@@ -978,7 +977,7 @@ textarea.bpm-textarea:focus {
 
 /* Buttons */
 .btn-primary { background: var(--bpm-accent); color: white; border: none; padding: 8px 16px; border-radius: 8px; font-size: 14px; font-weight: 500; cursor: pointer; text-decoration: none; display: inline-block; }
-.btn-primary:hover { background: #0082b8; }
+.btn-primary:hover { background: #0376a3; }
 .btn-secondary { background: transparent; color: var(--bpm-text-primary); border: 1px solid var(--bpm-border); padding: 8px 16px; border-radius: 8px; font-size: 14px; cursor: pointer; }
 
 /* Bouton Envoyer (bpm.promptInput / bpm.chatInterface) — même charte et relief que boutons primaires */
@@ -1049,7 +1048,7 @@ textarea.bpm-textarea:focus {
 .wiki-sidebar { border-right: 1px solid var(--bpm-border); padding-right: 24px; padding-top: 60px; overflow-y: auto; min-height: 0; }
 .wiki-tree-node { padding: 6px 8px; border-radius: 6px; cursor: pointer; display: flex; gap: 8px; align-items: center; font-size: 14px; }
 .wiki-tree-node:hover { background: var(--bpm-border); }
-.wiki-tree-node.active { background: rgba(0,163,226,0.1); color: var(--bpm-accent); font-weight: 600; }
+.wiki-tree-node.active { background: rgba(4,141,195,0.1); color: var(--bpm-accent); font-weight: 600; }
 .wiki-tree-arrow { display: inline-flex; flex-shrink: 0; align-items: center; justify-content: center; }
 .wiki-tree-count { font-size: 12px; color: var(--bpm-text-secondary); }
 .wiki-tree-doc { font-size: 1em; line-height: 1; opacity: 0.85; }
@@ -1442,7 +1441,7 @@ textarea.bpm-textarea:focus {
 .asset-manager-page .asset-manager-metrics-carousel a.asset-manager-metrics-grid:hover,
 .asset-manager-page .doc-page > .grid.mb-6 a.block:hover {
   border-color: var(--bpm-accent-cyan);
-  box-shadow: 0 2px 8px rgba(0, 163, 226, 0.08);
+  box-shadow: 0 2px 8px rgba(4, 141, 195, 0.08);
 }
 .asset-manager-page .asset-manager-metrics-grid a.block > div,
 .asset-manager-page .asset-manager-metrics-carousel a.asset-manager-metrics-grid > div,
@@ -1479,7 +1478,7 @@ textarea.bpm-textarea:focus {
 [data-theme="dark"] .asset-manager-page .asset-manager-metrics-grid a.block:hover,
 [data-theme="dark"] .asset-manager-page .asset-manager-metrics-carousel a.asset-manager-metrics-grid:hover,
 [data-theme="dark"] .asset-manager-page .doc-page > .grid.mb-6 a.block:hover {
-  box-shadow: 0 0 0 1px rgba(0,163,226,0.35);
+  box-shadow: 0 0 0 1px rgba(4,141,195,0.35);
 }
 
 /* Carousel des tuiles métriques (évite le débordement, comme beam-consulting) */
@@ -1684,7 +1683,7 @@ textarea.bpm-textarea:focus {
   flex-shrink: 0;
 }
 .asset-manager-page .asset-manager-filters .bpm-chip.asset-manager-chip-active {
-  background: rgba(0, 163, 226, 0.12) !important;
+  background: rgba(4, 141, 195, 0.12) !important;
   color: var(--bpm-accent-cyan) !important;
 }
 .asset-manager-page .asset-manager-export-btn:hover:not(:disabled) {
@@ -1832,7 +1831,7 @@ textarea.bpm-textarea:focus {
   background: #e5e7eb;
 }
 .asset-manager-page .asset-manager-equipment-filters .bpm-chip.asset-manager-chip-active {
-  background: rgba(0, 163, 226, 0.12) !important;
+  background: rgba(4, 141, 195, 0.12) !important;
   border-color: var(--bpm-accent-light, #b2ebf2) !important;
   color: var(--bpm-accent-cyan) !important;
   font-weight: 500;
@@ -1846,7 +1845,7 @@ textarea.bpm-textarea:focus {
   background: #f9fafb;
 }
 .asset-manager-page .asset-manager-equipment-filters .bpm-chip.asset-manager-chip-reset.asset-manager-chip-active {
-  background: rgba(0, 163, 226, 0.12) !important;
+  background: rgba(4, 141, 195, 0.12) !important;
   border-color: var(--bpm-accent-light, #b2ebf2) !important;
   color: var(--bpm-accent-cyan) !important;
 }

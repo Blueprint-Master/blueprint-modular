@@ -7,8 +7,8 @@
   --bpm-surface: #ffffff;
   --bpm-text-primary: #333;
   --bpm-text-secondary: #666;
-  --bpm-accent: #00a3e2;
-  --bpm-accent-cyan: #00a3e2;
+  --bpm-accent: #048dc3;
+  --bpm-accent-cyan: #048dc3;
   --bpm-accent-mint: #45d09e;
   --bpm-accent-light: #b2ebf2;
   --bpm-border: rgb(237, 237, 237);
@@ -174,7 +174,7 @@ html, body {
   font-family: inherit;
   transition: background 0.15s;
 }
-.btn-primary:hover { background: #0082b8; }
+.btn-primary:hover { background: #0376a3; }
 
 /* Divider */
 .bpm-divider-wrap { display: flex; align-items: center; gap: 8px; margin: 4px 0; }
