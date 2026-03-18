@@ -25,6 +25,7 @@ node_modules/
 
 # Build
 dist/
+packages/core/*.tgz
 .next/
 uploads/
 
