@@ -798,7 +798,7 @@ export default function ContractsPage() {
                 variant="primary"
                 onClick={() => handleAnalyze(selectedFiles)}
                 disabled={uploading || selectedFiles.length === 0}
-                title={selectedFiles.length === 0 ? "Sélectionnez au moins un fichier pour continuer" : undefined}
+                aria-label={selectedFiles.length === 0 ? "Sélectionnez au moins un fichier pour continuer" : "Analyser les documents"}
               >
                 {uploading ? (
                   <>
