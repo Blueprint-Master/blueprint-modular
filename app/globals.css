@@ -1999,9 +1999,63 @@ textarea.bpm-textarea:focus {
   border-top: 1px solid var(--bpm-border);
 }
 
+.import-modal-footer .bpm-btn,
+.import-modal-footer button {
+  display: inline-flex !important;
+  flex-direction: row !important;
+  align-items: center !important;
+  justify-content: center !important;
+  white-space: nowrap !important;
+  min-width: auto !important;
+  width: auto !important;
+}
+
+.import-modal-footer .bpm-btn > *,
+.import-modal-footer button > * {
+  display: inline-flex !important;
+  flex-direction: row !important;
+  align-items: center !important;
+  white-space: nowrap !important;
+}
+
+.import-modal-footer .bpm-btn svg,
+.import-modal-footer button svg {
+  flex-shrink: 0 !important;
+  display: inline-block !important;
+  margin-right: 6px !important;
+}
+
 .btn-file-count {
   margin-left: 4px;
   opacity: 0.8;
+}
+
+/* Bouton "Choisir des fichiers" dans la dropzone */
+.dropzone .bpm-btn,
+.dropzone button {
+  display: inline-flex !important;
+  flex-direction: row !important;
+  align-items: center !important;
+  justify-content: center !important;
+  white-space: nowrap !important;
+  min-width: auto !important;
+  padding-left: 16px !important;
+  padding-right: 16px !important;
+}
+
+.dropzone .bpm-btn > *,
+.dropzone button > * {
+  display: inline-flex !important;
+  flex-direction: row !important;
+  align-items: center !important;
+  white-space: nowrap !important;
+}
+
+.dropzone .bpm-btn svg,
+.dropzone button svg {
+  flex-shrink: 0 !important;
+  display: inline-block !important;
+  margin-right: 6px !important;
 }
 
 /* ============================================
