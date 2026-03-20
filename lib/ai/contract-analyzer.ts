@@ -17,6 +17,7 @@ export interface ExtractedData {
   start_date?: string;
   end_date?: string;
   renewal_date?: string;
+  termination_date?: string;
   termination_notice_days?: number;
   waiver_deadline?: string;
   commitments?: Array<{
@@ -63,6 +64,7 @@ function parseAndValidate(raw: string): ExtractedData {
   if (typeof data.start_date === "string") out.start_date = data.start_date;
   if (typeof data.end_date === "string") out.end_date = data.end_date;
   if (typeof data.renewal_date === "string") out.renewal_date = data.renewal_date;
+  if (typeof data.termination_date === "string") out.termination_date = data.termination_date;
   if (typeof data.termination_notice_days === "number") out.termination_notice_days = data.termination_notice_days;
   if (typeof data.waiver_deadline === "string") out.waiver_deadline = data.waiver_deadline;
   if (Array.isArray(data.commitments)) out.commitments = data.commitments as ExtractedData["commitments"];

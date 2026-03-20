@@ -80,6 +80,7 @@ Réponds UNIQUEMENT avec un objet JSON valide, sans texte avant ni après :
   "start_date": "YYYY-MM-DD ou null",
   "end_date": "YYYY-MM-DD ou null",
   "renewal_date": "YYYY-MM-DD ou null",
+  "termination_date": "YYYY-MM-DD ou null",
   "termination_notice_days": "nombre ou null",
   "waiver_deadline": "YYYY-MM-DD ou null",
   "commitments": [
