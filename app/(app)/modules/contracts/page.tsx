@@ -120,7 +120,7 @@ function CheckIcon({ className }: { className?: string }) {
   );
 }
 
-type Extracted = { supplier_name?: string; contract_date?: string; end_date?: string; termination_date?: string; overall_risk_level?: string };
+type Extracted = { supplier_name?: string; contract_date?: string; end_date?: string; termination_date?: string; overall_risk_level?: string; executive_summary?: string };
 
 interface ContractRow {
   id: string;
@@ -136,6 +136,7 @@ interface ContractRow {
   end_date?: string | null;
   termination_date?: string | null;
   overall_risk_level?: string | null;
+  executive_summary?: string | null;
   createdAt: string;
 }
 
