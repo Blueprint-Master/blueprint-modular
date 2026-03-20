@@ -113,7 +113,7 @@ function CheckIcon({ className }: { className?: string }) {
   );
 }
 
-type Extracted = { supplier_name?: string; contract_date?: string; end_date?: string; overall_risk_level?: string };
+type Extracted = { supplier_name?: string; contract_date?: string; end_date?: string; termination_date?: string; overall_risk_level?: string };
 
 interface ContractRow {
   id: string;
@@ -127,6 +127,7 @@ interface ContractRow {
   supplier_name?: string | null;
   contract_date?: string | null;
   end_date?: string | null;
+  termination_date?: string | null;
   overall_risk_level?: string | null;
   createdAt: string;
 }
@@ -138,6 +139,7 @@ function flattenContract(c: ContractRow): ContractRow {
     supplier_name: c.supplier_name ?? ex?.supplier_name ?? null,
     contract_date: c.contract_date ?? ex?.contract_date ?? null,
     end_date: c.end_date ?? ex?.end_date ?? null,
+    termination_date: c.termination_date ?? ex?.termination_date ?? null,
     overall_risk_level: c.overall_risk_level ?? ex?.overall_risk_level ?? null,
   };
 }
@@ -411,6 +413,7 @@ export default function ContractsPage() {
           buyer_name: data.extractedData?.buyer_name || "",
           contract_date: data.extractedData?.contract_date || "",
           end_date: data.extractedData?.end_date || "",
+          termination_date: data.extractedData?.termination_date || "",
           contractType: data.contractType || "",
         });
       } else {
@@ -440,6 +443,7 @@ export default function ContractsPage() {
             buyer_name: editFormData.buyer_name || null,
             contract_date: editFormData.contract_date || null,
             end_date: editFormData.end_date || null,
+            termination_date: editFormData.termination_date || null,
           },
         }),
       });
@@ -468,6 +472,7 @@ export default function ContractsPage() {
         buyer_name: detailContract.extractedData?.buyer_name || "",
         contract_date: detailContract.extractedData?.contract_date || "",
         end_date: detailContract.extractedData?.end_date || "",
+        termination_date: detailContract.extractedData?.termination_date || "",
         contractType: detailContract.contractType || "",
       });
     }
@@ -1180,6 +1185,28 @@ export default function ContractsPage() {
                                  detailContract.extractedData.end_date !== "undefined" &&
                                  detailContract.extractedData.end_date.trim() !== ""
                                   ? detailContract.extractedData.end_date
+                                  : <span className="data-empty">—</span>}
+                              </div>
+                            )}
+                          </div>
+                          <div>
+                            <label className="block mb-1" style={{ color: "var(--bpm-text-primary)", fontWeight: 500 }}>
+                              Date de dénonciation :
+                            </label>
+                            {isEditMode ? (
+                              <input
+                                type="date"
+                                className="detail-field-input"
+                                value={editFormData.termination_date || ""}
+                                onChange={(e) => setEditFormData({ ...editFormData, termination_date: e.target.value })}
+                              />
+                            ) : (
+                              <div style={{ color: "var(--bpm-text-secondary)" }}>
+                                {detailContract.extractedData?.termination_date && 
+                                 detailContract.extractedData.termination_date !== "null" && 
+                                 detailContract.extractedData.termination_date !== "undefined" &&
+                                 detailContract.extractedData.termination_date.trim() !== ""
+                                  ? detailContract.extractedData.termination_date
                                   : <span className="data-empty">—</span>}
                               </div>
                             )}
