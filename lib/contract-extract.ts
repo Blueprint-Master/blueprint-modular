@@ -11,7 +11,8 @@ export async function extractTextFromBuffer(
   if (mimeType === "application/pdf" || filename.toLowerCase().endsWith(".pdf")) {
     let extractedText = "";
     try {
-      const pdfParse = (await import("pdf-parse")).default as (buf: Buffer) => Promise<{ text?: string }>;
+      // eslint-disable-next-line @typescript-eslint/no-require-imports
+      const pdfParse = require("pdf-parse") as (buf: Buffer) => Promise<{ text: string; numpages: number }>;
       const data = await pdfParse(buffer);
       extractedText = data?.text ?? "";
       if (extractedText.length > 0) {

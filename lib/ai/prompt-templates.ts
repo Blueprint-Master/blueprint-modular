@@ -75,6 +75,10 @@ Réponds UNIQUEMENT avec un objet JSON valide, sans texte avant ni après :
 {
   "supplier_name": "string ou null",
   "buyer_name": "string ou null",
+  "executive_summary": "string (3-5 phrases en français résumant le contrat)",
+  "overall_risk_level": "low|medium|high",
+  "key_risks": ["string"],
+  "key_opportunities": ["string"],
   "signatories": [{"name": "string", "role": "string", "date": "string ou null"}],
   "contract_date": "YYYY-MM-DD ou null",
   "start_date": "YYYY-MM-DD ou null",
@@ -99,11 +103,7 @@ Réponds UNIQUEMENT avec un objet JSON valide, sans texte avant ni après :
   "exclusivity": true|false,
   "governing_law": "string ou null",
   "dispute_resolution": "string ou null",
-  "executive_summary": "string (3-5 phrases en français)",
-  "key_risks": ["string"],
-  "key_opportunities": ["string"],
-  "action_items": [{"action": "string", "deadline": "string ou null", "owner": "string ou null"}],
-  "overall_risk_level": "low|medium|high"
+  "action_items": [{"action": "string", "deadline": "string ou null", "owner": "string ou null"}]
 }`;
 
 /** Génération d'article wiki depuis des notes brutes */
