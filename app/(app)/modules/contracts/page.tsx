@@ -970,15 +970,9 @@ export default function ContractsPage() {
                 title={selectedFiles.length === 0 ? "Sélectionnez au moins un fichier pour continuer" : undefined}
               >
                 {uploading ? (
-                  <>
-                    <span className="animate-spin inline-block mr-2">⟳</span>
-                    Analyse en cours...
-                  </>
+                  "Analyse en cours..."
                 ) : (
                   <>
-                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="w-4 h-4 mr-2" aria-hidden="true">
-                      <polyline points="22 12 18 12 15 21 9 3 6 12 2 12" />
-                    </svg>
                     Analyser les documents
                     {selectedFiles.length > 0 && <span className="btn-file-count"> ({selectedFiles.length})</span>}
                   </>
