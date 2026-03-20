@@ -920,7 +920,7 @@ export default function ContractsPage() {
                         <section>
                           <h3 className="text-sm font-semibold mb-2" style={{ color: "var(--bpm-text-primary)" }}>Risques</h3>
                           <ul className="list-disc pl-5 text-sm space-y-1" style={{ color: "var(--bpm-text-secondary)" }}>
-                            {detailContract.extractedData.key_risks.map((r, i) => <li key={i}>{r}</li>)}
+                            {detailContract.extractedData.key_risks.map((r: string, i: number) => <li key={i}>{r}</li>)}
                           </ul>
                         </section>
                       )}
@@ -928,7 +928,7 @@ export default function ContractsPage() {
                         <section>
                           <h3 className="text-sm font-semibold mb-2" style={{ color: "var(--bpm-text-primary)" }}>Actions recommandées</h3>
                           <ul className="list-disc pl-5 text-sm space-y-1" style={{ color: "var(--bpm-text-secondary)" }}>
-                            {detailContract.extractedData.action_items.map((a, i) => (
+                            {detailContract.extractedData.action_items.map((a: { action: string; deadline?: string; owner?: string }, i: number) => (
                               <li key={i}>
                                 {a.action}
                                 {a.deadline && ` (Échéance: ${a.deadline})`}
