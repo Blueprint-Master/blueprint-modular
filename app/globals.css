@@ -1172,9 +1172,10 @@ textarea.bpm-textarea:focus {
 
 .contracts-stats {
   display: grid !important;
-  grid-template-columns: repeat(4, 1fr) !important;
+  grid-template-columns: repeat(4, auto) !important;
   gap: 12px;
   margin-bottom: 20px;
+  justify-content: start;
 }
 
 .stat-card {
@@ -1186,7 +1187,7 @@ textarea.bpm-textarea:focus {
   border-radius: var(--bpm-radius);
   padding: 12px 20px;
   min-width: 90px;
-  flex: 1;
+  width: auto;
   max-width: 140px;
   transition: var(--bpm-transition-fast);
 }
