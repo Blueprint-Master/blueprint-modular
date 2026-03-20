@@ -256,7 +256,8 @@ export default function ContractDetailPage() {
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mt-6">
         <div className="space-y-6">
           <section aria-labelledby="section-parties">
-            <Panel variant="info" title={<span id="section-parties">Parties & signataires</span>}>
+            <h2 id="section-parties" style={{ position: "absolute", width: "1px", height: "1px", padding: 0, margin: "-1px", overflow: "hidden", clip: "rect(0, 0, 0, 0)", whiteSpace: "nowrap", borderWidth: 0 }}>Parties & signataires</h2>
+            <Panel variant="info" title="Parties & signataires">
             <div className="space-y-3">
               {ex?.supplier_name && (
                 <div>
@@ -286,7 +287,8 @@ export default function ContractDetailPage() {
           </section>
 
           <section aria-labelledby="section-dates">
-            <Panel variant="info" title={<span id="section-dates">Dates</span>}>
+            <h2 id="section-dates" style={{ position: "absolute", width: "1px", height: "1px", padding: 0, margin: "-1px", overflow: "hidden", clip: "rect(0, 0, 0, 0)", whiteSpace: "nowrap", borderWidth: 0 }}>Dates</h2>
+            <Panel variant="info" title="Dates">
             <div className="space-y-2 text-sm">
               {ex?.contract_date && (
                 <div>
@@ -326,7 +328,8 @@ export default function ContractDetailPage() {
           </section>
 
           <section aria-labelledby="section-commitments">
-            <Panel variant="info" title={<span id="section-commitments">Engagements</span>}>
+            <h2 id="section-commitments" style={{ position: "absolute", width: "1px", height: "1px", padding: 0, margin: "-1px", overflow: "hidden", clip: "rect(0, 0, 0, 0)", whiteSpace: "nowrap", borderWidth: 0 }}>Engagements</h2>
+            <Panel variant="info" title="Engagements">
             {commitmentsData.length > 0 ? (
               <Table
                 columns={commitmentsColumns}
@@ -342,7 +345,8 @@ export default function ContractDetailPage() {
           </section>
 
           <section aria-labelledby="section-clauses">
-            <Panel variant="info" title={<span id="section-clauses">Clauses</span>}>
+            <h2 id="section-clauses" style={{ position: "absolute", width: "1px", height: "1px", padding: 0, margin: "-1px", overflow: "hidden", clip: "rect(0, 0, 0, 0)", whiteSpace: "nowrap", borderWidth: 0 }}>Clauses</h2>
+            <Panel variant="info" title="Clauses">
             <div className="space-y-2 text-sm">
               {ex?.payment_terms && (
                 <div>
@@ -387,7 +391,8 @@ export default function ContractDetailPage() {
           </section>
 
           <section aria-labelledby="section-actions">
-            <Panel variant="info" title={<span id="section-actions">Actions recommandées</span>}>
+            <h2 id="section-actions" style={{ position: "absolute", width: "1px", height: "1px", padding: 0, margin: "-1px", overflow: "hidden", clip: "rect(0, 0, 0, 0)", whiteSpace: "nowrap", borderWidth: 0 }}>Actions recommandées</h2>
+            <Panel variant="info" title="Actions recommandées">
             {actionItemsData.length > 0 ? (
               <Table
                 columns={actionItemsColumns}
@@ -405,7 +410,8 @@ export default function ContractDetailPage() {
 
         <div className="space-y-6">
           <section aria-labelledby="section-summary">
-            <Panel variant="info" title={<span id="section-summary">Synthèse</span>}>
+            <h2 id="section-summary" style={{ position: "absolute", width: "1px", height: "1px", padding: 0, margin: "-1px", overflow: "hidden", clip: "rect(0, 0, 0, 0)", whiteSpace: "nowrap", borderWidth: 0 }}>Synthèse</h2>
+            <Panel variant="info" title="Synthèse">
             {ex?.executive_summary ? (
               <p className="text-sm whitespace-pre-wrap">{ex.executive_summary}</p>
             ) : (
@@ -415,7 +421,8 @@ export default function ContractDetailPage() {
           </section>
 
           <section aria-labelledby="section-risks">
-            <Panel variant="info" title={<span id="section-risks">Risques</span>}>
+            <h2 id="section-risks" style={{ position: "absolute", width: "1px", height: "1px", padding: 0, margin: "-1px", overflow: "hidden", clip: "rect(0, 0, 0, 0)", whiteSpace: "nowrap", borderWidth: 0 }}>Risques</h2>
+            <Panel variant="info" title="Risques">
             {ex?.key_risks?.length ? (
               <ul className="list-disc pl-5 text-sm space-y-1">
                 {ex.key_risks.map((r, i) => <li key={i}>{r}</li>)}
@@ -427,7 +434,8 @@ export default function ContractDetailPage() {
           </section>
 
           <section aria-labelledby="section-opportunities">
-            <Panel variant="info" title={<span id="section-opportunities">Opportunités</span>}>
+            <h2 id="section-opportunities" style={{ position: "absolute", width: "1px", height: "1px", padding: 0, margin: "-1px", overflow: "hidden", clip: "rect(0, 0, 0, 0)", whiteSpace: "nowrap", borderWidth: 0 }}>Opportunités</h2>
+            <Panel variant="info" title="Opportunités">
             {ex?.key_opportunities?.length ? (
               <ul className="list-disc pl-5 text-sm space-y-1">
                 {ex.key_opportunities.map((o, i) => <li key={i}>{o}</li>)}
