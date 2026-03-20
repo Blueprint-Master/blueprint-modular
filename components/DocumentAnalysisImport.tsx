@@ -169,7 +169,7 @@ export function DocumentAnalysisImport({
             onClick={handleSubmit}
             disabled={disabled || selectedFiles.length === 0}
             className="doc-import-analyze-button"
-            title={selectedFiles.length === 0 ? "Sélectionnez au moins un fichier pour continuer" : undefined}
+            aria-label={selectedFiles.length === 0 ? "Sélectionnez au moins un fichier pour continuer" : "Analyser les documents"}
           >
             {disabled ? (
               <>
