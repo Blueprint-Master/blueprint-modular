@@ -1130,9 +1130,11 @@ textarea.bpm-textarea:focus {
 
 .contracts-import-btn {
   flex-shrink: 0;
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
+  display: inline-flex !important;
+  flex-direction: row !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 8px !important;
   background: var(--bpm-accent);
   color: white;
   padding: 8px 18px;
@@ -1143,6 +1145,12 @@ textarea.bpm-textarea:focus {
   cursor: pointer;
   transition: var(--bpm-transition-fast);
   box-shadow: 0 1px 3px rgba(4, 141, 195, 0.3);
+  white-space: nowrap;
+}
+
+.contracts-import-btn > * {
+  display: inline-flex;
+  align-items: center;
 }
 
 .contracts-import-btn:hover {
