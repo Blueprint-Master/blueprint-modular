@@ -1039,8 +1039,7 @@ export default function ContractsPage() {
                     <Button
                       variant="secondary"
                       size="small"
-                      onClick={(e) => {
-                        e.stopPropagation();
+                      onClick={() => {
                         if (selectedContractId && detailContract) {
                           handleDeleteClick(selectedContractId, detailContract.originalFilename);
                         }
