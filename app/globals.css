@@ -1149,8 +1149,15 @@ textarea.bpm-textarea:focus {
 }
 
 .contracts-import-btn > * {
-  display: inline-flex;
-  align-items: center;
+  display: inline-flex !important;
+  flex-direction: row !important;
+  align-items: center !important;
+  gap: 8px !important;
+}
+
+.contracts-import-btn svg {
+  flex-shrink: 0;
+  display: inline-block !important;
 }
 
 .contracts-import-btn:hover {

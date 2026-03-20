@@ -53,15 +53,6 @@ function FileIcon({ ext, className }: { ext: string; className?: string }) {
   );
 }
 
-function EllipsisIcon({ className }: { className?: string }) {
-  return (
-    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className} aria-hidden="true">
-      <circle cx="12" cy="12" r="1" />
-      <circle cx="19" cy="12" r="1" />
-      <circle cx="5" cy="12" r="1" />
-    </svg>
-  );
-}
 
 function XIcon({ className }: { className?: string }) {
   return (
@@ -152,7 +143,6 @@ export default function ContractsPage() {
   const [detailLoading, setDetailLoading] = useState(false);
   const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
   const [isDragging, setIsDragging] = useState(false);
-  const [contextMenuId, setContextMenuId] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const dropOverlayRef = useRef<HTMLDivElement>(null);
 
@@ -471,74 +461,8 @@ export default function ContractsPage() {
           );
         },
       },
-      {
-        key: "actions",
-        label: "",
-        render: (_val: unknown, row: Record<string, unknown>) => {
-          const id = row.id as string | undefined;
-          if (!id) return null;
-          return (
-            <span onClick={(e) => e.stopPropagation()} className="relative">
-              <button
-                type="button"
-                className="row-action-btn"
-                onClick={(e) => {
-                  e.stopPropagation();
-                  setContextMenuId(contextMenuId === id ? null : id);
-                }}
-                aria-label={`Actions pour ${row.originalFilename as string}`}
-                aria-expanded={contextMenuId === id}
-              >
-                <EllipsisIcon className="w-4 h-4" />
-              </button>
-              {contextMenuId === id && (
-                <>
-                  <div
-                    className="fixed inset-0 z-10"
-                    onClick={() => setContextMenuId(null)}
-                    aria-hidden="true"
-                  />
-                  <div
-                    className="absolute right-0 top-8 z-20 bg-white border rounded shadow-lg py-1 min-w-[160px]"
-                    style={{
-                      borderColor: "var(--bpm-border)",
-                      boxShadow: "var(--bpm-shadow-md)",
-                    }}
-                    role="menu"
-                  >
-                    <button
-                      type="button"
-                      className="w-full text-left px-4 py-2 text-sm hover:bg-gray-50 transition-colors"
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        setContextMenuId(null);
-                        if (id) openContractDetail(id);
-                      }}
-                      role="menuitem"
-                    >
-                      Voir le détail
-                    </button>
-                    <button
-                      type="button"
-                      className="w-full text-left px-4 py-2 text-sm hover:bg-gray-50 transition-colors text-red-600"
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        setContextMenuId(null);
-                        if (id) handleDelete(id, row.originalFilename as string);
-                      }}
-                      role="menuitem"
-                    >
-                      Supprimer
-                    </button>
-                  </div>
-                </>
-              )}
-            </span>
-          );
-        },
-      },
     ],
-    [reanalyzingId, handleReanalyze, contextMenuId, openContractDetail, handleDelete]
+    [reanalyzingId, handleReanalyze]
   );
 
   function statusBadgeStyle(s: string): { bg: string; label: string } {
@@ -719,18 +643,6 @@ export default function ContractsPage() {
                 }}
                 emptyMessage="Aucune donnée disponible"
               />
-            </div>
-            {/* Zone de drop persistante */}
-            <div
-              className="contracts-drop-hint"
-              onClick={() => setImportModalOpen(true)}
-              onDrop={handleDropzoneDrop}
-              onDragOver={(e) => e.preventDefault()}
-              role="button"
-              tabIndex={0}
-              aria-label="Glisser des fichiers ici pour les importer"
-            >
-              <UploadIcon className="w-4 h-4" />
             </div>
           </>
         )}
