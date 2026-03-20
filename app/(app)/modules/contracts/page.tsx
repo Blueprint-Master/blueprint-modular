@@ -271,7 +271,8 @@ export default function ContractsPage() {
     end_date: c.end_date ?? "-",
     overall_risk_level: c.overall_risk_level ?? "-",
     statusKey: c.status,
-    status: c.status === "analyzing" ? `${getStatusLabel("analyzing")} (${c.analysisProgress}%)` : getStatusLabel(c.status),
+    analysisProgress: c.analysisProgress ?? 0,
+    status: c.status === "analyzing" ? `${getStatusLabel("analyzing")} (${c.analysisProgress ?? 0}%)` : getStatusLabel(c.status),
   }));
 
   const listTabContent = (
