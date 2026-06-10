@@ -159,6 +159,17 @@ import {
   WizardForm,
 } from "../../../components/bpm";
 
+export { interpret, judgmentColor, trendArrow, judgmentLabel } from "../../../components/bpm";
+export type {
+  InterpretValue,
+  InterpretContext,
+  InterpretDirection,
+  TrajectoryPoint,
+  Judgment,
+  LevelStatus,
+  TrendStatus,
+  AnomalyStatus,
+} from "../../../components/bpm";
 export type { CrudPageProps, CrudColumn, CrudField } from "../../../components/bpm";
 export type { MetricRowProps } from "../../../components/bpm";
 export type { TabsProps, TabItem, TabsItems } from "../../../components/bpm/Tabs";
