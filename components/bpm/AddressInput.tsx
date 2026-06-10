@@ -4,6 +4,10 @@ import React, { useMemo, useState } from "react";
 
 export type AddressInputMode = "single" | "fields";
 
+/**
+ * @component bpm.addressInput
+ * @description Champ de saisie d'adresse avec autocomplétion.
+ */
 export interface AddressInputProps {
   mode?: AddressInputMode;
   value?: {
