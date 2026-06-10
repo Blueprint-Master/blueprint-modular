@@ -318,6 +318,7 @@ ISO ou texte libre, ou Date (affichage localisé court). */ timestamp?: string |
 ```
 
 ## bpm.codeEditor
+@component bpm.codeEditor @description Éditeur de code (textarea avec valeur, onChange, readOnly).
 ```
   value*: string
   onChange*: (value: string) => void
