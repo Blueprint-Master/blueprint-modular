@@ -9,6 +9,7 @@ import { afterEach, describe, expect, it } from "vitest";
 import React from "react";
 import {
   HighlightBox,
+  LabelValue,
   LiveGauge,
   Metric,
   Progress,
@@ -148,6 +149,35 @@ describe("elevate(instrument): sparkline", () => {
       />
     );
     expect(container.querySelector("svg")?.getAttribute("data-judgment")).toBe("favorable");
+  });
+});
+
+describe("elevate(instrument): labelValue", () => {
+  it("sans context → pas de jugement", () => {
+    const { container } = render(<LabelValue label="Réf" value="REF-001" />);
+    expect(container.querySelector("[data-judgment]")).toBeNull();
+  });
+
+  it("valeur numérique sous le repère → unfavorable + suffixe ▼", () => {
+    const { container } = render(
+      <LabelValue label="Stock" value={12} context={CTX_HIB} />
+    );
+    expect(container.querySelector("[data-judgment]")?.getAttribute("data-judgment")).toBe(
+      "unfavorable"
+    );
+    expect(container.textContent).toContain("▼");
+  });
+
+  it("trajectory descendante → tendance ↘ en suffixe", () => {
+    const { container } = render(
+      <LabelValue label="Stock" value={12} trajectory={TRAJ_DOWN} context={CTX_HIB} />
+    );
+    expect(container.textContent).toContain("↘");
+  });
+
+  it("valeur non numérique + context → pas de jugement (pas de NaN)", () => {
+    const { container } = render(<LabelValue label="Réf" value="REF-001" context={CTX_HIB} />);
+    expect(container.querySelector("[data-judgment]")).toBeNull();
   });
 });
 

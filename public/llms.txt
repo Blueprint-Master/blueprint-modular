@@ -698,7 +698,7 @@ Composant bpm.groupedList — interface non parsée (voir BPM_API.md).
 ```
 
 ## bpm.labelValue
-@component bpm.labelValue @description Affiche une paire label/valeur avec options de style, orientation et bouton copier. @example bpm.labelValue({ label: "Référence", value: "REF-001", copyable: true, valueStyle: "bold" }) @param {object} props @param {string} props.label - Libellé affiché en majuscules. Obligatoire. @param {string|number|React.ReactNode} props.value - Valeur à afficher. Obligatoire. @param {"horizontal"|"vertical"} [props.orientation="horizontal"] - Disposition label/valeur. Optionnel. @param {"sm"|"md"|"lg"} [props.size="md"] - Taille du texte. Optionnel. @param {"default"|"bold"|"accent"|"muted"} [props.valueStyle="default"] - Style de la valeur. Optionnel. @param {boolean} [props.copyable=false] - Affiche un bouton pour copier la valeur. Optionnel. @param {string} [props.className=""] - Classes CSS additionnelles. Optionnel. @parent bpm.card, bpm.panel @associated bpm.metric, bpm.inlineEdit
+@component bpm.labelValue @description Affiche une paire label/valeur avec options de style, orientation et bouton copier. @example bpm.labelValue({ label: "Référence", value: "REF-001", copyable: true, valueStyle: "bold" }) @param {object} props @param {string} props.label - Libellé affiché en majuscules. Obligatoire. @param {string|number|React.ReactNode} props.value - Valeur à afficher. Obligatoire. @param {"horizontal"|"vertical"} [props.orientation="horizontal"] - Disposition label/valeur. Optionnel. @param {"sm"|"md"|"lg"} [props.size="md"] - Taille du texte. Optionnel. @param {"default"|"bold"|"accent"|"muted"} [props.valueStyle="default"] - Style de la valeur. Optionnel. @param {boolean} [props.copyable=false] - Affiche un bouton pour copier la valeur. Optionnel. @param {string} [props.className=""] - Classes CSS additionnelles. Optionnel. @param {TrajectoryPoint[]} [props.trajectory] - Trajectoire v(t) de la valeur, jugée si context fourni. Optionnel. @param {InterpretContext} [props.context] - Contexte de jugement : la valeur est colorée et un verdict écart/tendance est révélé. Optionnel. @parent bpm.card, bpm.panel @associated bpm.metric, bpm.inlineEdit
 ```
   label*: string
   value*: string | number | React.ReactNode
@@ -707,6 +707,8 @@ Composant bpm.groupedList — interface non parsée (voir BPM_API.md).
   valueStyle?: "default" | "bold" | "accent" | "muted"
   copyable?: boolean
   className?: string
+  trajectory?: TrajectoryPoint[]  — Trajectoire v(t) [{t, v}] de la mesure (la valeur affichée reste value) — jugée si context est fourni.
+  context?: InterpretContext  — Contexte de jugement { reference, direction, comparisonFrame? } : la valeur prend la couleur du verdict et un suffixe écart/tendance role=status est révélé. Additif : sans context, rendu inchangé.
 ```
 
 ## bpm.lineChart

@@ -11,7 +11,7 @@
  * La page /components itère sur ce registre : pas de page à la main par composant.
  */
 import React from "react";
-import { HighlightBox, LiveGauge, Metric, Progress, ProgressRing, Sparkline, StatusBox } from "@/components/bpm";
+import { HighlightBox, LabelValue, LiveGauge, Metric, Progress, ProgressRing, Sparkline, StatusBox } from "@/components/bpm";
 
 /** Trajectoire de démonstration : dégradation régulière sur 6 périodes. */
 const TRAJ_DOWN = [
@@ -280,6 +280,40 @@ export const SHOWCASE: ShowcaseEntry[] = [
               { t: 3, v: 3.1 },
             ]}
             context={{ reference: 4.5, direction: "higher_is_better" }}
+          />
+        ),
+      },
+    ],
+  },
+  {
+    key: "labelValue",
+    class: "INSTRUMENT",
+    examples: [
+      {
+        name: "défaut",
+        note: "rendu historique inchangé",
+        render: () => <LabelValue label="Référence" value="REF-001" copyable />,
+      },
+      {
+        name: "déviant",
+        note: "valeur numérique + context → couleur jugée + suffixe ▼",
+        render: () => (
+          <LabelValue label="Stock" value={12} context={{ reference: 50, direction: "higher_is_better" }} />
+        ),
+      },
+      {
+        name: "trajectoire",
+        note: "trajectory v(t) → tendance jugée en suffixe",
+        render: () => (
+          <LabelValue
+            label="Stock"
+            value={12}
+            trajectory={[
+              { t: 1, v: 44 },
+              { t: 2, v: 28 },
+              { t: 3, v: 12 },
+            ]}
+            context={{ reference: 50, direction: "higher_is_better" }}
           />
         ),
       },

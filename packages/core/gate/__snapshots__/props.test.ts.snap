@@ -532,6 +532,8 @@ exports[`bpm prop surface snapshot > prop names match committed snapshot (additi
     "valueStyle",
     "copyable",
     "className",
+    "trajectory",
+    "context",
   ],
   "lineChart": [
     "data",
