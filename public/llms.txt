@@ -658,6 +658,7 @@ Carte Leaflet chargée côté client uniquement (évite erreurs SSR). */ const L
 ```
 
 ## bpm.grid
+@component bpm.grid @description Grille responsive avec espacement configurable.
 ```
   cols?: number | { xs?: number
   gap?: number | string
