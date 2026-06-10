@@ -360,6 +360,7 @@ ISO ou texte libre, ou Date (affichage localisé court). */ timestamp?: string |
 ```
 
 ## bpm.commentThread
+@component bpm.commentThread @description Fil de commentaires avec réponses et avatars.
 ```
   comments*: Comment[]
   onPost*: (content: string, parentId?: string) => void | Promise<void>

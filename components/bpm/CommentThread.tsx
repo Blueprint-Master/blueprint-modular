@@ -11,6 +11,10 @@ export interface Comment {
   replies?: Comment[];
 }
 
+/**
+ * @component bpm.commentThread
+ * @description Fil de commentaires avec réponses et avatars.
+ */
 export interface CommentThreadProps {
   comments: Comment[];
   onPost: (content: string, parentId?: string) => void | Promise<void>;
