@@ -11,7 +11,7 @@
  * La page /components itère sur ce registre : pas de page à la main par composant.
  */
 import React from "react";
-import { AnomalyAlert, AreaChart, BarChart, Comparison, FunnelChart, Heatmap, HighlightBox, RadarChart, Treemap, Waterfall, LabelValue, LineChart, LiveChart, LiveGauge, LoadingBar, MachineStatus, Metric, PredictiveChart, Progress, ProgressRing, Rating, ScatterChart, SensorGrid, Sparkline, StatusBox } from "@/components/bpm";
+import { AnomalyAlert, AreaChart, BarChart, Comparison, FunnelChart, Heatmap, HighlightBox, RadarChart, Table, Treemap, Waterfall, LabelValue, LineChart, LiveChart, LiveGauge, LoadingBar, MachineStatus, Metric, PredictiveChart, Progress, ProgressRing, Rating, ScatterChart, SensorGrid, Sparkline, StatusBox } from "@/components/bpm";
 
 /** Série temps réel de démonstration (fenêtre de 2 min, dérive sous le repère). */
 function liveDemoData(drift: number[]): { timestamp: number; value: number }[] {
@@ -832,6 +832,47 @@ export const SHOWCASE: ShowcaseEntry[] = [
             height={220}
             context={{ reference: 75, direction: "higher_is_better" }}
           />
+        ),
+      },
+    ],
+  },
+  {
+    key: "table",
+    class: "DATA",
+    examples: [
+      {
+        name: "défaut",
+        note: "rendu historique inchangé",
+        render: () => (
+          <Table
+            columns={[{ key: "nom", label: "Nom" }, { key: "ca", label: "CA" }]}
+            data={[{ nom: "Agence Nord", ca: 120 }, { nom: "Agence Sud", ca: 85 }]}
+          />
+        ),
+      },
+      {
+        name: "déviant (hook d'interprétation par colonne)",
+        note: "column.context → cellules CA jugées vs objectif 100",
+        render: () => (
+          <Table
+            columns={[
+              { key: "nom", label: "Nom" },
+              { key: "ca", label: "CA", context: { reference: 100, direction: "higher_is_better" } },
+            ]}
+            data={[{ nom: "Agence Nord", ca: 120 }, { nom: "Agence Sud", ca: 85 }]}
+            density="compact"
+          />
+        ),
+      },
+      {
+        name: "états",
+        note: "loading (squelettes) / error (role=alert) / empty",
+        render: () => (
+          <div style={{ display: "grid", gap: 8 }}>
+            <Table columns={[{ key: "a", label: "A" }, { key: "b", label: "B" }]} data={[]} loading />
+            <Table columns={[{ key: "a", label: "A" }]} data={[]} error="Impossible de charger les données" />
+            <Table columns={[{ key: "a", label: "A" }]} data={[]} />
+          </div>
         ),
       },
     ],

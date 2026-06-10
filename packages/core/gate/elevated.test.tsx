@@ -33,6 +33,7 @@ import {
   SensorGrid,
   Sparkline,
   StatusBox,
+  Table,
 } from "../../../components/bpm";
 
 afterEach(cleanup);
@@ -600,5 +601,51 @@ describe("elevate(instrument): highlightBox", () => {
       "unfavorable"
     );
     expect(container.querySelector('[role="status"]')).not.toBeNull();
+  });
+});
+
+describe("elevate(data): table", () => {
+  const COLS = [
+    { key: "nom", label: "Nom" },
+    { key: "ca", label: "CA", context: { reference: 100, direction: "higher_is_better" as const } },
+  ];
+  const DATA = [
+    { nom: "Nord", ca: 120 },
+    { nom: "Sud", ca: 85 },
+  ];
+
+  it("sans context de colonne → cellules non jugées", () => {
+    const { container } = render(
+      <Table columns={[{ key: "ca", label: "CA" }]} data={DATA} />
+    );
+    expect(container.querySelector("[data-judgment]")).toBeNull();
+  });
+
+  it("column.context → cellules numériques jugées individuellement", () => {
+    const { container } = render(<Table columns={COLS} data={DATA} />);
+    const judged = container.querySelectorAll("[data-judgment]");
+    expect(judged.length).toBe(2);
+    expect(judged[0].getAttribute("data-judgment")).toBe("favorable");
+    expect(judged[1].getAttribute("data-judgment")).toBe("unfavorable");
+  });
+
+  it("loading → lignes squelettes + aria-busy", () => {
+    const { container } = render(<Table columns={COLS} data={[]} loading />);
+    expect(container.querySelector("[aria-busy]")).not.toBeNull();
+    expect(container.querySelectorAll("tbody tr").length).toBe(3);
+  });
+
+  it("error → ligne role=alert prioritaire", () => {
+    const { container } = render(
+      <Table columns={COLS} data={DATA} error="Erreur de chargement" loading />
+    );
+    expect(container.querySelector('[role="alert"]')?.textContent).toBe("Erreur de chargement");
+  });
+
+  it("aria-sort posé sur la colonne triée", () => {
+    const { container } = render(
+      <Table columns={COLS} data={DATA} defaultSortColumn="ca" defaultSortDirection="desc" />
+    );
+    expect(container.querySelector('[aria-sort="descending"]')).not.toBeNull();
   });
 });

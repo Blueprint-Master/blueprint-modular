@@ -1361,6 +1361,9 @@ Composant bpm.scheduler — interface non parsée (voir BPM_API.md).
   minWidth?: number  — Largeur minimale du tableau en px (déclenche le scroll horizontal dans le wrapper si conteneur plus étroit). Non défini = pas de min-width.
   trackContext?: boolean  — Si true, expose ce tableau au contexte IA.
   emptyMessage?: string  — Message affiché quand data est vide. Default: "Aucune donnée disponible".
+  loading?: boolean  — État chargement : affiche des lignes squelettes (aria-busy). Additif : défaut false.
+  error?: string | null  — État erreur : affiche le message en ligne role=alert (prioritaire sur loading/empty). Additif : défaut null.
+  density?: "normal" | "compact"  — Densité d'affichage : "normal" (défaut, rendu historique) ou "compact" (padding réduit).
 ```
 INTERDIT : Tableau de données — obligatoire. INTERDIT : JSX dans data[], utiliser render dans TableColumn. */
 

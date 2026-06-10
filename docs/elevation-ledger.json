@@ -427,7 +427,7 @@
     {
       "key": "table",
       "class": "DATA",
-      "status": "todo",
+      "status": "done",
       "reason": null
     },
     {
@@ -940,6 +940,11 @@
       "after": 10,
       "date": "2026-06-10",
       "review": "Les 10 premiers instruments sont coherents: context+interpret, data-judgment, role=status, judgmentColor/Label partages. Derive constatee: (1) logique trier-trajectoire-et-prendre-le-dernier-point dupliquee dans 4 composants -> helper lastValue() ajoute a interpret.ts pour la suite ; (2) nom de la prop trajectoire variable (value elargi / points / measure / trajectory / history) — choix justifie par l API existante de chaque composant, convention consignee: elargir la prop numerique existante quand elle existe, sinon nom semantique naturel."
+    },
+    {
+      "after": 25,
+      "date": "2026-06-10",
+      "review": "25/25 INSTRUMENT traites. Coherence verifiee sur les 15 derniers vs les 10 premiers : pattern stable (context -> interpret, data-judgment, role=status/img + aria-label, repere pointille pour les representations spatiales, jugement par element pour les representations multi-valeurs : barres, points, cellules, capteurs, tuiles). Deux commits groupes assumes (paire progressRing+progress ; quatuor waterfall/funnel/treemap/radar) pour cause de fichiers registre/tests partages — consigne pour le rapport. Les 4 derniers (waterfall, funnel, treemap, radar) ont un jugement plus agrege (cumul, conversion, total, moyenne) : a relire en revue de design."
     }
   ]
 }

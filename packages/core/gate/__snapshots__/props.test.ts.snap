@@ -1040,6 +1040,9 @@ exports[`bpm prop surface snapshot > prop names match committed snapshot (additi
     "minWidth",
     "trackContext",
     "emptyMessage",
+    "loading",
+    "error",
+    "density",
   ],
   "tabs": [
     "tabs",
