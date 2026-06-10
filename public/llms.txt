@@ -645,6 +645,7 @@ Page CRUD générique : table + filtres + modal de création/édition/détail c�
 ```
 
 ## bpm.gps
+Carte Leaflet chargée côté client uniquement (évite erreurs SSR). */ const LeafletMap = dynamic( () => import("./GpsMap").then((m) => m.GpsMap), { ssr: false } ); État du cycle de vie de la géolocalisation. */ export type GpsStatus = "idle" | "loading" | "success" | "error"; @component bpm.gps @description Affichage ou sélection de position GPS.
 ```
   label?: string  — Titre affiché au-dessus du bloc.
   showMap?: boolean  — Afficher une carte Leaflet. Default: true.

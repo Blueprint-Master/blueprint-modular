@@ -12,6 +12,10 @@ const LeafletMap = dynamic(
 /** État du cycle de vie de la géolocalisation. */
 export type GpsStatus = "idle" | "loading" | "success" | "error";
 
+/**
+ * @component bpm.gps
+ * @description Affichage ou sélection de position GPS.
+ */
 export interface GpsProps {
   /** Titre affiché au-dessus du bloc. */
   label?: string;
