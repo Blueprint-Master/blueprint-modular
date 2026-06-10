@@ -482,6 +482,7 @@ Page CRUD générique : table + filtres + modal de création/édition/détail c�
 ```
 
 ## bpm.drawer
+@component bpm.drawer @description Tiroir / panneau latéral (détail, formulaire, filtres).
 ```
   children*: React.ReactNode
   open*: boolean

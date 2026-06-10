@@ -2,6 +2,10 @@
 
 import React, { useEffect } from "react";
 
+/**
+ * @component bpm.drawer
+ * @description Tiroir / panneau latéral (détail, formulaire, filtres).
+ */
 export interface DrawerProps {
   children: React.ReactNode;
   open: boolean;
