@@ -1,6 +1,6 @@
 # Blueprint Modular — Agent Context File
 # Version : 0.1.60
-# Date    : 2026-05-08
+# Date    : 2026-06-10
 # URL canonique : https://blueprint-modular.com/llms.txt
 #
 # Ce fichier est la référence machine de @blueprint-modular/core.
@@ -38,14 +38,14 @@ INTERDIT : import { bpm.modal } ou tout autre destructuring
 ```
 
 ## bpm.activityFeed
-@component bpm.activityFeed @description Flux chronologique d'activités métier avec avatars initiaux, horodatages relatifs en français et état vide. @example bpm.activityFeed({ activities: [{ id: "1", actor: "Alice", action: "a validé", target: "le devis DV-001", timestamp: new Date().toISOString(), color: "success" }], maxItems: 10, onLoadMore: () => fetchMore(), compact: true }) @note SSR : composant client (`use client`) ; horodatages relatifs via Date.now() côté client.
+@component bpm.activityFeed @description Flux chronologique d'activités métier avec avatars initiaux, horodatages relatifs en français et état vide. @example bpm.activityFeed({ activities: [ { id: "1", actor: "Alice", action: "a validé", target: "le devis DV-001", timestamp: new Date().toISOString(), color: "success" }, ], maxItems: 10, onLoadMore: () => fetchMore(), compact: true, }) @param {object} props @param {ActivityItem[]} props.activities - Liste ordonnée ; chaque entrée : `{ id, actor, action, target, timestamp (ISO), icon?, color? }`. Obligatoire. @param {number} [props.maxItems] - Nombre max d'entrées visibles ; si la liste est plus longue, affiche « Charger plus » si onLoadMore est fourni. Optionnel. @param {function} [props.onLoadMore] - Callback du bouton « Charger plus ». Optionnel. @param {string} [props.emptyMessage="Aucune activité récente."] - Message lorsque activities est vide. Optionnel. @param {boolean} [props.compact=false] - Densité réduite (typo et padding plus petits). Optionnel. @param {string} [props.className=""] - Classes CSS sur le conteneur racine. Optionnel. @usage Historique CRM, journal d'audit léger, timeline d'événements sur une fiche. @context PARENT: bpm.panel | bpm.card | colonne dashboard. ASSOCIATED: bpm.timeline, bpm.statusTracker. @note SSR : composant client (`use client`) ; les libellés relatifs utilisent `Date.now()` — prévoir hydratation côté client pour éviter un écart serveur/client sur l'horodatage affiché.
 ```
-  activities*: ActivityItem[]  — Liste ordonnée ; entrée { id, actor, action, target, timestamp (ISO), icon?, color? }.
-  maxItems?: number  — Limite d'affichage ; bouton « Charger plus » si onLoadMore défini et liste plus longue.
-  onLoadMore?: () => void  — Callback du bouton « Charger plus ».
-  emptyMessage?: string  — Message si activities vide. Défaut : « Aucune activité récente. »
-  compact?: boolean  — Densité réduite. Défaut : false.
-  className?: string  — Classes CSS sur `.bpm-activity-feed`. Défaut : "".
+  activities*: ActivityItem[]  — Liste des activités à afficher (ordre = ordre d'affichage).
+  maxItems?: number  — Limite d'affichage ; au-delà, le bouton « Charger plus » apparaît si onLoadMore est défini.
+  onLoadMore?: () => void  — Déclenché au clic sur « Charger plus » lorsque activities.length > maxItems.
+  emptyMessage?: string  — Texte centré affiché quand `activities` est vide. Défaut : « Aucune activité récente. »
+  compact?: boolean  — Mode compact : lignes plus serrées et avatars plus petits. Défaut : `false`.
+  className?: string  — Classes CSS additionnelles sur le conteneur `.bpm-activity-feed`. Défaut : `""`.
 ```
 
 ## bpm.addressInput
@@ -158,6 +158,7 @@ Composant bpm.aiQueryBar — voir @blueprint-modular/core ou BPM_API.md.
   children*: React.ReactNode  — PARENT: bpm.table (colonne statut) | bpm.metric | bpm.card. INTERDIT: texte long >20 chars — utiliser bpm.chip. ASSOCIÉ: bpm.table, bpm.metric, bpm.statusBox.
   variant?: BadgeVariant  — Style / couleur du badge. Valeurs : 'default' | 'primary' | 'success' | 'warning' | 'error'. Default: 'default'.
   className?: string
+  size?: "sm" | "md" | "lg"  — Taille du badge. 'sm' (défaut) | 'md' | 'lg'. Additif — n'affecte pas le rendu existant.
 ```
 
 ## bpm.barChart
@@ -372,6 +373,7 @@ Chat Ollama local (démo).
 ```
 
 ## bpm.crud
+Page CRUD générique : table + filtres + modal de création/édition/détail câblés sur un endpoint REST (GET/POST/PUT/DELETE). Utilise idKey pour les routes par identifiant.
 ```
   title*: string
   endpoint*: string
@@ -567,24 +569,15 @@ Composant bpm.gantt — interface non parsée (voir BPM_API.md).
 ```
 
 ## bpm.gps
-Géolocalisation navigateur + carte Leaflet. Modes `display` (affiche la position courante) et `picker` (sélection d'un point sur la carte). SSR-safe (carte dynamique, ssr:false).
 ```
   label?: string  — Titre affiché au-dessus du bloc.
   showMap?: boolean  — Afficher une carte Leaflet. Default: true.
-  onLocation?: (coords: { lat: number; lng: number; accuracy: number }) => void  — Callback appelé quand la position est obtenue (mode display).
+  onLocation?: (coords: { lat: number  — Callback appelé quand la position est obtenue (mode display).
   height?: number  — Hauteur de la carte en px. Default: 300.
   className?: string  — Classes CSS additionnelles.
-  mode?: "display" | "picker"  — 'display' = affichage position, 'picker' = sélection d'un point. Default: 'display'.
-  value?: { lat: number; lng: number } | null  — Position courante (mode picker, composant contrôlé).
-  onChange?: (coords: { lat: number; lng: number }) => void  — Callback déclenché en mode picker à chaque clic ou déplacement du marqueur.
-```
-Exemple :
-```tsx
-// Mode display
-bpm.gps({ label: "Ma position", onLocation: ({ lat, lng }) => setPos({ lat, lng }) })
-
-// Mode picker
-bpm.gps({ mode: "picker", value: point, onChange: setPoint, height: 400 })
+  mode?: "display" | "picker"  — Mode : 'display' = affichage position, 'picker' = sélection d'un point sur la carte. Default: 'display'.
+  value?: { lat: number  — Position courante (mode picker).
+  onChange?: (coords: { lat: number  — Callback à chaque déplacement du marker ou clic sur la carte (mode picker).
 ```
 
 ## bpm.grid
@@ -601,6 +594,7 @@ Composant bpm.groupedList — interface non parsée (voir BPM_API.md).
 ```
 
 ## bpm.heatmap
+@component bpm.heatmap @description Grille de valeurs numériques avec dégradé de couleur, infobulle au survol et clic optionnel sur cellule. @example bpm.heatmap({ data: [[1,2],[3,4]], xLabels: ["A","B"], yLabels: ["X","Y"], colorScale: { min: "#fff", max: "#f00" } }) @param {object} props @param {number[][]} props.data - Matrice 2D de valeurs numériques. Obligatoire. @param {string[]} props.xLabels - Libellés des colonnes. Obligatoire. @param {string[]} props.yLabels - Libellés des lignes. Obligatoire. @param {{ min: string; max: string }} props.colorScale - Couleurs min/max du dégradé. Obligatoire. @param {number} [props.valueMin] - Valeur minimale pour l'échelle. Optionnel, calculé automatiquement. @param {number} [props.valueMax] - Valeur maximale pour l'échelle. Optionnel, calculé automatiquement. @param {boolean} [props.showValues=false] - Affiche les valeurs dans les cellules. Optionnel. @param {function} [props.onCellClick] - Callback au clic sur une cellule (row, col, value). Optionnel. @param {string} [props.className=""] - Classes CSS additionnelles. Optionnel.
 ```
   data*: number[][]
   xLabels*: string[]
@@ -614,6 +608,7 @@ Composant bpm.groupedList — interface non parsée (voir BPM_API.md).
 ```
 
 ## bpm.highlightBox
+@component bpm.highlightBox @description Bloc de mise en valeur avec barre latérale colorée, numéro, titre et sections RTB/Cible optionnelles. @example bpm.highlightBox({ value: 1, label: "DAILY", title: "Objectif quotidien", rtbPoints: ["Point 1", "Point 2"] }) @param {object} props @param {number} props.value - Numéro affiché dans la barre gauche. Obligatoire. @param {string} props.label - Texte sous le numéro (ex: "DAILY"). Obligatoire. @param {string} props.title - Titre principal du contenu. Obligatoire. @param {string} [props.momentDescription] - Description "Moment" affichée en italique. Optionnel. @param {string[]} [props.rtbPoints] - Points RTB séparés par "·". Optionnel. @param {string|string[]} [props.targetPoints] - Points Cible (chaîne ou liste). Optionnel. @param {string} [props.barColor="#212121"] - Couleur de la barre latérale. Optionnel. @param {string} [props.className=""] - Classes CSS additionnelles. Optionnel.
 ```
   value*: number  — Numéro affiché dans la barre gauche (ex. 1)
   label*: string  — Texte sous le numéro dans la barre (ex. "DAILY")
@@ -626,6 +621,7 @@ Composant bpm.groupedList — interface non parsée (voir BPM_API.md).
 ```
 
 ## bpm.html
+@component bpm.html @description Affiche du HTML brut. À utiliser uniquement avec du contenu de confiance ou préalablement sanitisé. @example bpm.html({ html: "<p>Contenu <strong>HTML</strong></p>" }) @param {object} props @param {string} props.html - Contenu HTML brut à afficher. Obligatoire. @param {string} [props.className=""] - Classes CSS additionnelles. Optionnel. @param {React.CSSProperties} [props.style={}] - Styles inline additionnels. Optionnel.
 ```
   html*: string  — HTML brut à afficher (équivalent st.html). À n'utiliser qu'avec du contenu de confiance ou sanitized.
   className?: string
@@ -633,6 +629,7 @@ Composant bpm.groupedList — interface non parsée (voir BPM_API.md).
 ```
 
 ## bpm.image
+@component bpm.image @description Affiche une image avec chargement différé et options de dimensionnement/ajustement. @example bpm.image({ src: "/photo.jpg", alt: "Photo de profil", width: 200, fit: "cover" }) @param {object} props @param {string} props.src - URL de l'image. Obligatoire. @param {string} props.alt - Texte alternatif pour l'accessibilité. Obligatoire. @param {string} [props.title] - Titre affiché au survol. Optionnel. @param {number|string} [props.width] - Largeur en pixels ou CSS. Optionnel. @param {number|string} [props.height] - Hauteur en pixels ou CSS. Optionnel. @param {"contain"|"cover"|"fill"|"none"} [props.fit="contain"] - Mode d'ajustement object-fit. Optionnel. @param {string} [props.className=""] - Classes CSS additionnelles. Optionnel.
 ```
   src*: string
   alt*: string
@@ -644,6 +641,7 @@ Composant bpm.groupedList — interface non parsée (voir BPM_API.md).
 ```
 
 ## bpm.inlineEdit
+@component bpm.inlineEdit @description Champ éditable au clic : texte, nombre ou select. Validation par Entrée/blur, annulation par Échap. @example bpm.inlineEdit({ value: "Mon texte", onSave: (v) => console.log(v), type: "text" }) @param {object} props @param {string|number} props.value - Valeur actuelle affichée. Obligatoire. @param {function} props.onSave - Callback appelé à la sauvegarde avec la nouvelle valeur. Obligatoire. @param {"text"|"number"|"select"} [props.type="text"] - Type d'édition. Optionnel. @param {{ value: string; label: string }[]} [props.options=[]] - Options pour le type select. Optionnel. @param {string} [props.placeholder=""] - Placeholder si valeur vide. Optionnel. @param {boolean} [props.disabled=false] - Désactive l'édition. Optionnel. @param {string} [props.className=""] - Classes CSS additionnelles. Optionnel. @associated bpm.table, bpm.labelValue
 ```
   value*: string | number
   onSave*: (next: string | number) => void | Promise<void>
@@ -655,6 +653,7 @@ Composant bpm.groupedList — interface non parsée (voir BPM_API.md).
 ```
 
 ## bpm.input
+@component bpm.input @description Champ de saisie texte avec label optionnel. Supporte différents types HTML (text, email, password, etc.). @example bpm.input({ label: "Email", value: email, onChange: setEmail, type: "email", placeholder: "exemple@mail.com" }) @param {object} props @param {string} [props.label] - Label affiché au-dessus du champ. Optionnel. @param {string} [props.value=""] - Valeur contrôlée. Optionnel. @param {function} [props.onChange] - Callback recevant la valeur string directement. Optionnel. @param {string} [props.placeholder=""] - Texte indicatif. Optionnel. @param {"text"|"email"|"password"|"number"|"search"|"date"} [props.type="text"] - Type HTML du champ. Optionnel. @param {boolean} [props.disabled=false] - Désactive le champ. Optionnel. @param {string} [props.className=""] - Classes CSS additionnelles. Optionnel. @parent bpm.modal, bpm.panel, bpm.card @associated bpm.button, bpm.selectbox
 ```
   label?: string  — Label affiché au-dessus du champ.
   value?: string  — Valeur contrôlée.
@@ -678,6 +677,7 @@ Composant bpm.groupedList — interface non parsée (voir BPM_API.md).
 ```
 
 ## bpm.jsonEditor
+@component bpm.jsonEditor @description Éditeur JSON avec validation en temps réel, formatage automatique au blur et indicateur de validité. @example bpm.jsonEditor({ value: '{"key": "value"}', onChange: (v, valid) => console.log(v, valid) }) @param {object} props @param {string} props.value - Contenu JSON sous forme de chaîne. Obligatoire. @param {function} props.onChange - Callback (value, isValid) appelé à chaque modification. Obligatoire. @param {boolean} [props.readOnly=false] - Mode lecture seule (affiche un CodeBlock). Optionnel. @param {string|number} [props.height=300] - Hauteur du textarea. Optionnel. @param {boolean} [props.showValidation=true] - Affiche l'indicateur de validité. Optionnel. @param {string} [props.className=""] - Classes CSS additionnelles. Optionnel. @associated bpm.jsonViewer, bpm.codeBlock
 ```
   value*: string
   onChange*: (value: string, isValid: boolean) => void
@@ -696,6 +696,7 @@ Composant bpm.groupedList — interface non parsée (voir BPM_API.md).
 ```
 
 ## bpm.labelValue
+@component bpm.labelValue @description Affiche une paire label/valeur avec options de style, orientation et bouton copier. @example bpm.labelValue({ label: "Référence", value: "REF-001", copyable: true, valueStyle: "bold" }) @param {object} props @param {string} props.label - Libellé affiché en majuscules. Obligatoire. @param {string|number|React.ReactNode} props.value - Valeur à afficher. Obligatoire. @param {"horizontal"|"vertical"} [props.orientation="horizontal"] - Disposition label/valeur. Optionnel. @param {"sm"|"md"|"lg"} [props.size="md"] - Taille du texte. Optionnel. @param {"default"|"bold"|"accent"|"muted"} [props.valueStyle="default"] - Style de la valeur. Optionnel. @param {boolean} [props.copyable=false] - Affiche un bouton pour copier la valeur. Optionnel. @param {string} [props.className=""] - Classes CSS additionnelles. Optionnel. @parent bpm.card, bpm.panel @associated bpm.metric, bpm.inlineEdit
 ```
   label*: string
   value*: string | number | React.ReactNode
@@ -727,6 +728,7 @@ Composant bpm.groupedList — interface non parsée (voir BPM_API.md).
 ```
 
 ## bpm.liveGauge
+@component bpm.liveGauge @description Jauge demi-cercle avec aiguille et zones colorées (normal/avertissement/critique). @example bpm.liveGauge({ value: 75, min: 0, max: 100, warningAbove: 70, criticalAbove: 90, label: "CPU" }) @param {object} props @param {number} props.value - Valeur actuelle affichée. Obligatoire. @param {number} [props.min=0] - Valeur minimale de l'échelle. Optionnel. @param {number} [props.max=100] - Valeur maximale de l'échelle. Optionnel. @param {number} [props.warningAbove] - Seuil d'avertissement (zone jaune). Optionnel. @param {number} [props.criticalAbove] - Seuil critique (zone rouge). Optionnel. @param {"sm"|"md"|"lg"} [props.size="md"] - Taille de la jauge. Optionnel. @param {string} [props.label] - Libellé affiché sous la jauge. Optionnel. @param {string} [props.className=""] - Classes CSS additionnelles. Optionnel. @associated bpm.liveChart, bpm.metric, bpm.progress
 ```
   value*: number
   min?: number
@@ -748,6 +750,7 @@ Composant bpm.groupedList — interface non parsée (voir BPM_API.md).
 ```
 
 ## bpm.machineStatus
+@component bpm.machineStatus @description Carte d'état machine avec indicateur LED animé (clignotement en production ou défaut). @example bpm.machineStatus({ title: "Machine A", state: "running", detail: "Lot #1234" }) @param {object} props @param {string} props.title - Nom de la machine. Obligatoire. @param {"running"|"idle"|"fault"|"unknown"} props.state - État actuel. Obligatoire. @param {string} [props.detail] - Détail additionnel affiché sous l'état. Optionnel. @param {string} [props.className=""] - Classes CSS additionnelles. Optionnel. @associated bpm.sensorGrid, bpm.liveGauge, bpm.statusBox
 ```
   title*: string
   state*: MachineStatusState
@@ -756,6 +759,7 @@ Composant bpm.groupedList — interface non parsée (voir BPM_API.md).
 ```
 
 ## bpm.map
+@component bpm.map @description Carte OpenStreetMap embarquée en iframe. Utiliser MapView pour des fonctionnalités interactives. @example bpm.map({ lat: 48.8566, lng: 2.3522, height: 300 }) @param {object} props @param {string} [props.iframeSrc] - URL iframe personnalisée. Optionnel. @param {number} [props.lat] - Latitude du centre. Optionnel. @param {number} [props.lng] - Longitude du centre. Optionnel. @param {number|string} [props.width="100%"] - Largeur. Optionnel. @param {number|string} [props.height=400] - Hauteur. Optionnel. @param {string} [props.className=""] - Classes CSS additionnelles. Optionnel. @associated bpm.mapView, bpm.gps
 ```
   iframeSrc?: string
   lat?: number
@@ -766,6 +770,7 @@ Composant bpm.groupedList — interface non parsée (voir BPM_API.md).
 ```
 
 ## bpm.mapView
+@component bpm.mapView @description Carte Leaflet interactive avec marqueurs, polylignes, polygones et gestion des clics. @example bpm.mapView({ center: [48.8566, 2.3522], zoom: 13, markers: [{ position: [48.8566, 2.3522], label: "Paris" }] }) @param {object} props @param {[number, number]} props.center - Coordonnées [lat, lng] du centre. Obligatoire. @param {number} [props.zoom=13] - Niveau de zoom initial. Optionnel. @param {number|string} [props.height=320] - Hauteur de la carte. Optionnel. @param {MapMarker[]} [props.markers=[]] - Liste des marqueurs. Optionnel. @param {function} [props.onMarkerClick] - Callback au clic sur un marqueur. Optionnel. @param {string} [props.tileUrl] - URL du serveur de tuiles. Optionnel. @param {string} [props.tileAttribution] - Attribution du fournisseur de tuiles. Optionnel. @param {[number, number][][]} [props.polylines] - Lignes à tracer. Optionnel. @param {string} [props.polylineColor] - Couleur des polylignes. Optionnel. @param {MapPolygonSpec[]} [props.polygons] - Polygones à afficher. Optionnel. @param {function} [props.onMapClick] - Callback au clic sur la carte. Optionnel. @param {string} [props.className=""] - Classes CSS additionnelles. Optionnel. @associated bpm.map, bpm.routePlanner, bpm.gps
 ```
   center*: [number, number]
   zoom?: number
@@ -799,6 +804,7 @@ Composant bpm.groupedList — interface non parsée (voir BPM_API.md).
 ```
 
 ## bpm.metric
+Locales courants pour le format nombre (ex. "fr-FR" → 1 000,50, "en-US" → 1,000.50). */ export type MetricValueLocale = "fr-FR" | "en-US" | "de-DE" | string; @component bpm.metric @description Affiche une métrique chiffrée avec label, valeur, variation delta et options de formatage (devise, locale). @example bpm.metric({ label: "Chiffre d'affaires", value: 125000, delta: "+12%", currency: "EUR" }) @param {object} props @param {string} props.label - Libellé de la métrique. Obligatoire. @param {string|number} props.value - Valeur principale. Obligatoire. @param {number|string} [props.delta] - Variation affichée (ex: "+12%"). Optionnel. @param {string} [props.name] - Nom pour référencer dans le chat IA. Optionnel. @param {"aucun"|"normal"|"inverse"} [props.deltaType="normal"] - Coloration du delta. Optionnel. @param {string} [props.help] - Texte d'aide au survol. Optionnel. @param {number} [props.deltaDecimals=0] - Décimales pour le delta. Optionnel. @param {string} [props.currency="EUR"] - Devise pour l'affichage. Optionnel. @param {string} [props.valueLocale] - Locale pour formatage (fr-FR, en-US). Optionnel. @param {number} [props.valueDecimals=0] - Décimales pour la valeur. Optionnel. @param {boolean} [props.valueGrouping=true] - Séparateur de milliers. Optionnel. @param {boolean} [props.border=true] - Affiche la bordure. Optionnel. @param {React.ReactNode} [props.icon] - Icône à gauche du label. Optionnel. @param {string} [props.subtext] - Texte contextuel sous la valeur. Optionnel. @param {string} [props.accentColor] - Couleur d'accent. Optionnel. @param {boolean} [props.compact=false] - Mode compact réduit. Optionnel. @param {boolean} [props.trackContext=false] - Expose au contexte IA. Optionnel. @parent bpm.metricRow, bpm.grid, bpm.card @associated bpm.badge, bpm.plotlyChart
 ```
   label*: string  — Libellé affiché au-dessus de la valeur.
   value*: string | number  — Valeur principale (string ou number).
@@ -826,7 +832,7 @@ Composant bpm.groupedList — interface non parsée (voir BPM_API.md).
 ```
 
 ## bpm.modal
-Modal dialog. PATTERN : {isOpen && bpm.modal({ isOpen:true, onClose, title, children })} — TOUJOURS dans return(), jamais après.
+@component bpm.modal @description Fenêtre modale avec backdrop, fermeture Échap/clic extérieur. Pattern: {isOpen && bpm.modal({...})} @example bpm.modal({ isOpen: true, onClose: () => setOpen(false), title: "Confirmation", children: <p>Contenu</p> }) @param {object} props @param {boolean} props.isOpen - Contrôle l'affichage. Obligatoire. @param {function} props.onClose - Callback de fermeture. Obligatoire. @param {React.ReactNode} [props.title] - Titre de la modale. Optionnel. @param {React.ReactNode} props.children - Contenu. Obligatoire. @param {"small"|"medium"|"large"} [props.size="medium"] - Taille (400/600/800px). Optionnel. @param {boolean} [props.showCloseButton=true] - Affiche le bouton fermer. Optionnel. @associated bpm.button, bpm.input, bpm.selectbox, bpm.confirmModal @forbidden bpm.modal (pas d'imbrication) Modal dialog. PATTERN : {isOpen && bpm.modal({ isOpen:true, onClose, title, children })} — TOUJOURS dans return(), jamais après.
 ```
   isOpen*: boolean  — Contrôle l'affichage. PATTERN OBLIGATOIRE : {isOpen && bpm.modal({ isOpen:true, ... })}
   onClose*: () => void  — Callback de fermeture — obligatoire.
@@ -846,6 +852,7 @@ Modal dialog. PATTERN : {isOpen && bpm.modal({ isOpen:true, onClose, title, chil
 ```
 
 ## bpm.nfcBadge
+@component bpm.nfcBadge @description Badge indicateur de statut NFC/scannable avec icône et variantes de couleur. @example bpm.nfcBadge({ label: "Actif", variant: "success" }) @param {object} props @param {string} [props.label="Scannable"] - Texte affiché. Optionnel. @param {"default"|"primary"|"success"} [props.variant="default"] - Variante de couleur. Optionnel. @param {string} [props.className=""] - Classes CSS additionnelles. Optionnel. @associated bpm.badge, bpm.qrCode, bpm.barcode
 ```
   label?: string
   variant?: "default" | "primary" | "success"
@@ -864,6 +871,7 @@ Modal dialog. PATTERN : {isOpen && bpm.modal({ isOpen:true, onClose, title, chil
 ```
 
 ## bpm.numberInput
+@component bpm.numberInput @description Champ de saisie numérique avec validation min/max et formatage au blur. @example bpm.numberInput({ label: "Quantité", value: 10, onChange: setQty, min: 0, max: 100, step: 1 }) @param {object} props @param {string} [props.label] - Label affiché au-dessus. Optionnel. @param {number|null} [props.value] - Valeur contrôlée. Optionnel. @param {function} [props.onChange] - Callback (number | null). Optionnel. @param {number|null} [props.min] - Valeur minimale autorisée. Optionnel. @param {number|null} [props.max] - Valeur maximale autorisée. Optionnel. @param {number} [props.step=1] - Pas d'incrémentation. Optionnel. @param {boolean} [props.disabled=false] - Désactive le champ. Optionnel. @param {string} [props.help] - Texte d'aide au survol. Optionnel. @param {string} [props.placeholder=""] - Placeholder. Optionnel. @parent bpm.modal, bpm.panel @associated bpm.input, bpm.slider
 ```
   label?: string
   value?: number | null
@@ -877,6 +885,7 @@ Modal dialog. PATTERN : {isOpen && bpm.modal({ isOpen:true, onClose, title, chil
 ```
 
 ## bpm.offlineIndicator
+@component bpm.offlineIndicator @description Indicateur de statut hors ligne avec compteur de requêtes en attente et bouton de synchronisation. @example bpm.offlineIndicator({ demo: false }) @param {object} props @param {boolean} [props.demo=false] - Mode démo pour afficher le composant même sans file. Optionnel. @associated bpm.toast, bpm.statusBox
 ```
   demo?: boolean  — Affiche le composant même sans file (pour démo / page composants).
 ```
@@ -910,6 +919,7 @@ Conteneur page (core) — props : children.
 ```
 
 ## bpm.pagination
+@component bpm.pagination @description Contrôle de pagination avec boutons précédent/suivant, indicateur de page et compteur d'éléments. @example bpm.pagination({ page: 1, totalPages: 10, onPageChange: setPage, totalItems: 100, pageSize: 10 }) @param {object} props @param {number} props.page - Page courante (1-based). Obligatoire. @param {number} props.totalPages - Nombre total de pages. Obligatoire. @param {function} props.onPageChange - Callback au changement de page. Obligatoire. @param {number} [props.pageSize] - Taille de page pour affichage. Optionnel. @param {number} [props.totalItems] - Nombre total d'éléments. Optionnel. @param {string} [props.label] - Libellé personnalisé. Optionnel. @param {string} [props.className=""] - Classes CSS additionnelles. Optionnel. @associated bpm.table, bpm.crud
 ```
   page*: number  — Page courante (1-based).
   totalPages*: number  — Nombre total de pages.
@@ -931,6 +941,7 @@ Conteneur page (core) — props : children.
 ```
 
 ## bpm.pdfViewer
+@component bpm.pdfViewer @description Visionneuse PDF embarquée en iframe avec dimensions personnalisables. @example bpm.pdfViewer({ src: "/documents/rapport.pdf", title: "Rapport annuel", height: 600 }) @param {object} props @param {string} props.src - URL du fichier PDF. Obligatoire. @param {string} [props.title="PDF"] - Titre pour l'accessibilité. Optionnel. @param {number|string} [props.width="100%"] - Largeur. Optionnel. @param {number|string} [props.height="600px"] - Hauteur. Optionnel. @param {string} [props.className=""] - Classes CSS additionnelles. Optionnel. @associated bpm.filePreview, bpm.fileUploader
 ```
   src*: string
   title?: string
@@ -940,6 +951,7 @@ Conteneur page (core) — props : children.
 ```
 
 ## bpm.pivotTable
+@component bpm.pivotTable @description Tableau croisé dynamique avec agrégation (sum, avg, count, min, max), tri et heatmap. @example bpm.pivotTable({ data: rows, rowKey: "region", colKey: "produit", valueKey: "ventes", agg: "sum" }) @param {object} props @param {Record<string, unknown>[]} props.data - Données source. Obligatoire. @param {string} props.rowKey - Clé pour les lignes. Obligatoire. @param {string} props.colKey - Clé pour les colonnes. Obligatoire. @param {string} props.valueKey - Clé pour les valeurs à agréger. Obligatoire. @param {"sum"|"avg"|"count"|"min"|"max"} [props.agg="sum"] - Fonction d'agrégation. Optionnel. @param {string} [props.className=""] - Classes CSS additionnelles. Optionnel. @associated bpm.table, bpm.dataExplorer, bpm.heatmap
 ```
   data*: Record<string, unknown>[]
   rowKey*: string
@@ -955,6 +967,7 @@ Composant bpm.plcConnector — voir @blueprint-modular/core ou BPM_API.md.
 ```
 
 ## bpm.plotlyChart
+@component bpm.plotlyChart @description Graphique interactif Plotly.js avec support de tous types de traces (bar, line, scatter, etc.). @example bpm.plotlyChart({ data: [{ type: "bar", x: ["A", "B"], y: [10, 20] }], height: 400 }) @param {object} props @param {object[]} [props.data] - Tableau de traces Plotly. Optionnel. @param {object} [props.layout] - Config layout Plotly (title, axes). Optionnel. @param {object} [props.config] - Config Plotly (responsive, displayModeBar). Optionnel. @param {number} [props.height=400] - Hauteur en pixels. Optionnel. @param {number|string} [props.width="100%"] - Largeur. Optionnel. @param {string} [props.className=""] - Classes CSS additionnelles. Optionnel. @param {string} [props.iframeSrc] - URL iframe (compatibilité ascendante). Optionnel. @parent bpm.panel, bpm.card, bpm.tabs @associated bpm.metric, bpm.selectbox, bpm.dateRangePicker
 ```
   data?: object[]  — Tableau de traces Plotly (ex. [{type:'bar', x:[], y:[]}]). Obligatoire.
   layout?: object  — Config layout Plotly (title, xaxis, yaxis, etc.).
@@ -966,6 +979,7 @@ Composant bpm.plcConnector — voir @blueprint-modular/core ou BPM_API.md.
 ```
 
 ## bpm.popover
+@component bpm.popover @description Bulle contextuelle positionnée autour d'un déclencheur avec fermeture au clic extérieur. @example bpm.popover({ trigger: <button>Info</button>, children: <p>Contenu</p>, placement: "bottom" }) @param {object} props @param {React.ReactNode} props.trigger - Élément déclencheur. Obligatoire. @param {React.ReactNode} props.children - Contenu de la bulle. Obligatoire. @param {"top"|"bottom"|"left"|"right"} [props.placement="bottom"] - Position de la bulle. Optionnel. @param {string} [props.className=""] - Classes CSS additionnelles. Optionnel. @associated bpm.tooltip, bpm.dropdown
 ```
   trigger*: React.ReactNode
   children*: React.ReactNode
@@ -974,6 +988,7 @@ Composant bpm.plcConnector — voir @blueprint-modular/core ou BPM_API.md.
 ```
 
 ## bpm.predictiveChart
+@component bpm.predictiveChart @description Graphique de prévision avec données historiques, prédictions et intervalle de confiance. @example bpm.predictiveChart({ historical: [{x:1,y:10}], predicted: [{x:2,y:15}], confidenceUpper: [{x:2,y:18}], confidenceLower: [{x:2,y:12}], todayX: 1.5 }) @param {object} props @param {{ x: number; y: number }[]} props.historical - Points historiques. Obligatoire. @param {{ x: number; y: number }[]} props.predicted - Points prédits (ligne pointillée). Obligatoire. @param {{ x: number; y: number }[]} [props.confidenceUpper] - Borne supérieure de confiance. Optionnel. @param {{ x: number; y: number }[]} [props.confidenceLower] - Borne inférieure de confiance. Optionnel. @param {number} [props.todayX] - Position X de la ligne "aujourd'hui". Optionnel. @param {number} [props.width=520] - Largeur du SVG. Optionnel. @param {number} [props.height=220] - Hauteur du SVG. Optionnel. @param {string} [props.className=""] - Classes CSS additionnelles. Optionnel. @associated bpm.lineChart, bpm.liveChart, bpm.metric
 ```
   historical*: { x: number
   predicted*: { x: number
@@ -1005,6 +1020,7 @@ Composant bpm.plcConnector — voir @blueprint-modular/core ou BPM_API.md.
 ```
 
 ## bpm.progressRing
+@component bpm.progressRing @description Anneau de progression circulaire SVG avec animation de transition. @example bpm.progressRing({ value: 75, max: 100, size: 80, strokeWidth: 8 }) @param {object} props @param {number} props.value - Valeur actuelle. Obligatoire. @param {number} [props.max=100] - Valeur maximale. Optionnel. @param {number} [props.size=72] - Diamètre en pixels. Optionnel. @param {number} [props.strokeWidth=8] - Épaisseur du trait. Optionnel. @param {string} [props.className=""] - Classes CSS additionnelles. Optionnel. @associated bpm.progress, bpm.liveGauge, bpm.metric
 ```
   value*: number
   max?: number
@@ -1014,6 +1030,7 @@ Composant bpm.plcConnector — voir @blueprint-modular/core ou BPM_API.md.
 ```
 
 ## bpm.promptInput
+@component bpm.promptInput @description Zone de saisie multi-lignes pour prompts IA avec auto-resize, compteur de tokens et envoi Ctrl+Enter. @example bpm.promptInput({ value: prompt, onChange: setPrompt, onSubmit: handleSend, placeholder: "Posez votre question...", isLoading: false }) @param {object} props @param {string} props.value - Contenu du prompt. Obligatoire. @param {function} props.onChange - Callback au changement de texte. Obligatoire. @param {function} props.onSubmit - Callback à l'envoi (Ctrl+Enter ou bouton). Obligatoire. @param {string} [props.placeholder="Écrivez votre message..."] - Placeholder. Optionnel. @param {boolean} [props.isLoading=false] - État de chargement (désactive l'envoi). Optionnel. @param {boolean} [props.disabled=false] - Désactive la saisie et l'envoi. Optionnel. @param {number} [props.maxLength] - Longueur maximale. Optionnel. @param {boolean} [props.showTokenCount=false] - Affiche le compteur de tokens estimé. Optionnel. @param {number} [props.minRows=3] - Nombre minimum de lignes. Optionnel. @param {number} [props.maxRows=8] - Nombre maximum de lignes. Optionnel. @param {string} [props.className=""] - Classes CSS additionnelles. Optionnel. @parent bpm.chatInterface @associated bpm.modelSelector, bpm.streamingText
 ```
   value*: string
   onChange*: (value: string) => void
@@ -1029,6 +1046,7 @@ Composant bpm.plcConnector — voir @blueprint-modular/core ou BPM_API.md.
 ```
 
 ## bpm.qrCode
+@component bpm.qrCode @description Génère un QR code SVG à partir d'une valeur texte avec couleurs personnalisables. @example bpm.qrCode({ value: "https://example.com", size: 150, fgColor: "#000" }) @param {object} props @param {string} props.value - Texte/URL à encoder. Obligatoire. @param {number} [props.size=128] - Taille en pixels. Optionnel. @param {string} [props.fgColor="var(--bpm-text-primary)"] - Couleur des modules. Optionnel. @param {string} [props.bgColor="var(--bpm-bg-primary)"] - Couleur de fond. Optionnel. @param {string} [props.className=""] - Classes CSS additionnelles. Optionnel. @associated bpm.barcode, bpm.nfcBadge
 ```
   value*: string
   size?: number
@@ -1038,6 +1056,7 @@ Composant bpm.plcConnector — voir @blueprint-modular/core ou BPM_API.md.
 ```
 
 ## bpm.radarChart
+@component bpm.radarChart @description Graphique radar SVG pour comparer des valeurs sur plusieurs axes. @example bpm.radarChart({ axes: ["Vitesse", "Force", "Endurance"], values: [80, 60, 90], max: 100 }) @param {object} props @param {string[]} props.axes - Libellés des axes. Obligatoire. @param {number[]} props.values - Valeurs correspondantes aux axes. Obligatoire. @param {number} [props.max] - Valeur maximale de l'échelle. Optionnel, calculé auto. @param {number} [props.width=320] - Largeur du SVG. Optionnel. @param {number} [props.height=320] - Hauteur du SVG. Optionnel. @param {string} [props.className=""] - Classes CSS additionnelles. Optionnel. @associated bpm.plotlyChart, bpm.lineChart
 ```
   axes*: string[]
   values*: number[]
@@ -1048,6 +1067,7 @@ Composant bpm.plcConnector — voir @blueprint-modular/core ou BPM_API.md.
 ```
 
 ## bpm.radioGroup
+@component bpm.radioGroup @description Groupe de boutons radio avec disposition verticale ou horizontale. @example bpm.radioGroup({ name: "choix", label: "Choisissez", options: ["A", "B", "C"], value: selected, onChange: setSelected }) @param {object} props @param {string} [props.name] - Nom du groupe pour le formulaire. Optionnel. @param {string} [props.label] - Label affiché au-dessus. Optionnel. @param {RadioOption[]} [props.options=[]] - Options (string ou { value, label }). Optionnel. @param {string} [props.value] - Valeur sélectionnée. Optionnel. @param {function} [props.onChange] - Callback au changement. Optionnel. @param {boolean} [props.disabled=false] - Désactive le groupe. Optionnel. @param {"vertical"|"horizontal"} [props.layout="vertical"] - Disposition. Optionnel. @param {string} [props.className=""] - Classes CSS additionnelles. Optionnel. @associated bpm.checkbox, bpm.selectbox, bpm.input
 ```
   name?: string
   label?: string
@@ -1060,6 +1080,7 @@ Composant bpm.plcConnector — voir @blueprint-modular/core ou BPM_API.md.
 ```
 
 ## bpm.rating
+@component bpm.rating @description Composant d'évaluation par étoiles cliquables avec taille personnalisable. @example bpm.rating({ value: 3, max: 5, onChange: setRating, size: "medium" }) @param {object} props @param {number} [props.value=0] - Note actuelle. Optionnel. @param {number} [props.max=5] - Nombre maximum d'étoiles. Optionnel. @param {function} [props.onChange] - Callback au clic sur une étoile. Optionnel. @param {boolean} [props.disabled=false] - Désactive l'interaction. Optionnel. @param {"small"|"medium"|"large"} [props.size="medium"] - Taille des étoiles. Optionnel. @associated bpm.slider, bpm.metric
 ```
   value?: number
   max?: number
@@ -1090,6 +1111,7 @@ Composant bpm.plcConnector — voir @blueprint-modular/core ou BPM_API.md.
 ```
 
 ## bpm.richTextEditor
+@component bpm.richTextEditor @description Éditeur WYSIWYG contentEditable avec barre d'outils (gras, italique, titres, listes, liens, images) et export HTML/Markdown. @example bpm.richTextEditor({ value: html, onChange: ({ html, markdown }) => save(html), placeholder: "Rédigez ici..." }) @param {object} props @param {string} [props.defaultHtml=""] - HTML initial. Optionnel. @param {string} [props.value] - HTML contrôlé. Optionnel. @param {function} [props.onChange] - Callback ({ html, markdown }). Optionnel. @param {"html"|"markdown"} [props.format="html"] - Affiche l'aperçu Markdown si "markdown". Optionnel. @param {number} [props.minHeight=160] - Hauteur minimale. Optionnel. @param {number} [props.maxHeight=360] - Hauteur maximale. Optionnel. @param {boolean} [props.readOnly=false] - Mode lecture seule. Optionnel. @param {string} [props.placeholder=""] - Placeholder. Optionnel. @param {string} [props.className=""] - Classes CSS additionnelles. Optionnel. @associated bpm.textarea, bpm.markdown, bpm.codeEditor
 ```
   defaultHtml?: string
   value?: string
@@ -1127,6 +1149,7 @@ Composant bpm.scheduler — interface non parsée (voir BPM_API.md).
 ```
 
 ## bpm.scrollContainer
+@component bpm.scrollContainer @description Conteneur avec scroll vertical, horizontal ou bidirectionnel et option pour masquer la scrollbar. @example bpm.scrollContainer({ children: <Content />, height: 400, direction: "vertical", hideScrollbar: true }) @param {object} props @param {React.ReactNode} props.children - Contenu scrollable. Obligatoire. @param {string|number} [props.height="100%"] - Hauteur du conteneur. Optionnel. @param {string|number} [props.maxHeight] - Hauteur maximale. Optionnel. @param {"vertical"|"horizontal"|"both"} [props.direction="vertical"] - Direction du scroll. Optionnel. @param {boolean} [props.hideScrollbar=false] - Masque la scrollbar visuellement. Optionnel. @param {string} [props.className=""] - Classes CSS additionnelles. Optionnel. @parent bpm.panel, bpm.card
 ```
   children*: React.ReactNode
   height?: string | number  — Hauteur du conteneur (défaut '100%').
@@ -1137,6 +1160,7 @@ Composant bpm.scheduler — interface non parsée (voir BPM_API.md).
 ```
 
 ## bpm.selectbox
+@component bpm.selectbox @description Liste déroulante avec dropdown portalé, support clavier et placeholder. @example bpm.selectbox({ label: "Pays", options: ["France", "Belgique", "Suisse"], value: selected, onChange: setSelected }) @param {object} props @param {string} [props.label] - Label affiché au-dessus. Optionnel. @param {SelectboxOption[]} [props.options=[]] - Options (string ou { value, label }). Optionnel. @param {string|null} [props.value] - Valeur sélectionnée. Optionnel. @param {function} [props.onChange] - Callback au changement. Optionnel. @param {boolean} [props.disabled=false] - Désactive le composant. Optionnel. @param {string} [props.help] - Texte d'aide au survol. Optionnel. @param {string} [props.placeholder="Sélectionner..."] - Placeholder. Optionnel. @param {boolean} [props.required=false] - Champ obligatoire. Optionnel. @param {number} [props.triggerHeight] - Hauteur du trigger en pixels. Optionnel. @parent bpm.panel, bpm.modal, bpm.card @associated bpm.input, bpm.radioGroup, bpm.autocomplete
 ```
   label?: string  — Label affiché au-dessus.
   options?: SelectboxOption[]  — Liste d'options. Format : string[] ou [{value, label}].
@@ -1157,6 +1181,7 @@ Composant bpm.scheduler — interface non parsée (voir BPM_API.md).
 ```
 
 ## bpm.signaturePad
+@component bpm.signaturePad @description Zone de signature canvas avec export data URL PNG et boutons effacer/enregistrer. @example bpm.signaturePad({ width: 400, height: 160, onChangeDataUrl: setSignature }) @param {object} props @param {number} [props.width=400] - Largeur du canvas. Optionnel. @param {number} [props.height=160] - Hauteur du canvas. Optionnel. @param {string} [props.lineColor="var(--bpm-text-primary)"] - Couleur du trait. Optionnel. @param {string} [props.className=""] - Classes CSS additionnelles. Optionnel. @param {function} [props.onChangeDataUrl] - Callback (dataUrl | null). Optionnel. @associated bpm.fileUploader, bpm.image
 ```
   width?: number
   height?: number
@@ -1190,6 +1215,7 @@ Composant bpm.scheduler — interface non parsée (voir BPM_API.md).
 ```
 
 ## bpm.sparkline
+@component bpm.sparkline @description Courbe SVG compacte pour afficher une tendance avec couleur selon la direction (up/down/flat). @example bpm.sparkline({ values: [10, 15, 12, 18, 22], width: 120, height: 36, trend: "up" }) @param {object} props @param {number[]} props.values - Valeurs de la série. Obligatoire. @param {number} [props.width=120] - Largeur du SVG. Optionnel. @param {number} [props.height=36] - Hauteur du SVG. Optionnel. @param {"up"|"down"|"flat"} [props.trend="flat"] - Tendance pour la couleur. Optionnel. @param {string} [props.className=""] - Classes CSS additionnelles. Optionnel. @associated bpm.metric, bpm.lineChart, bpm.liveChart
 ```
   values*: number[]
   width?: number
@@ -1208,12 +1234,14 @@ Composant bpm.scheduler — interface non parsée (voir BPM_API.md).
 ```
 
 ## bpm.spinnerDot
+@component bpm.spinnerDot @description Spinner compact type cercle tournant pour indicateur de chargement inline. @example bpm.spinnerDot({ size: "medium" }) @param {object} props @param {string} [props.className=""] - Classes CSS additionnelles. Optionnel. @param {"small"|"medium"|"large"} [props.size="medium"] - Taille (16/24/32px). Optionnel. @associated bpm.spinner, bpm.loadingBar, bpm.skeleton
 ```
   className?: string
   size?: "small" | "medium" | "large"  — Taille : small (16px), medium (24px), large (32px).
 ```
 
 ## bpm.splitView
+@component bpm.splitView @description Deux volets redimensionnables avec séparateur draggable. Empile verticalement sous 640px. @example bpm.splitView({ left: <List />, right: <Detail />, defaultSplit: 30, direction: "horizontal" }) @param {object} props @param {React.ReactNode} props.left - Contenu du volet gauche/haut. Obligatoire. @param {React.ReactNode} props.right - Contenu du volet droit/bas. Obligatoire. @param {number} [props.defaultSplit=50] - Pourcentage initial du premier volet. Optionnel. @param {number} [props.minLeft=15] - Pourcentage minimum du premier volet. Optionnel. @param {number} [props.minRight=15] - Pourcentage minimum du second volet. Optionnel. @param {"horizontal"|"vertical"} [props.direction="horizontal"] - Direction du split. Optionnel. @param {string} [props.className=""] - Classes CSS additionnelles. Optionnel. @associated bpm.masterDetail, bpm.panel
 ```
   left*: React.ReactNode
   right*: React.ReactNode
@@ -1265,6 +1293,7 @@ Composant bpm.scheduler — interface non parsée (voir BPM_API.md).
 ```
 
 ## bpm.streamingText
+@component bpm.streamingText @description Affichage de texte en streaming avec curseur clignotant et rendu Markdown optionnel. @example bpm.streamingText({ content: partialText, isStreaming: true, renderMarkdown: true }) @param {object} props @param {string} props.content - Texte courant (s'allonge au fil du stream). Obligatoire. @param {boolean} [props.isStreaming=false] - Affiche le curseur clignotant. Optionnel. @param {boolean} [props.renderMarkdown=true] - Interprète le contenu comme Markdown. Optionnel. @param {string} [props.className=""] - Classes CSS additionnelles. Optionnel. @parent bpm.chatInterface @associated bpm.markdown, bpm.promptInput
 ```
   content*: string  — Texte courant (s'allonge au fil du stream).
   isStreaming?: boolean  — Affiche le curseur clignotant quand true.
@@ -1273,6 +1302,7 @@ Composant bpm.scheduler — interface non parsée (voir BPM_API.md).
 ```
 
 ## bpm.suggestionCard
+@component bpm.suggestionCard @description Carte de suggestion IA avec titre, description, barre de confiance et boutons d'action. @example bpm.suggestionCard({ title: "Suggestion", description: "Détail...", confidence: 85, actions: [{ label: "Appliquer", onClick: apply, variant: "primary" }] }) @param {object} props @param {string} props.title - Titre de la suggestion. Obligatoire. @param {string} props.description - Description détaillée. Obligatoire. @param {number} [props.confidence] - Niveau de confiance 0-100. Optionnel. @param {string} [props.icon] - Nom d'icône Material Symbols. Optionnel. @param {{ label: string; onClick: () => void; variant?: "primary" | "secondary" }[]} props.actions - Boutons d'action. Obligatoire. @param {boolean} [props.dismissable] - Affiche le bouton fermer. Optionnel. @param {function} [props.onDismiss] - Callback à la fermeture. Optionnel. @param {string} [props.className=""] - Classes CSS additionnelles. Optionnel. @associated bpm.card, bpm.message
 ```
   title*: string
   description*: string
@@ -1334,6 +1364,7 @@ INTERDIT : Tableau de données — obligatoire. INTERDIT : JSX dans data[], util
 ```
 
 ## bpm.theme
+@component bpm.theme @description Sélecteur de thème clair/sombre avec toggle ou select, persiste en localStorage. @example bpm.theme({ variant: "toggle", label: "Mode sombre" }) @param {object} props @param {"toggle"|"select"} [props.variant="toggle"] - Type de contrôle. Optionnel. @param {React.ReactNode} [props.label] - Label du toggle. Optionnel. @param {string} [props.lightLabel="Clair"] - Libellé option claire. Optionnel. @param {string} [props.darkLabel="Sombre"] - Libellé option sombre. Optionnel. @param {string} [props.className=""] - Classes CSS additionnelles. Optionnel. @associated bpm.toggle, bpm.pageLayout
 ```
   variant?: ThemeVariant  — Type de contrôle : interrupteur (toggle) ou liste (select).
   label?: React.ReactNode  — Label à côté du toggle (variant toggle uniquement).
@@ -1343,6 +1374,7 @@ INTERDIT : Tableau de données — obligatoire. INTERDIT : JSX dans data[], util
 ```
 
 ## bpm.timeInput
+@component bpm.timeInput @description Champ de sélection d'heure avec popover heures/minutes. @example bpm.timeInput({ label: "Heure de début", value: time, onChange: setTime }) @param {object} props @param {string} [props.label] - Label affiché au-dessus. Optionnel. @param {Date|string|null} [props.value] - Valeur (Date ou "HH:MM"). Optionnel. @param {function} [props.onChange] - Callback (Date | null). Optionnel. @param {boolean} [props.disabled=false] - Désactive le champ. Optionnel. @param {string} [props.min] - Heure minimale "HH:MM". Optionnel. @param {string} [props.max] - Heure maximale "HH:MM". Optionnel. @associated bpm.dateInput, bpm.timePickerPopover, bpm.scheduler
 ```
   label?: string
   value?: Date | string | null
@@ -1520,6 +1552,7 @@ Toast visuel ; en production préférer useToast().
 ```
 
 ## bpm.video
+@component bpm.video @description Lecteur vidéo HTML5 avec contrôles natifs et options de lecture en boucle/silencieux. @example bpm.video({ src: "/videos/demo.mp4", controls: true, width: 640, height: 360 }) @param {object} props @param {string} props.src - URL de la vidéo. Obligatoire. @param {boolean} [props.controls=true] - Affiche les contrôles natifs. Optionnel. @param {boolean} [props.loop=false] - Lecture en boucle. Optionnel. @param {boolean} [props.muted=false] - Lecture silencieuse. Optionnel. @param {number} [props.width] - Largeur en pixels. Optionnel. @param {number} [props.height] - Hauteur en pixels. Optionnel. @param {string} [props.className=""] - Classes CSS additionnelles. Optionnel. @associated bpm.image, bpm.carousel, bpm.lightbox
 ```
   src*: string
   controls?: boolean
@@ -1548,82 +1581,72 @@ Toast visuel ; en production préférer useToast().
   className?: string
 ```
 
-
-## COMPOSANTS INTERNES (helpers)
-Les composants ci-dessous sont utilisés en interne par d'autres composants bpm.
-Ils ne sont pas accessibles via bpm.xxx directement.
-
-## DatePickerPopover (interne)
-Utilisé par bpm.dateInput et bpm.dateRangePicker.
+## bpm.dataExplorerAnalytics
 ```
-  anchorRef*: React.RefObject<HTMLElement | null>  — Référence de l'élément ancre.
-  value*: Date | null  — Date sélectionnée.
-  min?: Date | null  — Date minimum.
-  max?: Date | null  — Date maximum.
-  onSelect*: (date: Date) => void  — Callback de sélection.
-  onClose*: () => void  — Callback de fermeture.
-```
-
-## TimePickerPopover (interne)
-Utilisé par bpm.timeInput.
-```
-  anchorRef*: React.RefObject<HTMLElement | null>  — Référence de l'élément ancre.
-  value*: Date | null  — Date/heure sélectionnée.
-  onSelect*: (hours: number, minutes: number) => void  — Callback de sélection.
-  onClose*: () => void  — Callback de fermeture.
-```
-
-## GpsMap (interne)
-Utilisé par bpm.gps pour afficher la carte Leaflet.
-```
-  mode*: "display" | "picker"  — Mode affichage ou sélection.
-  center*: { lat: number; lng: number }  — Centre de la carte.
-  markerPosition*: { lat: number; lng: number } | null  — Position du marqueur.
-  onMarkerChange?: (lat: number, lng: number) => void  — Callback déplacement marqueur.
-  onMapClick?: (lat: number, lng: number) => void  — Callback clic sur carte.
-  height*: number  — Hauteur de la carte en px.
-```
-
-## MapViewLeafletInner (interne)
-Utilisé par bpm.mapView pour le rendu Leaflet après import dynamique.
-```
-  rl*: typeof import("react-leaflet")  — Module react-leaflet.
-  L*: typeof import("leaflet")  — Module leaflet.
-  center*: [number, number]  — Centre [lat, lng].
-  zoom*: number  — Niveau de zoom.
-  height*: number | string  — Hauteur de la carte.
-  markers*: MapMarker[]  — Liste des marqueurs.
-  onMarkerClick?: (index: number, marker: MapMarker) => void  — Callback clic marqueur.
-  tileUrl*: string  — URL des tuiles.
-  tileAttribution?: string  — Attribution des tuiles.
-  polylines?: [number, number][][]  — Polylignes.
-  polylineColor?: string  — Couleur des polylignes.
-  polygons?: MapPolygonSpec[]  — Polygones.
-  onMapClick?: (latlng: [number, number]) => void  — Callback clic carte.
+  mode*: "analytics"
+  data*: Record<string, unknown>[]
+  columns*: ExplorerAnalyticsColumn[]
+  chartConfig?: { type: "bar" | "line" | "pie"
+  onFilter?: (filtered: Record<string, unknown>[]) => void
   className?: string
 ```
 
-## DataExplorerAnalytics (interne)
-Variante analytique du DataExplorer avec filtres et graphiques.
+## bpm.dataExplorerClassic
 ```
-  mode*: "analytics"  — Mode de l'explorateur.
-  data*: Record<string, unknown>[]  — Données à explorer.
-  columns*: ExplorerAnalyticsColumn[]  — Définition des colonnes (key, label, type, enumValues?).
-  chartConfig?: { type: "bar" | "line" | "pie"; xKey: string; yKey: string }  — Configuration du graphique.
-  onFilter?: (filtered: Record<string, unknown>[]) => void  — Callback données filtrées.
+  data*: Record<string, unknown>[]
+  columns?: ColumnDef[]
+  title?: string
+  searchable?: boolean
+  exportable?: boolean
+  pageSize?: number
   className?: string
 ```
 
-## DataExplorerClassic (interne)
-Variante classique du DataExplorer avec recherche, tri et pagination.
+## bpm.datePickerPopover
 ```
-  data*: Record<string, unknown>[]  — Données à explorer.
-  columns?: ColumnDef[]  — Définition des colonnes (key, label, type, sortable, filterable).
-  title?: string  — Titre de l'explorateur.
-  searchable?: boolean  — Activer la recherche. Default: true.
-  exportable?: boolean  — Activer l'export CSV. Default: false.
-  pageSize?: number  — Nombre d'éléments par page. Default: 20.
+  anchorRef*: React.RefObject<HTMLElement | null>
+  value*: Date | null
+  min?: Date | null
+  max?: Date | null
+  onSelect*: (date: Date) => void
+  onClose*: () => void
+```
+
+## bpm.gpsMap
+```
+  mode*: "display" | "picker"
+  center*: { lat: number
+  markerPosition*: { lat: number
+  onMarkerChange?: (lat: number, lng: number) => void
+  onMapClick?: (lat: number, lng: number) => void
+  height*: number
+```
+
+## bpm.mapViewLeaflet
+```
+  rl*: typeof import("react-leaflet")
+  L*: typeof import("leaflet")
+  center*: [number, number]
+  zoom*: number
+  height*: number | string
+  markers*: MapMarker[]
+  onMarkerClick?: (index: number, marker: MapMarker) => void
+  tileUrl*: string
+  tileAttribution?: string
+  polylines?: [number, number][][]
+  polylineColor?: string
+  polygons?: MapPolygonSpec[]
+  onMapClick?: (latlng: [number, number]) => void
   className?: string
+```
+
+## bpm.timePickerPopover
+@component bpm.timePickerPopover @description Popover de sélection heures/minutes utilisé par TimeInput. @example // Usage interne via bpm.timeInput @param {object} props @param {React.RefObject<HTMLElement>} props.anchorRef - Référence à l'élément ancre. Obligatoire. @param {Date|null} props.value - Heure actuelle. Obligatoire. @param {function} props.onSelect - Callback (hours, minutes). Obligatoire. @param {function} props.onClose - Callback à la fermeture. Obligatoire. @parent bpm.timeInput
+```
+  anchorRef*: React.RefObject<HTMLElement | null>
+  value*: Date | null
+  onSelect*: (hours: number, minutes: number) => void
+  onClose*: () => void
 ```
 
 

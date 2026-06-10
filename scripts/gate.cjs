@@ -1,0 +1,100 @@
+#!/usr/bin/env node
+/**
+ * Convergence gate orchestrator.
+ * Run from repo root: node scripts/gate.cjs
+ *
+ * Steps:
+ *   a. tsc --noEmit (type check packages/core/src)
+ *   b. vite build (build packages/core/dist + style.css)
+ *   c. Doc sync check (llms.txt + bpm-components.json vs. committed)
+ *   d. Smoke render tests (vitest — each bpm.* renders without throw)
+ *   e. Prop-surface snapshot (vitest — prop names frozen vs. snapshot)
+ */
+
+"use strict";
+
+const { execSync, spawnSync } = require("child_process");
+const path = require("path");
+const fs = require("fs");
+
+const REPO_ROOT = path.resolve(__dirname, "..");
+const CORE_DIR = path.join(REPO_ROOT, "packages", "core");
+
+let exitCode = 0;
+
+function step(label) {
+  console.log(`\n${"─".repeat(60)}`);
+  console.log(`  ${label}`);
+  console.log("─".repeat(60));
+}
+
+function run(cmd, opts = {}) {
+  const { cwd = REPO_ROOT, label = cmd } = opts;
+  try {
+    execSync(cmd, {
+      cwd,
+      stdio: "inherit",
+      env: { ...process.env },
+    });
+    console.log(`  ✓ ${label}`);
+    return true;
+  } catch (err) {
+    console.error(`  ✗ FAIL: ${label}`);
+    if (!opts.continueOnFail) exitCode = 1;
+    return false;
+  }
+}
+
+function runPython(script, opts = {}) {
+  const { cwd = REPO_ROOT } = opts;
+  const python = process.platform === "win32" ? "python" : "python3";
+  const result = spawnSync(python, [path.join(REPO_ROOT, "scripts", script)], {
+    cwd,
+    stdio: "inherit",
+    env: { ...process.env },
+  });
+  if (result.status !== 0) {
+    console.error(`  ✗ FAIL: ${script}`);
+    exitCode = 1;
+    return false;
+  }
+  console.log(`  ✓ ${script}`);
+  return true;
+}
+
+// ── Install dependencies ──────────────────────────────────────────────────────
+step("Installing dependencies");
+run("npm install", { cwd: CORE_DIR, label: "npm install (packages/core)" });
+// React types at repo root so tsc can resolve them from components/bpm/*.tsx
+// --no-save keeps package.json unchanged; --ignore-scripts skips postinstall (prisma etc.)
+run(
+  "npm install --no-save --ignore-scripts react react-dom @types/react @types/react-dom",
+  { cwd: REPO_ROOT, label: "install minimal React types at root (tsc)" }
+);
+
+// ── Step a: Type check ────────────────────────────────────────────────────────
+step("Step a — TypeScript type check (tsc --noEmit)");
+run("npx tsc --noEmit", { cwd: CORE_DIR, label: "tsc --noEmit" });
+
+// ── Step b: Build ─────────────────────────────────────────────────────────────
+step("Step b — Library build (vite build)");
+const buildOk = run("npm run build", { cwd: CORE_DIR, label: "vite build" });
+
+// ── Step c: Doc sync ──────────────────────────────────────────────────────────
+step("Step c — Doc sync check");
+runPython("gate-docs-sync.py");
+
+// ── Steps d + e: Vitest (smoke + prop snapshot) ───────────────────────────────
+step("Steps d+e — Smoke render + prop-surface snapshot (vitest)");
+run("npx vitest run gate/", { cwd: CORE_DIR, label: "vitest gate/" });
+
+// ── Summary ───────────────────────────────────────────────────────────────────
+console.log(`\n${"═".repeat(60)}`);
+if (exitCode === 0) {
+  console.log("  ✅  GATE GREEN — all checks passed");
+} else {
+  console.log("  ❌  GATE RED — one or more checks failed (see above)");
+}
+console.log("═".repeat(60) + "\n");
+
+process.exit(exitCode);

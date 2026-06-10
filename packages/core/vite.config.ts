@@ -28,7 +28,22 @@ export default defineConfig({
       },
     },
     rollupOptions: {
-      external: ['react', 'react-dom', 'react/jsx-runtime', 'react/jsx-dev-runtime', 'react-plotly.js', 'plotly.js', 'zod'],
+      external: [
+        'react', 'react-dom', 'react/jsx-runtime', 'react/jsx-dev-runtime',
+        'react-plotly.js', 'plotly.js', 'zod',
+        /^next(\/|$)/,
+        /^leaflet(\/|$)/,
+        'react-leaflet',
+        'qrcode.react',
+        'idb-keyval',
+        'react-markdown',
+        /^rehype/,
+        /^remark/,
+        /^unified/,
+        /^mdast/,
+        /^hast/,
+        /^highlight\.js/,
+      ],
       output: {
         globals: {
           react: 'React',
