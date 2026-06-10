@@ -23,6 +23,10 @@ export interface ScatterChartDatum {
   y: number;
 }
 
+/**
+ * @component bpm.scatterChart
+ * @description Graphique en nuage de points.
+ */
 export interface ScatterChartProps {
   data: ScatterChartDatum[];
   width?: number;
