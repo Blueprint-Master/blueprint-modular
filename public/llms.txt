@@ -582,6 +582,7 @@ Page CRUD générique : table + filtres + modal de création/édition/détail c�
 ```
 
 ## bpm.fileUploader
+@component bpm.fileUploader @description Upload de fichier(s) par glisser-déposer ou sélection.
 ```
   accept?: string
   multiple?: boolean

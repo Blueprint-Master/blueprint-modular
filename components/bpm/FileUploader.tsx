@@ -2,6 +2,10 @@
 
 import React, { useRef } from "react";
 
+/**
+ * @component bpm.fileUploader
+ * @description Upload de fichier(s) par glisser-déposer ou sélection.
+ */
 export interface FileUploaderProps {
   accept?: string;
   multiple?: boolean;
