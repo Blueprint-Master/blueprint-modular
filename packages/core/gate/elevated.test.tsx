@@ -14,6 +14,7 @@ import {
   HighlightBox,
   LabelValue,
   LineChart,
+  LiveChart,
   LiveGauge,
   MachineStatus,
   Metric,
@@ -155,6 +156,26 @@ describe("elevate(instrument): sparkline", () => {
       />
     );
     expect(container.querySelector("svg")?.getAttribute("data-judgment")).toBe("favorable");
+  });
+});
+
+describe("elevate(instrument): liveChart", () => {
+  const now = Date.now();
+  const DATA = [
+    { timestamp: now - 20000, value: 95 },
+    { timestamp: now - 10000, value: 84 },
+    { timestamp: now, value: 70 },
+  ];
+
+  it("sans context → pas de jugement", () => {
+    const { container } = render(<LiveChart data={DATA} />);
+    expect(container.querySelector("[data-judgment]")).toBeNull();
+  });
+
+  it("avec context → fenêtre jugée worsening/unfavorable + verdict", () => {
+    const { container } = render(<LiveChart data={DATA} context={CTX_HIB} />);
+    expect(container.querySelector("svg")?.getAttribute("data-judgment")).toBe("unfavorable");
+    expect(container.querySelector('[role="status"]')?.textContent).toContain("↘");
   });
 });
 

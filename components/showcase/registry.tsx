@@ -11,7 +11,13 @@
  * La page /components itère sur ce registre : pas de page à la main par composant.
  */
 import React from "react";
-import { AnomalyAlert, AreaChart, BarChart, HighlightBox, LabelValue, LineChart, LiveGauge, MachineStatus, Metric, Progress, ProgressRing, ScatterChart, Sparkline, StatusBox } from "@/components/bpm";
+import { AnomalyAlert, AreaChart, BarChart, HighlightBox, LabelValue, LineChart, LiveChart, LiveGauge, MachineStatus, Metric, Progress, ProgressRing, ScatterChart, Sparkline, StatusBox } from "@/components/bpm";
+
+/** Série temps réel de démonstration (fenêtre de 2 min, dérive sous le repère). */
+function liveDemoData(drift: number[]): { timestamp: number; value: number }[] {
+  const now = Date.now();
+  return drift.map((v, i) => ({ timestamp: now - (drift.length - 1 - i) * 10000, value: v }));
+}
 
 /** Trajectoire de démonstration : dégradation régulière sur 6 périodes. */
 const TRAJ_DOWN = [
@@ -491,6 +497,31 @@ export const SHOWCASE: ShowcaseEntry[] = [
               { x: 1, y: 101 }, { x: 2, y: 99 }, { x: 3, y: 102 }, { x: 4, y: 98 },
               { x: 5, y: 100 }, { x: 6, y: 62 },
             ]}
+            width={320}
+            height={120}
+            context={{ reference: 100, direction: "higher_is_better" }}
+          />
+        ),
+      },
+    ],
+  },
+  {
+    key: "liveChart",
+    class: "INSTRUMENT",
+    examples: [
+      {
+        name: "défaut",
+        note: "rendu historique inchangé (seuils manuels)",
+        render: () => (
+          <LiveChart data={liveDemoData([42, 45, 44, 47, 43])} thresholds={[{ value: 50 }]} width={320} height={120} />
+        ),
+      },
+      {
+        name: "déviant + trajectoire",
+        note: "context → fenêtre jugée : courbe rouge, repère pointillé, verdict sous le graphique",
+        render: () => (
+          <LiveChart
+            data={liveDemoData([95, 90, 84, 77, 70])}
             width={320}
             height={120}
             context={{ reference: 100, direction: "higher_is_better" }}
