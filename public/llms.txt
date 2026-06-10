@@ -997,6 +997,7 @@ Locales courants pour le format nombre (ex. "fr-FR" → 1 000,50, "en-US" → 1,
 ```
 
 ## bpm.orgChart
+@component bpm.orgChart @description Organigramme hiérarchique HTML/CSS (repliable).
 ```
   nodes*: OrgChartNode[]
   direction?: "vertical" | "horizontal"
