@@ -15,6 +15,10 @@ export interface FilterConfig {
   options?: FilterOption[];
 }
 
+/**
+ * @component bpm.filterPanel
+ * @description Panneau de filtres (select, multiselect, daterange, text, toggle).
+ */
 export interface FilterPanelProps {
   /** Liste des filtres à afficher. */
   filters: FilterConfig[];

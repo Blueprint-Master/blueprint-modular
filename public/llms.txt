@@ -593,6 +593,7 @@ Page CRUD générique : table + filtres + modal de création/édition/détail c�
 ```
 
 ## bpm.filterPanel
+@component bpm.filterPanel @description Panneau de filtres (select, multiselect, daterange, text, toggle).
 ```
   filters*: FilterConfig[]  — Liste des filtres à afficher.
   values?: Record<string, unknown>  — Valeurs courantes (clé = filter.key).
