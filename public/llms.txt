@@ -504,6 +504,7 @@ Page CRUD générique : table + filtres + modal de création/édition/détail c�
 ```
 
 ## bpm.emailComposer
+@component bpm.emailComposer @description Composeur d'email (To, CC, objet, corps riche).
 ```
   to?: string
   subject?: string

@@ -10,6 +10,10 @@ export interface EmailTemplate {
   bodyHtml: string;
 }
 
+/**
+ * @component bpm.emailComposer
+ * @description Composeur d'email (To, CC, objet, corps riche).
+ */
 export interface EmailComposerProps {
   to?: string;
   subject?: string;
