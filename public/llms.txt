@@ -440,6 +440,7 @@ Page CRUD générique : table + filtres + modal de création/édition/détail c�
 ```
 
 ## bpm.dateRangePicker
+@component bpm.dateRangePicker @description Sélecteur de plage de dates.
 ```
   label?: string
   start?: Date | string | null
