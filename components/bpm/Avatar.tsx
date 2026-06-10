@@ -4,6 +4,10 @@ import React, { useRef, useState } from "react";
 
 export type AvatarSize = "small" | "medium" | "large";
 
+/**
+ * @component bpm.avatar
+ * @description Avatar utilisateur (image, initiales ou icône).
+ */
 export interface AvatarProps {
   /** URL de l'image de l'avatar. */
   src?: string | null;
