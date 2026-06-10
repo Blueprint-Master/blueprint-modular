@@ -2,6 +2,10 @@
 
 import React from "react";
 
+/**
+ * @component bpm.emptyState
+ * @description État vide illustré (titre, description, action).
+ */
 export interface EmptyStateProps {
   title?: string;
   description?: React.ReactNode;

@@ -525,6 +525,7 @@ Page CRUD générique : table + filtres + modal de création/édition/détail c�
 ```
 
 ## bpm.emptyState
+@component bpm.emptyState @description État vide illustré (titre, description, action).
 ```
   title?: string
   description?: React.ReactNode
