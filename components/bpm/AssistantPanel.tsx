@@ -24,6 +24,10 @@ const PRODUCTION_QUESTIONS = [
   "Que me recommandes-tu pour améliorer la performance ?",
 ] as const;
 
+/**
+ * @component bpm.assistantPanel
+ * @description Panneau assistant IA (chips, saisie, réponses).
+ */
 export interface AssistantPanelProps {
   /** Si fourni, les chips affichent les réponses statiques (démo publique, pas d'appel API). */
   demoAnswers?: Record<string, string>;
