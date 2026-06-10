@@ -23,6 +23,10 @@ export interface TopNavItem {
   onClick?: () => void;
 }
 
+/**
+ * @component bpm.topNav
+ * @description Barre de navigation supérieure (titre + liens).
+ */
 export interface TopNavProps {
   title?: React.ReactNode;
   titleHref?: string;
