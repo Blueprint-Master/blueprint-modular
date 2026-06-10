@@ -56,7 +56,7 @@ bpm.input({
 
 bpm.metric({
   label*: string
-  value*: string | number
+  value*: string | number | TrajectoryPoint[]
   delta?: number | string | null
   name?: string | null
   deltaType?: "aucun" | "normal" | "inverse"

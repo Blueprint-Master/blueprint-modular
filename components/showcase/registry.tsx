@@ -11,6 +11,17 @@
  * La page /components itère sur ce registre : pas de page à la main par composant.
  */
 import React from "react";
+import { Metric } from "@/components/bpm";
+
+/** Trajectoire de démonstration : dégradation régulière sur 6 périodes. */
+const TRAJ_DOWN = [
+  { t: 1, v: 118 },
+  { t: 2, v: 112 },
+  { t: 3, v: 105 },
+  { t: 4, v: 97 },
+  { t: 5, v: 88 },
+  { t: 6, v: 81 },
+];
 
 export type ShowcaseClass = "INSTRUMENT" | "DATA" | "STRUCTURAL" | "INTERACTIF";
 
@@ -31,4 +42,38 @@ export interface ShowcaseEntry {
 
 export const SHOWCASE: ShowcaseEntry[] = [
   // Les entrées sont ajoutées composant par composant pendant la phase 2.
+  {
+    key: "metric",
+    class: "INSTRUMENT",
+    examples: [
+      {
+        name: "défaut",
+        note: "appel historique, rendu inchangé",
+        render: () => <Metric label="Chiffre d'affaires" value={125000} delta="+12%" />,
+      },
+      {
+        name: "déviant",
+        note: "context { reference: 150000, higher_is_better } → écart défavorable révélé",
+        render: () => (
+          <Metric
+            label="Chiffre d'affaires"
+            value={125000}
+            context={{ reference: 150000, direction: "higher_is_better" }}
+          />
+        ),
+      },
+      {
+        name: "trajectoire",
+        note: "value = v(t) → dernier point + tendance ↘ + sparkline",
+        render: () => (
+          <Metric
+            label="Taux de service (%)"
+            value={TRAJ_DOWN}
+            currency=""
+            context={{ reference: 100, direction: "higher_is_better", comparisonFrame: [98, 101, 99, 100, 102] }}
+          />
+        ),
+      },
+    ],
+  },
 ];

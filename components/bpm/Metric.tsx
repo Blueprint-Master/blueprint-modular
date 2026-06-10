@@ -2,6 +2,15 @@
 
 import React from "react";
 import { useBPMContext } from "@/lib/ai/context";
+import {
+  interpret,
+  judgmentColor,
+  judgmentLabel,
+  type InterpretContext,
+  type Judgment,
+  type TrajectoryPoint,
+} from "./interpret";
+import { Sparkline, type SparklineTrend } from "./Sparkline";
 
 /** Locales courants pour le format nombre (ex. "fr-FR" → 1 000,50, "en-US" → 1,000.50). */
 export type MetricValueLocale = "fr-FR" | "en-US" | "de-DE" | string;
@@ -30,6 +39,7 @@ export type MetricValueLocale = "fr-FR" | "en-US" | "de-DE" | string;
  * @param {string} [props.accentColor] - Couleur d'accent. Optionnel.
  * @param {boolean} [props.compact=false] - Mode compact réduit. Optionnel.
  * @param {boolean} [props.trackContext=false] - Expose au contexte IA. Optionnel.
+ * @param {InterpretContext} [props.context] - Contexte de jugement { reference, direction, comparisonFrame? } : révèle écart/tendance/anomalie via interpret. Optionnel.
  *
  * @parent bpm.metricRow, bpm.grid, bpm.card
  * @associated bpm.badge, bpm.plotlyChart
@@ -38,8 +48,8 @@ export interface MetricProps {
   /** PARENT: bpm.metricRow (standard) | bpm.grid | bpm.card (isolé). INTERDIT: div custom comme parent — casse le responsive. ASSOCIÉ: bpm.badge (statut), bpm.plotlyChart (tendance), bpm.metricRow. */
   /** Libellé affiché au-dessus de la valeur. */
   label: string;
-  /** Valeur principale (string ou number). */
-  value: string | number;
+  /** Valeur principale (string, number, ou trajectoire v(t) [{t, v}] — affiche le dernier point et révèle la tendance si context est fourni). */
+  value: string | number | TrajectoryPoint[];
   /** Variation affichée. Format string (ex. "+12%") ou number. */
   delta?: number | string | null;
   /** Nom optionnel pour référencer la métrique dans le chat IA : $metric:name ou @name */
@@ -67,6 +77,8 @@ export interface MetricProps {
   compact?: boolean;
   /** Si true, expose cette métrique au contexte IA. */
   trackContext?: boolean;
+  /** Contexte de jugement { reference, direction, comparisonFrame? } : la métrique porte alors un jugement via interpret(value, context) — écart au repère, tendance (si trajectoire), anomalie — révélé sous la valeur. Additif : sans context, rendu inchangé. */
+  context?: InterpretContext;
 }
 
 export function Metric({
@@ -87,7 +99,33 @@ export function Metric({
   accentColor = null,
   compact = false,
   trackContext = false,
+  context,
 }: MetricProps) {
+  // ── Jugement (additif) : trajectoire → dernier point + tendance ──────────
+  const trajectory = Array.isArray(value) ? value : null;
+  const sortedTraj = trajectory
+    ? [...trajectory].sort(
+        (a, b) =>
+          (a.t instanceof Date ? a.t.getTime() : a.t) -
+          (b.t instanceof Date ? b.t.getTime() : b.t)
+      )
+    : null;
+  const numericValue = sortedTraj
+    ? sortedTraj.length > 0
+      ? sortedTraj[sortedTraj.length - 1].v
+      : NaN
+    : typeof value === "number"
+      ? value
+      : NaN;
+  const judgment: Judgment | null =
+    context && Number.isFinite(numericValue)
+      ? interpret(sortedTraj ?? numericValue, context)
+      : null;
+  const trendToSparkline: Record<string, SparklineTrend> = {
+    improving: "up",
+    worsening: "down",
+    flat: "flat",
+  };
   const symbols: Record<string, string> = {
     EUR: "€",
     USD: "$",
@@ -111,8 +149,11 @@ export function Metric({
     if (!currency || currency === "") return `${sign}${fmt}`;
     return `${sign}${fmt} ${sym}`;
   };
-  const displayValue =
-    typeof value === "number"
+  const displayValue = Array.isArray(value)
+    ? Number.isFinite(numericValue)
+      ? formatWithLocale(numericValue, valueDecimals)
+      : "—"
+    : typeof value === "number"
       ? formatWithLocale(value, valueDecimals)
       : value;
   const deltaStr = typeof delta === "string" ? delta.trim() : "";
@@ -133,11 +174,16 @@ export function Metric({
       style={{
         background: "var(--bpm-surface, #ffffff)",
         ...(border ? { borderColor: "var(--bpm-border, #e5e7eb)" } : {}),
-        ...(accentColor ? { borderLeftWidth: 4, borderLeftColor: accentColor } : {}),
+        ...(accentColor
+          ? { borderLeftWidth: 4, borderLeftColor: accentColor }
+          : judgment
+            ? { borderLeftWidth: 4, borderLeftColor: judgmentColor(judgment) }
+            : {}),
         color: "var(--bpm-text-primary, #111827)",
         minHeight: compact ? "80px" : undefined,
       }}
       data-metric-name={name && name !== "" ? name : undefined}
+      data-judgment={judgment ? judgment.level.status : undefined}
     >
       <div className={`flex items-center gap-2 ${compact ? "mb-0.5" : "mb-1"}`} style={compact ? { marginBottom: "calc(0.125rem + 3px)" } : undefined}>
         {icon != null && (
@@ -158,6 +204,24 @@ export function Metric({
         </div>
       </div>
       <div className={compact ? "text-lg font-bold" : "text-xl font-bold"} style={compact ? { marginTop: 3 } : undefined}>{displayValue}</div>
+      {judgment && (
+        <div
+          role="status"
+          aria-label={`${label} : ${judgmentLabel(judgment)}`}
+          className={`flex items-center gap-2 ${compact ? "text-[11px] mt-0.5" : "text-xs mt-1"}`}
+          style={{ color: judgmentColor(judgment) }}
+        >
+          <span>{judgmentLabel(judgment)}</span>
+          {sortedTraj && sortedTraj.length >= 2 && judgment.trend && (
+            <Sparkline
+              values={sortedTraj.map((p) => p.v)}
+              trend={trendToSparkline[judgment.trend.status]}
+              width={compact ? 56 : 72}
+              height={compact ? 16 : 20}
+            />
+          )}
+        </div>
+      )}
       {(subtext != null && subtext !== "") && (
         <div className={`${compact ? "text-[11px]" : "text-sm mt-1"}`} style={{ color: "var(--bpm-text-secondary, #6b7280)", ...(compact ? { marginTop: "calc(0.125rem + 3px)" } : {}) }}>
           {subtext}
