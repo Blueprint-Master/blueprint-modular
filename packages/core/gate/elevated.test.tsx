@@ -10,6 +10,7 @@ import React from "react";
 import {
   AnomalyAlert,
   AreaChart,
+  BarChart,
   HighlightBox,
   LabelValue,
   LineChart,
@@ -153,6 +154,28 @@ describe("elevate(instrument): sparkline", () => {
       />
     );
     expect(container.querySelector("svg")?.getAttribute("data-judgment")).toBe("favorable");
+  });
+});
+
+describe("elevate(instrument): barChart", () => {
+  it("sans context → pas de jugement", () => {
+    const { container } = render(<BarChart data={[{ x: "A", y: 10 }]} />);
+    expect(container.querySelector("[data-judgment]")).toBeNull();
+  });
+
+  it("avec context → barres jugées individuellement + repère + verdict global", () => {
+    const { container } = render(
+      <BarChart
+        data={[{ x: "Jan", y: 110 }, { x: "Fév", y: 80 }]}
+        context={CTX_HIB}
+      />
+    );
+    const svg = container.querySelector("svg")!;
+    expect(svg.getAttribute("data-judgment")).toBe("unfavorable");
+    const rects = svg.querySelectorAll("rect");
+    // 110 > 100 → favorable (vert) ; 80 < 100 → unfavorable (rouge)
+    expect(rects[0].getAttribute("fill")).not.toBe(rects[1].getAttribute("fill"));
+    expect(svg.querySelectorAll("line").length).toBe(1);
   });
 });
 

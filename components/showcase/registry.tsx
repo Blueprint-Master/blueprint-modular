@@ -11,7 +11,7 @@
  * La page /components itère sur ce registre : pas de page à la main par composant.
  */
 import React from "react";
-import { AnomalyAlert, AreaChart, HighlightBox, LabelValue, LineChart, LiveGauge, MachineStatus, Metric, Progress, ProgressRing, Sparkline, StatusBox } from "@/components/bpm";
+import { AnomalyAlert, AreaChart, BarChart, HighlightBox, LabelValue, LineChart, LiveGauge, MachineStatus, Metric, Progress, ProgressRing, Sparkline, StatusBox } from "@/components/bpm";
 
 /** Trajectoire de démonstration : dégradation régulière sur 6 périodes. */
 const TRAJ_DOWN = [
@@ -441,6 +441,31 @@ export const SHOWCASE: ShowcaseEntry[] = [
             width={320}
             height={120}
             context={{ reference: 50, direction: "lower_is_better" }}
+          />
+        ),
+      },
+    ],
+  },
+  {
+    key: "barChart",
+    class: "INSTRUMENT",
+    examples: [
+      {
+        name: "défaut",
+        note: "rendu historique inchangé",
+        render: () => (
+          <BarChart data={[{ x: "Jan", y: 100 }, { x: "Fév", y: 150 }, { x: "Mar", y: 120 }]} width={320} height={120} />
+        ),
+      },
+      {
+        name: "déviant + trajectoire",
+        note: "context → chaque barre jugée individuellement (vert/rouge) + repère pointillé",
+        render: () => (
+          <BarChart
+            data={[{ x: "Jan", y: 110 }, { x: "Fév", y: 95 }, { x: "Mar", y: 80 }, { x: "Avr", y: 70 }]}
+            width={320}
+            height={120}
+            context={{ reference: 100, direction: "higher_is_better" }}
           />
         ),
       },
