@@ -4,6 +4,10 @@ import React from "react";
 
 export type CardVariant = "default" | "elevated" | "outlined";
 
+/**
+ * @component bpm.card
+ * @description Carte avec titre et contenu.
+ */
 export interface CardProps {
   title?: React.ReactNode;
   subtitle?: React.ReactNode;

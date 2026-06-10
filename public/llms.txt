@@ -244,6 +244,7 @@ Accent BPM aligné référence — valeurs hex pour styles 100% inline (pas de v
 ```
 
 ## bpm.card
+@component bpm.card @description Carte avec titre et contenu.
 ```
   title?: React.ReactNode
   subtitle?: React.ReactNode
