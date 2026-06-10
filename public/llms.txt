@@ -340,6 +340,7 @@ ISO ou texte libre, ou Date (affichage localisé court). */ timestamp?: string |
 ```
 
 ## bpm.column
+@component bpm.column @description Mise en page multi-colonnes responsive.
 ```
   columns?: number  — Nombre de colonnes (1, 2, 3, 4, etc.).
   gap?: number | string  — Espacement entre les colonnes (CSS, ex. "1rem", 16).
