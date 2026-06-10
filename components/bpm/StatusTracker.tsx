@@ -10,6 +10,10 @@ export interface StatusTrackerStage {
   description?: string;
 }
 
+/**
+ * @component bpm.statusTracker
+ * @description Suivi de statut en étapes (completed/current/pending/error).
+ */
 export interface StatusTrackerProps {
   stages: StatusTrackerStage[];
   direction?: "horizontal" | "vertical";

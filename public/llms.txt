@@ -1404,6 +1404,7 @@ Conteneur page (core) — props : children.
 ```
 
 ## bpm.statusTracker
+@component bpm.statusTracker @description Suivi de statut en étapes (completed/current/pending/error).
 ```
   stages*: StatusTrackerStage[]
   direction?: "horizontal" | "vertical"
