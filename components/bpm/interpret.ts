@@ -151,6 +151,21 @@ export function interpret(value: InterpretValue, context: InterpretContext): Jud
   return judgment;
 }
 
+/**
+ * Valeur courante d'une InterpretValue : le scalaire lui-même, ou le dernier
+ * point (trié par t) d'une trajectoire. NaN si trajectoire vide.
+ * Utile aux instruments pour AFFICHER la valeur même sans context.
+ */
+export function lastValue(value: InterpretValue): number {
+  if (!Array.isArray(value)) return value;
+  if (value.length === 0) return NaN;
+  let best = value[0];
+  for (const p of value) {
+    if (toMs(p.t) >= toMs(best.t)) best = p;
+  }
+  return best.v;
+}
+
 // ─────────────────────────────────────────────────────────────────────────────
 // Aides visuelles partagées (pures) — pour que chaque instrument révèle le
 // jugement avec les mêmes conventions (couleur, symbole, libellé).

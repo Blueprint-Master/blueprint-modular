@@ -934,5 +934,12 @@
       "status": "todo",
       "reason": null
     }
+  ],
+  "checkpoints": [
+    {
+      "after": 10,
+      "date": "2026-06-10",
+      "review": "Les 10 premiers instruments sont coherents: context+interpret, data-judgment, role=status, judgmentColor/Label partages. Derive constatee: (1) logique trier-trajectoire-et-prendre-le-dernier-point dupliquee dans 4 composants -> helper lastValue() ajoute a interpret.ts pour la suite ; (2) nom de la prop trajectoire variable (value elargi / points / measure / trajectory / history) — choix justifie par l API existante de chaque composant, convention consignee: elargir la prop numerique existante quand elle existe, sinon nom semantique naturel."
+    }
   ]
 }

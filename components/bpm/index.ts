@@ -315,3 +315,4 @@ export type {
   TrendStatus,
   AnomalyStatus,
 } from "./interpret";
+export { lastValue } from "./interpret";
