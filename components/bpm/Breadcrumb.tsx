@@ -8,6 +8,10 @@ export interface BreadcrumbItem {
   href?: string;
 }
 
+/**
+ * @component bpm.breadcrumb
+ * @description Fil d'Ariane simple.
+ */
 export interface BreadcrumbProps {
   items?: BreadcrumbItem[];
   separator?: string;
