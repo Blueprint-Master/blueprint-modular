@@ -2,6 +2,10 @@
 
 import React from "react";
 
+/**
+ * @component bpm.progress
+ * @description Barre de progression.
+ */
 export interface ProgressProps {
   value?: number;
   max?: number;

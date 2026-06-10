@@ -1122,6 +1122,7 @@ Conteneur page (core) — props : children.
 ```
 
 ## bpm.progress
+@component bpm.progress @description Barre de progression.
 ```
   value?: number
   max?: number
