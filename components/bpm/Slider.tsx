@@ -2,6 +2,10 @@
 
 import React from "react";
 
+/**
+ * @component bpm.slider
+ * @description Curseur min/max/step.
+ */
 export interface SliderProps {
   value?: number;
   min?: number;
