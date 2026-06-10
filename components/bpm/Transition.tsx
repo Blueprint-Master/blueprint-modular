@@ -11,6 +11,10 @@ import "./Transition.css";
 
 export type TransitionVariant = "fade" | "shimmer" | "border" | "grid";
 
+/**
+ * @component bpm.transition
+ * @description Animation de transition entre états.
+ */
 export interface TransitionProps {
   /** Index de la page / vue active (0-based). */
   activeIndex: number;

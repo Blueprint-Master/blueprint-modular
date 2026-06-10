@@ -1667,6 +1667,7 @@ Toast visuel ; en production préférer useToast().
 ```
 
 ## bpm.transition
+@component bpm.transition @description Animation de transition entre états.
 ```
   activeIndex*: number  — Index de la page / vue active (0-based).
   variant?: TransitionVariant  — Variant de transition : fade (slide), shimmer, border, grid.
