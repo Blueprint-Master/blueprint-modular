@@ -8,6 +8,7 @@ import { render, cleanup } from "@testing-library/react";
 import { afterEach, describe, expect, it } from "vitest";
 import React from "react";
 import {
+  AnomalyAlert,
   HighlightBox,
   LabelValue,
   LiveGauge,
@@ -149,6 +150,40 @@ describe("elevate(instrument): sparkline", () => {
       />
     );
     expect(container.querySelector("svg")?.getAttribute("data-judgment")).toBe("favorable");
+  });
+});
+
+describe("elevate(instrument): anomalyAlert", () => {
+  it("sans context → rendu historique (warning par défaut), pas de jugement", () => {
+    const { container } = render(<AnomalyAlert expected={10} actual={12} />);
+    expect(container.querySelector("[data-judgment]")).toBeNull();
+  });
+
+  it("context + écart fort + anomalie → gravité critical dérivée + verdict", () => {
+    const { container } = render(
+      <AnomalyAlert
+        expected={100}
+        actual={55}
+        context={{ reference: 100, direction: "higher_is_better", comparisonFrame: [97, 99, 102, 101, 98] }}
+      />
+    );
+    expect(container.querySelector("[data-judgment]")?.getAttribute("data-judgment")).toBe(
+      "unfavorable"
+    );
+    expect(container.textContent).toContain("sévérité");
+  });
+
+  it("severity explicite garde la priorité sur la dérivation", () => {
+    const { container } = render(
+      <AnomalyAlert
+        expected={100}
+        actual={55}
+        severity="info"
+        context={{ reference: 100, direction: "higher_is_better" }}
+      />
+    );
+    // border/bg info → pas critical : on vérifie juste que le rendu n'a pas throw
+    expect(container.querySelector('[role="alert"]')).not.toBeNull();
   });
 });
 

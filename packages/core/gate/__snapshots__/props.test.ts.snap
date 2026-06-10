@@ -53,6 +53,8 @@ exports[`bpm prop surface snapshot > prop names match committed snapshot (additi
     "severity",
     "className",
     "onDismiss",
+    "history",
+    "context",
   ],
   "approvalFlow": [
     "steps",

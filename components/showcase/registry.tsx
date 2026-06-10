@@ -11,7 +11,7 @@
  * La page /components itère sur ce registre : pas de page à la main par composant.
  */
 import React from "react";
-import { HighlightBox, LabelValue, LiveGauge, Metric, Progress, ProgressRing, Sparkline, StatusBox } from "@/components/bpm";
+import { AnomalyAlert, HighlightBox, LabelValue, LiveGauge, Metric, Progress, ProgressRing, Sparkline, StatusBox } from "@/components/bpm";
 
 /** Trajectoire de démonstration : dégradation régulière sur 6 périodes. */
 const TRAJ_DOWN = [
@@ -314,6 +314,44 @@ export const SHOWCASE: ShowcaseEntry[] = [
               { t: 3, v: 12 },
             ]}
             context={{ reference: 50, direction: "higher_is_better" }}
+          />
+        ),
+      },
+    ],
+  },
+  {
+    key: "anomalyAlert",
+    class: "INSTRUMENT",
+    examples: [
+      {
+        name: "défaut",
+        note: "rendu historique inchangé (severity manuelle)",
+        render: () => <AnomalyAlert expected="100 kg" actual="85 kg" severity="warning" />,
+      },
+      {
+        name: "déviant",
+        note: "context → gravité auto-dérivée de interpret().severity + verdict",
+        render: () => (
+          <AnomalyAlert
+            expected={100}
+            actual={55}
+            context={{ reference: 100, direction: "higher_is_better", comparisonFrame: [97, 99, 102, 101, 98] }}
+          />
+        ),
+      },
+      {
+        name: "trajectoire",
+        note: "history v(t) → tendance dans le verdict",
+        render: () => (
+          <AnomalyAlert
+            expected={100}
+            actual={55}
+            history={[
+              { t: 1, v: 96 },
+              { t: 2, v: 80 },
+              { t: 3, v: 55 },
+            ]}
+            context={{ reference: 100, direction: "higher_is_better" }}
           />
         ),
       },

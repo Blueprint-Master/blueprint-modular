@@ -87,9 +87,11 @@ Composant bpm.aiQueryBar — voir @blueprint-modular/core ou BPM_API.md.
   title?: string
   expected*: string | number
   actual*: string | number
-  severity?: AnomalySeverity
+  severity?: AnomalySeverity  — Niveau de gravité. Si omis et context fourni, dérivé automatiquement de interpret().severity.
   className?: string
   onDismiss?: () => void
+  history?: TrajectoryPoint[]  — Historique v(t) [{t, v}] de la mesure — révèle la tendance dans le verdict si context est fourni.
+  context?: InterpretContext  — Contexte de jugement { reference, direction, comparisonFrame? } : gravité auto-dérivée de la sévérité combinée (≥0.5 critical, >0.15 warning, sinon info) et verdict écart/tendance révélé. Additif : sans context, rendu inchangé.
 ```
 
 ## bpm.approvalFlow
