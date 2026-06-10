@@ -4,6 +4,10 @@ import React, { useEffect } from "react";
 
 export type ConfirmModalVariant = "danger" | "warning" | "info";
 
+/**
+ * @component bpm.confirmModal
+ * @description Modal de confirmation pour actions destructives (danger, warning, info).
+ */
 export interface ConfirmModalProps {
   isOpen: boolean;
   onConfirm: () => void;

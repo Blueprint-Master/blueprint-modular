@@ -380,6 +380,7 @@ ISO ou texte libre, ou Date (affichage localisé court). */ timestamp?: string |
 ```
 
 ## bpm.confirmModal
+@component bpm.confirmModal @description Modal de confirmation pour actions destructives (danger, warning, info).
 ```
   isOpen*: boolean
   onConfirm*: () => void
