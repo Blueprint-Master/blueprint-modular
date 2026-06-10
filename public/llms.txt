@@ -517,6 +517,7 @@ Page CRUD générique : table + filtres + modal de création/édition/détail c�
 ```
 
 ## bpm.empty
+@component bpm.empty @description État vide minimal (icône + message).
 ```
   children?: React.ReactNode
   className?: string
