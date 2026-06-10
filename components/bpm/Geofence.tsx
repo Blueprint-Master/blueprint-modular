@@ -11,6 +11,10 @@ export interface GeofenceZone {
   color?: string;
 }
 
+/**
+ * @component bpm.geofence
+ * @description Carte interactive avec zones géographiques (geofences).
+ */
 export interface GeofenceProps {
   zones: GeofenceZone[];
   onZonesChange?: (next: GeofenceZone[]) => void;

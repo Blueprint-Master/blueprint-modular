@@ -634,6 +634,7 @@ Page CRUD générique : table + filtres + modal de création/édition/détail c�
 ```
 
 ## bpm.geofence
+@component bpm.geofence @description Carte interactive avec zones géographiques (geofences).
 ```
   zones*: GeofenceZone[]
   onZonesChange?: (next: GeofenceZone[]) => void
