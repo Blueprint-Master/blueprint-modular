@@ -26,6 +26,10 @@ export interface InvoiceLine {
   unitPrice: number;
 }
 
+/**
+ * @component bpm.invoiceTemplate
+ * @description Modèle de facture (émetteur, client, lignes, total).
+ */
 export interface InvoiceTemplateProps {
   title?: string;
   issuer: string;

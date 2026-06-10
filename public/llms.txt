@@ -750,6 +750,7 @@ Carte Leaflet chargée côté client uniquement (évite erreurs SSR). */ const L
 ```
 
 ## bpm.invoiceTemplate
+@component bpm.invoiceTemplate @description Modèle de facture A4 prêt pour impression avec lignes, TVA et totaux calculés automatiquement. @example bpm.invoiceTemplate({ issuer: "Ma Société", client: "Client SA", lines: [{ label: "Service", qty: 2, unitPrice: 100 }] }) @param {object} props @param {string} [props.title="Facture"] - Titre du document. Optionnel. @param {string} props.issuer - Informations de l'émetteur. Obligatoire. @param {string} props.client - Informations du client. Obligatoire. @param {InvoiceLine[]} props.lines - Lignes de facturation (label, qty, unitPrice). Obligatoire. @param {number} [props.taxRate=0.2] - Taux de TVA (0.2 = 20%). Optionnel. @param {string} [props.invoiceNo="—"] - Numéro de facture. Optionnel. @param {string} [props.date] - Date de la facture (YYYY-MM-DD). Optionnel, défaut aujourd'hui. @param {string} [props.className=""] - Classes CSS additionnelles. Optionnel. @associated bpm.printLayout export interface InvoiceLine { label: string; qty: number; unitPrice: number; } @component bpm.invoiceTemplate @description Modèle de facture (émetteur, client, lignes, total).
 ```
   title?: string
   issuer*: string
@@ -793,6 +794,7 @@ Carte Leaflet chargée côté client uniquement (évite erreurs SSR). */ const L
 ```
 
 ## bpm.lineChart
+@component bpm.lineChart @description Graphique en ligne SVG simple et responsive pour afficher une série de données. @example bpm.lineChart({ data: [{ x: 0, y: 10 }, { x: 1, y: 25 }], color: "#3b82f6" }) @param {object} props @param {LineChartDatum[]} props.data - Tableau de points { x, y }. Obligatoire. @param {number} [props.width=400] - Largeur du SVG. Optionnel. @param {number} [props.height=200] - Hauteur du SVG. Optionnel. @param {string} [props.color="var(--bpm-accent)"] - Couleur de la ligne. Optionnel. @param {string} [props.className=""] - Classes CSS additionnelles. Optionnel. @associated bpm.areaChart, bpm.barChart, bpm.scatterChart export interface LineChartDatum { x: number | string; y: number; }/** @component bpm.lineChart @description Graphique en courbes.
 ```
   data*: LineChartDatum[]
   width?: number
