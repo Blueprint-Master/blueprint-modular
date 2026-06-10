@@ -2,6 +2,10 @@
 
 import React from "react";
 
+/**
+ * @component bpm.caption
+ * @description Légende ou texte secondaire.
+ */
 export interface CaptionProps {
   children: React.ReactNode;
   className?: string;

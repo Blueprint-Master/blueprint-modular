@@ -236,6 +236,7 @@ Accent BPM aligné référence — valeurs hex pour styles 100% inline (pas de v
 ```
 
 ## bpm.caption
+@component bpm.caption @description Légende ou texte secondaire.
 ```
   children*: React.ReactNode
   className?: string
