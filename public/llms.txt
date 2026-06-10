@@ -544,6 +544,7 @@ Page CRUD générique : table + filtres + modal de création/édition/détail c�
 ```
 
 ## bpm.exportButton
+@component bpm.exportButton @description Bouton d'export de données (CSV, JSON, Excel).
 ```
   data*: T[] | (() => T[])
   filename*: string
