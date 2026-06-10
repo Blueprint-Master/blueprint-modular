@@ -46,6 +46,10 @@ export interface TableColumn {
   noWrap?: boolean;
 }
 
+/**
+ * @component bpm.table
+ * @description Tableau triable avec colonnes configurables.
+ */
 export interface TableProps {
   /** PARENT: bpm.panel | bpm.container | page directe. INTERDIT: bpm.card comme parent direct — overflow caché. ASSOCIÉ: bpm.pagination, bpm.input (recherche), bpm.badge (statut colonne), bpm.button (actions). */
   /** Définition des colonnes — obligatoire. */
