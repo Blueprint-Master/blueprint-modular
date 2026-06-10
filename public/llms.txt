@@ -394,6 +394,7 @@ ISO ou texte libre, ou Date (affichage localisé court). */ timestamp?: string |
 ```
 
 ## bpm.container
+@component bpm.container @description Conteneur avec titre optionnel.
 ```
   children*: React.ReactNode
   className?: string
