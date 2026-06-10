@@ -556,6 +556,7 @@ Page CRUD générique : table + filtres + modal de création/édition/détail c�
 ```
 
 ## bpm.fab
+@component bpm.fab @description Bouton d'action flottant (FAB).
 ```
   icon?: React.ReactNode
   label?: string
