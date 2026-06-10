@@ -28,6 +28,10 @@ export type ReportSection =
   | { type: "kpi"; label: string; value: string; hint?: string }
   | { type: "divider" };
 
+/**
+ * @component bpm.reportPage
+ * @description Page de rapport structuré (titre, sections, contenu).
+ */
 export interface ReportPageProps {
   title: string;
   subtitle?: string;
