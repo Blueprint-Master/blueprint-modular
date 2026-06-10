@@ -349,6 +349,7 @@ ISO ou texte libre, ou Date (affichage localisé court). */ timestamp?: string |
 ```
 
 ## bpm.commandPalette
+@component bpm.commandPalette @description Palette de commandes modale (fuzzy search, clavier, Cmd+K).
 ```
   commands*: Command[]
   isOpen?: boolean  — Mode contrôlé : si défini, l’ouverture au clavier doit être gérée via `onRequestOpen`.
