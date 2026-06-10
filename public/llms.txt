@@ -428,6 +428,7 @@ Page CRUD générique : table + filtres + modal de création/édition/détail c�
 ```
 
 ## bpm.dateInput
+@component bpm.dateInput @description Sélecteur de date.
 ```
   label?: string
   value?: Date | string | null

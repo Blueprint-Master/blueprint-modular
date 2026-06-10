@@ -19,6 +19,10 @@ function formatDisplay(date: Date | string | null | undefined): string {
   return `${day}/${m}/${y}`;
 }
 
+/**
+ * @component bpm.dateInput
+ * @description Sélecteur de date.
+ */
 export interface DateInputProps {
   label?: string;
   value?: Date | string | null;
