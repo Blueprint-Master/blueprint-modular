@@ -9,6 +9,10 @@ export type DrillDownLevel<T extends Record<string, unknown>> = {
   items: T[];
 };
 
+/**
+ * @component bpm.drillDown
+ * @description Navigation drill-down multi-niveaux dans des données hiérarchiques.
+ */
 export type DrillDownProps<T extends Record<string, unknown>> = {
   levels: DrillDownLevel<T>[];
   currentLevel: number;

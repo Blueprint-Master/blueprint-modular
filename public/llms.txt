@@ -494,6 +494,7 @@ Page CRUD générique : table + filtres + modal de création/édition/détail c�
 ```
 
 ## bpm.drillDown
+@component bpm.drillDown @description Navigation drill-down multi-niveaux dans des données hiérarchiques.
 ```
   levels*: DrillDownLevel<T>[]
   currentLevel*: number
