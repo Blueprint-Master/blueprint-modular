@@ -11,7 +11,7 @@
  * La page /components itère sur ce registre : pas de page à la main par composant.
  */
 import React from "react";
-import { Metric } from "@/components/bpm";
+import { Metric, Progress, ProgressRing } from "@/components/bpm";
 
 /** Trajectoire de démonstration : dégradation régulière sur 6 périodes. */
 const TRAJ_DOWN = [
@@ -71,6 +71,61 @@ export const SHOWCASE: ShowcaseEntry[] = [
             value={TRAJ_DOWN}
             currency=""
             context={{ reference: 100, direction: "higher_is_better", comparisonFrame: [98, 101, 99, 100, 102] }}
+          />
+        ),
+      },
+    ],
+  },
+  {
+    key: "progressRing",
+    class: "INSTRUMENT",
+    examples: [
+      { name: "défaut", note: "rendu historique inchangé", render: () => <ProgressRing value={75} /> },
+      {
+        name: "déviant",
+        note: "context { reference: 90, higher_is_better } → anneau rouge (écart défavorable)",
+        render: () => <ProgressRing value={55} context={{ reference: 90, direction: "higher_is_better" }} />,
+      },
+      {
+        name: "trajectoire",
+        note: "v(t) descendante → flèche de tendance ↘ au centre",
+        render: () => (
+          <ProgressRing
+            value={[
+              { t: 1, v: 92 },
+              { t: 2, v: 80 },
+              { t: 3, v: 64 },
+            ]}
+            context={{ reference: 90, direction: "higher_is_better" }}
+          />
+        ),
+      },
+    ],
+  },
+  {
+    key: "progress",
+    class: "INSTRUMENT",
+    examples: [
+      { name: "défaut", note: "rendu historique inchangé", render: () => <Progress value={0.74} label="TRS" /> },
+      {
+        name: "déviant",
+        note: "context { reference: 0.8, higher_is_better } → barre rouge + écart révélé",
+        render: () => (
+          <Progress value={0.62} label="TRS" context={{ reference: 0.8, direction: "higher_is_better" }} />
+        ),
+      },
+      {
+        name: "trajectoire",
+        note: "v(t) en amélioration → barre verte, tendance ↗",
+        render: () => (
+          <Progress
+            value={[
+              { t: 1, v: 0.55 },
+              { t: 2, v: 0.71 },
+              { t: 3, v: 0.86 },
+            ]}
+            label="TRS"
+            context={{ reference: 0.8, direction: "higher_is_better" }}
           />
         ),
       },

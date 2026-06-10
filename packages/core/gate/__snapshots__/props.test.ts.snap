@@ -764,6 +764,7 @@ exports[`bpm prop surface snapshot > prop names match committed snapshot (additi
     "label",
     "showValue",
     "className",
+    "context",
   ],
   "progressRing": [
     "value",
@@ -771,6 +772,7 @@ exports[`bpm prop surface snapshot > prop names match committed snapshot (additi
     "size",
     "strokeWidth",
     "className",
+    "context",
   ],
   "promptInput": [
     "value",

@@ -1,13 +1,23 @@
 "use client";
 
 import React from "react";
+import {
+  interpret,
+  judgmentColor,
+  judgmentLabel,
+  type InterpretContext,
+  type TrajectoryPoint,
+} from "./interpret";
 
 export interface ProgressProps {
-  value?: number;
+  /** Valeur actuelle, ou trajectoire v(t) [{t, v}] (le dernier point remplit la barre ; la tendance est jugée si context est fourni). */
+  value?: number | TrajectoryPoint[];
   max?: number;
   label?: string;
   showValue?: boolean;
   className?: string;
+  /** Contexte de jugement { reference, direction, comparisonFrame? } : la barre prend la couleur du jugement et une ligne écart/tendance est révélée sous la barre. Additif : sans context, rendu inchangé. */
+  context?: InterpretContext;
 }
 
 /**
@@ -21,6 +31,7 @@ export interface ProgressProps {
  * - label (string, optionnel) — Libelle au-dessus.
  * - showValue (boolean, optionnel) — Afficher le pourcentage. Default: true.
  * - className (string, optionnel) — Classes CSS.
+ * - context (InterpretContext, optionnel) — Contexte de jugement { reference, direction } : couleur + ligne écart/tendance via interpret.
  * @usage Avancement commande, TRS ligne, objectif commercial.
  * @context PARENT: bpm.panel | bpm.card | bpm.tabs. ASSOCIATED: bpm.metric, bpm.slider. FORBIDDEN: aucun.
  */
@@ -30,10 +41,28 @@ export function Progress({
   label,
   showValue = true,
   className = "",
+  context,
 }: ProgressProps) {
-  const pct = max > 0 ? Math.min(100, Math.max(0, (value / max) * 100)) : 0;
+  const current = Array.isArray(value)
+    ? value.length > 0
+      ? [...value].sort(
+          (a, b) =>
+            (a.t instanceof Date ? a.t.getTime() : a.t) -
+            (b.t instanceof Date ? b.t.getTime() : b.t)
+        )[value.length - 1].v
+      : 0
+    : value;
+  const judgment =
+    context && Number.isFinite(current)
+      ? interpret(Array.isArray(value) ? value : current, context)
+      : null;
+  const fillColor = judgment ? judgmentColor(judgment) : "var(--bpm-accent)";
+  const pct = max > 0 ? Math.min(100, Math.max(0, (current / max) * 100)) : 0;
   return (
-    <div className={`bpm-progress-wrap ${className}`.trim()}>
+    <div
+      className={`bpm-progress-wrap ${className}`.trim()}
+      data-judgment={judgment ? judgment.level.status : undefined}
+    >
       {(label != null || showValue) && (
         <div className="flex justify-between items-center mb-1">
           {label != null && (
@@ -48,7 +77,7 @@ export function Progress({
       )}
       <div
         role="progressbar"
-        aria-valuenow={max > 0 ? value : undefined}
+        aria-valuenow={max > 0 ? current : undefined}
         aria-valuemin={0}
         aria-valuemax={max}
         className="bpm-progress-track h-2 rounded-full overflow-hidden"
@@ -56,9 +85,14 @@ export function Progress({
       >
         <div
           className="bpm-progress-fill h-full rounded-full transition-[width]"
-          style={{ width: `${pct}%`, background: "var(--bpm-accent)" }}
+          style={{ width: `${pct}%`, background: fillColor }}
         />
       </div>
+      {judgment && (
+        <div role="status" className="text-xs mt-1" style={{ color: fillColor }}>
+          {judgmentLabel(judgment)}
+        </div>
+      )}
     </div>
   );
 }

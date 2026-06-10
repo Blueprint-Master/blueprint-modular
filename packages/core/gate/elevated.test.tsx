@@ -7,7 +7,7 @@
 import { render, cleanup } from "@testing-library/react";
 import { afterEach, describe, expect, it } from "vitest";
 import React from "react";
-import { Metric } from "../../../components/bpm";
+import { Metric, Progress, ProgressRing } from "../../../components/bpm";
 
 afterEach(cleanup);
 
@@ -39,5 +39,43 @@ describe("elevate(instrument): metric", () => {
     );
     expect(container.querySelector("svg")).not.toBeNull();
     expect(container.textContent).toContain("88");
+  });
+});
+
+describe("elevate(instrument): progressRing", () => {
+  it("sans context → stroke accent, pas de jugement", () => {
+    const { container } = render(<ProgressRing value={75} />);
+    expect(container.querySelector("[data-judgment]")).toBeNull();
+  });
+
+  it("avec context défavorable → data-judgment=unfavorable", () => {
+    const { container } = render(
+      <ProgressRing value={55} context={CTX_HIB} max={100} />
+    );
+    expect(container.querySelector("[data-judgment]")?.getAttribute("data-judgment")).toBe(
+      "unfavorable"
+    );
+  });
+
+  it("trajectoire → flèche de tendance au centre", () => {
+    const { container } = render(<ProgressRing value={TRAJ_DOWN} context={CTX_HIB} max={120} />);
+    expect(container.querySelector("text")?.textContent).toBe("↘");
+  });
+});
+
+describe("elevate(instrument): progress", () => {
+  it("sans context → pas de jugement", () => {
+    const { container } = render(<Progress value={0.5} />);
+    expect(container.querySelector("[data-judgment]")).toBeNull();
+  });
+
+  it("avec context favorable → data-judgment=favorable + ligne status", () => {
+    const { container } = render(
+      <Progress value={0.9} max={1} context={{ reference: 0.8, direction: "higher_is_better" }} />
+    );
+    expect(container.querySelector("[data-judgment]")?.getAttribute("data-judgment")).toBe(
+      "favorable"
+    );
+    expect(container.querySelector('[role="status"]')).not.toBeNull();
   });
 });

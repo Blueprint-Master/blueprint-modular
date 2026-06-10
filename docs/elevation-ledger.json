@@ -103,13 +103,13 @@
     {
       "key": "progress",
       "class": "INSTRUMENT",
-      "status": "todo",
+      "status": "done",
       "reason": null
     },
     {
       "key": "progressRing",
       "class": "INSTRUMENT",
-      "status": "todo",
+      "status": "done",
       "reason": null
     },
     {
