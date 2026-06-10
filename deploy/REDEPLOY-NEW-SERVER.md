@@ -6,7 +6,7 @@
 
 ## Déploiement propre depuis Git (nouveau serveur)
 
-À faire **en SSH sur le nouveau VPS** (ex. `ssh ubuntu@NOUVELLE_IP`). Tout vient du repo, rien n’est copié depuis l’ancien serveur.
+À faire **en SSH sur le nouveau VPS** (ex. `ssh <vps-user>@NOUVELLE_IP`). Tout vient du repo, rien n’est copié depuis l’ancien serveur.
 
 ### 1. Prérequis
 
@@ -87,7 +87,7 @@ Une fois le déploiement propre fait une fois (clone + .env + étapes ci-dessus)
 En PowerShell (une fois pour la session, ou dans ton profil) :
 
 ```powershell
-$env:VPS_HOST = "NOUVELLE_IP"    # ex. 145.239.199.236
+$env:VPS_HOST = "NOUVELLE_IP"    # ex. <vps-host>
 $env:VPS_USER = "ubuntu"
 $env:VPS_REMOTE_DIR = "/home/ubuntu/blueprint-modular"
 # Si tu utilises une clé SSH différente :

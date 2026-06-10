@@ -1,5 +1,5 @@
 # Exemple de configuration Nginx pour le site Blueprint Modular
-# 1. Copier sur le VPS : scp nginx-bpm-domain.conf.example ubuntu@IP:/tmp/
+# 1. Copier sur le VPS : scp nginx-bpm-domain.conf.example <vps-user>@<vps-host>:/tmp/
 # 2. Sur le VPS : sudo cp /tmp/nginx-bpm-domain.conf.example /etc/nginx/sites-available/VOTRE_DOMAINE.fr
 # 3. Remplacer VOTRE_DOMAINE.fr par votre domaine dans le fichier
 # 4. Activer : sudo ln -sf /etc/nginx/sites-available/VOTRE_DOMAINE.fr /etc/nginx/sites-enabled/

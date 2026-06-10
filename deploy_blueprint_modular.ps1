@@ -4,10 +4,11 @@
 
 $ErrorActionPreference = "Stop"
 
-$SSH_KEY = "$env:USERPROFILE\.ssh\portfolio_beam_key"
-$SERVER_USER = "ubuntu"
-$SERVER_IP = "145.239.199.236"
-$REMOTE_PATH = "/var/www/blueprint-modular"
+# Infra fournie via variables d'environnement (voir .env.example). Aucune valeur reelle en dur.
+$SSH_KEY = if ($env:VPS_SSH_KEY) { $env:VPS_SSH_KEY } else { "$env:USERPROFILE\.ssh\<ssh-key-name>" }
+$SERVER_USER = if ($env:VPS_USER) { $env:VPS_USER } else { "<vps-user>" }
+$SERVER_IP = if ($env:VPS_HOST) { $env:VPS_HOST } else { "<vps-host>" }
+$REMOTE_PATH = if ($env:VPS_REMOTE_PATH) { $env:VPS_REMOTE_PATH } else { "/var/www/blueprint-modular" }
 
 if (-not (Test-Path $SSH_KEY)) {
     Write-Host "[ERREUR] Cle SSH introuvable: $SSH_KEY" -ForegroundColor Red

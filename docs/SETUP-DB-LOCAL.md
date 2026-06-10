@@ -50,14 +50,14 @@ Une nouvelle fenêtre (ou onglet) s’ouvre avec une grande zone de texte vide :
 
 4. **Modifier le mot de passe** :  
    - Avec Ctrl+F, ouvre la recherche et cherche : `MON_MOT_DE_PASSE`  
-   - Remplace **toute** la chaîne `MON_MOT_DE_PASSE` par le mot de passe que tu veux donner à l’utilisateur de la base (par ex. `MaSuperBdd2025`).  
-   - Il doit apparaître **entre guillemets** : `'MaSuperBdd2025'`  
+   - Remplace **toute** la chaîne `MON_MOT_DE_PASSE` par le mot de passe que tu veux donner à l’utilisateur de la base (par ex. `<password>`).  
+   - Il doit apparaître **entre guillemets** : `'<password>'`  
    - Tu peux laisser `blueprint_user` tel quel, ou le remplacer par un autre nom d’utilisateur si tu préfères.
 
-Exemple : si tu choisis le mot de passe `MaSuperBdd2025`, la ligne doit devenir :
+Exemple : si tu choisis le mot de passe `<password>`, la ligne doit devenir :
 
 ```sql
-CREATE USER blueprint_user WITH PASSWORD 'MaSuperBdd2025';
+CREATE USER blueprint_user WITH PASSWORD '<password>';
 ```
 
 ---
@@ -121,10 +121,10 @@ Si une erreur s’affiche (par ex. « role already exists » ou « database alre
 
    Remplace **TON_MOT_DE_PASSE** par **exactement** le même mot de passe que celui que tu as mis dans le script à l’étape 4 (sans guillemets dans le .env).
 
-   Exemple avec le mot de passe `MaSuperBdd2025` :
+   Exemple avec le mot de passe `<password>` :
 
    ```
-   DATABASE_URL=postgresql://blueprint_user:MaSuperBdd2025@localhost:5432/blueprint_modular
+   DATABASE_URL=postgresql://blueprint_user:<password>@localhost:5432/blueprint_modular
    ```
 
 3. **Si ton mot de passe contient des caractères spéciaux** (`@`, `#`, `:`, `/`, `%`), il faut les coder dans l’URL. Voir la section « Encodage du mot de passe » dans [DATABASE.md](DATABASE.md#52-créer-lutilisateur-et-la-base-première-fois-en-local).

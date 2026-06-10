@@ -42,7 +42,7 @@ Si le build Next.js affiche des warnings « Unsupported engine » (Node 18), pas
 
 **Depuis Windows (PowerShell)** — en se connectant au VPS puis en exécutant le script :
 ```powershell
-ssh -i $env:USERPROFILE\.ssh\portfolio_beam_key ubuntu@145.239.199.236 "cd /home/ubuntu/blueprint-modular && git pull && bash deploy/upgrade-node-20.sh"
+ssh -i $env:USERPROFILE\.ssh\<ssh-key-name> <vps-user>@<vps-host> "cd /home/ubuntu/blueprint-modular && git pull && bash deploy/upgrade-node-20.sh"
 ```
 
 **Ou directement sur le VPS (SSH)** :

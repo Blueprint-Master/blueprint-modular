@@ -1,5 +1,5 @@
 # Deploiement sur le VPS depuis Windows.
-# Prerequis : repo clone sur le VPS dans /home/ubuntu/blueprint-modular (ou VPS_REMOTE_DIR).
+# Prerequis : repo clone sur le VPS dans /home/<vps-user>/blueprint-modular (ou VPS_REMOTE_DIR).
 # Usage: .\scripts\deploy-vps-remote.ps1
 # Nouveau serveur : .\scripts\deploy-vps-remote.ps1 -VpsHost NOUVELLE_IP
 # Ou : $env:VPS_HOST = "NOUVELLE_IP"; .\scripts\deploy-vps-remote.ps1
@@ -12,16 +12,15 @@ param(
     [string]$RemoteDir = $env:VPS_REMOTE_DIR
 )
 
-# Valeurs par defaut
-if (-not $VpsHost) { $VpsHost = "51.83.88.18" }
-if (-not $User) { $User = "ubuntu" }
-if (-not $RemoteDir) { $RemoteDir = "/home/ubuntu/blueprint-modular" }
+# Valeurs par defaut (placeholders : fournir les vraies valeurs via $env:VPS_* ou les parametres)
+if (-not $VpsHost) { $VpsHost = "<vps-host>" }
+if (-not $User) { $User = "<vps-user>" }
+if (-not $RemoteDir) { $RemoteDir = "/home/<vps-user>/blueprint-modular" }
 $SshDir = Join-Path $env:USERPROFILE ".ssh"
 if (-not $KeyPath) {
     $candidates = @(
         (Join-Path $SshDir "id_ed25519"),
-        (Join-Path $SshDir "id_rsa"),
-        (Join-Path $SshDir "portfolio_beam_key")
+        (Join-Path $SshDir "id_rsa")
     )
     foreach ($k in $candidates) {
         if (Test-Path $k) { $KeyPath = $k; break }
