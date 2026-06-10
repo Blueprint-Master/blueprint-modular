@@ -947,6 +947,7 @@ Locales courants pour le format nombre (ex. "fr-FR" → 1 000,50, "en-US" → 1,
 ```
 
 ## bpm.modelSelector
+@component bpm.modelSelector @description Sélecteur de modèle IA avec dropdown groupé par fournisseur et affichage des capacités. @example bpm.modelSelector({ models: [{ id: "gpt-4", label: "GPT-4", provider: "OpenAI" }], selected: "gpt-4", onChange: setModel }) @param {object} props @param {ModelOption[]} props.models - Liste des modèles disponibles. Obligatoire. @param {string} props.selected - ID du modèle sélectionné. Obligatoire. @param {function} props.onChange - Callback au changement de sélection. Obligatoire. @param {boolean} [props.showCapabilities=true] - Affiche les capacités et fenêtre de contexte. Optionnel. @param {string} [props.className=""] - Classes CSS additionnelles. Optionnel. @associated bpm.chatInterface, bpm.promptInput export interface ModelOption { id: string; label: string; provider: string; capabilities?: string[]; contextWindow?: number; } @component bpm.modelSelector @description Sélecteur de modèle IA (par fournisseur, capacités).
 ```
   models*: ModelOption[]
   selected*: string
