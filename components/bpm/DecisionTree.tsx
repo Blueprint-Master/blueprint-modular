@@ -9,6 +9,10 @@ export type DecisionNode = {
   branches?: { label: string; targetId: string }[];
 };
 
+/**
+ * @component bpm.decisionTree
+ * @description Arbre de décision interactif (questions, actions, résultats).
+ */
 export type DecisionTreeProps = {
   rootId: string;
   nodes: DecisionNode[];

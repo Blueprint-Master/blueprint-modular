@@ -452,6 +452,7 @@ Page CRUD générique : table + filtres + modal de création/édition/détail c�
 ```
 
 ## bpm.decisionTree
+@component bpm.decisionTree @description Arbre de décision interactif (questions, actions, résultats).
 ```
   rootId*: string
   nodes*: DecisionNode[]
