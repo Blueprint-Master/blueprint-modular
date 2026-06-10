@@ -402,6 +402,7 @@ ISO ou texte libre, ou Date (affichage localisé court). */ timestamp?: string |
 ```
 
 ## bpm.contextMenu
+@component bpm.contextMenu @description Menu contextuel (clic droit ou clic bouton).
 ```
   items*: ContextMenuItem[]
   trigger*: React.ReactNode
