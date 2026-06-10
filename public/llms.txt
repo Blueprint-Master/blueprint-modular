@@ -158,6 +158,7 @@ Composant bpm.aiQueryBar — voir @blueprint-modular/core ou BPM_API.md.
   children*: React.ReactNode  — PARENT: bpm.table (colonne statut) | bpm.metric | bpm.card. INTERDIT: texte long >20 chars — utiliser bpm.chip. ASSOCIÉ: bpm.table, bpm.metric, bpm.statusBox.
   variant?: BadgeVariant  — Style / couleur du badge. Valeurs : 'default' | 'primary' | 'success' | 'warning' | 'error'. Default: 'default'.
   className?: string
+  size?: "sm" | "md" | "lg"  — Taille du badge. 'sm' (défaut) | 'md' | 'lg'. Additif — n'affecte pas le rendu existant.
 ```
 
 ## bpm.barChart

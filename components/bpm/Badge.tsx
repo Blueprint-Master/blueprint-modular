@@ -10,6 +10,8 @@ export interface BadgeProps {
   /** Style / couleur du badge. Valeurs : 'default' | 'primary' | 'success' | 'warning' | 'error'. Default: 'default'. */
   variant?: BadgeVariant;
   className?: string;
+  /** Taille du badge. 'sm' (défaut) | 'md' | 'lg'. Additif — n'affecte pas le rendu existant. */
+  size?: "sm" | "md" | "lg";
 }
 
 const variantStyles: Record<BadgeVariant, React.CSSProperties> = {
@@ -60,15 +62,22 @@ const variantStyles: Record<BadgeVariant, React.CSSProperties> = {
  * @associated bpm.chip, bpm.statusBox
  * @forbidden Texte long >20 caractères — utiliser bpm.chip
  */
+const sizeStyles: Record<"sm" | "md" | "lg", React.CSSProperties> = {
+  sm: { fontSize: "var(--bpm-font-size-sm)", padding: "0 6px" },
+  md: { fontSize: "var(--bpm-font-size-base)", padding: "2px 8px" },
+  lg: { fontSize: "var(--bpm-font-size-lg, 1rem)", padding: "4px 12px" },
+};
+
 export function Badge({
   children,
   variant = "default",
   className = "",
+  size = "sm",
 }: BadgeProps) {
   return (
     <span
-      className={`bpm-badge bpm-badge-${variant} inline-block font-medium px-2 py-0.5 ${className}`.trim()}
-      style={{ ...variantStyles[variant], fontSize: "var(--bpm-font-size-sm)" }}
+      className={`bpm-badge bpm-badge-${variant} inline-block font-medium ${className}`.trim()}
+      style={{ ...variantStyles[variant], ...sizeStyles[size] }}
     >
       {children}
     </span>

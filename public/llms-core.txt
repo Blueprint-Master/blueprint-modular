@@ -24,6 +24,7 @@ bpm.badge({
   children*: React.ReactNode
   variant?: BadgeVariant
   className?: string
+  size?: "sm" | "md" | "lg"
 })
 
 bpm.button({
