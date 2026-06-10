@@ -899,6 +899,7 @@ Carte Leaflet chargée côté client uniquement (évite erreurs SSR). */ const L
 ```
 
 ## bpm.message
+@component bpm.message @description Bandeau info/success/warning/error.
 ```
   type?: MessageType
   children*: React.ReactNode

@@ -4,6 +4,10 @@ import React from "react";
 
 export type MessageType = "info" | "success" | "warning" | "error";
 
+/**
+ * @component bpm.message
+ * @description Bandeau info/success/warning/error.
+ */
 export interface MessageProps {
   type?: MessageType;
   children: React.ReactNode;
