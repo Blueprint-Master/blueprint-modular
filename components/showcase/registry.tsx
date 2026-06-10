@@ -11,7 +11,7 @@
  * La page /components itère sur ce registre : pas de page à la main par composant.
  */
 import React from "react";
-import { Metric, Progress, ProgressRing } from "@/components/bpm";
+import { LiveGauge, Metric, Progress, ProgressRing } from "@/components/bpm";
 
 /** Trajectoire de démonstration : dégradation régulière sur 6 périodes. */
 const TRAJ_DOWN = [
@@ -126,6 +126,39 @@ export const SHOWCASE: ShowcaseEntry[] = [
             ]}
             label="TRS"
             context={{ reference: 0.8, direction: "higher_is_better" }}
+          />
+        ),
+      },
+    ],
+  },
+  {
+    key: "liveGauge",
+    class: "INSTRUMENT",
+    examples: [
+      {
+        name: "défaut",
+        note: "rendu historique inchangé (zones seuil)",
+        render: () => <LiveGauge value={62} warningAbove={70} criticalAbove={90} label="CPU %" />,
+      },
+      {
+        name: "déviant",
+        note: "context { reference: 60, lower_is_better } → valeur jugée défavorable",
+        render: () => (
+          <LiveGauge value={85} label="Latence (ms)" context={{ reference: 60, direction: "lower_is_better" }} />
+        ),
+      },
+      {
+        name: "trajectoire",
+        note: "v(t) montante & lower_is_better → tendance ↘ (worsening) révélée",
+        render: () => (
+          <LiveGauge
+            value={[
+              { t: 1, v: 40 },
+              { t: 2, v: 55 },
+              { t: 3, v: 72 },
+            ]}
+            label="Latence (ms)"
+            context={{ reference: 60, direction: "lower_is_better" }}
           />
         ),
       },

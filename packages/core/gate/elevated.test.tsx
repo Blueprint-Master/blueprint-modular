@@ -7,7 +7,7 @@
 import { render, cleanup } from "@testing-library/react";
 import { afterEach, describe, expect, it } from "vitest";
 import React from "react";
-import { Metric, Progress, ProgressRing } from "../../../components/bpm";
+import { LiveGauge, Metric, Progress, ProgressRing } from "../../../components/bpm";
 
 afterEach(cleanup);
 
@@ -77,5 +77,36 @@ describe("elevate(instrument): progress", () => {
       "favorable"
     );
     expect(container.querySelector('[role="status"]')).not.toBeNull();
+  });
+});
+
+describe("elevate(instrument): liveGauge", () => {
+  it("sans context → pas de jugement", () => {
+    const { container } = render(<LiveGauge value={62} />);
+    expect(container.querySelector("[data-judgment]")).toBeNull();
+  });
+
+  it("lower_is_better, valeur au-dessus du repère → unfavorable", () => {
+    const { container } = render(
+      <LiveGauge value={85} context={{ reference: 60, direction: "lower_is_better" }} />
+    );
+    expect(container.querySelector("[data-judgment]")?.getAttribute("data-judgment")).toBe(
+      "unfavorable"
+    );
+  });
+
+  it("trajectoire montante & lower_is_better → worsening (↘) + dernier point", () => {
+    const { container } = render(
+      <LiveGauge
+        value={[
+          { t: 1, v: 40 },
+          { t: 2, v: 55 },
+          { t: 3, v: 72 },
+        ]}
+        context={{ reference: 60, direction: "lower_is_better" }}
+      />
+    );
+    expect(container.textContent).toContain("72");
+    expect(container.textContent).toContain("↘");
   });
 });

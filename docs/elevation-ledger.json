@@ -73,7 +73,7 @@
     {
       "key": "liveGauge",
       "class": "INSTRUMENT",
-      "status": "todo",
+      "status": "done",
       "reason": null
     },
     {
