@@ -929,6 +929,7 @@ Locales courants pour le format nombre (ex. "fr-FR" → 1 000,50, "en-US" → 1,
 ```
 
 ## bpm.metricRow
+@component bpm.metricRow @description Ligne de métriques (conteneur pour plusieurs bpm.metric).
 ```
   children*: React.ReactNode
   className?: string

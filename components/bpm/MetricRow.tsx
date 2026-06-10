@@ -1,6 +1,10 @@
 "use client";
 import React from "react";
 
+/**
+ * @component bpm.metricRow
+ * @description Ligne de métriques (conteneur pour plusieurs bpm.metric).
+ */
 export interface MetricRowProps {
   children: React.ReactNode;
   className?: string;
