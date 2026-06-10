@@ -11,6 +11,10 @@ export interface ChangelogEntry {
   date: string;
 }
 
+/**
+ * @component bpm.changelog
+ * @description Journal des modifications avec catégories et versions.
+ */
 export interface ChangelogProps {
   changes: ChangelogEntry[];
   groupByDate?: boolean;

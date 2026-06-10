@@ -258,6 +258,7 @@ Accent BPM aligné référence — valeurs hex pour styles 100% inline (pas de v
 ```
 
 ## bpm.changelog
+@component bpm.changelog @description Journal des modifications avec catégories et versions.
 ```
   changes*: ChangelogEntry[]
   groupByDate?: boolean
