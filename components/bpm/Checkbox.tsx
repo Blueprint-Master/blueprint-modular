@@ -2,6 +2,10 @@
 
 import React from "react";
 
+/**
+ * @component bpm.checkbox
+ * @description Case à cocher.
+ */
 export interface CheckboxProps {
   label?: React.ReactNode;
   checked?: boolean;

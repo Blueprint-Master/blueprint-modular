@@ -289,6 +289,7 @@ ISO ou texte libre, ou Date (affichage localisé court). */ timestamp?: string |
 ```
 
 ## bpm.checkbox
+@component bpm.checkbox @description Case à cocher.
 ```
   label?: React.ReactNode
   checked?: boolean
