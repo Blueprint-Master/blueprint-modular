@@ -831,6 +831,8 @@ exports[`bpm prop surface snapshot > prop names match committed snapshot (additi
     "onChange",
     "disabled",
     "size",
+    "history",
+    "context",
   ],
   "relationGraph": [
     "nodes",

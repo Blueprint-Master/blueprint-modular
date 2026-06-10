@@ -20,6 +20,7 @@ import {
   Metric,
   Progress,
   ProgressRing,
+  Rating,
   ScatterChart,
   Sparkline,
   StatusBox,
@@ -156,6 +157,23 @@ describe("elevate(instrument): sparkline", () => {
       />
     );
     expect(container.querySelector("svg")?.getAttribute("data-judgment")).toBe("favorable");
+  });
+});
+
+describe("elevate(instrument): rating", () => {
+  it("sans context → pas de jugement", () => {
+    const { container } = render(<Rating value={3} />);
+    expect(container.querySelector("[data-judgment]")).toBeNull();
+  });
+
+  it("note sous la cible → unfavorable + écart affiché", () => {
+    const { container } = render(
+      <Rating value={2} context={{ reference: 4, direction: "higher_is_better" }} />
+    );
+    expect(container.querySelector("[data-judgment]")?.getAttribute("data-judgment")).toBe(
+      "unfavorable"
+    );
+    expect(container.textContent).toContain("vs cible");
   });
 });
 

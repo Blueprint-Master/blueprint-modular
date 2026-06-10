@@ -1096,13 +1096,15 @@ Composant bpm.plcConnector — voir @blueprint-modular/core ou BPM_API.md.
 ```
 
 ## bpm.rating
-@component bpm.rating @description Composant d'évaluation par étoiles cliquables avec taille personnalisable. @example bpm.rating({ value: 3, max: 5, onChange: setRating, size: "medium" }) @param {object} props @param {number} [props.value=0] - Note actuelle. Optionnel. @param {number} [props.max=5] - Nombre maximum d'étoiles. Optionnel. @param {function} [props.onChange] - Callback au clic sur une étoile. Optionnel. @param {boolean} [props.disabled=false] - Désactive l'interaction. Optionnel. @param {"small"|"medium"|"large"} [props.size="medium"] - Taille des étoiles. Optionnel. @associated bpm.slider, bpm.metric
+@component bpm.rating @description Composant d'évaluation par étoiles cliquables avec taille personnalisable. @example bpm.rating({ value: 3, max: 5, onChange: setRating, size: "medium" }) @param {object} props @param {number} [props.value=0] - Note actuelle. Optionnel. @param {number} [props.max=5] - Nombre maximum d'étoiles. Optionnel. @param {function} [props.onChange] - Callback au clic sur une étoile. Optionnel. @param {boolean} [props.disabled=false] - Désactive l'interaction. Optionnel. @param {"small"|"medium"|"large"} [props.size="medium"] - Taille des étoiles. Optionnel. @param {TrajectoryPoint[]} [props.history] - Historique v(t) de la note, pour la tendance. Optionnel. @param {InterpretContext} [props.context] - Contexte de jugement (ex. note cible) : étoiles colorées par le verdict + suffixe écart/tendance. Optionnel. @associated bpm.slider, bpm.metric
 ```
   value?: number
   max?: number
   onChange?: (value: number) => void
   disabled?: boolean
   size?: "small" | "medium" | "large"
+  history?: TrajectoryPoint[]  — Historique v(t) [{t, v}] de la note — révèle la tendance si context est fourni.
+  context?: InterpretContext  — Contexte de jugement { reference, direction } (ex. note cible 4.0) : les étoiles pleines prennent la couleur du verdict et un suffixe écart/tendance role=status est révélé. Additif : sans context, rendu inchangé.
 ```
 
 ## bpm.relationGraph

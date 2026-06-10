@@ -11,7 +11,7 @@
  * La page /components itère sur ce registre : pas de page à la main par composant.
  */
 import React from "react";
-import { AnomalyAlert, AreaChart, BarChart, HighlightBox, LabelValue, LineChart, LiveChart, LiveGauge, MachineStatus, Metric, Progress, ProgressRing, ScatterChart, Sparkline, StatusBox } from "@/components/bpm";
+import { AnomalyAlert, AreaChart, BarChart, HighlightBox, LabelValue, LineChart, LiveChart, LiveGauge, MachineStatus, Metric, Progress, ProgressRing, Rating, ScatterChart, Sparkline, StatusBox } from "@/components/bpm";
 
 /** Série temps réel de démonstration (fenêtre de 2 min, dérive sous le repère). */
 function liveDemoData(drift: number[]): { timestamp: number; value: number }[] {
@@ -525,6 +525,33 @@ export const SHOWCASE: ShowcaseEntry[] = [
             width={320}
             height={120}
             context={{ reference: 100, direction: "higher_is_better" }}
+          />
+        ),
+      },
+    ],
+  },
+  {
+    key: "rating",
+    class: "INSTRUMENT",
+    examples: [
+      { name: "défaut", note: "rendu historique inchangé", render: () => <Rating value={3} /> },
+      {
+        name: "déviant",
+        note: "cible 4.0 → étoiles rouges + écart révélé",
+        render: () => <Rating value={2} context={{ reference: 4, direction: "higher_is_better" }} />,
+      },
+      {
+        name: "trajectoire",
+        note: "history v(t) en baisse → tendance ↘",
+        render: () => (
+          <Rating
+            value={2}
+            history={[
+              { t: 1, v: 4.2 },
+              { t: 2, v: 3.1 },
+              { t: 3, v: 2.0 },
+            ]}
+            context={{ reference: 4, direction: "higher_is_better" }}
           />
         ),
       },
