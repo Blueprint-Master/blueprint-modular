@@ -11,7 +11,7 @@
  * La page /components itère sur ce registre : pas de page à la main par composant.
  */
 import React from "react";
-import { AnomalyAlert, HighlightBox, LabelValue, LiveGauge, MachineStatus, Metric, Progress, ProgressRing, Sparkline, StatusBox } from "@/components/bpm";
+import { AnomalyAlert, HighlightBox, LabelValue, LineChart, LiveGauge, MachineStatus, Metric, Progress, ProgressRing, Sparkline, StatusBox } from "@/components/bpm";
 
 /** Trajectoire de démonstration : dégradation régulière sur 6 périodes. */
 const TRAJ_DOWN = [
@@ -391,6 +391,31 @@ export const SHOWCASE: ShowcaseEntry[] = [
               { t: 3, v: 42 },
             ]}
             context={{ reference: 60, direction: "higher_is_better" }}
+          />
+        ),
+      },
+    ],
+  },
+  {
+    key: "lineChart",
+    class: "INSTRUMENT",
+    examples: [
+      {
+        name: "défaut",
+        note: "rendu historique inchangé",
+        render: () => (
+          <LineChart data={[{ x: 0, y: 10 }, { x: 1, y: 25 }, { x: 2, y: 18 }, { x: 3, y: 30 }]} width={320} height={120} />
+        ),
+      },
+      {
+        name: "déviant + trajectoire",
+        note: "context → repère pointillé, série jugée (sous le repère et en baisse → rouge)",
+        render: () => (
+          <LineChart
+            data={[{ x: 0, y: 95 }, { x: 1, y: 88 }, { x: 2, y: 80 }, { x: 3, y: 71 }]}
+            width={320}
+            height={120}
+            context={{ reference: 100, direction: "higher_is_better" }}
           />
         ),
       },

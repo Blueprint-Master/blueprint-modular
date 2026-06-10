@@ -11,6 +11,7 @@ import {
   AnomalyAlert,
   HighlightBox,
   LabelValue,
+  LineChart,
   LiveGauge,
   MachineStatus,
   Metric,
@@ -151,6 +152,28 @@ describe("elevate(instrument): sparkline", () => {
       />
     );
     expect(container.querySelector("svg")?.getAttribute("data-judgment")).toBe("favorable");
+  });
+});
+
+describe("elevate(instrument): lineChart", () => {
+  const DATA = [
+    { x: 0, y: 95 },
+    { x: 1, y: 80 },
+    { x: 2, y: 71 },
+  ];
+
+  it("sans context → pas de jugement ni ligne de repère", () => {
+    const { container } = render(<LineChart data={DATA} />);
+    expect(container.querySelector("[data-judgment]")).toBeNull();
+    expect(container.querySelectorAll("line").length).toBe(0);
+  });
+
+  it("avec context → série jugée worsening/unfavorable + repère tracé", () => {
+    const { container } = render(<LineChart data={DATA} context={CTX_HIB} />);
+    const svg = container.querySelector("svg")!;
+    expect(svg.getAttribute("data-judgment")).toBe("unfavorable");
+    expect(svg.querySelectorAll("line").length).toBe(1);
+    expect(svg.getAttribute("aria-label")).toContain("↘");
   });
 });
 
