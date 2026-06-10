@@ -3,6 +3,10 @@
 import React, { useState } from "react";
 import { Spinner } from "./Spinner";
 
+/**
+ * @component bpm.aiQueryBar
+ * @description Barre de requête IA (langage naturel → résultat structuré).
+ */
 export interface AIQueryBarProps {
   onQuery: (question: string) => Promise<string>;
   placeholder?: string;
