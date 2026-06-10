@@ -2,6 +2,10 @@
 
 import React, { useMemo, useState } from "react";
 
+/**
+ * @component bpm.groupedList
+ * @description Liste groupée par clé avec en-têtes de groupe.
+ */
 export type GroupedListProps<T extends Record<string, unknown>> = {
   items: T[];
   groupBy: keyof T;

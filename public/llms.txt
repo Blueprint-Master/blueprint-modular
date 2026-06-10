@@ -667,6 +667,7 @@ Carte Leaflet chargée côté client uniquement (évite erreurs SSR). */ const L
 ```
 
 ## bpm.groupedList
+@component bpm.groupedList @description Liste groupée par clé avec en-têtes de groupe.
 ```
   items*: T[]
   groupBy*: keyof T
