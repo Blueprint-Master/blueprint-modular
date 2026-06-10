@@ -13,6 +13,10 @@ export interface Alarm {
   acknowledged?: boolean;
 }
 
+/**
+ * @component bpm.alarmPanel
+ * @description Panneau d'alarmes industrielles (active, accusée, résolue).
+ */
 export interface AlarmPanelProps {
   alarms: Alarm[];
   onAcknowledge?: (id: string) => void;
