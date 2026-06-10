@@ -23,6 +23,7 @@ import {
   ProgressRing,
   Rating,
   ScatterChart,
+  SensorGrid,
   Sparkline,
   StatusBox,
 } from "../../../components/bpm";
@@ -158,6 +159,30 @@ describe("elevate(instrument): sparkline", () => {
       />
     );
     expect(container.querySelector("svg")?.getAttribute("data-judgment")).toBe("favorable");
+  });
+});
+
+describe("elevate(instrument): sensorGrid", () => {
+  it("sans context par capteur → pas de jugement", () => {
+    const { container } = render(
+      <SensorGrid sensors={[{ id: "1", label: "T", value: 24, status: "ok" }]} />
+    );
+    expect(container.querySelector("[data-judgment]")).toBeNull();
+  });
+
+  it("capteur avec context lower_is_better au-dessus du repère → unfavorable", () => {
+    const { container } = render(
+      <SensorGrid
+        sensors={[
+          { id: "1", label: "T", value: 31, status: "ok", context: { reference: 25, direction: "lower_is_better" } },
+          { id: "2", label: "D", value: 118, status: "ok", context: { reference: 100, direction: "higher_is_better" } },
+        ]}
+      />
+    );
+    const judged = container.querySelectorAll("[data-judgment]");
+    expect(judged.length).toBe(2);
+    expect(judged[0].getAttribute("data-judgment")).toBe("unfavorable");
+    expect(judged[1].getAttribute("data-judgment")).toBe("favorable");
   });
 });
 

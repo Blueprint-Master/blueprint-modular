@@ -11,7 +11,7 @@
  * La page /components itère sur ce registre : pas de page à la main par composant.
  */
 import React from "react";
-import { AnomalyAlert, AreaChart, BarChart, HighlightBox, LabelValue, LineChart, LiveChart, LiveGauge, LoadingBar, MachineStatus, Metric, Progress, ProgressRing, Rating, ScatterChart, Sparkline, StatusBox } from "@/components/bpm";
+import { AnomalyAlert, AreaChart, BarChart, HighlightBox, LabelValue, LineChart, LiveChart, LiveGauge, LoadingBar, MachineStatus, Metric, Progress, ProgressRing, Rating, ScatterChart, SensorGrid, Sparkline, StatusBox } from "@/components/bpm";
 
 /** Série temps réel de démonstration (fenêtre de 2 min, dérive sous le repère). */
 function liveDemoData(drift: number[]): { timestamp: number; value: number }[] {
@@ -571,6 +571,57 @@ export const SHOWCASE: ShowcaseEntry[] = [
         note: "avancement 35 % vs 60 % attendu → remplissage rouge + aria-label de verdict",
         render: () => (
           <LoadingBar variant="iso" value={35} context={{ reference: 60, direction: "higher_is_better" }} />
+        ),
+      },
+    ],
+  },
+  {
+    key: "sensorGrid",
+    class: "INSTRUMENT",
+    examples: [
+      {
+        name: "défaut",
+        note: "rendu historique inchangé (statuts catégoriels)",
+        render: () => (
+          <SensorGrid
+            columns={2}
+            sensors={[
+              { id: "1", label: "Température", value: 24.5, unit: "°C", status: "ok" },
+              { id: "2", label: "Pression", value: 2.1, unit: "bar", status: "warning" },
+            ]}
+          />
+        ),
+      },
+      {
+        name: "déviant + trajectoire",
+        note: "context par capteur → carte jugée (bordure + verdict), tendance via history",
+        render: () => (
+          <SensorGrid
+            columns={2}
+            sensors={[
+              {
+                id: "1",
+                label: "Température",
+                value: 31.2,
+                unit: "°C",
+                status: "ok",
+                context: { reference: 25, direction: "lower_is_better" },
+                history: [
+                  { t: 1, v: 24.8 },
+                  { t: 2, v: 27.5 },
+                  { t: 3, v: 31.2 },
+                ],
+              },
+              {
+                id: "2",
+                label: "Débit",
+                value: 118,
+                unit: "L/min",
+                status: "ok",
+                context: { reference: 100, direction: "higher_is_better" },
+              },
+            ]}
+          />
         ),
       },
     ],
