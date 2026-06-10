@@ -26,6 +26,10 @@ export interface TabItem {
 
 export type TabsItems = (string | TabItem)[];
 
+/**
+ * @component bpm.tabs
+ * @description Onglets pour organiser le contenu.
+ */
 export interface TabsProps {
   /** PARENT: bpm.panel | bpm.container | page directe. INTERDIT: bpm.tabs imbriqué dans un autre bpm.tabs. ASSOCIÉ: bpm.table (contenu onglet data), bpm.plotlyChart (contenu onglet graphique), bpm.metric. */
   /** Onglets : tableau de { label, content } ou chaînes (label uniquement). */
