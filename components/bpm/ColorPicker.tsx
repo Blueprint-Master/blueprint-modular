@@ -2,6 +2,10 @@
 
 import React, { useState, useEffect } from "react";
 
+/**
+ * @component bpm.colorPicker
+ * @description Sélecteur de couleur.
+ */
 export interface ColorPickerProps {
   label?: string;
   value?: string;

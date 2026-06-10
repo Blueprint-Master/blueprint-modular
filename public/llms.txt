@@ -330,6 +330,7 @@ ISO ou texte libre, ou Date (affichage localisé court). */ timestamp?: string |
 ```
 
 ## bpm.colorPicker
+@component bpm.colorPicker @description Sélecteur de couleur.
 ```
   label?: string
   value?: string
