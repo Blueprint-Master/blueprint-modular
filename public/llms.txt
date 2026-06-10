@@ -310,6 +310,7 @@ ISO ou texte libre, ou Date (affichage localisé court). */ timestamp?: string |
 ```
 
 ## bpm.codeBlock
+@component bpm.codeBlock @description Bloc de code avec syntaxe colorée et bouton Copier.
 ```
   code*: string
   language?: string
