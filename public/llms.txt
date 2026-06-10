@@ -274,6 +274,7 @@ Chat Ollama local (démo).
 ```
 
 ## bpm.chatInterface
+ISO ou texte libre, ou Date (affichage localisé court). */ timestamp?: string | Date; } @component bpm.chatInterface @description Interface de chat (messages, saisie, streaming).
 ```
   messages*: ChatMessage[]
   onSend*: (content: string) => void
