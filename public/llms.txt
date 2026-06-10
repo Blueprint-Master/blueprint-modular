@@ -604,6 +604,7 @@ Page CRUD générique : table + filtres + modal de création/édition/détail c�
 ```
 
 ## bpm.flowDiagram
+@component bpm.flowDiagram @description Diagramme d'états et transitions interactif (SVG).
 ```
   states*: FlowDiagramState[]
   transitions*: FlowDiagramTransition[]
