@@ -2,6 +2,10 @@
 
 import React from "react";
 
+/**
+ * @component bpm.text
+ * @description Texte simple (niveau corps).
+ */
 export interface TextProps {
   children: React.ReactNode;
   /** Style inline comme st.text (monospace). */

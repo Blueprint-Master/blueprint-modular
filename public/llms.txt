@@ -1477,6 +1477,7 @@ INTERDIT : Tableau de données — obligatoire. INTERDIT : JSX dans data[], util
 ```
 
 ## bpm.text
+@component bpm.text @description Texte simple (niveau corps).
 ```
   children*: React.ReactNode
   mono?: boolean  — Style inline comme st.text (monospace).
