@@ -25,6 +25,10 @@ export interface PrintLayoutMarginsMm {
   left?: number;
 }
 
+/**
+ * @component bpm.printLayout
+ * @description Mise en page optimisée pour l'impression.
+ */
 export interface PrintLayoutProps {
   children: React.ReactNode;
   orientation?: "portrait" | "landscape";
