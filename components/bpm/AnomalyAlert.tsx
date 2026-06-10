@@ -4,6 +4,10 @@ import React from "react";
 
 export type AnomalySeverity = "info" | "warning" | "critical";
 
+/**
+ * @component bpm.anomalyAlert
+ * @description Alerte d'anomalie avec valeur attendue vs réelle.
+ */
 export interface AnomalyAlertProps {
   title?: string;
   expected: string | number;
