@@ -299,6 +299,7 @@ ISO ou texte libre, ou Date (affichage localisé court). */ timestamp?: string |
 ```
 
 ## bpm.chip
+@component bpm.chip @description Pastille / chip (tag supprimable ou non).
 ```
   label*: React.ReactNode
   onDelete?: () => void
