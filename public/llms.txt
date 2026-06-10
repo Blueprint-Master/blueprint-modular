@@ -1315,6 +1315,7 @@ Conteneur page (core) — props : children.
 ```
 
 ## bpm.skeleton
+@component bpm.skeleton @description Placeholder de chargement (skeleton screen).
 ```
   variant?: SkeletonVariant
   width?: number | string

@@ -6,6 +6,10 @@ export type SkeletonVariant = "rectangular" | "circular" | "text";
 
 export type SkeletonRounded = "sm" | "md" | "lg" | "full";
 
+/**
+ * @component bpm.skeleton
+ * @description Placeholder de chargement (skeleton screen).
+ */
 export interface SkeletonProps {
   variant?: SkeletonVariant;
   width?: number | string;
