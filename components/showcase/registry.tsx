@@ -11,7 +11,7 @@
  * La page /components itère sur ce registre : pas de page à la main par composant.
  */
 import React from "react";
-import { AnomalyAlert, AreaChart, BarChart, HighlightBox, LabelValue, LineChart, LiveChart, LiveGauge, MachineStatus, Metric, Progress, ProgressRing, Rating, ScatterChart, Sparkline, StatusBox } from "@/components/bpm";
+import { AnomalyAlert, AreaChart, BarChart, HighlightBox, LabelValue, LineChart, LiveChart, LiveGauge, LoadingBar, MachineStatus, Metric, Progress, ProgressRing, Rating, ScatterChart, Sparkline, StatusBox } from "@/components/bpm";
 
 /** Série temps réel de démonstration (fenêtre de 2 min, dérive sous le repère). */
 function liveDemoData(drift: number[]): { timestamp: number; value: number }[] {
@@ -553,6 +553,24 @@ export const SHOWCASE: ShowcaseEntry[] = [
             ]}
             context={{ reference: 4, direction: "higher_is_better" }}
           />
+        ),
+      },
+    ],
+  },
+  {
+    key: "loadingBar",
+    class: "INSTRUMENT",
+    examples: [
+      {
+        name: "défaut",
+        note: "rendu historique inchangé (iso déterminé)",
+        render: () => <LoadingBar variant="iso" value={65} />,
+      },
+      {
+        name: "déviant",
+        note: "avancement 35 % vs 60 % attendu → remplissage rouge + aria-label de verdict",
+        render: () => (
+          <LoadingBar variant="iso" value={35} context={{ reference: 60, direction: "higher_is_better" }} />
         ),
       },
     ],

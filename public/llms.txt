@@ -758,6 +758,7 @@ Composant bpm.groupedList — interface non parsée (voir BPM_API.md).
   size?: "thin" | "default" | "thick"  — Hauteur : thin (6px), default (8px), thick (12px).
   animated?: boolean  — Désactive l'animation (utile pour screenshots ou prefers-reduced-motion).
   className?: string
+  context?: InterpretContext  — Contexte de jugement { reference, direction } : sur la barre déterminée (variant "iso" + value), l'avancement est jugé vs le repère attendu — remplissage coloré par le verdict + aria-label enrichi. Additif : sans context, rendu inchangé.
 ```
 
 ## bpm.machineStatus

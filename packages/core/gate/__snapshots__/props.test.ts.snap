@@ -574,6 +574,7 @@ exports[`bpm prop surface snapshot > prop names match committed snapshot (additi
     "size",
     "animated",
     "className",
+    "context",
   ],
   "machineStatus": [
     "title",

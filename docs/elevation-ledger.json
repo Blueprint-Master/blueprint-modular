@@ -79,7 +79,7 @@
     {
       "key": "loadingBar",
       "class": "INSTRUMENT",
-      "status": "todo",
+      "status": "done",
       "reason": null
     },
     {

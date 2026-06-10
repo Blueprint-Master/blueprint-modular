@@ -15,6 +15,7 @@ import {
   LabelValue,
   LineChart,
   LiveChart,
+  LoadingBar,
   LiveGauge,
   MachineStatus,
   Metric,
@@ -157,6 +158,29 @@ describe("elevate(instrument): sparkline", () => {
       />
     );
     expect(container.querySelector("svg")?.getAttribute("data-judgment")).toBe("favorable");
+  });
+});
+
+describe("elevate(instrument): loadingBar", () => {
+  it("sans context → pas de jugement", () => {
+    const { container } = render(<LoadingBar variant="iso" value={65} />);
+    expect(container.querySelector("[data-judgment]")).toBeNull();
+  });
+
+  it("avancement sous le repère attendu → unfavorable", () => {
+    const { container } = render(
+      <LoadingBar variant="iso" value={35} context={{ reference: 60, direction: "higher_is_better" }} />
+    );
+    expect(container.querySelector("[data-judgment]")?.getAttribute("data-judgment")).toBe(
+      "unfavorable"
+    );
+  });
+
+  it("variant indéterminé + context → pas de jugement (rien à juger)", () => {
+    const { container } = render(
+      <LoadingBar variant="sweep" context={{ reference: 60, direction: "higher_is_better" }} />
+    );
+    expect(container.querySelector("[data-judgment]")).toBeNull();
   });
 });
 
