@@ -1629,6 +1629,7 @@ Toast visuel ; en production préférer useToast().
 ```
 
 ## bpm.toggle
+@component bpm.toggle @description Interrupteur on/off.
 ```
   label?: React.ReactNode
   value?: boolean

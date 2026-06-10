@@ -2,6 +2,10 @@
 
 import React from "react";
 
+/**
+ * @component bpm.toggle
+ * @description Interrupteur on/off.
+ */
 export interface ToggleProps {
   label?: React.ReactNode;
   value?: boolean;
