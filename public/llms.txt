@@ -1156,6 +1156,7 @@ Composant bpm.plcConnector — voir @blueprint-modular/core ou BPM_API.md.
   color?: string
   radius?: number
   className?: string
+  context?: InterpretContext  — Contexte de jugement { reference, direction, comparisonFrame? } : chaque point est jugé (couleur par écart au repère ; anomalie >2σ — du comparisonFrame ou, à défaut, du nuage lui-même — cerclée), repère pointillé tracé, verdict global de la série en aria-label + data-judgment. Additif : sans context, rendu inchangé.
 ```
 
 ## bpm.scheduler

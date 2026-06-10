@@ -19,6 +19,7 @@ import {
   Metric,
   Progress,
   ProgressRing,
+  ScatterChart,
   Sparkline,
   StatusBox,
 } from "../../../components/bpm";
@@ -154,6 +155,28 @@ describe("elevate(instrument): sparkline", () => {
       />
     );
     expect(container.querySelector("svg")?.getAttribute("data-judgment")).toBe("favorable");
+  });
+});
+
+describe("elevate(instrument): scatterChart", () => {
+  it("sans context → pas de jugement", () => {
+    const { container } = render(<ScatterChart data={[{ x: 1, y: 10 }]} />);
+    expect(container.querySelector("[data-judgment]")).toBeNull();
+  });
+
+  it("avec context → outlier >2σ marqué data-abnormal + repère", () => {
+    const { container } = render(
+      <ScatterChart
+        data={[
+          { x: 1, y: 101 }, { x: 2, y: 99 }, { x: 3, y: 102 },
+          { x: 4, y: 98 }, { x: 5, y: 100 }, { x: 6, y: 62 },
+        ]}
+        context={CTX_HIB}
+      />
+    );
+    const svg = container.querySelector("svg")!;
+    expect(svg.querySelectorAll("[data-abnormal]").length).toBe(1);
+    expect(svg.querySelectorAll("line").length).toBe(1);
   });
 });
 

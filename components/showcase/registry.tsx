@@ -11,7 +11,7 @@
  * La page /components itère sur ce registre : pas de page à la main par composant.
  */
 import React from "react";
-import { AnomalyAlert, AreaChart, BarChart, HighlightBox, LabelValue, LineChart, LiveGauge, MachineStatus, Metric, Progress, ProgressRing, Sparkline, StatusBox } from "@/components/bpm";
+import { AnomalyAlert, AreaChart, BarChart, HighlightBox, LabelValue, LineChart, LiveGauge, MachineStatus, Metric, Progress, ProgressRing, ScatterChart, Sparkline, StatusBox } from "@/components/bpm";
 
 /** Trajectoire de démonstration : dégradation régulière sur 6 périodes. */
 const TRAJ_DOWN = [
@@ -463,6 +463,34 @@ export const SHOWCASE: ShowcaseEntry[] = [
         render: () => (
           <BarChart
             data={[{ x: "Jan", y: 110 }, { x: "Fév", y: 95 }, { x: "Mar", y: 80 }, { x: "Avr", y: 70 }]}
+            width={320}
+            height={120}
+            context={{ reference: 100, direction: "higher_is_better" }}
+          />
+        ),
+      },
+    ],
+  },
+  {
+    key: "scatterChart",
+    class: "INSTRUMENT",
+    examples: [
+      {
+        name: "défaut",
+        note: "rendu historique inchangé",
+        render: () => (
+          <ScatterChart data={[{ x: 1, y: 10 }, { x: 2, y: 25 }, { x: 3, y: 18 }]} width={320} height={120} />
+        ),
+      },
+      {
+        name: "déviant + anomalie",
+        note: "context → points jugés individuellement, outlier >2σ cerclé, repère pointillé",
+        render: () => (
+          <ScatterChart
+            data={[
+              { x: 1, y: 101 }, { x: 2, y: 99 }, { x: 3, y: 102 }, { x: 4, y: 98 },
+              { x: 5, y: 100 }, { x: 6, y: 62 },
+            ]}
             width={320}
             height={120}
             context={{ reference: 100, direction: "higher_is_better" }}
