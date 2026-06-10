@@ -1537,7 +1537,7 @@ Titre h1 minimal (core) — children uniquement. Pour titres hiérarchiques : bp
 ```
 
 ## bpm.title1
-— bpm.title1 : niveau 1 implicite, ne pas passer level.
+@component bpm.title @description Titre h1 minimal. — bpm.title1 : niveau 1 implicite, ne pas passer level.
 ```
   children*: React.ReactNode
   level?: 1 | 2 | 3 | 4
@@ -1553,7 +1553,7 @@ Titre h1 minimal (core) — children uniquement. Pour titres hiérarchiques : bp
 ```
 
 ## bpm.title2
-— bpm.title2 : niveau 2 implicite, ne pas passer level.
+@component bpm.title @description Titre h1 minimal. — bpm.title2 : niveau 2 implicite, ne pas passer level.
 ```
   children*: React.ReactNode
   level?: 1 | 2 | 3 | 4
@@ -1569,7 +1569,7 @@ Titre h1 minimal (core) — children uniquement. Pour titres hiérarchiques : bp
 ```
 
 ## bpm.title3
-— bpm.title3 : niveau 3 implicite, ne pas passer level.
+@component bpm.title @description Titre h1 minimal. — bpm.title3 : niveau 3 implicite, ne pas passer level.
 ```
   children*: React.ReactNode
   level?: 1 | 2 | 3 | 4
@@ -1585,7 +1585,7 @@ Titre h1 minimal (core) — children uniquement. Pour titres hiérarchiques : bp
 ```
 
 ## bpm.title4
-— bpm.title4 : niveau 4 implicite, ne pas passer level.
+@component bpm.title @description Titre h1 minimal. — bpm.title4 : niveau 4 implicite, ne pas passer level.
 ```
   children*: React.ReactNode
   level?: 1 | 2 | 3 | 4
@@ -1601,6 +1601,7 @@ Titre h1 minimal (core) — children uniquement. Pour titres hiérarchiques : bp
 ```
 
 ## bpm.titleBpm
+@component bpm.title @description Titre h1 minimal.
 ```
   children*: React.ReactNode
   level?: 1 | 2 | 3 | 4
