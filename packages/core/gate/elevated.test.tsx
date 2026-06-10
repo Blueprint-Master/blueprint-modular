@@ -19,6 +19,7 @@ import {
   LiveGauge,
   MachineStatus,
   Metric,
+  PredictiveChart,
   Progress,
   ProgressRing,
   Rating,
@@ -159,6 +160,26 @@ describe("elevate(instrument): sparkline", () => {
       />
     );
     expect(container.querySelector("svg")?.getAttribute("data-judgment")).toBe("favorable");
+  });
+});
+
+describe("elevate(instrument): predictiveChart", () => {
+  const HIST = [{ x: 1, y: 102 }, { x: 2, y: 97 }];
+  const PRED = [{ x: 3, y: 88 }, { x: 4, y: 76 }];
+
+  it("sans context → aria-label historique, pas de jugement", () => {
+    const { container } = render(<PredictiveChart historical={HIST} predicted={PRED} />);
+    expect(container.querySelector("svg")?.getAttribute("aria-label")).toBe("Prévision");
+    expect(container.querySelector("[data-judgment]")).toBeNull();
+  });
+
+  it("avec context → prévision jugée worsening/unfavorable", () => {
+    const { container } = render(
+      <PredictiveChart historical={HIST} predicted={PRED} context={CTX_HIB} />
+    );
+    const svg = container.querySelector("svg")!;
+    expect(svg.getAttribute("data-judgment")).toBe("unfavorable");
+    expect(svg.getAttribute("aria-label")).toContain("↘");
   });
 });
 

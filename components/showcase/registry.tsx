@@ -11,7 +11,7 @@
  * La page /components itère sur ce registre : pas de page à la main par composant.
  */
 import React from "react";
-import { AnomalyAlert, AreaChart, BarChart, HighlightBox, LabelValue, LineChart, LiveChart, LiveGauge, LoadingBar, MachineStatus, Metric, Progress, ProgressRing, Rating, ScatterChart, SensorGrid, Sparkline, StatusBox } from "@/components/bpm";
+import { AnomalyAlert, AreaChart, BarChart, HighlightBox, LabelValue, LineChart, LiveChart, LiveGauge, LoadingBar, MachineStatus, Metric, PredictiveChart, Progress, ProgressRing, Rating, ScatterChart, SensorGrid, Sparkline, StatusBox } from "@/components/bpm";
 
 /** Série temps réel de démonstration (fenêtre de 2 min, dérive sous le repère). */
 function liveDemoData(drift: number[]): { timestamp: number; value: number }[] {
@@ -621,6 +621,39 @@ export const SHOWCASE: ShowcaseEntry[] = [
                 context: { reference: 100, direction: "higher_is_better" },
               },
             ]}
+          />
+        ),
+      },
+    ],
+  },
+  {
+    key: "predictiveChart",
+    class: "INSTRUMENT",
+    examples: [
+      {
+        name: "défaut",
+        note: "rendu historique inchangé",
+        render: () => (
+          <PredictiveChart
+            historical={[{ x: 1, y: 10 }, { x: 2, y: 14 }, { x: 3, y: 13 }]}
+            predicted={[{ x: 3, y: 13 }, { x: 4, y: 16 }, { x: 5, y: 18 }]}
+            todayX={3}
+            width={320}
+            height={140}
+          />
+        ),
+      },
+      {
+        name: "déviant + trajectoire",
+        note: "context → la prévision (qui décroche sous le repère) devient rouge, repère tracé",
+        render: () => (
+          <PredictiveChart
+            historical={[{ x: 1, y: 102 }, { x: 2, y: 100 }, { x: 3, y: 97 }]}
+            predicted={[{ x: 3, y: 97 }, { x: 4, y: 88 }, { x: 5, y: 76 }]}
+            todayX={3}
+            width={320}
+            height={140}
+            context={{ reference: 100, direction: "higher_is_better" }}
           />
         ),
       },
