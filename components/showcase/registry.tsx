@@ -11,7 +11,7 @@
  * La page /components itère sur ce registre : pas de page à la main par composant.
  */
 import React from "react";
-import { LiveGauge, Metric, Progress, ProgressRing, Sparkline } from "@/components/bpm";
+import { LiveGauge, Metric, Progress, ProgressRing, Sparkline, StatusBox } from "@/components/bpm";
 
 /** Trajectoire de démonstration : dégradation régulière sur 6 périodes. */
 const TRAJ_DOWN = [
@@ -200,6 +200,45 @@ export const SHOWCASE: ShowcaseEntry[] = [
             context={{ reference: 50, direction: "higher_is_better" }}
             width={160}
             height={48}
+          />
+        ),
+      },
+    ],
+  },
+  {
+    key: "statusBox",
+    class: "INSTRUMENT",
+    examples: [
+      {
+        name: "défaut",
+        note: "rendu historique inchangé",
+        render: () => <StatusBox label="Synchronisation CRM" state="complete" />,
+      },
+      {
+        name: "déviant",
+        note: "value + context → verdict écart révélé, bordure jugée",
+        render: () => (
+          <StatusBox
+            label="File d'attente"
+            state="running"
+            value={340}
+            context={{ reference: 200, direction: "lower_is_better" }}
+          />
+        ),
+      },
+      {
+        name: "trajectoire",
+        note: "v(t) en baisse & lower_is_better → tendance ↗ (improving)",
+        render: () => (
+          <StatusBox
+            label="File d'attente"
+            state="running"
+            value={[
+              { t: 1, v: 410 },
+              { t: 2, v: 300 },
+              { t: 3, v: 180 },
+            ]}
+            context={{ reference: 200, direction: "lower_is_better" }}
           />
         ),
       },

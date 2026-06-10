@@ -7,7 +7,14 @@
 import { render, cleanup } from "@testing-library/react";
 import { afterEach, describe, expect, it } from "vitest";
 import React from "react";
-import { LiveGauge, Metric, Progress, ProgressRing, Sparkline } from "../../../components/bpm";
+import {
+  LiveGauge,
+  Metric,
+  Progress,
+  ProgressRing,
+  Sparkline,
+  StatusBox,
+} from "../../../components/bpm";
 
 afterEach(cleanup);
 
@@ -140,5 +147,36 @@ describe("elevate(instrument): sparkline", () => {
       />
     );
     expect(container.querySelector("svg")?.getAttribute("data-judgment")).toBe("favorable");
+  });
+});
+
+describe("elevate(instrument): statusBox", () => {
+  it("sans value/context → pas de jugement", () => {
+    const { container } = render(<StatusBox label="Sync" state="complete" />);
+    expect(container.querySelector("[data-judgment]")).toBeNull();
+  });
+
+  it("value au-dessus du repère & lower_is_better → unfavorable + verdict", () => {
+    const { container } = render(
+      <StatusBox label="Queue" value={340} context={{ reference: 200, direction: "lower_is_better" }} />
+    );
+    expect(container.querySelector("[data-judgment]")?.getAttribute("data-judgment")).toBe(
+      "unfavorable"
+    );
+    expect(container.querySelector('[role="status"]')).not.toBeNull();
+  });
+
+  it("trajectoire descendante & lower_is_better → improving", () => {
+    const { container } = render(
+      <StatusBox
+        label="Queue"
+        value={[
+          { t: 1, v: 410 },
+          { t: 2, v: 180 },
+        ]}
+        context={{ reference: 200, direction: "lower_is_better" }}
+      />
+    );
+    expect(container.textContent).toContain("↗");
   });
 });

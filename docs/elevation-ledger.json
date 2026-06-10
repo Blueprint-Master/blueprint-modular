@@ -145,7 +145,7 @@
     {
       "key": "statusBox",
       "class": "INSTRUMENT",
-      "status": "todo",
+      "status": "done",
       "reason": null
     },
     {

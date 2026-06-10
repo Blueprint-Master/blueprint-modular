@@ -1278,6 +1278,8 @@ Composant bpm.scheduler — interface non parsée (voir BPM_API.md).
   defaultExpanded?: boolean
   compact?: boolean  — Réduit le padding pour contextes denses.
   className?: string
+  value?: number | TrajectoryPoint[]  — Valeur mesurée associée au statut (scalaire ou trajectoire v(t) [{t,v}]) — jugée si context est fourni.
+  context?: InterpretContext  — Contexte de jugement { reference, direction, comparisonFrame? } : un verdict écart/tendance/anomalie est révélé à droite du libellé et la bordure gauche prend la couleur du jugement. Additif : sans context, rendu inchangé.
 ```
 
 ## bpm.statusTracker
