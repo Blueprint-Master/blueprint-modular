@@ -5,10 +5,11 @@
 
 set -e
 
-SSH_KEY="${HOME}/.ssh/portfolio_beam_key"
-SERVER_USER="ubuntu"
-SERVER_IP="145.239.199.236"
-REMOTE_PATH="/var/www/blueprint-modular"
+# Infra fournie via variables d'environnement (voir .env.example). Aucune valeur réelle en dur.
+SSH_KEY="${VPS_SSH_KEY:-${HOME}/.ssh/<ssh-key-name>}"
+SERVER_USER="${VPS_USER:-<vps-user>}"
+SERVER_IP="${VPS_HOST:-<vps-host>}"
+REMOTE_PATH="${VPS_REMOTE_PATH:-/var/www/blueprint-modular}"
 
 if [ ! -f "$SSH_KEY" ]; then
     echo "[ERREUR] Clé SSH introuvable: $SSH_KEY"

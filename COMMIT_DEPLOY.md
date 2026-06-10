@@ -11,7 +11,7 @@ Machine Windows (dev)
     │
     ├── git push → GitHub (remigit55/blueprint-modular)
     │                   │
-    │                   └── SSH → VPS OVH (145.239.199.236)
+    │                   └── SSH → VPS OVH (<vps-host>)
     │                               │
     │                               ├── /var/www/blueprint-modular       ← blueprint-modular.com
     │                               └── /var/www/blueprint-modular-docs  ← docs.blueprint-modular.com
@@ -21,8 +21,8 @@ Machine Windows (dev)
         scripts/deploy-vps-remote.ps1      ← SSH + git fetch/reset + deploy-from-git.sh (recommandé)
 ```
 
-**Serveur** : `ubuntu@145.239.199.236`  
-**Clé SSH** : `~/.ssh/portfolio_beam_key`  
+**Serveur** : `<vps-user>@<vps-host>`  
+**Clé SSH** : `~/.ssh/<ssh-key-name>`  
 **Repo Git** : `https://github.com/remigit55/blueprint-modular`  
 **Repo local** : `C:\Users\remi.cabrit\blueprint-modular`
 
@@ -77,14 +77,14 @@ git push origin master
 cd C:\Users\remi.cabrit\blueprint-modular
 .\scripts\deploy-vps-remote.ps1
 # Ou avec paramètres explicites :
-.\scripts\deploy-vps-remote.ps1 -VpsHost 145.239.199.236 -User ubuntu
+.\scripts\deploy-vps-remote.ps1 -VpsHost <vps-host> -User ubuntu
 ```
 Ce script fait : SSH vers le VPS → `git fetch origin` puis `git reset --hard origin/master` (évite les conflits de modifs locales) → exécute `deploy/deploy-from-git.sh`.
 
 **Option B — Directement sur le VPS (SSH manuel) :**
 ```powershell
 # Connexion SSH
-ssh -i ~/.ssh/portfolio_beam_key ubuntu@145.239.199.236
+ssh -i ~/.ssh/<ssh-key-name> <vps-user>@<vps-host>
 
 # Sur le VPS (même logique que le script : fetch + reset pour rester aligné sur GitHub) :
 cd /home/ubuntu/blueprint-modular
@@ -98,8 +98,8 @@ chmod +x deploy/deploy-from-git.sh && bash deploy/deploy-from-git.sh
 
 ```powershell
 # Vérifier les fichiers déployés
-ssh -i ~/.ssh/portfolio_beam_key ubuntu@145.239.199.236 "ls -la /var/www/blueprint-modular"
-ssh -i ~/.ssh/portfolio_beam_key ubuntu@145.239.199.236 "ls -la /var/www/blueprint-modular-docs"
+ssh -i ~/.ssh/<ssh-key-name> <vps-user>@<vps-host> "ls -la /var/www/blueprint-modular"
+ssh -i ~/.ssh/<ssh-key-name> <vps-user>@<vps-host> "ls -la /var/www/blueprint-modular-docs"
 ```
 
 Puis tester dans le navigateur :
@@ -161,7 +161,7 @@ ENCRYPTION_SECRET=...
 npx prisma migrate dev --schema=prisma/schema.prisma --name nom_de_la_migration
 
 # En production (applique les migrations existantes)
-$env:DATABASE_URL = "postgresql://bpm:MOT_DE_PASSE@145.239.199.236:5432/blueprint_modular"
+$env:DATABASE_URL = "postgresql://bpm:MOT_DE_PASSE@<vps-host>:5432/blueprint_modular"
 npx prisma migrate deploy --schema=prisma/schema.prisma
 ```
 
@@ -173,10 +173,10 @@ npx prisma migrate deploy --schema=prisma/schema.prisma
 
 ```powershell
 # Vérifier les logs Nginx sur le VPS
-ssh -i ~/.ssh/portfolio_beam_key ubuntu@145.239.199.236 "sudo tail -50 /var/log/nginx/error.log"
+ssh -i ~/.ssh/<ssh-key-name> <vps-user>@<vps-host> "sudo tail -50 /var/log/nginx/error.log"
 
 # Recharger Nginx si besoin
-ssh -i ~/.ssh/portfolio_beam_key ubuntu@145.239.199.236 "sudo nginx -t && sudo systemctl reload nginx"
+ssh -i ~/.ssh/<ssh-key-name> <vps-user>@<vps-host> "sudo nginx -t && sudo systemctl reload nginx"
 
 # Rollback : revenir au commit précédent
 git revert HEAD
