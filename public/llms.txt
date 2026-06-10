@@ -1520,6 +1520,7 @@ INTERDIT : Tableau de données — obligatoire. INTERDIT : JSX dans data[], util
 ```
 
 ## bpm.timeline
+@deprecated Utilisez TimelineEvent avec la prop `events`. Conservé pour rétrocompatibilité. */ export interface TimelineItem { id?: string; title: React.ReactNode; description?: React.ReactNode; date?: string; status?: "done" | "current" | "upcoming"; } export interface TimelineEvent { date: string; title: string; description?: string; actor?: string; icon?: string; color?: "default" | "info" | "success" | "warning" | "error"; metadata?: Record<string, string>; } @component bpm.timeline @description Frise chronologique (événements ISO, groupement par date).
 ```
   events?: TimelineEvent[]  — Nouvelle API — fil chronologique riche.
   items?: TimelineItem[]  — Ancienne API — conservée pour compatibilité.
