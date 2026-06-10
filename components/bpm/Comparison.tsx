@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useMemo } from "react";
+import { interpret, judgmentColor, type InterpretContext } from "./interpret";
 
 export interface ComparisonProps {
   items: Record<string, unknown>[];
@@ -8,6 +9,8 @@ export interface ComparisonProps {
   labels?: Record<string, string>;
   highlightBest?: boolean;
   className?: string;
+  /** Contextes de jugement PAR DIMENSION { dim: { reference, direction } } : chaque cellule de la dimension est jugée par interpret — valeur colorée par le verdict, écart au repère en title, data-judgment par cellule. Additif : sans contexts, rendu inchangé. */
+  contexts?: Record<string, InterpretContext>;
 }
 
 function toNum(v: unknown): number | null {
@@ -28,6 +31,7 @@ function toNum(v: unknown): number | null {
  * @param {Record<string, string>} [props.labels] - Labels personnalisés pour les dimensions. Optionnel.
  * @param {boolean} [props.highlightBest=true] - Met en évidence les meilleures valeurs. Optionnel.
  * @param {string} [props.className=""] - Classes CSS additionnelles. Optionnel.
+ * @param {Record<string, InterpretContext>} [props.contexts] - Contextes de jugement par dimension : cellules jugées vs repère. Optionnel.
  *
  * @associated bpm.table, bpm.metric
  */
@@ -37,6 +41,7 @@ export function Comparison({
   labels,
   highlightBest = true,
   className = "",
+  contexts,
 }: ComparisonProps) {
   const best = useMemo(() => {
     const m = new Map<string, number>();
@@ -111,16 +116,28 @@ export function Comparison({
                 const raw = it[d];
                 const n = toNum(raw);
                 const isBest = highlightBest && best.get(d) === rowI && n != null;
+                const ctx = contexts?.[d];
+                const judgment = ctx && n != null ? interpret(n, ctx) : null;
                 return (
                   <td
                     key={d}
+                    data-judgment={judgment ? judgment.level.status : undefined}
+                    title={
+                      judgment
+                        ? `écart ${judgment.level.gap >= 0 ? "+" : ""}${judgment.level.gap} vs repère ${ctx!.reference}`
+                        : undefined
+                    }
                     style={{
                       padding: "10px 12px",
                       borderBottom: "1px solid var(--bpm-border)",
                       textAlign: "right",
                       background: isBest ? "var(--bpm-success-soft)" : "transparent",
-                      color: isBest ? "var(--bpm-success-text)" : "var(--bpm-text-primary)",
-                      fontWeight: isBest ? 700 : 400,
+                      color: judgment
+                        ? judgmentColor(judgment)
+                        : isBest
+                          ? "var(--bpm-success-text)"
+                          : "var(--bpm-text-primary)",
+                      fontWeight: isBest ? 700 : judgment && judgment.level.status === "unfavorable" ? 600 : 400,
                     }}
                   >
                     {n != null ? String(raw) : String(raw ?? "—")}

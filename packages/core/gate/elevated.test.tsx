@@ -11,6 +11,7 @@ import {
   AnomalyAlert,
   AreaChart,
   BarChart,
+  Comparison,
   HighlightBox,
   LabelValue,
   LineChart,
@@ -160,6 +161,29 @@ describe("elevate(instrument): sparkline", () => {
       />
     );
     expect(container.querySelector("svg")?.getAttribute("data-judgment")).toBe("favorable");
+  });
+});
+
+describe("elevate(instrument): comparison", () => {
+  const ITEMS = [{ prix: 100 }, { prix: 80 }];
+
+  it("sans contexts → pas de jugement", () => {
+    const { container } = render(<Comparison items={ITEMS} dimensions={["prix"]} />);
+    expect(container.querySelector("[data-judgment]")).toBeNull();
+  });
+
+  it("contexts par dimension → cellules jugées individuellement", () => {
+    const { container } = render(
+      <Comparison
+        items={ITEMS}
+        dimensions={["prix"]}
+        contexts={{ prix: { reference: 90, direction: "lower_is_better" } }}
+      />
+    );
+    const judged = container.querySelectorAll("[data-judgment]");
+    expect(judged.length).toBe(2);
+    expect(judged[0].getAttribute("data-judgment")).toBe("unfavorable"); // 100 > 90
+    expect(judged[1].getAttribute("data-judgment")).toBe("favorable"); // 80 < 90
   });
 });
 

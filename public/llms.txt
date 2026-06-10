@@ -346,6 +346,7 @@ Chat Ollama local (démo).
   labels?: Record<string, string>
   highlightBest?: boolean
   className?: string
+  contexts?: Record<string, InterpretContext>  — Contextes de jugement PAR DIMENSION { dim: { reference, direction } } : chaque cellule de la dimension est jugée par interpret — valeur colorée par le verdict, écart au repère en title, data-judgment par cellule. Additif : sans contexts, rendu inchangé.
 ```
 
 ## bpm.confirmModal

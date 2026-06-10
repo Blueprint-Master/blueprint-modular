@@ -11,7 +11,7 @@
  * La page /components itère sur ce registre : pas de page à la main par composant.
  */
 import React from "react";
-import { AnomalyAlert, AreaChart, BarChart, HighlightBox, LabelValue, LineChart, LiveChart, LiveGauge, LoadingBar, MachineStatus, Metric, PredictiveChart, Progress, ProgressRing, Rating, ScatterChart, SensorGrid, Sparkline, StatusBox } from "@/components/bpm";
+import { AnomalyAlert, AreaChart, BarChart, Comparison, HighlightBox, LabelValue, LineChart, LiveChart, LiveGauge, LoadingBar, MachineStatus, Metric, PredictiveChart, Progress, ProgressRing, Rating, ScatterChart, SensorGrid, Sparkline, StatusBox } from "@/components/bpm";
 
 /** Série temps réel de démonstration (fenêtre de 2 min, dérive sous le repère). */
 function liveDemoData(drift: number[]): { timestamp: number; value: number }[] {
@@ -654,6 +654,37 @@ export const SHOWCASE: ShowcaseEntry[] = [
             width={320}
             height={140}
             context={{ reference: 100, direction: "higher_is_better" }}
+          />
+        ),
+      },
+    ],
+  },
+  {
+    key: "comparison",
+    class: "INSTRUMENT",
+    examples: [
+      {
+        name: "défaut",
+        note: "rendu historique inchangé (highlightBest)",
+        render: () => (
+          <Comparison
+            items={[{ prix: 100, delai: 12 }, { prix: 80, delai: 18 }]}
+            dimensions={["prix", "delai"]}
+          />
+        ),
+      },
+      {
+        name: "déviant",
+        note: "contexts par dimension → cellules jugées vs repère (prix cible 90 lower_is_better, délai cible 15 lower_is_better)",
+        render: () => (
+          <Comparison
+            items={[{ prix: 100, delai: 12 }, { prix: 80, delai: 18 }]}
+            dimensions={["prix", "delai"]}
+            highlightBest={false}
+            contexts={{
+              prix: { reference: 90, direction: "lower_is_better" },
+              delai: { reference: 15, direction: "lower_is_better" },
+            }}
           />
         ),
       },
