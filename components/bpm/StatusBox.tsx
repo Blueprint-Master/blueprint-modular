@@ -3,6 +3,10 @@
 import React, { useState } from "react";
 import { Spinner } from "./Spinner";
 
+/**
+ * @component bpm.statusBox
+ * @description Boîte de statut (success, warning, error, info).
+ */
 export interface StatusBoxProps {
   label: string;
   state?: "running" | "complete" | "error";

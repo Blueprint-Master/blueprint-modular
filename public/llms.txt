@@ -1393,6 +1393,7 @@ Conteneur page (core) — props : children.
 ```
 
 ## bpm.statusBox
+@component bpm.statusBox @description Boîte de statut (success, warning, error, info).
 ```
   label*: string
   state?: "running" | "complete" | "error"
