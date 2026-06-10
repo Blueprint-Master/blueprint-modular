@@ -1717,6 +1717,7 @@ Toast visuel ; en production préférer useToast().
 ```
 
 ## bpm.wizardForm
+@component bpm.wizardForm @description Formulaire multi-étapes avec stepper et validation.
 ```
   steps*: WizardStep[]
   onComplete*: () => void
