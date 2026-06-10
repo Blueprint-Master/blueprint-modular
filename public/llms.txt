@@ -1413,6 +1413,7 @@ Conteneur page (core) — props : children.
 ```
 
 ## bpm.stepper
+@component bpm.stepper @description Progression multi-étapes (horizontal/vertical).
 ```
   steps?: StepperStep[]
   currentStep?: number
