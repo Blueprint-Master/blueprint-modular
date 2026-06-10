@@ -198,6 +198,32 @@ Blueprint Modular is used in production at [NXTFOOD](https://nxtfood.fr) (food p
 
 ---
 
+## Convergence gate
+
+A single command validates the entire component surface — types, build, doc sync, smoke render, and prop-surface snapshot:
+
+```bash
+npm run gate
+```
+
+| Check | What it verifies |
+|-------|-----------------|
+| `tsc --noEmit` | TypeScript types in `packages/core/src/` compile without errors |
+| `vite build` | Library bundles (`dist/index.mjs`, `dist/index.js`, `dist/style.css`) build cleanly |
+| Doc sync | `public/llms.txt` and `lib/generated/bpm-components.json` match what the generators would produce today |
+| Smoke render | Every `bpm.*` export mounts with minimal props without throwing |
+| Prop-surface snapshot | The prop names for every component match the committed snapshot — any removal/rename = FAIL (θ-additive guarantee) |
+
+**When to run it:** before any PR, after adding/modifying a component, after regenerating docs.
+
+**When a check is red:**
+- `tsc` / `vite build` failures → fix the type error or build config.
+- Doc sync failure → run `python scripts/generate-llms-txt.py && python scripts/generate-bpm-components-json.py` then re-commit.
+- Smoke render failure → the component throws with minimal props; update `packages/core/gate/fixtures.ts` with the correct minimal props, or fix the component bug.
+- Prop snapshot failure → a prop was removed/renamed. If intentional, run `npx vitest run gate/ --update-snapshots` from `packages/core` and commit the updated snapshot.
+
+---
+
 ## License
 
 MIT
