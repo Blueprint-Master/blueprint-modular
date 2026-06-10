@@ -26,6 +26,10 @@ export interface StateTransition {
   label?: string;
 }
 
+/**
+ * @component bpm.stateMachine
+ * @description Visualiseur de machine à états finis.
+ */
 export interface StateMachineProps {
   states: string[];
   transitions: StateTransition[];
