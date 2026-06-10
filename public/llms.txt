@@ -1639,6 +1639,7 @@ Toast visuel ; en production préférer useToast().
 ```
 
 ## bpm.tooltip
+@component bpm.tooltip @description Info-bulle au survol.
 ```
   text*: string
   children*: React.ReactNode

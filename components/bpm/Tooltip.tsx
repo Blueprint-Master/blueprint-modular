@@ -13,6 +13,10 @@ export type TooltipPlacement =
   | "left"
   | "right";
 
+/**
+ * @component bpm.tooltip
+ * @description Info-bulle au survol.
+ */
 export interface TooltipProps {
   text: string;
   children: React.ReactNode;
