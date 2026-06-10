@@ -12,7 +12,11 @@ import {
   AreaChart,
   BarChart,
   Comparison,
+  FunnelChart,
   Heatmap,
+  RadarChart,
+  Treemap,
+  Waterfall,
   HighlightBox,
   LabelValue,
   LineChart,
@@ -162,6 +166,74 @@ describe("elevate(instrument): sparkline", () => {
       />
     );
     expect(container.querySelector("svg")?.getAttribute("data-judgment")).toBe("favorable");
+  });
+});
+
+describe("elevate(instrument): waterfall / funnelChart / treemap / radarChart", () => {
+  it("waterfall : cumul final 120 vs 150 → unfavorable, verdict role=status", () => {
+    const { container } = render(
+      <Waterfall
+        data={[
+          { label: "Début", value: 100, type: "start" },
+          { label: "+V", value: 50 },
+          { label: "-C", value: -30 },
+        ]}
+        context={{ reference: 150, direction: "higher_is_better" }}
+      />
+    );
+    expect(container.querySelector("[data-judgment]")?.getAttribute("data-judgment")).toBe(
+      "unfavorable"
+    );
+    expect(container.querySelector('[role="status"]')).not.toBeNull();
+  });
+
+  it("waterfall sans context → rendu historique (racine svg, pas de jugement)", () => {
+    const { container } = render(
+      <Waterfall data={[{ label: "Début", value: 100, type: "start" }]} />
+    );
+    expect(container.firstElementChild?.tagName.toLowerCase()).toBe("svg");
+    expect(container.querySelector("[data-judgment]")).toBeNull();
+  });
+
+  it("funnelChart : conversion 4 % vs cible 10 % → unfavorable", () => {
+    const { container } = render(
+      <FunnelChart
+        stages={[{ label: "V", value: 1000 }, { label: "C", value: 40 }]}
+        context={{ reference: 10, direction: "higher_is_better" }}
+      />
+    );
+    expect(container.querySelector("[data-judgment]")?.getAttribute("data-judgment")).toBe(
+      "unfavorable"
+    );
+  });
+
+  it("treemap : tuiles jugées individuellement + verdict global", () => {
+    const { container } = render(
+      <Treemap
+        data={[{ name: "A", value: 50 }, { name: "B", value: 20 }]}
+        context={{ reference: 35, direction: "higher_is_better" }}
+      />
+    );
+    const svg = container.querySelector("svg")!;
+    expect(svg.getAttribute("data-judgment")).toBe("favorable"); // total 70 > 35
+    const cellJudgments = [...svg.querySelectorAll("g[data-judgment]")].map((g) =>
+      g.getAttribute("data-judgment")
+    );
+    expect(cellJudgments).toEqual(["favorable", "unfavorable"]);
+  });
+
+  it("radarChart : moyenne sous le repère → polygone jugé + anneau de repère", () => {
+    const { container } = render(
+      <RadarChart
+        axes={["A", "B", "C"]}
+        values={[70, 50, 70]}
+        max={100}
+        context={{ reference: 75, direction: "higher_is_better" }}
+      />
+    );
+    const svg = container.querySelector("svg")!;
+    expect(svg.getAttribute("data-judgment")).toBe("unfavorable");
+    expect(svg.getAttribute("aria-label")).toContain("moyenne");
   });
 });
 

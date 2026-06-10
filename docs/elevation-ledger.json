@@ -37,7 +37,7 @@
     {
       "key": "funnelChart",
       "class": "INSTRUMENT",
-      "status": "todo",
+      "status": "done",
       "reason": null
     },
     {
@@ -115,7 +115,7 @@
     {
       "key": "radarChart",
       "class": "INSTRUMENT",
-      "status": "todo",
+      "status": "done",
       "reason": null
     },
     {
@@ -151,13 +151,13 @@
     {
       "key": "treemap",
       "class": "INSTRUMENT",
-      "status": "todo",
+      "status": "done",
       "reason": null
     },
     {
       "key": "waterfall",
       "class": "INSTRUMENT",
-      "status": "todo",
+      "status": "done",
       "reason": null
     },
     {

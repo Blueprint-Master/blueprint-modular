@@ -1,6 +1,12 @@
 "use client";
 
 import React, { useMemo } from "react";
+import {
+  interpret,
+  judgmentColor,
+  judgmentLabel,
+  type InterpretContext,
+} from "./interpret";
 
 /**
  * @component bpm.treemap
@@ -13,6 +19,7 @@ import React, { useMemo } from "react";
  * @param {number} [props.width=400] - Largeur du SVG en pixels. Optionnel.
  * @param {number} [props.height=280] - Hauteur du SVG en pixels. Optionnel.
  * @param {string} [props.className=""] - Classes CSS additionnelles. Optionnel.
+ * @param {InterpretContext} [props.context] - Contexte de jugement : chaque tuile est jugée vs le repère (contour coloré par le verdict, data-judgment), verdict global aria. Optionnel.
  *
  * @associated bpm.heatmap, bpm.pieChart, bpm.sunburst
  */
@@ -27,6 +34,8 @@ export interface TreemapProps {
   width?: number;
   height?: number;
   className?: string;
+  /** Contexte de jugement { reference, direction } : chaque tuile est jugée par interpret (contour coloré par le verdict hors zone neutre, data-judgment), et le total reçoit un verdict global (aria-label, data-judgment racine). Additif : sans context, rendu inchangé. */
+  context?: InterpretContext;
 }
 
 interface Cell extends TreemapItem {
@@ -133,11 +142,17 @@ export function Treemap({
   width = 400,
   height = 280,
   className = "",
+  context,
 }: TreemapProps) {
   const cells = useMemo(
     () => squarify(data, 0, 0, width, height),
     [data, width, height],
   );
+
+  const overall = useMemo(() => {
+    if (!context || data.length === 0) return null;
+    return interpret(data.reduce((s, d) => s + d.value, 0), context);
+  }, [data, context]);
 
   return (
     <svg
@@ -146,18 +161,22 @@ export function Treemap({
       className={className}
       style={{ background: "var(--bpm-bg-secondary)", borderRadius: "var(--bpm-radius)" }}
       role="img"
-      aria-label="Treemap"
+      aria-label={overall ? `Treemap — total : ${judgmentLabel(overall)}` : "Treemap"}
+      data-judgment={overall ? overall.level.status : undefined}
     >
-      {cells.map((c, i) => (
-        <g key={i}>
+      {cells.map((c, i) => {
+        const j = context ? interpret(c.value, context) : null;
+        const judged = j && j.level.status !== "neutral";
+        return (
+        <g key={i} data-judgment={j ? j.level.status : undefined}>
           <rect
             x={c.x + 1}
             y={c.y + 1}
             width={Math.max(0, c.w - 2)}
             height={Math.max(0, c.h - 2)}
             fill={c.fill ?? "var(--bpm-accent-soft)"}
-            stroke="var(--bpm-border)"
-            strokeWidth={1}
+            stroke={judged ? judgmentColor(j) : "var(--bpm-border)"}
+            strokeWidth={judged ? 2 : 1}
           />
           {c.w > 48 && c.h > 22 && (
             <text
@@ -171,7 +190,8 @@ export function Treemap({
             </text>
           )}
         </g>
-      ))}
+        );
+      })}
     </svg>
   );
 }

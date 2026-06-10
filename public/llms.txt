@@ -556,6 +556,7 @@ Composant bpm.drillDown — interface non parsée (voir BPM_API.md).
   showPercentage?: boolean
   horizontal?: boolean
   className?: string
+  context?: InterpretContext  — Contexte de jugement { reference (en % de conversion globale), direction } : le taux de conversion dernière/première étape est jugé par interpret — verdict révélé sous l'entonnoir (layout vertical) ou en title/aria (horizontal), data-judgment. Additif : sans context, rendu inchangé.
 ```
 
 ## bpm.gantt
@@ -1084,6 +1085,7 @@ Composant bpm.plcConnector — voir @blueprint-modular/core ou BPM_API.md.
   width?: number
   height?: number
   className?: string
+  context?: InterpretContext  — Contexte de jugement { reference, direction } : un anneau de repère pointillé est tracé au niveau de reference, le polygone prend la couleur du verdict global (moyenne des axes), aria-label enrichi, data-judgment. Additif : sans context, rendu inchangé.
 ```
 
 ## bpm.radioGroup
@@ -1568,6 +1570,7 @@ Toast visuel ; en production préférer useToast().
   width?: number
   height?: number
   className?: string
+  context?: InterpretContext  — Contexte de jugement { reference, direction } : chaque tuile est jugée par interpret (contour coloré par le verdict hors zone neutre, data-judgment), et le total reçoit un verdict global (aria-label, data-judgment racine). Additif : sans context, rendu inchangé.
 ```
 
 ## bpm.treeview
@@ -1596,6 +1599,7 @@ Toast visuel ; en production préférer useToast().
   width?: number
   height?: number
   className?: string
+  context?: InterpretContext  — Contexte de jugement { reference, direction } : le cumul FINAL de la cascade est jugé par interpret — verdict écart au repère révélé sous le graphique (role=status), data-judgment. Additif : sans context, rendu inchangé.
 ```
 
 ## bpm.wizardForm

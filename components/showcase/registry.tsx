@@ -11,7 +11,7 @@
  * La page /components itère sur ce registre : pas de page à la main par composant.
  */
 import React from "react";
-import { AnomalyAlert, AreaChart, BarChart, Comparison, Heatmap, HighlightBox, LabelValue, LineChart, LiveChart, LiveGauge, LoadingBar, MachineStatus, Metric, PredictiveChart, Progress, ProgressRing, Rating, ScatterChart, SensorGrid, Sparkline, StatusBox } from "@/components/bpm";
+import { AnomalyAlert, AreaChart, BarChart, Comparison, FunnelChart, Heatmap, HighlightBox, RadarChart, Treemap, Waterfall, LabelValue, LineChart, LiveChart, LiveGauge, LoadingBar, MachineStatus, Metric, PredictiveChart, Progress, ProgressRing, Rating, ScatterChart, SensorGrid, Sparkline, StatusBox } from "@/components/bpm";
 
 /** Série temps réel de démonstration (fenêtre de 2 min, dérive sous le repère). */
 function liveDemoData(drift: number[]): { timestamp: number; value: number }[] {
@@ -718,6 +718,119 @@ export const SHOWCASE: ShowcaseEntry[] = [
             colorScale={{ min: "#eff6ff", max: "#1d4ed8" }}
             showValues
             context={{ reference: 100, direction: "higher_is_better" }}
+          />
+        ),
+      },
+    ],
+  },
+  {
+    key: "waterfall",
+    class: "INSTRUMENT",
+    examples: [
+      {
+        name: "défaut",
+        note: "rendu historique inchangé",
+        render: () => (
+          <Waterfall
+            data={[
+              { label: "Début", value: 100, type: "start" },
+              { label: "+Ventes", value: 50 },
+              { label: "-Coûts", value: -30 },
+              { label: "Total", value: 120, type: "total" },
+            ]}
+            width={320}
+            height={160}
+          />
+        ),
+      },
+      {
+        name: "déviant",
+        note: "cumul final 120 vs repère 150 → verdict défavorable sous la cascade",
+        render: () => (
+          <Waterfall
+            data={[
+              { label: "Début", value: 100, type: "start" },
+              { label: "+Ventes", value: 50 },
+              { label: "-Coûts", value: -30 },
+              { label: "Total", value: 120, type: "total" },
+            ]}
+            width={320}
+            height={160}
+            context={{ reference: 150, direction: "higher_is_better" }}
+          />
+        ),
+      },
+    ],
+  },
+  {
+    key: "funnelChart",
+    class: "INSTRUMENT",
+    examples: [
+      {
+        name: "défaut",
+        note: "rendu historique inchangé",
+        render: () => (
+          <FunnelChart stages={[{ label: "Visiteurs", value: 1000 }, { label: "Leads", value: 200 }, { label: "Clients", value: 40 }]} showPercentage />
+        ),
+      },
+      {
+        name: "déviant",
+        note: "conversion 4 % vs cible 10 % → verdict défavorable sous l'entonnoir",
+        render: () => (
+          <FunnelChart
+            stages={[{ label: "Visiteurs", value: 1000 }, { label: "Leads", value: 200 }, { label: "Clients", value: 40 }]}
+            showPercentage
+            context={{ reference: 10, direction: "higher_is_better" }}
+          />
+        ),
+      },
+    ],
+  },
+  {
+    key: "treemap",
+    class: "INSTRUMENT",
+    examples: [
+      {
+        name: "défaut",
+        note: "rendu historique inchangé",
+        render: () => (
+          <Treemap data={[{ name: "A", value: 50 }, { name: "B", value: 30 }, { name: "C", value: 20 }]} width={320} height={140} />
+        ),
+      },
+      {
+        name: "déviant",
+        note: "context (part cible 35) → tuiles sous/au-dessus du repère contourées",
+        render: () => (
+          <Treemap
+            data={[{ name: "A", value: 50 }, { name: "B", value: 30 }, { name: "C", value: 20 }]}
+            width={320}
+            height={140}
+            context={{ reference: 35, direction: "higher_is_better" }}
+          />
+        ),
+      },
+    ],
+  },
+  {
+    key: "radarChart",
+    class: "INSTRUMENT",
+    examples: [
+      {
+        name: "défaut",
+        note: "rendu historique inchangé",
+        render: () => <RadarChart axes={["Vitesse", "Force", "Endurance"]} values={[80, 60, 90]} max={100} width={220} height={220} />,
+      },
+      {
+        name: "déviant",
+        note: "anneau de repère 75 pointillé, moyenne 63 < 75 → polygone rouge",
+        render: () => (
+          <RadarChart
+            axes={["Vitesse", "Force", "Endurance"]}
+            values={[70, 50, 70]}
+            max={100}
+            width={220}
+            height={220}
+            context={{ reference: 75, direction: "higher_is_better" }}
           />
         ),
       },

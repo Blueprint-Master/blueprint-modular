@@ -1,6 +1,12 @@
 "use client";
 
 import React, { useMemo } from "react";
+import {
+  interpret,
+  judgmentColor,
+  judgmentLabel,
+  type InterpretContext,
+} from "./interpret";
 
 export interface FunnelStage {
   label: string;
@@ -12,6 +18,8 @@ export interface FunnelChartProps {
   showPercentage?: boolean;
   horizontal?: boolean;
   className?: string;
+  /** Contexte de jugement { reference (en % de conversion globale), direction } : le taux de conversion dernière/première étape est jugé par interpret — verdict révélé sous l'entonnoir (layout vertical) ou en title/aria (horizontal), data-judgment. Additif : sans context, rendu inchangé. */
+  context?: InterpretContext;
 }
 
 /**
@@ -33,7 +41,13 @@ export function FunnelChart({
   showPercentage = false,
   horizontal = false,
   className = "",
+  context,
 }: FunnelChartProps) {
+  const judgment = useMemo(() => {
+    if (!context || stages.length < 2 || !stages[0].value) return null;
+    const conversion = (stages[stages.length - 1].value / stages[0].value) * 100;
+    return interpret(conversion, context);
+  }, [stages, context]);
   const { total, widthsPct } = useMemo(() => {
     const t = stages.reduce((s, x) => s + x.value, 0) || 1;
     const maxV = Math.max(...stages.map((s) => s.value), 1);
@@ -53,6 +67,9 @@ export function FunnelChart({
     return (
       <div
         className={className}
+        data-judgment={judgment ? judgment.level.status : undefined}
+        title={judgment ? judgmentLabel(judgment) : undefined}
+        aria-label={judgment ? `Conversion — ${judgmentLabel(judgment)}` : undefined}
         style={{
           display: "flex",
           flexDirection: "row",
@@ -106,6 +123,7 @@ export function FunnelChart({
   return (
     <div
       className={className}
+      data-judgment={judgment ? judgment.level.status : undefined}
       style={{
         display: "flex",
         flexDirection: "column",
@@ -153,6 +171,20 @@ export function FunnelChart({
           </div>
         );
       })}
+      {judgment && (
+        <div
+          role="status"
+          style={{
+            padding: "6px 10px",
+            fontSize: 12,
+            color: judgmentColor(judgment),
+            borderTop: "1px solid var(--bpm-border)",
+            background: "var(--bpm-surface)",
+          }}
+        >
+          {judgmentLabel(judgment)}
+        </div>
+      )}
     </div>
   );
 }

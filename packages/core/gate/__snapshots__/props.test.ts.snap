@@ -417,6 +417,7 @@ exports[`bpm prop surface snapshot > prop names match committed snapshot (additi
     "showPercentage",
     "horizontal",
     "className",
+    "context",
   ],
   "gantt": [
     "tasks",
@@ -818,6 +819,7 @@ exports[`bpm prop surface snapshot > prop names match committed snapshot (additi
     "width",
     "height",
     "className",
+    "context",
   ],
   "radioGroup": [
     "name",
@@ -1192,6 +1194,7 @@ exports[`bpm prop surface snapshot > prop names match committed snapshot (additi
     "width",
     "height",
     "className",
+    "context",
   ],
   "treeview": [
     "nodes",
@@ -1213,6 +1216,7 @@ exports[`bpm prop surface snapshot > prop names match committed snapshot (additi
     "width",
     "height",
     "className",
+    "context",
   ],
   "wizardForm": [
     "steps",
