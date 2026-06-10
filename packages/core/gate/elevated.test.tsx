@@ -8,6 +8,7 @@ import { render, cleanup } from "@testing-library/react";
 import { afterEach, describe, expect, it } from "vitest";
 import React from "react";
 import {
+  HighlightBox,
   LiveGauge,
   Metric,
   Progress,
@@ -178,5 +179,28 @@ describe("elevate(instrument): statusBox", () => {
       />
     );
     expect(container.textContent).toContain("↗");
+  });
+});
+
+describe("elevate(instrument): highlightBox", () => {
+  it("sans measure/context → pas de jugement", () => {
+    const { container } = render(<HighlightBox value={1} label="DAILY" title="Objectif" />);
+    expect(container.querySelector("[data-judgment]")).toBeNull();
+  });
+
+  it("measure sous le repère & higher_is_better → unfavorable + verdict", () => {
+    const { container } = render(
+      <HighlightBox
+        value={2}
+        label="KPI"
+        title="Conversion"
+        measure={3.1}
+        context={{ reference: 4.5, direction: "higher_is_better" }}
+      />
+    );
+    expect(container.querySelector("[data-judgment]")?.getAttribute("data-judgment")).toBe(
+      "unfavorable"
+    );
+    expect(container.querySelector('[role="status"]')).not.toBeNull();
   });
 });

@@ -11,7 +11,7 @@
  * La page /components itère sur ce registre : pas de page à la main par composant.
  */
 import React from "react";
-import { LiveGauge, Metric, Progress, ProgressRing, Sparkline, StatusBox } from "@/components/bpm";
+import { HighlightBox, LiveGauge, Metric, Progress, ProgressRing, Sparkline, StatusBox } from "@/components/bpm";
 
 /** Trajectoire de démonstration : dégradation régulière sur 6 périodes. */
 const TRAJ_DOWN = [
@@ -239,6 +239,47 @@ export const SHOWCASE: ShowcaseEntry[] = [
               { t: 3, v: 180 },
             ]}
             context={{ reference: 200, direction: "lower_is_better" }}
+          />
+        ),
+      },
+    ],
+  },
+  {
+    key: "highlightBox",
+    class: "INSTRUMENT",
+    examples: [
+      {
+        name: "défaut",
+        note: "rendu historique inchangé",
+        render: () => <HighlightBox value={1} label="DAILY" title="Objectif quotidien" rtbPoints={["Point 1", "Point 2"]} />,
+      },
+      {
+        name: "déviant",
+        note: "measure + context → barre colorée par le verdict + ligne d'écart",
+        render: () => (
+          <HighlightBox
+            value={2}
+            label="KPI"
+            title="Taux de conversion"
+            measure={3.1}
+            context={{ reference: 4.5, direction: "higher_is_better" }}
+          />
+        ),
+      },
+      {
+        name: "trajectoire",
+        note: "measure = v(t) → tendance jugée dans la ligne de verdict",
+        render: () => (
+          <HighlightBox
+            value={3}
+            label="KPI"
+            title="Taux de conversion"
+            measure={[
+              { t: 1, v: 4.8 },
+              { t: 2, v: 4.2 },
+              { t: 3, v: 3.1 },
+            ]}
+            context={{ reference: 4.5, direction: "higher_is_better" }}
           />
         ),
       },
