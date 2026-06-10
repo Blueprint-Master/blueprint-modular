@@ -875,6 +875,7 @@ Carte Leaflet chargée côté client uniquement (évite erreurs SSR). */ const L
 ```
 
 ## bpm.markdown
+@component bpm.markdown @description Rendu Markdown sécurisé.
 ```
   text*: string  — Contenu Markdown. Utilisez `---` sur une ligne pour une ligne horizontale (hr).
   className?: string
