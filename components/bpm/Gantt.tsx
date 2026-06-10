@@ -29,6 +29,10 @@ export type GanttTask = {
   group?: string;
 };
 
+/**
+ * @component bpm.gantt
+ * @description Diagramme de Gantt (tâches, jalons, dépendances).
+ */
 export type GanttProps = {
   tasks: GanttTask[];
   viewMode: "day" | "week" | "month";

@@ -624,6 +624,7 @@ Page CRUD générique : table + filtres + modal de création/édition/détail c�
 ```
 
 ## bpm.gantt
+@component bpm.gantt @description Diagramme de Gantt (tâches, jalons, dépendances).
 ```
   tasks*: GanttTask[]
   viewMode*: "day" | "week" | "month"
