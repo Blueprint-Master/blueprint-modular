@@ -1351,6 +1351,7 @@ Conteneur page (core) — props : children.
 ```
 
 ## bpm.spinner
+@component bpm.spinner @description Indicateur de chargement (roue).
 ```
   text?: string
   size?: SpinnerSize
