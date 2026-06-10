@@ -11,6 +11,10 @@ export type LoadingBarVariant =
   | "arc"
   | "dots";
 
+/**
+ * @component bpm.loadingBar
+ * @description Barre de chargement (sweep, blocks, iso, stacked, arc, dots).
+ */
 export interface LoadingBarProps {
   /** Variant visuel (sweep, blocks, iso, stacked, arc, dots). */
   variant?: LoadingBarVariant;

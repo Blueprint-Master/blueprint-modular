@@ -830,6 +830,7 @@ Carte Leaflet chargée côté client uniquement (évite erreurs SSR). */ const L
 ```
 
 ## bpm.loadingBar
+@component bpm.loadingBar @description Barre de chargement (sweep, blocks, iso, stacked, arc, dots).
 ```
   variant?: LoadingBarVariant  — Variant visuel (sweep, blocks, iso, stacked, arc, dots).
   value?: number  — Pour les barres déterminées (ex. iso) : 0–100. Non fourni = indéterminé.
