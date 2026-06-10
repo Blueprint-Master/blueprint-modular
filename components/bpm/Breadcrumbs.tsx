@@ -8,6 +8,10 @@ export interface BreadcrumbsItem {
   onClick?: () => void;
 }
 
+/**
+ * @component bpm.breadcrumbs
+ * @description Fil d'Ariane avec items cliquables.
+ */
 export interface BreadcrumbsProps {
   items: BreadcrumbsItem[];
   separator?: React.ReactNode;
