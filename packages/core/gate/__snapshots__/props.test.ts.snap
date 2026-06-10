@@ -460,6 +460,7 @@ exports[`bpm prop surface snapshot > prop names match committed snapshot (additi
     "showValues",
     "onCellClick",
     "className",
+    "context",
   ],
   "highlightBox": [
     "value",

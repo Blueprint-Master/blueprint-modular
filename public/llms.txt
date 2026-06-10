@@ -599,7 +599,7 @@ Composant bpm.groupedList — interface non parsée (voir BPM_API.md).
 ```
 
 ## bpm.heatmap
-@component bpm.heatmap @description Grille de valeurs numériques avec dégradé de couleur, infobulle au survol et clic optionnel sur cellule. @example bpm.heatmap({ data: [[1,2],[3,4]], xLabels: ["A","B"], yLabels: ["X","Y"], colorScale: { min: "#fff", max: "#f00" } }) @param {object} props @param {number[][]} props.data - Matrice 2D de valeurs numériques. Obligatoire. @param {string[]} props.xLabels - Libellés des colonnes. Obligatoire. @param {string[]} props.yLabels - Libellés des lignes. Obligatoire. @param {{ min: string; max: string }} props.colorScale - Couleurs min/max du dégradé. Obligatoire. @param {number} [props.valueMin] - Valeur minimale pour l'échelle. Optionnel, calculé automatiquement. @param {number} [props.valueMax] - Valeur maximale pour l'échelle. Optionnel, calculé automatiquement. @param {boolean} [props.showValues=false] - Affiche les valeurs dans les cellules. Optionnel. @param {function} [props.onCellClick] - Callback au clic sur une cellule (row, col, value). Optionnel. @param {string} [props.className=""] - Classes CSS additionnelles. Optionnel.
+@component bpm.heatmap @description Grille de valeurs numériques avec dégradé de couleur, infobulle au survol et clic optionnel sur cellule. @example bpm.heatmap({ data: [[1,2],[3,4]], xLabels: ["A","B"], yLabels: ["X","Y"], colorScale: { min: "#fff", max: "#f00" } }) @param {object} props @param {number[][]} props.data - Matrice 2D de valeurs numériques. Obligatoire. @param {string[]} props.xLabels - Libellés des colonnes. Obligatoire. @param {string[]} props.yLabels - Libellés des lignes. Obligatoire. @param {{ min: string; max: string }} props.colorScale - Couleurs min/max du dégradé. Obligatoire. @param {number} [props.valueMin] - Valeur minimale pour l'échelle. Optionnel, calculé automatiquement. @param {number} [props.valueMax] - Valeur maximale pour l'échelle. Optionnel, calculé automatiquement. @param {boolean} [props.showValues=false] - Affiche les valeurs dans les cellules. Optionnel. @param {function} [props.onCellClick] - Callback au clic sur une cellule (row, col, value). Optionnel. @param {string} [props.className=""] - Classes CSS additionnelles. Optionnel. @param {InterpretContext} [props.context] - Contexte de jugement : chaque cellule est jugée vs le repère (liseré coloré sur les écarts, anomalies >2σ — comparisonFrame ou matrice — soulignées, infobulle enrichie du verdict). Optionnel.
 ```
   data*: number[][]
   xLabels*: string[]
@@ -610,6 +610,7 @@ Composant bpm.groupedList — interface non parsée (voir BPM_API.md).
   showValues?: boolean
   onCellClick?: (row: number, col: number, value: number) => void
   className?: string
+  context?: InterpretContext  — Contexte de jugement { reference, direction, comparisonFrame? } : chaque cellule est jugée par interpret — liseré coloré par verdict (hors zone neutre), data-judgment par cellule, infobulle enrichie. Anomalie >2σ évaluée contre comparisonFrame ou, à défaut, la matrice entière. Additif : sans context, rendu inchangé.
 ```
 
 ## bpm.highlightBox

@@ -11,7 +11,7 @@
  * La page /components itère sur ce registre : pas de page à la main par composant.
  */
 import React from "react";
-import { AnomalyAlert, AreaChart, BarChart, Comparison, HighlightBox, LabelValue, LineChart, LiveChart, LiveGauge, LoadingBar, MachineStatus, Metric, PredictiveChart, Progress, ProgressRing, Rating, ScatterChart, SensorGrid, Sparkline, StatusBox } from "@/components/bpm";
+import { AnomalyAlert, AreaChart, BarChart, Comparison, Heatmap, HighlightBox, LabelValue, LineChart, LiveChart, LiveGauge, LoadingBar, MachineStatus, Metric, PredictiveChart, Progress, ProgressRing, Rating, ScatterChart, SensorGrid, Sparkline, StatusBox } from "@/components/bpm";
 
 /** Série temps réel de démonstration (fenêtre de 2 min, dérive sous le repère). */
 function liveDemoData(drift: number[]): { timestamp: number; value: number }[] {
@@ -685,6 +685,39 @@ export const SHOWCASE: ShowcaseEntry[] = [
               prix: { reference: 90, direction: "lower_is_better" },
               delai: { reference: 15, direction: "lower_is_better" },
             }}
+          />
+        ),
+      },
+    ],
+  },
+  {
+    key: "heatmap",
+    class: "INSTRUMENT",
+    examples: [
+      {
+        name: "défaut",
+        note: "rendu historique inchangé (dégradé seul)",
+        render: () => (
+          <Heatmap
+            data={[[12, 18], [22, 30]]}
+            xLabels={["A", "B"]}
+            yLabels={["X", "Y"]}
+            colorScale={{ min: "#eff6ff", max: "#1d4ed8" }}
+            showValues
+          />
+        ),
+      },
+      {
+        name: "déviant + anomalie",
+        note: "context → cellules sous le repère liserées en rouge, outlier >2σ souligné",
+        render: () => (
+          <Heatmap
+            data={[[98, 101, 97], [102, 99, 55]]}
+            xLabels={["L1", "L2", "L3"]}
+            yLabels={["M1", "M2"]}
+            colorScale={{ min: "#eff6ff", max: "#1d4ed8" }}
+            showValues
+            context={{ reference: 100, direction: "higher_is_better" }}
           />
         ),
       },

@@ -12,6 +12,7 @@ import {
   AreaChart,
   BarChart,
   Comparison,
+  Heatmap,
   HighlightBox,
   LabelValue,
   LineChart,
@@ -161,6 +162,26 @@ describe("elevate(instrument): sparkline", () => {
       />
     );
     expect(container.querySelector("svg")?.getAttribute("data-judgment")).toBe("favorable");
+  });
+});
+
+describe("elevate(instrument): heatmap", () => {
+  const PROPS = {
+    data: [[98, 101, 97], [102, 99, 55]],
+    xLabels: ["L1", "L2", "L3"],
+    yLabels: ["M1", "M2"],
+    colorScale: { min: "#fff", max: "#000" },
+  };
+
+  it("sans context → pas de jugement", () => {
+    const { container } = render(<Heatmap {...PROPS} />);
+    expect(container.querySelector("[data-judgment]")).toBeNull();
+  });
+
+  it("avec context → cellules jugées, outlier 55 marqué abnormal", () => {
+    const { container } = render(<Heatmap {...PROPS} context={CTX_HIB} />);
+    expect(container.querySelectorAll("[data-judgment]").length).toBe(6);
+    expect(container.querySelectorAll("[data-abnormal]").length).toBe(1);
   });
 });
 
