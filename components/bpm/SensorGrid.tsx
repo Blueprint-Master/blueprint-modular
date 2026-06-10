@@ -26,6 +26,10 @@ export interface SensorReading {
   detail?: string;
 }
 
+/**
+ * @component bpm.sensorGrid
+ * @description Grille de capteurs industriels (valeur, seuil, état).
+ */
 export interface SensorGridProps {
   sensors: SensorReading[];
   columns?: number;
