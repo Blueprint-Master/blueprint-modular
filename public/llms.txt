@@ -370,6 +370,7 @@ ISO ou texte libre, ou Date (affichage localisé court). */ timestamp?: string |
 ```
 
 ## bpm.comparison
+@component bpm.comparison @description Tableau de comparaison multi-items.
 ```
   items*: Record<string, unknown>[]
   dimensions*: string[]
