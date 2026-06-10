@@ -30,6 +30,7 @@ INTERDIT : import { bpm.modal } ou tout autre destructuring
 ## COMPOSANTS
 
 ## bpm.accordion
+@component bpm.accordion @description Accordéon (sections repliables).
 ```
   sections?: AccordionSection[]
   allowMultiple?: boolean
@@ -49,6 +50,7 @@ INTERDIT : import { bpm.modal } ou tout autre destructuring
 ```
 
 ## bpm.addressInput
+@component bpm.addressInput @description Champ de saisie d'adresse avec autocomplétion.
 ```
   mode?: AddressInputMode
   value?: {
@@ -61,11 +63,17 @@ INTERDIT : import { bpm.modal } ou tout autre destructuring
 ```
 
 ## bpm.aiQueryBar
-Composant bpm.aiQueryBar — voir @blueprint-modular/core ou BPM_API.md.
+@component bpm.aiQueryBar @description Barre de requête IA (langage naturel → résultat structuré).
 ```
+  onQuery*: (question: string) => Promise<string>
+  placeholder?: string
+  suggestions?: string[]
+  loading?: boolean
+  className?: string
 ```
 
 ## bpm.alarmPanel
+@component bpm.alarmPanel @description Panneau d'alarmes industrielles (active, accusée, résolue).
 ```
   alarms*: Alarm[]
   onAcknowledge?: (id: string) => void
@@ -74,6 +82,7 @@ Composant bpm.aiQueryBar — voir @blueprint-modular/core ou BPM_API.md.
 ```
 
 ## bpm.altairChart
+@component bpm.altairChart @description Graphique Altair / Vega-Lite.
 ```
   spec?: Record<string, unknown>  — Spécification Vega-Lite / Altair (JSON). À fournir côté app.
   iframeSrc?: string  — Ou URL d'un fichier JSON ou d'une vue compilée.
@@ -83,6 +92,7 @@ Composant bpm.aiQueryBar — voir @blueprint-modular/core ou BPM_API.md.
 ```
 
 ## bpm.anomalyAlert
+@component bpm.anomalyAlert @description Alerte d'anomalie avec valeur attendue vs réelle.
 ```
   title?: string
   expected*: string | number
@@ -93,6 +103,7 @@ Composant bpm.aiQueryBar — voir @blueprint-modular/core ou BPM_API.md.
 ```
 
 ## bpm.approvalFlow
+@component bpm.approvalFlow @description Flux de validation multi-étapes (approve/reject par étape).
 ```
   steps*: ApprovalStep[]
   onApprove?: (stepId: string, comment?: string) => void
@@ -103,6 +114,7 @@ Composant bpm.aiQueryBar — voir @blueprint-modular/core ou BPM_API.md.
 ```
 
 ## bpm.areaChart
+@component bpm.areaChart @description Graphique en aires.
 ```
   data*: AreaChartDatum[]
   width?: number
@@ -112,6 +124,7 @@ Composant bpm.aiQueryBar — voir @blueprint-modular/core ou BPM_API.md.
 ```
 
 ## bpm.assistantPanel
+@component bpm.assistantPanel @description Panneau assistant IA (chips, saisie, réponses).
 ```
   demoAnswers?: Record<string, string>  — Si fourni, les chips affichent les réponses statiques (démo publique, pas d'appel API).
   title?: string  — Titre du panneau
@@ -120,6 +133,7 @@ Composant bpm.aiQueryBar — voir @blueprint-modular/core ou BPM_API.md.
 ```
 
 ## bpm.audio
+@component bpm.audio @description Lecteur audio HTML5.
 ```
   src*: string
   controls?: boolean
@@ -128,6 +142,7 @@ Composant bpm.aiQueryBar — voir @blueprint-modular/core ou BPM_API.md.
 ```
 
 ## bpm.autocomplete
+@component bpm.autocomplete @description Champ de saisie avec suggestions.
 ```
   label?: string
   placeholder?: string
@@ -138,6 +153,7 @@ Composant bpm.aiQueryBar — voir @blueprint-modular/core ou BPM_API.md.
 ```
 
 ## bpm.avatar
+@component bpm.avatar @description Avatar utilisateur (image, initiales ou icône).
 ```
   src?: string | null  — URL de l'image de l'avatar.
   alt?: string  — Texte alternatif (accessibilité).
@@ -154,6 +170,7 @@ Composant bpm.aiQueryBar — voir @blueprint-modular/core ou BPM_API.md.
 ```
 
 ## bpm.badge
+@component bpm.badge @description Badge / étiquette (success, warning, etc.).
 ```
   children*: React.ReactNode  — PARENT: bpm.table (colonne statut) | bpm.metric | bpm.card. INTERDIT: texte long >20 chars — utiliser bpm.chip. ASSOCIÉ: bpm.table, bpm.metric, bpm.statusBox.
   variant?: BadgeVariant  — Style / couleur du badge. Valeurs : 'default' | 'primary' | 'success' | 'warning' | 'error'. Default: 'default'.
@@ -162,6 +179,7 @@ Composant bpm.aiQueryBar — voir @blueprint-modular/core ou BPM_API.md.
 ```
 
 ## bpm.barChart
+@component bpm.barChart @description Graphique en barres.
 ```
   data*: BarChartDatum[]
   width?: number
@@ -171,6 +189,7 @@ Composant bpm.aiQueryBar — voir @blueprint-modular/core ou BPM_API.md.
 ```
 
 ## bpm.barcode
+@component bpm.barcode @description Code-barres (EAN-13, Code 128).
 ```
   value*: string
   format?: "EAN13" | "CODE128"
@@ -182,6 +201,7 @@ Composant bpm.aiQueryBar — voir @blueprint-modular/core ou BPM_API.md.
 ```
 
 ## bpm.breadcrumb
+@component bpm.breadcrumb @description Fil d'Ariane simple.
 ```
   items?: BreadcrumbItem[]
   separator?: string
@@ -189,6 +209,7 @@ Composant bpm.aiQueryBar — voir @blueprint-modular/core ou BPM_API.md.
 ```
 
 ## bpm.breadcrumbs
+@component bpm.breadcrumbs @description Fil d'Ariane avec items cliquables.
 ```
   items*: BreadcrumbsItem[]
   separator?: React.ReactNode
@@ -197,6 +218,7 @@ Composant bpm.aiQueryBar — voir @blueprint-modular/core ou BPM_API.md.
 ```
 
 ## bpm.button
+Accent BPM aligné référence — valeurs hex pour styles 100% inline (pas de var()). */ const ACCENT = "#00a3e2"; const ACCENT_DARK = "#008bc4"; const ACCENT_DARKER = "#007aa8"; const ACCENT_LIGHT = "#b3e0f4"; export type ButtonVariant = | "primary" | "secondary" | "outline" | "ghost" | "destructive" | "link"; export type ButtonSize = "small" | "medium" | "large" | "sm" | "md" | "lg"; @component bpm.button @description Bouton d'action (primary, secondary, outline, ghost, destructive).
 ```
   children?: React.ReactNode
   onClick?: () => void
@@ -385,7 +407,6 @@ Page CRUD générique : table + filtres + modal de création/édition/détail c�
 ```
 
 ## bpm.dataExplorer
-Composant bpm.dataExplorer — interface non parsée (voir BPM_API.md).
 ```
 ```
 
@@ -412,8 +433,11 @@ Composant bpm.dataExplorer — interface non parsée (voir BPM_API.md).
 ```
 
 ## bpm.decisionTree
-Composant bpm.decisionTree — interface non parsée (voir BPM_API.md).
 ```
+  rootId*: string
+  nodes*: DecisionNode[]
+  currentNodeId?: string
+  onNodeClick*: (nodeId: string, branch?: { label: string
 ```
 
 ## bpm.diffViewer
@@ -447,8 +471,12 @@ Composant bpm.decisionTree — interface non parsée (voir BPM_API.md).
 ```
 
 ## bpm.drillDown
-Composant bpm.drillDown — interface non parsée (voir BPM_API.md).
 ```
+  levels*: DrillDownLevel<T>[]
+  currentLevel*: number
+  onDrill*: (item: T, nextLevel: number) => void
+  onBack*: () => void
+  breadcrumbs?: boolean
 ```
 
 ## bpm.emailComposer
@@ -489,6 +517,13 @@ Composant bpm.drillDown — interface non parsée (voir BPM_API.md).
 
 ## bpm.exportButton
 ```
+  data*: T[] | (() => T[])
+  filename*: string
+  formats?: ("csv" | "json")[]
+  columns?: ExportColumn<T>[]
+  csvDelimiter?: "
+  csvBOM?: boolean
+  className?: string
 ```
 
 ## bpm.fab
@@ -554,8 +589,12 @@ Composant bpm.drillDown — interface non parsée (voir BPM_API.md).
 ```
 
 ## bpm.gantt
-Composant bpm.gantt — interface non parsée (voir BPM_API.md).
 ```
+  tasks*: GanttTask[]
+  viewMode*: "day" | "week" | "month"
+  onTaskClick*: (task: GanttTask) => void
+  showDependencies?: boolean
+  todayLine?: boolean
 ```
 
 ## bpm.geofence
@@ -589,8 +628,14 @@ Composant bpm.gantt — interface non parsée (voir BPM_API.md).
 ```
 
 ## bpm.groupedList
-Composant bpm.groupedList — interface non parsée (voir BPM_API.md).
 ```
+  items*: T[]
+  groupBy*: keyof T
+  renderItem*: (item: T, index: number) => React.ReactNode
+  renderGroupHeader?: (key: string, count: number) => React.ReactNode
+  sortGroups?: "asc" | "desc"
+  collapsible?: boolean
+  defaultCollapsed?: boolean
 ```
 
 ## bpm.heatmap
@@ -794,6 +839,16 @@ Composant bpm.groupedList — interface non parsée (voir BPM_API.md).
 
 ## bpm.masterDetail
 ```
+  items*: T[]
+  columns*: MasterDetailColumn<T>[]
+  renderDetail*: (item: T) => React.ReactElement
+  selectedId?: string
+  onSelect*: (item: T) => void
+  idKey?: string
+  searchable?: boolean
+  emptyDetailMessage?: string
+  splitRatio?: number
+  className?: string
 ```
 
 ## bpm.message
@@ -962,8 +1017,9 @@ Conteneur page (core) — props : children.
 ```
 
 ## bpm.plcConnector
-Composant bpm.plcConnector — voir @blueprint-modular/core ou BPM_API.md.
+@component bpm.plcConnector @description Formulaire de configuration de connexion automate industriel (Modbus, OPC UA, MQTT, EtherNet/IP). @example bpm.plcConnector({ className: "my-class" }) @param {object} props @param {string} [props.className=""] - Classes CSS additionnelles. Optionnel. @associated bpm.machineStatus, bpm.sensorGrid, bpm.liveChart
 ```
+  className?: string
 ```
 
 ## bpm.plotlyChart
@@ -1144,8 +1200,14 @@ Composant bpm.plcConnector — voir @blueprint-modular/core ou BPM_API.md.
 ```
 
 ## bpm.scheduler
-Composant bpm.scheduler — interface non parsée (voir BPM_API.md).
 ```
+  view*: "day" | "week" | "month"
+  events*: SchedulerEvent[]
+  resources?: SchedulerResource[]
+  onEventClick*: (ev: SchedulerEvent) => void
+  onSlotClick*: (dayStart: Date, hour: number) => void
+  startHour?: number
+  endHour?: number
 ```
 
 ## bpm.scrollContainer
