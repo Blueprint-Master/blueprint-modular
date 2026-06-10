@@ -9,6 +9,7 @@ import { afterEach, describe, expect, it } from "vitest";
 import React from "react";
 import {
   AnomalyAlert,
+  AreaChart,
   HighlightBox,
   LabelValue,
   LineChart,
@@ -152,6 +153,25 @@ describe("elevate(instrument): sparkline", () => {
       />
     );
     expect(container.querySelector("svg")?.getAttribute("data-judgment")).toBe("favorable");
+  });
+});
+
+describe("elevate(instrument): areaChart", () => {
+  it("sans context → pas de jugement", () => {
+    const { container } = render(<AreaChart data={[{ x: 1, y: 10 }, { x: 2, y: 20 }]} />);
+    expect(container.querySelector("[data-judgment]")).toBeNull();
+  });
+
+  it("lower_is_better, série montante au-dessus du repère → unfavorable + repère", () => {
+    const { container } = render(
+      <AreaChart
+        data={[{ x: 1, y: 40 }, { x: 2, y: 67 }, { x: 3, y: 80 }]}
+        context={{ reference: 50, direction: "lower_is_better" }}
+      />
+    );
+    const svg = container.querySelector("svg")!;
+    expect(svg.getAttribute("data-judgment")).toBe("unfavorable");
+    expect(svg.querySelectorAll("line").length).toBe(1);
   });
 });
 

@@ -70,6 +70,7 @@ exports[`bpm prop surface snapshot > prop names match committed snapshot (additi
     "height",
     "color",
     "className",
+    "context",
   ],
   "assistantPanel": [
     "demoAnswers",

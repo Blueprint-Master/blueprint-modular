@@ -111,6 +111,7 @@ Composant bpm.aiQueryBar — voir @blueprint-modular/core ou BPM_API.md.
   height?: number
   color?: string
   className?: string
+  context?: InterpretContext  — Contexte de jugement { reference, direction, comparisonFrame? } : la série (trajectoire v(t), t = x) est jugée par interpret — repère pointillé, couleur d'aire selon le verdict, aria-label. Additif : sans context, rendu inchangé.
 ```
 
 ## bpm.assistantPanel
