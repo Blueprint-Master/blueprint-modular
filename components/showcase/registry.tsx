@@ -11,7 +11,7 @@
  * La page /components itère sur ce registre : pas de page à la main par composant.
  */
 import React from "react";
-import { LiveGauge, Metric, Progress, ProgressRing } from "@/components/bpm";
+import { LiveGauge, Metric, Progress, ProgressRing, Sparkline } from "@/components/bpm";
 
 /** Trajectoire de démonstration : dégradation régulière sur 6 périodes. */
 const TRAJ_DOWN = [
@@ -159,6 +159,47 @@ export const SHOWCASE: ShowcaseEntry[] = [
             ]}
             label="Latence (ms)"
             context={{ reference: 60, direction: "lower_is_better" }}
+          />
+        ),
+      },
+    ],
+  },
+  {
+    key: "sparkline",
+    class: "INSTRUMENT",
+    examples: [
+      {
+        name: "défaut",
+        note: "rendu historique inchangé (couleur pilotée par trend)",
+        render: () => <Sparkline values={[10, 15, 12, 18, 22]} trend="up" />,
+      },
+      {
+        name: "déviant",
+        note: "context → couleur jugée + ligne de repère pointillée",
+        render: () => (
+          <Sparkline
+            values={[105, 102, 98, 92, 85]}
+            context={{ reference: 100, direction: "higher_is_better" }}
+            width={160}
+            height={48}
+          />
+        ),
+      },
+      {
+        name: "trajectoire",
+        note: "points v(t) explicites (t non régulier) → tendance jugée",
+        render: () => (
+          <Sparkline
+            values={[]}
+            points={[
+              { t: 0, v: 40 },
+              { t: 10, v: 44 },
+              { t: 40, v: 58 },
+              { t: 60, v: 66 },
+            ]}
+            context={{ reference: 50, direction: "higher_is_better" }}
+            width={160}
+            height={48}
           />
         ),
       },

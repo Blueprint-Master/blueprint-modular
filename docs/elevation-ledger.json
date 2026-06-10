@@ -139,7 +139,7 @@
     {
       "key": "sparkline",
       "class": "INSTRUMENT",
-      "status": "todo",
+      "status": "done",
       "reason": null
     },
     {

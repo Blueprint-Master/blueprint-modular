@@ -7,7 +7,7 @@
 import { render, cleanup } from "@testing-library/react";
 import { afterEach, describe, expect, it } from "vitest";
 import React from "react";
-import { LiveGauge, Metric, Progress, ProgressRing } from "../../../components/bpm";
+import { LiveGauge, Metric, Progress, ProgressRing, Sparkline } from "../../../components/bpm";
 
 afterEach(cleanup);
 
@@ -108,5 +108,37 @@ describe("elevate(instrument): liveGauge", () => {
     );
     expect(container.textContent).toContain("72");
     expect(container.textContent).toContain("↘");
+  });
+});
+
+describe("elevate(instrument): sparkline", () => {
+  it("sans context → aria-hidden, pas de jugement", () => {
+    const { container } = render(<Sparkline values={[1, 2, 3]} />);
+    expect(container.querySelector("svg")?.getAttribute("aria-hidden")).toBe("true");
+    expect(container.querySelector("[data-judgment]")).toBeNull();
+  });
+
+  it("avec context → data-judgment + ligne de repère + aria-label", () => {
+    const { container } = render(
+      <Sparkline values={[105, 98, 90]} context={CTX_HIB} />
+    );
+    const svg = container.querySelector("svg")!;
+    expect(svg.getAttribute("data-judgment")).toBe("unfavorable");
+    expect(svg.getAttribute("role")).toBe("img");
+    expect(svg.querySelectorAll("line").length).toBe(1);
+  });
+
+  it("points v(t) explicites → jugement sur la trajectoire", () => {
+    const { container } = render(
+      <Sparkline
+        values={[]}
+        points={[
+          { t: 0, v: 40 },
+          { t: 60, v: 66 },
+        ]}
+        context={{ reference: 50, direction: "higher_is_better" }}
+      />
+    );
+    expect(container.querySelector("svg")?.getAttribute("data-judgment")).toBe("favorable");
   });
 });
