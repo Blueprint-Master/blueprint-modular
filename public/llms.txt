@@ -615,6 +615,7 @@ Page CRUD générique : table + filtres + modal de création/édition/détail c�
 ```
 
 ## bpm.funnelChart
+@component bpm.funnelChart @description Graphique en entonnoir (tunnel de conversion).
 ```
   stages*: FunnelStage[]
   showPercentage?: boolean
