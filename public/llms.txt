@@ -965,6 +965,7 @@ Locales courants pour le format nombre (ex. "fr-FR" → 1 000,50, "en-US" → 1,
 ```
 
 ## bpm.notificationCenter
+@component bpm.notificationCenter @description Centre de notifications (liste, marquage, suppression).
 ```
   notifications*: NotificationItem[]
   onMarkRead*: (id: string) => void
