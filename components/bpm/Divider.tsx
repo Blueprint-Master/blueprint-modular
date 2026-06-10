@@ -2,6 +2,10 @@
 
 import React from "react";
 
+/**
+ * @component bpm.divider
+ * @description Séparateur horizontal avec label optionnel.
+ */
 export interface DividerProps {
   label?: string;
   orientation?: "horizontal" | "vertical";

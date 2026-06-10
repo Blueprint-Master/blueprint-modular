@@ -472,6 +472,7 @@ Page CRUD générique : table + filtres + modal de création/édition/détail c�
 ```
 
 ## bpm.divider
+@component bpm.divider @description Séparateur horizontal avec label optionnel.
 ```
   label?: string
   orientation?: "horizontal" | "vertical"
