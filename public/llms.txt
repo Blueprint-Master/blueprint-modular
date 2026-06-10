@@ -566,6 +566,7 @@ Page CRUD générique : table + filtres + modal de création/édition/détail c�
 ```
 
 ## bpm.filePreview
+@component bpm.filePreview @description Aperçu de fichier (image, PDF, texte/code).
 ```
   url*: string
   filename*: string
