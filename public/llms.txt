@@ -535,6 +535,7 @@ Page CRUD générique : table + filtres + modal de création/édition/détail c�
 ```
 
 ## bpm.expander
+@component bpm.expander @description Bloc repliable avec titre.
 ```
   title*: React.ReactNode
   children*: React.ReactNode
