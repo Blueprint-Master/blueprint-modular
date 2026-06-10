@@ -1486,6 +1486,7 @@ INTERDIT : Tableau de données — obligatoire. INTERDIT : JSX dans data[], util
 ```
 
 ## bpm.textarea
+@component bpm.textarea @description Zone de texte multiligne.
 ```
   label?: string
   value?: string

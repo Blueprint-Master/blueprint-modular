@@ -2,6 +2,10 @@
 
 import React from "react";
 
+/**
+ * @component bpm.textarea
+ * @description Zone de texte multiligne.
+ */
 export interface TextareaProps extends Omit<React.TextareaHTMLAttributes<HTMLTextAreaElement>, "value" | "onChange"> {
   label?: string;
   value?: string;
