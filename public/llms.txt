@@ -423,6 +423,7 @@ Page CRUD générique : table + filtres + modal de création/édition/détail c�
 ```
 
 ## bpm.dataExplorer
+@component bpm.dataExplorer @description Explorateur de données unifié (classique ou analytics).
 ```
 ```
 
