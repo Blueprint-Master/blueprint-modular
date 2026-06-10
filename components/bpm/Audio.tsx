@@ -2,6 +2,10 @@
 
 import React from "react";
 
+/**
+ * @component bpm.audio
+ * @description Lecteur audio HTML5.
+ */
 export interface AudioProps {
   src: string;
   controls?: boolean;
