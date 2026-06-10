@@ -1039,6 +1039,7 @@ Conteneur page (core) — props : children.
 ```
 
 ## bpm.panel
+@component bpm.panel @description Panneau informatif (info, success, warning, error).
 ```
   variant?: "info" | "success" | "warning" | "error"  — PARENT: page directe | bpm.grid | bpm.tabs (contenu onglet). INTERDIT: bpm.panel imbriqué trop profond (max 2 niveaux). ASSOCIÉ: bpm.title, bpm.metric, bpm.table, bpm.plotlyChart.
   title?: string | null

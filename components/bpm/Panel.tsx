@@ -2,6 +2,10 @@
 
 import React from "react";
 
+/**
+ * @component bpm.panel
+ * @description Panneau informatif (info, success, warning, error).
+ */
 export interface PanelProps {
   /** PARENT: page directe | bpm.grid | bpm.tabs (contenu onglet). INTERDIT: bpm.panel imbriqué trop profond (max 2 niveaux). ASSOCIÉ: bpm.title, bpm.metric, bpm.table, bpm.plotlyChart. */
   variant?: "info" | "success" | "warning" | "error";
