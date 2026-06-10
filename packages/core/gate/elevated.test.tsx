@@ -12,6 +12,7 @@ import {
   HighlightBox,
   LabelValue,
   LiveGauge,
+  MachineStatus,
   Metric,
   Progress,
   ProgressRing,
@@ -150,6 +151,23 @@ describe("elevate(instrument): sparkline", () => {
       />
     );
     expect(container.querySelector("svg")?.getAttribute("data-judgment")).toBe("favorable");
+  });
+});
+
+describe("elevate(instrument): machineStatus", () => {
+  it("sans value/context → pas de jugement", () => {
+    const { container } = render(<MachineStatus title="M1" state="running" />);
+    expect(container.querySelector("[data-judgment]")).toBeNull();
+  });
+
+  it("value sous le repère → unfavorable + verdict, même si LED running", () => {
+    const { container } = render(
+      <MachineStatus title="M1" state="running" value={42} context={{ reference: 60, direction: "higher_is_better" }} />
+    );
+    expect(container.querySelector("[data-judgment]")?.getAttribute("data-judgment")).toBe(
+      "unfavorable"
+    );
+    expect(container.querySelector('[role="status"]')).not.toBeNull();
   });
 });
 

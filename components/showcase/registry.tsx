@@ -11,7 +11,7 @@
  * La page /components itère sur ce registre : pas de page à la main par composant.
  */
 import React from "react";
-import { AnomalyAlert, HighlightBox, LabelValue, LiveGauge, Metric, Progress, ProgressRing, Sparkline, StatusBox } from "@/components/bpm";
+import { AnomalyAlert, HighlightBox, LabelValue, LiveGauge, MachineStatus, Metric, Progress, ProgressRing, Sparkline, StatusBox } from "@/components/bpm";
 
 /** Trajectoire de démonstration : dégradation régulière sur 6 périodes. */
 const TRAJ_DOWN = [
@@ -352,6 +352,45 @@ export const SHOWCASE: ShowcaseEntry[] = [
               { t: 3, v: 55 },
             ]}
             context={{ reference: 100, direction: "higher_is_better" }}
+          />
+        ),
+      },
+    ],
+  },
+  {
+    key: "machineStatus",
+    class: "INSTRUMENT",
+    examples: [
+      {
+        name: "défaut",
+        note: "rendu historique inchangé (LED animée)",
+        render: () => <MachineStatus title="Machine A" state="running" detail="Lot #1234" />,
+      },
+      {
+        name: "déviant",
+        note: "value (cadence) + context → verdict + bordure jugée",
+        render: () => (
+          <MachineStatus
+            title="Machine A"
+            state="running"
+            value={42}
+            context={{ reference: 60, direction: "higher_is_better" }}
+          />
+        ),
+      },
+      {
+        name: "trajectoire",
+        note: "v(t) en chute → tendance ↘ révélée alors que la LED est verte",
+        render: () => (
+          <MachineStatus
+            title="Machine A"
+            state="running"
+            value={[
+              { t: 1, v: 64 },
+              { t: 2, v: 55 },
+              { t: 3, v: 42 },
+            ]}
+            context={{ reference: 60, direction: "higher_is_better" }}
           />
         ),
       },
