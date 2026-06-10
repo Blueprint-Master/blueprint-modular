@@ -1239,6 +1239,7 @@ Conteneur page (core) — props : children.
 ```
 
 ## bpm.routePlanner
+@component bpm.routePlanner @description Planificateur d'itinéraire avec liste de points réordonnables, carte Leaflet et calcul de distance orthodromique. @example bpm.routePlanner({ stops: [{ id: "1", label: "Paris", position: [48.85, 2.35] }], onReorder: setStops, showDistance: true }) @param {object} props @param {RouteStop[]} props.stops - Points de l'itinéraire (id, label, position [lat, lng]). Obligatoire. @param {function} [props.onReorder] - Callback à la réorganisation. Optionnel. @param {boolean} [props.showDistance=true] - Affiche la distance totale. Optionnel. @param {number|string} [props.mapHeight=360] - Hauteur de la carte. Optionnel. @param {string} [props.className=""] - Classes CSS additionnelles. Optionnel. @associated bpm.mapView, bpm.gps, bpm.timeline export interface RouteStop { id: string; label?: string; position: [number, number]; } function haversineKm(a: [number, number], b: [number, number]): number { const R = 6371; const toRad = (x: number) => (x * Math.PI) / 180; const dLat = toRad(b[0] - a[0]); const dLon = toRad(b[1] - a[1]); const lat1 = toRad(a[0]); const lat2 = toRad(b[0]); const h = Math.sin(dLat / 2) ** 2 + Math.cos(lat1) * Math.cos(lat2) * Math.sin(dLon / 2) ** 2; return 2 * R * Math.asin(Math.min(1, Math.sqrt(h))); } @component bpm.routePlanner @description Planificateur d'itinéraire (arrêts, distances).
 ```
   stops*: RouteStop[]
   onReorder?: (next: RouteStop[]) => void

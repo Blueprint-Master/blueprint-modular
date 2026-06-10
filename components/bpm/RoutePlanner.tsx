@@ -37,6 +37,10 @@ function haversineKm(a: [number, number], b: [number, number]): number {
   return 2 * R * Math.asin(Math.min(1, Math.sqrt(h)));
 }
 
+/**
+ * @component bpm.routePlanner
+ * @description Planificateur d'itinéraire (arrêts, distances).
+ */
 export interface RoutePlannerProps {
   stops: RouteStop[];
   onReorder?: (next: RouteStop[]) => void;
