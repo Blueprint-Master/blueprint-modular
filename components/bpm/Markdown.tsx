@@ -6,6 +6,10 @@ import remarkGfm from "remark-gfm";
 import rehypeHighlight from "rehype-highlight";
 import "highlight.js/styles/github.css";
 
+/**
+ * @component bpm.markdown
+ * @description Rendu Markdown sécurisé.
+ */
 export interface MarkdownProps {
   /** Contenu Markdown. Utilisez `---` sur une ligne pour une ligne horizontale (hr). */
   text: string;
