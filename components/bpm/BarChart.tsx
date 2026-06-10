@@ -7,6 +7,10 @@ export interface BarChartDatum {
   y: number;
 }
 
+/**
+ * @component bpm.barChart
+ * @description Graphique en barres.
+ */
 export interface BarChartProps {
   data: BarChartDatum[];
   width?: number;
