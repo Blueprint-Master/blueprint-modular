@@ -461,6 +461,7 @@ Page CRUD générique : table + filtres + modal de création/édition/détail c�
 ```
 
 ## bpm.diffViewer
+@component bpm.diffViewer @description Visualisation de diff texte/code (split ou unified).
 ```
   original*: string
   modified*: string
