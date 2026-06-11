@@ -345,6 +345,21 @@ const fr = {
     apiTitle: "Référence d'API",
     apiNote:
       "Extrait de llms.txt, généré depuis les sources TypeScript — la même référence que lisent les agents.",
+    semanticTitle: "Couche sémantique",
+    semanticNote:
+      "Ce que le composant signifie pour un agent — valeurs proposées par la boucle, ontologie curée par l'humain. Exposée par le connecteur MCP (get_component).",
+    semanticRole: "Rôle",
+    semanticFrame: "Frame Ω",
+    semanticIndicatorType: "Type d'indicateur",
+    semanticDirectionality: "Directionnalité",
+    semanticTemporality: "Temporalité",
+    semanticGuidanceUse: "Quand l'employer",
+    semanticGuidancePair: "S'associe avec",
+    semanticGuidanceAvoid: "À éviter pour",
+    semanticRelations: "Relations d'indicateurs",
+    semanticContext: "Contexte attendu",
+    semanticStatus: "Statut",
+    semanticCurationQuestion: "Question de curation",
   },
   mcp: {
     metaTitle: "Connecteur MCP — Blueprint Modular",

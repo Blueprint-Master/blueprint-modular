@@ -345,6 +345,21 @@ const en: Dictionary = {
     apiTitle: "API reference",
     apiNote:
       "Excerpt from llms.txt, generated from the TypeScript sources — the same reference your agents read.",
+    semanticTitle: "Semantic layer",
+    semanticNote:
+      "What the component means to an agent — values proposed by the loop, ontology curated by a human. Exposed by the MCP connector (get_component).",
+    semanticRole: "Role",
+    semanticFrame: "Ω frame",
+    semanticIndicatorType: "Indicator type",
+    semanticDirectionality: "Directionality",
+    semanticTemporality: "Temporality",
+    semanticGuidanceUse: "When to use",
+    semanticGuidancePair: "Pairs with",
+    semanticGuidanceAvoid: "Avoid for",
+    semanticRelations: "Indicator relations",
+    semanticContext: "Expected context",
+    semanticStatus: "Status",
+    semanticCurationQuestion: "Curation question",
   },
   mcp: {
     metaTitle: "MCP connector — Blueprint Modular",
