@@ -95,6 +95,16 @@ const fr = {
       cta: "Suivre le guide de démarrage",
     },
   },
+  homeDemo: {
+    revenue: "CA mensuel",
+    orders: "Commandes",
+    gaugeLabel: "Charge ligne 2",
+    stageCreated: "Créé",
+    stageAnalysis: "En analyse",
+    stageValidation: "Validation",
+    stageClosed: "Clôturé",
+    statusOk: "Opérationnel",
+  },
   gallery: {
     title: "Galerie de composants",
     caption: "{count} composants bpm.* en rendu réel",
