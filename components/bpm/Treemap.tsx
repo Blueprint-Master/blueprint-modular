@@ -4,7 +4,6 @@ import React, { useMemo } from "react";
 import {
   interpret,
   judgmentColor,
-  judgmentLabel,
   type InterpretContext,
 } from "./interpret";
 
@@ -19,7 +18,7 @@ import {
  * @param {number} [props.width=400] - Largeur du SVG en pixels. Optionnel.
  * @param {number} [props.height=280] - Hauteur du SVG en pixels. Optionnel.
  * @param {string} [props.className=""] - Classes CSS additionnelles. Optionnel.
- * @param {InterpretContext} [props.context] - Contexte de jugement : chaque tuile est jugée vs le repère (contour coloré par le verdict, data-judgment), verdict global aria. Optionnel.
+ * @param {InterpretContext} [props.context] - Contexte de jugement par tuile : chaque cellule est jugée vs le repère (contour coloré par le verdict hors zone neutre, data-judgment par tuile). Optionnel.
  *
  * @associated bpm.heatmap, bpm.pieChart, bpm.sunburst
  */
@@ -34,7 +33,7 @@ export interface TreemapProps {
   width?: number;
   height?: number;
   className?: string;
-  /** Contexte de jugement { reference, direction } : chaque tuile est jugée par interpret (contour coloré par le verdict hors zone neutre, data-judgment), et le total reçoit un verdict global (aria-label, data-judgment racine). Additif : sans context, rendu inchangé. */
+  /** Contexte de jugement { reference, direction } : chaque tuile est jugée individuellement par interpret vs le repère (contour coloré par le verdict hors zone neutre, data-judgment par tuile). Pas de verdict agrégé : un total de tuiles hétérogènes n'a pas de jugement unique. Additif : sans context, rendu inchangé. */
   context?: InterpretContext;
 }
 
@@ -149,11 +148,6 @@ export function Treemap({
     [data, width, height],
   );
 
-  const overall = useMemo(() => {
-    if (!context || data.length === 0) return null;
-    return interpret(data.reduce((s, d) => s + d.value, 0), context);
-  }, [data, context]);
-
   return (
     <svg
       width={width}
@@ -161,8 +155,7 @@ export function Treemap({
       className={className}
       style={{ background: "var(--bpm-bg-secondary)", borderRadius: "var(--bpm-radius)" }}
       role="img"
-      aria-label={overall ? `Treemap — total : ${judgmentLabel(overall)}` : "Treemap"}
-      data-judgment={overall ? overall.level.status : undefined}
+      aria-label="Treemap"
     >
       {cells.map((c, i) => {
         const j = context ? interpret(c.value, context) : null;
