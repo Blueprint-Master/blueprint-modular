@@ -1,0 +1,1778 @@
+{
+  "mission": "couche-semantique",
+  "standard": "9 checks (cf. scripts/validate-semantics.py) ; valeurs proposed/needs-curation/curated",
+  "generated_by": "scripts/validate-semantics.py --write-ledger",
+  "totals": {
+    "components": {
+      "total": 101,
+      "proposed": 92,
+      "needs-curation": 9
+    }
+  },
+  "needsCuration": [
+    {
+      "slug": "avatar",
+      "bpm": "bpm.avatar",
+      "question": "Ω n'a pas de frame « acteur » : avatar (et orgChart) sont rattachés à entity par défaut. Faut-il introduire un frame acteur/identité dans le seed Ω, ou les rattacher à permission (Role) ?"
+    },
+    {
+      "slug": "timeline",
+      "bpm": "bpm.timeline",
+      "question": "timeline (et activityFeed) : simple affichage d'événements ou indicateur de charge/fréquence (compte d'événements par période) ? Trancher si un bloc indicateur doit être porté et avec quelle temporalité."
+    },
+    {
+      "slug": "activityfeed",
+      "bpm": "bpm.activityFeed",
+      "question": "activityFeed (et timeline) : simple affichage d'événements ou indicateur d'activité (fréquence/volume par période) ? Trancher si un bloc indicateur doit être porté."
+    },
+    {
+      "slug": "orgchart",
+      "bpm": "bpm.orgChart",
+      "question": "Ω n'a pas de frame « acteur » : orgChart (et avatar) sont rattachés à entity par défaut. Faut-il introduire un frame acteur/identité dans le seed Ω, ou les rattacher à permission (Role) ?"
+    },
+    {
+      "slug": "plotlychart",
+      "bpm": "bpm.plotlyChart",
+      "question": "plotlyChart est LE graphique des apps générées mais son sens dépend de la trace : faut-il décliner la sémantique par usage (sous-types tendance/distribution/jauge) plutôt qu'un indicatorType multiple avec direction/temporalité contextuelles ?"
+    },
+    {
+      "slug": "barcode",
+      "bpm": "bpm.barcode",
+      "question": "Identification & traçabilité (barcode/qrCode/nfcBadge) : Ω n'a pas de frame identification. Rattachement proposé à connector (pont physique↔numérique) — valider, ou rattacher à entity (identifiant), ou créer un frame dédié dans le seed Ω ?"
+    },
+    {
+      "slug": "qrcode",
+      "bpm": "bpm.qrCode",
+      "question": "Identification & traçabilité (barcode/qrCode/nfcBadge) : Ω n'a pas de frame identification. Rattachement proposé à connector — valider, ou rattacher à entity, ou créer un frame dédié ?"
+    },
+    {
+      "slug": "nfcbadge",
+      "bpm": "bpm.nfcBadge",
+      "question": "Identification & traçabilité (barcode/qrCode/nfcBadge) : Ω n'a pas de frame identification. Rattachement proposé à connector — valider, ou rattacher à entity, ou créer un frame dédié ?"
+    },
+    {
+      "slug": "diffviewer",
+      "bpm": "bpm.diffViewer",
+      "question": "diffViewer : frame ai (revue de sorties IA, catégorie actuelle) ou entity (versionnage de données métier) ? Le rattachement détermine ses associations sémantiques."
+    }
+  ],
+  "components": [
+    {
+      "slug": "metric",
+      "bpm": "bpm.metric",
+      "checks": {
+        "present": true,
+        "role": true,
+        "frame": true,
+        "indicator": true,
+        "guidance": true,
+        "relations": true,
+        "hints": true,
+        "status": true,
+        "wired": true
+      },
+      "status": "proposed",
+      "gap": ""
+    },
+    {
+      "slug": "table",
+      "bpm": "bpm.table",
+      "checks": {
+        "present": true,
+        "role": true,
+        "frame": true,
+        "indicator": true,
+        "guidance": true,
+        "relations": true,
+        "hints": true,
+        "status": true,
+        "wired": true
+      },
+      "status": "proposed",
+      "gap": ""
+    },
+    {
+      "slug": "title",
+      "bpm": "bpm.title",
+      "checks": {
+        "present": true,
+        "role": true,
+        "frame": true,
+        "indicator": true,
+        "guidance": true,
+        "relations": true,
+        "hints": true,
+        "status": true,
+        "wired": true
+      },
+      "status": "proposed",
+      "gap": ""
+    },
+    {
+      "slug": "title1",
+      "bpm": "bpm.title1",
+      "checks": {
+        "present": true,
+        "role": true,
+        "frame": true,
+        "indicator": true,
+        "guidance": true,
+        "relations": true,
+        "hints": true,
+        "status": true,
+        "wired": true
+      },
+      "status": "proposed",
+      "gap": ""
+    },
+    {
+      "slug": "title2",
+      "bpm": "bpm.title2",
+      "checks": {
+        "present": true,
+        "role": true,
+        "frame": true,
+        "indicator": true,
+        "guidance": true,
+        "relations": true,
+        "hints": true,
+        "status": true,
+        "wired": true
+      },
+      "status": "proposed",
+      "gap": ""
+    },
+    {
+      "slug": "title3",
+      "bpm": "bpm.title3",
+      "checks": {
+        "present": true,
+        "role": true,
+        "frame": true,
+        "indicator": true,
+        "guidance": true,
+        "relations": true,
+        "hints": true,
+        "status": true,
+        "wired": true
+      },
+      "status": "proposed",
+      "gap": ""
+    },
+    {
+      "slug": "text",
+      "bpm": "bpm.text",
+      "checks": {
+        "present": true,
+        "role": true,
+        "frame": true,
+        "indicator": true,
+        "guidance": true,
+        "relations": true,
+        "hints": true,
+        "status": true,
+        "wired": true
+      },
+      "status": "proposed",
+      "gap": ""
+    },
+    {
+      "slug": "caption",
+      "bpm": "bpm.caption",
+      "checks": {
+        "present": true,
+        "role": true,
+        "frame": true,
+        "indicator": true,
+        "guidance": true,
+        "relations": true,
+        "hints": true,
+        "status": true,
+        "wired": true
+      },
+      "status": "proposed",
+      "gap": ""
+    },
+    {
+      "slug": "badge",
+      "bpm": "bpm.badge",
+      "checks": {
+        "present": true,
+        "role": true,
+        "frame": true,
+        "indicator": true,
+        "guidance": true,
+        "relations": true,
+        "hints": true,
+        "status": true,
+        "wired": true
+      },
+      "status": "proposed",
+      "gap": ""
+    },
+    {
+      "slug": "progress",
+      "bpm": "bpm.progress",
+      "checks": {
+        "present": true,
+        "role": true,
+        "frame": true,
+        "indicator": true,
+        "guidance": true,
+        "relations": true,
+        "hints": true,
+        "status": true,
+        "wired": true
+      },
+      "status": "proposed",
+      "gap": ""
+    },
+    {
+      "slug": "skeleton",
+      "bpm": "bpm.skeleton",
+      "checks": {
+        "present": true,
+        "role": true,
+        "frame": true,
+        "indicator": true,
+        "guidance": true,
+        "relations": true,
+        "hints": true,
+        "status": true,
+        "wired": true
+      },
+      "status": "proposed",
+      "gap": ""
+    },
+    {
+      "slug": "jsonviewer",
+      "bpm": "bpm.jsonViewer",
+      "checks": {
+        "present": true,
+        "role": true,
+        "frame": true,
+        "indicator": true,
+        "guidance": true,
+        "relations": true,
+        "hints": true,
+        "status": true,
+        "wired": true
+      },
+      "status": "proposed",
+      "gap": ""
+    },
+    {
+      "slug": "avatar",
+      "bpm": "bpm.avatar",
+      "checks": {
+        "present": true,
+        "role": true,
+        "frame": true,
+        "indicator": true,
+        "guidance": true,
+        "relations": true,
+        "hints": true,
+        "status": true,
+        "wired": true
+      },
+      "status": "needs-curation",
+      "gap": ""
+    },
+    {
+      "slug": "panel",
+      "bpm": "bpm.panel",
+      "checks": {
+        "present": true,
+        "role": true,
+        "frame": true,
+        "indicator": true,
+        "guidance": true,
+        "relations": true,
+        "hints": true,
+        "status": true,
+        "wired": true
+      },
+      "status": "proposed",
+      "gap": ""
+    },
+    {
+      "slug": "tabs",
+      "bpm": "bpm.tabs",
+      "checks": {
+        "present": true,
+        "role": true,
+        "frame": true,
+        "indicator": true,
+        "guidance": true,
+        "relations": true,
+        "hints": true,
+        "status": true,
+        "wired": true
+      },
+      "status": "proposed",
+      "gap": ""
+    },
+    {
+      "slug": "expander",
+      "bpm": "bpm.expander",
+      "checks": {
+        "present": true,
+        "role": true,
+        "frame": true,
+        "indicator": true,
+        "guidance": true,
+        "relations": true,
+        "hints": true,
+        "status": true,
+        "wired": true
+      },
+      "status": "proposed",
+      "gap": ""
+    },
+    {
+      "slug": "accordion",
+      "bpm": "bpm.accordion",
+      "checks": {
+        "present": true,
+        "role": true,
+        "frame": true,
+        "indicator": true,
+        "guidance": true,
+        "relations": true,
+        "hints": true,
+        "status": true,
+        "wired": true
+      },
+      "status": "proposed",
+      "gap": ""
+    },
+    {
+      "slug": "card",
+      "bpm": "bpm.card",
+      "checks": {
+        "present": true,
+        "role": true,
+        "frame": true,
+        "indicator": true,
+        "guidance": true,
+        "relations": true,
+        "hints": true,
+        "status": true,
+        "wired": true
+      },
+      "status": "proposed",
+      "gap": ""
+    },
+    {
+      "slug": "highlightbox",
+      "bpm": "bpm.highlightBox",
+      "checks": {
+        "present": true,
+        "role": true,
+        "frame": true,
+        "indicator": true,
+        "guidance": true,
+        "relations": true,
+        "hints": true,
+        "status": true,
+        "wired": true
+      },
+      "status": "proposed",
+      "gap": ""
+    },
+    {
+      "slug": "divider",
+      "bpm": "bpm.divider",
+      "checks": {
+        "present": true,
+        "role": true,
+        "frame": true,
+        "indicator": true,
+        "guidance": true,
+        "relations": true,
+        "hints": true,
+        "status": true,
+        "wired": true
+      },
+      "status": "proposed",
+      "gap": ""
+    },
+    {
+      "slug": "grid",
+      "bpm": "bpm.grid",
+      "checks": {
+        "present": true,
+        "role": true,
+        "frame": true,
+        "indicator": true,
+        "guidance": true,
+        "relations": true,
+        "hints": true,
+        "status": true,
+        "wired": true
+      },
+      "status": "proposed",
+      "gap": ""
+    },
+    {
+      "slug": "column",
+      "bpm": "bpm.column",
+      "checks": {
+        "present": true,
+        "role": true,
+        "frame": true,
+        "indicator": true,
+        "guidance": true,
+        "relations": true,
+        "hints": true,
+        "status": true,
+        "wired": true
+      },
+      "status": "proposed",
+      "gap": ""
+    },
+    {
+      "slug": "emptystate",
+      "bpm": "bpm.emptyState",
+      "checks": {
+        "present": true,
+        "role": true,
+        "frame": true,
+        "indicator": true,
+        "guidance": true,
+        "relations": true,
+        "hints": true,
+        "status": true,
+        "wired": true
+      },
+      "status": "proposed",
+      "gap": ""
+    },
+    {
+      "slug": "container",
+      "bpm": "bpm.container",
+      "checks": {
+        "present": true,
+        "role": true,
+        "frame": true,
+        "indicator": true,
+        "guidance": true,
+        "relations": true,
+        "hints": true,
+        "status": true,
+        "wired": true
+      },
+      "status": "proposed",
+      "gap": ""
+    },
+    {
+      "slug": "empty",
+      "bpm": "bpm.empty",
+      "checks": {
+        "present": true,
+        "role": true,
+        "frame": true,
+        "indicator": true,
+        "guidance": true,
+        "relations": true,
+        "hints": true,
+        "status": true,
+        "wired": true
+      },
+      "status": "proposed",
+      "gap": ""
+    },
+    {
+      "slug": "popover",
+      "bpm": "bpm.popover",
+      "checks": {
+        "present": true,
+        "role": true,
+        "frame": true,
+        "indicator": true,
+        "guidance": true,
+        "relations": true,
+        "hints": true,
+        "status": true,
+        "wired": true
+      },
+      "status": "proposed",
+      "gap": ""
+    },
+    {
+      "slug": "button",
+      "bpm": "bpm.button",
+      "checks": {
+        "present": true,
+        "role": true,
+        "frame": true,
+        "indicator": true,
+        "guidance": true,
+        "relations": true,
+        "hints": true,
+        "status": true,
+        "wired": true
+      },
+      "status": "proposed",
+      "gap": ""
+    },
+    {
+      "slug": "theme",
+      "bpm": "bpm.theme",
+      "checks": {
+        "present": true,
+        "role": true,
+        "frame": true,
+        "indicator": true,
+        "guidance": true,
+        "relations": true,
+        "hints": true,
+        "status": true,
+        "wired": true
+      },
+      "status": "proposed",
+      "gap": ""
+    },
+    {
+      "slug": "selectbox",
+      "bpm": "bpm.selectbox",
+      "checks": {
+        "present": true,
+        "role": true,
+        "frame": true,
+        "indicator": true,
+        "guidance": true,
+        "relations": true,
+        "hints": true,
+        "status": true,
+        "wired": true
+      },
+      "status": "proposed",
+      "gap": ""
+    },
+    {
+      "slug": "numberinput",
+      "bpm": "bpm.numberInput",
+      "checks": {
+        "present": true,
+        "role": true,
+        "frame": true,
+        "indicator": true,
+        "guidance": true,
+        "relations": true,
+        "hints": true,
+        "status": true,
+        "wired": true
+      },
+      "status": "proposed",
+      "gap": ""
+    },
+    {
+      "slug": "input",
+      "bpm": "bpm.input",
+      "checks": {
+        "present": true,
+        "role": true,
+        "frame": true,
+        "indicator": true,
+        "guidance": true,
+        "relations": true,
+        "hints": true,
+        "status": true,
+        "wired": true
+      },
+      "status": "proposed",
+      "gap": ""
+    },
+    {
+      "slug": "textarea",
+      "bpm": "bpm.textarea",
+      "checks": {
+        "present": true,
+        "role": true,
+        "frame": true,
+        "indicator": true,
+        "guidance": true,
+        "relations": true,
+        "hints": true,
+        "status": true,
+        "wired": true
+      },
+      "status": "proposed",
+      "gap": ""
+    },
+    {
+      "slug": "checkbox",
+      "bpm": "bpm.checkbox",
+      "checks": {
+        "present": true,
+        "role": true,
+        "frame": true,
+        "indicator": true,
+        "guidance": true,
+        "relations": true,
+        "hints": true,
+        "status": true,
+        "wired": true
+      },
+      "status": "proposed",
+      "gap": ""
+    },
+    {
+      "slug": "radiogroup",
+      "bpm": "bpm.radioGroup",
+      "checks": {
+        "present": true,
+        "role": true,
+        "frame": true,
+        "indicator": true,
+        "guidance": true,
+        "relations": true,
+        "hints": true,
+        "status": true,
+        "wired": true
+      },
+      "status": "proposed",
+      "gap": ""
+    },
+    {
+      "slug": "slider",
+      "bpm": "bpm.slider",
+      "checks": {
+        "present": true,
+        "role": true,
+        "frame": true,
+        "indicator": true,
+        "guidance": true,
+        "relations": true,
+        "hints": true,
+        "status": true,
+        "wired": true
+      },
+      "status": "proposed",
+      "gap": ""
+    },
+    {
+      "slug": "dateinput",
+      "bpm": "bpm.dateInput",
+      "checks": {
+        "present": true,
+        "role": true,
+        "frame": true,
+        "indicator": true,
+        "guidance": true,
+        "relations": true,
+        "hints": true,
+        "status": true,
+        "wired": true
+      },
+      "status": "proposed",
+      "gap": ""
+    },
+    {
+      "slug": "daterangepicker",
+      "bpm": "bpm.dateRangePicker",
+      "checks": {
+        "present": true,
+        "role": true,
+        "frame": true,
+        "indicator": true,
+        "guidance": true,
+        "relations": true,
+        "hints": true,
+        "status": true,
+        "wired": true
+      },
+      "status": "proposed",
+      "gap": ""
+    },
+    {
+      "slug": "timeinput",
+      "bpm": "bpm.timeInput",
+      "checks": {
+        "present": true,
+        "role": true,
+        "frame": true,
+        "indicator": true,
+        "guidance": true,
+        "relations": true,
+        "hints": true,
+        "status": true,
+        "wired": true
+      },
+      "status": "proposed",
+      "gap": ""
+    },
+    {
+      "slug": "rating",
+      "bpm": "bpm.rating",
+      "checks": {
+        "present": true,
+        "role": true,
+        "frame": true,
+        "indicator": true,
+        "guidance": true,
+        "relations": true,
+        "hints": true,
+        "status": true,
+        "wired": true
+      },
+      "status": "proposed",
+      "gap": ""
+    },
+    {
+      "slug": "fileuploader",
+      "bpm": "bpm.fileUploader",
+      "checks": {
+        "present": true,
+        "role": true,
+        "frame": true,
+        "indicator": true,
+        "guidance": true,
+        "relations": true,
+        "hints": true,
+        "status": true,
+        "wired": true
+      },
+      "status": "proposed",
+      "gap": ""
+    },
+    {
+      "slug": "colorpicker",
+      "bpm": "bpm.colorPicker",
+      "checks": {
+        "present": true,
+        "role": true,
+        "frame": true,
+        "indicator": true,
+        "guidance": true,
+        "relations": true,
+        "hints": true,
+        "status": true,
+        "wired": true
+      },
+      "status": "proposed",
+      "gap": ""
+    },
+    {
+      "slug": "chip",
+      "bpm": "bpm.chip",
+      "checks": {
+        "present": true,
+        "role": true,
+        "frame": true,
+        "indicator": true,
+        "guidance": true,
+        "relations": true,
+        "hints": true,
+        "status": true,
+        "wired": true
+      },
+      "status": "proposed",
+      "gap": ""
+    },
+    {
+      "slug": "message",
+      "bpm": "bpm.message",
+      "checks": {
+        "present": true,
+        "role": true,
+        "frame": true,
+        "indicator": true,
+        "guidance": true,
+        "relations": true,
+        "hints": true,
+        "status": true,
+        "wired": true
+      },
+      "status": "proposed",
+      "gap": ""
+    },
+    {
+      "slug": "spinner",
+      "bpm": "bpm.spinner",
+      "checks": {
+        "present": true,
+        "role": true,
+        "frame": true,
+        "indicator": true,
+        "guidance": true,
+        "relations": true,
+        "hints": true,
+        "status": true,
+        "wired": true
+      },
+      "status": "proposed",
+      "gap": ""
+    },
+    {
+      "slug": "loadingbar",
+      "bpm": "bpm.loadingBar",
+      "checks": {
+        "present": true,
+        "role": true,
+        "frame": true,
+        "indicator": true,
+        "guidance": true,
+        "relations": true,
+        "hints": true,
+        "status": true,
+        "wired": true
+      },
+      "status": "proposed",
+      "gap": ""
+    },
+    {
+      "slug": "tooltip",
+      "bpm": "bpm.tooltip",
+      "checks": {
+        "present": true,
+        "role": true,
+        "frame": true,
+        "indicator": true,
+        "guidance": true,
+        "relations": true,
+        "hints": true,
+        "status": true,
+        "wired": true
+      },
+      "status": "proposed",
+      "gap": ""
+    },
+    {
+      "slug": "statusbox",
+      "bpm": "bpm.statusBox",
+      "checks": {
+        "present": true,
+        "role": true,
+        "frame": true,
+        "indicator": true,
+        "guidance": true,
+        "relations": true,
+        "hints": true,
+        "status": true,
+        "wired": true
+      },
+      "status": "proposed",
+      "gap": ""
+    },
+    {
+      "slug": "breadcrumb",
+      "bpm": "bpm.breadcrumb",
+      "checks": {
+        "present": true,
+        "role": true,
+        "frame": true,
+        "indicator": true,
+        "guidance": true,
+        "relations": true,
+        "hints": true,
+        "status": true,
+        "wired": true
+      },
+      "status": "proposed",
+      "gap": ""
+    },
+    {
+      "slug": "stepper",
+      "bpm": "bpm.stepper",
+      "checks": {
+        "present": true,
+        "role": true,
+        "frame": true,
+        "indicator": true,
+        "guidance": true,
+        "relations": true,
+        "hints": true,
+        "status": true,
+        "wired": true
+      },
+      "status": "proposed",
+      "gap": ""
+    },
+    {
+      "slug": "audio",
+      "bpm": "bpm.audio",
+      "checks": {
+        "present": true,
+        "role": true,
+        "frame": true,
+        "indicator": true,
+        "guidance": true,
+        "relations": true,
+        "hints": true,
+        "status": true,
+        "wired": true
+      },
+      "status": "proposed",
+      "gap": ""
+    },
+    {
+      "slug": "video",
+      "bpm": "bpm.video",
+      "checks": {
+        "present": true,
+        "role": true,
+        "frame": true,
+        "indicator": true,
+        "guidance": true,
+        "relations": true,
+        "hints": true,
+        "status": true,
+        "wired": true
+      },
+      "status": "proposed",
+      "gap": ""
+    },
+    {
+      "slug": "html",
+      "bpm": "bpm.html",
+      "checks": {
+        "present": true,
+        "role": true,
+        "frame": true,
+        "indicator": true,
+        "guidance": true,
+        "relations": true,
+        "hints": true,
+        "status": true,
+        "wired": true
+      },
+      "status": "proposed",
+      "gap": ""
+    },
+    {
+      "slug": "linechart",
+      "bpm": "bpm.lineChart",
+      "checks": {
+        "present": true,
+        "role": true,
+        "frame": true,
+        "indicator": true,
+        "guidance": true,
+        "relations": true,
+        "hints": true,
+        "status": true,
+        "wired": true
+      },
+      "status": "proposed",
+      "gap": ""
+    },
+    {
+      "slug": "barchart",
+      "bpm": "bpm.barChart",
+      "checks": {
+        "present": true,
+        "role": true,
+        "frame": true,
+        "indicator": true,
+        "guidance": true,
+        "relations": true,
+        "hints": true,
+        "status": true,
+        "wired": true
+      },
+      "status": "proposed",
+      "gap": ""
+    },
+    {
+      "slug": "areachart",
+      "bpm": "bpm.areaChart",
+      "checks": {
+        "present": true,
+        "role": true,
+        "frame": true,
+        "indicator": true,
+        "guidance": true,
+        "relations": true,
+        "hints": true,
+        "status": true,
+        "wired": true
+      },
+      "status": "proposed",
+      "gap": ""
+    },
+    {
+      "slug": "scatterchart",
+      "bpm": "bpm.scatterChart",
+      "checks": {
+        "present": true,
+        "role": true,
+        "frame": true,
+        "indicator": true,
+        "guidance": true,
+        "relations": true,
+        "hints": true,
+        "status": true,
+        "wired": true
+      },
+      "status": "proposed",
+      "gap": ""
+    },
+    {
+      "slug": "modal",
+      "bpm": "bpm.modal",
+      "checks": {
+        "present": true,
+        "role": true,
+        "frame": true,
+        "indicator": true,
+        "guidance": true,
+        "relations": true,
+        "hints": true,
+        "status": true,
+        "wired": true
+      },
+      "status": "proposed",
+      "gap": ""
+    },
+    {
+      "slug": "codeblock",
+      "bpm": "bpm.codeBlock",
+      "checks": {
+        "present": true,
+        "role": true,
+        "frame": true,
+        "indicator": true,
+        "guidance": true,
+        "relations": true,
+        "hints": true,
+        "status": true,
+        "wired": true
+      },
+      "status": "proposed",
+      "gap": ""
+    },
+    {
+      "slug": "topnav",
+      "bpm": "bpm.topNav",
+      "checks": {
+        "present": true,
+        "role": true,
+        "frame": true,
+        "indicator": true,
+        "guidance": true,
+        "relations": true,
+        "hints": true,
+        "status": true,
+        "wired": true
+      },
+      "status": "proposed",
+      "gap": ""
+    },
+    {
+      "slug": "fab",
+      "bpm": "bpm.fab",
+      "checks": {
+        "present": true,
+        "role": true,
+        "frame": true,
+        "indicator": true,
+        "guidance": true,
+        "relations": true,
+        "hints": true,
+        "status": true,
+        "wired": true
+      },
+      "status": "proposed",
+      "gap": ""
+    },
+    {
+      "slug": "treeview",
+      "bpm": "bpm.treeview",
+      "checks": {
+        "present": true,
+        "role": true,
+        "frame": true,
+        "indicator": true,
+        "guidance": true,
+        "relations": true,
+        "hints": true,
+        "status": true,
+        "wired": true
+      },
+      "status": "proposed",
+      "gap": ""
+    },
+    {
+      "slug": "timeline",
+      "bpm": "bpm.timeline",
+      "checks": {
+        "present": true,
+        "role": true,
+        "frame": true,
+        "indicator": true,
+        "guidance": true,
+        "relations": true,
+        "hints": true,
+        "status": true,
+        "wired": true
+      },
+      "status": "needs-curation",
+      "gap": ""
+    },
+    {
+      "slug": "flowdiagram",
+      "bpm": "bpm.flowDiagram",
+      "checks": {
+        "present": true,
+        "role": true,
+        "frame": true,
+        "indicator": true,
+        "guidance": true,
+        "relations": true,
+        "hints": true,
+        "status": true,
+        "wired": true
+      },
+      "status": "proposed",
+      "gap": ""
+    },
+    {
+      "slug": "statustracker",
+      "bpm": "bpm.statusTracker",
+      "checks": {
+        "present": true,
+        "role": true,
+        "frame": true,
+        "indicator": true,
+        "guidance": true,
+        "relations": true,
+        "hints": true,
+        "status": true,
+        "wired": true
+      },
+      "status": "proposed",
+      "gap": ""
+    },
+    {
+      "slug": "activityfeed",
+      "bpm": "bpm.activityFeed",
+      "checks": {
+        "present": true,
+        "role": true,
+        "frame": true,
+        "indicator": true,
+        "guidance": true,
+        "relations": true,
+        "hints": true,
+        "status": true,
+        "wired": true
+      },
+      "status": "needs-curation",
+      "gap": ""
+    },
+    {
+      "slug": "orgchart",
+      "bpm": "bpm.orgChart",
+      "checks": {
+        "present": true,
+        "role": true,
+        "frame": true,
+        "indicator": true,
+        "guidance": true,
+        "relations": true,
+        "hints": true,
+        "status": true,
+        "wired": true
+      },
+      "status": "needs-curation",
+      "gap": ""
+    },
+    {
+      "slug": "masterdetail",
+      "bpm": "bpm.masterDetail",
+      "checks": {
+        "present": true,
+        "role": true,
+        "frame": true,
+        "indicator": true,
+        "guidance": true,
+        "relations": true,
+        "hints": true,
+        "status": true,
+        "wired": true
+      },
+      "status": "proposed",
+      "gap": ""
+    },
+    {
+      "slug": "wizardform",
+      "bpm": "bpm.wizardForm",
+      "checks": {
+        "present": true,
+        "role": true,
+        "frame": true,
+        "indicator": true,
+        "guidance": true,
+        "relations": true,
+        "hints": true,
+        "status": true,
+        "wired": true
+      },
+      "status": "proposed",
+      "gap": ""
+    },
+    {
+      "slug": "commandpalette",
+      "bpm": "bpm.commandPalette",
+      "checks": {
+        "present": true,
+        "role": true,
+        "frame": true,
+        "indicator": true,
+        "guidance": true,
+        "relations": true,
+        "hints": true,
+        "status": true,
+        "wired": true
+      },
+      "status": "proposed",
+      "gap": ""
+    },
+    {
+      "slug": "image",
+      "bpm": "bpm.image",
+      "checks": {
+        "present": true,
+        "role": true,
+        "frame": true,
+        "indicator": true,
+        "guidance": true,
+        "relations": true,
+        "hints": true,
+        "status": true,
+        "wired": true
+      },
+      "status": "proposed",
+      "gap": ""
+    },
+    {
+      "slug": "pdfviewer",
+      "bpm": "bpm.pdfViewer",
+      "checks": {
+        "present": true,
+        "role": true,
+        "frame": true,
+        "indicator": true,
+        "guidance": true,
+        "relations": true,
+        "hints": true,
+        "status": true,
+        "wired": true
+      },
+      "status": "proposed",
+      "gap": ""
+    },
+    {
+      "slug": "autocomplete",
+      "bpm": "bpm.autocomplete",
+      "checks": {
+        "present": true,
+        "role": true,
+        "frame": true,
+        "indicator": true,
+        "guidance": true,
+        "relations": true,
+        "hints": true,
+        "status": true,
+        "wired": true
+      },
+      "status": "proposed",
+      "gap": ""
+    },
+    {
+      "slug": "plotlychart",
+      "bpm": "bpm.plotlyChart",
+      "checks": {
+        "present": true,
+        "role": true,
+        "frame": true,
+        "indicator": true,
+        "guidance": true,
+        "relations": true,
+        "hints": true,
+        "status": true,
+        "wired": true
+      },
+      "status": "needs-curation",
+      "gap": ""
+    },
+    {
+      "slug": "map",
+      "bpm": "bpm.map",
+      "checks": {
+        "present": true,
+        "role": true,
+        "frame": true,
+        "indicator": true,
+        "guidance": true,
+        "relations": true,
+        "hints": true,
+        "status": true,
+        "wired": true
+      },
+      "status": "proposed",
+      "gap": ""
+    },
+    {
+      "slug": "altairchart",
+      "bpm": "bpm.altairChart",
+      "checks": {
+        "present": true,
+        "role": true,
+        "frame": true,
+        "indicator": true,
+        "guidance": true,
+        "relations": true,
+        "hints": true,
+        "status": true,
+        "wired": true
+      },
+      "status": "proposed",
+      "gap": ""
+    },
+    {
+      "slug": "barcode",
+      "bpm": "bpm.barcode",
+      "checks": {
+        "present": true,
+        "role": true,
+        "frame": true,
+        "indicator": true,
+        "guidance": true,
+        "relations": true,
+        "hints": true,
+        "status": true,
+        "wired": true
+      },
+      "status": "needs-curation",
+      "gap": ""
+    },
+    {
+      "slug": "qrcode",
+      "bpm": "bpm.qrCode",
+      "checks": {
+        "present": true,
+        "role": true,
+        "frame": true,
+        "indicator": true,
+        "guidance": true,
+        "relations": true,
+        "hints": true,
+        "status": true,
+        "wired": true
+      },
+      "status": "needs-curation",
+      "gap": ""
+    },
+    {
+      "slug": "nfcbadge",
+      "bpm": "bpm.nfcBadge",
+      "checks": {
+        "present": true,
+        "role": true,
+        "frame": true,
+        "indicator": true,
+        "guidance": true,
+        "relations": true,
+        "hints": true,
+        "status": true,
+        "wired": true
+      },
+      "status": "needs-curation",
+      "gap": ""
+    },
+    {
+      "slug": "drawer",
+      "bpm": "bpm.drawer",
+      "checks": {
+        "present": true,
+        "role": true,
+        "frame": true,
+        "indicator": true,
+        "guidance": true,
+        "relations": true,
+        "hints": true,
+        "status": true,
+        "wired": true
+      },
+      "status": "proposed",
+      "gap": ""
+    },
+    {
+      "slug": "pagination",
+      "bpm": "bpm.pagination",
+      "checks": {
+        "present": true,
+        "role": true,
+        "frame": true,
+        "indicator": true,
+        "guidance": true,
+        "relations": true,
+        "hints": true,
+        "status": true,
+        "wired": true
+      },
+      "status": "proposed",
+      "gap": ""
+    },
+    {
+      "slug": "filterpanel",
+      "bpm": "bpm.filterPanel",
+      "checks": {
+        "present": true,
+        "role": true,
+        "frame": true,
+        "indicator": true,
+        "guidance": true,
+        "relations": true,
+        "hints": true,
+        "status": true,
+        "wired": true
+      },
+      "status": "proposed",
+      "gap": ""
+    },
+    {
+      "slug": "confirmmodal",
+      "bpm": "bpm.confirmModal",
+      "checks": {
+        "present": true,
+        "role": true,
+        "frame": true,
+        "indicator": true,
+        "guidance": true,
+        "relations": true,
+        "hints": true,
+        "status": true,
+        "wired": true
+      },
+      "status": "proposed",
+      "gap": ""
+    },
+    {
+      "slug": "toast",
+      "bpm": "bpm.toast",
+      "checks": {
+        "present": true,
+        "role": true,
+        "frame": true,
+        "indicator": true,
+        "guidance": true,
+        "relations": true,
+        "hints": true,
+        "status": true,
+        "wired": true
+      },
+      "status": "proposed",
+      "gap": ""
+    },
+    {
+      "slug": "pagelayout",
+      "bpm": "bpm.pageLayout",
+      "checks": {
+        "present": true,
+        "role": true,
+        "frame": true,
+        "indicator": true,
+        "guidance": true,
+        "relations": true,
+        "hints": true,
+        "status": true,
+        "wired": true
+      },
+      "status": "proposed",
+      "gap": ""
+    },
+    {
+      "slug": "scrollcontainer",
+      "bpm": "bpm.scrollContainer",
+      "checks": {
+        "present": true,
+        "role": true,
+        "frame": true,
+        "indicator": true,
+        "guidance": true,
+        "relations": true,
+        "hints": true,
+        "status": true,
+        "wired": true
+      },
+      "status": "proposed",
+      "gap": ""
+    },
+    {
+      "slug": "labelvalue",
+      "bpm": "bpm.labelValue",
+      "checks": {
+        "present": true,
+        "role": true,
+        "frame": true,
+        "indicator": true,
+        "guidance": true,
+        "relations": true,
+        "hints": true,
+        "status": true,
+        "wired": true
+      },
+      "status": "proposed",
+      "gap": ""
+    },
+    {
+      "slug": "spinnerdot",
+      "bpm": "bpm.spinnerDot",
+      "checks": {
+        "present": true,
+        "role": true,
+        "frame": true,
+        "indicator": true,
+        "guidance": true,
+        "relations": true,
+        "hints": true,
+        "status": true,
+        "wired": true
+      },
+      "status": "proposed",
+      "gap": ""
+    },
+    {
+      "slug": "titlebpm",
+      "bpm": "bpm.titleBpm",
+      "checks": {
+        "present": true,
+        "role": true,
+        "frame": true,
+        "indicator": true,
+        "guidance": true,
+        "relations": true,
+        "hints": true,
+        "status": true,
+        "wired": true
+      },
+      "status": "proposed",
+      "gap": ""
+    },
+    {
+      "slug": "markdown",
+      "bpm": "bpm.markdown",
+      "checks": {
+        "present": true,
+        "role": true,
+        "frame": true,
+        "indicator": true,
+        "guidance": true,
+        "relations": true,
+        "hints": true,
+        "status": true,
+        "wired": true
+      },
+      "status": "proposed",
+      "gap": ""
+    },
+    {
+      "slug": "codeeditor",
+      "bpm": "bpm.codeEditor",
+      "checks": {
+        "present": true,
+        "role": true,
+        "frame": true,
+        "indicator": true,
+        "guidance": true,
+        "relations": true,
+        "hints": true,
+        "status": true,
+        "wired": true
+      },
+      "status": "proposed",
+      "gap": ""
+    },
+    {
+      "slug": "crud",
+      "bpm": "bpm.crud",
+      "checks": {
+        "present": true,
+        "role": true,
+        "frame": true,
+        "indicator": true,
+        "guidance": true,
+        "relations": true,
+        "hints": true,
+        "status": true,
+        "wired": true
+      },
+      "status": "proposed",
+      "gap": ""
+    },
+    {
+      "slug": "gps",
+      "bpm": "bpm.gps",
+      "checks": {
+        "present": true,
+        "role": true,
+        "frame": true,
+        "indicator": true,
+        "guidance": true,
+        "relations": true,
+        "hints": true,
+        "status": true,
+        "wired": true
+      },
+      "status": "proposed",
+      "gap": ""
+    },
+    {
+      "slug": "jsoneditor",
+      "bpm": "bpm.jsonEditor",
+      "checks": {
+        "present": true,
+        "role": true,
+        "frame": true,
+        "indicator": true,
+        "guidance": true,
+        "relations": true,
+        "hints": true,
+        "status": true,
+        "wired": true
+      },
+      "status": "proposed",
+      "gap": ""
+    },
+    {
+      "slug": "notificationcenter",
+      "bpm": "bpm.notificationCenter",
+      "checks": {
+        "present": true,
+        "role": true,
+        "frame": true,
+        "indicator": true,
+        "guidance": true,
+        "relations": true,
+        "hints": true,
+        "status": true,
+        "wired": true
+      },
+      "status": "proposed",
+      "gap": ""
+    },
+    {
+      "slug": "filepreview",
+      "bpm": "bpm.filePreview",
+      "checks": {
+        "present": true,
+        "role": true,
+        "frame": true,
+        "indicator": true,
+        "guidance": true,
+        "relations": true,
+        "hints": true,
+        "status": true,
+        "wired": true
+      },
+      "status": "proposed",
+      "gap": ""
+    },
+    {
+      "slug": "dataexplorer",
+      "bpm": "bpm.dataExplorer",
+      "checks": {
+        "present": true,
+        "role": true,
+        "frame": true,
+        "indicator": true,
+        "guidance": true,
+        "relations": true,
+        "hints": true,
+        "status": true,
+        "wired": true
+      },
+      "status": "proposed",
+      "gap": ""
+    },
+    {
+      "slug": "chatinterface",
+      "bpm": "bpm.chatInterface",
+      "checks": {
+        "present": true,
+        "role": true,
+        "frame": true,
+        "indicator": true,
+        "guidance": true,
+        "relations": true,
+        "hints": true,
+        "status": true,
+        "wired": true
+      },
+      "status": "proposed",
+      "gap": ""
+    },
+    {
+      "slug": "promptinput",
+      "bpm": "bpm.promptInput",
+      "checks": {
+        "present": true,
+        "role": true,
+        "frame": true,
+        "indicator": true,
+        "guidance": true,
+        "relations": true,
+        "hints": true,
+        "status": true,
+        "wired": true
+      },
+      "status": "proposed",
+      "gap": ""
+    },
+    {
+      "slug": "streamingtext",
+      "bpm": "bpm.streamingText",
+      "checks": {
+        "present": true,
+        "role": true,
+        "frame": true,
+        "indicator": true,
+        "guidance": true,
+        "relations": true,
+        "hints": true,
+        "status": true,
+        "wired": true
+      },
+      "status": "proposed",
+      "gap": ""
+    },
+    {
+      "slug": "diffviewer",
+      "bpm": "bpm.diffViewer",
+      "checks": {
+        "present": true,
+        "role": true,
+        "frame": true,
+        "indicator": true,
+        "guidance": true,
+        "relations": true,
+        "hints": true,
+        "status": true,
+        "wired": true
+      },
+      "status": "needs-curation",
+      "gap": ""
+    },
+    {
+      "slug": "modelselector",
+      "bpm": "bpm.modelSelector",
+      "checks": {
+        "present": true,
+        "role": true,
+        "frame": true,
+        "indicator": true,
+        "guidance": true,
+        "relations": true,
+        "hints": true,
+        "status": true,
+        "wired": true
+      },
+      "status": "proposed",
+      "gap": ""
+    }
+  ]
+}
