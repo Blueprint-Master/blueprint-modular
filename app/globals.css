@@ -3838,3 +3838,174 @@ body.contract-detail-panel-open .pwa-title-bar {
     grid-template-columns: 1fr;
   }
 }
+
+/* --- Vitrine : eyebrow, teasers, MCP & ressources --- */
+.site-eyebrow {
+  display: inline-block;
+  font-family: var(--site-font-mono);
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--bpm-accent);
+  margin-bottom: 14px;
+}
+
+/* Teaser MCP : texte + endpoint */
+.site-teaser {
+  display: grid;
+  grid-template-columns: 1.4fr 1fr;
+  gap: 32px;
+  align-items: center;
+}
+
+.site-teaser-body h2 {
+  margin-bottom: 12px;
+}
+
+.site-teaser-aside {
+  border: 1px solid var(--bpm-border);
+  border-radius: 12px;
+  background: var(--bpm-surface);
+  padding: 20px;
+  box-shadow: var(--bpm-shadow-sm);
+}
+
+.site-endpoint {
+  display: block;
+  font-family: var(--site-font-mono);
+  font-size: 13px;
+  line-height: 1.5;
+  color: var(--bpm-text-primary);
+  background: var(--bpm-code-bg);
+  border: 1px solid var(--bpm-code-border);
+  border-radius: 8px;
+  padding: 12px 14px;
+  word-break: break-all;
+}
+
+/* En-tête /mcp : endpoint sous le lead */
+.site-mcp-endpoint {
+  max-width: 520px;
+  margin: 0 0 24px;
+}
+
+/* Outils MCP */
+.site-tool-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 16px;
+  list-style: none;
+  padding: 0;
+  margin: 24px 0 0;
+}
+
+.site-tool-card {
+  border: 1px solid var(--bpm-border);
+  border-radius: 12px;
+  padding: 20px;
+  background: var(--bpm-surface);
+}
+
+.site-tool-name {
+  display: block;
+  font-family: var(--site-font-mono);
+  font-size: 14.5px;
+  font-weight: 600;
+  color: var(--bpm-accent);
+  margin-bottom: 8px;
+  word-break: break-word;
+}
+
+.site-tool-sig {
+  color: var(--bpm-text-muted);
+  font-weight: 400;
+}
+
+.site-tool-card p {
+  font-size: 14px;
+  line-height: 1.55;
+  color: var(--bpm-text-secondary);
+  margin: 0;
+}
+
+/* Étapes ordonnées (ajout du connecteur) */
+.site-step-title {
+  font-size: 15px;
+  font-weight: 650;
+  color: var(--bpm-text-primary);
+  margin: 0 0 12px;
+}
+
+.site-ordered-steps {
+  margin: 0;
+  padding-left: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.site-ordered-steps li {
+  font-size: 14px;
+  line-height: 1.55;
+  color: var(--bpm-text-secondary);
+}
+
+/* Hub ressources */
+.site-resource-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 16px;
+  list-style: none;
+  padding: 0;
+  margin: 24px 0 0;
+}
+
+.site-resource-card {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  height: 100%;
+  border: 1px solid var(--bpm-border);
+  border-radius: 12px;
+  padding: 20px;
+  background: var(--bpm-surface);
+  text-decoration: none;
+  transition: var(--bpm-transition-fast);
+}
+
+.site-resource-card:hover {
+  border-color: var(--bpm-border-strong);
+  box-shadow: var(--bpm-shadow-sm);
+}
+
+.site-resource-card:focus-visible {
+  outline: none;
+  box-shadow: var(--bpm-focus-ring);
+}
+
+.site-resource-card-title {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 15.5px;
+  font-weight: 650;
+  color: var(--bpm-text-primary);
+}
+
+.site-resource-ext {
+  font-size: 12px;
+  color: var(--bpm-text-muted);
+}
+
+.site-resource-card-body {
+  font-size: 14px;
+  line-height: 1.55;
+  color: var(--bpm-text-secondary);
+}
+
+@media (max-width: 900px) {
+  .site-teaser {
+    grid-template-columns: 1fr;
+  }
+}
