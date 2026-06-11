@@ -1,0 +1,45 @@
+# Déploiement manuel de Blueprint Modular sur le serveur de prod (bpm-prod).
+#
+# Calqué sur le manual-deploy.yml de blueprint-maker : même mécanisme
+# (connexion SSH via appleboy/ssh-action, déclenchement workflow_dispatch),
+# seules les valeurs propres à Modular sont adaptées.
+#
+# Déclenchement : onglet « Actions » → « Manual deploy (bpm-prod) » →
+# bouton « Run workflow » (tappable depuis mobile).
+#
+# Secrets requis (mêmes noms que Maker — définis au niveau org Blueprint-Master
+# ou à ajouter au repo Modular) :
+#   SSH_HOST         hôte du serveur bpm-prod
+#   SSH_USER         utilisateur SSH (ubuntu)
+#   SSH_PRIVATE_KEY  clé privée SSH d'accès au serveur
+#   SSH_PORT         port SSH (ex. 22)
+#
+# Ce workflow ne modifie pas deploy-from-git.sh ni la logique applicative :
+# il se contente de mettre le repo à jour sur le serveur puis de lancer
+# le script de déploiement existant (qui gère vitrine, doc, build Next.js,
+# Prisma migrate et le service PM2 « blueprint-app »).
+
+name: Manual deploy (bpm-prod)
+
+on:
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    name: Deploy Blueprint Modular
+    runs-on: ubuntu-latest
+    steps:
+      - name: Deploy over SSH
+        uses: appleboy/ssh-action@v1.2.0
+        with:
+          host: ${{ secrets.SSH_HOST }}
+          username: ${{ secrets.SSH_USER }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          port: ${{ secrets.SSH_PORT }}
+          script: |
+            set -e
+            cd ~/blueprint-modular
+            git fetch origin
+            git reset --hard origin/master
+            chmod +x deploy/deploy-from-git.sh
+            ./deploy/deploy-from-git.sh
