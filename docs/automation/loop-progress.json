@@ -13,7 +13,7 @@
       "priority": "P0",
       "title": "Page /mcp intégrée au shell du site (nav/footer/i18n), composants bpm réels",
       "status": "done",
-      "notes": "Déplacée de app/mcp/page.tsx vers app/(public)/(site)/mcp/. Server component + generateMetadata, i18n FR/EN, Badge + CodeBlock bpm, compteur TOTAL depuis le registre. Endpoint = source réelle https://blueprint-modular.com/api/mcp (le brief mentionnait mcp.blueprint-modular.com, absent du code — on suit la source).",
+      "notes": "Déplacée de app/mcp/page.tsx vers app/(public)/(site)/mcp/. Server component + generateMetadata, i18n FR/EN, Badge + CodeBlock bpm, compteur TOTAL depuis le registre. Endpoint exposé = https://mcp.blueprint-modular.com/api/mcp (décision utilisateur ; le route handler reste app/api/mcp/route.ts, sous-domaine à configurer côté infra).",
       "smoke": "200 FR/EN, marqueurs list_components/suggest_composition/endpoint présents, /api/mcp tools/list renvoie les 4 outils."
     },
     {
