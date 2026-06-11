@@ -36,6 +36,7 @@ const fr = {
     resourcesHub: "Ressources & guides",
     mcp: "Connecteur MCP",
     llms: "llms.txt — référence machine",
+    llmsCore: "llms-core.txt",
     pypi: "Package PyPI",
     privacy: "Confidentialité",
     terms: "Conditions d'utilisation",

@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-06-11T06:01:42.741Z",
+  "generatedAt": "2026-06-11T18:12:51.934Z",
   "source": "lib/generated/bpm-components.json + public/llms.txt",
   "total": 101,
   "categories": [
@@ -21,7 +21,7 @@
       "description": "Métrique avec valeur, label et delta.",
       "category": "Affichage de données",
       "fullDescription": "Affiche une métrique chiffrée avec label, valeur, variation delta et options de formatage (devise, locale).",
-      "props": "  label*: string  — Libellé affiché au-dessus de la valeur.\n  value*: string | number  — Valeur principale (string ou number).\n  delta?: number | string | null  — Variation affichée. Format string (ex. \"+12%\") ou number.\n  name?: string | null  — Nom optionnel pour référencer la métrique dans le chat IA : $metric:name ou @name\n  deltaType?: \"aucun\" | \"normal\" | \"inverse\"  — Aucun = pas de couleur, normal = + vert / - rouge, inverse = + rouge / - vert\n  help?: string | null\n  deltaDecimals?: number\n  currency?: string\n  valueLocale?: MetricValueLocale  — Locale pour formater value (et delta) quand ce sont des nombres. Ex. \"fr-FR\" (1 000,50), \"en-US\" (1,000.50).\n  valueDecimals?: number  — Nombre de décimales pour value (si value est un number et valueLocale est défini).\n  valueGrouping?: boolean  — Afficher le séparateur de milliers (true par défaut). false → 1000,50 au lieu de 1 000,50.\n  border?: boolean  — Afficher la bordure autour de la métrique (true par défaut).\n  icon?: React.ReactNode | null  — Icône distinctive (ex. lucide-react) affichée à gauche du label.\n  subtext?: string | null  — Micro-info contextuelle sous la métrique (gris clair).\n  accentColor?: string | null  — Couleur d'accent (bordure gauche ou fond icône).\n  compact?: boolean  — Mode compact : hauteur réduite (~80px), padding et typo plus serrés.\n  trackContext?: boolean  — Si true, expose cette métrique au contexte IA.",
+      "props": "  label*: string  — Libellé affiché au-dessus de la valeur.\n  value*: string | number | TrajectoryPoint[]  — Valeur principale (string, number, ou trajectoire v(t) [{t, v}] — affiche le dernier point et révèle la tendance si context est fourni).\n  delta?: number | string | null  — Variation affichée. Format string (ex. \"+12%\") ou number.\n  name?: string | null  — Nom optionnel pour référencer la métrique dans le chat IA : $metric:name ou @name\n  deltaType?: \"aucun\" | \"normal\" | \"inverse\"  — Aucun = pas de couleur, normal = + vert / - rouge, inverse = + rouge / - vert\n  help?: string | null\n  deltaDecimals?: number\n  currency?: string\n  valueLocale?: MetricValueLocale  — Locale pour formater value (et delta) quand ce sont des nombres. Ex. \"fr-FR\" (1 000,50), \"en-US\" (1,000.50).\n  valueDecimals?: number  — Nombre de décimales pour value (si value est un number et valueLocale est défini).\n  valueGrouping?: boolean  — Afficher le séparateur de milliers (true par défaut). false → 1000,50 au lieu de 1 000,50.\n  border?: boolean  — Afficher la bordure autour de la métrique (true par défaut).\n  icon?: React.ReactNode | null  — Icône distinctive (ex. lucide-react) affichée à gauche du label.\n  subtext?: string | null  — Micro-info contextuelle sous la métrique (gris clair).\n  accentColor?: string | null  — Couleur d'accent (bordure gauche ou fond icône).\n  compact?: boolean  — Mode compact : hauteur réduite (~80px), padding et typo plus serrés.\n  trackContext?: boolean  — Si true, expose cette métrique au contexte IA.\n  context?: InterpretContext  — Contexte de jugement { reference, direction, comparisonFrame? } : la métrique porte alors un jugement via interpret(value, context) — écart au repère, tendance (si trajectoire), anomalie — révélé sous la valeur. Additif : sans context, rendu inchangé.",
       "example": "bpm.metric({ label: \"Chiffre d'affaires\", value: 125000, delta: \"+12%\", currency: \"EUR\" })",
       "associated": [
         "bpm.badge",
@@ -32,15 +32,27 @@
         "bpm.grid",
         "bpm.card"
       ],
-      "_haystack": "bpm.metric metric métrique avec valeur, label et delta. affichage de données affiche une métrique chiffrée avec label, valeur, variation delta et options de formatage (devise, locale).   label*: string  — libellé affiché au-dessus de la valeur.\n  value*: string | number  — valeur principale (string ou number).\n  delta?: number | string | null  — variation affichée. format string (ex. \"+12%\") ou number.\n  name?: string | null  — nom optionnel pour référencer la métrique dans le chat ia : $metric:name ou @name\n  deltatype?: \"aucun\" | \"normal\" | \"inverse\"  — aucun = pas de couleur, normal = + vert / - rouge, inverse = + rouge / - vert\n  help?: string | null\n  deltadecimals?: number\n  currency?: string\n  valuelocale?: metricvaluelocale  — locale pour formater value (et delta) quand ce sont des nombres. ex. \"fr-fr\" (1 000,50), \"en-us\" (1,000.50).\n  valuedecimals?: number  — nombre de décimales pour value (si value est un number et valuelocale est défini).\n  valuegrouping?: boolean  — afficher le séparateur de milliers (true par défaut). false → 1000,50 au lieu de 1 000,50.\n  border?: boolean  — afficher la bordure autour de la métrique (true par défaut).\n  icon?: react.reactnode | null  — icône distinctive (ex. lucide-react) affichée à gauche du label.\n  subtext?: string | null  — micro-info contextuelle sous la métrique (gris clair).\n  accentcolor?: string | null  — couleur d'accent (bordure gauche ou fond icône).\n  compact?: boolean  — mode compact : hauteur réduite (~80px), padding et typo plus serrés.\n  trackcontext?: boolean  — si true, expose cette métrique au contexte ia. bpm.metric({ label: \"chiffre d'affaires\", value: 125000, delta: \"+12%\", currency: \"eur\" }) bpm.badge bpm.plotlychart"
+      "_haystack": "bpm.metric metric métrique avec valeur, label et delta. affichage de données affiche une métrique chiffrée avec label, valeur, variation delta et options de formatage (devise, locale).   label*: string  — libellé affiché au-dessus de la valeur.\n  value*: string | number | trajectorypoint[]  — valeur principale (string, number, ou trajectoire v(t) [{t, v}] — affiche le dernier point et révèle la tendance si context est fourni).\n  delta?: number | string | null  — variation affichée. format string (ex. \"+12%\") ou number.\n  name?: string | null  — nom optionnel pour référencer la métrique dans le chat ia : $metric:name ou @name\n  deltatype?: \"aucun\" | \"normal\" | \"inverse\"  — aucun = pas de couleur, normal = + vert / - rouge, inverse = + rouge / - vert\n  help?: string | null\n  deltadecimals?: number\n  currency?: string\n  valuelocale?: metricvaluelocale  — locale pour formater value (et delta) quand ce sont des nombres. ex. \"fr-fr\" (1 000,50), \"en-us\" (1,000.50).\n  valuedecimals?: number  — nombre de décimales pour value (si value est un number et valuelocale est défini).\n  valuegrouping?: boolean  — afficher le séparateur de milliers (true par défaut). false → 1000,50 au lieu de 1 000,50.\n  border?: boolean  — afficher la bordure autour de la métrique (true par défaut).\n  icon?: react.reactnode | null  — icône distinctive (ex. lucide-react) affichée à gauche du label.\n  subtext?: string | null  — micro-info contextuelle sous la métrique (gris clair).\n  accentcolor?: string | null  — couleur d'accent (bordure gauche ou fond icône).\n  compact?: boolean  — mode compact : hauteur réduite (~80px), padding et typo plus serrés.\n  trackcontext?: boolean  — si true, expose cette métrique au contexte ia.\n  context?: interpretcontext  — contexte de jugement { reference, direction, comparisonframe? } : la métrique porte alors un jugement via interpret(value, context) — écart au repère, tendance (si trajectoire), anomalie — révélé sous la valeur. additif : sans context, rendu inchangé. bpm.metric({ label: \"chiffre d'affaires\", value: 125000, delta: \"+12%\", currency: \"eur\" }) bpm.badge bpm.plotlychart"
     },
     {
       "slug": "table",
       "name": "bpm.table",
       "description": "Tableau triable avec lignes alternées.",
       "category": "Affichage de données",
-      "props": "  columns*: TableColumn[]  — Définition des colonnes — obligatoire.\n  data*: Record<string, unknown>[]  — Tableau de données — obligatoire. INTERDIT : JSX dans data[], utiliser render dans TableColumn.\n  striped?: boolean\n  hover?: boolean\n  onRowClick?: (row: Record<string, unknown>) => void  — Callback au clic sur une ligne.\n  defaultSortColumn?: string | null\n  defaultSortDirection?: \"asc\" | \"desc\"\n  name?: string | null\n  keyColumn?: string | null\n  className?: string\n  valueLocale?: MetricValueLocale  — Locale pour formater les nombres (ex. \"fr-FR\", \"en-US\").\n  valueDecimals?: number  — Nombre de décimales par défaut pour les cellules numériques.\n  valueGrouping?: boolean  — Séparateur de milliers (true = 1 000,50).\n  minWidth?: number  — Largeur minimale du tableau en px (déclenche le scroll horizontal dans le wrapper si conteneur plus étroit). Non défini = pas de min-width.\n  trackContext?: boolean  — Si true, expose ce tableau au contexte IA.\n  emptyMessage?: string  — Message affiché quand data est vide. Default: \"Aucune donnée disponible\".",
-      "_haystack": "bpm.table table tableau triable avec lignes alternées. affichage de données   columns*: tablecolumn[]  — définition des colonnes — obligatoire.\n  data*: record<string, unknown>[]  — tableau de données — obligatoire. interdit : jsx dans data[], utiliser render dans tablecolumn.\n  striped?: boolean\n  hover?: boolean\n  onrowclick?: (row: record<string, unknown>) => void  — callback au clic sur une ligne.\n  defaultsortcolumn?: string | null\n  defaultsortdirection?: \"asc\" | \"desc\"\n  name?: string | null\n  keycolumn?: string | null\n  classname?: string\n  valuelocale?: metricvaluelocale  — locale pour formater les nombres (ex. \"fr-fr\", \"en-us\").\n  valuedecimals?: number  — nombre de décimales par défaut pour les cellules numériques.\n  valuegrouping?: boolean  — séparateur de milliers (true = 1 000,50).\n  minwidth?: number  — largeur minimale du tableau en px (déclenche le scroll horizontal dans le wrapper si conteneur plus étroit). non défini = pas de min-width.\n  trackcontext?: boolean  — si true, expose ce tableau au contexte ia.\n  emptymessage?: string  — message affiché quand data est vide. default: \"aucune donnée disponible\"."
+      "fullDescription": "Tableau de données triable avec colonnes personnalisables, formatage numérique et scroll horizontal.",
+      "props": "  columns*: TableColumn[]  — Définition des colonnes — obligatoire.\n  data*: Record<string, unknown>[]  — Tableau de données — obligatoire. INTERDIT : JSX dans data[], utiliser render dans TableColumn.\n  striped?: boolean\n  hover?: boolean\n  onRowClick?: (row: Record<string, unknown>) => void  — Callback au clic sur une ligne.\n  defaultSortColumn?: string | null\n  defaultSortDirection?: \"asc\" | \"desc\"\n  name?: string | null\n  keyColumn?: string | null\n  className?: string\n  valueLocale?: MetricValueLocale  — Locale pour formater les nombres (ex. \"fr-FR\", \"en-US\").\n  valueDecimals?: number  — Nombre de décimales par défaut pour les cellules numériques.\n  valueGrouping?: boolean  — Séparateur de milliers (true = 1 000,50).\n  minWidth?: number  — Largeur minimale du tableau en px (déclenche le scroll horizontal dans le wrapper si conteneur plus étroit). Non défini = pas de min-width.\n  trackContext?: boolean  — Si true, expose ce tableau au contexte IA.\n  emptyMessage?: string  — Message affiché quand data est vide. Default: \"Aucune donnée disponible\".\n  loading?: boolean  — État chargement : affiche des lignes squelettes (aria-busy). Additif : défaut false.\n  error?: string | null  — État erreur : affiche le message en ligne role=alert (prioritaire sur loading/empty). Additif : défaut null.\n  density?: \"normal\" | \"compact\"  — Densité d'affichage : \"normal\" (défaut, rendu historique) ou \"compact\" (padding réduit).",
+      "example": "bpm.table({ columns: [{ key: \"nom\", label: \"Nom\" }, { key: \"montant\", label: \"Montant\", align: \"right\" }], data: rows, striped: true, hover: true })",
+      "associated": [
+        "bpm.pagination",
+        "bpm.input",
+        "bpm.badge",
+        "bpm.button"
+      ],
+      "parent": [
+        "bpm.panel",
+        "bpm.container"
+      ],
+      "_haystack": "bpm.table table tableau triable avec lignes alternées. affichage de données tableau de données triable avec colonnes personnalisables, formatage numérique et scroll horizontal.   columns*: tablecolumn[]  — définition des colonnes — obligatoire.\n  data*: record<string, unknown>[]  — tableau de données — obligatoire. interdit : jsx dans data[], utiliser render dans tablecolumn.\n  striped?: boolean\n  hover?: boolean\n  onrowclick?: (row: record<string, unknown>) => void  — callback au clic sur une ligne.\n  defaultsortcolumn?: string | null\n  defaultsortdirection?: \"asc\" | \"desc\"\n  name?: string | null\n  keycolumn?: string | null\n  classname?: string\n  valuelocale?: metricvaluelocale  — locale pour formater les nombres (ex. \"fr-fr\", \"en-us\").\n  valuedecimals?: number  — nombre de décimales par défaut pour les cellules numériques.\n  valuegrouping?: boolean  — séparateur de milliers (true = 1 000,50).\n  minwidth?: number  — largeur minimale du tableau en px (déclenche le scroll horizontal dans le wrapper si conteneur plus étroit). non défini = pas de min-width.\n  trackcontext?: boolean  — si true, expose ce tableau au contexte ia.\n  emptymessage?: string  — message affiché quand data est vide. default: \"aucune donnée disponible\".\n  loading?: boolean  — état chargement : affiche des lignes squelettes (aria-busy). additif : défaut false.\n  error?: string | null  — état erreur : affiche le message en ligne role=alert (prioritaire sur loading/empty). additif : défaut null.\n  density?: \"normal\" | \"compact\"  — densité d'affichage : \"normal\" (défaut, rendu historique) ou \"compact\" (padding réduit). bpm.table({ columns: [{ key: \"nom\", label: \"nom\" }, { key: \"montant\", label: \"montant\", align: \"right\" }], data: rows, striped: true, hover: true }) bpm.pagination bpm.input bpm.badge bpm.button"
     },
     {
       "slug": "title",
@@ -55,120 +67,145 @@
       "name": "bpm.title1",
       "description": "Titre niveau 1.",
       "category": "Affichage de données",
+      "fullDescription": "Titre h1 minimal. — bpm.title1 : niveau 1 implicite, ne pas passer level.",
       "props": "  children*: React.ReactNode\n  level?: 1 | 2 | 3 | 4\n  size?: string | null  — Taille de police (ex. \"1.5rem\", \"24px\"). Surcharge le défaut du niveau.\n  bold?: boolean | number | null  — Gras : true = 700, false = 400, ou nombre (ex. 600). Surcharge le défaut du niveau.\n  color?: string | null  — Couleur du texte (ex. \"var(--bpm-text-primary)\", \"#333\"). Surcharge la couleur par défaut.\n  bar?: boolean  — Barre verticale sombre à gauche du titre (comme en-tête de section).\n  barColor?: string | null  — Couleur de la barre gauche (hex, rgb ou nom CSS). Ignoré si bar=false.\n  inverted?: boolean  — Couleur inversée : fond sombre, texte blanc (style badge / scénario).\n  invertedBackground?: string | null  — Couleur de fond quand inverted=true (hex, rgb ou nom CSS). Par défaut : #1d1d1f.\n  logoUrl?: string | null  — Optional logo URL (e.g. from localStorage). Shown only when level === 1.\n  onLogoClick?: () => void",
-      "_haystack": "bpm.title1 title1 titre niveau 1. affichage de données   children*: react.reactnode\n  level?: 1 | 2 | 3 | 4\n  size?: string | null  — taille de police (ex. \"1.5rem\", \"24px\"). surcharge le défaut du niveau.\n  bold?: boolean | number | null  — gras : true = 700, false = 400, ou nombre (ex. 600). surcharge le défaut du niveau.\n  color?: string | null  — couleur du texte (ex. \"var(--bpm-text-primary)\", \"#333\"). surcharge la couleur par défaut.\n  bar?: boolean  — barre verticale sombre à gauche du titre (comme en-tête de section).\n  barcolor?: string | null  — couleur de la barre gauche (hex, rgb ou nom css). ignoré si bar=false.\n  inverted?: boolean  — couleur inversée : fond sombre, texte blanc (style badge / scénario).\n  invertedbackground?: string | null  — couleur de fond quand inverted=true (hex, rgb ou nom css). par défaut : #1d1d1f.\n  logourl?: string | null  — optional logo url (e.g. from localstorage). shown only when level === 1.\n  onlogoclick?: () => void"
+      "_haystack": "bpm.title1 title1 titre niveau 1. affichage de données titre h1 minimal. — bpm.title1 : niveau 1 implicite, ne pas passer level.   children*: react.reactnode\n  level?: 1 | 2 | 3 | 4\n  size?: string | null  — taille de police (ex. \"1.5rem\", \"24px\"). surcharge le défaut du niveau.\n  bold?: boolean | number | null  — gras : true = 700, false = 400, ou nombre (ex. 600). surcharge le défaut du niveau.\n  color?: string | null  — couleur du texte (ex. \"var(--bpm-text-primary)\", \"#333\"). surcharge la couleur par défaut.\n  bar?: boolean  — barre verticale sombre à gauche du titre (comme en-tête de section).\n  barcolor?: string | null  — couleur de la barre gauche (hex, rgb ou nom css). ignoré si bar=false.\n  inverted?: boolean  — couleur inversée : fond sombre, texte blanc (style badge / scénario).\n  invertedbackground?: string | null  — couleur de fond quand inverted=true (hex, rgb ou nom css). par défaut : #1d1d1f.\n  logourl?: string | null  — optional logo url (e.g. from localstorage). shown only when level === 1.\n  onlogoclick?: () => void"
     },
     {
       "slug": "title2",
       "name": "bpm.title2",
       "description": "Titre niveau 2.",
       "category": "Affichage de données",
+      "fullDescription": "Titre h1 minimal. — bpm.title2 : niveau 2 implicite, ne pas passer level.",
       "props": "  children*: React.ReactNode\n  level?: 1 | 2 | 3 | 4\n  size?: string | null  — Taille de police (ex. \"1.5rem\", \"24px\"). Surcharge le défaut du niveau.\n  bold?: boolean | number | null  — Gras : true = 700, false = 400, ou nombre (ex. 600). Surcharge le défaut du niveau.\n  color?: string | null  — Couleur du texte (ex. \"var(--bpm-text-primary)\", \"#333\"). Surcharge la couleur par défaut.\n  bar?: boolean  — Barre verticale sombre à gauche du titre (comme en-tête de section).\n  barColor?: string | null  — Couleur de la barre gauche (hex, rgb ou nom CSS). Ignoré si bar=false.\n  inverted?: boolean  — Couleur inversée : fond sombre, texte blanc (style badge / scénario).\n  invertedBackground?: string | null  — Couleur de fond quand inverted=true (hex, rgb ou nom CSS). Par défaut : #1d1d1f.\n  logoUrl?: string | null  — Optional logo URL (e.g. from localStorage). Shown only when level === 1.\n  onLogoClick?: () => void",
-      "_haystack": "bpm.title2 title2 titre niveau 2. affichage de données   children*: react.reactnode\n  level?: 1 | 2 | 3 | 4\n  size?: string | null  — taille de police (ex. \"1.5rem\", \"24px\"). surcharge le défaut du niveau.\n  bold?: boolean | number | null  — gras : true = 700, false = 400, ou nombre (ex. 600). surcharge le défaut du niveau.\n  color?: string | null  — couleur du texte (ex. \"var(--bpm-text-primary)\", \"#333\"). surcharge la couleur par défaut.\n  bar?: boolean  — barre verticale sombre à gauche du titre (comme en-tête de section).\n  barcolor?: string | null  — couleur de la barre gauche (hex, rgb ou nom css). ignoré si bar=false.\n  inverted?: boolean  — couleur inversée : fond sombre, texte blanc (style badge / scénario).\n  invertedbackground?: string | null  — couleur de fond quand inverted=true (hex, rgb ou nom css). par défaut : #1d1d1f.\n  logourl?: string | null  — optional logo url (e.g. from localstorage). shown only when level === 1.\n  onlogoclick?: () => void"
+      "_haystack": "bpm.title2 title2 titre niveau 2. affichage de données titre h1 minimal. — bpm.title2 : niveau 2 implicite, ne pas passer level.   children*: react.reactnode\n  level?: 1 | 2 | 3 | 4\n  size?: string | null  — taille de police (ex. \"1.5rem\", \"24px\"). surcharge le défaut du niveau.\n  bold?: boolean | number | null  — gras : true = 700, false = 400, ou nombre (ex. 600). surcharge le défaut du niveau.\n  color?: string | null  — couleur du texte (ex. \"var(--bpm-text-primary)\", \"#333\"). surcharge la couleur par défaut.\n  bar?: boolean  — barre verticale sombre à gauche du titre (comme en-tête de section).\n  barcolor?: string | null  — couleur de la barre gauche (hex, rgb ou nom css). ignoré si bar=false.\n  inverted?: boolean  — couleur inversée : fond sombre, texte blanc (style badge / scénario).\n  invertedbackground?: string | null  — couleur de fond quand inverted=true (hex, rgb ou nom css). par défaut : #1d1d1f.\n  logourl?: string | null  — optional logo url (e.g. from localstorage). shown only when level === 1.\n  onlogoclick?: () => void"
     },
     {
       "slug": "title3",
       "name": "bpm.title3",
       "description": "Titre niveau 3.",
       "category": "Affichage de données",
+      "fullDescription": "Titre h1 minimal. — bpm.title3 : niveau 3 implicite, ne pas passer level.",
       "props": "  children*: React.ReactNode\n  level?: 1 | 2 | 3 | 4\n  size?: string | null  — Taille de police (ex. \"1.5rem\", \"24px\"). Surcharge le défaut du niveau.\n  bold?: boolean | number | null  — Gras : true = 700, false = 400, ou nombre (ex. 600). Surcharge le défaut du niveau.\n  color?: string | null  — Couleur du texte (ex. \"var(--bpm-text-primary)\", \"#333\"). Surcharge la couleur par défaut.\n  bar?: boolean  — Barre verticale sombre à gauche du titre (comme en-tête de section).\n  barColor?: string | null  — Couleur de la barre gauche (hex, rgb ou nom CSS). Ignoré si bar=false.\n  inverted?: boolean  — Couleur inversée : fond sombre, texte blanc (style badge / scénario).\n  invertedBackground?: string | null  — Couleur de fond quand inverted=true (hex, rgb ou nom CSS). Par défaut : #1d1d1f.\n  logoUrl?: string | null  — Optional logo URL (e.g. from localStorage). Shown only when level === 1.\n  onLogoClick?: () => void",
-      "_haystack": "bpm.title3 title3 titre niveau 3. affichage de données   children*: react.reactnode\n  level?: 1 | 2 | 3 | 4\n  size?: string | null  — taille de police (ex. \"1.5rem\", \"24px\"). surcharge le défaut du niveau.\n  bold?: boolean | number | null  — gras : true = 700, false = 400, ou nombre (ex. 600). surcharge le défaut du niveau.\n  color?: string | null  — couleur du texte (ex. \"var(--bpm-text-primary)\", \"#333\"). surcharge la couleur par défaut.\n  bar?: boolean  — barre verticale sombre à gauche du titre (comme en-tête de section).\n  barcolor?: string | null  — couleur de la barre gauche (hex, rgb ou nom css). ignoré si bar=false.\n  inverted?: boolean  — couleur inversée : fond sombre, texte blanc (style badge / scénario).\n  invertedbackground?: string | null  — couleur de fond quand inverted=true (hex, rgb ou nom css). par défaut : #1d1d1f.\n  logourl?: string | null  — optional logo url (e.g. from localstorage). shown only when level === 1.\n  onlogoclick?: () => void"
+      "_haystack": "bpm.title3 title3 titre niveau 3. affichage de données titre h1 minimal. — bpm.title3 : niveau 3 implicite, ne pas passer level.   children*: react.reactnode\n  level?: 1 | 2 | 3 | 4\n  size?: string | null  — taille de police (ex. \"1.5rem\", \"24px\"). surcharge le défaut du niveau.\n  bold?: boolean | number | null  — gras : true = 700, false = 400, ou nombre (ex. 600). surcharge le défaut du niveau.\n  color?: string | null  — couleur du texte (ex. \"var(--bpm-text-primary)\", \"#333\"). surcharge la couleur par défaut.\n  bar?: boolean  — barre verticale sombre à gauche du titre (comme en-tête de section).\n  barcolor?: string | null  — couleur de la barre gauche (hex, rgb ou nom css). ignoré si bar=false.\n  inverted?: boolean  — couleur inversée : fond sombre, texte blanc (style badge / scénario).\n  invertedbackground?: string | null  — couleur de fond quand inverted=true (hex, rgb ou nom css). par défaut : #1d1d1f.\n  logourl?: string | null  — optional logo url (e.g. from localstorage). shown only when level === 1.\n  onlogoclick?: () => void"
     },
     {
       "slug": "text",
       "name": "bpm.text",
       "description": "Texte simple (niveau corps).",
       "category": "Affichage de données",
+      "fullDescription": "Texte simple (niveau corps).",
       "props": "  children*: React.ReactNode\n  mono?: boolean  — Style inline comme st.text (monospace).\n  className?: string\n  style?: React.CSSProperties",
-      "_haystack": "bpm.text text texte simple (niveau corps). affichage de données   children*: react.reactnode\n  mono?: boolean  — style inline comme st.text (monospace).\n  classname?: string\n  style?: react.cssproperties"
+      "_haystack": "bpm.text text texte simple (niveau corps). affichage de données texte simple (niveau corps).   children*: react.reactnode\n  mono?: boolean  — style inline comme st.text (monospace).\n  classname?: string\n  style?: react.cssproperties"
     },
     {
       "slug": "caption",
       "name": "bpm.caption",
       "description": "Légende ou texte secondaire.",
       "category": "Affichage de données",
+      "fullDescription": "Légende ou texte secondaire.",
       "props": "  children*: React.ReactNode\n  className?: string\n  style?: React.CSSProperties",
-      "_haystack": "bpm.caption caption légende ou texte secondaire. affichage de données   children*: react.reactnode\n  classname?: string\n  style?: react.cssproperties"
+      "_haystack": "bpm.caption caption légende ou texte secondaire. affichage de données légende ou texte secondaire.   children*: react.reactnode\n  classname?: string\n  style?: react.cssproperties"
     },
     {
       "slug": "badge",
       "name": "bpm.badge",
       "description": "Badge / étiquette (success, warning, etc.).",
       "category": "Affichage de données",
+      "fullDescription": "Badge / étiquette (success, warning, etc.).",
       "props": "  children*: React.ReactNode  — PARENT: bpm.table (colonne statut) | bpm.metric | bpm.card. INTERDIT: texte long >20 chars — utiliser bpm.chip. ASSOCIÉ: bpm.table, bpm.metric, bpm.statusBox.\n  variant?: BadgeVariant  — Style / couleur du badge. Valeurs : 'default' | 'primary' | 'success' | 'warning' | 'error'. Default: 'default'.\n  className?: string\n  size?: \"sm\" | \"md\" | \"lg\"  — Taille du badge. 'sm' (défaut) | 'md' | 'lg'. Additif — n'affecte pas le rendu existant.",
-      "_haystack": "bpm.badge badge badge / étiquette (success, warning, etc.). affichage de données   children*: react.reactnode  — parent: bpm.table (colonne statut) | bpm.metric | bpm.card. interdit: texte long >20 chars — utiliser bpm.chip. associé: bpm.table, bpm.metric, bpm.statusbox.\n  variant?: badgevariant  — style / couleur du badge. valeurs : 'default' | 'primary' | 'success' | 'warning' | 'error'. default: 'default'.\n  classname?: string\n  size?: \"sm\" | \"md\" | \"lg\"  — taille du badge. 'sm' (défaut) | 'md' | 'lg'. additif — n'affecte pas le rendu existant."
+      "_haystack": "bpm.badge badge badge / étiquette (success, warning, etc.). affichage de données badge / étiquette (success, warning, etc.).   children*: react.reactnode  — parent: bpm.table (colonne statut) | bpm.metric | bpm.card. interdit: texte long >20 chars — utiliser bpm.chip. associé: bpm.table, bpm.metric, bpm.statusbox.\n  variant?: badgevariant  — style / couleur du badge. valeurs : 'default' | 'primary' | 'success' | 'warning' | 'error'. default: 'default'.\n  classname?: string\n  size?: \"sm\" | \"md\" | \"lg\"  — taille du badge. 'sm' (défaut) | 'md' | 'lg'. additif — n'affecte pas le rendu existant."
     },
     {
       "slug": "progress",
       "name": "bpm.progress",
       "description": "Barre de progression.",
       "category": "Affichage de données",
-      "props": "  value?: number\n  max?: number\n  label?: string\n  showValue?: boolean\n  className?: string",
-      "_haystack": "bpm.progress progress barre de progression. affichage de données   value?: number\n  max?: number\n  label?: string\n  showvalue?: boolean\n  classname?: string"
+      "fullDescription": "Barre de progression.",
+      "props": "  value?: number | TrajectoryPoint[]  — Valeur actuelle, ou trajectoire v(t) [{t, v}] (le dernier point remplit la barre ; la tendance est jugée si context est fourni).\n  max?: number\n  label?: string\n  showValue?: boolean\n  className?: string\n  context?: InterpretContext  — Contexte de jugement { reference, direction, comparisonFrame? } : la barre prend la couleur du jugement et une ligne écart/tendance est révélée sous la barre. Additif : sans context, rendu inchangé.",
+      "_haystack": "bpm.progress progress barre de progression. affichage de données barre de progression.   value?: number | trajectorypoint[]  — valeur actuelle, ou trajectoire v(t) [{t, v}] (le dernier point remplit la barre ; la tendance est jugée si context est fourni).\n  max?: number\n  label?: string\n  showvalue?: boolean\n  classname?: string\n  context?: interpretcontext  — contexte de jugement { reference, direction, comparisonframe? } : la barre prend la couleur du jugement et une ligne écart/tendance est révélée sous la barre. additif : sans context, rendu inchangé."
     },
     {
       "slug": "skeleton",
       "name": "bpm.skeleton",
       "description": "Placeholder de chargement (skeleton).",
       "category": "Affichage de données",
+      "fullDescription": "Placeholder de chargement (skeleton screen).",
       "props": "  variant?: SkeletonVariant\n  width?: number | string\n  height?: number | string\n  className?: string\n  animated?: boolean  — Désactive l'animation pulse (utile pour screenshots, tests, prefers-reduced-motion).\n  shimmer?: boolean  — Animation shimmer (dégradé balayant) en alternative au pulse.\n  rounded?: SkeletonRounded  — Contrôle le rayon des bords (ignoré si variant === \"circular\").\n  lines?: number  — Nombre de lignes de skeleton empilées (variant text). Default: 1.",
-      "_haystack": "bpm.skeleton skeleton placeholder de chargement (skeleton). affichage de données   variant?: skeletonvariant\n  width?: number | string\n  height?: number | string\n  classname?: string\n  animated?: boolean  — désactive l'animation pulse (utile pour screenshots, tests, prefers-reduced-motion).\n  shimmer?: boolean  — animation shimmer (dégradé balayant) en alternative au pulse.\n  rounded?: skeletonrounded  — contrôle le rayon des bords (ignoré si variant === \"circular\").\n  lines?: number  — nombre de lignes de skeleton empilées (variant text). default: 1."
+      "_haystack": "bpm.skeleton skeleton placeholder de chargement (skeleton). affichage de données placeholder de chargement (skeleton screen).   variant?: skeletonvariant\n  width?: number | string\n  height?: number | string\n  classname?: string\n  animated?: boolean  — désactive l'animation pulse (utile pour screenshots, tests, prefers-reduced-motion).\n  shimmer?: boolean  — animation shimmer (dégradé balayant) en alternative au pulse.\n  rounded?: skeletonrounded  — contrôle le rayon des bords (ignoré si variant === \"circular\").\n  lines?: number  — nombre de lignes de skeleton empilées (variant text). default: 1."
     },
     {
       "slug": "jsonviewer",
       "name": "bpm.jsonviewer",
       "description": "Affichage JSON formaté et repliable.",
       "category": "Affichage de données",
+      "fullDescription": "Affichage JSON formaté et repliable.",
       "props": "  data*: unknown  — Objet ou chaîne JSON à afficher.\n  defaultExpandedLevel?: number  — Nombre de niveaux ouverts par défaut (0 = tout replié).\n  maxHeight?: number  — Hauteur max en px pour scroll.\n  className?: string",
-      "_haystack": "bpm.jsonviewer jsonviewer affichage json formaté et repliable. affichage de données   data*: unknown  — objet ou chaîne json à afficher.\n  defaultexpandedlevel?: number  — nombre de niveaux ouverts par défaut (0 = tout replié).\n  maxheight?: number  — hauteur max en px pour scroll.\n  classname?: string"
+      "_haystack": "bpm.jsonviewer jsonviewer affichage json formaté et repliable. affichage de données affichage json formaté et repliable.   data*: unknown  — objet ou chaîne json à afficher.\n  defaultexpandedlevel?: number  — nombre de niveaux ouverts par défaut (0 = tout replié).\n  maxheight?: number  — hauteur max en px pour scroll.\n  classname?: string"
     },
     {
       "slug": "avatar",
       "name": "bpm.avatar",
       "description": "Avatar utilisateur.",
       "category": "Affichage de données",
+      "fullDescription": "Avatar utilisateur (image, initiales ou icône).",
       "props": "  src?: string | null  — URL de l'image de l'avatar.\n  alt?: string  — Texte alternatif (accessibilité).\n  initials?: string  — Initiales affichées si pas d'image. Ex. \"JD\".\n  size?: AvatarSize  — Taille de l'avatar. Valeurs : 'small' | 'medium' | 'large'. Default: 'medium'.\n  className?: string\n  variant?: \"default\" | \"sidebar\"  — Affiche l'avatar dans un bloc type sidebar : avatar + name + subtitle, optionnellement bouton déconnexion. Valeurs : 'default' | 'sidebar'. Default: 'default'.\n  name?: string  — Nom affiché à côté de l'avatar (variant sidebar).\n  subtitle?: string  — Sous-titre (ex. email) sous le nom (variant sidebar).\n  onLogout?: () => void  — Callback déconnexion (variant sidebar) ; si fourni, affiche un bouton.\n  logoutLabel?: string  — Libellé du bouton déconnexion (variant sidebar). Default: 'Se déconnecter'.\n  editable?: boolean  — Active le mode édition : overlay crayon au survol, file picker au clic.\n  onImageChange?: (file: File) => void  — Callback appelé avec le File sélectionné.",
-      "_haystack": "bpm.avatar avatar avatar utilisateur. affichage de données   src?: string | null  — url de l'image de l'avatar.\n  alt?: string  — texte alternatif (accessibilité).\n  initials?: string  — initiales affichées si pas d'image. ex. \"jd\".\n  size?: avatarsize  — taille de l'avatar. valeurs : 'small' | 'medium' | 'large'. default: 'medium'.\n  classname?: string\n  variant?: \"default\" | \"sidebar\"  — affiche l'avatar dans un bloc type sidebar : avatar + name + subtitle, optionnellement bouton déconnexion. valeurs : 'default' | 'sidebar'. default: 'default'.\n  name?: string  — nom affiché à côté de l'avatar (variant sidebar).\n  subtitle?: string  — sous-titre (ex. email) sous le nom (variant sidebar).\n  onlogout?: () => void  — callback déconnexion (variant sidebar) ; si fourni, affiche un bouton.\n  logoutlabel?: string  — libellé du bouton déconnexion (variant sidebar). default: 'se déconnecter'.\n  editable?: boolean  — active le mode édition : overlay crayon au survol, file picker au clic.\n  onimagechange?: (file: file) => void  — callback appelé avec le file sélectionné."
+      "_haystack": "bpm.avatar avatar avatar utilisateur. affichage de données avatar utilisateur (image, initiales ou icône).   src?: string | null  — url de l'image de l'avatar.\n  alt?: string  — texte alternatif (accessibilité).\n  initials?: string  — initiales affichées si pas d'image. ex. \"jd\".\n  size?: avatarsize  — taille de l'avatar. valeurs : 'small' | 'medium' | 'large'. default: 'medium'.\n  classname?: string\n  variant?: \"default\" | \"sidebar\"  — affiche l'avatar dans un bloc type sidebar : avatar + name + subtitle, optionnellement bouton déconnexion. valeurs : 'default' | 'sidebar'. default: 'default'.\n  name?: string  — nom affiché à côté de l'avatar (variant sidebar).\n  subtitle?: string  — sous-titre (ex. email) sous le nom (variant sidebar).\n  onlogout?: () => void  — callback déconnexion (variant sidebar) ; si fourni, affiche un bouton.\n  logoutlabel?: string  — libellé du bouton déconnexion (variant sidebar). default: 'se déconnecter'.\n  editable?: boolean  — active le mode édition : overlay crayon au survol, file picker au clic.\n  onimagechange?: (file: file) => void  — callback appelé avec le file sélectionné."
     },
     {
       "slug": "panel",
       "name": "bpm.panel",
       "description": "Panneau informatif (info, success, warning, error).",
       "category": "Mise en page",
+      "fullDescription": "Panneau informatif (info, success, warning, error).",
       "props": "  variant?: \"info\" | \"success\" | \"warning\" | \"error\"  — PARENT: page directe | bpm.grid | bpm.tabs (contenu onglet). INTERDIT: bpm.panel imbriqué trop profond (max 2 niveaux). ASSOCIÉ: bpm.title, bpm.metric, bpm.table, bpm.plotlyChart.\n  title?: string | null\n  icon?: string | null | false\n  inverted?: boolean  — Couleur inversée : fond sombre, texte blanc (style zone type Executive Summary).\n  children?: React.ReactNode\n  className?: string",
-      "_haystack": "bpm.panel panel panneau informatif (info, success, warning, error). mise en page   variant?: \"info\" | \"success\" | \"warning\" | \"error\"  — parent: page directe | bpm.grid | bpm.tabs (contenu onglet). interdit: bpm.panel imbriqué trop profond (max 2 niveaux). associé: bpm.title, bpm.metric, bpm.table, bpm.plotlychart.\n  title?: string | null\n  icon?: string | null | false\n  inverted?: boolean  — couleur inversée : fond sombre, texte blanc (style zone type executive summary).\n  children?: react.reactnode\n  classname?: string"
+      "_haystack": "bpm.panel panel panneau informatif (info, success, warning, error). mise en page panneau informatif (info, success, warning, error).   variant?: \"info\" | \"success\" | \"warning\" | \"error\"  — parent: page directe | bpm.grid | bpm.tabs (contenu onglet). interdit: bpm.panel imbriqué trop profond (max 2 niveaux). associé: bpm.title, bpm.metric, bpm.table, bpm.plotlychart.\n  title?: string | null\n  icon?: string | null | false\n  inverted?: boolean  — couleur inversée : fond sombre, texte blanc (style zone type executive summary).\n  children?: react.reactnode\n  classname?: string"
     },
     {
       "slug": "tabs",
       "name": "bpm.tabs",
       "description": "Onglets pour organiser le contenu.",
       "category": "Mise en page",
+      "fullDescription": "Système d'onglets avec contenu associé, scroll horizontal si débordement.",
       "props": "  tabs?: TabsItems  — Onglets : tableau de { label, content } ou chaînes (label uniquement).\n  defaultTab?: number  — Index de l'onglet actif au montage. Default: 0.\n  onChange?: (index: number) => void\n  className?: string",
-      "_haystack": "bpm.tabs tabs onglets pour organiser le contenu. mise en page   tabs?: tabsitems  — onglets : tableau de { label, content } ou chaînes (label uniquement).\n  defaulttab?: number  — index de l'onglet actif au montage. default: 0.\n  onchange?: (index: number) => void\n  classname?: string"
+      "example": "bpm.tabs({ tabs: [{ label: \"Aperçu\", content: <Overview /> }, { label: \"Détails\", content: <Details /> }], defaultTab: 0 })",
+      "associated": [
+        "bpm.table",
+        "bpm.plotlyChart",
+        "bpm.metric"
+      ],
+      "parent": [
+        "bpm.panel",
+        "bpm.container"
+      ],
+      "_haystack": "bpm.tabs tabs onglets pour organiser le contenu. mise en page système d'onglets avec contenu associé, scroll horizontal si débordement.   tabs?: tabsitems  — onglets : tableau de { label, content } ou chaînes (label uniquement).\n  defaulttab?: number  — index de l'onglet actif au montage. default: 0.\n  onchange?: (index: number) => void\n  classname?: string bpm.tabs({ tabs: [{ label: \"aperçu\", content: <overview /> }, { label: \"détails\", content: <details /> }], defaulttab: 0 }) bpm.table bpm.plotlychart bpm.metric"
     },
     {
       "slug": "expander",
       "name": "bpm.expander",
       "description": "Bloc repliable.",
       "category": "Mise en page",
+      "fullDescription": "Bloc repliable avec titre.",
       "props": "  title*: React.ReactNode\n  children*: React.ReactNode\n  defaultExpanded?: boolean\n  className?: string",
-      "_haystack": "bpm.expander expander bloc repliable. mise en page   title*: react.reactnode\n  children*: react.reactnode\n  defaultexpanded?: boolean\n  classname?: string"
+      "_haystack": "bpm.expander expander bloc repliable. mise en page bloc repliable avec titre.   title*: react.reactnode\n  children*: react.reactnode\n  defaultexpanded?: boolean\n  classname?: string"
     },
     {
       "slug": "accordion",
       "name": "bpm.accordion",
       "description": "Accordéon (sections repliables).",
       "category": "Mise en page",
+      "fullDescription": "Accordéon (sections repliables).",
       "props": "  sections?: AccordionSection[]\n  allowMultiple?: boolean\n  defaultOpenIds?: string[]\n  className?: string",
-      "_haystack": "bpm.accordion accordion accordéon (sections repliables). mise en page   sections?: accordionsection[]\n  allowmultiple?: boolean\n  defaultopenids?: string[]\n  classname?: string"
+      "_haystack": "bpm.accordion accordion accordéon (sections repliables). mise en page accordéon (sections repliables).   sections?: accordionsection[]\n  allowmultiple?: boolean\n  defaultopenids?: string[]\n  classname?: string"
     },
     {
       "slug": "card",
       "name": "bpm.card",
       "description": "Carte avec titre et contenu.",
       "category": "Mise en page",
+      "fullDescription": "Carte avec titre et contenu.",
       "props": "  title?: React.ReactNode\n  subtitle?: React.ReactNode\n  image?: string\n  imageAlt?: string\n  children?: React.ReactNode\n  actions?: React.ReactNode\n  variant?: CardVariant\n  inverted?: boolean  — Couleur inversée : fond sombre, texte blanc (style zone type Executive Summary).\n  className?: string",
-      "_haystack": "bpm.card card carte avec titre et contenu. mise en page   title?: react.reactnode\n  subtitle?: react.reactnode\n  image?: string\n  imagealt?: string\n  children?: react.reactnode\n  actions?: react.reactnode\n  variant?: cardvariant\n  inverted?: boolean  — couleur inversée : fond sombre, texte blanc (style zone type executive summary).\n  classname?: string"
+      "_haystack": "bpm.card card carte avec titre et contenu. mise en page carte avec titre et contenu.   title?: react.reactnode\n  subtitle?: react.reactnode\n  image?: string\n  imagealt?: string\n  children?: react.reactnode\n  actions?: react.reactnode\n  variant?: cardvariant\n  inverted?: boolean  — couleur inversée : fond sombre, texte blanc (style zone type executive summary).\n  classname?: string"
     },
     {
       "slug": "highlightbox",
@@ -185,48 +222,54 @@
       "name": "bpm.divider",
       "description": "Séparateur horizontal.",
       "category": "Mise en page",
+      "fullDescription": "Séparateur horizontal avec label optionnel.",
       "props": "  label?: string\n  orientation?: \"horizontal\" | \"vertical\"\n  thickness?: number  — Épaisseur en pixels (défaut 1).\n  color?: string  — Couleur de la ligne (CSS, ex. var(--bpm-border), #ccc, rgb(0,0,0)).\n  className?: string",
-      "_haystack": "bpm.divider divider séparateur horizontal. mise en page   label?: string\n  orientation?: \"horizontal\" | \"vertical\"\n  thickness?: number  — épaisseur en pixels (défaut 1).\n  color?: string  — couleur de la ligne (css, ex. var(--bpm-border), #ccc, rgb(0,0,0)).\n  classname?: string"
+      "_haystack": "bpm.divider divider séparateur horizontal. mise en page séparateur horizontal avec label optionnel.   label?: string\n  orientation?: \"horizontal\" | \"vertical\"\n  thickness?: number  — épaisseur en pixels (défaut 1).\n  color?: string  — couleur de la ligne (css, ex. var(--bpm-border), #ccc, rgb(0,0,0)).\n  classname?: string"
     },
     {
       "slug": "grid",
       "name": "bpm.grid",
       "description": "Grille responsive.",
       "category": "Mise en page",
+      "fullDescription": "Grille responsive avec espacement configurable.",
       "props": "  cols?: number | { xs?: number\n  gap?: number | string\n  className?: string\n  children?: React.ReactNode",
-      "_haystack": "bpm.grid grid grille responsive. mise en page   cols?: number | { xs?: number\n  gap?: number | string\n  classname?: string\n  children?: react.reactnode"
+      "_haystack": "bpm.grid grid grille responsive. mise en page grille responsive avec espacement configurable.   cols?: number | { xs?: number\n  gap?: number | string\n  classname?: string\n  children?: react.reactnode"
     },
     {
       "slug": "column",
       "name": "bpm.column",
       "description": "Diviser la page en 1, 2, 3 ou plus colonnes.",
       "category": "Mise en page",
+      "fullDescription": "Mise en page multi-colonnes responsive.",
       "props": "  columns?: number  — Nombre de colonnes (1, 2, 3, 4, etc.).\n  gap?: number | string  — Espacement entre les colonnes (CSS, ex. \"1rem\", 16).\n  className?: string\n  children?: React.ReactNode",
-      "_haystack": "bpm.column column diviser la page en 1, 2, 3 ou plus colonnes. mise en page   columns?: number  — nombre de colonnes (1, 2, 3, 4, etc.).\n  gap?: number | string  — espacement entre les colonnes (css, ex. \"1rem\", 16).\n  classname?: string\n  children?: react.reactnode"
+      "_haystack": "bpm.column column diviser la page en 1, 2, 3 ou plus colonnes. mise en page mise en page multi-colonnes responsive.   columns?: number  — nombre de colonnes (1, 2, 3, 4, etc.).\n  gap?: number | string  — espacement entre les colonnes (css, ex. \"1rem\", 16).\n  classname?: string\n  children?: react.reactnode"
     },
     {
       "slug": "emptystate",
       "name": "bpm.emptystate",
       "description": "État vide (aucune donnée).",
       "category": "Mise en page",
+      "fullDescription": "État vide illustré (titre, description, action).",
       "props": "  title?: string\n  description?: React.ReactNode\n  icon?: React.ReactNode\n  action?: React.ReactNode\n  className?: string",
-      "_haystack": "bpm.emptystate emptystate état vide (aucune donnée). mise en page   title?: string\n  description?: react.reactnode\n  icon?: react.reactnode\n  action?: react.reactnode\n  classname?: string"
+      "_haystack": "bpm.emptystate emptystate état vide (aucune donnée). mise en page état vide illustré (titre, description, action).   title?: string\n  description?: react.reactnode\n  icon?: react.reactnode\n  action?: react.reactnode\n  classname?: string"
     },
     {
       "slug": "container",
       "name": "bpm.container",
       "description": "Conteneur avec titre optionnel.",
       "category": "Mise en page",
+      "fullDescription": "Conteneur avec titre optionnel.",
       "props": "  children*: React.ReactNode\n  className?: string\n  style?: React.CSSProperties",
-      "_haystack": "bpm.container container conteneur avec titre optionnel. mise en page   children*: react.reactnode\n  classname?: string\n  style?: react.cssproperties"
+      "_haystack": "bpm.container container conteneur avec titre optionnel. mise en page conteneur avec titre optionnel.   children*: react.reactnode\n  classname?: string\n  style?: react.cssproperties"
     },
     {
       "slug": "empty",
       "name": "bpm.empty",
       "description": "État vide minimal (icône + message).",
       "category": "Mise en page",
+      "fullDescription": "État vide minimal (icône + message).",
       "props": "  children?: React.ReactNode\n  className?: string\n  style?: React.CSSProperties",
-      "_haystack": "bpm.empty empty état vide minimal (icône + message). mise en page   children?: react.reactnode\n  classname?: string\n  style?: react.cssproperties"
+      "_haystack": "bpm.empty empty état vide minimal (icône + message). mise en page état vide minimal (icône + message).   children?: react.reactnode\n  classname?: string\n  style?: react.cssproperties"
     },
     {
       "slug": "popover",
@@ -247,8 +290,9 @@
       "name": "bpm.button",
       "description": "Bouton d'action (primary, secondary, outline).",
       "category": "Interaction",
+      "fullDescription": "Bouton d'action (primary, secondary, outline, ghost, destructive).",
       "props": "  children?: React.ReactNode\n  onClick?: () => void\n  variant?: ButtonVariant\n  size?: ButtonSize\n  raised?: boolean  — Toolbar : ghost avec hover surface + shadow\n  icon?: string | null\n  iconRight?: string | null\n  loading?: boolean\n  disabled?: boolean\n  fullWidth?: boolean\n  type?: \"button\" | \"submit\" | \"reset\"\n  className?: string\n  style?: React.CSSProperties",
-      "_haystack": "bpm.button button bouton d'action (primary, secondary, outline). interaction   children?: react.reactnode\n  onclick?: () => void\n  variant?: buttonvariant\n  size?: buttonsize\n  raised?: boolean  — toolbar : ghost avec hover surface + shadow\n  icon?: string | null\n  iconright?: string | null\n  loading?: boolean\n  disabled?: boolean\n  fullwidth?: boolean\n  type?: \"button\" | \"submit\" | \"reset\"\n  classname?: string\n  style?: react.cssproperties"
+      "_haystack": "bpm.button button bouton d'action (primary, secondary, outline). interaction bouton d'action (primary, secondary, outline, ghost, destructive).   children?: react.reactnode\n  onclick?: () => void\n  variant?: buttonvariant\n  size?: buttonsize\n  raised?: boolean  — toolbar : ghost avec hover surface + shadow\n  icon?: string | null\n  iconright?: string | null\n  loading?: boolean\n  disabled?: boolean\n  fullwidth?: boolean\n  type?: \"button\" | \"submit\" | \"reset\"\n  classname?: string\n  style?: react.cssproperties"
     },
     {
       "slug": "theme",
@@ -326,16 +370,18 @@
       "name": "bpm.textarea",
       "description": "Zone de texte multiligne.",
       "category": "Interaction",
+      "fullDescription": "Zone de texte multiligne.",
       "props": "  label?: string\n  value?: string\n  onChange?: (value: string) => void\n  placeholder?: string\n  rows?: number\n  disabled?: boolean\n  inverted?: boolean  — Couleur inversée : fond sombre, texte blanc (style zone type PJ).\n  className?: string",
-      "_haystack": "bpm.textarea textarea zone de texte multiligne. interaction   label?: string\n  value?: string\n  onchange?: (value: string) => void\n  placeholder?: string\n  rows?: number\n  disabled?: boolean\n  inverted?: boolean  — couleur inversée : fond sombre, texte blanc (style zone type pj).\n  classname?: string"
+      "_haystack": "bpm.textarea textarea zone de texte multiligne. interaction zone de texte multiligne.   label?: string\n  value?: string\n  onchange?: (value: string) => void\n  placeholder?: string\n  rows?: number\n  disabled?: boolean\n  inverted?: boolean  — couleur inversée : fond sombre, texte blanc (style zone type pj).\n  classname?: string"
     },
     {
       "slug": "checkbox",
       "name": "bpm.checkbox",
       "description": "Case à cocher.",
       "category": "Interaction",
+      "fullDescription": "Case à cocher.",
       "props": "  label?: React.ReactNode\n  checked?: boolean\n  onChange?: (checked: boolean) => void\n  disabled?: boolean\n  className?: string",
-      "_haystack": "bpm.checkbox checkbox case à cocher. interaction   label?: react.reactnode\n  checked?: boolean\n  onchange?: (checked: boolean) => void\n  disabled?: boolean\n  classname?: string"
+      "_haystack": "bpm.checkbox checkbox case à cocher. interaction case à cocher.   label?: react.reactnode\n  checked?: boolean\n  onchange?: (checked: boolean) => void\n  disabled?: boolean\n  classname?: string"
     },
     {
       "slug": "radiogroup",
@@ -357,24 +403,27 @@
       "name": "bpm.slider",
       "description": "Curseur min/max/step.",
       "category": "Interaction",
+      "fullDescription": "Curseur min/max/step.",
       "props": "  value?: number\n  min?: number\n  max?: number\n  step?: number\n  onChange?: (value: number) => void\n  label?: string\n  disabled?: boolean\n  className?: string",
-      "_haystack": "bpm.slider slider curseur min/max/step. interaction   value?: number\n  min?: number\n  max?: number\n  step?: number\n  onchange?: (value: number) => void\n  label?: string\n  disabled?: boolean\n  classname?: string"
+      "_haystack": "bpm.slider slider curseur min/max/step. interaction curseur min/max/step.   value?: number\n  min?: number\n  max?: number\n  step?: number\n  onchange?: (value: number) => void\n  label?: string\n  disabled?: boolean\n  classname?: string"
     },
     {
       "slug": "dateinput",
       "name": "bpm.dateinput",
       "description": "Sélecteur de date.",
       "category": "Interaction",
+      "fullDescription": "Sélecteur de date.",
       "props": "  label?: string\n  value?: Date | string | null\n  onChange?: (value: Date | null) => void\n  disabled?: boolean\n  help?: string | null\n  min?: Date | string | null\n  max?: Date | string | null",
-      "_haystack": "bpm.dateinput dateinput sélecteur de date. interaction   label?: string\n  value?: date | string | null\n  onchange?: (value: date | null) => void\n  disabled?: boolean\n  help?: string | null\n  min?: date | string | null\n  max?: date | string | null"
+      "_haystack": "bpm.dateinput dateinput sélecteur de date. interaction sélecteur de date.   label?: string\n  value?: date | string | null\n  onchange?: (value: date | null) => void\n  disabled?: boolean\n  help?: string | null\n  min?: date | string | null\n  max?: date | string | null"
     },
     {
       "slug": "daterangepicker",
       "name": "bpm.daterangepicker",
       "description": "Sélecteur de plage de dates.",
       "category": "Interaction",
+      "fullDescription": "Sélecteur de plage de dates.",
       "props": "  label?: string\n  start?: Date | string | null\n  end?: Date | string | null\n  onChange?: (start: Date | null, end: Date | null) => void\n  disabled?: boolean\n  min?: Date | string | null\n  max?: Date | string | null",
-      "_haystack": "bpm.daterangepicker daterangepicker sélecteur de plage de dates. interaction   label?: string\n  start?: date | string | null\n  end?: date | string | null\n  onchange?: (start: date | null, end: date | null) => void\n  disabled?: boolean\n  min?: date | string | null\n  max?: date | string | null"
+      "_haystack": "bpm.daterangepicker daterangepicker sélecteur de plage de dates. interaction sélecteur de plage de dates.   label?: string\n  start?: date | string | null\n  end?: date | string | null\n  onchange?: (start: date | null, end: date | null) => void\n  disabled?: boolean\n  min?: date | string | null\n  max?: date | string | null"
     },
     {
       "slug": "timeinput",
@@ -397,101 +446,112 @@
       "description": "Notation par étoiles.",
       "category": "Interaction",
       "fullDescription": "Composant d'évaluation par étoiles cliquables avec taille personnalisable.",
-      "props": "  value?: number\n  max?: number\n  onChange?: (value: number) => void\n  disabled?: boolean\n  size?: \"small\" | \"medium\" | \"large\"",
+      "props": "  value?: number\n  max?: number\n  onChange?: (value: number) => void\n  disabled?: boolean\n  size?: \"small\" | \"medium\" | \"large\"\n  history?: TrajectoryPoint[]  — Historique v(t) [{t, v}] de la note — révèle la tendance si context est fourni.\n  context?: InterpretContext  — Contexte de jugement { reference, direction } (ex. note cible 4.0) : les étoiles pleines prennent la couleur du verdict et un suffixe écart/tendance role=status est révélé. Additif : sans context, rendu inchangé.",
       "example": "bpm.rating({ value: 3, max: 5, onChange: setRating, size: \"medium\" })",
       "associated": [
         "bpm.slider",
         "bpm.metric"
       ],
-      "_haystack": "bpm.rating rating notation par étoiles. interaction composant d'évaluation par étoiles cliquables avec taille personnalisable.   value?: number\n  max?: number\n  onchange?: (value: number) => void\n  disabled?: boolean\n  size?: \"small\" | \"medium\" | \"large\" bpm.rating({ value: 3, max: 5, onchange: setrating, size: \"medium\" }) bpm.slider bpm.metric"
+      "_haystack": "bpm.rating rating notation par étoiles. interaction composant d'évaluation par étoiles cliquables avec taille personnalisable.   value?: number\n  max?: number\n  onchange?: (value: number) => void\n  disabled?: boolean\n  size?: \"small\" | \"medium\" | \"large\"\n  history?: trajectorypoint[]  — historique v(t) [{t, v}] de la note — révèle la tendance si context est fourni.\n  context?: interpretcontext  — contexte de jugement { reference, direction } (ex. note cible 4.0) : les étoiles pleines prennent la couleur du verdict et un suffixe écart/tendance role=status est révélé. additif : sans context, rendu inchangé. bpm.rating({ value: 3, max: 5, onchange: setrating, size: \"medium\" }) bpm.slider bpm.metric"
     },
     {
       "slug": "fileuploader",
       "name": "bpm.fileuploader",
       "description": "Upload de fichier(s).",
       "category": "Interaction",
+      "fullDescription": "Upload de fichier(s) par glisser-déposer ou sélection.",
       "props": "  accept?: string\n  multiple?: boolean\n  maxSizeBytes?: number\n  onFiles?: (files: File[]) => void\n  disabled?: boolean\n  label?: string",
-      "_haystack": "bpm.fileuploader fileuploader upload de fichier(s). interaction   accept?: string\n  multiple?: boolean\n  maxsizebytes?: number\n  onfiles?: (files: file[]) => void\n  disabled?: boolean\n  label?: string"
+      "_haystack": "bpm.fileuploader fileuploader upload de fichier(s). interaction upload de fichier(s) par glisser-déposer ou sélection.   accept?: string\n  multiple?: boolean\n  maxsizebytes?: number\n  onfiles?: (files: file[]) => void\n  disabled?: boolean\n  label?: string"
     },
     {
       "slug": "colorpicker",
       "name": "bpm.colorpicker",
       "description": "Sélecteur de couleur.",
       "category": "Interaction",
+      "fullDescription": "Sélecteur de couleur.",
       "props": "  label?: string\n  value?: string\n  onChange?: (value: string) => void\n  help?: string | null\n  disabled?: boolean",
-      "_haystack": "bpm.colorpicker colorpicker sélecteur de couleur. interaction   label?: string\n  value?: string\n  onchange?: (value: string) => void\n  help?: string | null\n  disabled?: boolean"
+      "_haystack": "bpm.colorpicker colorpicker sélecteur de couleur. interaction sélecteur de couleur.   label?: string\n  value?: string\n  onchange?: (value: string) => void\n  help?: string | null\n  disabled?: boolean"
     },
     {
       "slug": "chip",
       "name": "bpm.chip",
       "description": "Pastille / chip.",
       "category": "Interaction",
+      "fullDescription": "Pastille / chip (tag supprimable ou non).",
       "props": "  label*: React.ReactNode\n  onDelete?: () => void\n  onClick?: () => void\n  variant?: ChipVariant\n  disabled?: boolean\n  className?: string",
-      "_haystack": "bpm.chip chip pastille / chip. interaction   label*: react.reactnode\n  ondelete?: () => void\n  onclick?: () => void\n  variant?: chipvariant\n  disabled?: boolean\n  classname?: string"
+      "_haystack": "bpm.chip chip pastille / chip. interaction pastille / chip (tag supprimable ou non).   label*: react.reactnode\n  ondelete?: () => void\n  onclick?: () => void\n  variant?: chipvariant\n  disabled?: boolean\n  classname?: string"
     },
     {
       "slug": "message",
       "name": "bpm.message",
       "description": "Bandeau info/success/warning/error.",
       "category": "Feedback",
+      "fullDescription": "Bandeau info/success/warning/error.",
       "props": "  type?: MessageType\n  children*: React.ReactNode\n  className?: string",
-      "_haystack": "bpm.message message bandeau info/success/warning/error. feedback   type?: messagetype\n  children*: react.reactnode\n  classname?: string"
+      "_haystack": "bpm.message message bandeau info/success/warning/error. feedback bandeau info/success/warning/error.   type?: messagetype\n  children*: react.reactnode\n  classname?: string"
     },
     {
       "slug": "spinner",
       "name": "bpm.spinner",
       "description": "Indicateur de chargement.",
       "category": "Feedback",
+      "fullDescription": "Indicateur de chargement (roue).",
       "props": "  text?: string\n  size?: SpinnerSize\n  variant?: SpinnerVariant\n  neutral?: boolean  — Utilise la couleur texte (gris) au lieu de l'accent pour homogénéiser avec flèches/icônes neutres\n  className?: string",
-      "_haystack": "bpm.spinner spinner indicateur de chargement. feedback   text?: string\n  size?: spinnersize\n  variant?: spinnervariant\n  neutral?: boolean  — utilise la couleur texte (gris) au lieu de l'accent pour homogénéiser avec flèches/icônes neutres\n  classname?: string"
+      "_haystack": "bpm.spinner spinner indicateur de chargement. feedback indicateur de chargement (roue).   text?: string\n  size?: spinnersize\n  variant?: spinnervariant\n  neutral?: boolean  — utilise la couleur texte (gris) au lieu de l'accent pour homogénéiser avec flèches/icônes neutres\n  classname?: string"
     },
     {
       "slug": "loadingbar",
       "name": "bpm.loadingbar",
       "description": "Barre de chargement (sweep, blocks, iso, stacked, arc, dots).",
       "category": "Feedback",
+      "fullDescription": "Barre de chargement (sweep, blocks, iso, stacked, arc, dots).",
       "props": "  variant?: LoadingBarVariant  — Variant visuel (sweep, blocks, iso, stacked, arc, dots).\n  value?: number  — Pour les barres déterminées (ex. iso) : 0–100. Non fourni = indéterminé.\n  size?: \"thin\" | \"default\" | \"thick\"  — Hauteur : thin (6px), default (8px), thick (12px).\n  animated?: boolean  — Désactive l'animation (utile pour screenshots ou prefers-reduced-motion).\n  className?: string",
-      "_haystack": "bpm.loadingbar loadingbar barre de chargement (sweep, blocks, iso, stacked, arc, dots). feedback   variant?: loadingbarvariant  — variant visuel (sweep, blocks, iso, stacked, arc, dots).\n  value?: number  — pour les barres déterminées (ex. iso) : 0–100. non fourni = indéterminé.\n  size?: \"thin\" | \"default\" | \"thick\"  — hauteur : thin (6px), default (8px), thick (12px).\n  animated?: boolean  — désactive l'animation (utile pour screenshots ou prefers-reduced-motion).\n  classname?: string"
+      "_haystack": "bpm.loadingbar loadingbar barre de chargement (sweep, blocks, iso, stacked, arc, dots). feedback barre de chargement (sweep, blocks, iso, stacked, arc, dots).   variant?: loadingbarvariant  — variant visuel (sweep, blocks, iso, stacked, arc, dots).\n  value?: number  — pour les barres déterminées (ex. iso) : 0–100. non fourni = indéterminé.\n  size?: \"thin\" | \"default\" | \"thick\"  — hauteur : thin (6px), default (8px), thick (12px).\n  animated?: boolean  — désactive l'animation (utile pour screenshots ou prefers-reduced-motion).\n  classname?: string"
     },
     {
       "slug": "tooltip",
       "name": "bpm.tooltip",
       "description": "Info-bulle au survol.",
       "category": "Feedback",
+      "fullDescription": "Info-bulle au survol.",
       "props": "  text*: string\n  children*: React.ReactNode\n  position?: TooltipPlacement\n  backgroundColor?: string | null  — Couleur de fond du tooltip (hex, rgb ou nom CSS). Par défaut : noir.\n  textColor?: string | null  — Couleur du texte du tooltip (hex, rgb ou nom CSS). Par défaut : blanc.",
-      "_haystack": "bpm.tooltip tooltip info-bulle au survol. feedback   text*: string\n  children*: react.reactnode\n  position?: tooltipplacement\n  backgroundcolor?: string | null  — couleur de fond du tooltip (hex, rgb ou nom css). par défaut : noir.\n  textcolor?: string | null  — couleur du texte du tooltip (hex, rgb ou nom css). par défaut : blanc."
+      "_haystack": "bpm.tooltip tooltip info-bulle au survol. feedback info-bulle au survol.   text*: string\n  children*: react.reactnode\n  position?: tooltipplacement\n  backgroundcolor?: string | null  — couleur de fond du tooltip (hex, rgb ou nom css). par défaut : noir.\n  textcolor?: string | null  — couleur du texte du tooltip (hex, rgb ou nom css). par défaut : blanc."
     },
     {
       "slug": "statusbox",
       "name": "bpm.statusbox",
       "description": "Boîte de statut (success, warning, error, info).",
       "category": "Feedback",
-      "props": "  label*: string\n  state?: \"running\" | \"complete\" | \"error\"\n  children?: React.ReactNode\n  defaultExpanded?: boolean\n  compact?: boolean  — Réduit le padding pour contextes denses.\n  className?: string",
-      "_haystack": "bpm.statusbox statusbox boîte de statut (success, warning, error, info). feedback   label*: string\n  state?: \"running\" | \"complete\" | \"error\"\n  children?: react.reactnode\n  defaultexpanded?: boolean\n  compact?: boolean  — réduit le padding pour contextes denses.\n  classname?: string"
+      "fullDescription": "Boîte de statut (success, warning, error, info).",
+      "props": "  label*: string\n  state?: \"running\" | \"complete\" | \"error\"\n  children?: React.ReactNode\n  defaultExpanded?: boolean\n  compact?: boolean  — Réduit le padding pour contextes denses.\n  className?: string\n  value?: number | TrajectoryPoint[]  — Valeur mesurée associée au statut (scalaire ou trajectoire v(t) [{t,v}]) — jugée si context est fourni.\n  context?: InterpretContext  — Contexte de jugement { reference, direction, comparisonFrame? } : un verdict écart/tendance/anomalie est révélé à droite du libellé et la bordure gauche prend la couleur du jugement. Additif : sans context, rendu inchangé.",
+      "_haystack": "bpm.statusbox statusbox boîte de statut (success, warning, error, info). feedback boîte de statut (success, warning, error, info).   label*: string\n  state?: \"running\" | \"complete\" | \"error\"\n  children?: react.reactnode\n  defaultexpanded?: boolean\n  compact?: boolean  — réduit le padding pour contextes denses.\n  classname?: string\n  value?: number | trajectorypoint[]  — valeur mesurée associée au statut (scalaire ou trajectoire v(t) [{t,v}]) — jugée si context est fourni.\n  context?: interpretcontext  — contexte de jugement { reference, direction, comparisonframe? } : un verdict écart/tendance/anomalie est révélé à droite du libellé et la bordure gauche prend la couleur du jugement. additif : sans context, rendu inchangé."
     },
     {
       "slug": "breadcrumb",
       "name": "bpm.breadcrumb",
       "description": "Fil d'Ariane.",
       "category": "Navigation",
+      "fullDescription": "Fil d'Ariane simple.",
       "props": "  items?: BreadcrumbItem[]\n  separator?: string\n  className?: string",
-      "_haystack": "bpm.breadcrumb breadcrumb fil d'ariane. navigation   items?: breadcrumbitem[]\n  separator?: string\n  classname?: string"
+      "_haystack": "bpm.breadcrumb breadcrumb fil d'ariane. navigation fil d'ariane simple.   items?: breadcrumbitem[]\n  separator?: string\n  classname?: string"
     },
     {
       "slug": "stepper",
       "name": "bpm.stepper",
       "description": "Progression multi-étapes (horizontal/vertical, tailles sm/md/lg).",
       "category": "Navigation",
+      "fullDescription": "Progression multi-étapes (horizontal/vertical).",
       "props": "  steps?: StepperStep[]\n  currentStep?: number\n  direction?: \"horizontal\" | \"vertical\"\n  onStepClick?: (stepIndex: number) => void\n  size?: \"sm\" | \"md\" | \"lg\"\n  className?: string",
-      "_haystack": "bpm.stepper stepper progression multi-étapes (horizontal/vertical, tailles sm/md/lg). navigation   steps?: stepperstep[]\n  currentstep?: number\n  direction?: \"horizontal\" | \"vertical\"\n  onstepclick?: (stepindex: number) => void\n  size?: \"sm\" | \"md\" | \"lg\"\n  classname?: string"
+      "_haystack": "bpm.stepper stepper progression multi-étapes (horizontal/vertical, tailles sm/md/lg). navigation progression multi-étapes (horizontal/vertical).   steps?: stepperstep[]\n  currentstep?: number\n  direction?: \"horizontal\" | \"vertical\"\n  onstepclick?: (stepindex: number) => void\n  size?: \"sm\" | \"md\" | \"lg\"\n  classname?: string"
     },
     {
       "slug": "audio",
       "name": "bpm.audio",
       "description": "Lecteur audio.",
       "category": "Média",
+      "fullDescription": "Lecteur audio HTML5.",
       "props": "  src*: string\n  controls?: boolean\n  loop?: boolean\n  className?: string",
-      "_haystack": "bpm.audio audio lecteur audio. média   src*: string\n  controls?: boolean\n  loop?: boolean\n  classname?: string"
+      "_haystack": "bpm.audio audio lecteur audio. média lecteur audio html5.   src*: string\n  controls?: boolean\n  loop?: boolean\n  classname?: string"
     },
     {
       "slug": "video",
@@ -523,32 +583,48 @@
       "name": "bpm.linechart",
       "description": "Graphique en courbes.",
       "category": "Graphiques",
-      "props": "  data*: LineChartDatum[]\n  width?: number\n  height?: number\n  color?: string\n  className?: string",
-      "_haystack": "bpm.linechart linechart graphique en courbes. graphiques   data*: linechartdatum[]\n  width?: number\n  height?: number\n  color?: string\n  classname?: string"
+      "fullDescription": "Graphique en ligne SVG simple et responsive pour afficher une série de données.",
+      "props": "  data*: LineChartDatum[]\n  width?: number\n  height?: number\n  color?: string\n  className?: string\n  context?: InterpretContext  — Contexte de jugement { reference, direction, comparisonFrame? } : la série (lue comme trajectoire v(t), t = x) est jugée par interpret — repère tracé en pointillé, couleur de ligne selon le verdict, aria-label. Additif : sans context, rendu inchangé.",
+      "example": "bpm.lineChart({ data: [{ x: 0, y: 10 }, { x: 1, y: 25 }], color: \"#3b82f6\" })",
+      "associated": [
+        "bpm.areaChart",
+        "bpm.barChart",
+        "bpm.scatterChart"
+      ],
+      "_haystack": "bpm.linechart linechart graphique en courbes. graphiques graphique en ligne svg simple et responsive pour afficher une série de données.   data*: linechartdatum[]\n  width?: number\n  height?: number\n  color?: string\n  classname?: string\n  context?: interpretcontext  — contexte de jugement { reference, direction, comparisonframe? } : la série (lue comme trajectoire v(t), t = x) est jugée par interpret — repère tracé en pointillé, couleur de ligne selon le verdict, aria-label. additif : sans context, rendu inchangé. bpm.linechart({ data: [{ x: 0, y: 10 }, { x: 1, y: 25 }], color: \"#3b82f6\" }) bpm.areachart bpm.barchart bpm.scatterchart"
     },
     {
       "slug": "barchart",
       "name": "bpm.barchart",
       "description": "Graphique en barres.",
       "category": "Graphiques",
-      "props": "  data*: BarChartDatum[]\n  width?: number\n  height?: number\n  color?: string\n  className?: string",
-      "_haystack": "bpm.barchart barchart graphique en barres. graphiques   data*: barchartdatum[]\n  width?: number\n  height?: number\n  color?: string\n  classname?: string"
+      "fullDescription": "Graphique en barres.",
+      "props": "  data*: BarChartDatum[]\n  width?: number\n  height?: number\n  color?: string\n  className?: string\n  context?: InterpretContext  — Contexte de jugement { reference, direction } : chaque barre est jugée individuellement (couleur par écart au repère), le repère est tracé en pointillé et la série entière reçoit un verdict global (aria-label, data-judgment). Additif : sans context, rendu inchangé.",
+      "_haystack": "bpm.barchart barchart graphique en barres. graphiques graphique en barres.   data*: barchartdatum[]\n  width?: number\n  height?: number\n  color?: string\n  classname?: string\n  context?: interpretcontext  — contexte de jugement { reference, direction } : chaque barre est jugée individuellement (couleur par écart au repère), le repère est tracé en pointillé et la série entière reçoit un verdict global (aria-label, data-judgment). additif : sans context, rendu inchangé."
     },
     {
       "slug": "areachart",
       "name": "bpm.areachart",
       "description": "Graphique en aires.",
       "category": "Graphiques",
-      "props": "  data*: AreaChartDatum[]\n  width?: number\n  height?: number\n  color?: string\n  className?: string",
-      "_haystack": "bpm.areachart areachart graphique en aires. graphiques   data*: areachartdatum[]\n  width?: number\n  height?: number\n  color?: string\n  classname?: string"
+      "fullDescription": "Graphique en aires.",
+      "props": "  data*: AreaChartDatum[]\n  width?: number\n  height?: number\n  color?: string\n  className?: string\n  context?: InterpretContext  — Contexte de jugement { reference, direction, comparisonFrame? } : la série (trajectoire v(t), t = x) est jugée par interpret — repère pointillé, couleur d'aire selon le verdict, aria-label. Additif : sans context, rendu inchangé.",
+      "_haystack": "bpm.areachart areachart graphique en aires. graphiques graphique en aires.   data*: areachartdatum[]\n  width?: number\n  height?: number\n  color?: string\n  classname?: string\n  context?: interpretcontext  — contexte de jugement { reference, direction, comparisonframe? } : la série (trajectoire v(t), t = x) est jugée par interpret — repère pointillé, couleur d'aire selon le verdict, aria-label. additif : sans context, rendu inchangé."
     },
     {
       "slug": "scatterchart",
       "name": "bpm.scatterchart",
       "description": "Graphique en nuage de points.",
       "category": "Graphiques",
-      "props": "  data*: ScatterChartDatum[]\n  width?: number\n  height?: number\n  color?: string\n  radius?: number\n  className?: string",
-      "_haystack": "bpm.scatterchart scatterchart graphique en nuage de points. graphiques   data*: scatterchartdatum[]\n  width?: number\n  height?: number\n  color?: string\n  radius?: number\n  classname?: string"
+      "fullDescription": "Graphique de dispersion (nuage de points) SVG simple et responsive.",
+      "props": "  data*: ScatterChartDatum[]\n  width?: number\n  height?: number\n  color?: string\n  radius?: number\n  className?: string\n  context?: InterpretContext  — Contexte de jugement { reference, direction, comparisonFrame? } : chaque point est jugé (couleur par écart au repère ; anomalie >2σ — du comparisonFrame ou, à défaut, du nuage lui-même — cerclée), repère pointillé tracé, verdict global de la série en aria-label + data-judgment. Additif : sans context, rendu inchangé.",
+      "example": "bpm.scatterChart({ data: [{ x: 1, y: 10 }, { x: 2, y: 25 }], color: \"#3b82f6\", radius: 5 })",
+      "associated": [
+        "bpm.lineChart",
+        "bpm.areaChart",
+        "bpm.plotlyChart"
+      ],
+      "_haystack": "bpm.scatterchart scatterchart graphique en nuage de points. graphiques graphique de dispersion (nuage de points) svg simple et responsive.   data*: scatterchartdatum[]\n  width?: number\n  height?: number\n  color?: string\n  radius?: number\n  classname?: string\n  context?: interpretcontext  — contexte de jugement { reference, direction, comparisonframe? } : chaque point est jugé (couleur par écart au repère ; anomalie >2σ — du comparisonframe ou, à défaut, du nuage lui-même — cerclée), repère pointillé tracé, verdict global de la série en aria-label + data-judgment. additif : sans context, rendu inchangé. bpm.scatterchart({ data: [{ x: 1, y: 10 }, { x: 2, y: 25 }], color: \"#3b82f6\", radius: 5 }) bpm.linechart bpm.areachart bpm.plotlychart"
     },
     {
       "slug": "modal",
@@ -571,56 +647,75 @@
       "name": "bpm.codeblock",
       "description": "Bloc de code avec Copier.",
       "category": "Utilitaires",
+      "fullDescription": "Bloc de code avec syntaxe colorée et bouton Copier.",
       "props": "  code*: string\n  language?: string\n  className?: string",
-      "_haystack": "bpm.codeblock codeblock bloc de code avec copier. utilitaires   code*: string\n  language?: string\n  classname?: string"
+      "_haystack": "bpm.codeblock codeblock bloc de code avec copier. utilitaires bloc de code avec syntaxe colorée et bouton copier.   code*: string\n  language?: string\n  classname?: string"
     },
     {
       "slug": "topnav",
       "name": "bpm.topnav",
       "description": "Barre de navigation supérieure (titre + liens).",
       "category": "Navigation",
+      "fullDescription": "Barre de navigation horizontale avec titre/logo et liens/boutons.",
       "props": "  title?: React.ReactNode\n  titleHref?: string\n  items?: TopNavItem[]\n  className?: string",
-      "_haystack": "bpm.topnav topnav barre de navigation supérieure (titre + liens). navigation   title?: react.reactnode\n  titlehref?: string\n  items?: topnavitem[]\n  classname?: string"
+      "example": "bpm.topNav({ title: \"Mon App\", titleHref: \"/\", items: [{ label: \"Accueil\", href: \"/\" }, { label: \"Aide\", onClick: showHelp }] })",
+      "associated": [
+        "bpm.pageLayout",
+        "bpm.sidebar",
+        "bpm.breadcrumb"
+      ],
+      "_haystack": "bpm.topnav topnav barre de navigation supérieure (titre + liens). navigation barre de navigation horizontale avec titre/logo et liens/boutons.   title?: react.reactnode\n  titlehref?: string\n  items?: topnavitem[]\n  classname?: string bpm.topnav({ title: \"mon app\", titlehref: \"/\", items: [{ label: \"accueil\", href: \"/\" }, { label: \"aide\", onclick: showhelp }] }) bpm.pagelayout bpm.sidebar bpm.breadcrumb"
     },
     {
       "slug": "fab",
       "name": "bpm.fab",
       "description": "Bouton d'action flottant (FAB).",
       "category": "Interaction",
+      "fullDescription": "Bouton d'action flottant (FAB).",
       "props": "  icon?: React.ReactNode\n  label?: string\n  onClick?: () => void\n  position?: \"bottom-right\" | \"bottom-left\" | \"top-right\" | \"top-left\"\n  className?: string",
-      "_haystack": "bpm.fab fab bouton d'action flottant (fab). interaction   icon?: react.reactnode\n  label?: string\n  onclick?: () => void\n  position?: \"bottom-right\" | \"bottom-left\" | \"top-right\" | \"top-left\"\n  classname?: string"
+      "_haystack": "bpm.fab fab bouton d'action flottant (fab). interaction bouton d'action flottant (fab).   icon?: react.reactnode\n  label?: string\n  onclick?: () => void\n  position?: \"bottom-right\" | \"bottom-left\" | \"top-right\" | \"top-left\"\n  classname?: string"
     },
     {
       "slug": "treeview",
       "name": "bpm.treeview",
       "description": "Arbre de nœuds repliables et sélectionnables.",
       "category": "Affichage de données",
+      "fullDescription": "Arborescence hiérarchique dépliable avec sélection de nœud.",
       "props": "  nodes?: TreeviewNode[]\n  onSelect?: (node: TreeviewNode) => void\n  selectedId?: string | null\n  className?: string",
-      "_haystack": "bpm.treeview treeview arbre de nœuds repliables et sélectionnables. affichage de données   nodes?: treeviewnode[]\n  onselect?: (node: treeviewnode) => void\n  selectedid?: string | null\n  classname?: string"
+      "example": "bpm.treeview({ nodes: [{ id: \"1\", label: \"Parent\", children: [{ id: \"1.1\", label: \"Enfant\" }] }], onSelect: handleSelect })",
+      "associated": [
+        "bpm.sidebar",
+        "bpm.accordion",
+        "bpm.menu"
+      ],
+      "_haystack": "bpm.treeview treeview arbre de nœuds repliables et sélectionnables. affichage de données arborescence hiérarchique dépliable avec sélection de nœud.   nodes?: treeviewnode[]\n  onselect?: (node: treeviewnode) => void\n  selectedid?: string | null\n  classname?: string bpm.treeview({ nodes: [{ id: \"1\", label: \"parent\", children: [{ id: \"1.1\", label: \"enfant\" }] }], onselect: handleselect }) bpm.sidebar bpm.accordion bpm.menu"
     },
     {
       "slug": "timeline",
       "name": "bpm.timeline",
       "description": "Frise chronologique (événements ISO, groupement par date, fil vertical).",
       "category": "Affichage de données",
+      "fullDescription": "Frise chronologique (événements ISO, groupement par date).",
       "props": "  events?: TimelineEvent[]  — Nouvelle API — fil chronologique riche.\n  items?: TimelineItem[]  — Ancienne API — conservée pour compatibilité.\n  maxItems?: number\n  sortOrder?: \"asc\" | \"desc\"\n  groupByDate?: boolean\n  className?: string",
-      "_haystack": "bpm.timeline timeline frise chronologique (événements iso, groupement par date, fil vertical). affichage de données   events?: timelineevent[]  — nouvelle api — fil chronologique riche.\n  items?: timelineitem[]  — ancienne api — conservée pour compatibilité.\n  maxitems?: number\n  sortorder?: \"asc\" | \"desc\"\n  groupbydate?: boolean\n  classname?: string"
+      "_haystack": "bpm.timeline timeline frise chronologique (événements iso, groupement par date, fil vertical). affichage de données frise chronologique (événements iso, groupement par date).   events?: timelineevent[]  — nouvelle api — fil chronologique riche.\n  items?: timelineitem[]  — ancienne api — conservée pour compatibilité.\n  maxitems?: number\n  sortorder?: \"asc\" | \"desc\"\n  groupbydate?: boolean\n  classname?: string"
     },
     {
       "slug": "flowdiagram",
       "name": "bpm.flowDiagram",
       "description": "Diagramme d'états et transitions interactif (SVG).",
       "category": "Affichage de données",
+      "fullDescription": "Diagramme d'états et transitions interactif (SVG).",
       "props": "  states*: FlowDiagramState[]\n  transitions*: FlowDiagramTransition[]\n  currentState?: string\n  onTransition?: (from: string, to: string) => void\n  direction?: \"horizontal\" | \"vertical\"\n  className?: string",
-      "_haystack": "bpm.flowdiagram flowdiagram diagramme d'états et transitions interactif (svg). affichage de données   states*: flowdiagramstate[]\n  transitions*: flowdiagramtransition[]\n  currentstate?: string\n  ontransition?: (from: string, to: string) => void\n  direction?: \"horizontal\" | \"vertical\"\n  classname?: string"
+      "_haystack": "bpm.flowdiagram flowdiagram diagramme d'états et transitions interactif (svg). affichage de données diagramme d'états et transitions interactif (svg).   states*: flowdiagramstate[]\n  transitions*: flowdiagramtransition[]\n  currentstate?: string\n  ontransition?: (from: string, to: string) => void\n  direction?: \"horizontal\" | \"vertical\"\n  classname?: string"
     },
     {
       "slug": "statustracker",
       "name": "bpm.statusTracker",
       "description": "Suivi de statut réel (barre, étapes completed/current/pending/error).",
       "category": "Affichage de données",
+      "fullDescription": "Suivi de statut en étapes (completed/current/pending/error).",
       "props": "  stages*: StatusTrackerStage[]\n  direction?: \"horizontal\" | \"vertical\"\n  compact?: boolean\n  className?: string",
-      "_haystack": "bpm.statustracker statustracker suivi de statut réel (barre, étapes completed/current/pending/error). affichage de données   stages*: statustrackerstage[]\n  direction?: \"horizontal\" | \"vertical\"\n  compact?: boolean\n  classname?: string"
+      "_haystack": "bpm.statustracker statustracker suivi de statut réel (barre, étapes completed/current/pending/error). affichage de données suivi de statut en étapes (completed/current/pending/error).   stages*: statustrackerstage[]\n  direction?: \"horizontal\" | \"vertical\"\n  compact?: boolean\n  classname?: string"
     },
     {
       "slug": "activityfeed",
@@ -637,32 +732,36 @@
       "name": "bpm.orgChart",
       "description": "Organigramme hiérarchique HTML/CSS (repliable).",
       "category": "Mise en page",
+      "fullDescription": "Organigramme hiérarchique HTML/CSS (repliable).",
       "props": "  nodes*: OrgChartNode[]\n  direction?: \"vertical\" | \"horizontal\"\n  onNodeClick?: (node: OrgChartNode) => void\n  expandable?: boolean\n  rootId?: string\n  className?: string",
-      "_haystack": "bpm.orgchart orgchart organigramme hiérarchique html/css (repliable). mise en page   nodes*: orgchartnode[]\n  direction?: \"vertical\" | \"horizontal\"\n  onnodeclick?: (node: orgchartnode) => void\n  expandable?: boolean\n  rootid?: string\n  classname?: string"
+      "_haystack": "bpm.orgchart orgchart organigramme hiérarchique html/css (repliable). mise en page organigramme hiérarchique html/css (repliable).   nodes*: orgchartnode[]\n  direction?: \"vertical\" | \"horizontal\"\n  onnodeclick?: (node: orgchartnode) => void\n  expandable?: boolean\n  rootid?: string\n  classname?: string"
     },
     {
       "slug": "masterdetail",
       "name": "bpm.masterDetail",
       "description": "Vue liste + détail responsive (recherche, mobile).",
       "category": "Mise en page",
-      "props": "",
-      "_haystack": "bpm.masterdetail masterdetail vue liste + détail responsive (recherche, mobile). mise en page"
+      "fullDescription": "Vue liste + détail responsive (recherche, mobile).",
+      "props": "  items*: T[]\n  columns*: MasterDetailColumn<T>[]\n  renderDetail*: (item: T) => React.ReactElement\n  selectedId?: string\n  onSelect*: (item: T) => void\n  idKey?: string\n  searchable?: boolean\n  emptyDetailMessage?: string\n  splitRatio?: number\n  className?: string",
+      "_haystack": "bpm.masterdetail masterdetail vue liste + détail responsive (recherche, mobile). mise en page vue liste + détail responsive (recherche, mobile).   items*: t[]\n  columns*: masterdetailcolumn<t>[]\n  renderdetail*: (item: t) => react.reactelement\n  selectedid?: string\n  onselect*: (item: t) => void\n  idkey?: string\n  searchable?: boolean\n  emptydetailmessage?: string\n  splitratio?: number\n  classname?: string"
     },
     {
       "slug": "wizardform",
       "name": "bpm.wizardForm",
       "description": "Formulaire multi-étapes avec stepper et validation.",
       "category": "Interaction",
+      "fullDescription": "Formulaire multi-étapes avec stepper et validation.",
       "props": "  steps*: WizardStep[]\n  onComplete*: () => void\n  onCancel?: () => void\n  submitLabel?: string\n  showSummary?: boolean\n  className?: string",
-      "_haystack": "bpm.wizardform wizardform formulaire multi-étapes avec stepper et validation. interaction   steps*: wizardstep[]\n  oncomplete*: () => void\n  oncancel?: () => void\n  submitlabel?: string\n  showsummary?: boolean\n  classname?: string"
+      "_haystack": "bpm.wizardform wizardform formulaire multi-étapes avec stepper et validation. interaction formulaire multi-étapes avec stepper et validation.   steps*: wizardstep[]\n  oncomplete*: () => void\n  oncancel?: () => void\n  submitlabel?: string\n  showsummary?: boolean\n  classname?: string"
     },
     {
       "slug": "commandpalette",
       "name": "bpm.commandPalette",
       "description": "Palette de commandes modale (fuzzy, clavier, Cmd+K).",
       "category": "Navigation",
+      "fullDescription": "Palette de commandes modale (fuzzy search, clavier, Cmd+K).",
       "props": "  commands*: Command[]\n  isOpen?: boolean  — Mode contrôlé : si défini, l’ouverture au clavier doit être gérée via `onRequestOpen`.\n  onClose*: () => void\n  onRequestOpen?: () => void  — Appelé sur Cmd/Ctrl+K lorsque `isOpen` est fourni (mode contrôlé).\n  placeholder?: string\n  className?: string",
-      "_haystack": "bpm.commandpalette commandpalette palette de commandes modale (fuzzy, clavier, cmd+k). navigation   commands*: command[]\n  isopen?: boolean  — mode contrôlé : si défini, l’ouverture au clavier doit être gérée via `onrequestopen`.\n  onclose*: () => void\n  onrequestopen?: () => void  — appelé sur cmd/ctrl+k lorsque `isopen` est fourni (mode contrôlé).\n  placeholder?: string\n  classname?: string"
+      "_haystack": "bpm.commandpalette commandpalette palette de commandes modale (fuzzy, clavier, cmd+k). navigation palette de commandes modale (fuzzy search, clavier, cmd+k).   commands*: command[]\n  isopen?: boolean  — mode contrôlé : si défini, l’ouverture au clavier doit être gérée via `onrequestopen`.\n  onclose*: () => void\n  onrequestopen?: () => void  — appelé sur cmd/ctrl+k lorsque `isopen` est fourni (mode contrôlé).\n  placeholder?: string\n  classname?: string"
     },
     {
       "slug": "image",
@@ -693,8 +792,9 @@
       "name": "bpm.autocomplete",
       "description": "Champ de saisie avec suggestions.",
       "category": "Interaction",
+      "fullDescription": "Champ de saisie avec suggestions.",
       "props": "  label?: string\n  placeholder?: string\n  value?: string\n  onChange?: (value: string) => void\n  options*: AutocompleteOption[]\n  className?: string",
-      "_haystack": "bpm.autocomplete autocomplete champ de saisie avec suggestions. interaction   label?: string\n  placeholder?: string\n  value?: string\n  onchange?: (value: string) => void\n  options*: autocompleteoption[]\n  classname?: string"
+      "_haystack": "bpm.autocomplete autocomplete champ de saisie avec suggestions. interaction champ de saisie avec suggestions.   label?: string\n  placeholder?: string\n  value?: string\n  onchange?: (value: string) => void\n  options*: autocompleteoption[]\n  classname?: string"
     },
     {
       "slug": "plotlychart",
@@ -735,16 +835,18 @@
       "name": "bpm.altairchart",
       "description": "Graphique Altair / Vega-Lite.",
       "category": "Graphiques",
+      "fullDescription": "Graphique Altair / Vega-Lite.",
       "props": "  spec?: Record<string, unknown>  — Spécification Vega-Lite / Altair (JSON). À fournir côté app.\n  iframeSrc?: string  — Ou URL d'un fichier JSON ou d'une vue compilée.\n  width?: number | string\n  height?: number | string\n  className?: string",
-      "_haystack": "bpm.altairchart altairchart graphique altair / vega-lite. graphiques   spec?: record<string, unknown>  — spécification vega-lite / altair (json). à fournir côté app.\n  iframesrc?: string  — ou url d'un fichier json ou d'une vue compilée.\n  width?: number | string\n  height?: number | string\n  classname?: string"
+      "_haystack": "bpm.altairchart altairchart graphique altair / vega-lite. graphiques graphique altair / vega-lite.   spec?: record<string, unknown>  — spécification vega-lite / altair (json). à fournir côté app.\n  iframesrc?: string  — ou url d'un fichier json ou d'une vue compilée.\n  width?: number | string\n  height?: number | string\n  classname?: string"
     },
     {
       "slug": "barcode",
       "name": "bpm.barcode",
       "description": "Code-barres (EAN-13, Code 128).",
       "category": "Identification & traçabilité",
+      "fullDescription": "Code-barres (EAN-13, Code 128).",
       "props": "  value*: string\n  format?: \"EAN13\" | \"CODE128\"\n  height?: number\n  width?: number\n  lineColor?: string\n  background?: string\n  className?: string",
-      "_haystack": "bpm.barcode barcode code-barres (ean-13, code 128). identification & traçabilité   value*: string\n  format?: \"ean13\" | \"code128\"\n  height?: number\n  width?: number\n  linecolor?: string\n  background?: string\n  classname?: string"
+      "_haystack": "bpm.barcode barcode code-barres (ean-13, code 128). identification & traçabilité code-barres (ean-13, code 128).   value*: string\n  format?: \"ean13\" | \"code128\"\n  height?: number\n  width?: number\n  linecolor?: string\n  background?: string\n  classname?: string"
     },
     {
       "slug": "qrcode",
@@ -780,8 +882,9 @@
       "name": "bpm.drawer",
       "description": "Tiroir / panneau latéral (détail, formulaire, filtres).",
       "category": "Mise en page",
+      "fullDescription": "Tiroir / panneau latéral (détail, formulaire, filtres).",
       "props": "  children*: React.ReactNode\n  open*: boolean\n  onClose*: () => void\n  title?: React.ReactNode\n  side?: \"left\" | \"right\"\n  width?: number | string\n  className?: string",
-      "_haystack": "bpm.drawer drawer tiroir / panneau latéral (détail, formulaire, filtres). mise en page   children*: react.reactnode\n  open*: boolean\n  onclose*: () => void\n  title?: react.reactnode\n  side?: \"left\" | \"right\"\n  width?: number | string\n  classname?: string"
+      "_haystack": "bpm.drawer drawer tiroir / panneau latéral (détail, formulaire, filtres). mise en page tiroir / panneau latéral (détail, formulaire, filtres).   children*: react.reactnode\n  open*: boolean\n  onclose*: () => void\n  title?: react.reactnode\n  side?: \"left\" | \"right\"\n  width?: number | string\n  classname?: string"
     },
     {
       "slug": "pagination",
@@ -802,16 +905,18 @@
       "name": "bpm.filterPanel",
       "description": "Panneau de filtres (select, multiselect, daterange, text, toggle).",
       "category": "Interaction",
+      "fullDescription": "Panneau de filtres (select, multiselect, daterange, text, toggle).",
       "props": "  filters*: FilterConfig[]  — Liste des filtres à afficher.\n  values?: Record<string, unknown>  — Valeurs courantes (clé = filter.key).\n  onChange*: (key: string, value: unknown) => void  — Callback à chaque changement d'un filtre.\n  onReset*: () => void  — Callback réinitialisation.\n  orientation?: \"horizontal\" | \"vertical\"  — Disposition : horizontal (flex row) ou vertical (colonne 240px).\n  collapsible?: boolean  — Afficher un bouton pour replier le panneau (avec badge si filtres actifs).",
-      "_haystack": "bpm.filterpanel filterpanel panneau de filtres (select, multiselect, daterange, text, toggle). interaction   filters*: filterconfig[]  — liste des filtres à afficher.\n  values?: record<string, unknown>  — valeurs courantes (clé = filter.key).\n  onchange*: (key: string, value: unknown) => void  — callback à chaque changement d'un filtre.\n  onreset*: () => void  — callback réinitialisation.\n  orientation?: \"horizontal\" | \"vertical\"  — disposition : horizontal (flex row) ou vertical (colonne 240px).\n  collapsible?: boolean  — afficher un bouton pour replier le panneau (avec badge si filtres actifs)."
+      "_haystack": "bpm.filterpanel filterpanel panneau de filtres (select, multiselect, daterange, text, toggle). interaction panneau de filtres (select, multiselect, daterange, text, toggle).   filters*: filterconfig[]  — liste des filtres à afficher.\n  values?: record<string, unknown>  — valeurs courantes (clé = filter.key).\n  onchange*: (key: string, value: unknown) => void  — callback à chaque changement d'un filtre.\n  onreset*: () => void  — callback réinitialisation.\n  orientation?: \"horizontal\" | \"vertical\"  — disposition : horizontal (flex row) ou vertical (colonne 240px).\n  collapsible?: boolean  — afficher un bouton pour replier le panneau (avec badge si filtres actifs)."
     },
     {
       "slug": "confirmmodal",
       "name": "bpm.confirmModal",
       "description": "Modal de confirmation pour actions destructives (danger, warning, info).",
       "category": "Mise en page",
+      "fullDescription": "Modal de confirmation pour actions destructives (danger, warning, info).",
       "props": "  isOpen*: boolean\n  onConfirm*: () => void\n  onCancel*: () => void\n  title*: string\n  message*: string\n  confirmLabel?: string\n  cancelLabel?: string\n  variant?: ConfirmModalVariant\n  isLoading?: boolean",
-      "_haystack": "bpm.confirmmodal confirmmodal modal de confirmation pour actions destructives (danger, warning, info). mise en page   isopen*: boolean\n  onconfirm*: () => void\n  oncancel*: () => void\n  title*: string\n  message*: string\n  confirmlabel?: string\n  cancellabel?: string\n  variant?: confirmmodalvariant\n  isloading?: boolean"
+      "_haystack": "bpm.confirmmodal confirmmodal modal de confirmation pour actions destructives (danger, warning, info). mise en page modal de confirmation pour actions destructives (danger, warning, info).   isopen*: boolean\n  onconfirm*: () => void\n  oncancel*: () => void\n  title*: string\n  message*: string\n  confirmlabel?: string\n  cancellabel?: string\n  variant?: confirmmodalvariant\n  isloading?: boolean"
     },
     {
       "slug": "toast",
@@ -826,8 +931,14 @@
       "name": "bpm.pageLayout",
       "description": "Layout avec sidebar repliable, titre et zone de contenu.",
       "category": "Mise en page",
+      "fullDescription": "Layout d'application avec sidebar rétractable, navigation par icônes Material et switch de thème.",
       "props": "  title*: string\n  items*: SidebarItem[]\n  currentItem*: string\n  onNavigate*: (key: string) => void\n  children*: React.ReactNode\n  defaultCollapsed?: boolean\n  theme?: \"light\" | \"dark\"  — Thème courant (optionnel). Si fourni avec onThemeChange, affiche le bouton thème en bas de la sidebar (aligné .Maker).\n  onThemeChange?: (theme: \"light\" | \"dark\") => void  — Callback changement de thème (clair ↔ sombre). Affiche le bouton thème en bas si défini.",
-      "_haystack": "bpm.pagelayout pagelayout layout avec sidebar repliable, titre et zone de contenu. mise en page   title*: string\n  items*: sidebaritem[]\n  currentitem*: string\n  onnavigate*: (key: string) => void\n  children*: react.reactnode\n  defaultcollapsed?: boolean\n  theme?: \"light\" | \"dark\"  — thème courant (optionnel). si fourni avec onthemechange, affiche le bouton thème en bas de la sidebar (aligné .maker).\n  onthemechange?: (theme: \"light\" | \"dark\") => void  — callback changement de thème (clair ↔ sombre). affiche le bouton thème en bas si défini."
+      "example": "bpm.pageLayout({ title: \"Mon App\", items: [{ key: \"home\", label: \"Accueil\", icon: \"home\" }], currentItem: \"home\", onNavigate: setPage, children: <Content /> })",
+      "associated": [
+        "bpm.topNav",
+        "bpm.sidebar"
+      ],
+      "_haystack": "bpm.pagelayout pagelayout layout avec sidebar repliable, titre et zone de contenu. mise en page layout d'application avec sidebar rétractable, navigation par icônes material et switch de thème.   title*: string\n  items*: sidebaritem[]\n  currentitem*: string\n  onnavigate*: (key: string) => void\n  children*: react.reactnode\n  defaultcollapsed?: boolean\n  theme?: \"light\" | \"dark\"  — thème courant (optionnel). si fourni avec onthemechange, affiche le bouton thème en bas de la sidebar (aligné .maker).\n  onthemechange?: (theme: \"light\" | \"dark\") => void  — callback changement de thème (clair ↔ sombre). affiche le bouton thème en bas si défini. bpm.pagelayout({ title: \"mon app\", items: [{ key: \"home\", label: \"accueil\", icon: \"home\" }], currentitem: \"home\", onnavigate: setpage, children: <content /> }) bpm.topnav bpm.sidebar"
     },
     {
       "slug": "scrollcontainer",
@@ -849,7 +960,7 @@
       "description": "Paire label / valeur (orientation, taille, copyable).",
       "category": "Affichage de données",
       "fullDescription": "Affiche une paire label/valeur avec options de style, orientation et bouton copier.",
-      "props": "  label*: string\n  value*: string | number | React.ReactNode\n  orientation?: \"horizontal\" | \"vertical\"\n  size?: \"sm\" | \"md\" | \"lg\"\n  valueStyle?: \"default\" | \"bold\" | \"accent\" | \"muted\"\n  copyable?: boolean\n  className?: string",
+      "props": "  label*: string\n  value*: string | number | React.ReactNode\n  orientation?: \"horizontal\" | \"vertical\"\n  size?: \"sm\" | \"md\" | \"lg\"\n  valueStyle?: \"default\" | \"bold\" | \"accent\" | \"muted\"\n  copyable?: boolean\n  className?: string\n  trajectory?: TrajectoryPoint[]  — Trajectoire v(t) [{t, v}] de la mesure (la valeur affichée reste value) — jugée si context est fourni.\n  context?: InterpretContext  — Contexte de jugement { reference, direction, comparisonFrame? } : la valeur prend la couleur du verdict et un suffixe écart/tendance role=status est révélé. Additif : sans context, rendu inchangé.",
       "example": "bpm.labelValue({ label: \"Référence\", value: \"REF-001\", copyable: true, valueStyle: \"bold\" })",
       "associated": [
         "bpm.metric",
@@ -859,7 +970,7 @@
         "bpm.card",
         "bpm.panel"
       ],
-      "_haystack": "bpm.labelvalue labelvalue paire label / valeur (orientation, taille, copyable). affichage de données affiche une paire label/valeur avec options de style, orientation et bouton copier.   label*: string\n  value*: string | number | react.reactnode\n  orientation?: \"horizontal\" | \"vertical\"\n  size?: \"sm\" | \"md\" | \"lg\"\n  valuestyle?: \"default\" | \"bold\" | \"accent\" | \"muted\"\n  copyable?: boolean\n  classname?: string bpm.labelvalue({ label: \"référence\", value: \"ref-001\", copyable: true, valuestyle: \"bold\" }) bpm.metric bpm.inlineedit"
+      "_haystack": "bpm.labelvalue labelvalue paire label / valeur (orientation, taille, copyable). affichage de données affiche une paire label/valeur avec options de style, orientation et bouton copier.   label*: string\n  value*: string | number | react.reactnode\n  orientation?: \"horizontal\" | \"vertical\"\n  size?: \"sm\" | \"md\" | \"lg\"\n  valuestyle?: \"default\" | \"bold\" | \"accent\" | \"muted\"\n  copyable?: boolean\n  classname?: string\n  trajectory?: trajectorypoint[]  — trajectoire v(t) [{t, v}] de la mesure (la valeur affichée reste value) — jugée si context est fourni.\n  context?: interpretcontext  — contexte de jugement { reference, direction, comparisonframe? } : la valeur prend la couleur du verdict et un suffixe écart/tendance role=status est révélé. additif : sans context, rendu inchangé. bpm.labelvalue({ label: \"référence\", value: \"ref-001\", copyable: true, valuestyle: \"bold\" }) bpm.metric bpm.inlineedit"
     },
     {
       "slug": "spinnerdot",
@@ -881,24 +992,27 @@
       "name": "bpm.titleBpm",
       "description": "Titre (alias bpm.title, niveaux 1 à 4).",
       "category": "Affichage de données",
+      "fullDescription": "Titre h1 minimal.",
       "props": "  children*: React.ReactNode\n  level?: 1 | 2 | 3 | 4\n  size?: string | null  — Taille de police (ex. \"1.5rem\", \"24px\"). Surcharge le défaut du niveau.\n  bold?: boolean | number | null  — Gras : true = 700, false = 400, ou nombre (ex. 600). Surcharge le défaut du niveau.\n  color?: string | null  — Couleur du texte (ex. \"var(--bpm-text-primary)\", \"#333\"). Surcharge la couleur par défaut.\n  bar?: boolean  — Barre verticale sombre à gauche du titre (comme en-tête de section).\n  barColor?: string | null  — Couleur de la barre gauche (hex, rgb ou nom CSS). Ignoré si bar=false.\n  inverted?: boolean  — Couleur inversée : fond sombre, texte blanc (style badge / scénario).\n  invertedBackground?: string | null  — Couleur de fond quand inverted=true (hex, rgb ou nom CSS). Par défaut : #1d1d1f.\n  logoUrl?: string | null  — Optional logo URL (e.g. from localStorage). Shown only when level === 1.\n  onLogoClick?: () => void",
-      "_haystack": "bpm.titlebpm titlebpm titre (alias bpm.title, niveaux 1 à 4). affichage de données   children*: react.reactnode\n  level?: 1 | 2 | 3 | 4\n  size?: string | null  — taille de police (ex. \"1.5rem\", \"24px\"). surcharge le défaut du niveau.\n  bold?: boolean | number | null  — gras : true = 700, false = 400, ou nombre (ex. 600). surcharge le défaut du niveau.\n  color?: string | null  — couleur du texte (ex. \"var(--bpm-text-primary)\", \"#333\"). surcharge la couleur par défaut.\n  bar?: boolean  — barre verticale sombre à gauche du titre (comme en-tête de section).\n  barcolor?: string | null  — couleur de la barre gauche (hex, rgb ou nom css). ignoré si bar=false.\n  inverted?: boolean  — couleur inversée : fond sombre, texte blanc (style badge / scénario).\n  invertedbackground?: string | null  — couleur de fond quand inverted=true (hex, rgb ou nom css). par défaut : #1d1d1f.\n  logourl?: string | null  — optional logo url (e.g. from localstorage). shown only when level === 1.\n  onlogoclick?: () => void"
+      "_haystack": "bpm.titlebpm titlebpm titre (alias bpm.title, niveaux 1 à 4). affichage de données titre h1 minimal.   children*: react.reactnode\n  level?: 1 | 2 | 3 | 4\n  size?: string | null  — taille de police (ex. \"1.5rem\", \"24px\"). surcharge le défaut du niveau.\n  bold?: boolean | number | null  — gras : true = 700, false = 400, ou nombre (ex. 600). surcharge le défaut du niveau.\n  color?: string | null  — couleur du texte (ex. \"var(--bpm-text-primary)\", \"#333\"). surcharge la couleur par défaut.\n  bar?: boolean  — barre verticale sombre à gauche du titre (comme en-tête de section).\n  barcolor?: string | null  — couleur de la barre gauche (hex, rgb ou nom css). ignoré si bar=false.\n  inverted?: boolean  — couleur inversée : fond sombre, texte blanc (style badge / scénario).\n  invertedbackground?: string | null  — couleur de fond quand inverted=true (hex, rgb ou nom css). par défaut : #1d1d1f.\n  logourl?: string | null  — optional logo url (e.g. from localstorage). shown only when level === 1.\n  onlogoclick?: () => void"
     },
     {
       "slug": "markdown",
       "name": "bpm.markdown",
       "description": "Rendu Markdown sécurisé.",
       "category": "Affichage de données",
+      "fullDescription": "Rendu Markdown sécurisé.",
       "props": "  text*: string  — Contenu Markdown. Utilisez `---` sur une ligne pour une ligne horizontale (hr).\n  className?: string",
-      "_haystack": "bpm.markdown markdown rendu markdown sécurisé. affichage de données   text*: string  — contenu markdown. utilisez `---` sur une ligne pour une ligne horizontale (hr).\n  classname?: string"
+      "_haystack": "bpm.markdown markdown rendu markdown sécurisé. affichage de données rendu markdown sécurisé.   text*: string  — contenu markdown. utilisez `---` sur une ligne pour une ligne horizontale (hr).\n  classname?: string"
     },
     {
       "slug": "codeeditor",
       "name": "bpm.codeEditor",
       "description": "Éditeur de code (textarea avec valeur, onChange, readOnly).",
       "category": "Utilitaires",
+      "fullDescription": "Éditeur de code (textarea avec valeur, onChange, readOnly).",
       "props": "  value*: string\n  onChange*: (value: string) => void\n  language?: string\n  readOnly?: boolean\n  height?: string | number\n  placeholder?: string\n  className?: string",
-      "_haystack": "bpm.codeeditor codeeditor éditeur de code (textarea avec valeur, onchange, readonly). utilitaires   value*: string\n  onchange*: (value: string) => void\n  language?: string\n  readonly?: boolean\n  height?: string | number\n  placeholder?: string\n  classname?: string"
+      "_haystack": "bpm.codeeditor codeeditor éditeur de code (textarea avec valeur, onchange, readonly). utilitaires éditeur de code (textarea avec valeur, onchange, readonly).   value*: string\n  onchange*: (value: string) => void\n  language?: string\n  readonly?: boolean\n  height?: string | number\n  placeholder?: string\n  classname?: string"
     },
     {
       "slug": "crud",
@@ -913,8 +1027,9 @@
       "name": "bpm.gps",
       "description": "Affichage ou sélection de position GPS (carte, picker).",
       "category": "Média",
+      "fullDescription": "Affichage ou sélection de position GPS.",
       "props": "  label?: string  — Titre affiché au-dessus du bloc.\n  showMap?: boolean  — Afficher une carte Leaflet. Default: true.\n  onLocation?: (coords: { lat: number  — Callback appelé quand la position est obtenue (mode display).\n  height?: number  — Hauteur de la carte en px. Default: 300.\n  className?: string  — Classes CSS additionnelles.\n  mode?: \"display\" | \"picker\"  — Mode : 'display' = affichage position, 'picker' = sélection d'un point sur la carte. Default: 'display'.\n  value?: { lat: number  — Position courante (mode picker).\n  onChange?: (coords: { lat: number  — Callback à chaque déplacement du marker ou clic sur la carte (mode picker).",
-      "_haystack": "bpm.gps gps affichage ou sélection de position gps (carte, picker). média   label?: string  — titre affiché au-dessus du bloc.\n  showmap?: boolean  — afficher une carte leaflet. default: true.\n  onlocation?: (coords: { lat: number  — callback appelé quand la position est obtenue (mode display).\n  height?: number  — hauteur de la carte en px. default: 300.\n  classname?: string  — classes css additionnelles.\n  mode?: \"display\" | \"picker\"  — mode : 'display' = affichage position, 'picker' = sélection d'un point sur la carte. default: 'display'.\n  value?: { lat: number  — position courante (mode picker).\n  onchange?: (coords: { lat: number  — callback à chaque déplacement du marker ou clic sur la carte (mode picker)."
+      "_haystack": "bpm.gps gps affichage ou sélection de position gps (carte, picker). média affichage ou sélection de position gps.   label?: string  — titre affiché au-dessus du bloc.\n  showmap?: boolean  — afficher une carte leaflet. default: true.\n  onlocation?: (coords: { lat: number  — callback appelé quand la position est obtenue (mode display).\n  height?: number  — hauteur de la carte en px. default: 300.\n  classname?: string  — classes css additionnelles.\n  mode?: \"display\" | \"picker\"  — mode : 'display' = affichage position, 'picker' = sélection d'un point sur la carte. default: 'display'.\n  value?: { lat: number  — position courante (mode picker).\n  onchange?: (coords: { lat: number  — callback à chaque déplacement du marker ou clic sur la carte (mode picker)."
     },
     {
       "slug": "jsoneditor",
@@ -935,32 +1050,36 @@
       "name": "bpm.notificationCenter",
       "description": "Liste de notifications (lu/non lu, marquage, suppression).",
       "category": "Feedback",
+      "fullDescription": "Centre de notifications (liste, marquage, suppression).",
       "props": "  notifications*: NotificationItem[]\n  onMarkRead*: (id: string) => void\n  onMarkAllRead?: () => void\n  onDismiss?: (id: string) => void\n  maxVisible?: number\n  emptyMessage?: string\n  className?: string",
-      "_haystack": "bpm.notificationcenter notificationcenter liste de notifications (lu/non lu, marquage, suppression). feedback   notifications*: notificationitem[]\n  onmarkread*: (id: string) => void\n  onmarkallread?: () => void\n  ondismiss?: (id: string) => void\n  maxvisible?: number\n  emptymessage?: string\n  classname?: string"
+      "_haystack": "bpm.notificationcenter notificationcenter liste de notifications (lu/non lu, marquage, suppression). feedback centre de notifications (liste, marquage, suppression).   notifications*: notificationitem[]\n  onmarkread*: (id: string) => void\n  onmarkallread?: () => void\n  ondismiss?: (id: string) => void\n  maxvisible?: number\n  emptymessage?: string\n  classname?: string"
     },
     {
       "slug": "filepreview",
       "name": "bpm.filePreview",
       "description": "Aperçu de fichier (image, PDF, texte/code).",
       "category": "Média",
+      "fullDescription": "Aperçu de fichier (image, PDF, texte/code).",
       "props": "  url*: string\n  filename*: string\n  mimeType?: string\n  height?: string | number\n  showDownload?: boolean\n  className?: string\n  file_url?: string  — Props snake_case (API Python) — normalisées en interne\n  file_name?: string\n  mime_type?: string\n  show_download?: boolean\n  class_name?: string",
-      "_haystack": "bpm.filepreview filepreview aperçu de fichier (image, pdf, texte/code). média   url*: string\n  filename*: string\n  mimetype?: string\n  height?: string | number\n  showdownload?: boolean\n  classname?: string\n  file_url?: string  — props snake_case (api python) — normalisées en interne\n  file_name?: string\n  mime_type?: string\n  show_download?: boolean\n  class_name?: string"
+      "_haystack": "bpm.filepreview filepreview aperçu de fichier (image, pdf, texte/code). média aperçu de fichier (image, pdf, texte/code).   url*: string\n  filename*: string\n  mimetype?: string\n  height?: string | number\n  showdownload?: boolean\n  classname?: string\n  file_url?: string  — props snake_case (api python) — normalisées en interne\n  file_name?: string\n  mime_type?: string\n  show_download?: boolean\n  class_name?: string"
     },
     {
       "slug": "dataexplorer",
       "name": "bpm.dataExplorer",
       "description": "Explorateur de données (table, recherche, tri, pagination, export CSV).",
       "category": "IA & Spécialisés",
+      "fullDescription": "Explorateur de données unifié (classique ou analytics).",
       "props": "",
-      "_haystack": "bpm.dataexplorer dataexplorer explorateur de données (table, recherche, tri, pagination, export csv). ia & spécialisés"
+      "_haystack": "bpm.dataexplorer dataexplorer explorateur de données (table, recherche, tri, pagination, export csv). ia & spécialisés explorateur de données unifié (classique ou analytics)."
     },
     {
       "slug": "chatinterface",
       "name": "bpm.chatInterface",
       "description": "Interface de chat (messages, saisie, streaming).",
       "category": "IA & Spécialisés",
+      "fullDescription": "Interface de chat (messages, saisie, streaming).",
       "props": "  messages*: ChatMessage[]\n  onSend*: (content: string) => void\n  isLoading?: boolean  — @deprecated Préférez `typing`.\n  typing?: boolean  — Indicateur « en cours de frappe » côté assistant.\n  placeholder?: string\n  systemContext?: string  — Contexte système affiché en haut si défini.\n  title?: string  — Titre dans l’en-tête du panneau.\n  disabled?: boolean\n  height?: string\n  className?: string",
-      "_haystack": "bpm.chatinterface chatinterface interface de chat (messages, saisie, streaming). ia & spécialisés   messages*: chatmessage[]\n  onsend*: (content: string) => void\n  isloading?: boolean  — @deprecated préférez `typing`.\n  typing?: boolean  — indicateur « en cours de frappe » côté assistant.\n  placeholder?: string\n  systemcontext?: string  — contexte système affiché en haut si défini.\n  title?: string  — titre dans l’en-tête du panneau.\n  disabled?: boolean\n  height?: string\n  classname?: string"
+      "_haystack": "bpm.chatinterface chatinterface interface de chat (messages, saisie, streaming). ia & spécialisés interface de chat (messages, saisie, streaming).   messages*: chatmessage[]\n  onsend*: (content: string) => void\n  isloading?: boolean  — @deprecated préférez `typing`.\n  typing?: boolean  — indicateur « en cours de frappe » côté assistant.\n  placeholder?: string\n  systemcontext?: string  — contexte système affiché en haut si défini.\n  title?: string  — titre dans l’en-tête du panneau.\n  disabled?: boolean\n  height?: string\n  classname?: string"
     },
     {
       "slug": "promptinput",
@@ -1001,16 +1120,23 @@
       "name": "bpm.diffViewer",
       "description": "Visualisation de diff texte/code (split ou unified).",
       "category": "IA & Spécialisés",
+      "fullDescription": "Visualisation de diff texte/code (split ou unified).",
       "props": "  original*: string\n  modified*: string\n  language?: string\n  mode?: \"split\" | \"unified\"\n  title?: { original?: string\n  className?: string",
-      "_haystack": "bpm.diffviewer diffviewer visualisation de diff texte/code (split ou unified). ia & spécialisés   original*: string\n  modified*: string\n  language?: string\n  mode?: \"split\" | \"unified\"\n  title?: { original?: string\n  classname?: string"
+      "_haystack": "bpm.diffviewer diffviewer visualisation de diff texte/code (split ou unified). ia & spécialisés visualisation de diff texte/code (split ou unified).   original*: string\n  modified*: string\n  language?: string\n  mode?: \"split\" | \"unified\"\n  title?: { original?: string\n  classname?: string"
     },
     {
       "slug": "modelselector",
       "name": "bpm.modelSelector",
       "description": "Sélecteur de modèle IA (par fournisseur, capacités).",
       "category": "IA & Spécialisés",
+      "fullDescription": "Sélecteur de modèle IA avec dropdown groupé par fournisseur et affichage des capacités.",
       "props": "  models*: ModelOption[]\n  selected*: string\n  onChange*: (modelId: string) => void\n  showCapabilities?: boolean\n  className?: string",
-      "_haystack": "bpm.modelselector modelselector sélecteur de modèle ia (par fournisseur, capacités). ia & spécialisés   models*: modeloption[]\n  selected*: string\n  onchange*: (modelid: string) => void\n  showcapabilities?: boolean\n  classname?: string"
+      "example": "bpm.modelSelector({ models: [{ id: \"gpt-4\", label: \"GPT-4\", provider: \"OpenAI\" }], selected: \"gpt-4\", onChange: setModel })",
+      "associated": [
+        "bpm.chatInterface",
+        "bpm.promptInput"
+      ],
+      "_haystack": "bpm.modelselector modelselector sélecteur de modèle ia (par fournisseur, capacités). ia & spécialisés sélecteur de modèle ia avec dropdown groupé par fournisseur et affichage des capacités.   models*: modeloption[]\n  selected*: string\n  onchange*: (modelid: string) => void\n  showcapabilities?: boolean\n  classname?: string bpm.modelselector({ models: [{ id: \"gpt-4\", label: \"gpt-4\", provider: \"openai\" }], selected: \"gpt-4\", onchange: setmodel }) bpm.chatinterface bpm.promptinput"
     }
   ]
 }

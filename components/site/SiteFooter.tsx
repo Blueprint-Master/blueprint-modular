@@ -33,6 +33,7 @@ export function SiteFooter() {
           <Link href="/docs/getting-started">{dict.footer.gettingStarted}</Link>
           <Link href="/mcp">{dict.footer.mcp}</Link>
           <a href="/llms.txt">{dict.footer.llms}</a>
+          <a href="/llms-core.txt">{dict.footer.llmsCore}</a>
           <a href="https://pypi.org/project/blueprint-modular/" target="_blank" rel="noopener noreferrer">
             {dict.footer.pypi}
           </a>

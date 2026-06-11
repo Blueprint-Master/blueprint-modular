@@ -36,6 +36,7 @@ const en: Dictionary = {
     resourcesHub: "Resources & guides",
     mcp: "MCP connector",
     llms: "llms.txt — machine reference",
+    llmsCore: "llms-core.txt",
     pypi: "PyPI package",
     privacy: "Privacy",
     terms: "Terms of use",
