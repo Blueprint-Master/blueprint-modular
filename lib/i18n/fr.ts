@@ -14,8 +14,11 @@ const fr = {
   },
   nav: {
     gallery: "Composants",
+    modules: "Modules",
     docs: "Documentation",
     gettingStarted: "Démarrage",
+    resources: "Ressources",
+    mcp: "MCP",
     ariaMain: "Navigation principale",
     ariaLocale: "Langue du site",
     ariaHome: "Blueprint Modular — accueil",
@@ -26,9 +29,13 @@ const fr = {
     legal: "Légal",
     gallery: "Galerie de composants",
     catalog: "Catalogue",
+    modules: "Modules métier",
     gettingStarted: "Démarrage",
     changelog: "Changelog",
+    resourcesHub: "Toutes les ressources",
+    mcp: "Connecteur MCP",
     llms: "llms.txt — référence machine",
+    llmsCore: "llms-core.txt",
     pypi: "Package PyPI",
     privacy: "Confidentialité",
     terms: "Conditions d'utilisation",
@@ -308,6 +315,106 @@ const fr = {
     apiTitle: "Référence d'API",
     apiNote:
       "Extrait de llms.txt, généré depuis les sources TypeScript — la même référence que lisent les agents.",
+  },
+  mcp: {
+    metaTitle: "Connecteur MCP — Blueprint Modular",
+    metaDescription:
+      "Serveur MCP public, read-only, qui expose le catalogue de composants Blueprint Modular à Claude, ChatGPT et tout hôte MCP. Sans authentification.",
+    title: "Connecteur MCP",
+    lead:
+      "Un serveur {strong} qui expose le catalogue de {count} composants à Claude, ChatGPT et tout hôte MCP, via le transport Streamable HTTP. Aucune authentification : le catalogue est une donnée publique.",
+    leadStrong: "MCP public, en lecture seule,",
+    badgeReadonly: "Lecture seule",
+    badgeNoauth: "Sans authentification",
+    badgePublic: "Catalogue public",
+    endpointTitle: "Endpoint",
+    endpointNote: "Transport Streamable HTTP, sans état. SSE désactivé (déprécié par la spec MCP).",
+    toolsTitle: "Outils exposés",
+    toolsNote:
+      "Quatre outils en lecture seule (readOnlyHint). Aucune écriture, aucune action, aucune exposition de données internes.",
+    tools: [
+      {
+        name: "list_components",
+        sig: "category?, cursor?",
+        desc: "Liste paginée (curseur) des composants : nom et description en une ligne, filtrable par catégorie.",
+      },
+      {
+        name: "search_components",
+        sig: "query, cursor?",
+        desc: "Recherche paginée par pertinence (nom, description, catégorie, tags).",
+      },
+      {
+        name: "get_component",
+        sig: "name",
+        desc: "Détail d'un composant : description, props et types, exemple d'usage, composants associés.",
+      },
+      {
+        name: "suggest_composition",
+        sig: "need, limit?",
+        desc: "Suggère des composants répondant à un besoin décrit en langage naturel.",
+      },
+    ],
+    categoriesTitle: "Catégories couvertes",
+    addTitle: "Ajouter le connecteur",
+    addClaude: "Dans Claude",
+    addClaudeSteps: [
+      "Settings → Connectors → Add custom connector.",
+      "Name : Blueprint Modular.",
+      "Remote MCP server URL : l'endpoint ci-dessus.",
+      "Aucune authentification à configurer.",
+    ],
+    addChatgpt: "Dans ChatGPT (developer mode)",
+    addChatgptSteps: [
+      "Settings → Connectors → Advanced → Developer mode.",
+      "Create / Add custom connector.",
+      "MCP Server URL : l'endpoint ci-dessus, authentification : None.",
+    ],
+    testTitle: "Tester en local",
+    testNote:
+      "En développement, l'endpoint est servi sur http://localhost:3000/api/mcp par npm run dev. Inspectez-le avec MCP Inspector (Transport : Streamable HTTP, Auth : none).",
+    footnote:
+      "Endpoint de santé : GET /api/health. Confidentialité : /privacy. Une seule application sert le site et le connecteur.",
+    contact: "Contact",
+  },
+  resources: {
+    metaTitle: "Ressources — Blueprint Modular",
+    metaDescription:
+      "Documentation, guides, référence d'API et connecteur MCP de Blueprint Modular. Tout ce qu'il faut pour construire, livrer et automatiser.",
+    title: "Ressources",
+    lead:
+      "Toute la documentation, les guides et les références machine pour construire, livrer et automatiser avec Blueprint Modular. Les liens pointent vers des pages réelles de ce site.",
+    externalBadge: "Externe",
+    groups: {
+      docs: {
+        title: "Documentation",
+        desc: "Comprendre le produit et démarrer une application.",
+      },
+      guides: {
+        title: "Guides & modules",
+        desc: "Composants en situation et modules métier prêts à brancher.",
+      },
+      api: {
+        title: "Référence machine",
+        desc: "La surface d'API complète, générée depuis le code — lisible par les agents.",
+      },
+      mcp: {
+        title: "Connecteur MCP",
+        desc: "Brancher le catalogue directement dans Claude, ChatGPT et tout hôte MCP.",
+      },
+    },
+    cards: {
+      docsHub: { title: "Hub documentation", body: "Vue d'ensemble, parcours d'installation et liens structurés." },
+      gettingStarted: { title: "Démarrage", body: "Installer, première app, premier composant — en trois étapes." },
+      catalog: { title: "Catalogue des composants", body: "Les composants du registre : descriptions, catégories, aperçus live." },
+      changelog: { title: "Changelog", body: "Versions, ajouts et corrections du package." },
+      gallery: { title: "Galerie de composants", body: "Chaque composant rendu en situation réelle, avec ses variantes." },
+      modules: { title: "Modules métier", body: "Modules assemblés et documentés, chacun avec sa page et son simulateur." },
+      database: { title: "Prérequis production", body: "Tables Prisma par module, variables d'environnement, déploiement." },
+      llms: { title: "llms.txt", body: "La référence machine complète, générée depuis les sources TypeScript." },
+      llmsCore: { title: "llms-core.txt", body: "Version condensée : l'essentiel de l'API en quelques milliers de tokens." },
+      pypi: { title: "Package PyPI", body: "Installer blueprint-modular depuis l'index Python officiel." },
+      mcpConnector: { title: "Connecteur MCP", body: "Endpoint public read-only, quatre outils, sans authentification." },
+    },
   },
 };
 

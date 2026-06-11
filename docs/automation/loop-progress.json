@@ -1,0 +1,63 @@
+{
+  "mission": "Push commercial Modular — storefront vendable + MCP fonctionnel",
+  "branch": "claude/modular-commercial-push-ysti5d",
+  "updatedAt": "2026-06-11",
+  "smoke": {
+    "method": "next start (PORT=3123) + curl + assertions DOM (markers bpm, statut HTTP, absence d'overlay Next)",
+    "lastRun": "2026-06-11",
+    "result": "green"
+  },
+  "items": [
+    {
+      "id": "P0-storefront-mcp-page",
+      "priority": "P0",
+      "title": "Page /mcp intégrée au shell du site (nav/footer/i18n), composants bpm réels",
+      "status": "done",
+      "notes": "Déplacée de app/mcp/page.tsx vers app/(public)/(site)/mcp/. Server component + generateMetadata, i18n FR/EN, Badge + CodeBlock bpm, compteur TOTAL depuis le registre. Endpoint = source réelle https://blueprint-modular.com/api/mcp (le brief mentionnait mcp.blueprint-modular.com, absent du code — on suit la source).",
+      "smoke": "200 FR/EN, marqueurs list_components/suggest_composition/endpoint présents, /api/mcp tools/list renvoie les 4 outils."
+    },
+    {
+      "id": "P0-storefront-resources-page",
+      "priority": "P0",
+      "title": "Page /resources (doc + guides + API + MCP, liens vérifiés)",
+      "status": "done",
+      "notes": "Nouvelle page app/(public)/(site)/resources/. 4 groupes (docs, guides & modules, référence machine, MCP). Tous les liens internes pointent vers des routes existantes; liens externes (PyPI, GitHub DATABASE.md, llms*.txt) marqués 'Externe'.",
+      "smoke": "200 FR/EN, cartes rendues, liens /llms-core.txt et /mcp présents."
+    },
+    {
+      "id": "P0-storefront-nav-footer",
+      "priority": "P0",
+      "title": "SiteNav/SiteFooter enrichis",
+      "status": "done",
+      "notes": "Nav: ajout Modules, Ressources, MCP. Footer: ajout Modules, lien hub Ressources, Connecteur MCP, llms-core.txt. Clés i18n FR/EN ajoutées."
+    },
+    {
+      "id": "P0-storefront-i18n",
+      "priority": "P0",
+      "title": "i18n FR/EN pour /mcp et /resources",
+      "status": "done",
+      "notes": "Sections mcp{} et resources{} ajoutées à fr.ts ET en.ts (parité typée). Bascule de locale vérifiée (FR 'Lecture seule' / EN 'Read-only')."
+    },
+    {
+      "id": "P0-docs-regen",
+      "priority": "P0",
+      "title": "Doc composants régénérée (llms.txt/llms-core.txt + mcp-registry)",
+      "status": "done",
+      "notes": "generate-bpm-components-json.py (101), generate-llms-txt.py (160 composants), generate-mcp-registry.mjs. llms.txt/llms-core.txt/bpm-components.json déjà en phase; mcp-registry.json était DÉSYNC du llms.txt committé — resynchronisé."
+    },
+    {
+      "id": "P0-storefront-sitemap",
+      "priority": "P0",
+      "title": "Sitemap : exposer /components, /resources, /mcp",
+      "status": "done",
+      "notes": "Routes publiques ajoutées à app/sitemap.ts."
+    },
+    {
+      "id": "P1-modules-triage",
+      "priority": "P1",
+      "title": "Triage des 32 modules : développés / gatés 'bientôt' / needs-human",
+      "status": "pending",
+      "notes": "32 modules sous app/(app)/modules/. La plupart rendent déjà une UI réelle composant bpm.* (doc + simulateur). Triage et renforcement ciblé en cours."
+    }
+  ]
+}
