@@ -41,6 +41,7 @@ export function SiteFooter() {
 
         <nav className="site-footer-col" aria-label={dict.footer.legal}>
           <h2>{dict.footer.legal}</h2>
+          <Link href="/legal">{dict.footer.legalNotice}</Link>
           <Link href="/privacy">{dict.footer.privacy}</Link>
           <Link href="/terms">{dict.footer.terms}</Link>
         </nav>

@@ -22,6 +22,8 @@ const fr = {
     ariaMain: "Navigation principale",
     ariaLocale: "Langue du site",
     ariaHome: "Blueprint Modular — accueil",
+    openMenu: "Ouvrir le menu",
+    closeMenu: "Fermer le menu",
   },
   footer: {
     product: "Produit",
@@ -38,6 +40,7 @@ const fr = {
     llms: "llms.txt — référence machine",
     llmsCore: "llms-core.txt",
     pypi: "Package PyPI",
+    legalNotice: "Mentions légales",
     privacy: "Confidentialité",
     terms: "Conditions d'utilisation",
     note: "Ce site est construit avec ses propres composants.",
@@ -231,6 +234,9 @@ const fr = {
         "Installez le package, lancez bpm run, et servez une application métier complète — sans toucher au HTML.",
       primary: "Commencer",
       secondary: "Voir les composants",
+      contact: "Nous contacter",
+      offer:
+        "Open-source sous licence Apache-2.0 — gratuit, sans verrou propriétaire. Une question, un besoin entreprise ? Écrivez-nous.",
     },
   },
   homeDemo: {
@@ -450,6 +456,121 @@ const fr = {
         title: "llms.txt",
         body: "La référence machine complète, générée depuis les sources. À donner à votre agent.",
       },
+    },
+  },
+  legal: {
+    lastUpdated: "Dernière mise à jour : {date}",
+    backHome: "Retour à l'accueil",
+    nav: {
+      notice: "Mentions légales",
+      privacy: "Confidentialité",
+      terms: "Conditions d'utilisation",
+    },
+    notice: {
+      metaTitle: "Mentions légales — Blueprint Modular",
+      metaDescription:
+        "Mentions légales de Blueprint Modular : éditeur, directeur de publication, hébergement, propriété intellectuelle et licence open-source du package.",
+      title: "Mentions légales",
+      intro:
+        "Les présentes mentions légales s'appliquent au site Blueprint Modular et au connecteur MCP associé. Pour toute question, écrivez à l'adresse de contact indiquée ci-dessous.",
+      sections: [
+        {
+          h: "Éditeur du site",
+          p: "Le site Blueprint Modular est édité par le projet Blueprint Modular. Pour toute demande relative à l'identité de l'éditeur (raison sociale, immatriculation), contactez l'éditeur à l'adresse de contact ci-dessous.",
+        },
+        {
+          h: "Directeur de la publication",
+          p: "Le directeur de la publication est le responsable du projet Blueprint Modular, joignable à l'adresse de contact ci-dessous.",
+        },
+        {
+          h: "Hébergement",
+          p: "Le site est servi par une application Next.js déployée sur l'infrastructure retenue par l'éditeur. Les coordonnées de l'hébergeur sont communiquées sur demande à l'adresse de contact.",
+        },
+        {
+          h: "Propriété intellectuelle",
+          p: "La marque, le logo et le contenu rédactionnel du site sont la propriété de l'éditeur. Le code des composants est distribué sous licence open-source (voir ci-dessous). Toute reproduction du contenu éditorial sans autorisation est interdite.",
+        },
+        {
+          h: "Licence du package",
+          p: "Le package @blueprint-modular/core est publié sous licence Apache-2.0. Vous êtes libre de l'utiliser, le modifier et le redistribuer dans les conditions de cette licence. Le texte complet est disponible avec le package sur PyPI et dans le dépôt.",
+        },
+        {
+          h: "Responsabilité",
+          p: "L'éditeur s'efforce de fournir des informations exactes et à jour, sans garantir l'exhaustivité ni l'absence d'erreur. L'usage du site et du package se fait sous la responsabilité de l'utilisateur.",
+        },
+      ],
+      contactTitle: "Contact",
+      contactBody: "Pour toute question relative à ces mentions légales :",
+    },
+    privacy: {
+      metaTitle: "Politique de confidentialité — Blueprint Modular",
+      metaDescription:
+        "Politique de confidentialité de Blueprint Modular : aucune donnée personnelle collectée, aucun cookie de suivi, lectures stateless d'un catalogue public. Conforme au RGPD.",
+      title: "Politique de confidentialité",
+      intro:
+        "Cette politique décrit comment le site Blueprint Modular et son connecteur MCP traitent les données. En résumé : aucune donnée personnelle collectée, aucun cookie de suivi.",
+      sections: [
+        {
+          h: "Aucune donnée personnelle collectée",
+          p: "Le site et le connecteur MCP ne demandent, ne collectent ni ne traitent aucune donnée personnelle. Aucune authentification n'est requise pour consulter la vitrine ou interroger le catalogue : il n'y a ni compte, ni profil créé à cette fin.",
+        },
+        {
+          h: "Lectures stateless d'un catalogue public",
+          p: "Chaque requête au connecteur est une lecture sans état du catalogue public de composants. Le serveur est strictement read-only : il n'effectue aucune écriture et n'accède à aucune donnée privée ou de production.",
+        },
+        {
+          h: "Aucun stockage des conversations",
+          p: "Le contenu de vos conversations et de vos requêtes d'outils n'est pas conservé. Des compteurs techniques éphémères par adresse IP peuvent exister en mémoire le temps d'appliquer une limitation de débit basique ; ils ne sont ni persistés, ni utilisés pour identifier un utilisateur.",
+        },
+        {
+          h: "Aucun partage avec des tiers",
+          p: "Aucune donnée n'est vendue, louée ou partagée avec des tiers. Le service ne réalise aucun pistage publicitaire.",
+        },
+      ],
+      cookiesTitle: "Cookies",
+      cookiesBody:
+        "Le site n'utilise aucun cookie de suivi, de mesure d'audience ni de publicité. Un unique cookie technique (bpm-locale) mémorise votre choix de langue ; il est strictement nécessaire au fonctionnement et ne requiert pas de consentement préalable.",
+      rgpdTitle: "RGPD et vos droits",
+      rgpdBody:
+        "Aucune donnée personnelle n'étant collectée, il n'existe pas de traitement au sens du RGPD nécessitant un consentement. Si vous estimez néanmoins qu'une donnée vous concernant a été traitée, vous disposez d'un droit d'accès, de rectification et d'effacement que vous pouvez exercer à l'adresse de contact.",
+      contactTitle: "Contact",
+      contactBody: "Pour toute question relative à cette politique :",
+    },
+    terms: {
+      metaTitle: "Conditions d'utilisation — Blueprint Modular",
+      metaDescription:
+        "Conditions d'utilisation du site Blueprint Modular et de son connecteur MCP : objet, licence du package, disponibilité du service, limitation de responsabilité.",
+      title: "Conditions d'utilisation",
+      intro:
+        "En utilisant le site Blueprint Modular, son connecteur MCP ou le package @blueprint-modular/core, vous acceptez les conditions ci-dessous.",
+      sections: [
+        {
+          h: "Objet",
+          p: "Le site présente la bibliothèque de composants Blueprint Modular et expose un connecteur MCP public en lecture seule. Le package est distribué via PyPI.",
+        },
+        {
+          h: "Licence du package",
+          p: "Le package @blueprint-modular/core est publié sous licence Apache-2.0. Votre usage du package est régi par cette licence, qui prévaut pour ce qui concerne le code.",
+        },
+        {
+          h: "Usage du connecteur MCP",
+          p: "Le connecteur est fourni gratuitement, en lecture seule et sans authentification. Une limitation de débit basique peut s'appliquer pour préserver la disponibilité du service. Tout usage abusif visant à dégrader le service est interdit.",
+        },
+        {
+          h: "Disponibilité",
+          p: "Le service est fourni « en l'état », sans garantie de disponibilité continue. L'éditeur peut faire évoluer, suspendre ou interrompre tout ou partie du service sans préavis.",
+        },
+        {
+          h: "Limitation de responsabilité",
+          p: "L'éditeur ne saurait être tenu responsable des dommages directs ou indirects résultant de l'utilisation du site, du connecteur ou du package, dans les limites permises par la loi applicable.",
+        },
+        {
+          h: "Évolution des conditions",
+          p: "Ces conditions peuvent être mises à jour. La version applicable est celle publiée sur cette page à la date de votre utilisation.",
+        },
+      ],
+      contactTitle: "Contact",
+      contactBody: "Pour toute question relative à ces conditions :",
     },
   },
 };

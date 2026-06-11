@@ -22,6 +22,8 @@ const en: Dictionary = {
     ariaMain: "Main navigation",
     ariaLocale: "Site language",
     ariaHome: "Blueprint Modular — home",
+    openMenu: "Open menu",
+    closeMenu: "Close menu",
   },
   footer: {
     product: "Product",
@@ -38,6 +40,7 @@ const en: Dictionary = {
     llms: "llms.txt — machine reference",
     llmsCore: "llms-core.txt",
     pypi: "PyPI package",
+    legalNotice: "Legal notice",
     privacy: "Privacy",
     terms: "Terms of use",
     note: "This site is built with its own components.",
@@ -231,6 +234,9 @@ const en: Dictionary = {
         "Install the package, run bpm run, and serve a complete business application — without touching any HTML.",
       primary: "Get started",
       secondary: "Browse components",
+      contact: "Contact us",
+      offer:
+        "Open source under the Apache-2.0 license — free, no vendor lock-in. A question, an enterprise need? Get in touch.",
     },
   },
   homeDemo: {
@@ -450,6 +456,121 @@ const en: Dictionary = {
         title: "llms.txt",
         body: "The complete machine reference, generated from the sources. Hand it to your agent.",
       },
+    },
+  },
+  legal: {
+    lastUpdated: "Last updated: {date}",
+    backHome: "Back to home",
+    nav: {
+      notice: "Legal notice",
+      privacy: "Privacy",
+      terms: "Terms of use",
+    },
+    notice: {
+      metaTitle: "Legal notice — Blueprint Modular",
+      metaDescription:
+        "Legal notice for Blueprint Modular: publisher, publication director, hosting, intellectual property and the package's open-source license.",
+      title: "Legal notice",
+      intro:
+        "This legal notice applies to the Blueprint Modular website and its MCP connector. For any question, write to the contact address listed below.",
+      sections: [
+        {
+          h: "Site publisher",
+          p: "The Blueprint Modular website is published by the Blueprint Modular project. For any request regarding the publisher's identity (legal name, registration), contact the publisher at the address below.",
+        },
+        {
+          h: "Publication director",
+          p: "The publication director is the lead of the Blueprint Modular project, reachable at the contact address below.",
+        },
+        {
+          h: "Hosting",
+          p: "The site is served by a Next.js application deployed on the infrastructure chosen by the publisher. Hosting provider details are available on request at the contact address.",
+        },
+        {
+          h: "Intellectual property",
+          p: "The brand, logo and editorial content of the site are the property of the publisher. The component code is distributed under an open-source license (see below). Any reproduction of the editorial content without authorization is prohibited.",
+        },
+        {
+          h: "Package license",
+          p: "The @blueprint-modular/core package is released under the Apache-2.0 license. You are free to use, modify and redistribute it under the terms of that license. The full text ships with the package on PyPI and in the repository.",
+        },
+        {
+          h: "Liability",
+          p: "The publisher strives to provide accurate, up-to-date information, without guaranteeing completeness or the absence of errors. Use of the site and package is at the user's own responsibility.",
+        },
+      ],
+      contactTitle: "Contact",
+      contactBody: "For any question regarding this legal notice:",
+    },
+    privacy: {
+      metaTitle: "Privacy policy — Blueprint Modular",
+      metaDescription:
+        "Blueprint Modular privacy policy: no personal data collected, no tracking cookies, stateless reads of a public catalog. GDPR-compliant.",
+      title: "Privacy policy",
+      intro:
+        "This policy describes how the Blueprint Modular website and its MCP connector handle data. In short: no personal data collected, no tracking cookies.",
+      sections: [
+        {
+          h: "No personal data collected",
+          p: "The site and the MCP connector do not request, collect or process any personal data. No authentication is required to browse the showcase or query the catalog: there is no account or profile created for this purpose.",
+        },
+        {
+          h: "Stateless reads of a public catalog",
+          p: "Each request to the connector is a stateless read of the public component catalog. The server is strictly read-only: it performs no writes and accesses no private or production data.",
+        },
+        {
+          h: "No storage of conversations",
+          p: "The content of your conversations and tool requests is not retained. Ephemeral technical counters per IP address may exist in memory only to apply basic rate limiting; they are neither persisted nor used to identify a user.",
+        },
+        {
+          h: "No sharing with third parties",
+          p: "No data is sold, rented or shared with third parties. The service performs no advertising tracking.",
+        },
+      ],
+      cookiesTitle: "Cookies",
+      cookiesBody:
+        "The site uses no tracking, analytics or advertising cookies. A single technical cookie (bpm-locale) remembers your language choice; it is strictly necessary for operation and does not require prior consent.",
+      rgpdTitle: "GDPR and your rights",
+      rgpdBody:
+        "Since no personal data is collected, there is no processing under the GDPR requiring consent. Should you nonetheless consider that data concerning you has been processed, you have a right of access, rectification and erasure, which you may exercise at the contact address.",
+      contactTitle: "Contact",
+      contactBody: "For any question regarding this policy:",
+    },
+    terms: {
+      metaTitle: "Terms of use — Blueprint Modular",
+      metaDescription:
+        "Terms of use for the Blueprint Modular site and its MCP connector: purpose, package license, service availability, limitation of liability.",
+      title: "Terms of use",
+      intro:
+        "By using the Blueprint Modular website, its MCP connector or the @blueprint-modular/core package, you accept the terms below.",
+      sections: [
+        {
+          h: "Purpose",
+          p: "The site presents the Blueprint Modular component library and exposes a public, read-only MCP connector. The package is distributed via PyPI.",
+        },
+        {
+          h: "Package license",
+          p: "The @blueprint-modular/core package is released under the Apache-2.0 license. Your use of the package is governed by that license, which prevails regarding the code.",
+        },
+        {
+          h: "Use of the MCP connector",
+          p: "The connector is provided free of charge, read-only and without authentication. Basic rate limiting may apply to preserve service availability. Any abusive use aimed at degrading the service is prohibited.",
+        },
+        {
+          h: "Availability",
+          p: "The service is provided “as is”, without any guarantee of continuous availability. The publisher may change, suspend or discontinue all or part of the service without notice.",
+        },
+        {
+          h: "Limitation of liability",
+          p: "The publisher cannot be held liable for any direct or indirect damage resulting from the use of the site, connector or package, within the limits permitted by applicable law.",
+        },
+        {
+          h: "Changes to the terms",
+          p: "These terms may be updated. The applicable version is the one published on this page at the date of your use.",
+        },
+      ],
+      contactTitle: "Contact",
+      contactBody: "For any question regarding these terms:",
     },
   },
 };

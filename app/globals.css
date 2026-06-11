@@ -3901,6 +3901,14 @@ body.contract-detail-panel-open .pwa-title-bar {
   justify-content: center;
 }
 
+.site-cta-offer {
+  margin: 22px auto 0;
+  max-width: 56ch;
+  font-size: 13.5px;
+  line-height: 1.6;
+  color: #9fc3d2;
+}
+
 @media (max-width: 900px) {
   .site-why-grid {
     grid-template-columns: 1fr;
@@ -4168,4 +4176,181 @@ body.contract-detail-panel-open .pwa-title-bar {
   border: 0;
   border-radius: 0;
   box-shadow: none;
+}
+
+/* ============================================================
+   Pages légales (mentions, confidentialité, conditions)
+   Article lisible dans le shell du site (nav + footer + switch).
+   ============================================================ */
+.site-legal {
+  max-width: 760px;
+}
+
+.site-legal h1 {
+  font-family: var(--site-font-display);
+  font-size: clamp(28px, 4vw, 40px);
+  line-height: 1.12;
+  letter-spacing: -0.02em;
+  font-weight: 700;
+  color: var(--bpm-text-primary);
+  margin: 0 0 8px;
+}
+
+.site-legal-meta {
+  font-size: 13.5px;
+  color: var(--bpm-text-muted);
+  margin: 0 0 24px;
+}
+
+.site-legal-intro {
+  font-size: 16px;
+  line-height: 1.65;
+  color: var(--bpm-text-secondary);
+  margin: 0 0 8px;
+}
+
+.site-legal-section {
+  margin-top: 28px;
+}
+
+.site-legal-section h2 {
+  font-family: var(--site-font-display);
+  font-size: 18px;
+  font-weight: 650;
+  letter-spacing: -0.01em;
+  color: var(--bpm-text-primary);
+  margin: 0 0 8px;
+}
+
+.site-legal-section p {
+  font-size: 15px;
+  line-height: 1.7;
+  color: var(--bpm-text-secondary);
+  margin: 0;
+}
+
+.site-legal-section a {
+  color: var(--bpm-accent);
+  text-decoration: underline;
+}
+
+.site-legal-back {
+  margin-top: 40px;
+  padding-top: 20px;
+  border-top: 1px solid var(--bpm-border);
+}
+
+.site-legal-back a {
+  font-size: 14px;
+  color: var(--bpm-accent);
+  text-decoration: none;
+}
+
+.site-legal-back a:hover {
+  text-decoration: underline;
+}
+
+/* ============================================================
+   Navigation mobile : burger + panneau plein écran
+   Desktop ≥ 768px : nav inline classique, burger masqué.
+   Mobile  < 768px : liens repliés dans un panneau, cibles ≥ 44px.
+   ============================================================ */
+.site-nav-burger {
+  display: none;
+}
+
+.site-mobile-menu {
+  display: none;
+}
+
+@media (max-width: 767px) {
+  .site-nav-links {
+    display: none;
+  }
+  .site-nav-app {
+    display: none;
+  }
+  .site-nav-burger {
+    display: inline-flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 5px;
+    width: 44px;
+    height: 44px;
+    padding: 0;
+    border: 1px solid var(--bpm-border-strong);
+    border-radius: 8px;
+    background: var(--bpm-bg-primary);
+    cursor: pointer;
+  }
+  .site-nav-burger:focus-visible {
+    outline: none;
+    box-shadow: var(--bpm-focus-ring);
+  }
+  .site-nav-burger-bar {
+    display: block;
+    width: 18px;
+    height: 2px;
+    background: var(--bpm-text-primary);
+    border-radius: 2px;
+    transition: transform 0.2s ease, opacity 0.2s ease;
+  }
+  .site-nav[data-menu-open="true"] .site-nav-burger-bar:nth-child(1) {
+    transform: translateY(7px) rotate(45deg);
+  }
+  .site-nav[data-menu-open="true"] .site-nav-burger-bar:nth-child(2) {
+    opacity: 0;
+  }
+  .site-nav[data-menu-open="true"] .site-nav-burger-bar:nth-child(3) {
+    transform: translateY(-7px) rotate(-45deg);
+  }
+
+  /* Cibles tactiles ≥ 44px pour la bascule de langue */
+  .site-locale-btn {
+    min-height: 44px;
+    padding: 0 14px;
+  }
+
+  /* Panneau mobile */
+  .site-mobile-menu {
+    display: block;
+    position: fixed;
+    top: 60px;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: var(--bpm-bg-primary);
+    border-top: 1px solid var(--bpm-border);
+    padding: 12px 24px 32px;
+    overflow-y: auto;
+    z-index: 99;
+  }
+  .site-mobile-menu[hidden] {
+    display: none;
+  }
+  .site-mobile-links {
+    display: flex;
+    flex-direction: column;
+  }
+  .site-mobile-link {
+    display: flex;
+    align-items: center;
+    min-height: 52px;
+    padding: 8px 4px;
+    font-size: 17px;
+    color: var(--bpm-text-primary);
+    text-decoration: none;
+    border-bottom: 1px solid var(--bpm-border);
+  }
+  .site-mobile-link[aria-current="page"] {
+    font-weight: 650;
+    color: var(--bpm-accent);
+  }
+  .site-mobile-cta {
+    margin-top: 22px;
+    width: 100%;
+    min-height: 48px;
+    font-size: 16px;
+  }
 }
