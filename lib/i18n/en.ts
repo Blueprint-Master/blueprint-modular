@@ -188,6 +188,11 @@ const en: Dictionary = {
     searchAria: "Search a component by keywords",
     breadcrumb: "Catalog",
   },
+  componentPage: {
+    apiTitle: "API reference",
+    apiNote:
+      "Excerpt from llms.txt, generated from the TypeScript sources — the same reference your agents read.",
+  },
 };
 
 export default en;
