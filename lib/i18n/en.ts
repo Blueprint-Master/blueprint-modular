@@ -7,7 +7,7 @@ const en: Dictionary = {
   common: {
     brand: "Blueprint Modular",
     tagline: "Business components driven from Python.",
-    installCommand: "pip install blueprint-modular",
+    installCommand: "npm i @blueprint-modular/core",
     openApp: "Open the app",
     rendered: "Rendered",
     code: "Code",
@@ -294,7 +294,16 @@ const en: Dictionary = {
   },
   gettingStarted: {
     title: "Getting started",
-    lead: "From zero to a running application, in three steps.",
+    lead: "Two real surfaces, both published. Start with React (live, exposed to the MCP); the Python CLI is available to drive an app from a script.",
+    reactTrack: {
+      label: "React / JSX — available today",
+      body: "The featured surface: the npm package @blueprint-modular/core exposes the bpm object and components as JSX. This is the surface read by the MCP connector. Install, import the stylesheet, compose.",
+      usageNote: "Don't forget the stylesheet: import '@blueprint-modular/core/dist/style.css'.",
+    },
+    pythonTrack: {
+      label: "Python — available (bpm CLI)",
+      body: "The PyPI package blueprint-modular ships the bpm object and the CLI (bpm init / run / build). Ideal to drive a data application from a plain Python script.",
+    },
     steps: [
       {
         title: "Install",

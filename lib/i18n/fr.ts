@@ -7,7 +7,7 @@ const fr = {
   common: {
     brand: "Blueprint Modular",
     tagline: "Composants métier pilotés depuis Python.",
-    installCommand: "pip install blueprint-modular",
+    installCommand: "npm i @blueprint-modular/core",
     openApp: "Ouvrir l'app",
     rendered: "Rendu",
     code: "Code",
@@ -294,7 +294,16 @@ const fr = {
   },
   gettingStarted: {
     title: "Démarrage",
-    lead: "De zéro à une application qui tourne, en trois étapes.",
+    lead: "Deux surfaces réelles, toutes deux publiées. Commencez par React (live, exposé au MCP) ; le CLI Python est disponible pour piloter une app depuis un script.",
+    reactTrack: {
+      label: "React / JSX — disponible aujourd'hui",
+      body: "La surface mise en avant : le paquet npm @blueprint-modular/core expose l'objet bpm et les composants en JSX. C'est la surface lue par le connecteur MCP. Installez, importez la feuille de style, composez.",
+      usageNote: "N'oubliez pas la feuille de style : import '@blueprint-modular/core/dist/style.css'.",
+    },
+    pythonTrack: {
+      label: "Python — disponible (CLI bpm)",
+      body: "Le paquet PyPI blueprint-modular fournit l'objet bpm et le CLI (bpm init / run / build). Idéal pour piloter une application de données depuis un simple script Python.",
+    },
     steps: [
       {
         title: "Installer",
