@@ -2,13 +2,6 @@
 
 import React from "react";
 import "./HighlightBox.css";
-import {
-  interpret,
-  judgmentColor,
-  judgmentLabel,
-  type InterpretContext,
-  type TrajectoryPoint,
-} from "./interpret";
 
 /**
  * @component bpm.highlightBox
@@ -25,8 +18,6 @@ import {
  * @param {string|string[]} [props.targetPoints] - Points Cible (chaîne ou liste). Optionnel.
  * @param {string} [props.barColor="#212121"] - Couleur de la barre latérale. Optionnel.
  * @param {string} [props.className=""] - Classes CSS additionnelles. Optionnel.
- * @param {number|TrajectoryPoint[]} [props.measure] - Mesure associée (scalaire ou trajectoire v(t)) jugée si context fourni. Optionnel.
- * @param {InterpretContext} [props.context] - Contexte de jugement : barre colorée selon le verdict + ligne écart/tendance. Optionnel.
  */
 export interface HighlightBoxProps {
   /** Numéro affiché dans la barre gauche (ex. 1) */
@@ -44,10 +35,6 @@ export interface HighlightBoxProps {
   /** Couleur de la barre latérale (hex, rgb ou nom CSS). Par défaut : noir (#212121). */
   barColor?: string | null;
   className?: string;
-  /** Mesure associée au bloc (scalaire ou trajectoire v(t) [{t,v}]) — jugée via interpret si context est fourni. */
-  measure?: number | TrajectoryPoint[];
-  /** Contexte de jugement { reference, direction, comparisonFrame? } : la barre latérale prend la couleur du verdict (sauf barColor explicite) et une ligne écart/tendance est révélée. Additif : sans context, rendu inchangé. */
-  context?: InterpretContext;
 }
 
 export function HighlightBox({
@@ -59,10 +46,7 @@ export function HighlightBox({
   targetPoints,
   barColor = null,
   className = "",
-  measure,
-  context,
 }: HighlightBoxProps) {
-  const judgment = context && measure != null ? interpret(measure, context) : null;
   const rtbText =
     Array.isArray(rtbPoints) && rtbPoints.length > 0
       ? rtbPoints.join(" · ")
@@ -74,18 +58,13 @@ export function HighlightBox({
         ? targetPoints.join(", ")
         : targetPoints;
 
-  const barStyle = barColor
-    ? { background: barColor }
-    : judgment
-      ? { background: judgmentColor(judgment) }
-      : undefined;
+  const barStyle = barColor ? { background: barColor } : undefined;
 
   return (
     <div
       className={`bpm-highlight-box ${className}`.trim()}
       role="article"
       aria-label={title}
-      data-judgment={judgment ? judgment.level.status : undefined}
     >
       <div className="bpm-highlight-box-bar" style={barStyle}>
         <span className="bpm-highlight-box-value">{value}</span>
@@ -109,11 +88,6 @@ export function HighlightBox({
           <div className="bpm-highlight-box-block">
             <span className="bpm-highlight-box-block-label">Cible :</span>{" "}
             <span className="bpm-highlight-box-block-text">{targetText}</span>
-          </div>
-        )}
-        {judgment && (
-          <div className="bpm-highlight-box-block" role="status" style={{ color: judgmentColor(judgment) }}>
-            {judgmentLabel(judgment)}
           </div>
         )}
       </div>
