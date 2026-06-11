@@ -1,5 +1,6 @@
 import Link from "next/link";
 import type { Dictionary } from "@/lib/i18n";
+import { CONTACT_EMAIL } from "@/lib/mcp/meta";
 
 export function FinalCta({ dict }: { dict: Dictionary }) {
   const cta = dict.home.cta;
@@ -19,7 +20,11 @@ export function FinalCta({ dict }: { dict: Dictionary }) {
           <Link href="/components" className="site-cta-secondary">
             {cta.secondary}
           </Link>
+          <a href={`mailto:${CONTACT_EMAIL}`} className="site-cta-secondary">
+            {cta.contact}
+          </a>
         </div>
+        <p className="site-cta-offer">{cta.offer}</p>
       </div>
     </section>
   );

@@ -122,6 +122,10 @@ const DEMO_CARD_STYLE: React.CSSProperties = {
   border: "1px solid var(--bpm-border)",
   borderRadius: "var(--bpm-radius)",
   padding: 16,
+  // Contenu de démo à largeur fixe (graphiques, médias 400px) : défile dans la
+  // carte sur mobile au lieu de déborder la page ou d'être coupé.
+  minWidth: 0,
+  overflowX: "auto",
 };
 
 function DemoCard({
