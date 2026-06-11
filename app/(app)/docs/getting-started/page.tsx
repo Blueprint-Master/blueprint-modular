@@ -35,31 +35,7 @@ export default function Dashboard() {
         <p className="doc-description">{gs.lead}</p>
       </div>
 
-      {/* Surface React/JSX — mise en avant (live, MCP) */}
-      <section className="site-step" style={{ maxWidth: 720, marginBottom: 28 }}>
-        <h3>{gs.reactTrack.label}</h3>
-        <p style={{ marginBottom: 14 }}>{gs.reactTrack.body}</p>
-        <CodeBlock code={reactInstall} language="bash" />
-        <div style={{ marginTop: 12 }}>
-          <CodeBlock code={reactUsage} language="tsx" />
-        </div>
-        <p style={{ margin: "10px 0 14px", fontSize: 13.5, color: "var(--bpm-text-secondary)" }}>
-          {gs.reactTrack.usageNote}
-        </p>
-        <span className="site-pane-label">{gs.previewLabel}</span>
-        <div
-          style={{
-            border: "1px solid var(--bpm-border)",
-            borderRadius: "var(--bpm-radius)",
-            background: "var(--bpm-bg-secondary)",
-            padding: 20,
-          }}
-        >
-          <Metric label={dict.homeDemo.revenue} value="142 500" delta={3200} />
-        </div>
-      </section>
-
-      {/* Surface Python — disponible (CLI bpm), chemin secondaire réel */}
+      {/* Surface Python — tête d'affiche (pip + bpm run), chemin réel */}
       <section className="site-step" style={{ maxWidth: 720, marginBottom: 28 }}>
         <h3>{gs.pythonTrack.label}</h3>
         <p style={{ marginBottom: 14 }}>{gs.pythonTrack.body}</p>
@@ -69,9 +45,37 @@ export default function Dashboard() {
               <h4 style={{ margin: "0 0 6px" }}>{step.title}</h4>
               <p style={{ marginBottom: 10 }}>{step.body}</p>
               <CodeBlock code={pythonSteps[i]?.code ?? ""} language={pythonSteps[i]?.lang ?? "bash"} />
+              {i === 2 && (
+                <div style={{ marginTop: 14 }}>
+                  <span className="site-pane-label">{gs.previewLabel}</span>
+                  <div
+                    style={{
+                      border: "1px solid var(--bpm-border)",
+                      borderRadius: "var(--bpm-radius)",
+                      background: "var(--bpm-bg-secondary)",
+                      padding: 20,
+                    }}
+                  >
+                    <Metric label={dict.homeDemo.revenue} value="142 500" delta={3200} />
+                  </div>
+                </div>
+              )}
             </li>
           ))}
         </ol>
+      </section>
+
+      {/* Surface React/JSX — co-équale (même objet bpm, exposée au MCP) */}
+      <section className="site-step" style={{ maxWidth: 720, marginBottom: 28 }}>
+        <h3>{gs.reactTrack.label}</h3>
+        <p style={{ marginBottom: 14 }}>{gs.reactTrack.body}</p>
+        <CodeBlock code={reactInstall} language="bash" />
+        <div style={{ marginTop: 12 }}>
+          <CodeBlock code={reactUsage} language="tsx" />
+        </div>
+        <p style={{ margin: "10px 0 0", fontSize: 13.5, color: "var(--bpm-text-secondary)" }}>
+          {gs.reactTrack.usageNote}
+        </p>
       </section>
 
       <section style={{ maxWidth: 720 }}>

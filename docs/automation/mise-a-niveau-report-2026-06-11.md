@@ -84,14 +84,17 @@ L'addendum supposait PyPI **non publié** (→ masquer/étiqueter Python « bien
 | PyPI `blueprint-modular` | **0.1.36** (12+ releases) | `pip install` → exit 0 | `import bpm` ✓, `bpm run/build/init/setup` ✓ |
 
 **Les deux paquets sont publiés et fonctionnent** — aucune commande affichée
-n'échoue si copiée. La prémisse « PyPI 404 » est factuellement fausse. Décision
-produit (utilisateur) : **« disponible, React en avant »**.
+n'échoue si copiée. La prémisse « PyPI 404 » est factuellement fausse, donc
+**l'addendum de disponibilité est écarté** (décision utilisateur).
 
-- CTA d'installation principal (hero + final CTA) → `npm i @blueprint-modular/core`.
-- `/docs/getting-started` : piste **React/JSX live mise en avant** (install + usage +
-  feuille de style + aperçu rendu), puis piste **Python disponible** (`pip install` +
-  `bpm init` + `bpm run`) — chemin réel, **jamais étiqueté « bientôt »**.
-- i18n FR/EN : `installCommand` → npm ; `reactTrack`/`pythonTrack` (parité typée).
+Décision produit retenue : **deux chemins de démarrage réels, Python en tête
+d'affiche, React/npm en second co-équal — rien de masqué, rien en « bientôt »**.
+
+- CTA d'installation (hero + final CTA) → `pip install blueprint-modular`.
+- `/docs/getting-started` : piste **Python** d'abord (`pip install` + `bpm init` +
+  `bpm run` + aperçu rendu), puis piste **React/JSX co-équale**
+  (`npm i @blueprint-modular/core` + usage + feuille de style) — surface lue par le MCP.
+- i18n FR/EN : `pythonTrack`/`reactTrack` (parité typée) ; `installCommand` = pip.
 
 ## 4. Vérifications globales
 

@@ -7,7 +7,7 @@ const fr = {
   common: {
     brand: "Blueprint Modular",
     tagline: "Composants métier pilotés depuis Python.",
-    installCommand: "npm i @blueprint-modular/core",
+    installCommand: "pip install blueprint-modular",
     openApp: "Ouvrir l'app",
     rendered: "Rendu",
     code: "Code",
@@ -294,15 +294,15 @@ const fr = {
   },
   gettingStarted: {
     title: "Démarrage",
-    lead: "Deux surfaces réelles, toutes deux publiées. Commencez par React (live, exposé au MCP) ; le CLI Python est disponible pour piloter une app depuis un script.",
-    reactTrack: {
-      label: "React / JSX — disponible aujourd'hui",
-      body: "La surface mise en avant : le paquet npm @blueprint-modular/core expose l'objet bpm et les composants en JSX. C'est la surface lue par le connecteur MCP. Installez, importez la feuille de style, composez.",
-      usageNote: "N'oubliez pas la feuille de style : import '@blueprint-modular/core/dist/style.css'.",
-    },
+    lead: "Deux chemins de démarrage réels, tous deux publiés et fonctionnels. Pilotez votre app en Python (pip + bpm run), ou composez les mêmes composants en React/JSX.",
     pythonTrack: {
-      label: "Python — disponible (CLI bpm)",
-      body: "Le paquet PyPI blueprint-modular fournit l'objet bpm et le CLI (bpm init / run / build). Idéal pour piloter une application de données depuis un simple script Python.",
+      label: "Python — pip install + bpm run",
+      body: "Le paquet PyPI blueprint-modular fournit l'objet bpm et le CLI (bpm init / run / build). Pilotez une application de données complète depuis un simple script Python — sans toucher au HTML.",
+    },
+    reactTrack: {
+      label: "React / JSX — @blueprint-modular/core",
+      body: "Le paquet npm @blueprint-modular/core expose le même objet bpm et les composants en JSX. C'est la surface lue par le connecteur MCP. Installez, importez la feuille de style, composez.",
+      usageNote: "N'oubliez pas la feuille de style : import '@blueprint-modular/core/dist/style.css'.",
     },
     steps: [
       {
