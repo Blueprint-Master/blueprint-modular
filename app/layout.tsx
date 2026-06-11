@@ -1,6 +1,8 @@
 import type { Metadata, Viewport } from "next";
 import "./globals.css";
 import { APP_VERSION } from "@/lib/version";
+import { getLocale } from "@/lib/i18n/server";
+import { LocaleProvider } from "@/lib/i18n/LocaleProvider";
 import { ThemeProvider } from "@/components/ThemeProvider";
 import { AuthProvider } from "@/components/AuthProvider";
 import { NotificationProviders } from "@/components/NotificationProviders";
@@ -50,13 +52,14 @@ export const metadata: Metadata = {
   },
 };
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const locale = await getLocale();
   return (
-    <html lang="fr" dir="ltr" suppressHydrationWarning>
+    <html lang={locale} dir="ltr" suppressHydrationWarning>
       <head>
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="" />
@@ -93,15 +96,17 @@ export default function RootLayout({
           }}
         />
         <a href="#main-content" className="skip-nav">Aller au contenu principal</a>
-        <ThemeProvider>
-          <AuthProvider>
-            <NotificationProviders>
-              <ChunkLoadHandler />
-              <PwaSwRegister />
-              {children}
-            </NotificationProviders>
-          </AuthProvider>
-        </ThemeProvider>
+        <LocaleProvider initialLocale={locale}>
+          <ThemeProvider>
+            <AuthProvider>
+              <NotificationProviders>
+                <ChunkLoadHandler />
+                <PwaSwRegister />
+                {children}
+              </NotificationProviders>
+            </AuthProvider>
+          </ThemeProvider>
+        </LocaleProvider>
       </body>
     </html>
   );
