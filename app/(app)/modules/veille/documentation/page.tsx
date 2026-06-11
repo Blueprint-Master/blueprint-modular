@@ -24,7 +24,7 @@ export default function VeilleDocumentationPage() {
         Comment fonctionne le module Veille
       </h2>
       <p className="mb-4" style={{ color: "var(--bpm-text-secondary)" }}>
-        Le module Veille est prévu pour centraliser la veille stratégique et opérationnelle : agrégation de flux (RSS, alertes métier), tableaux de bord de suivi et notifications. L&apos;interface détaillée (sources, abonnements, filtres) sera enrichie dans une prochaine version. Actuellement, la page /modules/veille présente une description du module et un lien vers cette documentation.
+        Le module Veille centralise la veille stratégique et opérationnelle : agrégation de flux (RSS, API, pages web, alertes métier), suivi de la collecte et remontée des écarts. La page <code>/modules/veille</code> propose un onglet Documentation et un onglet Simulateur : ce dernier est un assemblage réel de composants <code>bpm.*</code> — <code>bpm.metricRow</code> (sources suivies, alertes, articles), <code>bpm.table</code> avec statut rendu par <code>bpm.badge</code>, <code>bpm.anomalyAlert</code> (pic détecté), <code>bpm.activityFeed</code> (collectes récentes) et un formulaire <code>bpm.input</code> + <code>bpm.selectbox</code> + <code>bpm.button</code> pour ajouter une source. Les données du simulateur sont câblées côté client (état React) afin de démontrer l&apos;interaction sans dépendance externe.
       </p>
 
       <h2 className="text-lg font-semibold mt-8 mb-2" style={{ color: "var(--bpm-text-primary)" }}>
