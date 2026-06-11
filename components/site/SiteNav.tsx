@@ -8,9 +8,9 @@ import { LOCALES } from "@/lib/i18n";
 const LINKS = [
   { href: "/components", key: "gallery" as const },
   { href: "/modules", key: "modules" as const },
-  { href: "/docs", key: "docs" as const },
-  { href: "/resources", key: "resources" as const },
   { href: "/mcp", key: "mcp" as const },
+  { href: "/resources", key: "resources" as const },
+  { href: "/docs", key: "docs" as const },
 ];
 
 export function SiteNav() {

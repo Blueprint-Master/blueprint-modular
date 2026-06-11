@@ -23,13 +23,14 @@ export function SiteFooter() {
           <Link href="/components">{dict.footer.gallery}</Link>
           <Link href="/modules">{dict.footer.modules}</Link>
           <Link href="/docs/components">{dict.footer.catalog}</Link>
-          <Link href="/docs/getting-started">{dict.footer.gettingStarted}</Link>
           <Link href="/docs/changelog">{dict.footer.changelog}</Link>
         </nav>
 
         <nav className="site-footer-col" aria-label={dict.footer.resources}>
           <h2>{dict.footer.resources}</h2>
           <Link href="/resources">{dict.footer.resourcesHub}</Link>
+          <Link href="/docs">{dict.footer.docs}</Link>
+          <Link href="/docs/getting-started">{dict.footer.gettingStarted}</Link>
           <Link href="/mcp">{dict.footer.mcp}</Link>
           <a href="/llms.txt">{dict.footer.llms}</a>
           <a href="/llms-core.txt">{dict.footer.llmsCore}</a>
