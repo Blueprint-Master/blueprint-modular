@@ -87,6 +87,8 @@ import {
   ModelSelector,
 } from "@/components/bpm";
 import registry from "@/lib/generated/bpm-components.json";
+import { useI18n } from "@/lib/i18n/LocaleProvider";
+import { fmt } from "@/lib/i18n";
 
 type ComponentEntry = (typeof registry.components)[number];
 
@@ -198,6 +200,7 @@ function groupByCategory(components: ComponentEntry[]): { name: string; items: C
 }
 
 export default function DocsComponentsPage() {
+  const { dict } = useI18n();
   const [searchQuery, setSearchQuery] = useState("");
   const categories = groupByCategory(registry.components);
 
@@ -227,18 +230,15 @@ export default function DocsComponentsPage() {
   return (
     <div className="doc-page">
       <div className="doc-page-header">
-        <h1>Composants</h1>
-        <p className="doc-description">
-          Référence des composants avec sandbox live. La liste est alimentée par le package Python{" "}
-          <code className="text-sm">blueprint-modular</code> (pip install). Cliquez sur une carte pour la documentation.
-        </p>
+        <h1>{dict.catalog.title}</h1>
+        <p className="doc-description">{fmt(dict.catalog.lead, { count: registry.components.length })}</p>
         <div className="mt-4 max-w-md">
           <Input
             type="search"
             value={searchQuery}
             onChange={setSearchQuery}
-            placeholder="Rechercher un composant (mots-clés…)"
-            aria-label="Rechercher un composant par mots-clés"
+            placeholder={dict.catalog.searchPlaceholder}
+            aria-label={dict.catalog.searchAria}
           />
         </div>
       </div>

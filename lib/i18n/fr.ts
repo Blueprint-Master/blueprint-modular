@@ -188,6 +188,11 @@ const fr = {
     searchAria: "Rechercher un composant par mots-clés",
     breadcrumb: "Catalogue",
   },
+  componentPage: {
+    apiTitle: "Référence d'API",
+    apiNote:
+      "Extrait de llms.txt, généré depuis les sources TypeScript — la même référence que lisent les agents.",
+  },
 };
 
 export default fr;
