@@ -1,5 +1,7 @@
 /* Material Symbols (weight 200) pour bpm.pageLayout — doit précéder tout le reste */
 @import url("https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,200,0,0&display=block");
+/* Direction typographique du site public : DM Sans (display + corps) + JetBrains Mono (fil conducteur) */
+@import url("https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600;9..40,700&family=JetBrains+Mono:wght@400;500;600&display=swap");
 
 @tailwind base;
 @tailwind components;
@@ -3110,8 +3112,55 @@ body.contract-detail-panel-open .pwa-title-bar {
 
 :root {
   --site-max-width: 1120px;
-  --site-font-display: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
-  --site-font-mono: ui-monospace, "SF Mono", "Cascadia Code", "JetBrains Mono", Menlo, monospace;
+  --site-font-display: "DM Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  --site-font-mono: "JetBrains Mono", ui-monospace, "SF Mono", "Cascadia Code", Menlo, monospace;
+
+  /* Direction visuelle (maquette) — palette de l'instrument */
+  --site-ink: #0f2530;
+  --site-ink-soft: #3d5763;
+  --site-muted: #6c828c;
+  --site-cyan: #048dc3;
+  --site-cyan-deep: #036a96;
+  --site-mint: #45d09e;
+  --site-mist: #f2f6f8;
+  --site-hairline: #dce6ea;
+  --site-hairline-strong: #c3d3da;
+  --site-code: #0d1f29;
+  --site-code-line: #1c3340;
+  --site-code-ink: #d7e6ec;
+  /* Syntaxe (panneaux sombres) */
+  --site-code-kw: #6cc5e8;
+  --site-code-str: #7fd3a8;
+  --site-code-fn: #e7c46b;
+  --site-code-com: #5e7a87;
+}
+
+/*
+ * Shell du site public : on mappe la palette de la maquette sur les tokens --bpm-*
+ * UNIQUEMENT dans ce scope. Toutes les règles .site-* existantes héritent ainsi de
+ * l'encre, des hairlines et du cyan-deep sans impacter l'application.
+ */
+.site-shell {
+  font-family: var(--site-font-display);
+  color: var(--site-ink);
+  -webkit-font-smoothing: antialiased;
+
+  --bpm-text-primary: var(--site-ink);
+  --bpm-text-secondary: var(--site-ink-soft);
+  --bpm-text-muted: var(--site-muted);
+  --bpm-border: var(--site-hairline);
+  --bpm-border-strong: var(--site-hairline-strong);
+  --bpm-bg-secondary: var(--site-mist);
+  --bpm-accent: var(--site-cyan);
+  --bpm-accent-hover: var(--site-cyan-deep);
+  --bpm-accent-active: var(--site-cyan-deep);
+  --bpm-accent-mint: var(--site-mint);
+  --bpm-accent-soft: rgba(4, 141, 195, 0.12);
+}
+
+/* Alternance blanc / brume entre sections (rythme de la maquette) */
+.site-shell main > section:nth-of-type(2n):not(.site-cta-band) {
+  background: var(--site-mist);
 }
 
 .site-container {
@@ -3390,16 +3439,16 @@ body.contract-detail-panel-open .pwa-title-bar {
   gap: 10px;
   font-family: var(--site-font-mono);
   font-size: 13.5px;
-  color: var(--bpm-text-primary);
-  background: var(--bpm-code-bg);
-  border: 1px solid var(--bpm-code-border);
+  color: var(--site-code-ink);
+  background: var(--site-code);
+  border: 1px solid var(--site-code-line);
   border-radius: 8px;
   padding: 10px 14px;
 }
 
 .site-kbd-line::before {
   content: "$";
-  color: var(--bpm-text-muted);
+  color: var(--site-code-kw);
 }
 
 /* --- Grilles de l'accueil --- */
@@ -3809,9 +3858,28 @@ body.contract-detail-panel-open .pwa-title-bar {
   max-width: 70ch;
 }
 
-/* Bandeau CTA final */
+/* Bandeau CTA final — surface sombre signature */
 .site-cta-band {
-  background: var(--bpm-bg-secondary);
+  background: var(--site-code);
+  border-color: var(--site-code-line);
+}
+
+.site-cta-band h2 {
+  color: #ffffff;
+}
+
+.site-cta-band .site-section-body {
+  color: #9fc3d2;
+}
+
+.site-cta-band .site-cta-secondary {
+  background: transparent;
+  color: #ffffff;
+  border-color: #33586a;
+}
+
+.site-cta-band .site-cta-secondary:hover {
+  border-color: var(--site-mint);
 }
 
 .site-cta-inner {
@@ -3845,9 +3913,9 @@ body.contract-detail-panel-open .pwa-title-bar {
   font-family: var(--site-font-mono);
   font-size: 12px;
   font-weight: 600;
-  letter-spacing: 0.12em;
+  letter-spacing: 0.14em;
   text-transform: uppercase;
-  color: var(--bpm-accent);
+  color: var(--site-cyan-deep);
   margin-bottom: 14px;
 }
 
@@ -3876,9 +3944,9 @@ body.contract-detail-panel-open .pwa-title-bar {
   font-family: var(--site-font-mono);
   font-size: 13px;
   line-height: 1.5;
-  color: var(--bpm-text-primary);
-  background: var(--bpm-code-bg);
-  border: 1px solid var(--bpm-code-border);
+  color: var(--site-code-ink);
+  background: var(--site-code);
+  border: 1px solid var(--site-code-line);
   border-radius: 8px;
   padding: 12px 14px;
   word-break: break-all;
@@ -4008,4 +4076,96 @@ body.contract-detail-panel-open .pwa-title-bar {
   .site-teaser {
     grid-template-columns: 1fr;
   }
+}
+
+/* ============================================================
+   Signature hero : code → interface
+   Cadre la carte démo réelle (composants bpm) d'un panneau de
+   code sombre montrant le snippet qui la produit. La carte n'est
+   pas remplacée : elle reste rendue par les vrais composants.
+   ============================================================ */
+.site-hero-signature {
+  display: grid;
+  gap: 0;
+  border: 1px solid var(--site-hairline);
+  border-radius: 16px;
+  overflow: hidden;
+  background: var(--bpm-surface);
+  box-shadow: 0 1px 2px rgba(15, 37, 48, 0.05), 0 8px 30px rgba(15, 37, 48, 0.06);
+}
+
+.site-code-pane {
+  background: var(--site-code);
+  color: var(--site-code-ink);
+  padding: 18px 20px 20px;
+}
+
+.site-code-bar {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  font-family: var(--site-font-mono);
+  font-size: 11.5px;
+  color: #7fa6b6;
+  margin-bottom: 14px;
+}
+
+.site-code-dot {
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  background: var(--site-code-line);
+}
+
+.site-code-file {
+  margin-left: auto;
+  letter-spacing: 0.04em;
+}
+
+.site-code-pane pre {
+  margin: 0;
+  font-family: var(--site-font-mono);
+  font-size: 13px;
+  line-height: 1.7;
+  overflow-x: auto;
+  white-space: pre;
+}
+
+.site-code-pane .tok-kw {
+  color: var(--site-code-kw);
+}
+.site-code-pane .tok-str {
+  color: var(--site-code-str);
+}
+.site-code-pane .tok-fn {
+  color: var(--site-code-fn);
+}
+.site-code-pane .tok-num {
+  color: var(--site-code-fn);
+}
+.site-code-pane .tok-com {
+  color: var(--site-code-com);
+}
+
+.site-code-arrow {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  background: var(--site-mist);
+  border-top: 1px solid var(--site-hairline);
+  border-bottom: 1px solid var(--site-hairline);
+  font-family: var(--site-font-mono);
+  font-size: 11px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--site-muted);
+  padding: 8px;
+}
+
+/* Le rendu réel occupe le panneau du bas : bords gérés par le cadre */
+.site-hero-signature .site-demo-panel {
+  border: 0;
+  border-radius: 0;
+  box-shadow: none;
 }

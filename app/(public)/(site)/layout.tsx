@@ -7,7 +7,7 @@ import { SiteFooter } from "@/components/site/SiteFooter";
  */
 export default function SiteLayout({ children }: { children: React.ReactNode }) {
   return (
-    <div style={{ minHeight: "100vh", display: "flex", flexDirection: "column", background: "var(--bpm-bg-primary)" }}>
+    <div className="site-shell" style={{ minHeight: "100vh", display: "flex", flexDirection: "column", background: "var(--bpm-bg-primary)" }}>
       <SiteNav />
       <main id="main-content" style={{ flex: 1 }}>
         {children}
