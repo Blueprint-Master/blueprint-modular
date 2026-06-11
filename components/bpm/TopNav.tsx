@@ -16,6 +16,8 @@ import Link from "next/link";
  * @param {string} [props.className=""] - Classes CSS additionnelles. Optionnel.
  *
  * @associated bpm.pageLayout, bpm.sidebar, bpm.breadcrumb
+ * @parent bpm.page, bpm.pageLayout
+ * @forbidden Navigation latérale dense — utiliser bpm.sidebar
  */
 export interface TopNavItem {
   label: string;

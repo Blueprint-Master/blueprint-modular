@@ -24,6 +24,7 @@ import { Button } from "./Button";
  *
  * @parent bpm.chatInterface
  * @associated bpm.modelSelector, bpm.streamingText
+ * @forbidden Saisie d'une ligne simple — utiliser bpm.input
  */
 export interface PromptInputProps {
   value: string;

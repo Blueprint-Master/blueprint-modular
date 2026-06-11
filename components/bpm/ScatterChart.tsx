@@ -24,6 +24,8 @@ import {
  * @param {InterpretContext} [props.context] - Contexte de jugement : points colorés par écart individuel, anomalies (>2σ du nuage) cerclées, repère pointillé, verdict global. Optionnel.
  *
  * @associated bpm.lineChart, bpm.areaChart, bpm.plotlyChart
+ * @parent bpm.card, bpm.grid
+ * @forbidden Évolution temporelle — utiliser bpm.lineChart
  */
 export interface ScatterChartDatum {
   x: number;

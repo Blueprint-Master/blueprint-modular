@@ -130,6 +130,8 @@ function arrowHead(tipX: number, tipY: number, ang: number, size = 8): string {
  * @param {string} [props.className=""] - Classes CSS additionnelles. Optionnel.
  *
  * @associated bpm.decisionTree, bpm.stepper, bpm.timeline
+ * @parent bpm.card, bpm.container
+ * @forbidden Étapes linéaires — utiliser bpm.stepper
  */
 export function FlowDiagram({
   states,

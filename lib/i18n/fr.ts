@@ -300,7 +300,16 @@ const fr = {
   },
   gettingStarted: {
     title: "Démarrage",
-    lead: "De zéro à une application qui tourne, en trois étapes.",
+    lead: "Deux chemins de démarrage réels, tous deux publiés et fonctionnels. Pilotez votre app en Python (pip + bpm run), ou composez les mêmes composants en React/JSX.",
+    pythonTrack: {
+      label: "Python — pip install + bpm run",
+      body: "Le paquet PyPI blueprint-modular fournit l'objet bpm et le CLI (bpm init / run / build). Pilotez une application de données complète depuis un simple script Python — sans toucher au HTML.",
+    },
+    reactTrack: {
+      label: "React / JSX — @blueprint-modular/core",
+      body: "Le paquet npm @blueprint-modular/core expose le même objet bpm et les composants en JSX. C'est la surface lue par le connecteur MCP. Installez, importez la feuille de style, composez.",
+      usageNote: "N'oubliez pas la feuille de style : import '@blueprint-modular/core/dist/style.css'.",
+    },
     steps: [
       {
         title: "Installer",

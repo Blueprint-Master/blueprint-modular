@@ -39,6 +39,8 @@ export interface GeofenceProps {
  * @param {string} [props.className=""] - Classes CSS additionnelles. Optionnel.
  *
  * @associated bpm.mapView, bpm.gps
+ * @parent bpm.card, bpm.modal, bpm.container
+ * @forbidden aucun
  */
 export function Geofence({
   zones: controlledZones,

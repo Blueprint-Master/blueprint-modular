@@ -28,6 +28,8 @@ export interface ColumnProps {
  * @param {ReactNode} [props.children] - Contenu des colonnes. Optionnel.
  *
  * @associated bpm.grid, bpm.container, bpm.row
+ * @parent bpm.page, bpm.container
+ * @forbidden Layout pleine largeur d'un seul bloc — inutile
  */
 export function Column({
   columns = 2,

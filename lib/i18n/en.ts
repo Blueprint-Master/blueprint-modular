@@ -300,7 +300,16 @@ const en: Dictionary = {
   },
   gettingStarted: {
     title: "Getting started",
-    lead: "From zero to a running application, in three steps.",
+    lead: "Two real getting-started paths, both published and working. Drive your app in Python (pip + bpm run), or compose the same components in React/JSX.",
+    pythonTrack: {
+      label: "Python — pip install + bpm run",
+      body: "The PyPI package blueprint-modular ships the bpm object and the CLI (bpm init / run / build). Drive a complete data application from a plain Python script — without touching any HTML.",
+    },
+    reactTrack: {
+      label: "React / JSX — @blueprint-modular/core",
+      body: "The npm package @blueprint-modular/core exposes the same bpm object and components as JSX. This is the surface read by the MCP connector. Install, import the stylesheet, compose.",
+      usageNote: "Don't forget the stylesheet: import '@blueprint-modular/core/dist/style.css'.",
+    },
     steps: [
       {
         title: "Install",

@@ -74,6 +74,8 @@ function formatCellValue(value: unknown, type?: string): React.ReactNode {
  * @param {string} [props.idKey="id"] - Clé d'identifiant pour les opérations. Optionnel.
  *
  * @associated bpm.table, bpm.modal, bpm.form
+ * @parent bpm.page, bpm.pageLayout
+ * @forbidden aucun
  */
 export function CrudPage({
   title,

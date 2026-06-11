@@ -29,6 +29,7 @@ import {
  *
  * @parent bpm.card, bpm.panel
  * @associated bpm.metric, bpm.inlineEdit
+ * @forbidden Valeur chiffrée à juger — utiliser bpm.metric
  */
 export interface LabelValueProps {
   label: string;

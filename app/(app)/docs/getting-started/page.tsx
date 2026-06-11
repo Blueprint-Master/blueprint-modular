@@ -11,10 +11,21 @@ export default function GettingStartedPage() {
   const { dict } = useI18n();
   const gs = dict.gettingStarted;
   const count = registry.components.length;
-  const stepCodes = [
-    "pip install blueprint-modular",
-    "bpm init --name mon-app\ncd mon-app",
-    `import bpm\n\nbpm.metric("${dict.homeDemo.revenue}", 142500, delta=3200)\n\n# bpm run app.py`,
+
+  // Surface React/JSX — live, publiée npm, exposée par le MCP (chemin mis en avant).
+  const reactInstall = "npm i @blueprint-modular/core";
+  const reactUsage = `import { bpm } from "@blueprint-modular/core";
+import "@blueprint-modular/core/dist/style.css";
+
+export default function Dashboard() {
+  return bpm.metric({ label: "${dict.homeDemo.revenue}", value: "142 500 €", delta: 12 });
+}`;
+
+  // Surface Python — publiée PyPI, CLI bpm (chemin secondaire, réel).
+  const pythonSteps: { code: string; lang: "bash" | "python" }[] = [
+    { code: "pip install blueprint-modular", lang: "bash" },
+    { code: "bpm init --name mon-app\ncd mon-app", lang: "bash" },
+    { code: `import bpm\n\nbpm.metric("${dict.homeDemo.revenue}", 142500, delta=3200)\n\n# bpm run app.py`, lang: "python" },
   ];
 
   return (
@@ -24,30 +35,48 @@ export default function GettingStartedPage() {
         <p className="doc-description">{gs.lead}</p>
       </div>
 
-      <ol className="site-steps" style={{ gridTemplateColumns: "1fr", maxWidth: 720 }}>
-        {gs.steps.map((step, i) => (
-          <li className="site-step" key={step.title}>
-            <h3>{step.title}</h3>
-            <p style={{ marginBottom: 14 }}>{step.body}</p>
-            <CodeBlock code={stepCodes[i] ?? ""} language={i === 2 ? "python" : "bash"} />
-            {i === 2 && (
-              <div style={{ marginTop: 14 }}>
-                <span className="site-pane-label">{gs.previewLabel}</span>
-                <div
-                  style={{
-                    border: "1px solid var(--bpm-border)",
-                    borderRadius: "var(--bpm-radius)",
-                    background: "var(--bpm-bg-secondary)",
-                    padding: 20,
-                  }}
-                >
-                  <Metric label={dict.homeDemo.revenue} value="142 500" delta={3200} />
+      {/* Surface Python — tête d'affiche (pip + bpm run), chemin réel */}
+      <section className="site-step" style={{ maxWidth: 720, marginBottom: 28 }}>
+        <h3>{gs.pythonTrack.label}</h3>
+        <p style={{ marginBottom: 14 }}>{gs.pythonTrack.body}</p>
+        <ol className="site-steps" style={{ gridTemplateColumns: "1fr", margin: 0 }}>
+          {gs.steps.map((step, i) => (
+            <li className="site-step" key={step.title} style={{ border: "none", padding: 0 }}>
+              <h4 style={{ margin: "0 0 6px" }}>{step.title}</h4>
+              <p style={{ marginBottom: 10 }}>{step.body}</p>
+              <CodeBlock code={pythonSteps[i]?.code ?? ""} language={pythonSteps[i]?.lang ?? "bash"} />
+              {i === 2 && (
+                <div style={{ marginTop: 14 }}>
+                  <span className="site-pane-label">{gs.previewLabel}</span>
+                  <div
+                    style={{
+                      border: "1px solid var(--bpm-border)",
+                      borderRadius: "var(--bpm-radius)",
+                      background: "var(--bpm-bg-secondary)",
+                      padding: 20,
+                    }}
+                  >
+                    <Metric label={dict.homeDemo.revenue} value="142 500" delta={3200} />
+                  </div>
                 </div>
-              </div>
-            )}
-          </li>
-        ))}
-      </ol>
+              )}
+            </li>
+          ))}
+        </ol>
+      </section>
+
+      {/* Surface React/JSX — co-équale (même objet bpm, exposée au MCP) */}
+      <section className="site-step" style={{ maxWidth: 720, marginBottom: 28 }}>
+        <h3>{gs.reactTrack.label}</h3>
+        <p style={{ marginBottom: 14 }}>{gs.reactTrack.body}</p>
+        <CodeBlock code={reactInstall} language="bash" />
+        <div style={{ marginTop: 12 }}>
+          <CodeBlock code={reactUsage} language="tsx" />
+        </div>
+        <p style={{ margin: "10px 0 0", fontSize: 13.5, color: "var(--bpm-text-secondary)" }}>
+          {gs.reactTrack.usageNote}
+        </p>
+      </section>
 
       <section style={{ maxWidth: 720 }}>
         <h2 className="text-lg font-semibold mb-3" style={{ color: "var(--bpm-text-primary)" }}>

@@ -13,6 +13,8 @@ import React from "react";
  * @param {"small"|"medium"|"large"} [props.size="medium"] - Taille (16/24/32px). Optionnel.
  *
  * @associated bpm.spinner, bpm.loadingBar, bpm.skeleton
+ * @parent bpm.button, bpm.card, bpm.panel
+ * @forbidden Chargement de zone de contenu — utiliser bpm.skeleton
  */
 export interface SpinnerDotProps {
   className?: string;

@@ -17,6 +17,8 @@ import { createPortal } from "react-dom";
  * @param {string} [props.className=""] - Classes CSS additionnelles. Optionnel.
  *
  * @associated bpm.chatInterface, bpm.promptInput
+ * @parent bpm.promptInput, bpm.chatInterface, bpm.card
+ * @forbidden Sélection générique — utiliser bpm.selectbox
  */
 export interface ModelOption {
   id: string;

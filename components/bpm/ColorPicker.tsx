@@ -29,6 +29,7 @@ export interface ColorPickerProps {
  *
  * @parent bpm.form
  * @associated bpm.input, bpm.select
+ * @forbidden aucun
  */
 export function ColorPicker({
   label,

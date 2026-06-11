@@ -18,6 +18,8 @@ import React from "react";
  * @param {string} [props.className=""] - Classes CSS additionnelles. Optionnel.
  *
  * @associated bpm.table, bpm.crud
+ * @parent bpm.table, bpm.dataExplorer, bpm.card
+ * @forbidden Liste défilante infinie — utiliser le scroll
  */
 export interface PaginationProps {
   /** Page courante (1-based). */

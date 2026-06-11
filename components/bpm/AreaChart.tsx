@@ -42,6 +42,8 @@ export interface AreaChartProps {
  * @param {InterpretContext} [props.context] - Contexte de jugement : repère pointillé, couleur d'aire jugée, aria-label descriptif. Optionnel.
  *
  * @associated bpm.lineChart, bpm.barChart, bpm.plotlyChart
+ * @parent bpm.card, bpm.grid, bpm.tableauxDeBord
+ * @forbidden Comparaison de catégories — utiliser bpm.barChart
  */
 export function AreaChart(p: AreaChartProps) {
   const { data, width = 400, height = 200, color = "var(--bpm-accent)", className = "", context } = p;

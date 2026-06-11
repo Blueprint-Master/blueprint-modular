@@ -33,6 +33,18 @@ const SIZE_PX: Record<NonNullable<StepperProps["size"]>, number> = {
 /**
  * @component bpm.stepper
  * @description Progression multi-étapes horizontale ou verticale, complété / courant / à venir.
+ * @example
+ * bpm.stepper({ steps: [{ label: "Panier" }, { label: "Livraison" }, { label: "Paiement" }], currentStep: 1 })
+ * @props
+ * - steps (StepperStep[], optionnel) — Étapes { label, description?, icon?, optional? }.
+ * - currentStep (number, optionnel) — Index de l’étape courante (0-based). Default: 0.
+ * - direction ("horizontal"|"vertical", optionnel) — Orientation. Default: "horizontal".
+ * - onStepClick (function, optionnel) — Callback (stepIndex) au clic sur une étape.
+ * - size ("sm"|"md"|"lg", optionnel) — Taille des pastilles. Default: "md".
+ * - className (string, optionnel) — Classes CSS additionnelles.
+ * @parent bpm.wizardForm, bpm.card, bpm.page
+ * @associated bpm.statusTracker, bpm.button
+ * @forbidden Suivi d'état d'un objet — utiliser bpm.statusTracker
  */
 export function Stepper({
   steps = [],

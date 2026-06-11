@@ -262,6 +262,18 @@ function Subtree({
 /**
  * @component bpm.orgChart
  * @description Organigramme hiérarchique HTML/CSS, repliable.
+ * @example
+ * bpm.orgChart({ nodes: [{ id: "1", label: "CEO" }, { id: "2", label: "CTO", parentId: "1" }], expandable: true })
+ * @props
+ * - nodes (OrgChartNode[], obligatoire) — Nœuds { id, label, parentId?, ... }.
+ * - direction ("vertical"|"horizontal", optionnel) — Sens de l’arbre. Default: "vertical".
+ * - onNodeClick (function, optionnel) — Callback (node) au clic sur un nœud.
+ * - expandable (boolean, optionnel) — Nœuds repliables. Default: false.
+ * - rootId (string, optionnel) — Id du nœud racine.
+ * - className (string, optionnel) — Classes CSS additionnelles.
+ * @parent bpm.card, bpm.container, bpm.page
+ * @associated bpm.treeview, bpm.flowDiagram
+ * @forbidden Arbre de données/fichiers — utiliser bpm.treeview
  */
 export function OrgChart({
   nodes,

@@ -31,6 +31,7 @@ export interface BreadcrumbProps {
  *
  * @parent bpm.pageHeader, bpm.navbar
  * @associated bpm.breadcrumbs, bpm.tabs
+ * @forbidden aucun
  */
 export function Breadcrumb({
   items = [],

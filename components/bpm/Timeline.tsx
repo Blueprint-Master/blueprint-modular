@@ -98,6 +98,18 @@ function itemsToEvents(items: TimelineItem[]): TimelineEvent[] {
 /**
  * @component bpm.timeline
  * @description Frise chronologique verticale (événements ou ancienne prop items).
+ * @example
+ * bpm.timeline({ events: [{ date: "2026-06-01", title: "Création", description: "Dossier ouvert" }] })
+ * @props
+ * - events (TimelineEvent[], optionnel) — Événements { date, title, description?, icon? } (API recommandée).
+ * - items (TimelineItem[], optionnel) — Ancienne API, conservée pour compatibilité.
+ * - maxItems (number, optionnel) — Limite d’éléments affichés.
+ * - sortOrder ("asc"|"desc", optionnel) — Ordre chronologique. Default: "desc".
+ * - groupByDate (boolean, optionnel) — Regroupe les événements par date.
+ * - className (string, optionnel) — Classes CSS additionnelles.
+ * @parent bpm.card, bpm.drawer, bpm.page
+ * @associated bpm.activityFeed, bpm.statusTracker
+ * @forbidden Flux non daté en continu — utiliser bpm.activityFeed
  */
 export function Timeline({
   events: eventsProp,

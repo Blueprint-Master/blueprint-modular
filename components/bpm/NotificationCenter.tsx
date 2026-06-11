@@ -85,6 +85,19 @@ function TypeGlyph({ type }: { type: NotificationItem["type"] }) {
 /**
  * @component bpm.notificationCenter
  * @description Liste de notifications groupées (non lues / lues), actions lecture et suppression.
+ * @example
+ * bpm.notificationCenter({ notifications, onMarkRead: markRead, onDismiss: dismiss })
+ * @props
+ * - notifications (NotificationItem[], obligatoire) — { id, title, message?, read, date }.
+ * - onMarkRead (function, obligatoire) — Callback (id) marque comme lu.
+ * - onMarkAllRead (function, optionnel) — Marque toutes les notifications comme lues.
+ * - onDismiss (function, optionnel) — Callback (id) supprime une notification.
+ * - maxVisible (number, optionnel) — Nombre maximum affiché.
+ * - emptyMessage (string, optionnel) — Message liste vide.
+ * - className (string, optionnel) — Classes CSS additionnelles.
+ * @parent bpm.topNav, bpm.drawer, bpm.page
+ * @associated bpm.activityFeed, bpm.toast, bpm.badge
+ * @forbidden Message éphémère unique — utiliser bpm.toast
  */
 export function NotificationCenter({
   notifications,

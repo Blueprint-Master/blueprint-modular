@@ -26,6 +26,8 @@ export type DataExplorerProps = DataExplorerClassicProps | DataExplorerAnalytics
  * @param {ColumnDef[]|ExplorerAnalyticsColumn[]} props.columns - Définition des colonnes. Obligatoire.
  *
  * @associated bpm.table, bpm.filterPanel, bpm.barChart
+ * @parent bpm.page, bpm.pageLayout, bpm.card
+ * @forbidden Petite liste statique — utiliser bpm.table
  */
 export function DataExplorer(props: DataExplorerProps) {
   if ("mode" in props && props.mode === "analytics") {

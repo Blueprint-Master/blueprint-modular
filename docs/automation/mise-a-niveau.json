@@ -1,0 +1,2254 @@
+{
+  "mission": "mise-a-niveau",
+  "standard": "8 checks composants + 5 checks modules (cf. scripts/validate-components.py)",
+  "generated_by": "scripts/validate-components.py --write-ledger",
+  "totals": {
+    "components": {
+      "total": 101,
+      "done": 101
+    },
+    "modules": {
+      "total": 32,
+      "done": 31,
+      "needs-dogfooding": 1
+    }
+  },
+  "components": [
+    {
+      "slug": "metric",
+      "bpm": "bpm.metric",
+      "key": "metric",
+      "file": "components/bpm/Metric.tsx",
+      "checks": {
+        "source": true,
+        "jsdoc": true,
+        "props_doc": true,
+        "relations": true,
+        "semantic": true,
+        "example": true,
+        "in_llms": true,
+        "in_catalog": true
+      },
+      "status": "done",
+      "gap": ""
+    },
+    {
+      "slug": "table",
+      "bpm": "bpm.table",
+      "key": "table",
+      "file": "components/bpm/Table.tsx",
+      "checks": {
+        "source": true,
+        "jsdoc": true,
+        "props_doc": true,
+        "relations": true,
+        "semantic": true,
+        "example": true,
+        "in_llms": true,
+        "in_catalog": true
+      },
+      "status": "done",
+      "gap": ""
+    },
+    {
+      "slug": "title",
+      "bpm": "bpm.title",
+      "key": "title",
+      "file": "components/bpm/Title.tsx",
+      "checks": {
+        "source": true,
+        "jsdoc": true,
+        "props_doc": true,
+        "relations": true,
+        "semantic": true,
+        "example": true,
+        "in_llms": true,
+        "in_catalog": true
+      },
+      "status": "done",
+      "gap": ""
+    },
+    {
+      "slug": "title1",
+      "bpm": "bpm.title1",
+      "key": "title1",
+      "file": "components/bpm/Title.tsx",
+      "checks": {
+        "source": true,
+        "jsdoc": true,
+        "props_doc": true,
+        "relations": true,
+        "semantic": true,
+        "example": true,
+        "in_llms": true,
+        "in_catalog": true
+      },
+      "status": "done",
+      "gap": ""
+    },
+    {
+      "slug": "title2",
+      "bpm": "bpm.title2",
+      "key": "title2",
+      "file": "components/bpm/Title.tsx",
+      "checks": {
+        "source": true,
+        "jsdoc": true,
+        "props_doc": true,
+        "relations": true,
+        "semantic": true,
+        "example": true,
+        "in_llms": true,
+        "in_catalog": true
+      },
+      "status": "done",
+      "gap": ""
+    },
+    {
+      "slug": "title3",
+      "bpm": "bpm.title3",
+      "key": "title3",
+      "file": "components/bpm/Title.tsx",
+      "checks": {
+        "source": true,
+        "jsdoc": true,
+        "props_doc": true,
+        "relations": true,
+        "semantic": true,
+        "example": true,
+        "in_llms": true,
+        "in_catalog": true
+      },
+      "status": "done",
+      "gap": ""
+    },
+    {
+      "slug": "text",
+      "bpm": "bpm.text",
+      "key": "text",
+      "file": "components/bpm/Text.tsx",
+      "checks": {
+        "source": true,
+        "jsdoc": true,
+        "props_doc": true,
+        "relations": true,
+        "semantic": true,
+        "example": true,
+        "in_llms": true,
+        "in_catalog": true
+      },
+      "status": "done",
+      "gap": ""
+    },
+    {
+      "slug": "caption",
+      "bpm": "bpm.caption",
+      "key": "caption",
+      "file": "components/bpm/Caption.tsx",
+      "checks": {
+        "source": true,
+        "jsdoc": true,
+        "props_doc": true,
+        "relations": true,
+        "semantic": true,
+        "example": true,
+        "in_llms": true,
+        "in_catalog": true
+      },
+      "status": "done",
+      "gap": ""
+    },
+    {
+      "slug": "badge",
+      "bpm": "bpm.badge",
+      "key": "badge",
+      "file": "components/bpm/Badge.tsx",
+      "checks": {
+        "source": true,
+        "jsdoc": true,
+        "props_doc": true,
+        "relations": true,
+        "semantic": true,
+        "example": true,
+        "in_llms": true,
+        "in_catalog": true
+      },
+      "status": "done",
+      "gap": ""
+    },
+    {
+      "slug": "progress",
+      "bpm": "bpm.progress",
+      "key": "progress",
+      "file": "components/bpm/Progress.tsx",
+      "checks": {
+        "source": true,
+        "jsdoc": true,
+        "props_doc": true,
+        "relations": true,
+        "semantic": true,
+        "example": true,
+        "in_llms": true,
+        "in_catalog": true
+      },
+      "status": "done",
+      "gap": ""
+    },
+    {
+      "slug": "skeleton",
+      "bpm": "bpm.skeleton",
+      "key": "skeleton",
+      "file": "components/bpm/Skeleton.tsx",
+      "checks": {
+        "source": true,
+        "jsdoc": true,
+        "props_doc": true,
+        "relations": true,
+        "semantic": true,
+        "example": true,
+        "in_llms": true,
+        "in_catalog": true
+      },
+      "status": "done",
+      "gap": ""
+    },
+    {
+      "slug": "jsonviewer",
+      "bpm": "bpm.jsonViewer",
+      "key": "jsonViewer",
+      "file": "components/bpm/JsonViewer.tsx",
+      "checks": {
+        "source": true,
+        "jsdoc": true,
+        "props_doc": true,
+        "relations": true,
+        "semantic": true,
+        "example": true,
+        "in_llms": true,
+        "in_catalog": true
+      },
+      "status": "done",
+      "gap": ""
+    },
+    {
+      "slug": "avatar",
+      "bpm": "bpm.avatar",
+      "key": "avatar",
+      "file": "components/bpm/Avatar.tsx",
+      "checks": {
+        "source": true,
+        "jsdoc": true,
+        "props_doc": true,
+        "relations": true,
+        "semantic": true,
+        "example": true,
+        "in_llms": true,
+        "in_catalog": true
+      },
+      "status": "done",
+      "gap": ""
+    },
+    {
+      "slug": "panel",
+      "bpm": "bpm.panel",
+      "key": "panel",
+      "file": "components/bpm/Panel.tsx",
+      "checks": {
+        "source": true,
+        "jsdoc": true,
+        "props_doc": true,
+        "relations": true,
+        "semantic": true,
+        "example": true,
+        "in_llms": true,
+        "in_catalog": true
+      },
+      "status": "done",
+      "gap": ""
+    },
+    {
+      "slug": "tabs",
+      "bpm": "bpm.tabs",
+      "key": "tabs",
+      "file": "components/bpm/Tabs.tsx",
+      "checks": {
+        "source": true,
+        "jsdoc": true,
+        "props_doc": true,
+        "relations": true,
+        "semantic": true,
+        "example": true,
+        "in_llms": true,
+        "in_catalog": true
+      },
+      "status": "done",
+      "gap": ""
+    },
+    {
+      "slug": "expander",
+      "bpm": "bpm.expander",
+      "key": "expander",
+      "file": "components/bpm/Expander.tsx",
+      "checks": {
+        "source": true,
+        "jsdoc": true,
+        "props_doc": true,
+        "relations": true,
+        "semantic": true,
+        "example": true,
+        "in_llms": true,
+        "in_catalog": true
+      },
+      "status": "done",
+      "gap": ""
+    },
+    {
+      "slug": "accordion",
+      "bpm": "bpm.accordion",
+      "key": "accordion",
+      "file": "components/bpm/Accordion.tsx",
+      "checks": {
+        "source": true,
+        "jsdoc": true,
+        "props_doc": true,
+        "relations": true,
+        "semantic": true,
+        "example": true,
+        "in_llms": true,
+        "in_catalog": true
+      },
+      "status": "done",
+      "gap": ""
+    },
+    {
+      "slug": "card",
+      "bpm": "bpm.card",
+      "key": "card",
+      "file": "components/bpm/Card.tsx",
+      "checks": {
+        "source": true,
+        "jsdoc": true,
+        "props_doc": true,
+        "relations": true,
+        "semantic": true,
+        "example": true,
+        "in_llms": true,
+        "in_catalog": true
+      },
+      "status": "done",
+      "gap": ""
+    },
+    {
+      "slug": "highlightbox",
+      "bpm": "bpm.highlightBox",
+      "key": "highlightBox",
+      "file": "components/bpm/HighlightBox.tsx",
+      "checks": {
+        "source": true,
+        "jsdoc": true,
+        "props_doc": true,
+        "relations": true,
+        "semantic": true,
+        "example": true,
+        "in_llms": true,
+        "in_catalog": true
+      },
+      "status": "done",
+      "gap": ""
+    },
+    {
+      "slug": "divider",
+      "bpm": "bpm.divider",
+      "key": "divider",
+      "file": "components/bpm/Divider.tsx",
+      "checks": {
+        "source": true,
+        "jsdoc": true,
+        "props_doc": true,
+        "relations": true,
+        "semantic": true,
+        "example": true,
+        "in_llms": true,
+        "in_catalog": true
+      },
+      "status": "done",
+      "gap": ""
+    },
+    {
+      "slug": "grid",
+      "bpm": "bpm.grid",
+      "key": "grid",
+      "file": "components/bpm/Grid.tsx",
+      "checks": {
+        "source": true,
+        "jsdoc": true,
+        "props_doc": true,
+        "relations": true,
+        "semantic": true,
+        "example": true,
+        "in_llms": true,
+        "in_catalog": true
+      },
+      "status": "done",
+      "gap": ""
+    },
+    {
+      "slug": "column",
+      "bpm": "bpm.column",
+      "key": "column",
+      "file": "components/bpm/Column.tsx",
+      "checks": {
+        "source": true,
+        "jsdoc": true,
+        "props_doc": true,
+        "relations": true,
+        "semantic": true,
+        "example": true,
+        "in_llms": true,
+        "in_catalog": true
+      },
+      "status": "done",
+      "gap": ""
+    },
+    {
+      "slug": "emptystate",
+      "bpm": "bpm.emptyState",
+      "key": "emptyState",
+      "file": "components/bpm/EmptyState.tsx",
+      "checks": {
+        "source": true,
+        "jsdoc": true,
+        "props_doc": true,
+        "relations": true,
+        "semantic": true,
+        "example": true,
+        "in_llms": true,
+        "in_catalog": true
+      },
+      "status": "done",
+      "gap": ""
+    },
+    {
+      "slug": "container",
+      "bpm": "bpm.container",
+      "key": "container",
+      "file": "components/bpm/Container.tsx",
+      "checks": {
+        "source": true,
+        "jsdoc": true,
+        "props_doc": true,
+        "relations": true,
+        "semantic": true,
+        "example": true,
+        "in_llms": true,
+        "in_catalog": true
+      },
+      "status": "done",
+      "gap": ""
+    },
+    {
+      "slug": "empty",
+      "bpm": "bpm.empty",
+      "key": "empty",
+      "file": "components/bpm/Empty.tsx",
+      "checks": {
+        "source": true,
+        "jsdoc": true,
+        "props_doc": true,
+        "relations": true,
+        "semantic": true,
+        "example": true,
+        "in_llms": true,
+        "in_catalog": true
+      },
+      "status": "done",
+      "gap": ""
+    },
+    {
+      "slug": "popover",
+      "bpm": "bpm.popover",
+      "key": "popover",
+      "file": "components/bpm/Popover.tsx",
+      "checks": {
+        "source": true,
+        "jsdoc": true,
+        "props_doc": true,
+        "relations": true,
+        "semantic": true,
+        "example": true,
+        "in_llms": true,
+        "in_catalog": true
+      },
+      "status": "done",
+      "gap": ""
+    },
+    {
+      "slug": "button",
+      "bpm": "bpm.button",
+      "key": "button",
+      "file": "components/bpm/Button.tsx",
+      "checks": {
+        "source": true,
+        "jsdoc": true,
+        "props_doc": true,
+        "relations": true,
+        "semantic": true,
+        "example": true,
+        "in_llms": true,
+        "in_catalog": true
+      },
+      "status": "done",
+      "gap": ""
+    },
+    {
+      "slug": "theme",
+      "bpm": "bpm.theme",
+      "key": "theme",
+      "file": "components/bpm/Theme.tsx",
+      "checks": {
+        "source": true,
+        "jsdoc": true,
+        "props_doc": true,
+        "relations": true,
+        "semantic": true,
+        "example": true,
+        "in_llms": true,
+        "in_catalog": true
+      },
+      "status": "done",
+      "gap": ""
+    },
+    {
+      "slug": "selectbox",
+      "bpm": "bpm.selectbox",
+      "key": "selectbox",
+      "file": "components/bpm/Selectbox.tsx",
+      "checks": {
+        "source": true,
+        "jsdoc": true,
+        "props_doc": true,
+        "relations": true,
+        "semantic": true,
+        "example": true,
+        "in_llms": true,
+        "in_catalog": true
+      },
+      "status": "done",
+      "gap": ""
+    },
+    {
+      "slug": "numberinput",
+      "bpm": "bpm.numberInput",
+      "key": "numberInput",
+      "file": "components/bpm/NumberInput.tsx",
+      "checks": {
+        "source": true,
+        "jsdoc": true,
+        "props_doc": true,
+        "relations": true,
+        "semantic": true,
+        "example": true,
+        "in_llms": true,
+        "in_catalog": true
+      },
+      "status": "done",
+      "gap": ""
+    },
+    {
+      "slug": "input",
+      "bpm": "bpm.input",
+      "key": "input",
+      "file": "components/bpm/Input.tsx",
+      "checks": {
+        "source": true,
+        "jsdoc": true,
+        "props_doc": true,
+        "relations": true,
+        "semantic": true,
+        "example": true,
+        "in_llms": true,
+        "in_catalog": true
+      },
+      "status": "done",
+      "gap": ""
+    },
+    {
+      "slug": "textarea",
+      "bpm": "bpm.textarea",
+      "key": "textarea",
+      "file": "components/bpm/Textarea.tsx",
+      "checks": {
+        "source": true,
+        "jsdoc": true,
+        "props_doc": true,
+        "relations": true,
+        "semantic": true,
+        "example": true,
+        "in_llms": true,
+        "in_catalog": true
+      },
+      "status": "done",
+      "gap": ""
+    },
+    {
+      "slug": "checkbox",
+      "bpm": "bpm.checkbox",
+      "key": "checkbox",
+      "file": "components/bpm/Checkbox.tsx",
+      "checks": {
+        "source": true,
+        "jsdoc": true,
+        "props_doc": true,
+        "relations": true,
+        "semantic": true,
+        "example": true,
+        "in_llms": true,
+        "in_catalog": true
+      },
+      "status": "done",
+      "gap": ""
+    },
+    {
+      "slug": "radiogroup",
+      "bpm": "bpm.radioGroup",
+      "key": "radioGroup",
+      "file": "components/bpm/RadioGroup.tsx",
+      "checks": {
+        "source": true,
+        "jsdoc": true,
+        "props_doc": true,
+        "relations": true,
+        "semantic": true,
+        "example": true,
+        "in_llms": true,
+        "in_catalog": true
+      },
+      "status": "done",
+      "gap": ""
+    },
+    {
+      "slug": "slider",
+      "bpm": "bpm.slider",
+      "key": "slider",
+      "file": "components/bpm/Slider.tsx",
+      "checks": {
+        "source": true,
+        "jsdoc": true,
+        "props_doc": true,
+        "relations": true,
+        "semantic": true,
+        "example": true,
+        "in_llms": true,
+        "in_catalog": true
+      },
+      "status": "done",
+      "gap": ""
+    },
+    {
+      "slug": "dateinput",
+      "bpm": "bpm.dateInput",
+      "key": "dateInput",
+      "file": "components/bpm/DateInput.tsx",
+      "checks": {
+        "source": true,
+        "jsdoc": true,
+        "props_doc": true,
+        "relations": true,
+        "semantic": true,
+        "example": true,
+        "in_llms": true,
+        "in_catalog": true
+      },
+      "status": "done",
+      "gap": ""
+    },
+    {
+      "slug": "daterangepicker",
+      "bpm": "bpm.dateRangePicker",
+      "key": "dateRangePicker",
+      "file": "components/bpm/DateRangePicker.tsx",
+      "checks": {
+        "source": true,
+        "jsdoc": true,
+        "props_doc": true,
+        "relations": true,
+        "semantic": true,
+        "example": true,
+        "in_llms": true,
+        "in_catalog": true
+      },
+      "status": "done",
+      "gap": ""
+    },
+    {
+      "slug": "timeinput",
+      "bpm": "bpm.timeInput",
+      "key": "timeInput",
+      "file": "components/bpm/TimeInput.tsx",
+      "checks": {
+        "source": true,
+        "jsdoc": true,
+        "props_doc": true,
+        "relations": true,
+        "semantic": true,
+        "example": true,
+        "in_llms": true,
+        "in_catalog": true
+      },
+      "status": "done",
+      "gap": ""
+    },
+    {
+      "slug": "rating",
+      "bpm": "bpm.rating",
+      "key": "rating",
+      "file": "components/bpm/Rating.tsx",
+      "checks": {
+        "source": true,
+        "jsdoc": true,
+        "props_doc": true,
+        "relations": true,
+        "semantic": true,
+        "example": true,
+        "in_llms": true,
+        "in_catalog": true
+      },
+      "status": "done",
+      "gap": ""
+    },
+    {
+      "slug": "fileuploader",
+      "bpm": "bpm.fileUploader",
+      "key": "fileUploader",
+      "file": "components/bpm/FileUploader.tsx",
+      "checks": {
+        "source": true,
+        "jsdoc": true,
+        "props_doc": true,
+        "relations": true,
+        "semantic": true,
+        "example": true,
+        "in_llms": true,
+        "in_catalog": true
+      },
+      "status": "done",
+      "gap": ""
+    },
+    {
+      "slug": "colorpicker",
+      "bpm": "bpm.colorPicker",
+      "key": "colorPicker",
+      "file": "components/bpm/ColorPicker.tsx",
+      "checks": {
+        "source": true,
+        "jsdoc": true,
+        "props_doc": true,
+        "relations": true,
+        "semantic": true,
+        "example": true,
+        "in_llms": true,
+        "in_catalog": true
+      },
+      "status": "done",
+      "gap": ""
+    },
+    {
+      "slug": "chip",
+      "bpm": "bpm.chip",
+      "key": "chip",
+      "file": "components/bpm/Chip.tsx",
+      "checks": {
+        "source": true,
+        "jsdoc": true,
+        "props_doc": true,
+        "relations": true,
+        "semantic": true,
+        "example": true,
+        "in_llms": true,
+        "in_catalog": true
+      },
+      "status": "done",
+      "gap": ""
+    },
+    {
+      "slug": "message",
+      "bpm": "bpm.message",
+      "key": "message",
+      "file": "components/bpm/Message.tsx",
+      "checks": {
+        "source": true,
+        "jsdoc": true,
+        "props_doc": true,
+        "relations": true,
+        "semantic": true,
+        "example": true,
+        "in_llms": true,
+        "in_catalog": true
+      },
+      "status": "done",
+      "gap": ""
+    },
+    {
+      "slug": "spinner",
+      "bpm": "bpm.spinner",
+      "key": "spinner",
+      "file": "components/bpm/Spinner.tsx",
+      "checks": {
+        "source": true,
+        "jsdoc": true,
+        "props_doc": true,
+        "relations": true,
+        "semantic": true,
+        "example": true,
+        "in_llms": true,
+        "in_catalog": true
+      },
+      "status": "done",
+      "gap": ""
+    },
+    {
+      "slug": "loadingbar",
+      "bpm": "bpm.loadingBar",
+      "key": "loadingBar",
+      "file": "components/bpm/LoadingBar.tsx",
+      "checks": {
+        "source": true,
+        "jsdoc": true,
+        "props_doc": true,
+        "relations": true,
+        "semantic": true,
+        "example": true,
+        "in_llms": true,
+        "in_catalog": true
+      },
+      "status": "done",
+      "gap": ""
+    },
+    {
+      "slug": "tooltip",
+      "bpm": "bpm.tooltip",
+      "key": "tooltip",
+      "file": "components/bpm/Tooltip.tsx",
+      "checks": {
+        "source": true,
+        "jsdoc": true,
+        "props_doc": true,
+        "relations": true,
+        "semantic": true,
+        "example": true,
+        "in_llms": true,
+        "in_catalog": true
+      },
+      "status": "done",
+      "gap": ""
+    },
+    {
+      "slug": "statusbox",
+      "bpm": "bpm.statusBox",
+      "key": "statusBox",
+      "file": "components/bpm/StatusBox.tsx",
+      "checks": {
+        "source": true,
+        "jsdoc": true,
+        "props_doc": true,
+        "relations": true,
+        "semantic": true,
+        "example": true,
+        "in_llms": true,
+        "in_catalog": true
+      },
+      "status": "done",
+      "gap": ""
+    },
+    {
+      "slug": "breadcrumb",
+      "bpm": "bpm.breadcrumb",
+      "key": "breadcrumb",
+      "file": "components/bpm/Breadcrumb.tsx",
+      "checks": {
+        "source": true,
+        "jsdoc": true,
+        "props_doc": true,
+        "relations": true,
+        "semantic": true,
+        "example": true,
+        "in_llms": true,
+        "in_catalog": true
+      },
+      "status": "done",
+      "gap": ""
+    },
+    {
+      "slug": "stepper",
+      "bpm": "bpm.stepper",
+      "key": "stepper",
+      "file": "components/bpm/Stepper.tsx",
+      "checks": {
+        "source": true,
+        "jsdoc": true,
+        "props_doc": true,
+        "relations": true,
+        "semantic": true,
+        "example": true,
+        "in_llms": true,
+        "in_catalog": true
+      },
+      "status": "done",
+      "gap": ""
+    },
+    {
+      "slug": "audio",
+      "bpm": "bpm.audio",
+      "key": "audio",
+      "file": "components/bpm/Audio.tsx",
+      "checks": {
+        "source": true,
+        "jsdoc": true,
+        "props_doc": true,
+        "relations": true,
+        "semantic": true,
+        "example": true,
+        "in_llms": true,
+        "in_catalog": true
+      },
+      "status": "done",
+      "gap": ""
+    },
+    {
+      "slug": "video",
+      "bpm": "bpm.video",
+      "key": "video",
+      "file": "components/bpm/Video.tsx",
+      "checks": {
+        "source": true,
+        "jsdoc": true,
+        "props_doc": true,
+        "relations": true,
+        "semantic": true,
+        "example": true,
+        "in_llms": true,
+        "in_catalog": true
+      },
+      "status": "done",
+      "gap": ""
+    },
+    {
+      "slug": "html",
+      "bpm": "bpm.html",
+      "key": "html",
+      "file": "components/bpm/Html.tsx",
+      "checks": {
+        "source": true,
+        "jsdoc": true,
+        "props_doc": true,
+        "relations": true,
+        "semantic": true,
+        "example": true,
+        "in_llms": true,
+        "in_catalog": true
+      },
+      "status": "done",
+      "gap": ""
+    },
+    {
+      "slug": "linechart",
+      "bpm": "bpm.lineChart",
+      "key": "lineChart",
+      "file": "components/bpm/LineChart.tsx",
+      "checks": {
+        "source": true,
+        "jsdoc": true,
+        "props_doc": true,
+        "relations": true,
+        "semantic": true,
+        "example": true,
+        "in_llms": true,
+        "in_catalog": true
+      },
+      "status": "done",
+      "gap": ""
+    },
+    {
+      "slug": "barchart",
+      "bpm": "bpm.barChart",
+      "key": "barChart",
+      "file": "components/bpm/BarChart.tsx",
+      "checks": {
+        "source": true,
+        "jsdoc": true,
+        "props_doc": true,
+        "relations": true,
+        "semantic": true,
+        "example": true,
+        "in_llms": true,
+        "in_catalog": true
+      },
+      "status": "done",
+      "gap": ""
+    },
+    {
+      "slug": "areachart",
+      "bpm": "bpm.areaChart",
+      "key": "areaChart",
+      "file": "components/bpm/AreaChart.tsx",
+      "checks": {
+        "source": true,
+        "jsdoc": true,
+        "props_doc": true,
+        "relations": true,
+        "semantic": true,
+        "example": true,
+        "in_llms": true,
+        "in_catalog": true
+      },
+      "status": "done",
+      "gap": ""
+    },
+    {
+      "slug": "scatterchart",
+      "bpm": "bpm.scatterChart",
+      "key": "scatterChart",
+      "file": "components/bpm/ScatterChart.tsx",
+      "checks": {
+        "source": true,
+        "jsdoc": true,
+        "props_doc": true,
+        "relations": true,
+        "semantic": true,
+        "example": true,
+        "in_llms": true,
+        "in_catalog": true
+      },
+      "status": "done",
+      "gap": ""
+    },
+    {
+      "slug": "modal",
+      "bpm": "bpm.modal",
+      "key": "modal",
+      "file": "components/bpm/Modal.tsx",
+      "checks": {
+        "source": true,
+        "jsdoc": true,
+        "props_doc": true,
+        "relations": true,
+        "semantic": true,
+        "example": true,
+        "in_llms": true,
+        "in_catalog": true
+      },
+      "status": "done",
+      "gap": ""
+    },
+    {
+      "slug": "codeblock",
+      "bpm": "bpm.codeBlock",
+      "key": "codeBlock",
+      "file": "components/bpm/CodeBlock.tsx",
+      "checks": {
+        "source": true,
+        "jsdoc": true,
+        "props_doc": true,
+        "relations": true,
+        "semantic": true,
+        "example": true,
+        "in_llms": true,
+        "in_catalog": true
+      },
+      "status": "done",
+      "gap": ""
+    },
+    {
+      "slug": "topnav",
+      "bpm": "bpm.topNav",
+      "key": "topNav",
+      "file": "components/bpm/TopNav.tsx",
+      "checks": {
+        "source": true,
+        "jsdoc": true,
+        "props_doc": true,
+        "relations": true,
+        "semantic": true,
+        "example": true,
+        "in_llms": true,
+        "in_catalog": true
+      },
+      "status": "done",
+      "gap": ""
+    },
+    {
+      "slug": "fab",
+      "bpm": "bpm.fab",
+      "key": "fab",
+      "file": "components/bpm/FAB.tsx",
+      "checks": {
+        "source": true,
+        "jsdoc": true,
+        "props_doc": true,
+        "relations": true,
+        "semantic": true,
+        "example": true,
+        "in_llms": true,
+        "in_catalog": true
+      },
+      "status": "done",
+      "gap": ""
+    },
+    {
+      "slug": "treeview",
+      "bpm": "bpm.treeview",
+      "key": "treeview",
+      "file": "components/bpm/Treeview.tsx",
+      "checks": {
+        "source": true,
+        "jsdoc": true,
+        "props_doc": true,
+        "relations": true,
+        "semantic": true,
+        "example": true,
+        "in_llms": true,
+        "in_catalog": true
+      },
+      "status": "done",
+      "gap": ""
+    },
+    {
+      "slug": "timeline",
+      "bpm": "bpm.timeline",
+      "key": "timeline",
+      "file": "components/bpm/Timeline.tsx",
+      "checks": {
+        "source": true,
+        "jsdoc": true,
+        "props_doc": true,
+        "relations": true,
+        "semantic": true,
+        "example": true,
+        "in_llms": true,
+        "in_catalog": true
+      },
+      "status": "done",
+      "gap": ""
+    },
+    {
+      "slug": "flowdiagram",
+      "bpm": "bpm.flowDiagram",
+      "key": "flowDiagram",
+      "file": "components/bpm/FlowDiagram.tsx",
+      "checks": {
+        "source": true,
+        "jsdoc": true,
+        "props_doc": true,
+        "relations": true,
+        "semantic": true,
+        "example": true,
+        "in_llms": true,
+        "in_catalog": true
+      },
+      "status": "done",
+      "gap": ""
+    },
+    {
+      "slug": "statustracker",
+      "bpm": "bpm.statusTracker",
+      "key": "statusTracker",
+      "file": "components/bpm/StatusTracker.tsx",
+      "checks": {
+        "source": true,
+        "jsdoc": true,
+        "props_doc": true,
+        "relations": true,
+        "semantic": true,
+        "example": true,
+        "in_llms": true,
+        "in_catalog": true
+      },
+      "status": "done",
+      "gap": ""
+    },
+    {
+      "slug": "activityfeed",
+      "bpm": "bpm.activityFeed",
+      "key": "activityFeed",
+      "file": "components/bpm/ActivityFeed.tsx",
+      "checks": {
+        "source": true,
+        "jsdoc": true,
+        "props_doc": true,
+        "relations": true,
+        "semantic": true,
+        "example": true,
+        "in_llms": true,
+        "in_catalog": true
+      },
+      "status": "done",
+      "gap": ""
+    },
+    {
+      "slug": "orgchart",
+      "bpm": "bpm.orgChart",
+      "key": "orgChart",
+      "file": "components/bpm/OrgChart.tsx",
+      "checks": {
+        "source": true,
+        "jsdoc": true,
+        "props_doc": true,
+        "relations": true,
+        "semantic": true,
+        "example": true,
+        "in_llms": true,
+        "in_catalog": true
+      },
+      "status": "done",
+      "gap": ""
+    },
+    {
+      "slug": "masterdetail",
+      "bpm": "bpm.masterDetail",
+      "key": "masterDetail",
+      "file": "components/bpm/MasterDetail.tsx",
+      "checks": {
+        "source": true,
+        "jsdoc": true,
+        "props_doc": true,
+        "relations": true,
+        "semantic": true,
+        "example": true,
+        "in_llms": true,
+        "in_catalog": true
+      },
+      "status": "done",
+      "gap": ""
+    },
+    {
+      "slug": "wizardform",
+      "bpm": "bpm.wizardForm",
+      "key": "wizardForm",
+      "file": "components/bpm/WizardForm.tsx",
+      "checks": {
+        "source": true,
+        "jsdoc": true,
+        "props_doc": true,
+        "relations": true,
+        "semantic": true,
+        "example": true,
+        "in_llms": true,
+        "in_catalog": true
+      },
+      "status": "done",
+      "gap": ""
+    },
+    {
+      "slug": "commandpalette",
+      "bpm": "bpm.commandPalette",
+      "key": "commandPalette",
+      "file": "components/bpm/CommandPalette.tsx",
+      "checks": {
+        "source": true,
+        "jsdoc": true,
+        "props_doc": true,
+        "relations": true,
+        "semantic": true,
+        "example": true,
+        "in_llms": true,
+        "in_catalog": true
+      },
+      "status": "done",
+      "gap": ""
+    },
+    {
+      "slug": "image",
+      "bpm": "bpm.image",
+      "key": "image",
+      "file": "components/bpm/Image.tsx",
+      "checks": {
+        "source": true,
+        "jsdoc": true,
+        "props_doc": true,
+        "relations": true,
+        "semantic": true,
+        "example": true,
+        "in_llms": true,
+        "in_catalog": true
+      },
+      "status": "done",
+      "gap": ""
+    },
+    {
+      "slug": "pdfviewer",
+      "bpm": "bpm.pdfViewer",
+      "key": "pdfViewer",
+      "file": "components/bpm/PdfViewer.tsx",
+      "checks": {
+        "source": true,
+        "jsdoc": true,
+        "props_doc": true,
+        "relations": true,
+        "semantic": true,
+        "example": true,
+        "in_llms": true,
+        "in_catalog": true
+      },
+      "status": "done",
+      "gap": ""
+    },
+    {
+      "slug": "autocomplete",
+      "bpm": "bpm.autocomplete",
+      "key": "autocomplete",
+      "file": "components/bpm/Autocomplete.tsx",
+      "checks": {
+        "source": true,
+        "jsdoc": true,
+        "props_doc": true,
+        "relations": true,
+        "semantic": true,
+        "example": true,
+        "in_llms": true,
+        "in_catalog": true
+      },
+      "status": "done",
+      "gap": ""
+    },
+    {
+      "slug": "plotlychart",
+      "bpm": "bpm.plotlyChart",
+      "key": "plotlyChart",
+      "file": "components/bpm/PlotlyChart.tsx",
+      "checks": {
+        "source": true,
+        "jsdoc": true,
+        "props_doc": true,
+        "relations": true,
+        "semantic": true,
+        "example": true,
+        "in_llms": true,
+        "in_catalog": true
+      },
+      "status": "done",
+      "gap": ""
+    },
+    {
+      "slug": "map",
+      "bpm": "bpm.map",
+      "key": "map",
+      "file": "components/bpm/Map.tsx",
+      "checks": {
+        "source": true,
+        "jsdoc": true,
+        "props_doc": true,
+        "relations": true,
+        "semantic": true,
+        "example": true,
+        "in_llms": true,
+        "in_catalog": true
+      },
+      "status": "done",
+      "gap": ""
+    },
+    {
+      "slug": "altairchart",
+      "bpm": "bpm.altairChart",
+      "key": "altairChart",
+      "file": "components/bpm/AltairChart.tsx",
+      "checks": {
+        "source": true,
+        "jsdoc": true,
+        "props_doc": true,
+        "relations": true,
+        "semantic": true,
+        "example": true,
+        "in_llms": true,
+        "in_catalog": true
+      },
+      "status": "done",
+      "gap": ""
+    },
+    {
+      "slug": "barcode",
+      "bpm": "bpm.barcode",
+      "key": "barcode",
+      "file": "components/bpm/Barcode.tsx",
+      "checks": {
+        "source": true,
+        "jsdoc": true,
+        "props_doc": true,
+        "relations": true,
+        "semantic": true,
+        "example": true,
+        "in_llms": true,
+        "in_catalog": true
+      },
+      "status": "done",
+      "gap": ""
+    },
+    {
+      "slug": "qrcode",
+      "bpm": "bpm.qrCode",
+      "key": "qrCode",
+      "file": "components/bpm/QRCode.tsx",
+      "checks": {
+        "source": true,
+        "jsdoc": true,
+        "props_doc": true,
+        "relations": true,
+        "semantic": true,
+        "example": true,
+        "in_llms": true,
+        "in_catalog": true
+      },
+      "status": "done",
+      "gap": ""
+    },
+    {
+      "slug": "nfcbadge",
+      "bpm": "bpm.nfcBadge",
+      "key": "nfcBadge",
+      "file": "components/bpm/NfcBadge.tsx",
+      "checks": {
+        "source": true,
+        "jsdoc": true,
+        "props_doc": true,
+        "relations": true,
+        "semantic": true,
+        "example": true,
+        "in_llms": true,
+        "in_catalog": true
+      },
+      "status": "done",
+      "gap": ""
+    },
+    {
+      "slug": "drawer",
+      "bpm": "bpm.drawer",
+      "key": "drawer",
+      "file": "components/bpm/Drawer.tsx",
+      "checks": {
+        "source": true,
+        "jsdoc": true,
+        "props_doc": true,
+        "relations": true,
+        "semantic": true,
+        "example": true,
+        "in_llms": true,
+        "in_catalog": true
+      },
+      "status": "done",
+      "gap": ""
+    },
+    {
+      "slug": "pagination",
+      "bpm": "bpm.pagination",
+      "key": "pagination",
+      "file": "components/bpm/Pagination.tsx",
+      "checks": {
+        "source": true,
+        "jsdoc": true,
+        "props_doc": true,
+        "relations": true,
+        "semantic": true,
+        "example": true,
+        "in_llms": true,
+        "in_catalog": true
+      },
+      "status": "done",
+      "gap": ""
+    },
+    {
+      "slug": "filterpanel",
+      "bpm": "bpm.filterPanel",
+      "key": "filterPanel",
+      "file": "components/bpm/FilterPanel.tsx",
+      "checks": {
+        "source": true,
+        "jsdoc": true,
+        "props_doc": true,
+        "relations": true,
+        "semantic": true,
+        "example": true,
+        "in_llms": true,
+        "in_catalog": true
+      },
+      "status": "done",
+      "gap": ""
+    },
+    {
+      "slug": "confirmmodal",
+      "bpm": "bpm.confirmModal",
+      "key": "confirmModal",
+      "file": "components/bpm/ConfirmModal.tsx",
+      "checks": {
+        "source": true,
+        "jsdoc": true,
+        "props_doc": true,
+        "relations": true,
+        "semantic": true,
+        "example": true,
+        "in_llms": true,
+        "in_catalog": true
+      },
+      "status": "done",
+      "gap": ""
+    },
+    {
+      "slug": "toast",
+      "bpm": "bpm.toast",
+      "key": "toast",
+      "file": "components/bpm/Toast.tsx",
+      "checks": {
+        "source": true,
+        "jsdoc": true,
+        "props_doc": true,
+        "relations": true,
+        "semantic": true,
+        "example": true,
+        "in_llms": true,
+        "in_catalog": true
+      },
+      "status": "done",
+      "gap": ""
+    },
+    {
+      "slug": "pagelayout",
+      "bpm": "bpm.pageLayout",
+      "key": "pageLayout",
+      "file": "components/bpm/PageLayout.tsx",
+      "checks": {
+        "source": true,
+        "jsdoc": true,
+        "props_doc": true,
+        "relations": true,
+        "semantic": true,
+        "example": true,
+        "in_llms": true,
+        "in_catalog": true
+      },
+      "status": "done",
+      "gap": ""
+    },
+    {
+      "slug": "scrollcontainer",
+      "bpm": "bpm.scrollContainer",
+      "key": "scrollContainer",
+      "file": "components/bpm/ScrollContainer.tsx",
+      "checks": {
+        "source": true,
+        "jsdoc": true,
+        "props_doc": true,
+        "relations": true,
+        "semantic": true,
+        "example": true,
+        "in_llms": true,
+        "in_catalog": true
+      },
+      "status": "done",
+      "gap": ""
+    },
+    {
+      "slug": "labelvalue",
+      "bpm": "bpm.labelValue",
+      "key": "labelValue",
+      "file": "components/bpm/LabelValue.tsx",
+      "checks": {
+        "source": true,
+        "jsdoc": true,
+        "props_doc": true,
+        "relations": true,
+        "semantic": true,
+        "example": true,
+        "in_llms": true,
+        "in_catalog": true
+      },
+      "status": "done",
+      "gap": ""
+    },
+    {
+      "slug": "spinnerdot",
+      "bpm": "bpm.spinnerDot",
+      "key": "spinnerDot",
+      "file": "components/bpm/SpinnerDot.tsx",
+      "checks": {
+        "source": true,
+        "jsdoc": true,
+        "props_doc": true,
+        "relations": true,
+        "semantic": true,
+        "example": true,
+        "in_llms": true,
+        "in_catalog": true
+      },
+      "status": "done",
+      "gap": ""
+    },
+    {
+      "slug": "titlebpm",
+      "bpm": "bpm.titleBpm",
+      "key": "titleBpm",
+      "file": "components/bpm/Title.tsx",
+      "checks": {
+        "source": true,
+        "jsdoc": true,
+        "props_doc": true,
+        "relations": true,
+        "semantic": true,
+        "example": true,
+        "in_llms": true,
+        "in_catalog": true
+      },
+      "status": "done",
+      "gap": ""
+    },
+    {
+      "slug": "markdown",
+      "bpm": "bpm.markdown",
+      "key": "markdown",
+      "file": "components/bpm/Markdown.tsx",
+      "checks": {
+        "source": true,
+        "jsdoc": true,
+        "props_doc": true,
+        "relations": true,
+        "semantic": true,
+        "example": true,
+        "in_llms": true,
+        "in_catalog": true
+      },
+      "status": "done",
+      "gap": ""
+    },
+    {
+      "slug": "codeeditor",
+      "bpm": "bpm.codeEditor",
+      "key": "codeEditor",
+      "file": "components/bpm/CodeEditor.tsx",
+      "checks": {
+        "source": true,
+        "jsdoc": true,
+        "props_doc": true,
+        "relations": true,
+        "semantic": true,
+        "example": true,
+        "in_llms": true,
+        "in_catalog": true
+      },
+      "status": "done",
+      "gap": ""
+    },
+    {
+      "slug": "crud",
+      "bpm": "bpm.crud",
+      "key": "crud",
+      "file": "components/bpm/CrudPage.tsx",
+      "checks": {
+        "source": true,
+        "jsdoc": true,
+        "props_doc": true,
+        "relations": true,
+        "semantic": true,
+        "example": true,
+        "in_llms": true,
+        "in_catalog": true
+      },
+      "status": "done",
+      "gap": ""
+    },
+    {
+      "slug": "gps",
+      "bpm": "bpm.gps",
+      "key": "gps",
+      "file": "components/bpm/Geofence.tsx",
+      "checks": {
+        "source": true,
+        "jsdoc": true,
+        "props_doc": true,
+        "relations": true,
+        "semantic": true,
+        "example": true,
+        "in_llms": true,
+        "in_catalog": true
+      },
+      "status": "done",
+      "gap": ""
+    },
+    {
+      "slug": "jsoneditor",
+      "bpm": "bpm.jsonEditor",
+      "key": "jsonEditor",
+      "file": "components/bpm/JsonEditor.tsx",
+      "checks": {
+        "source": true,
+        "jsdoc": true,
+        "props_doc": true,
+        "relations": true,
+        "semantic": true,
+        "example": true,
+        "in_llms": true,
+        "in_catalog": true
+      },
+      "status": "done",
+      "gap": ""
+    },
+    {
+      "slug": "notificationcenter",
+      "bpm": "bpm.notificationCenter",
+      "key": "notificationCenter",
+      "file": "components/bpm/NotificationCenter.tsx",
+      "checks": {
+        "source": true,
+        "jsdoc": true,
+        "props_doc": true,
+        "relations": true,
+        "semantic": true,
+        "example": true,
+        "in_llms": true,
+        "in_catalog": true
+      },
+      "status": "done",
+      "gap": ""
+    },
+    {
+      "slug": "filepreview",
+      "bpm": "bpm.filePreview",
+      "key": "filePreview",
+      "file": "components/bpm/FilePreview.tsx",
+      "checks": {
+        "source": true,
+        "jsdoc": true,
+        "props_doc": true,
+        "relations": true,
+        "semantic": true,
+        "example": true,
+        "in_llms": true,
+        "in_catalog": true
+      },
+      "status": "done",
+      "gap": ""
+    },
+    {
+      "slug": "dataexplorer",
+      "bpm": "bpm.dataExplorer",
+      "key": "dataExplorer",
+      "file": "components/bpm/DataExplorer.tsx",
+      "checks": {
+        "source": true,
+        "jsdoc": true,
+        "props_doc": true,
+        "relations": true,
+        "semantic": true,
+        "example": true,
+        "in_llms": true,
+        "in_catalog": true
+      },
+      "status": "done",
+      "gap": ""
+    },
+    {
+      "slug": "chatinterface",
+      "bpm": "bpm.chatInterface",
+      "key": "chatInterface",
+      "file": "components/bpm/ChatInterface.tsx",
+      "checks": {
+        "source": true,
+        "jsdoc": true,
+        "props_doc": true,
+        "relations": true,
+        "semantic": true,
+        "example": true,
+        "in_llms": true,
+        "in_catalog": true
+      },
+      "status": "done",
+      "gap": ""
+    },
+    {
+      "slug": "promptinput",
+      "bpm": "bpm.promptInput",
+      "key": "promptInput",
+      "file": "components/bpm/PromptInput.tsx",
+      "checks": {
+        "source": true,
+        "jsdoc": true,
+        "props_doc": true,
+        "relations": true,
+        "semantic": true,
+        "example": true,
+        "in_llms": true,
+        "in_catalog": true
+      },
+      "status": "done",
+      "gap": ""
+    },
+    {
+      "slug": "streamingtext",
+      "bpm": "bpm.streamingText",
+      "key": "streamingText",
+      "file": "components/bpm/StreamingText.tsx",
+      "checks": {
+        "source": true,
+        "jsdoc": true,
+        "props_doc": true,
+        "relations": true,
+        "semantic": true,
+        "example": true,
+        "in_llms": true,
+        "in_catalog": true
+      },
+      "status": "done",
+      "gap": ""
+    },
+    {
+      "slug": "diffviewer",
+      "bpm": "bpm.diffViewer",
+      "key": "diffViewer",
+      "file": "components/bpm/DiffViewer.tsx",
+      "checks": {
+        "source": true,
+        "jsdoc": true,
+        "props_doc": true,
+        "relations": true,
+        "semantic": true,
+        "example": true,
+        "in_llms": true,
+        "in_catalog": true
+      },
+      "status": "done",
+      "gap": ""
+    },
+    {
+      "slug": "modelselector",
+      "bpm": "bpm.modelSelector",
+      "key": "modelSelector",
+      "file": "components/bpm/ModelSelector.tsx",
+      "checks": {
+        "source": true,
+        "jsdoc": true,
+        "props_doc": true,
+        "relations": true,
+        "semantic": true,
+        "example": true,
+        "in_llms": true,
+        "in_catalog": true
+      },
+      "status": "done",
+      "gap": ""
+    }
+  ],
+  "modules": [
+    {
+      "slug": "asset-manager",
+      "type": "module",
+      "checks": {
+        "page": true,
+        "composes_bpm": true,
+        "doc": true,
+        "simulateur": false,
+        "no_mirror": true
+      },
+      "status": "done",
+      "gap": ""
+    },
+    {
+      "slug": "audit-log",
+      "type": "module",
+      "checks": {
+        "page": true,
+        "composes_bpm": true,
+        "doc": true,
+        "simulateur": true,
+        "no_mirror": true
+      },
+      "status": "done",
+      "gap": ""
+    },
+    {
+      "slug": "auth",
+      "type": "module",
+      "checks": {
+        "page": true,
+        "composes_bpm": true,
+        "doc": true,
+        "simulateur": true,
+        "no_mirror": true
+      },
+      "status": "done",
+      "gap": ""
+    },
+    {
+      "slug": "calendrier",
+      "type": "module",
+      "checks": {
+        "page": true,
+        "composes_bpm": true,
+        "doc": true,
+        "simulateur": true,
+        "no_mirror": true
+      },
+      "status": "done",
+      "gap": ""
+    },
+    {
+      "slug": "catalogue-produits",
+      "type": "module",
+      "checks": {
+        "page": true,
+        "composes_bpm": true,
+        "doc": true,
+        "simulateur": true,
+        "no_mirror": true
+      },
+      "status": "done",
+      "gap": ""
+    },
+    {
+      "slug": "commentaires",
+      "type": "module",
+      "checks": {
+        "page": true,
+        "composes_bpm": true,
+        "doc": true,
+        "simulateur": true,
+        "no_mirror": true
+      },
+      "status": "done",
+      "gap": ""
+    },
+    {
+      "slug": "connecteurs",
+      "type": "module",
+      "checks": {
+        "page": true,
+        "composes_bpm": true,
+        "doc": true,
+        "simulateur": true,
+        "no_mirror": true
+      },
+      "status": "done",
+      "gap": ""
+    },
+    {
+      "slug": "contracts",
+      "type": "module",
+      "checks": {
+        "page": true,
+        "composes_bpm": true,
+        "doc": true,
+        "simulateur": true,
+        "no_mirror": true
+      },
+      "status": "done",
+      "gap": ""
+    },
+    {
+      "slug": "devis-facturation",
+      "type": "module",
+      "checks": {
+        "page": true,
+        "composes_bpm": true,
+        "doc": true,
+        "simulateur": true,
+        "no_mirror": true
+      },
+      "status": "done",
+      "gap": ""
+    },
+    {
+      "slug": "documents",
+      "type": "module",
+      "checks": {
+        "page": true,
+        "composes_bpm": true,
+        "doc": true,
+        "simulateur": true,
+        "no_mirror": true
+      },
+      "status": "done",
+      "gap": ""
+    },
+    {
+      "slug": "export-planifie",
+      "type": "module",
+      "checks": {
+        "page": true,
+        "composes_bpm": true,
+        "doc": true,
+        "simulateur": true,
+        "no_mirror": true
+      },
+      "status": "done",
+      "gap": ""
+    },
+    {
+      "slug": "formulaire-dynamique",
+      "type": "module",
+      "checks": {
+        "page": true,
+        "composes_bpm": true,
+        "doc": true,
+        "simulateur": true,
+        "no_mirror": true
+      },
+      "status": "done",
+      "gap": ""
+    },
+    {
+      "slug": "ia",
+      "type": "module",
+      "checks": {
+        "page": true,
+        "composes_bpm": true,
+        "doc": true,
+        "simulateur": true,
+        "no_mirror": true
+      },
+      "status": "done",
+      "gap": ""
+    },
+    {
+      "slug": "keep-screen-on",
+      "type": "module",
+      "checks": {
+        "page": true,
+        "composes_bpm": true,
+        "doc": true,
+        "simulateur": false,
+        "no_mirror": true
+      },
+      "status": "done",
+      "gap": ""
+    },
+    {
+      "slug": "monitor",
+      "type": "module",
+      "checks": {
+        "page": true,
+        "composes_bpm": false,
+        "doc": true,
+        "simulateur": false,
+        "no_mirror": true
+      },
+      "status": "needs-dogfooding",
+      "gap": "ne compose aucun bpm.* (dogfooding manquant)"
+    },
+    {
+      "slug": "multi-langue",
+      "type": "module",
+      "checks": {
+        "page": true,
+        "composes_bpm": true,
+        "doc": true,
+        "simulateur": true,
+        "no_mirror": true
+      },
+      "status": "done",
+      "gap": ""
+    },
+    {
+      "slug": "newsletter",
+      "type": "module",
+      "checks": {
+        "page": true,
+        "composes_bpm": true,
+        "doc": true,
+        "simulateur": false,
+        "no_mirror": true
+      },
+      "status": "done",
+      "gap": ""
+    },
+    {
+      "slug": "notification",
+      "type": "module",
+      "checks": {
+        "page": true,
+        "composes_bpm": true,
+        "doc": true,
+        "simulateur": true,
+        "no_mirror": true
+      },
+      "status": "done",
+      "gap": ""
+    },
+    {
+      "slug": "notifications-ciblees",
+      "type": "module",
+      "checks": {
+        "page": true,
+        "composes_bpm": true,
+        "doc": true,
+        "simulateur": true,
+        "no_mirror": true
+      },
+      "status": "done",
+      "gap": ""
+    },
+    {
+      "slug": "rapports",
+      "type": "module",
+      "checks": {
+        "page": true,
+        "composes_bpm": true,
+        "doc": true,
+        "simulateur": true,
+        "no_mirror": true
+      },
+      "status": "done",
+      "gap": ""
+    },
+    {
+      "slug": "referentiels",
+      "type": "module",
+      "checks": {
+        "page": true,
+        "composes_bpm": true,
+        "doc": true,
+        "simulateur": true,
+        "no_mirror": true
+      },
+      "status": "done",
+      "gap": ""
+    },
+    {
+      "slug": "reservation-creneaux",
+      "type": "module",
+      "checks": {
+        "page": true,
+        "composes_bpm": true,
+        "doc": true,
+        "simulateur": true,
+        "no_mirror": true
+      },
+      "status": "done",
+      "gap": ""
+    },
+    {
+      "slug": "skeleton",
+      "type": "module",
+      "checks": {
+        "page": true,
+        "composes_bpm": true,
+        "doc": true,
+        "simulateur": true,
+        "no_mirror": true
+      },
+      "status": "done",
+      "gap": ""
+    },
+    {
+      "slug": "tableau-blanc",
+      "type": "module",
+      "checks": {
+        "page": true,
+        "composes_bpm": true,
+        "doc": true,
+        "simulateur": true,
+        "no_mirror": true
+      },
+      "status": "done",
+      "gap": ""
+    },
+    {
+      "slug": "tableaux-de-bord",
+      "type": "module",
+      "checks": {
+        "page": true,
+        "composes_bpm": true,
+        "doc": true,
+        "simulateur": true,
+        "no_mirror": true
+      },
+      "status": "done",
+      "gap": ""
+    },
+    {
+      "slug": "taches",
+      "type": "module",
+      "checks": {
+        "page": true,
+        "composes_bpm": true,
+        "doc": true,
+        "simulateur": true,
+        "no_mirror": true
+      },
+      "status": "done",
+      "gap": ""
+    },
+    {
+      "slug": "templates",
+      "type": "module",
+      "checks": {
+        "page": true,
+        "composes_bpm": true,
+        "doc": true,
+        "simulateur": true,
+        "no_mirror": true
+      },
+      "status": "done",
+      "gap": ""
+    },
+    {
+      "slug": "themes",
+      "type": "module",
+      "checks": {
+        "page": true,
+        "composes_bpm": true,
+        "doc": true,
+        "simulateur": true,
+        "no_mirror": true
+      },
+      "status": "done",
+      "gap": ""
+    },
+    {
+      "slug": "veille",
+      "type": "module",
+      "checks": {
+        "page": true,
+        "composes_bpm": true,
+        "doc": true,
+        "simulateur": true,
+        "no_mirror": true
+      },
+      "status": "done",
+      "gap": ""
+    },
+    {
+      "slug": "webhooks",
+      "type": "module",
+      "checks": {
+        "page": true,
+        "composes_bpm": true,
+        "doc": true,
+        "simulateur": true,
+        "no_mirror": true
+      },
+      "status": "done",
+      "gap": ""
+    },
+    {
+      "slug": "wiki",
+      "type": "module",
+      "checks": {
+        "page": true,
+        "composes_bpm": true,
+        "doc": true,
+        "simulateur": true,
+        "no_mirror": true
+      },
+      "status": "done",
+      "gap": ""
+    },
+    {
+      "slug": "workflow",
+      "type": "module",
+      "checks": {
+        "page": true,
+        "composes_bpm": true,
+        "doc": true,
+        "simulateur": true,
+        "no_mirror": true
+      },
+      "status": "done",
+      "gap": ""
+    }
+  ]
+}

@@ -32,6 +32,8 @@ export interface CodeEditorProps {
  * @param {string} [props.className=""] - Classes CSS additionnelles. Optionnel.
  *
  * @associated bpm.codeBlock, bpm.jsonEditor
+ * @parent bpm.card, bpm.modal, bpm.tabs
+ * @forbidden Affichage en lecture seule — utiliser bpm.codeBlock
  */
 export function CodeEditor({
   value,

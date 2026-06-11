@@ -14,6 +14,8 @@ import React from "react";
  * @param {string} [props.className=""] - Classes CSS additionnelles. Optionnel.
  *
  * @associated bpm.badge, bpm.qrCode, bpm.barcode
+ * @parent bpm.card, bpm.table
+ * @forbidden aucun
  */
 export interface NfcBadgeProps {
   label?: string;

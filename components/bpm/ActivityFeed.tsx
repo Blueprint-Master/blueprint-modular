@@ -36,6 +36,7 @@ export interface ActivityItem {
  * @usage Historique CRM, journal d'audit léger, timeline d'événements sur une fiche.
  * @context PARENT: bpm.panel | bpm.card | colonne dashboard. ASSOCIATED: bpm.timeline, bpm.statusTracker.
  * @note SSR : composant client (`use client`) ; les libellés relatifs utilisent `Date.now()` — prévoir hydratation côté client pour éviter un écart serveur/client sur l'horodatage affiché.
+ * @forbidden Chronologie datée structurée — utiliser bpm.timeline
  */
 export interface ActivityFeedProps {
   /** Liste des activités à afficher (ordre = ordre d'affichage). */

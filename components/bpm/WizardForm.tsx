@@ -27,6 +27,18 @@ export interface WizardFormProps {
 /**
  * @component bpm.wizardForm
  * @description Assistant multi-étapes avec stepper, validation et transition slide.
+ * @example
+ * bpm.wizardForm({ steps: [{ title: "Profil", content: <>…</> }], onComplete: handleDone })
+ * @props
+ * - steps (WizardStep[], obligatoire) — Étapes { title, content, validate? }.
+ * - onComplete (function, obligatoire) — Callback à la dernière étape validée.
+ * - onCancel (function, optionnel) — Callback d’annulation.
+ * - submitLabel (string, optionnel) — Libellé du bouton final. Default: "Terminer".
+ * - showSummary (boolean, optionnel) — Affiche un récapitulatif final.
+ * - className (string, optionnel) — Classes CSS additionnelles.
+ * @parent bpm.modal, bpm.page, bpm.card
+ * @associated bpm.stepper, bpm.input, bpm.button
+ * @forbidden Formulaire court d'un seul tenant — utiliser bpm.modal
  */
 export function WizardForm({
   steps,

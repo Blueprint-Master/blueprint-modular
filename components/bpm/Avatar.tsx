@@ -68,6 +68,7 @@ const overlayIconSizeMap: Record<AvatarSize, number> = {
  *
  * @parent bpm.sidebar, bpm.navbar
  * @associated bpm.userMenu, bpm.badge
+ * @forbidden aucun
  */
 export function Avatar({
   src: srcProp,

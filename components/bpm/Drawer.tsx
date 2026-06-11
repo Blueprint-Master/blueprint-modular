@@ -32,6 +32,8 @@ export interface DrawerProps {
  * @param {string} [props.className=""] - Classes CSS additionnelles. Optionnel.
  *
  * @associated bpm.modal, bpm.panel, bpm.sidebar
+ * @parent bpm.page, bpm.pageLayout
+ * @forbidden Confirmation courte — utiliser bpm.modal/confirmModal
  */
 export function Drawer({ children, open, onClose, title, side = "right", width = 360, className = "" }: DrawerProps) {
   useEffect(() => {

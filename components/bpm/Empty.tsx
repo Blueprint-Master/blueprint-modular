@@ -24,6 +24,8 @@ export interface EmptyProps {
  * @param {object} [props.style={}] - Styles inline. Optionnel.
  *
  * @associated bpm.column, bpm.grid
+ * @parent bpm.card, bpm.table, bpm.container
+ * @forbidden aucun
  */
 export function Empty({ children, className = "", style = {} }: EmptyProps) {
   return (

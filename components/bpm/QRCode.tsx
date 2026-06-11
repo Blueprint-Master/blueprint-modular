@@ -17,6 +17,8 @@ import { QRCodeSVG } from "qrcode.react";
  * @param {string} [props.className=""] - Classes CSS additionnelles. Optionnel.
  *
  * @associated bpm.barcode, bpm.nfcBadge
+ * @parent bpm.card, bpm.modal, bpm.filePreview
+ * @forbidden Code produit numérique court — utiliser bpm.barcode
  */
 export interface QRCodeProps {
   value: string;

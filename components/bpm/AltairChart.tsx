@@ -30,6 +30,8 @@ export interface AltairChartProps {
  * @param {string} [props.className=""] - Classes CSS additionnelles. Optionnel.
  *
  * @associated bpm.plotlyChart, bpm.lineChart, bpm.barChart
+ * @parent bpm.card, bpm.grid
+ * @forbidden Graphique simple — utiliser bpm.lineChart/barChart
  */
 export function AltairChart({
   spec,

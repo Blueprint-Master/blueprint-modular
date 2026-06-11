@@ -21,6 +21,7 @@ import React, { useState, useEffect } from "react";
  *
  * @parent bpm.modal, bpm.panel
  * @associated bpm.input, bpm.slider
+ * @forbidden Valeur non numérique — utiliser bpm.input
  */
 export interface NumberInputProps {
   label?: string;

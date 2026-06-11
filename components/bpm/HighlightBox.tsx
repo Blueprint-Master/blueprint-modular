@@ -18,6 +18,9 @@ import "./HighlightBox.css";
  * @param {string|string[]} [props.targetPoints] - Points Cible (chaîne ou liste). Optionnel.
  * @param {string} [props.barColor="#212121"] - Couleur de la barre latérale. Optionnel.
  * @param {string} [props.className=""] - Classes CSS additionnelles. Optionnel.
+ * @parent bpm.grid, bpm.column, bpm.container
+ * @associated bpm.metric, bpm.card
+ * @forbidden Donnée chiffrée temps réel — utiliser bpm.metric
  */
 export interface HighlightBoxProps {
   /** Numéro affiché dans la barre gauche (ex. 1) */

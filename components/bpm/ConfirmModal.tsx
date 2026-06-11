@@ -47,6 +47,8 @@ const VARIANT_STYLES: Record<
  * @param {boolean} [props.isLoading=false] - État de chargement. Optionnel.
  *
  * @associated bpm.modal, bpm.button
+ * @parent bpm.page, bpm.card
+ * @forbidden Information non bloquante — utiliser bpm.toast
  */
 export function ConfirmModal({
   isOpen,

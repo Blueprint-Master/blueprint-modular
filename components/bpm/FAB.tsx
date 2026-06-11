@@ -35,6 +35,8 @@ const positionClasses: Record<NonNullable<FABProps["position"]>, string> = {
  * @param {string} [props.className=""] - Classes CSS additionnelles. Optionnel.
  *
  * @associated bpm.button, bpm.iconButton
+ * @parent bpm.page, bpm.pageLayout
+ * @forbidden Plus d'une action principale — utiliser bpm.button dans une barre
  */
 export function FAB({ icon, label, onClick, position = "bottom-right", className = "" }: FABProps) {
   return (

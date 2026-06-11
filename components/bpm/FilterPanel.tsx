@@ -64,6 +64,8 @@ function getActiveCount(filters: FilterConfig[], values: Record<string, unknown>
  * @param {boolean} [props.collapsible=false] - Panneau repliable avec badge. Optionnel.
  *
  * @associated bpm.table, bpm.dataExplorer, bpm.chip
+ * @parent bpm.drawer, bpm.card, bpm.dataExplorer
+ * @forbidden aucun
  */
 export function FilterPanel({
   filters,

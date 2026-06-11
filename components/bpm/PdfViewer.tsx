@@ -16,6 +16,8 @@ import React from "react";
  * @param {string} [props.className=""] - Classes CSS additionnelles. Optionnel.
  *
  * @associated bpm.filePreview, bpm.fileUploader
+ * @parent bpm.card, bpm.modal, bpm.drawer
+ * @forbidden Image simple — utiliser bpm.image
  */
 export interface PdfViewerProps {
   src: string;

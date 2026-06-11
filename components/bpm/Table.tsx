@@ -30,6 +30,18 @@ import { interpret, judgmentColor, type InterpretContext } from "./interpret";
  * @param {boolean} [props.trackContext=false] - Expose au contexte IA. Optionnel.
  * @param {string} [props.emptyMessage="Aucune donnée disponible"] - Message si vide. Optionnel.
  *
+ * @props
+ * - columns (TableColumn[], obligatoire) — Colonnes (key, label, align?, render?, decimals?).
+ * - data (Record<string,unknown>[], obligatoire) — Lignes ; jamais de JSX dans data[] (utiliser render).
+ * - striped / hover (boolean, optionnel) — Lignes alternées / surbrillance au survol.
+ * - onRowClick (function, optionnel) — Callback (row) au clic sur une ligne.
+ * - defaultSortColumn / defaultSortDirection (optionnel) — Tri initial.
+ * - name / keyColumn (string, optionnel) — Identifiant IA du tableau / colonne-clé React.
+ * - valueLocale / valueDecimals / valueGrouping (optionnel) — Formatage numérique des cellules.
+ * - minWidth (number, optionnel) — Largeur minimale en px (déclenche le scroll horizontal).
+ * - trackContext (boolean, optionnel) — Expose le tableau au contexte IA.
+ * - emptyMessage (string, optionnel) — Message affiché quand data est vide.
+ * - className (string, optionnel) — Classes CSS additionnelles.
  * @parent bpm.panel, bpm.container
  * @associated bpm.pagination, bpm.input, bpm.badge, bpm.button
  * @forbidden bpm.card (overflow caché)
