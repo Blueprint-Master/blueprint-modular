@@ -47,4 +47,7 @@ doc-app/
 # Copie accidentelle du repo dans lui-même
 blueprint-modular/
 
+# Captures de revue visuelle (générées par scripts/shoot-components.mjs, non committées)
+review/
+
 .vercel
