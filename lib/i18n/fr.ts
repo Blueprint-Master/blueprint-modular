@@ -94,6 +94,122 @@ const fr = {
       ],
       cta: "Suivre le guide de démarrage",
     },
+    showcase: {
+      liveTitle: "Le rendu réel, pas des captures.",
+      liveBody:
+        "Chaque tuile ci-dessous est un composant du package, monté en direct sur cette page. Survolez, lisez, comparez : c'est exactement ce que votre application affichera.",
+      families: {
+        dataDisplay: "Affichage de données",
+        layout: "Mise en page",
+        interaction: "Interaction",
+        feedback: "Feedback",
+        navigation: "Navigation",
+        media: "Média",
+        charts: "Graphiques",
+        utilities: "Utilitaires",
+        identity: "Identification & traçabilité",
+        ai: "IA & spécialisés",
+      },
+      tiles: {
+        metric: "Métrique",
+        status: "Suivi de statut",
+        gauge: "Jauge à seuils",
+        progress: "Progression",
+        approval: "Flux d'approbation",
+        activity: "Flux d'activité",
+        anomaly: "Détection d'anomalie",
+      },
+      progressLabel: "Objectif trimestriel",
+      badgeReview: "À revoir",
+      approver1: "Marie Dupont",
+      role1: "Responsable",
+      approver2: "Jean Martin",
+      role2: "Direction",
+      activityAction: "a validé",
+      activityTarget: "le devis DV-001",
+      anomalyTitle: "Écart de stock détecté",
+      anomalyExpected: "100 unités",
+      anomalyActual: "85 unités",
+    },
+    modules: {
+      title: "{count} modules métier prêts à brancher.",
+      body:
+        "Au-delà des composants, Blueprint Modular livre des modules complets — assemblés, documentés et testables en ligne. Chacun dispose d'une page avec documentation et simulateur.",
+      cta: "Explorer les modules",
+      categories: {
+        auth: "Authentification",
+        content: "Contenu & productivité",
+        data: "Données & reporting",
+        process: "Processus & workflow",
+        integrations: "Intégrations & technique",
+        business: "Métier",
+      },
+      descriptions: {
+        auth: "Connexion Google et e-mail, sessions, whitelist utilisateurs.",
+        content: "Calendrier, wiki, templates, newsletter, tableau blanc, monitor…",
+        data: "Tableaux de bord, rapports, référentiels, analyse de documents, exports.",
+        process: "Tâches, workflow, notifications, audit log, validations.",
+        integrations: "Connecteurs, webhooks, multi-langue, thèmes, assistant IA.",
+        business: "Catalogue produits, devis & facturation, formulaires, réservations.",
+      },
+    },
+    whyBpm: {
+      title: "Pourquoi Blueprint Modular ?",
+      points: [
+        {
+          title: "Une seule source de vérité",
+          body:
+            "Le site, le catalogue et llms.txt sont générés depuis le code TypeScript. Aucune divergence possible entre la doc et le composant.",
+        },
+        {
+          title: "Accessibilité et thèmes inclus",
+          body:
+            "Contrastes, focus visibles, rôles ARIA, clair et sombre : tout est intégré aux composants, pas ajouté après coup.",
+        },
+        {
+          title: "Aucun build front à maintenir",
+          body:
+            "Le package Python embarque le React déjà compilé. Pas de Node, pas de bundler, pas de fichier de configuration à entretenir.",
+        },
+        {
+          title: "Pensé pour les agents",
+          body:
+            "Toute la surface d'API est lisible par un LLM. Votre agent construit, complète et corrige l'interface sans deviner.",
+        },
+      ],
+    },
+    faq: {
+      title: "Questions fréquentes",
+      items: [
+        {
+          q: "Faut-il connaître React ?",
+          a: "Non. Vous écrivez du Python ; les composants React sont déjà compilés dans le package et s'appellent comme des fonctions.",
+        },
+        {
+          q: "Peut-on personnaliser le thème ?",
+          a: "Oui. Couleurs, logo et mode clair/sombre passent par les tokens de design ; le module Thèmes permet un rendu par instance ou par client.",
+        },
+        {
+          q: "Comment mon agent utilise-t-il la bibliothèque ?",
+          a: "Donnez-lui llms.txt : il y trouve chaque composant avec ses props, types, valeurs par défaut et exemples, dans un format pensé pour son contexte.",
+        },
+        {
+          q: "Quelle base de données faut-il ?",
+          a: "Chaque module documente ses tables Prisma et ses variables d'environnement. Voir docs/DATABASE.md dans le dépôt pour les prérequis de production.",
+        },
+        {
+          q: "Est-ce prêt pour la production ?",
+          a: "Oui. Les modules métier sont assemblés et documentés, avec authentification, audit et déploiement décrits — ce site tourne sur ses propres composants.",
+        },
+      ],
+    },
+    cta: {
+      title: "Prêt à écrire votre première interface ?",
+      body:
+        "Installez le package, lancez bpm run, et servez une application métier complète — sans toucher au HTML.",
+      primary: "Commencer",
+      secondary: "Voir les composants",
+    },
   },
   homeDemo: {
     revenue: "CA mensuel",

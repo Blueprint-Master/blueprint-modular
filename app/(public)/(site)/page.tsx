@@ -9,9 +9,17 @@ export async function generateMetadata(): Promise<Metadata> {
     description: dict.home.metaDescription,
     alternates: { canonical: "https://blueprint-modular.com/" },
     openGraph: {
+      type: "website",
+      siteName: dict.common.brand,
+      url: "https://blueprint-modular.com/",
       title: dict.home.metaTitle,
       description: dict.home.metaDescription,
       locale: locale === "en" ? "en_US" : "fr_FR",
+    },
+    twitter: {
+      card: "summary_large_image",
+      title: dict.home.metaTitle,
+      description: dict.home.metaDescription,
     },
   };
 }
