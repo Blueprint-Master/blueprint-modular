@@ -108,6 +108,20 @@ const en: Dictionary = {
   gallery: {
     title: "Component gallery",
     caption: "{count} bpm.* components, live",
+    ariaSections: "Gallery sections",
+    sections: {
+      typography: "Typography",
+      button: "Button",
+      feedback: "Feedback & status",
+      forms: "Inputs",
+      layout: "Layout & containers",
+      data: "Data & visualization",
+      navigation: "Navigation",
+      overlays: "Overlays & interactions",
+      media: "Media & utilities",
+      business: "Business systems",
+      specialized: "Specialized",
+    },
   },
   docsHub: {
     title: "Documentation",

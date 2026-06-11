@@ -108,6 +108,20 @@ const fr = {
   gallery: {
     title: "Galerie de composants",
     caption: "{count} composants bpm.* en rendu réel",
+    ariaSections: "Sections de la galerie",
+    sections: {
+      typography: "Typographie",
+      button: "Button",
+      feedback: "Feedback & statuts",
+      forms: "Saisie",
+      layout: "Mise en page & conteneurs",
+      data: "Données & visualisation",
+      navigation: "Navigation",
+      overlays: "Overlays & interactions",
+      media: "Médias & utilitaires",
+      business: "Systèmes métier",
+      specialized: "Spécialisés",
+    },
   },
   docsHub: {
     title: "Documentation",
