@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useMemo } from "react";
+import { type InterpretContext } from "./interpret";
 
 /**
  * @component bpm.radarChart
@@ -25,6 +26,8 @@ export interface RadarChartProps {
   width?: number;
   height?: number;
   className?: string;
+  /** Contexte de repère { reference, direction } : un anneau de repère pointillé est tracé au niveau de reference (même échelle que les axes). Pas de verdict agrégé : un polygone sur N axes hétérogènes n'a pas de couleur de jugement unique — la lecture se fait par axe vs l'anneau. Additif : sans context, rendu inchangé. */
+  context?: InterpretContext;
 }
 
 export function RadarChart({
@@ -34,6 +37,7 @@ export function RadarChart({
   width = 320,
   height = 320,
   className = "",
+  context,
 }: RadarChartProps) {
   const cx = width / 2;
   const cy = height / 2;
@@ -58,6 +62,15 @@ export function RadarChart({
   const poly = pts.map((p) => `${p.x},${p.y}`).join(" ");
 
   const rings = 4;
+
+  // Anneau de repère par axe (géométrique) — pas de verdict agrégé sur le polygone.
+  const refT = context ? Math.min(1, Math.max(0, context.reference / max)) : 0;
+  const refRingPts = context
+    ? Array.from({ length: n }, (_, i) => {
+        const a = (i / n) * Math.PI * 2 - Math.PI / 2;
+        return `${cx + R * refT * Math.cos(a)},${cy + R * refT * Math.sin(a)}`;
+      }).join(" ")
+    : null;
 
   return (
     <svg
@@ -100,6 +113,16 @@ export function RadarChart({
           />
         );
       })}
+      {refRingPts && (
+        <polygon
+          points={refRingPts}
+          fill="none"
+          stroke="var(--bpm-text-secondary)"
+          strokeWidth={1}
+          strokeDasharray="4 4"
+          opacity={0.7}
+        />
+      )}
       <polygon
         points={poly}
         fill="var(--bpm-accent-soft)"

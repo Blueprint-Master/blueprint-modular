@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useCallback, useMemo, useState } from "react";
+import { interpret, judgmentColor, type InterpretContext } from "./interpret";
 
 /**
  * @component bpm.heatmap
@@ -18,6 +19,7 @@ import React, { useCallback, useMemo, useState } from "react";
  * @param {boolean} [props.showValues=false] - Affiche les valeurs dans les cellules. Optionnel.
  * @param {function} [props.onCellClick] - Callback au clic sur une cellule (row, col, value). Optionnel.
  * @param {string} [props.className=""] - Classes CSS additionnelles. Optionnel.
+ * @param {InterpretContext} [props.context] - Contexte de jugement : chaque cellule est jugée vs le repère (liseré coloré sur les écarts, anomalies >2σ — comparisonFrame ou matrice — soulignées, infobulle enrichie du verdict). Optionnel.
  */
 export interface HeatmapProps {
   data: number[][];
@@ -29,6 +31,8 @@ export interface HeatmapProps {
   showValues?: boolean;
   onCellClick?: (row: number, col: number, value: number) => void;
   className?: string;
+  /** Contexte de jugement { reference, direction, comparisonFrame? } : chaque cellule est jugée par interpret — liseré coloré par verdict (hors zone neutre), data-judgment par cellule, infobulle enrichie. Anomalie >2σ évaluée contre comparisonFrame ou, à défaut, la matrice entière. Additif : sans context, rendu inchangé. */
+  context?: InterpretContext;
 }
 
 function clamp01(t: number): number {
@@ -50,7 +54,16 @@ export function Heatmap({
   showValues = false,
   onCellClick,
   className = "",
+  context,
 }: HeatmapProps) {
+  const judgeCell = useCallback(
+    (v: number) => {
+      if (!context || !Number.isFinite(v)) return null;
+      const frame = context.comparisonFrame ?? data.flat().filter((x) => Number.isFinite(x));
+      return interpret(v, { ...context, comparisonFrame: frame });
+    },
+    [context, data]
+  );
   const { minV, maxV } = useMemo(() => {
     const flat = data.flat();
     const lo = vminIn ?? (flat.length ? Math.min(...flat) : 0);
@@ -112,9 +125,13 @@ export function Heatmap({
                   const v = row[j];
                   const num = v ?? NaN;
                   const bg = Number.isFinite(num) ? cellColor(num) : "var(--bpm-bg-secondary)";
+                  const judgment = judgeCell(num);
+                  const judged = judgment && judgment.level.status !== "neutral";
                   return (
                     <td key={j}>
                       <button
+                        data-judgment={judgment ? judgment.level.status : undefined}
+                        data-abnormal={judgment?.anomaly?.status === "abnormal" ? "true" : undefined}
                         type="button"
                         disabled={!Number.isFinite(num) || !onCellClick}
                         onClick={() => Number.isFinite(num) && onCellClick?.(i, j, num)}
@@ -124,16 +141,25 @@ export function Heatmap({
                           setTip({
                             x: r.left + r.width / 2,
                             y: r.top,
-                            text: `${xLabels[j] ?? j} × ${yLabels[i] ?? i}: ${num}`,
+                            text:
+                              `${xLabels[j] ?? j} × ${yLabels[i] ?? i}: ${num}` +
+                              (judgment
+                                ? ` — ${judgment.level.status}${judgment.anomaly?.status === "abnormal" ? " · anomalie" : ""}`
+                                : ""),
                           });
                         }}
                         onMouseLeave={() => setTip(null)}
                         style={{
                           width: 44,
                           height: 32,
-                          border: "1px solid var(--bpm-border)",
+                          border: judged
+                            ? `2px solid ${judgmentColor(judgment)}`
+                            : "1px solid var(--bpm-border)",
                           borderRadius: "var(--bpm-radius-sm)",
                           background: bg,
+                          ...(judgment?.anomaly?.status === "abnormal"
+                            ? { boxShadow: `0 0 0 2px ${judgmentColor(judgment)} inset` }
+                            : {}),
                           color: "var(--bpm-text-primary)",
                           cursor: onCellClick && Number.isFinite(num) ? "pointer" : "default",
                           fontSize: 10,

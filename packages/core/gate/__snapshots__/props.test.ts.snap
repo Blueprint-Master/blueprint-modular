@@ -53,6 +53,8 @@ exports[`bpm prop surface snapshot > prop names match committed snapshot (additi
     "severity",
     "className",
     "onDismiss",
+    "history",
+    "context",
   ],
   "approvalFlow": [
     "steps",
@@ -68,6 +70,7 @@ exports[`bpm prop surface snapshot > prop names match committed snapshot (additi
     "height",
     "color",
     "className",
+    "context",
   ],
   "assistantPanel": [
     "demoAnswers",
@@ -115,6 +118,7 @@ exports[`bpm prop surface snapshot > prop names match committed snapshot (additi
     "height",
     "color",
     "className",
+    "context",
   ],
   "barcode": [
     "value",
@@ -252,6 +256,7 @@ exports[`bpm prop surface snapshot > prop names match committed snapshot (additi
     "labels",
     "highlightBest",
     "className",
+    "contexts",
   ],
   "confirmModal": [
     "isOpen",
@@ -455,6 +460,7 @@ exports[`bpm prop surface snapshot > prop names match committed snapshot (additi
     "showValues",
     "onCellClick",
     "className",
+    "context",
   ],
   "highlightBox": [
     "value",
@@ -530,6 +536,8 @@ exports[`bpm prop surface snapshot > prop names match committed snapshot (additi
     "valueStyle",
     "copyable",
     "className",
+    "trajectory",
+    "context",
   ],
   "lineChart": [
     "data",
@@ -537,6 +545,7 @@ exports[`bpm prop surface snapshot > prop names match committed snapshot (additi
     "height",
     "color",
     "className",
+    "context",
   ],
   "liveChart": [
     "data",
@@ -546,6 +555,7 @@ exports[`bpm prop surface snapshot > prop names match committed snapshot (additi
     "width",
     "height",
     "className",
+    "context",
   ],
   "liveGauge": [
     "value",
@@ -556,6 +566,7 @@ exports[`bpm prop surface snapshot > prop names match committed snapshot (additi
     "size",
     "label",
     "className",
+    "context",
   ],
   "loadingBar": [
     "variant",
@@ -569,6 +580,8 @@ exports[`bpm prop surface snapshot > prop names match committed snapshot (additi
     "state",
     "detail",
     "className",
+    "value",
+    "context",
   ],
   "map": [
     "iframeSrc",
@@ -620,6 +633,7 @@ exports[`bpm prop surface snapshot > prop names match committed snapshot (additi
     "accentColor",
     "compact",
     "trackContext",
+    "context",
   ],
   "metricRow": [
     "children",
@@ -748,6 +762,7 @@ exports[`bpm prop surface snapshot > prop names match committed snapshot (additi
     "width",
     "height",
     "className",
+    "context",
   ],
   "printLayout": [
     "children",
@@ -763,6 +778,7 @@ exports[`bpm prop surface snapshot > prop names match committed snapshot (additi
     "label",
     "showValue",
     "className",
+    "context",
   ],
   "progressRing": [
     "value",
@@ -770,6 +786,7 @@ exports[`bpm prop surface snapshot > prop names match committed snapshot (additi
     "size",
     "strokeWidth",
     "className",
+    "context",
   ],
   "promptInput": [
     "value",
@@ -798,6 +815,7 @@ exports[`bpm prop surface snapshot > prop names match committed snapshot (additi
     "width",
     "height",
     "className",
+    "context",
   ],
   "radioGroup": [
     "name",
@@ -815,6 +833,8 @@ exports[`bpm prop surface snapshot > prop names match committed snapshot (additi
     "onChange",
     "disabled",
     "size",
+    "history",
+    "context",
   ],
   "relationGraph": [
     "nodes",
@@ -858,6 +878,7 @@ exports[`bpm prop surface snapshot > prop names match committed snapshot (additi
     "color",
     "radius",
     "className",
+    "context",
   ],
   "scheduler": [
     "view",
@@ -925,6 +946,8 @@ exports[`bpm prop surface snapshot > prop names match committed snapshot (additi
     "height",
     "trend",
     "className",
+    "points",
+    "context",
   ],
   "spinner": [
     "text",
@@ -963,6 +986,8 @@ exports[`bpm prop surface snapshot > prop names match committed snapshot (additi
     "defaultExpanded",
     "compact",
     "className",
+    "value",
+    "context",
   ],
   "statusTracker": [
     "stages",
@@ -1011,6 +1036,9 @@ exports[`bpm prop surface snapshot > prop names match committed snapshot (additi
     "minWidth",
     "trackContext",
     "emptyMessage",
+    "loading",
+    "error",
+    "density",
   ],
   "tabs": [
     "tabs",
@@ -1165,6 +1193,7 @@ exports[`bpm prop surface snapshot > prop names match committed snapshot (additi
     "width",
     "height",
     "className",
+    "context",
   ],
   "treeview": [
     "nodes",
@@ -1186,6 +1215,7 @@ exports[`bpm prop surface snapshot > prop names match committed snapshot (additi
     "width",
     "height",
     "className",
+    "context",
   ],
   "wizardForm": [
     "steps",

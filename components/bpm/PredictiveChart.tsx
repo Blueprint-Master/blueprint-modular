@@ -1,6 +1,12 @@
 "use client";
 
 import React, { useMemo } from "react";
+import {
+  interpret,
+  judgmentColor,
+  judgmentLabel,
+  type InterpretContext,
+} from "./interpret";
 
 /**
  * @component bpm.predictiveChart
@@ -17,6 +23,7 @@ import React, { useMemo } from "react";
  * @param {number} [props.width=520] - Largeur du SVG. Optionnel.
  * @param {number} [props.height=220] - Hauteur du SVG. Optionnel.
  * @param {string} [props.className=""] - Classes CSS additionnelles. Optionnel.
+ * @param {InterpretContext} [props.context] - Contexte de jugement : la trajectoire PRÉDITE est jugée par interpret (couleur de la prévision, repère pointillé, verdict). Optionnel.
  *
  * @associated bpm.lineChart, bpm.liveChart, bpm.metric
  */
@@ -29,6 +36,8 @@ export interface PredictiveChartProps {
   width?: number;
   height?: number;
   className?: string;
+  /** Contexte de jugement { reference, direction } : la trajectoire prédite est jugée par interpret — la prévision (pointillés) prend la couleur du verdict, le repère est tracé, l'aria-label décrit le jugement. Additif : sans context, rendu inchangé. */
+  context?: InterpretContext;
 }
 
 function pathLine(pts: { x: number; y: number }[], sx: (x: number) => number, sy: (y: number) => number) {
@@ -47,15 +56,25 @@ export function PredictiveChart({
   width = 520,
   height = 220,
   className = "",
+  context,
 }: PredictiveChartProps) {
   const pad = { l: 36, r: 16, t: 12, b: 28 };
   const innerW = width - pad.l - pad.r;
   const innerH = height - pad.t - pad.b;
 
+  const judgment = useMemo(() => {
+    if (!context || predicted.length === 0) return null;
+    return interpret(
+      predicted.map((p) => ({ t: p.x, v: p.y })),
+      context
+    );
+  }, [predicted, context]);
+
   const { sx, sy } = useMemo(() => {
     const all = [...historical, ...predicted, ...(confidenceUpper ?? []), ...(confidenceLower ?? [])];
     const xs = all.map((p) => p.x);
     const ys = all.map((p) => p.y);
+    if (judgment && context) ys.push(context.reference);
     const minX = Math.min(...xs, 0);
     const maxX = Math.max(...xs, 1);
     const minY = Math.min(...ys, 0);
@@ -65,7 +84,7 @@ export function PredictiveChart({
     const sx = (x: number) => pad.l + ((x - minX) / dx) * innerW;
     const sy = (y: number) => pad.t + innerH - ((y - minY) / dy) * innerH;
     return { sx, sy };
-  }, [historical, predicted, confidenceUpper, confidenceLower, innerW, innerH, pad.l, pad.t]);
+  }, [historical, predicted, confidenceUpper, confidenceLower, innerW, innerH, pad.l, pad.t, judgment, context]);
 
   const histPath = pathLine(historical, sx, sy);
   const predPath = pathLine(predicted, sx, sy);
@@ -91,7 +110,8 @@ export function PredictiveChart({
       className={className}
       style={{ background: "var(--bpm-bg-secondary)", borderRadius: "var(--bpm-radius)" }}
       role="img"
-      aria-label="Prévision"
+      aria-label={judgment ? `Prévision — ${judgmentLabel(judgment)}` : "Prévision"}
+      data-judgment={judgment ? judgment.level.status : undefined}
     >
       <rect
         x={pad.l}
@@ -112,11 +132,23 @@ export function PredictiveChart({
           strokeWidth={2.5}
         />
       ) : null}
+      {judgment && context ? (
+        <line
+          x1={pad.l}
+          y1={sy(context.reference)}
+          x2={pad.l + innerW}
+          y2={sy(context.reference)}
+          stroke="var(--bpm-text-secondary)"
+          strokeWidth={1}
+          strokeDasharray="4 4"
+          opacity={0.6}
+        />
+      ) : null}
       {predPath ? (
         <path
           d={predPath}
           fill="none"
-          stroke="var(--bpm-accent)"
+          stroke={judgment ? judgmentColor(judgment) : "var(--bpm-accent)"}
           strokeWidth={2}
           strokeDasharray="6 4"
           opacity={0.95}

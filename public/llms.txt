@@ -1,6 +1,6 @@
 # Blueprint Modular — Agent Context File
 # Version : 0.1.60
-# Date    : 2026-06-10
+# Date    : 2026-06-11
 # URL canonique : https://blueprint-modular.com/llms.txt
 #
 # Ce fichier est la référence machine de @blueprint-modular/core.
@@ -87,9 +87,11 @@ Composant bpm.aiQueryBar — voir @blueprint-modular/core ou BPM_API.md.
   title?: string
   expected*: string | number
   actual*: string | number
-  severity?: AnomalySeverity
+  severity?: AnomalySeverity  — Niveau de gravité. Si omis et context fourni, dérivé automatiquement de interpret().severity.
   className?: string
   onDismiss?: () => void
+  history?: TrajectoryPoint[]  — Historique v(t) [{t, v}] de la mesure — révèle la tendance dans le verdict si context est fourni.
+  context?: InterpretContext  — Contexte de jugement { reference, direction, comparisonFrame? } : gravité auto-dérivée de la sévérité combinée (≥0.5 critical, >0.15 warning, sinon info) et verdict écart/tendance révélé. Additif : sans context, rendu inchangé.
 ```
 
 ## bpm.approvalFlow
@@ -109,6 +111,7 @@ Composant bpm.aiQueryBar — voir @blueprint-modular/core ou BPM_API.md.
   height?: number
   color?: string
   className?: string
+  context?: InterpretContext  — Contexte de jugement { reference, direction, comparisonFrame? } : la série (trajectoire v(t), t = x) est jugée par interpret — repère pointillé, couleur d'aire selon le verdict, aria-label. Additif : sans context, rendu inchangé.
 ```
 
 ## bpm.assistantPanel
@@ -168,6 +171,7 @@ Composant bpm.aiQueryBar — voir @blueprint-modular/core ou BPM_API.md.
   height?: number
   color?: string
   className?: string
+  context?: InterpretContext  — Contexte de jugement { reference, direction } : chaque barre est jugée individuellement (couleur par écart au repère), le repère est tracé en pointillé et la série entière reçoit un verdict global (aria-label, data-judgment). Additif : sans context, rendu inchangé.
 ```
 
 ## bpm.barcode
@@ -342,6 +346,7 @@ Chat Ollama local (démo).
   labels?: Record<string, string>
   highlightBest?: boolean
   className?: string
+  contexts?: Record<string, InterpretContext>  — Contextes de jugement PAR DIMENSION { dim: { reference, direction } } : chaque cellule de la dimension est jugée par interpret — valeur colorée par le verdict, écart au repère en title, data-judgment par cellule. Additif : sans contexts, rendu inchangé.
 ```
 
 ## bpm.confirmModal
@@ -594,7 +599,7 @@ Composant bpm.groupedList — interface non parsée (voir BPM_API.md).
 ```
 
 ## bpm.heatmap
-@component bpm.heatmap @description Grille de valeurs numériques avec dégradé de couleur, infobulle au survol et clic optionnel sur cellule. @example bpm.heatmap({ data: [[1,2],[3,4]], xLabels: ["A","B"], yLabels: ["X","Y"], colorScale: { min: "#fff", max: "#f00" } }) @param {object} props @param {number[][]} props.data - Matrice 2D de valeurs numériques. Obligatoire. @param {string[]} props.xLabels - Libellés des colonnes. Obligatoire. @param {string[]} props.yLabels - Libellés des lignes. Obligatoire. @param {{ min: string; max: string }} props.colorScale - Couleurs min/max du dégradé. Obligatoire. @param {number} [props.valueMin] - Valeur minimale pour l'échelle. Optionnel, calculé automatiquement. @param {number} [props.valueMax] - Valeur maximale pour l'échelle. Optionnel, calculé automatiquement. @param {boolean} [props.showValues=false] - Affiche les valeurs dans les cellules. Optionnel. @param {function} [props.onCellClick] - Callback au clic sur une cellule (row, col, value). Optionnel. @param {string} [props.className=""] - Classes CSS additionnelles. Optionnel.
+@component bpm.heatmap @description Grille de valeurs numériques avec dégradé de couleur, infobulle au survol et clic optionnel sur cellule. @example bpm.heatmap({ data: [[1,2],[3,4]], xLabels: ["A","B"], yLabels: ["X","Y"], colorScale: { min: "#fff", max: "#f00" } }) @param {object} props @param {number[][]} props.data - Matrice 2D de valeurs numériques. Obligatoire. @param {string[]} props.xLabels - Libellés des colonnes. Obligatoire. @param {string[]} props.yLabels - Libellés des lignes. Obligatoire. @param {{ min: string; max: string }} props.colorScale - Couleurs min/max du dégradé. Obligatoire. @param {number} [props.valueMin] - Valeur minimale pour l'échelle. Optionnel, calculé automatiquement. @param {number} [props.valueMax] - Valeur maximale pour l'échelle. Optionnel, calculé automatiquement. @param {boolean} [props.showValues=false] - Affiche les valeurs dans les cellules. Optionnel. @param {function} [props.onCellClick] - Callback au clic sur une cellule (row, col, value). Optionnel. @param {string} [props.className=""] - Classes CSS additionnelles. Optionnel. @param {InterpretContext} [props.context] - Contexte de jugement : chaque cellule est jugée vs le repère (liseré coloré sur les écarts, anomalies >2σ — comparisonFrame ou matrice — soulignées, infobulle enrichie du verdict). Optionnel.
 ```
   data*: number[][]
   xLabels*: string[]
@@ -605,6 +610,7 @@ Composant bpm.groupedList — interface non parsée (voir BPM_API.md).
   showValues?: boolean
   onCellClick?: (row: number, col: number, value: number) => void
   className?: string
+  context?: InterpretContext  — Contexte de jugement { reference, direction, comparisonFrame? } : chaque cellule est jugée par interpret — liseré coloré par verdict (hors zone neutre), data-judgment par cellule, infobulle enrichie. Anomalie >2σ évaluée contre comparisonFrame ou, à défaut, la matrice entière. Additif : sans context, rendu inchangé.
 ```
 
 ## bpm.highlightBox
@@ -696,7 +702,7 @@ Composant bpm.groupedList — interface non parsée (voir BPM_API.md).
 ```
 
 ## bpm.labelValue
-@component bpm.labelValue @description Affiche une paire label/valeur avec options de style, orientation et bouton copier. @example bpm.labelValue({ label: "Référence", value: "REF-001", copyable: true, valueStyle: "bold" }) @param {object} props @param {string} props.label - Libellé affiché en majuscules. Obligatoire. @param {string|number|React.ReactNode} props.value - Valeur à afficher. Obligatoire. @param {"horizontal"|"vertical"} [props.orientation="horizontal"] - Disposition label/valeur. Optionnel. @param {"sm"|"md"|"lg"} [props.size="md"] - Taille du texte. Optionnel. @param {"default"|"bold"|"accent"|"muted"} [props.valueStyle="default"] - Style de la valeur. Optionnel. @param {boolean} [props.copyable=false] - Affiche un bouton pour copier la valeur. Optionnel. @param {string} [props.className=""] - Classes CSS additionnelles. Optionnel. @parent bpm.card, bpm.panel @associated bpm.metric, bpm.inlineEdit
+@component bpm.labelValue @description Affiche une paire label/valeur avec options de style, orientation et bouton copier. @example bpm.labelValue({ label: "Référence", value: "REF-001", copyable: true, valueStyle: "bold" }) @param {object} props @param {string} props.label - Libellé affiché en majuscules. Obligatoire. @param {string|number|React.ReactNode} props.value - Valeur à afficher. Obligatoire. @param {"horizontal"|"vertical"} [props.orientation="horizontal"] - Disposition label/valeur. Optionnel. @param {"sm"|"md"|"lg"} [props.size="md"] - Taille du texte. Optionnel. @param {"default"|"bold"|"accent"|"muted"} [props.valueStyle="default"] - Style de la valeur. Optionnel. @param {boolean} [props.copyable=false] - Affiche un bouton pour copier la valeur. Optionnel. @param {string} [props.className=""] - Classes CSS additionnelles. Optionnel. @param {TrajectoryPoint[]} [props.trajectory] - Trajectoire v(t) de la valeur, jugée si context fourni. Optionnel. @param {InterpretContext} [props.context] - Contexte de jugement : la valeur est colorée et un verdict écart/tendance est révélé. Optionnel. @parent bpm.card, bpm.panel @associated bpm.metric, bpm.inlineEdit
 ```
   label*: string
   value*: string | number | React.ReactNode
@@ -705,6 +711,8 @@ Composant bpm.groupedList — interface non parsée (voir BPM_API.md).
   valueStyle?: "default" | "bold" | "accent" | "muted"
   copyable?: boolean
   className?: string
+  trajectory?: TrajectoryPoint[]  — Trajectoire v(t) [{t, v}] de la mesure (la valeur affichée reste value) — jugée si context est fourni.
+  context?: InterpretContext  — Contexte de jugement { reference, direction, comparisonFrame? } : la valeur prend la couleur du verdict et un suffixe écart/tendance role=status est révélé. Additif : sans context, rendu inchangé.
 ```
 
 ## bpm.lineChart
@@ -714,6 +722,7 @@ Composant bpm.groupedList — interface non parsée (voir BPM_API.md).
   height?: number
   color?: string
   className?: string
+  context?: InterpretContext  — Contexte de jugement { reference, direction, comparisonFrame? } : la série (lue comme trajectoire v(t), t = x) est jugée par interpret — repère tracé en pointillé, couleur de ligne selon le verdict, aria-label. Additif : sans context, rendu inchangé.
 ```
 
 ## bpm.liveChart
@@ -725,12 +734,13 @@ Composant bpm.groupedList — interface non parsée (voir BPM_API.md).
   width?: number
   height?: number
   className?: string
+  context?: InterpretContext  — Contexte de jugement { reference, direction, comparisonFrame? } : la fenêtre courante est jugée par interpret (couleur de courbe selon le verdict, repère pointillé, verdict écart/tendance sous le graphique). Additif : sans context, rendu inchangé.
 ```
 
 ## bpm.liveGauge
-@component bpm.liveGauge @description Jauge demi-cercle avec aiguille et zones colorées (normal/avertissement/critique). @example bpm.liveGauge({ value: 75, min: 0, max: 100, warningAbove: 70, criticalAbove: 90, label: "CPU" }) @param {object} props @param {number} props.value - Valeur actuelle affichée. Obligatoire. @param {number} [props.min=0] - Valeur minimale de l'échelle. Optionnel. @param {number} [props.max=100] - Valeur maximale de l'échelle. Optionnel. @param {number} [props.warningAbove] - Seuil d'avertissement (zone jaune). Optionnel. @param {number} [props.criticalAbove] - Seuil critique (zone rouge). Optionnel. @param {"sm"|"md"|"lg"} [props.size="md"] - Taille de la jauge. Optionnel. @param {string} [props.label] - Libellé affiché sous la jauge. Optionnel. @param {string} [props.className=""] - Classes CSS additionnelles. Optionnel. @associated bpm.liveChart, bpm.metric, bpm.progress
+@component bpm.liveGauge @description Jauge demi-cercle avec aiguille et zones colorées (normal/avertissement/critique). @example bpm.liveGauge({ value: 75, min: 0, max: 100, warningAbove: 70, criticalAbove: 90, label: "CPU" }) @param {object} props @param {number} props.value - Valeur actuelle affichée. Obligatoire. @param {number} [props.min=0] - Valeur minimale de l'échelle. Optionnel. @param {number} [props.max=100] - Valeur maximale de l'échelle. Optionnel. @param {number} [props.warningAbove] - Seuil d'avertissement (zone jaune). Optionnel. @param {number} [props.criticalAbove] - Seuil critique (zone rouge). Optionnel. @param {"sm"|"md"|"lg"} [props.size="md"] - Taille de la jauge. Optionnel. @param {string} [props.label] - Libellé affiché sous la jauge. Optionnel. @param {string} [props.className=""] - Classes CSS additionnelles. Optionnel. @param {InterpretContext} [props.context] - Contexte de jugement : la valeur affichée prend la couleur du jugement, écart/tendance révélés sous la jauge. Optionnel. @associated bpm.liveChart, bpm.metric, bpm.progress
 ```
-  value*: number
+  value*: number | TrajectoryPoint[]  — Valeur actuelle, ou trajectoire v(t) [{t, v}] (l'aiguille pointe le dernier point ; tendance jugée si context fourni).
   min?: number
   max?: number
   warningAbove?: number
@@ -738,6 +748,7 @@ Composant bpm.groupedList — interface non parsée (voir BPM_API.md).
   size?: LiveGaugeSize
   label?: string
   className?: string
+  context?: InterpretContext  — Contexte de jugement { reference, direction, comparisonFrame? } : interpret() colore la valeur et révèle écart au repère + tendance + anomalie sous la jauge. Additif : sans context, rendu inchangé.
 ```
 
 ## bpm.loadingBar
@@ -750,12 +761,14 @@ Composant bpm.groupedList — interface non parsée (voir BPM_API.md).
 ```
 
 ## bpm.machineStatus
-@component bpm.machineStatus @description Carte d'état machine avec indicateur LED animé (clignotement en production ou défaut). @example bpm.machineStatus({ title: "Machine A", state: "running", detail: "Lot #1234" }) @param {object} props @param {string} props.title - Nom de la machine. Obligatoire. @param {"running"|"idle"|"fault"|"unknown"} props.state - État actuel. Obligatoire. @param {string} [props.detail] - Détail additionnel affiché sous l'état. Optionnel. @param {string} [props.className=""] - Classes CSS additionnelles. Optionnel. @associated bpm.sensorGrid, bpm.liveGauge, bpm.statusBox
+@component bpm.machineStatus @description Carte d'état machine avec indicateur LED animé (clignotement en production ou défaut). @example bpm.machineStatus({ title: "Machine A", state: "running", detail: "Lot #1234" }) @param {object} props @param {string} props.title - Nom de la machine. Obligatoire. @param {"running"|"idle"|"fault"|"unknown"} props.state - État actuel. Obligatoire. @param {string} [props.detail] - Détail additionnel affiché sous l'état. Optionnel. @param {string} [props.className=""] - Classes CSS additionnelles. Optionnel. @param {number|TrajectoryPoint[]} [props.value] - Mesure de production associée (scalaire ou trajectoire v(t)), jugée si context fourni. Optionnel. @param {InterpretContext} [props.context] - Contexte de jugement : verdict écart/tendance révélé sous l'état. Optionnel. @associated bpm.sensorGrid, bpm.liveGauge, bpm.statusBox
 ```
   title*: string
   state*: MachineStatusState
   detail?: string
   className?: string
+  value?: number | TrajectoryPoint[]  — Mesure de production associée (cadence, TRS… ; scalaire ou trajectoire v(t) [{t,v}]) — jugée via interpret si context est fourni.
+  context?: InterpretContext  — Contexte de jugement { reference, direction, comparisonFrame? } : un verdict écart/tendance/anomalie est révélé sous l'état (role=status) et la bordure gauche prend la couleur du jugement. Additif : sans context, rendu inchangé.
 ```
 
 ## bpm.map
@@ -804,10 +817,10 @@ Composant bpm.groupedList — interface non parsée (voir BPM_API.md).
 ```
 
 ## bpm.metric
-Locales courants pour le format nombre (ex. "fr-FR" → 1 000,50, "en-US" → 1,000.50). */ export type MetricValueLocale = "fr-FR" | "en-US" | "de-DE" | string; @component bpm.metric @description Affiche une métrique chiffrée avec label, valeur, variation delta et options de formatage (devise, locale). @example bpm.metric({ label: "Chiffre d'affaires", value: 125000, delta: "+12%", currency: "EUR" }) @param {object} props @param {string} props.label - Libellé de la métrique. Obligatoire. @param {string|number} props.value - Valeur principale. Obligatoire. @param {number|string} [props.delta] - Variation affichée (ex: "+12%"). Optionnel. @param {string} [props.name] - Nom pour référencer dans le chat IA. Optionnel. @param {"aucun"|"normal"|"inverse"} [props.deltaType="normal"] - Coloration du delta. Optionnel. @param {string} [props.help] - Texte d'aide au survol. Optionnel. @param {number} [props.deltaDecimals=0] - Décimales pour le delta. Optionnel. @param {string} [props.currency="EUR"] - Devise pour l'affichage. Optionnel. @param {string} [props.valueLocale] - Locale pour formatage (fr-FR, en-US). Optionnel. @param {number} [props.valueDecimals=0] - Décimales pour la valeur. Optionnel. @param {boolean} [props.valueGrouping=true] - Séparateur de milliers. Optionnel. @param {boolean} [props.border=true] - Affiche la bordure. Optionnel. @param {React.ReactNode} [props.icon] - Icône à gauche du label. Optionnel. @param {string} [props.subtext] - Texte contextuel sous la valeur. Optionnel. @param {string} [props.accentColor] - Couleur d'accent. Optionnel. @param {boolean} [props.compact=false] - Mode compact réduit. Optionnel. @param {boolean} [props.trackContext=false] - Expose au contexte IA. Optionnel. @parent bpm.metricRow, bpm.grid, bpm.card @associated bpm.badge, bpm.plotlyChart
+Locales courants pour le format nombre (ex. "fr-FR" → 1 000,50, "en-US" → 1,000.50). */ export type MetricValueLocale = "fr-FR" | "en-US" | "de-DE" | string; @component bpm.metric @description Affiche une métrique chiffrée avec label, valeur, variation delta et options de formatage (devise, locale). @example bpm.metric({ label: "Chiffre d'affaires", value: 125000, delta: "+12%", currency: "EUR" }) @param {object} props @param {string} props.label - Libellé de la métrique. Obligatoire. @param {string|number} props.value - Valeur principale. Obligatoire. @param {number|string} [props.delta] - Variation affichée (ex: "+12%"). Optionnel. @param {string} [props.name] - Nom pour référencer dans le chat IA. Optionnel. @param {"aucun"|"normal"|"inverse"} [props.deltaType="normal"] - Coloration du delta. Optionnel. @param {string} [props.help] - Texte d'aide au survol. Optionnel. @param {number} [props.deltaDecimals=0] - Décimales pour le delta. Optionnel. @param {string} [props.currency="EUR"] - Devise pour l'affichage. Optionnel. @param {string} [props.valueLocale] - Locale pour formatage (fr-FR, en-US). Optionnel. @param {number} [props.valueDecimals=0] - Décimales pour la valeur. Optionnel. @param {boolean} [props.valueGrouping=true] - Séparateur de milliers. Optionnel. @param {boolean} [props.border=true] - Affiche la bordure. Optionnel. @param {React.ReactNode} [props.icon] - Icône à gauche du label. Optionnel. @param {string} [props.subtext] - Texte contextuel sous la valeur. Optionnel. @param {string} [props.accentColor] - Couleur d'accent. Optionnel. @param {boolean} [props.compact=false] - Mode compact réduit. Optionnel. @param {boolean} [props.trackContext=false] - Expose au contexte IA. Optionnel. @param {InterpretContext} [props.context] - Contexte de jugement { reference, direction, comparisonFrame? } : révèle écart/tendance/anomalie via interpret. Optionnel. @parent bpm.metricRow, bpm.grid, bpm.card @associated bpm.badge, bpm.plotlyChart
 ```
   label*: string  — Libellé affiché au-dessus de la valeur.
-  value*: string | number  — Valeur principale (string ou number).
+  value*: string | number | TrajectoryPoint[]  — Valeur principale (string, number, ou trajectoire v(t) [{t, v}] — affiche le dernier point et révèle la tendance si context est fourni).
   delta?: number | string | null  — Variation affichée. Format string (ex. "+12%") ou number.
   name?: string | null  — Nom optionnel pour référencer la métrique dans le chat IA : $metric:name ou @name
   deltaType?: "aucun" | "normal" | "inverse"  — Aucun = pas de couleur, normal = + vert / - rouge, inverse = + rouge / - vert
@@ -823,6 +836,7 @@ Locales courants pour le format nombre (ex. "fr-FR" → 1 000,50, "en-US" → 1,
   accentColor?: string | null  — Couleur d'accent (bordure gauche ou fond icône).
   compact?: boolean  — Mode compact : hauteur réduite (~80px), padding et typo plus serrés.
   trackContext?: boolean  — Si true, expose cette métrique au contexte IA.
+  context?: InterpretContext  — Contexte de jugement { reference, direction, comparisonFrame? } : la métrique porte alors un jugement via interpret(value, context) — écart au repère, tendance (si trajectoire), anomalie — révélé sous la valeur. Additif : sans context, rendu inchangé.
 ```
 
 ## bpm.metricRow
@@ -988,7 +1002,7 @@ Composant bpm.plcConnector — voir @blueprint-modular/core ou BPM_API.md.
 ```
 
 ## bpm.predictiveChart
-@component bpm.predictiveChart @description Graphique de prévision avec données historiques, prédictions et intervalle de confiance. @example bpm.predictiveChart({ historical: [{x:1,y:10}], predicted: [{x:2,y:15}], confidenceUpper: [{x:2,y:18}], confidenceLower: [{x:2,y:12}], todayX: 1.5 }) @param {object} props @param {{ x: number; y: number }[]} props.historical - Points historiques. Obligatoire. @param {{ x: number; y: number }[]} props.predicted - Points prédits (ligne pointillée). Obligatoire. @param {{ x: number; y: number }[]} [props.confidenceUpper] - Borne supérieure de confiance. Optionnel. @param {{ x: number; y: number }[]} [props.confidenceLower] - Borne inférieure de confiance. Optionnel. @param {number} [props.todayX] - Position X de la ligne "aujourd'hui". Optionnel. @param {number} [props.width=520] - Largeur du SVG. Optionnel. @param {number} [props.height=220] - Hauteur du SVG. Optionnel. @param {string} [props.className=""] - Classes CSS additionnelles. Optionnel. @associated bpm.lineChart, bpm.liveChart, bpm.metric
+@component bpm.predictiveChart @description Graphique de prévision avec données historiques, prédictions et intervalle de confiance. @example bpm.predictiveChart({ historical: [{x:1,y:10}], predicted: [{x:2,y:15}], confidenceUpper: [{x:2,y:18}], confidenceLower: [{x:2,y:12}], todayX: 1.5 }) @param {object} props @param {{ x: number; y: number }[]} props.historical - Points historiques. Obligatoire. @param {{ x: number; y: number }[]} props.predicted - Points prédits (ligne pointillée). Obligatoire. @param {{ x: number; y: number }[]} [props.confidenceUpper] - Borne supérieure de confiance. Optionnel. @param {{ x: number; y: number }[]} [props.confidenceLower] - Borne inférieure de confiance. Optionnel. @param {number} [props.todayX] - Position X de la ligne "aujourd'hui". Optionnel. @param {number} [props.width=520] - Largeur du SVG. Optionnel. @param {number} [props.height=220] - Hauteur du SVG. Optionnel. @param {string} [props.className=""] - Classes CSS additionnelles. Optionnel. @param {InterpretContext} [props.context] - Contexte de jugement : la trajectoire PRÉDITE est jugée par interpret (couleur de la prévision, repère pointillé, verdict). Optionnel. @associated bpm.lineChart, bpm.liveChart, bpm.metric
 ```
   historical*: { x: number
   predicted*: { x: number
@@ -998,6 +1012,7 @@ Composant bpm.plcConnector — voir @blueprint-modular/core ou BPM_API.md.
   width?: number
   height?: number
   className?: string
+  context?: InterpretContext  — Contexte de jugement { reference, direction } : la trajectoire prédite est jugée par interpret — la prévision (pointillés) prend la couleur du verdict, le repère est tracé, l'aria-label décrit le jugement. Additif : sans context, rendu inchangé.
 ```
 
 ## bpm.printLayout
@@ -1012,21 +1027,23 @@ Composant bpm.plcConnector — voir @blueprint-modular/core ou BPM_API.md.
 
 ## bpm.progress
 ```
-  value?: number
+  value?: number | TrajectoryPoint[]  — Valeur actuelle, ou trajectoire v(t) [{t, v}] (le dernier point remplit la barre ; la tendance est jugée si context est fourni).
   max?: number
   label?: string
   showValue?: boolean
   className?: string
+  context?: InterpretContext  — Contexte de jugement { reference, direction, comparisonFrame? } : la barre prend la couleur du jugement et une ligne écart/tendance est révélée sous la barre. Additif : sans context, rendu inchangé.
 ```
 
 ## bpm.progressRing
-@component bpm.progressRing @description Anneau de progression circulaire SVG avec animation de transition. @example bpm.progressRing({ value: 75, max: 100, size: 80, strokeWidth: 8 }) @param {object} props @param {number} props.value - Valeur actuelle. Obligatoire. @param {number} [props.max=100] - Valeur maximale. Optionnel. @param {number} [props.size=72] - Diamètre en pixels. Optionnel. @param {number} [props.strokeWidth=8] - Épaisseur du trait. Optionnel. @param {string} [props.className=""] - Classes CSS additionnelles. Optionnel. @associated bpm.progress, bpm.liveGauge, bpm.metric
+@component bpm.progressRing @description Anneau de progression circulaire SVG avec animation de transition. @example bpm.progressRing({ value: 75, max: 100, size: 80, strokeWidth: 8 }) @param {object} props @param {number} props.value - Valeur actuelle (ou trajectoire v(t) [{t,v}] : dernier point). Obligatoire. @param {number} [props.max=100] - Valeur maximale. Optionnel. @param {number} [props.size=72] - Diamètre en pixels. Optionnel. @param {number} [props.strokeWidth=8] - Épaisseur du trait. Optionnel. @param {string} [props.className=""] - Classes CSS additionnelles. Optionnel. @param {InterpretContext} [props.context] - Contexte de jugement : couleur de l'anneau selon l'écart au repère, flèche de tendance au centre si trajectoire. Optionnel. @associated bpm.progress, bpm.liveGauge, bpm.metric
 ```
-  value*: number
+  value*: number | TrajectoryPoint[]  — Valeur actuelle, ou trajectoire v(t) [{t, v}] (le dernier point remplit l'anneau, la tendance est révélée au centre si context est fourni).
   max?: number
   size?: number
   strokeWidth?: number
   className?: string
+  context?: InterpretContext  — Contexte de jugement { reference, direction, comparisonFrame? } : l'anneau prend la couleur du jugement (favorable/neutre/défavorable) au lieu de l'accent. Additif : sans context, rendu inchangé.
 ```
 
 ## bpm.promptInput
@@ -1064,6 +1081,7 @@ Composant bpm.plcConnector — voir @blueprint-modular/core ou BPM_API.md.
   width?: number
   height?: number
   className?: string
+  context?: InterpretContext  — Contexte de repère { reference, direction } : un anneau de repère pointillé est tracé au niveau de reference (même échelle que les axes). Pas de verdict agrégé : un polygone sur N axes hétérogènes n'a pas de couleur de jugement unique — la lecture se fait par axe vs l'anneau. Additif : sans context, rendu inchangé.
 ```
 
 ## bpm.radioGroup
@@ -1080,13 +1098,15 @@ Composant bpm.plcConnector — voir @blueprint-modular/core ou BPM_API.md.
 ```
 
 ## bpm.rating
-@component bpm.rating @description Composant d'évaluation par étoiles cliquables avec taille personnalisable. @example bpm.rating({ value: 3, max: 5, onChange: setRating, size: "medium" }) @param {object} props @param {number} [props.value=0] - Note actuelle. Optionnel. @param {number} [props.max=5] - Nombre maximum d'étoiles. Optionnel. @param {function} [props.onChange] - Callback au clic sur une étoile. Optionnel. @param {boolean} [props.disabled=false] - Désactive l'interaction. Optionnel. @param {"small"|"medium"|"large"} [props.size="medium"] - Taille des étoiles. Optionnel. @associated bpm.slider, bpm.metric
+@component bpm.rating @description Composant d'évaluation par étoiles cliquables avec taille personnalisable. @example bpm.rating({ value: 3, max: 5, onChange: setRating, size: "medium" }) @param {object} props @param {number} [props.value=0] - Note actuelle. Optionnel. @param {number} [props.max=5] - Nombre maximum d'étoiles. Optionnel. @param {function} [props.onChange] - Callback au clic sur une étoile. Optionnel. @param {boolean} [props.disabled=false] - Désactive l'interaction. Optionnel. @param {"small"|"medium"|"large"} [props.size="medium"] - Taille des étoiles. Optionnel. @param {TrajectoryPoint[]} [props.history] - Historique v(t) de la note, pour la tendance. Optionnel. @param {InterpretContext} [props.context] - Contexte de jugement (ex. note cible) : étoiles colorées par le verdict + suffixe écart/tendance. Optionnel. @associated bpm.slider, bpm.metric
 ```
   value?: number
   max?: number
   onChange?: (value: number) => void
   disabled?: boolean
   size?: "small" | "medium" | "large"
+  history?: TrajectoryPoint[]  — Historique v(t) [{t, v}] de la note — révèle la tendance si context est fourni.
+  context?: InterpretContext  — Contexte de jugement { reference, direction } (ex. note cible 4.0) : les étoiles pleines prennent la couleur du verdict et un suffixe écart/tendance role=status est révélé. Additif : sans context, rendu inchangé.
 ```
 
 ## bpm.relationGraph
@@ -1141,6 +1161,7 @@ Composant bpm.plcConnector — voir @blueprint-modular/core ou BPM_API.md.
   color?: string
   radius?: number
   className?: string
+  context?: InterpretContext  — Contexte de jugement { reference, direction, comparisonFrame? } : chaque point est jugé (couleur par écart au repère ; anomalie >2σ — du comparisonFrame ou, à défaut, du nuage lui-même — cerclée), repère pointillé tracé, verdict global de la série en aria-label + data-judgment. Additif : sans context, rendu inchangé.
 ```
 
 ## bpm.scheduler
@@ -1215,13 +1236,15 @@ Composant bpm.scheduler — interface non parsée (voir BPM_API.md).
 ```
 
 ## bpm.sparkline
-@component bpm.sparkline @description Courbe SVG compacte pour afficher une tendance avec couleur selon la direction (up/down/flat). @example bpm.sparkline({ values: [10, 15, 12, 18, 22], width: 120, height: 36, trend: "up" }) @param {object} props @param {number[]} props.values - Valeurs de la série. Obligatoire. @param {number} [props.width=120] - Largeur du SVG. Optionnel. @param {number} [props.height=36] - Hauteur du SVG. Optionnel. @param {"up"|"down"|"flat"} [props.trend="flat"] - Tendance pour la couleur. Optionnel. @param {string} [props.className=""] - Classes CSS additionnelles. Optionnel. @associated bpm.metric, bpm.lineChart, bpm.liveChart
+@component bpm.sparkline @description Courbe SVG compacte pour afficher une tendance avec couleur selon la direction (up/down/flat). @example bpm.sparkline({ values: [10, 15, 12, 18, 22], width: 120, height: 36, trend: "up" }) @param {object} props @param {number[]} props.values - Valeurs de la série. Obligatoire. @param {number} [props.width=120] - Largeur du SVG. Optionnel. @param {number} [props.height=36] - Hauteur du SVG. Optionnel. @param {"up"|"down"|"flat"} [props.trend="flat"] - Tendance pour la couleur. Optionnel. @param {string} [props.className=""] - Classes CSS additionnelles. Optionnel. @param {InterpretContext} [props.context] - Contexte de jugement : couleur déduite de la tendance jugée (interpret), ligne de repère pointillée, aria-label descriptif. Optionnel. @associated bpm.metric, bpm.lineChart, bpm.liveChart
 ```
-  values*: number[]
+  values*: number[]  — Valeurs de la série (t implicite = index). Trajectoire v(t) explicite possible via points [{t, v}].
   width?: number
   height?: number
   trend?: SparklineTrend
   className?: string
+  points?: TrajectoryPoint[]  — Trajectoire v(t) explicite [{t, v}] — prioritaire sur values pour le jugement (les v sont aussi tracés).
+  context?: InterpretContext  — Contexte de jugement { reference, direction } : la couleur suit la tendance jugée (improving→succès, worsening→erreur) au lieu de la prop trend, et le repère est tracé en pointillé. Additif : sans context, rendu inchangé.
 ```
 
 ## bpm.spinner
@@ -1272,6 +1295,8 @@ Composant bpm.scheduler — interface non parsée (voir BPM_API.md).
   defaultExpanded?: boolean
   compact?: boolean  — Réduit le padding pour contextes denses.
   className?: string
+  value?: number | TrajectoryPoint[]  — Valeur mesurée associée au statut (scalaire ou trajectoire v(t) [{t,v}]) — jugée si context est fourni.
+  context?: InterpretContext  — Contexte de jugement { reference, direction, comparisonFrame? } : un verdict écart/tendance/anomalie est révélé à droite du libellé et la bordure gauche prend la couleur du jugement. Additif : sans context, rendu inchangé.
 ```
 
 ## bpm.statusTracker
@@ -1332,6 +1357,9 @@ Composant bpm.scheduler — interface non parsée (voir BPM_API.md).
   minWidth?: number  — Largeur minimale du tableau en px (déclenche le scroll horizontal dans le wrapper si conteneur plus étroit). Non défini = pas de min-width.
   trackContext?: boolean  — Si true, expose ce tableau au contexte IA.
   emptyMessage?: string  — Message affiché quand data est vide. Default: "Aucune donnée disponible".
+  loading?: boolean  — État chargement : affiche des lignes squelettes (aria-busy). Additif : défaut false.
+  error?: string | null  — État erreur : affiche le message en ligne role=alert (prioritaire sur loading/empty). Additif : défaut null.
+  density?: "normal" | "compact"  — Densité d'affichage : "normal" (défaut, rendu historique) ou "compact" (padding réduit).
 ```
 INTERDIT : Tableau de données — obligatoire. INTERDIT : JSX dans data[], utiliser render dans TableColumn. */
 
@@ -1541,6 +1569,7 @@ Toast visuel ; en production préférer useToast().
   width?: number
   height?: number
   className?: string
+  context?: InterpretContext  — Contexte de jugement { reference, direction } : chaque tuile est jugée individuellement par interpret vs le repère (contour coloré par le verdict hors zone neutre, data-judgment par tuile). Pas de verdict agrégé : un total de tuiles hétérogènes n'a pas de jugement unique. Additif : sans context, rendu inchangé.
 ```
 
 ## bpm.treeview
@@ -1569,6 +1598,7 @@ Toast visuel ; en production préférer useToast().
   width?: number
   height?: number
   className?: string
+  context?: InterpretContext  — Contexte de jugement { reference, direction } : le cumul FINAL de la cascade est jugé par interpret — verdict écart au repère révélé sous le graphique (role=status), data-judgment. Additif : sans context, rendu inchangé.
 ```
 
 ## bpm.wizardForm

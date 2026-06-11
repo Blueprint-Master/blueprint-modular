@@ -1,6 +1,13 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
+import {
+  interpret,
+  judgmentColor,
+  judgmentLabel,
+  type InterpretContext,
+  type TrajectoryPoint,
+} from "./interpret";
 
 export type MachineStatusState = "running" | "idle" | "fault" | "unknown";
 
@@ -15,6 +22,8 @@ export type MachineStatusState = "running" | "idle" | "fault" | "unknown";
  * @param {"running"|"idle"|"fault"|"unknown"} props.state - État actuel. Obligatoire.
  * @param {string} [props.detail] - Détail additionnel affiché sous l'état. Optionnel.
  * @param {string} [props.className=""] - Classes CSS additionnelles. Optionnel.
+ * @param {number|TrajectoryPoint[]} [props.value] - Mesure de production associée (scalaire ou trajectoire v(t)), jugée si context fourni. Optionnel.
+ * @param {InterpretContext} [props.context] - Contexte de jugement : verdict écart/tendance révélé sous l'état. Optionnel.
  *
  * @associated bpm.sensorGrid, bpm.liveGauge, bpm.statusBox
  */
@@ -23,6 +32,10 @@ export interface MachineStatusProps {
   state: MachineStatusState;
   detail?: string;
   className?: string;
+  /** Mesure de production associée (cadence, TRS… ; scalaire ou trajectoire v(t) [{t,v}]) — jugée via interpret si context est fourni. */
+  value?: number | TrajectoryPoint[];
+  /** Contexte de jugement { reference, direction, comparisonFrame? } : un verdict écart/tendance/anomalie est révélé sous l'état (role=status) et la bordure gauche prend la couleur du jugement. Additif : sans context, rendu inchangé. */
+  context?: InterpretContext;
 }
 
 const STATE_LABEL: Record<MachineStatusState, string> = {
@@ -37,7 +50,10 @@ export function MachineStatus({
   state,
   detail,
   className = "",
+  value,
+  context,
 }: MachineStatusProps) {
+  const judgment = context && value != null ? interpret(value, context) : null;
   const color =
     state === "running"
       ? "var(--bpm-success)"
@@ -67,7 +83,9 @@ export function MachineStatus({
         padding: 16,
         background: "var(--bpm-surface)",
         boxShadow: "var(--bpm-shadow-sm)",
+        ...(judgment ? { borderLeft: `4px solid ${judgmentColor(judgment)}` } : {}),
       }}
+      data-judgment={judgment ? judgment.level.status : undefined}
     >
       <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
         <span
@@ -98,6 +116,11 @@ export function MachineStatus({
           </div>
           {detail && (
             <div style={{ fontSize: 12, color: "var(--bpm-text-muted)", marginTop: 6 }}>{detail}</div>
+          )}
+          {judgment && (
+            <div role="status" style={{ fontSize: 12, marginTop: 6, color: judgmentColor(judgment) }}>
+              {judgmentLabel(judgment)}
+            </div>
           )}
         </div>
       </div>

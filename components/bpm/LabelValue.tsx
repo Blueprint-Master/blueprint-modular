@@ -1,6 +1,14 @@
 "use client";
 
 import React, { useCallback, useState } from "react";
+import {
+  interpret,
+  judgmentColor,
+  judgmentLabel,
+  trendArrow,
+  type InterpretContext,
+  type TrajectoryPoint,
+} from "./interpret";
 
 /**
  * @component bpm.labelValue
@@ -16,6 +24,8 @@ import React, { useCallback, useState } from "react";
  * @param {"default"|"bold"|"accent"|"muted"} [props.valueStyle="default"] - Style de la valeur. Optionnel.
  * @param {boolean} [props.copyable=false] - Affiche un bouton pour copier la valeur. Optionnel.
  * @param {string} [props.className=""] - Classes CSS additionnelles. Optionnel.
+ * @param {TrajectoryPoint[]} [props.trajectory] - Trajectoire v(t) de la valeur, jugée si context fourni. Optionnel.
+ * @param {InterpretContext} [props.context] - Contexte de jugement : la valeur est colorée et un verdict écart/tendance est révélé. Optionnel.
  *
  * @parent bpm.card, bpm.panel
  * @associated bpm.metric, bpm.inlineEdit
@@ -28,6 +38,10 @@ export interface LabelValueProps {
   valueStyle?: "default" | "bold" | "accent" | "muted";
   copyable?: boolean;
   className?: string;
+  /** Trajectoire v(t) [{t, v}] de la mesure (la valeur affichée reste value) — jugée si context est fourni. */
+  trajectory?: TrajectoryPoint[];
+  /** Contexte de jugement { reference, direction, comparisonFrame? } : la valeur prend la couleur du verdict et un suffixe écart/tendance role=status est révélé. Additif : sans context, rendu inchangé. */
+  context?: InterpretContext;
 }
 
 const sizeMap = {
@@ -44,12 +58,25 @@ export function LabelValue({
   valueStyle = "default",
   copyable = false,
   className = "",
+  trajectory,
+  context,
 }: LabelValueProps) {
   const [copied, setCopied] = useState(false);
   const { labelSize, valueSize } = sizeMap[size];
 
-  const valueColor =
-    valueStyle === "accent"
+  const numeric =
+    trajectory && trajectory.length > 0
+      ? trajectory
+      : typeof value === "number"
+        ? value
+        : typeof value === "string" && value.trim() !== "" && Number.isFinite(Number(value))
+          ? Number(value)
+          : null;
+  const judgment = context && numeric != null ? interpret(numeric, context) : null;
+
+  const valueColor = judgment
+    ? judgmentColor(judgment)
+    : valueStyle === "accent"
       ? "var(--bpm-accent)"
       : valueStyle === "muted"
         ? "var(--bpm-text-muted)"
@@ -74,8 +101,20 @@ export function LabelValue({
         fontWeight: valueWeight,
         color: valueColor,
       }}
+      data-judgment={judgment ? judgment.level.status : undefined}
     >
       {value}
+      {judgment && (
+        <span
+          role="status"
+          aria-label={judgmentLabel(judgment)}
+          style={{ marginLeft: 6, fontSize: Math.max(10, valueSize - 3), fontWeight: 400 }}
+        >
+          {judgment.level.status === "favorable" ? "▲" : judgment.level.status === "unfavorable" ? "▼" : "•"}
+          {judgment.trend ? ` ${trendArrow(judgment)}` : ""}
+          {judgment.anomaly?.status === "abnormal" ? " ⚠" : ""}
+        </span>
+      )}
     </span>
   );
 

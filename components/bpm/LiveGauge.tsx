@@ -1,6 +1,14 @@
 "use client";
 
 import React, { useMemo } from "react";
+import {
+  interpret,
+  judgmentColor,
+  judgmentLabel,
+  trendArrow,
+  type InterpretContext,
+  type TrajectoryPoint,
+} from "./interpret";
 
 export type LiveGaugeSize = "sm" | "md" | "lg";
 
@@ -19,11 +27,13 @@ export type LiveGaugeSize = "sm" | "md" | "lg";
  * @param {"sm"|"md"|"lg"} [props.size="md"] - Taille de la jauge. Optionnel.
  * @param {string} [props.label] - Libellé affiché sous la jauge. Optionnel.
  * @param {string} [props.className=""] - Classes CSS additionnelles. Optionnel.
+ * @param {InterpretContext} [props.context] - Contexte de jugement : la valeur affichée prend la couleur du jugement, écart/tendance révélés sous la jauge. Optionnel.
  *
  * @associated bpm.liveChart, bpm.metric, bpm.progress
  */
 export interface LiveGaugeProps {
-  value: number;
+  /** Valeur actuelle, ou trajectoire v(t) [{t, v}] (l'aiguille pointe le dernier point ; tendance jugée si context fourni). */
+  value: number | TrajectoryPoint[];
   min?: number;
   max?: number;
   warningAbove?: number;
@@ -31,6 +41,8 @@ export interface LiveGaugeProps {
   size?: LiveGaugeSize;
   label?: string;
   className?: string;
+  /** Contexte de jugement { reference, direction, comparisonFrame? } : interpret() colore la valeur et révèle écart au repère + tendance + anomalie sous la jauge. Additif : sans context, rendu inchangé. */
+  context?: InterpretContext;
 }
 
 const sizeMap: Record<LiveGaugeSize, { w: number; h: number; stroke: number }> = {
@@ -56,16 +68,31 @@ export function LiveGauge({
   size = "md",
   label,
   className = "",
+  context,
 }: LiveGaugeProps) {
   const { w, h, stroke } = sizeMap[size];
   const cx = w / 2;
   const cy = h - 4;
   const r = Math.min(w * 0.42, (h - 8) * 0.9);
 
+  const current = Array.isArray(value)
+    ? value.length > 0
+      ? [...value].sort(
+          (a, b) =>
+            (a.t instanceof Date ? a.t.getTime() : a.t) -
+            (b.t instanceof Date ? b.t.getTime() : b.t)
+        )[value.length - 1].v
+      : min
+    : value;
+  const judgment =
+    context && Number.isFinite(current)
+      ? interpret(Array.isArray(value) ? value : current, context)
+      : null;
+
   const t = useMemo(() => {
     if (max <= min) return 0;
-    return Math.min(1, Math.max(0, (value - min) / (max - min)));
-  }, [value, min, max]);
+    return Math.min(1, Math.max(0, (current - min) / (max - min)));
+  }, [current, min, max]);
 
   const angleFor = (v: number) => {
     if (max <= min) return 180;
@@ -73,7 +100,7 @@ export function LiveGauge({
     return 180 + x * 180;
   };
 
-  const needleAngle = angleFor(value);
+  const needleAngle = angleFor(current);
   const pN = polar(cx, cy, r * 0.9, needleAngle);
 
   const arcPath = (a0: number, a1: number) => {
@@ -87,7 +114,11 @@ export function LiveGauge({
   const hi = warningAbove != null && criticalAbove != null ? Math.max(warningAbove, criticalAbove) : null;
 
   return (
-    <div className={className} style={{ display: "inline-flex", flexDirection: "column", alignItems: "center" }}>
+    <div
+      className={className}
+      style={{ display: "inline-flex", flexDirection: "column", alignItems: "center" }}
+      data-judgment={judgment ? judgment.level.status : undefined}
+    >
       <svg width={w} height={h} viewBox={`0 0 ${w} ${h}`} aria-label={label ?? "Gauge"}>
         <path d={arcPath(180, 360)} fill="none" stroke="var(--bpm-border)" strokeWidth={stroke} strokeLinecap="round" opacity={0.45} />
         {lo != null && hi != null && max > min ? (
@@ -118,7 +149,21 @@ export function LiveGauge({
         <circle cx={cx} cy={cy} r={5} fill="var(--bpm-surface)" stroke="var(--bpm-border)" strokeWidth={1.5} />
       </svg>
       {label ? <span style={{ fontSize: 12, color: "var(--bpm-text-secondary)", marginTop: 2 }}>{label}</span> : null}
-      <span style={{ fontSize: 18, fontWeight: 600, color: "var(--bpm-text-primary)" }}>{value}</span>
+      <span
+        style={{
+          fontSize: 18,
+          fontWeight: 600,
+          color: judgment ? judgmentColor(judgment) : "var(--bpm-text-primary)",
+        }}
+      >
+        {Array.isArray(value) ? current : value}
+        {judgment?.trend ? ` ${trendArrow(judgment)}` : ""}
+      </span>
+      {judgment && (
+        <span role="status" style={{ fontSize: 11, color: judgmentColor(judgment) }}>
+          {judgmentLabel(judgment)}
+        </span>
+      )}
     </div>
   );
 }
