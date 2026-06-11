@@ -5,7 +5,7 @@ Serveur **MCP read-only** qui expose le catalogue de composants
 via un endpoint **Streamable HTTP**, conçu pour passer une review de directory
 sans retouche.
 
-- **Endpoint** : `POST /api/mcp` (prod : `https://blueprint-modular.com/api/mcp`)
+- **Endpoint** : `POST /api/mcp` (prod : `https://mcp.blueprint-modular.com`)
 - **Transport** : Streamable HTTP (sans état). SSE désactivé (déprécié par la spec MCP).
 - **Auth** : aucune — le catalogue de composants est une donnée **publique**.
 - **Accès** : **read-only strict**. Aucune écriture, aucune action, aucune exposition de `bpm-prod`.
@@ -93,7 +93,7 @@ npx @modelcontextprotocol/inspector
 
 1. **Settings → Connectors → Add custom connector**.
 2. **Name** : `Blueprint Modular`
-3. **Remote MCP server URL** : `https://blueprint-modular.com/api/mcp`
+3. **Remote MCP server URL** : `https://mcp.blueprint-modular.com`
    (en local : `http://localhost:3000/api/mcp`).
 4. Pas d'authentification à configurer.
 
@@ -101,7 +101,7 @@ npx @modelcontextprotocol/inspector
 
 1. **Settings → Connectors → Advanced → Developer mode**.
 2. **Create / Add custom connector**.
-3. **MCP Server URL** : `https://blueprint-modular.com/api/mcp`, **Auth : None**.
+3. **MCP Server URL** : `https://mcp.blueprint-modular.com`, **Auth : None**.
 
 ## Détails techniques
 

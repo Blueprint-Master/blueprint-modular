@@ -9,7 +9,7 @@ public, sans authentification.
 
 - **Name** (≤100) : `Blueprint Modular`
 - **Tagline** (≤55) : `Catalogue read-only des composants Blueprint Modular`
-- **Endpoint** : `https://blueprint-modular.com/api/mcp`
+- **Endpoint** : `https://mcp.blueprint-modular.com`
 - **Transport** : Streamable HTTP (stateless)
 - **Auth** : None (catalogue public)
 - **Contact** : contact@blueprint-modular.com
@@ -77,7 +77,7 @@ Servi sur `/privacy`. Texte intégral :
 
 ## Instructions pour le reviewer
 
-1. Ajouter le connecteur avec l'URL `https://blueprint-modular.com/api/mcp`
+1. Ajouter le connecteur avec l'URL `https://mcp.blueprint-modular.com`
    (ou un déploiement preview Vercel), authentification **None**.
 2. Vérifier `GET /api/health` → `{ "status": "ok", "version": "1.0.0", ... }`.
 3. Vérifier que `tools/list` renvoie 4 outils, chacun avec

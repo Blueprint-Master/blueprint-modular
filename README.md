@@ -239,7 +239,7 @@ output (catalogue data only), per-IP rate limiting.
   via `npm run generate:mcp-registry` (never hand-authored)
 
 Add it in Claude via **Settings → Connectors → Add custom connector**, URL
-`https://blueprint-modular.com/api/mcp`. Full details — tools, params, local
+`https://mcp.blueprint-modular.com`. Full details — tools, params, local
 testing, MCP Inspector — in [`docs/MCP_CONNECTOR.md`](docs/MCP_CONNECTOR.md).
 Directory submission copy: [`SUBMISSION.md`](SUBMISSION.md).
 

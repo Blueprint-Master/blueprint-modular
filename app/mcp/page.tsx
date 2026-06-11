@@ -8,7 +8,7 @@ export const metadata = {
     "Serveur MCP public read-only exposant le catalogue de composants Blueprint Modular à Claude, ChatGPT et tout hôte MCP.",
 };
 
-const ENDPOINT = "https://blueprint-modular.com/api/mcp";
+const ENDPOINT = "https://mcp.blueprint-modular.com";
 
 const tools: Array<{ name: string; sig: string; desc: string }> = [
   {
