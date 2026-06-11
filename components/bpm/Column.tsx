@@ -2,6 +2,10 @@
 
 import React from "react";
 
+/**
+ * @component bpm.column
+ * @description Mise en page multi-colonnes responsive.
+ */
 export interface ColumnProps {
   /** Nombre de colonnes (1, 2, 3, 4, etc.). */
   columns?: number;

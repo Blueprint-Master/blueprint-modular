@@ -31,6 +31,10 @@ export interface LiveChartDatum {
   value: number;
 }
 
+/**
+ * @component bpm.liveChart
+ * @description Graphique en temps réel (mise à jour continue).
+ */
 export interface LiveChartProps {
   data: LiveChartDatum[];
   bufferDuration?: number;

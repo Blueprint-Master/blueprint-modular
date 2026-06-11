@@ -17,6 +17,10 @@ export type ButtonVariant =
   | "link";
 export type ButtonSize = "small" | "medium" | "large" | "sm" | "md" | "lg";
 
+/**
+ * @component bpm.button
+ * @description Bouton d'action (primary, secondary, outline, ghost, destructive).
+ */
 export interface ButtonProps {
   children?: React.ReactNode;
   onClick?: () => void;

@@ -8,6 +8,10 @@ export interface MasterDetailColumn<T> {
   render?: (value: unknown, row: T) => React.ReactNode;
 }
 
+/**
+ * @component bpm.masterDetail
+ * @description Vue liste + détail responsive (recherche, mobile).
+ */
 export interface MasterDetailProps<T extends Record<string, unknown>> {
   items: T[];
   columns: MasterDetailColumn<T>[];

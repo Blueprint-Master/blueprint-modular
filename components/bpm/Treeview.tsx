@@ -23,6 +23,10 @@ export interface TreeviewNode {
   defaultOpen?: boolean;
 }
 
+/**
+ * @component bpm.treeview
+ * @description Arbre de nœuds repliables et sélectionnables.
+ */
 export interface TreeviewProps {
   nodes?: TreeviewNode[];
   onSelect?: (node: TreeviewNode) => void;

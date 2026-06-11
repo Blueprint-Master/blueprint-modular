@@ -12,6 +12,10 @@ export interface ApprovalStep {
   avatar?: string;
 }
 
+/**
+ * @component bpm.approvalFlow
+ * @description Flux de validation multi-étapes (approve/reject par étape).
+ */
 export interface ApprovalFlowProps {
   steps: ApprovalStep[];
   onApprove?: (stepId: string, comment?: string) => void;

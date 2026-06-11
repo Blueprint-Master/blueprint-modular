@@ -9,6 +9,10 @@ import {
   type TrajectoryPoint,
 } from "./interpret";
 
+/**
+ * @component bpm.progress
+ * @description Barre de progression.
+ */
 export interface ProgressProps {
   /** Valeur actuelle, ou trajectoire v(t) [{t, v}] (le dernier point remplit la barre ; la tendance est jugée si context est fourni). */
   value?: number | TrajectoryPoint[];

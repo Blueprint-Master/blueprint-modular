@@ -30,6 +30,7 @@ INTERDIT : import { bpm.modal } ou tout autre destructuring
 ## COMPOSANTS
 
 ## bpm.accordion
+@component bpm.accordion @description Accordéon (sections repliables).
 ```
   sections?: AccordionSection[]
   allowMultiple?: boolean
@@ -49,6 +50,7 @@ INTERDIT : import { bpm.modal } ou tout autre destructuring
 ```
 
 ## bpm.addressInput
+@component bpm.addressInput @description Champ de saisie d'adresse avec autocomplétion.
 ```
   mode?: AddressInputMode
   value?: {
@@ -61,11 +63,17 @@ INTERDIT : import { bpm.modal } ou tout autre destructuring
 ```
 
 ## bpm.aiQueryBar
-Composant bpm.aiQueryBar — voir @blueprint-modular/core ou BPM_API.md.
+@component bpm.aiQueryBar @description Barre de requête IA (langage naturel → résultat structuré).
 ```
+  onQuery*: (question: string) => Promise<string>
+  placeholder?: string
+  suggestions?: string[]
+  loading?: boolean
+  className?: string
 ```
 
 ## bpm.alarmPanel
+@component bpm.alarmPanel @description Panneau d'alarmes industrielles (active, accusée, résolue).
 ```
   alarms*: Alarm[]
   onAcknowledge?: (id: string) => void
@@ -74,6 +82,7 @@ Composant bpm.aiQueryBar — voir @blueprint-modular/core ou BPM_API.md.
 ```
 
 ## bpm.altairChart
+@component bpm.altairChart @description Graphique Altair / Vega-Lite.
 ```
   spec?: Record<string, unknown>  — Spécification Vega-Lite / Altair (JSON). À fournir côté app.
   iframeSrc?: string  — Ou URL d'un fichier JSON ou d'une vue compilée.
@@ -83,6 +92,7 @@ Composant bpm.aiQueryBar — voir @blueprint-modular/core ou BPM_API.md.
 ```
 
 ## bpm.anomalyAlert
+@component bpm.anomalyAlert @description Alerte d'anomalie avec valeur attendue vs réelle.
 ```
   title?: string
   expected*: string | number
@@ -95,6 +105,7 @@ Composant bpm.aiQueryBar — voir @blueprint-modular/core ou BPM_API.md.
 ```
 
 ## bpm.approvalFlow
+@component bpm.approvalFlow @description Flux de validation multi-étapes (approve/reject par étape).
 ```
   steps*: ApprovalStep[]
   onApprove?: (stepId: string, comment?: string) => void
@@ -105,6 +116,7 @@ Composant bpm.aiQueryBar — voir @blueprint-modular/core ou BPM_API.md.
 ```
 
 ## bpm.areaChart
+@component bpm.areaChart @description Graphique en aires.
 ```
   data*: AreaChartDatum[]
   width?: number
@@ -115,6 +127,7 @@ Composant bpm.aiQueryBar — voir @blueprint-modular/core ou BPM_API.md.
 ```
 
 ## bpm.assistantPanel
+@component bpm.assistantPanel @description Panneau assistant IA (chips, saisie, réponses).
 ```
   demoAnswers?: Record<string, string>  — Si fourni, les chips affichent les réponses statiques (démo publique, pas d'appel API).
   title?: string  — Titre du panneau
@@ -123,6 +136,7 @@ Composant bpm.aiQueryBar — voir @blueprint-modular/core ou BPM_API.md.
 ```
 
 ## bpm.audio
+@component bpm.audio @description Lecteur audio HTML5.
 ```
   src*: string
   controls?: boolean
@@ -131,6 +145,7 @@ Composant bpm.aiQueryBar — voir @blueprint-modular/core ou BPM_API.md.
 ```
 
 ## bpm.autocomplete
+@component bpm.autocomplete @description Champ de saisie avec suggestions.
 ```
   label?: string
   placeholder?: string
@@ -141,6 +156,7 @@ Composant bpm.aiQueryBar — voir @blueprint-modular/core ou BPM_API.md.
 ```
 
 ## bpm.avatar
+@component bpm.avatar @description Avatar utilisateur (image, initiales ou icône).
 ```
   src?: string | null  — URL de l'image de l'avatar.
   alt?: string  — Texte alternatif (accessibilité).
@@ -157,6 +173,7 @@ Composant bpm.aiQueryBar — voir @blueprint-modular/core ou BPM_API.md.
 ```
 
 ## bpm.badge
+@component bpm.badge @description Badge / étiquette (success, warning, etc.).
 ```
   children*: React.ReactNode  — PARENT: bpm.table (colonne statut) | bpm.metric | bpm.card. INTERDIT: texte long >20 chars — utiliser bpm.chip. ASSOCIÉ: bpm.table, bpm.metric, bpm.statusBox.
   variant?: BadgeVariant  — Style / couleur du badge. Valeurs : 'default' | 'primary' | 'success' | 'warning' | 'error'. Default: 'default'.
@@ -165,6 +182,7 @@ Composant bpm.aiQueryBar — voir @blueprint-modular/core ou BPM_API.md.
 ```
 
 ## bpm.barChart
+@component bpm.barChart @description Graphique en barres.
 ```
   data*: BarChartDatum[]
   width?: number
@@ -175,6 +193,7 @@ Composant bpm.aiQueryBar — voir @blueprint-modular/core ou BPM_API.md.
 ```
 
 ## bpm.barcode
+@component bpm.barcode @description Code-barres (EAN-13, Code 128).
 ```
   value*: string
   format?: "EAN13" | "CODE128"
@@ -186,6 +205,7 @@ Composant bpm.aiQueryBar — voir @blueprint-modular/core ou BPM_API.md.
 ```
 
 ## bpm.breadcrumb
+@component bpm.breadcrumb @description Fil d'Ariane simple.
 ```
   items?: BreadcrumbItem[]
   separator?: string
@@ -193,6 +213,7 @@ Composant bpm.aiQueryBar — voir @blueprint-modular/core ou BPM_API.md.
 ```
 
 ## bpm.breadcrumbs
+@component bpm.breadcrumbs @description Fil d'Ariane avec items cliquables.
 ```
   items*: BreadcrumbsItem[]
   separator?: React.ReactNode
@@ -201,6 +222,7 @@ Composant bpm.aiQueryBar — voir @blueprint-modular/core ou BPM_API.md.
 ```
 
 ## bpm.button
+Accent BPM aligné référence — valeurs hex pour styles 100% inline (pas de var()). */ const ACCENT = "#00a3e2"; const ACCENT_DARK = "#008bc4"; const ACCENT_DARKER = "#007aa8"; const ACCENT_LIGHT = "#b3e0f4"; export type ButtonVariant = | "primary" | "secondary" | "outline" | "ghost" | "destructive" | "link"; export type ButtonSize = "small" | "medium" | "large" | "sm" | "md" | "lg"; @component bpm.button @description Bouton d'action (primary, secondary, outline, ghost, destructive).
 ```
   children?: React.ReactNode
   onClick?: () => void
@@ -218,6 +240,7 @@ Composant bpm.aiQueryBar — voir @blueprint-modular/core ou BPM_API.md.
 ```
 
 ## bpm.caption
+@component bpm.caption @description Légende ou texte secondaire.
 ```
   children*: React.ReactNode
   className?: string
@@ -225,6 +248,7 @@ Composant bpm.aiQueryBar — voir @blueprint-modular/core ou BPM_API.md.
 ```
 
 ## bpm.card
+@component bpm.card @description Carte avec titre et contenu.
 ```
   title?: React.ReactNode
   subtitle?: React.ReactNode
@@ -238,6 +262,7 @@ Composant bpm.aiQueryBar — voir @blueprint-modular/core ou BPM_API.md.
 ```
 
 ## bpm.changelog
+@component bpm.changelog @description Journal des modifications avec catégories et versions.
 ```
   changes*: ChangelogEntry[]
   groupByDate?: boolean
@@ -253,6 +278,7 @@ Chat Ollama local (démo).
 ```
 
 ## bpm.chatInterface
+ISO ou texte libre, ou Date (affichage localisé court). */ timestamp?: string | Date; } @component bpm.chatInterface @description Interface de chat (messages, saisie, streaming).
 ```
   messages*: ChatMessage[]
   onSend*: (content: string) => void
@@ -267,6 +293,7 @@ Chat Ollama local (démo).
 ```
 
 ## bpm.checkbox
+@component bpm.checkbox @description Case à cocher.
 ```
   label?: React.ReactNode
   checked?: boolean
@@ -276,6 +303,7 @@ Chat Ollama local (démo).
 ```
 
 ## bpm.chip
+@component bpm.chip @description Pastille / chip (tag supprimable ou non).
 ```
   label*: React.ReactNode
   onDelete?: () => void
@@ -286,6 +314,7 @@ Chat Ollama local (démo).
 ```
 
 ## bpm.codeBlock
+@component bpm.codeBlock @description Bloc de code avec syntaxe colorée et bouton Copier.
 ```
   code*: string
   language?: string
@@ -293,6 +322,7 @@ Chat Ollama local (démo).
 ```
 
 ## bpm.codeEditor
+@component bpm.codeEditor @description Éditeur de code (textarea avec valeur, onChange, readOnly).
 ```
   value*: string
   onChange*: (value: string) => void
@@ -304,6 +334,7 @@ Chat Ollama local (démo).
 ```
 
 ## bpm.colorPicker
+@component bpm.colorPicker @description Sélecteur de couleur.
 ```
   label?: string
   value?: string
@@ -313,6 +344,7 @@ Chat Ollama local (démo).
 ```
 
 ## bpm.column
+@component bpm.column @description Mise en page multi-colonnes responsive.
 ```
   columns?: number  — Nombre de colonnes (1, 2, 3, 4, etc.).
   gap?: number | string  — Espacement entre les colonnes (CSS, ex. "1rem", 16).
@@ -321,6 +353,7 @@ Chat Ollama local (démo).
 ```
 
 ## bpm.commandPalette
+@component bpm.commandPalette @description Palette de commandes modale (fuzzy search, clavier, Cmd+K).
 ```
   commands*: Command[]
   isOpen?: boolean  — Mode contrôlé : si défini, l’ouverture au clavier doit être gérée via `onRequestOpen`.
@@ -331,6 +364,7 @@ Chat Ollama local (démo).
 ```
 
 ## bpm.commentThread
+@component bpm.commentThread @description Fil de commentaires avec réponses et avatars.
 ```
   comments*: Comment[]
   onPost*: (content: string, parentId?: string) => void | Promise<void>
@@ -340,6 +374,7 @@ Chat Ollama local (démo).
 ```
 
 ## bpm.comparison
+@component bpm.comparison @description Tableau de comparaison multi-items.
 ```
   items*: Record<string, unknown>[]
   dimensions*: string[]
@@ -350,6 +385,7 @@ Chat Ollama local (démo).
 ```
 
 ## bpm.confirmModal
+@component bpm.confirmModal @description Modal de confirmation pour actions destructives (danger, warning, info).
 ```
   isOpen*: boolean
   onConfirm*: () => void
@@ -363,6 +399,7 @@ Chat Ollama local (démo).
 ```
 
 ## bpm.container
+@component bpm.container @description Conteneur avec titre optionnel.
 ```
   children*: React.ReactNode
   className?: string
@@ -370,6 +407,7 @@ Chat Ollama local (démo).
 ```
 
 ## bpm.contextMenu
+@component bpm.contextMenu @description Menu contextuel (clic droit ou clic bouton).
 ```
   items*: ContextMenuItem[]
   trigger*: React.ReactNode
@@ -390,11 +428,12 @@ Page CRUD générique : table + filtres + modal de création/édition/détail c�
 ```
 
 ## bpm.dataExplorer
-Composant bpm.dataExplorer — interface non parsée (voir BPM_API.md).
+@component bpm.dataExplorer @description Explorateur de données unifié (classique ou analytics).
 ```
 ```
 
 ## bpm.dateInput
+@component bpm.dateInput @description Sélecteur de date.
 ```
   label?: string
   value?: Date | string | null
@@ -406,6 +445,7 @@ Composant bpm.dataExplorer — interface non parsée (voir BPM_API.md).
 ```
 
 ## bpm.dateRangePicker
+@component bpm.dateRangePicker @description Sélecteur de plage de dates.
 ```
   label?: string
   start?: Date | string | null
@@ -417,11 +457,16 @@ Composant bpm.dataExplorer — interface non parsée (voir BPM_API.md).
 ```
 
 ## bpm.decisionTree
-Composant bpm.decisionTree — interface non parsée (voir BPM_API.md).
+@component bpm.decisionTree @description Arbre de décision interactif (questions, actions, résultats).
 ```
+  rootId*: string
+  nodes*: DecisionNode[]
+  currentNodeId?: string
+  onNodeClick*: (nodeId: string, branch?: { label: string
 ```
 
 ## bpm.diffViewer
+@component bpm.diffViewer @description Visualisation de diff texte/code (split ou unified).
 ```
   original*: string
   modified*: string
@@ -432,6 +477,7 @@ Composant bpm.decisionTree — interface non parsée (voir BPM_API.md).
 ```
 
 ## bpm.divider
+@component bpm.divider @description Séparateur horizontal avec label optionnel.
 ```
   label?: string
   orientation?: "horizontal" | "vertical"
@@ -441,6 +487,7 @@ Composant bpm.decisionTree — interface non parsée (voir BPM_API.md).
 ```
 
 ## bpm.drawer
+@component bpm.drawer @description Tiroir / panneau latéral (détail, formulaire, filtres).
 ```
   children*: React.ReactNode
   open*: boolean
@@ -452,11 +499,17 @@ Composant bpm.decisionTree — interface non parsée (voir BPM_API.md).
 ```
 
 ## bpm.drillDown
-Composant bpm.drillDown — interface non parsée (voir BPM_API.md).
+@component bpm.drillDown @description Navigation drill-down multi-niveaux dans des données hiérarchiques.
 ```
+  levels*: DrillDownLevel<T>[]
+  currentLevel*: number
+  onDrill*: (item: T, nextLevel: number) => void
+  onBack*: () => void
+  breadcrumbs?: boolean
 ```
 
 ## bpm.emailComposer
+@component bpm.emailComposer @description Composeur d'email (To, CC, objet, corps riche).
 ```
   to?: string
   subject?: string
@@ -469,6 +522,7 @@ Composant bpm.drillDown — interface non parsée (voir BPM_API.md).
 ```
 
 ## bpm.empty
+@component bpm.empty @description État vide minimal (icône + message).
 ```
   children?: React.ReactNode
   className?: string
@@ -476,6 +530,7 @@ Composant bpm.drillDown — interface non parsée (voir BPM_API.md).
 ```
 
 ## bpm.emptyState
+@component bpm.emptyState @description État vide illustré (titre, description, action).
 ```
   title?: string
   description?: React.ReactNode
@@ -485,6 +540,7 @@ Composant bpm.drillDown — interface non parsée (voir BPM_API.md).
 ```
 
 ## bpm.expander
+@component bpm.expander @description Bloc repliable avec titre.
 ```
   title*: React.ReactNode
   children*: React.ReactNode
@@ -493,10 +549,19 @@ Composant bpm.drillDown — interface non parsée (voir BPM_API.md).
 ```
 
 ## bpm.exportButton
+@component bpm.exportButton @description Bouton d'export de données (CSV, JSON, Excel).
 ```
+  data*: T[] | (() => T[])
+  filename*: string
+  formats?: ("csv" | "json")[]
+  columns?: ExportColumn<T>[]
+  csvDelimiter?: "
+  csvBOM?: boolean
+  className?: string
 ```
 
 ## bpm.fab
+@component bpm.fab @description Bouton d'action flottant (FAB).
 ```
   icon?: React.ReactNode
   label?: string
@@ -506,6 +571,7 @@ Composant bpm.drillDown — interface non parsée (voir BPM_API.md).
 ```
 
 ## bpm.filePreview
+@component bpm.filePreview @description Aperçu de fichier (image, PDF, texte/code).
 ```
   url*: string
   filename*: string
@@ -521,6 +587,7 @@ Composant bpm.drillDown — interface non parsée (voir BPM_API.md).
 ```
 
 ## bpm.fileUploader
+@component bpm.fileUploader @description Upload de fichier(s) par glisser-déposer ou sélection.
 ```
   accept?: string
   multiple?: boolean
@@ -531,6 +598,7 @@ Composant bpm.drillDown — interface non parsée (voir BPM_API.md).
 ```
 
 ## bpm.filterPanel
+@component bpm.filterPanel @description Panneau de filtres (select, multiselect, daterange, text, toggle).
 ```
   filters*: FilterConfig[]  — Liste des filtres à afficher.
   values?: Record<string, unknown>  — Valeurs courantes (clé = filter.key).
@@ -541,6 +609,7 @@ Composant bpm.drillDown — interface non parsée (voir BPM_API.md).
 ```
 
 ## bpm.flowDiagram
+@component bpm.flowDiagram @description Diagramme d'états et transitions interactif (SVG).
 ```
   states*: FlowDiagramState[]
   transitions*: FlowDiagramTransition[]
@@ -551,6 +620,7 @@ Composant bpm.drillDown — interface non parsée (voir BPM_API.md).
 ```
 
 ## bpm.funnelChart
+@component bpm.funnelChart @description Graphique en entonnoir (tunnel de conversion).
 ```
   stages*: FunnelStage[]
   showPercentage?: boolean
@@ -559,11 +629,17 @@ Composant bpm.drillDown — interface non parsée (voir BPM_API.md).
 ```
 
 ## bpm.gantt
-Composant bpm.gantt — interface non parsée (voir BPM_API.md).
+@component bpm.gantt @description Diagramme de Gantt (tâches, jalons, dépendances).
 ```
+  tasks*: GanttTask[]
+  viewMode*: "day" | "week" | "month"
+  onTaskClick*: (task: GanttTask) => void
+  showDependencies?: boolean
+  todayLine?: boolean
 ```
 
 ## bpm.geofence
+@component bpm.geofence @description Carte interactive avec zones géographiques (geofences).
 ```
   zones*: GeofenceZone[]
   onZonesChange?: (next: GeofenceZone[]) => void
@@ -574,6 +650,7 @@ Composant bpm.gantt — interface non parsée (voir BPM_API.md).
 ```
 
 ## bpm.gps
+Carte Leaflet chargée côté client uniquement (évite erreurs SSR). */ const LeafletMap = dynamic( () => import("./GpsMap").then((m) => m.GpsMap), { ssr: false } ); État du cycle de vie de la géolocalisation. */ export type GpsStatus = "idle" | "loading" | "success" | "error"; @component bpm.gps @description Affichage ou sélection de position GPS.
 ```
   label?: string  — Titre affiché au-dessus du bloc.
   showMap?: boolean  — Afficher une carte Leaflet. Default: true.
@@ -586,6 +663,7 @@ Composant bpm.gantt — interface non parsée (voir BPM_API.md).
 ```
 
 ## bpm.grid
+@component bpm.grid @description Grille responsive avec espacement configurable.
 ```
   cols?: number | { xs?: number
   gap?: number | string
@@ -594,8 +672,15 @@ Composant bpm.gantt — interface non parsée (voir BPM_API.md).
 ```
 
 ## bpm.groupedList
-Composant bpm.groupedList — interface non parsée (voir BPM_API.md).
+@component bpm.groupedList @description Liste groupée par clé avec en-têtes de groupe.
 ```
+  items*: T[]
+  groupBy*: keyof T
+  renderItem*: (item: T, index: number) => React.ReactNode
+  renderGroupHeader?: (key: string, count: number) => React.ReactNode
+  sortGroups?: "asc" | "desc"
+  collapsible?: boolean
+  defaultCollapsed?: boolean
 ```
 
 ## bpm.heatmap
@@ -671,6 +756,7 @@ Composant bpm.groupedList — interface non parsée (voir BPM_API.md).
 ```
 
 ## bpm.invoiceTemplate
+@component bpm.invoiceTemplate @description Modèle de facture A4 prêt pour impression avec lignes, TVA et totaux calculés automatiquement. @example bpm.invoiceTemplate({ issuer: "Ma Société", client: "Client SA", lines: [{ label: "Service", qty: 2, unitPrice: 100 }] }) @param {object} props @param {string} [props.title="Facture"] - Titre du document. Optionnel. @param {string} props.issuer - Informations de l'émetteur. Obligatoire. @param {string} props.client - Informations du client. Obligatoire. @param {InvoiceLine[]} props.lines - Lignes de facturation (label, qty, unitPrice). Obligatoire. @param {number} [props.taxRate=0.2] - Taux de TVA (0.2 = 20%). Optionnel. @param {string} [props.invoiceNo="—"] - Numéro de facture. Optionnel. @param {string} [props.date] - Date de la facture (YYYY-MM-DD). Optionnel, défaut aujourd'hui. @param {string} [props.className=""] - Classes CSS additionnelles. Optionnel. @associated bpm.printLayout export interface InvoiceLine { label: string; qty: number; unitPrice: number; } @component bpm.invoiceTemplate @description Modèle de facture (émetteur, client, lignes, total).
 ```
   title?: string
   issuer*: string
@@ -694,6 +780,7 @@ Composant bpm.groupedList — interface non parsée (voir BPM_API.md).
 ```
 
 ## bpm.jsonViewer
+@component bpm.jsonViewer @description Affichage JSON formaté et repliable.
 ```
   data*: unknown  — Objet ou chaîne JSON à afficher.
   defaultExpandedLevel?: number  — Nombre de niveaux ouverts par défaut (0 = tout replié).
@@ -716,6 +803,7 @@ Composant bpm.groupedList — interface non parsée (voir BPM_API.md).
 ```
 
 ## bpm.lineChart
+@component bpm.lineChart @description Graphique en ligne SVG simple et responsive pour afficher une série de données. @example bpm.lineChart({ data: [{ x: 0, y: 10 }, { x: 1, y: 25 }], color: "#3b82f6" }) @param {object} props @param {LineChartDatum[]} props.data - Tableau de points { x, y }. Obligatoire. @param {number} [props.width=400] - Largeur du SVG. Optionnel. @param {number} [props.height=200] - Hauteur du SVG. Optionnel. @param {string} [props.color="var(--bpm-accent)"] - Couleur de la ligne. Optionnel. @param {string} [props.className=""] - Classes CSS additionnelles. Optionnel. @param {InterpretContext} [props.context] - Contexte de jugement : ligne de repère pointillée, couleur de série jugée, aria-label descriptif. Optionnel. @associated bpm.areaChart, bpm.barChart, bpm.scatterChart export interface LineChartDatum { x: number | string; y: number; }/** @component bpm.lineChart @description Graphique en courbes.
 ```
   data*: LineChartDatum[]
   width?: number
@@ -726,6 +814,7 @@ Composant bpm.groupedList — interface non parsée (voir BPM_API.md).
 ```
 
 ## bpm.liveChart
+@component bpm.liveChart @description Graphique temps réel avec fenêtre glissante, seuils en pointillés et rafraîchissement automatique. @example bpm.liveChart({ data: [{ timestamp: Date.now(), value: 42 }], bufferDuration: 60, refreshInterval: 1000 }) @param {object} props @param {LiveChartDatum[]} props.data - Points { timestamp, value }. Obligatoire. @param {number} [props.bufferDuration=120] - Durée de la fenêtre en secondes. Optionnel. @param {{ value: number; label?: string }[]} [props.thresholds=[]] - Lignes de seuil horizontales. Optionnel. @param {number} [props.refreshInterval] - Intervalle de rafraîchissement en ms. Optionnel. @param {number} [props.width=400] - Largeur du graphique. Optionnel. @param {number} [props.height=180] - Hauteur du graphique. Optionnel. @param {string} [props.className=""] - Classes CSS additionnelles. Optionnel. @param {InterpretContext} [props.context] - Contexte de jugement : courbe colorée par le verdict, repère pointillé, verdict sous le graphique. Optionnel. @associated bpm.liveGauge, bpm.lineChart, bpm.sparkline export interface LiveChartDatum { timestamp: number; value: number; } @component bpm.liveChart @description Graphique en temps réel (mise à jour continue).
 ```
   data*: LiveChartDatum[]
   bufferDuration?: number
@@ -752,6 +841,7 @@ Composant bpm.groupedList — interface non parsée (voir BPM_API.md).
 ```
 
 ## bpm.loadingBar
+@component bpm.loadingBar @description Barre de chargement (sweep, blocks, iso, stacked, arc, dots).
 ```
   variant?: LoadingBarVariant  — Variant visuel (sweep, blocks, iso, stacked, arc, dots).
   value?: number  — Pour les barres déterminées (ex. iso) : 0–100. Non fourni = indéterminé.
@@ -800,16 +890,29 @@ Composant bpm.groupedList — interface non parsée (voir BPM_API.md).
 ```
 
 ## bpm.markdown
+@component bpm.markdown @description Rendu Markdown sécurisé.
 ```
   text*: string  — Contenu Markdown. Utilisez `---` sur une ligne pour une ligne horizontale (hr).
   className?: string
 ```
 
 ## bpm.masterDetail
+@component bpm.masterDetail @description Vue liste + détail responsive (recherche, mobile).
 ```
+  items*: T[]
+  columns*: MasterDetailColumn<T>[]
+  renderDetail*: (item: T) => React.ReactElement
+  selectedId?: string
+  onSelect*: (item: T) => void
+  idKey?: string
+  searchable?: boolean
+  emptyDetailMessage?: string
+  splitRatio?: number
+  className?: string
 ```
 
 ## bpm.message
+@component bpm.message @description Bandeau info/success/warning/error.
 ```
   type?: MessageType
   children*: React.ReactNode
@@ -840,6 +943,7 @@ Locales courants pour le format nombre (ex. "fr-FR" → 1 000,50, "en-US" → 1,
 ```
 
 ## bpm.metricRow
+@component bpm.metricRow @description Ligne de métriques (conteneur pour plusieurs bpm.metric).
 ```
   children*: React.ReactNode
   className?: string
@@ -857,6 +961,7 @@ Locales courants pour le format nombre (ex. "fr-FR" → 1 000,50, "en-US" → 1,
 ```
 
 ## bpm.modelSelector
+@component bpm.modelSelector @description Sélecteur de modèle IA avec dropdown groupé par fournisseur et affichage des capacités. @example bpm.modelSelector({ models: [{ id: "gpt-4", label: "GPT-4", provider: "OpenAI" }], selected: "gpt-4", onChange: setModel }) @param {object} props @param {ModelOption[]} props.models - Liste des modèles disponibles. Obligatoire. @param {string} props.selected - ID du modèle sélectionné. Obligatoire. @param {function} props.onChange - Callback au changement de sélection. Obligatoire. @param {boolean} [props.showCapabilities=true] - Affiche les capacités et fenêtre de contexte. Optionnel. @param {string} [props.className=""] - Classes CSS additionnelles. Optionnel. @associated bpm.chatInterface, bpm.promptInput export interface ModelOption { id: string; label: string; provider: string; capabilities?: string[]; contextWindow?: number; } @component bpm.modelSelector @description Sélecteur de modèle IA (par fournisseur, capacités).
 ```
   models*: ModelOption[]
   selected*: string
@@ -874,6 +979,7 @@ Locales courants pour le format nombre (ex. "fr-FR" → 1 000,50, "en-US" → 1,
 ```
 
 ## bpm.notificationCenter
+@component bpm.notificationCenter @description Centre de notifications (liste, marquage, suppression).
 ```
   notifications*: NotificationItem[]
   onMarkRead*: (id: string) => void
@@ -905,6 +1011,7 @@ Locales courants pour le format nombre (ex. "fr-FR" → 1 000,50, "en-US" → 1,
 ```
 
 ## bpm.orgChart
+@component bpm.orgChart @description Organigramme hiérarchique HTML/CSS (repliable).
 ```
   nodes*: OrgChartNode[]
   direction?: "vertical" | "horizontal"
@@ -921,6 +1028,7 @@ Conteneur page (core) — props : children.
 ```
 
 ## bpm.pageLayout
+@component bpm.pageLayout @description Layout d'application avec sidebar rétractable, navigation par icônes Material et switch de thème. @example bpm.pageLayout({ title: "Mon App", items: [{ key: "home", label: "Accueil", icon: "home" }], currentItem: "home", onNavigate: setPage, children: <Content /> }) @param {object} props @param {string} props.title - Titre affiché dans la sidebar. Obligatoire. @param {SidebarItem[]} props.items - Éléments de navigation (key, label, icon). Obligatoire. @param {string} props.currentItem - Clé de l'élément actif. Obligatoire. @param {function} props.onNavigate - Callback au clic sur un item (key). Obligatoire. @param {React.ReactNode} props.children - Contenu principal. Obligatoire. @param {boolean} [props.defaultCollapsed=false] - Sidebar rétractée par défaut. Optionnel. @param {"light"|"dark"} [props.theme] - Thème actuel. Optionnel. @param {function} [props.onThemeChange] - Callback changement de thème. Optionnel. @associated bpm.topNav, bpm.sidebar export interface SidebarItem { Clé unique de l’entrée. */ key: string; Libellé affiché (mode expanded). */ label: string; Nom de l’icône Material Symbol (snake_case), ex: "dashboard", "inventory_2", "widgets". Voir https://fonts.google.com/icons (weight 200). */ icon: string; } @component bpm.pageLayout @description Layout avec sidebar repliable, titre et zone de contenu.
 ```
   title*: string
   items*: SidebarItem[]
@@ -945,6 +1053,7 @@ Conteneur page (core) — props : children.
 ```
 
 ## bpm.panel
+@component bpm.panel @description Panneau informatif (info, success, warning, error).
 ```
   variant?: "info" | "success" | "warning" | "error"  — PARENT: page directe | bpm.grid | bpm.tabs (contenu onglet). INTERDIT: bpm.panel imbriqué trop profond (max 2 niveaux). ASSOCIÉ: bpm.title, bpm.metric, bpm.table, bpm.plotlyChart.
   title?: string | null
@@ -976,8 +1085,9 @@ Conteneur page (core) — props : children.
 ```
 
 ## bpm.plcConnector
-Composant bpm.plcConnector — voir @blueprint-modular/core ou BPM_API.md.
+@component bpm.plcConnector @description Formulaire de configuration de connexion automate industriel (Modbus, OPC UA, MQTT, EtherNet/IP). @example bpm.plcConnector({ className: "my-class" }) @param {object} props @param {string} [props.className=""] - Classes CSS additionnelles. Optionnel. @associated bpm.machineStatus, bpm.sensorGrid, bpm.liveChart
 ```
+  className?: string
 ```
 
 ## bpm.plotlyChart
@@ -1016,6 +1126,7 @@ Composant bpm.plcConnector — voir @blueprint-modular/core ou BPM_API.md.
 ```
 
 ## bpm.printLayout
+@component bpm.printLayout @description Mise en page optimisée pour l'impression A4 avec en-tête, pied de page et marges personnalisables. @example bpm.printLayout({ children: <Content />, orientation: "portrait", header: <Logo />, footer: "Page 1", marginsMm: { top: 20 } }) @param {object} props @param {React.ReactNode} props.children - Contenu principal. Obligatoire. @param {"portrait"|"landscape"} [props.orientation="portrait"] - Orientation de la page. Optionnel. @param {React.ReactNode} [props.header] - En-tête affiché en haut. Optionnel. @param {React.ReactNode} [props.footer] - Pied de page. Optionnel. @param {PrintLayoutMarginsMm} [props.marginsMm] - Marges en mm (top, right, bottom, left). Optionnel. @param {string} [props.className=""] - Classes CSS additionnelles. Optionnel. @associated bpm.invoiceTemplate, bpm.reportPage export interface PrintLayoutMarginsMm { top?: number; right?: number; bottom?: number; left?: number; } @component bpm.printLayout @description Mise en page optimisée pour l'impression.
 ```
   children*: React.ReactNode
   orientation?: "portrait" | "landscape"
@@ -1026,6 +1137,7 @@ Composant bpm.plcConnector — voir @blueprint-modular/core ou BPM_API.md.
 ```
 
 ## bpm.progress
+@component bpm.progress @description Barre de progression.
 ```
   value?: number | TrajectoryPoint[]  — Valeur actuelle, ou trajectoire v(t) [{t, v}] (le dernier point remplit la barre ; la tendance est jugée si context est fourni).
   max?: number
@@ -1110,6 +1222,7 @@ Composant bpm.plcConnector — voir @blueprint-modular/core ou BPM_API.md.
 ```
 
 ## bpm.relationGraph
+@component bpm.relationGraph @description Graphe relationnel SVG interactif avec layouts force/grille/circulaire, zoom, panoramique et drag-and-drop des nœuds. @example bpm.relationGraph({ nodes: [{ id: "1", label: "A" }], edges: [{ from: "1", to: "2" }], layout: "force" }) @param {object} props @param {GraphNode[]} props.nodes - Liste des nœuds (id, label, width?, height?). Obligatoire. @param {GraphEdge[]} props.edges - Liste des arêtes (from, to). Obligatoire. @param {"force"|"grid"|"circular"} [props.layout="force"] - Algorithme de placement. Optionnel. @param {number} [props.width=640] - Largeur du SVG. Optionnel. @param {number} [props.height=420] - Hauteur du SVG. Optionnel. @param {string} [props.className=""] - Classes CSS additionnelles. Optionnel. @associated bpm.orgChart, bpm.treeview export interface GraphNode { id: string; label: string; width?: number; height?: number; } export interface GraphEdge { from: string; to: string; } export type RelationGraphLayout = "force" | "grid" | "circular"; @component bpm.relationGraph @description Graphe de relations interactif (nœuds et arêtes).
 ```
   nodes*: GraphNode[]
   edges*: GraphEdge[]
@@ -1120,6 +1233,7 @@ Composant bpm.plcConnector — voir @blueprint-modular/core ou BPM_API.md.
 ```
 
 ## bpm.reportPage
+@component bpm.reportPage @description Page de rapport structurée avec sections (titre, texte, tableau, graphique, KPI), impression PDF via window.print. @example bpm.reportPage({ title: "Rapport mensuel", sections: [{ type: "heading", text: "Résumé" }, { type: "kpi", label: "CA", value: "150k€" }] }) @param {object} props @param {string} props.title - Titre principal du rapport. Obligatoire. @param {string} [props.subtitle] - Sous-titre. Optionnel. @param {string} [props.date] - Date du rapport. Optionnel. @param {React.ReactNode} [props.logo] - Logo affiché en haut à droite. Optionnel. @param {ReportSection[]} props.sections - Sections du rapport (heading, text, table, chart, kpi, divider). Obligatoire. @param {boolean} [props.exportable=true] - Affiche le bouton Imprimer/PDF. Optionnel. @param {string} [props.className=""] - Classes CSS additionnelles. Optionnel. @associated bpm.printLayout, bpm.invoiceTemplate, bpm.lineChart export type ReportSection = | { type: "heading"; text: string; level?: 1 | 2 | 3 } | { type: "text"; content: string } | { type: "table"; headers: string[]; rows: string[][] } | { type: "chart"; title?: string; data: { timestamp: number; value: number }[] } | { type: "kpi"; label: string; value: string; hint?: string } | { type: "divider" }; @component bpm.reportPage @description Page de rapport structuré (titre, sections, contenu).
 ```
   title*: string
   subtitle?: string
@@ -1145,6 +1259,7 @@ Composant bpm.plcConnector — voir @blueprint-modular/core ou BPM_API.md.
 ```
 
 ## bpm.routePlanner
+@component bpm.routePlanner @description Planificateur d'itinéraire avec liste de points réordonnables, carte Leaflet et calcul de distance orthodromique. @example bpm.routePlanner({ stops: [{ id: "1", label: "Paris", position: [48.85, 2.35] }], onReorder: setStops, showDistance: true }) @param {object} props @param {RouteStop[]} props.stops - Points de l'itinéraire (id, label, position [lat, lng]). Obligatoire. @param {function} [props.onReorder] - Callback à la réorganisation. Optionnel. @param {boolean} [props.showDistance=true] - Affiche la distance totale. Optionnel. @param {number|string} [props.mapHeight=360] - Hauteur de la carte. Optionnel. @param {string} [props.className=""] - Classes CSS additionnelles. Optionnel. @associated bpm.mapView, bpm.gps, bpm.timeline export interface RouteStop { id: string; label?: string; position: [number, number]; } function haversineKm(a: [number, number], b: [number, number]): number { const R = 6371; const toRad = (x: number) => (x * Math.PI) / 180; const dLat = toRad(b[0] - a[0]); const dLon = toRad(b[1] - a[1]); const lat1 = toRad(a[0]); const lat2 = toRad(b[0]); const h = Math.sin(dLat / 2) ** 2 + Math.cos(lat1) * Math.cos(lat2) * Math.sin(dLon / 2) ** 2; return 2 * R * Math.asin(Math.min(1, Math.sqrt(h))); } @component bpm.routePlanner @description Planificateur d'itinéraire (arrêts, distances).
 ```
   stops*: RouteStop[]
   onReorder?: (next: RouteStop[]) => void
@@ -1154,6 +1269,7 @@ Composant bpm.plcConnector — voir @blueprint-modular/core ou BPM_API.md.
 ```
 
 ## bpm.scatterChart
+@component bpm.scatterChart @description Graphique de dispersion (nuage de points) SVG simple et responsive. @example bpm.scatterChart({ data: [{ x: 1, y: 10 }, { x: 2, y: 25 }], color: "#3b82f6", radius: 5 }) @param {object} props @param {ScatterChartDatum[]} props.data - Points { x, y }. Obligatoire. @param {number} [props.width=400] - Largeur du SVG. Optionnel. @param {number} [props.height=200] - Hauteur du SVG. Optionnel. @param {string} [props.color="var(--bpm-accent)"] - Couleur des points. Optionnel. @param {number} [props.radius=4] - Rayon des cercles. Optionnel. @param {string} [props.className=""] - Classes CSS additionnelles. Optionnel. @param {InterpretContext} [props.context] - Contexte de jugement : points colorés par écart individuel, anomalies (>2σ du nuage) cerclées, repère pointillé, verdict global. Optionnel. @associated bpm.lineChart, bpm.areaChart, bpm.plotlyChart export interface ScatterChartDatum { x: number; y: number; } @component bpm.scatterChart @description Graphique en nuage de points.
 ```
   data*: ScatterChartDatum[]
   width?: number
@@ -1165,8 +1281,15 @@ Composant bpm.plcConnector — voir @blueprint-modular/core ou BPM_API.md.
 ```
 
 ## bpm.scheduler
-Composant bpm.scheduler — interface non parsée (voir BPM_API.md).
+@component bpm.scheduler @description Calendrier/agenda avec vues jour, semaine et mois, gestion d'événements et de ressources. @example bpm.scheduler({ view: "week", events: [{ id: "1", title: "Réunion", start: "2024-01-15T10:00", end: "2024-01-15T11:00" }], onEventClick: handleEvent, onSlotClick: handleSlot }) @param {object} props @param {"day"|"week"|"month"} props.view - Vue active. Obligatoire. @param {SchedulerEvent[]} props.events - Liste des événements (id, title, start, end, resourceId?, color?). Obligatoire. @param {SchedulerResource[]} [props.resources] - Ressources associables (id, label). Optionnel. @param {function} props.onEventClick - Callback au clic sur un événement. Obligatoire. @param {function} props.onSlotClick - Callback au clic sur un créneau vide (dayStart, hour). Obligatoire. @param {number} [props.startHour=8] - Première heure affichée. Optionnel. @param {number} [props.endHour=20] - Dernière heure affichée. Optionnel. @associated bpm.calendar, bpm.timeline const DAY_MS = 24 * 60 * 60 * 1000; function parseMs(iso: string): number { const t = Date.parse(iso); return Number.isNaN(t) ? 0 : t; } function startOfLocalDay(d: Date): Date { return new Date(d.getFullYear(), d.getMonth(), d.getDate()); } function addDays(d: Date, n: number): Date { const x = new Date(d); x.setDate(x.getDate() + n); return x; } function startOfWeekMonday(d: Date): Date { const s = startOfLocalDay(d); const day = s.getDay(); const diff = day === 0 ? -6 : 1 - day; return addDays(s, diff); } function daysInMonth(y: number, m: number): number { return new Date(y, m + 1, 0).getDate(); } const WEEKDAY_LABELS = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"]; export type SchedulerEvent = { id: string; title: string; start: string; end: string; resourceId?: string; color?: string; }; export type SchedulerResource = { id: string; label: string; }; @component bpm.scheduler @description Planificateur / agenda (semaine, jour, mois).
 ```
+  view*: "day" | "week" | "month"
+  events*: SchedulerEvent[]
+  resources?: SchedulerResource[]
+  onEventClick*: (ev: SchedulerEvent) => void
+  onSlotClick*: (dayStart: Date, hour: number) => void
+  startHour?: number
+  endHour?: number
 ```
 
 ## bpm.scrollContainer
@@ -1195,6 +1318,7 @@ Composant bpm.scheduler — interface non parsée (voir BPM_API.md).
 ```
 
 ## bpm.sensorGrid
+@component bpm.sensorGrid @description Grille de cartes capteur avec valeur, unité, statut coloré et détail optionnel. @example bpm.sensorGrid({ sensors: [{ id: "1", label: "Température", value: 24.5, unit: "°C", status: "ok" }], columns: 3 }) @param {object} props @param {SensorReading[]} props.sensors - Liste des capteurs (id, label, value, unit?, status, detail?). Obligatoire. @param {number} [props.columns=3] - Nombre de colonnes de la grille. Optionnel. @param {string} [props.className=""] - Classes CSS additionnelles. Optionnel. @associated bpm.machineStatus, bpm.liveGauge, bpm.metric export interface SensorReading { id: string; label: string; value: string | number; unit?: string; status: SensorStatus; detail?: string; Historique v(t) [{t, v}] du capteur — révèle la tendance si context est fourni. */ history?: TrajectoryPoint[]; Contexte de jugement propre au capteur { reference, direction, comparisonFrame? } : la carte est jugée par interpret (bordure colorée par le verdict, ligne écart/tendance). Additif : sans context, rendu inchangé. */ context?: InterpretContext; } @component bpm.sensorGrid @description Grille de capteurs industriels (valeur, seuil, état).
 ```
   sensors*: SensorReading[]
   columns?: number
@@ -1212,6 +1336,7 @@ Composant bpm.scheduler — interface non parsée (voir BPM_API.md).
 ```
 
 ## bpm.skeleton
+@component bpm.skeleton @description Placeholder de chargement (skeleton screen).
 ```
   variant?: SkeletonVariant
   width?: number | string
@@ -1224,6 +1349,7 @@ Composant bpm.scheduler — interface non parsée (voir BPM_API.md).
 ```
 
 ## bpm.slider
+@component bpm.slider @description Curseur min/max/step.
 ```
   value?: number
   min?: number
@@ -1248,6 +1374,7 @@ Composant bpm.scheduler — interface non parsée (voir BPM_API.md).
 ```
 
 ## bpm.spinner
+@component bpm.spinner @description Indicateur de chargement (roue).
 ```
   text?: string
   size?: SpinnerSize
@@ -1276,6 +1403,7 @@ Composant bpm.scheduler — interface non parsée (voir BPM_API.md).
 ```
 
 ## bpm.stateMachine
+@component bpm.stateMachine @description Visualisation d'une machine à états avec graphe circulaire, transitions cliquables et historique. @example bpm.stateMachine({ states: ["A", "B", "C"], transitions: [{ from: "A", to: "B" }], currentState: "A", onTransition: handleTransition }) @param {object} props @param {string[]} props.states - Liste des états. Obligatoire. @param {StateTransition[]} props.transitions - Liste des transitions (from, to, label?). Obligatoire. @param {string} props.currentState - État actuel. Obligatoire. @param {string[]} [props.history=[]] - Historique des états traversés. Optionnel. @param {function} [props.onTransition] - Callback (from, to) au clic sur une transition. Optionnel. @param {number} [props.width=420] - Largeur du SVG. Optionnel. @param {number} [props.height=420] - Hauteur du SVG. Optionnel. @param {string} [props.className=""] - Classes CSS additionnelles. Optionnel. @associated bpm.stepper, bpm.timeline, bpm.relationGraph export interface StateTransition { from: string; to: string; label?: string; } @component bpm.stateMachine @description Visualiseur de machine à états finis.
 ```
   states*: string[]
   transitions*: StateTransition[]
@@ -1288,6 +1416,7 @@ Composant bpm.scheduler — interface non parsée (voir BPM_API.md).
 ```
 
 ## bpm.statusBox
+@component bpm.statusBox @description Boîte de statut (success, warning, error, info).
 ```
   label*: string
   state?: "running" | "complete" | "error"
@@ -1300,6 +1429,7 @@ Composant bpm.scheduler — interface non parsée (voir BPM_API.md).
 ```
 
 ## bpm.statusTracker
+@component bpm.statusTracker @description Suivi de statut en étapes (completed/current/pending/error).
 ```
   stages*: StatusTrackerStage[]
   direction?: "horizontal" | "vertical"
@@ -1308,6 +1438,7 @@ Composant bpm.scheduler — interface non parsée (voir BPM_API.md).
 ```
 
 ## bpm.stepper
+@component bpm.stepper @description Progression multi-étapes (horizontal/vertical).
 ```
   steps?: StepperStep[]
   currentStep?: number
@@ -1340,6 +1471,7 @@ Composant bpm.scheduler — interface non parsée (voir BPM_API.md).
 ```
 
 ## bpm.table
+@component bpm.table @description Tableau de données triable avec colonnes personnalisables, formatage numérique et scroll horizontal. @example bpm.table({ columns: [{ key: "nom", label: "Nom" }, { key: "montant", label: "Montant", align: "right" }], data: rows, striped: true, hover: true }) @param {object} props @param {TableColumn[]} props.columns - Définition des colonnes (key, label, align?, render?, decimals?). Obligatoire. @param {Record<string, unknown>[]} props.data - Tableau de données. Obligatoire. @param {boolean} [props.striped=true] - Lignes alternées. Optionnel. @param {boolean} [props.hover=true] - Surbrillance au survol. Optionnel. @param {function} [props.onRowClick] - Callback au clic sur une ligne. Optionnel. @param {string} [props.defaultSortColumn] - Colonne triée par défaut. Optionnel. @param {"asc"|"desc"} [props.defaultSortDirection="asc"] - Direction de tri par défaut. Optionnel. @param {string} [props.name] - Nom pour référence IA. Optionnel. @param {string} [props.keyColumn] - Colonne d'ID unique. Optionnel. @param {string} [props.className=""] - Classes CSS additionnelles. Optionnel. @param {string} [props.valueLocale="fr-FR"] - Locale pour formatage. Optionnel. @param {number} [props.valueDecimals=0] - Décimales par défaut. Optionnel. @param {boolean} [props.valueGrouping=true] - Séparateur de milliers. Optionnel. @param {number} [props.minWidth] - Largeur minimale en pixels. Optionnel. @param {boolean} [props.trackContext=false] - Expose au contexte IA. Optionnel. @param {string} [props.emptyMessage="Aucune donnée disponible"] - Message si vide. Optionnel. @parent bpm.panel, bpm.container @associated bpm.pagination, bpm.input, bpm.badge, bpm.button @forbidden bpm.card (overflow caché) export interface TableColumn { key: string; label: React.ReactNode; align?: "left" | "center" | "right"; className?: string; Renderer personnalisé (valeur + ligne). Seule prop supportée — pas renderCell. */ render?: (value: unknown, row: Record<string, unknown>) => React.ReactNode; Décimales pour cette colonne (surcharge valueDecimals du tableau). */ decimals?: number; Si true, l'en-tête de colonne ne passe pas à la ligne (whitespace-nowrap). */ noWrap?: boolean; Contexte de jugement de la colonne { reference, direction, comparisonFrame? } : chaque cellule numérique est jugée par interpret — valeur colorée par le verdict, écart en title, data-judgment. Ignoré si render est fourni. Additif : sans context, rendu inchangé. */ context?: InterpretContext; } @component bpm.table @description Tableau triable avec colonnes configurables.
 ```
   columns*: TableColumn[]  — Définition des colonnes — obligatoire.
   data*: Record<string, unknown>[]  — Tableau de données — obligatoire. INTERDIT : JSX dans data[], utiliser render dans TableColumn.
@@ -1364,6 +1496,7 @@ Composant bpm.scheduler — interface non parsée (voir BPM_API.md).
 INTERDIT : Tableau de données — obligatoire. INTERDIT : JSX dans data[], utiliser render dans TableColumn. */
 
 ## bpm.tabs
+@component bpm.tabs @description Système d'onglets avec contenu associé, scroll horizontal si débordement. @example bpm.tabs({ tabs: [{ label: "Aperçu", content: <Overview /> }, { label: "Détails", content: <Details /> }], defaultTab: 0 }) @param {object} props @param {TabsItems} [props.tabs=[]] - Onglets (string[] ou { label, content, key? }[]). Optionnel. @param {number} [props.defaultTab=0] - Index de l'onglet actif au montage. Optionnel. @param {function} [props.onChange] - Callback au changement d'onglet (index). Optionnel. @param {string} [props.className=""] - Classes CSS additionnelles. Optionnel. @parent bpm.panel, bpm.container @associated bpm.table, bpm.plotlyChart, bpm.metric @forbidden bpm.tabs (pas d'imbrication) export interface TabItem { label: string; content: React.ReactNode | null; key?: string | number; } export type TabsItems = (string | TabItem)[]; @component bpm.tabs @description Onglets pour organiser le contenu.
 ```
   tabs?: TabsItems  — Onglets : tableau de { label, content } ou chaînes (label uniquement).
   defaultTab?: number  — Index de l'onglet actif au montage. Default: 0.
@@ -1372,6 +1505,7 @@ INTERDIT : Tableau de données — obligatoire. INTERDIT : JSX dans data[], util
 ```
 
 ## bpm.text
+@component bpm.text @description Texte simple (niveau corps).
 ```
   children*: React.ReactNode
   mono?: boolean  — Style inline comme st.text (monospace).
@@ -1380,6 +1514,7 @@ INTERDIT : Tableau de données — obligatoire. INTERDIT : JSX dans data[], util
 ```
 
 ## bpm.textarea
+@component bpm.textarea @description Zone de texte multiligne.
 ```
   label?: string
   value?: string
@@ -1413,6 +1548,7 @@ INTERDIT : Tableau de données — obligatoire. INTERDIT : JSX dans data[], util
 ```
 
 ## bpm.timeline
+@deprecated Utilisez TimelineEvent avec la prop `events`. Conservé pour rétrocompatibilité. */ export interface TimelineItem { id?: string; title: React.ReactNode; description?: React.ReactNode; date?: string; status?: "done" | "current" | "upcoming"; } export interface TimelineEvent { date: string; title: string; description?: string; actor?: string; icon?: string; color?: "default" | "info" | "success" | "warning" | "error"; metadata?: Record<string, string>; } @component bpm.timeline @description Frise chronologique (événements ISO, groupement par date).
 ```
   events?: TimelineEvent[]  — Nouvelle API — fil chronologique riche.
   items?: TimelineItem[]  — Ancienne API — conservée pour compatibilité.
@@ -1429,7 +1565,7 @@ Titre h1 minimal (core) — children uniquement. Pour titres hiérarchiques : bp
 ```
 
 ## bpm.title1
-— bpm.title1 : niveau 1 implicite, ne pas passer level.
+@component bpm.title @description Titre h1 minimal. — bpm.title1 : niveau 1 implicite, ne pas passer level.
 ```
   children*: React.ReactNode
   level?: 1 | 2 | 3 | 4
@@ -1445,7 +1581,7 @@ Titre h1 minimal (core) — children uniquement. Pour titres hiérarchiques : bp
 ```
 
 ## bpm.title2
-— bpm.title2 : niveau 2 implicite, ne pas passer level.
+@component bpm.title @description Titre h1 minimal. — bpm.title2 : niveau 2 implicite, ne pas passer level.
 ```
   children*: React.ReactNode
   level?: 1 | 2 | 3 | 4
@@ -1461,7 +1597,7 @@ Titre h1 minimal (core) — children uniquement. Pour titres hiérarchiques : bp
 ```
 
 ## bpm.title3
-— bpm.title3 : niveau 3 implicite, ne pas passer level.
+@component bpm.title @description Titre h1 minimal. — bpm.title3 : niveau 3 implicite, ne pas passer level.
 ```
   children*: React.ReactNode
   level?: 1 | 2 | 3 | 4
@@ -1477,7 +1613,7 @@ Titre h1 minimal (core) — children uniquement. Pour titres hiérarchiques : bp
 ```
 
 ## bpm.title4
-— bpm.title4 : niveau 4 implicite, ne pas passer level.
+@component bpm.title @description Titre h1 minimal. — bpm.title4 : niveau 4 implicite, ne pas passer level.
 ```
   children*: React.ReactNode
   level?: 1 | 2 | 3 | 4
@@ -1493,6 +1629,7 @@ Titre h1 minimal (core) — children uniquement. Pour titres hiérarchiques : bp
 ```
 
 ## bpm.titleBpm
+@component bpm.title @description Titre h1 minimal.
 ```
   children*: React.ReactNode
   level?: 1 | 2 | 3 | 4
@@ -1520,6 +1657,7 @@ Toast visuel ; en production préférer useToast().
 ```
 
 ## bpm.toggle
+@component bpm.toggle @description Interrupteur on/off.
 ```
   label?: React.ReactNode
   value?: boolean
@@ -1529,6 +1667,7 @@ Toast visuel ; en production préférer useToast().
 ```
 
 ## bpm.tooltip
+@component bpm.tooltip @description Info-bulle au survol.
 ```
   text*: string
   children*: React.ReactNode
@@ -1538,6 +1677,7 @@ Toast visuel ; en production préférer useToast().
 ```
 
 ## bpm.topNav
+@component bpm.topNav @description Barre de navigation horizontale avec titre/logo et liens/boutons. @example bpm.topNav({ title: "Mon App", titleHref: "/", items: [{ label: "Accueil", href: "/" }, { label: "Aide", onClick: showHelp }] }) @param {object} props @param {React.ReactNode} [props.title] - Titre ou logo. Optionnel. @param {string} [props.titleHref="#"] - Lien du titre. Optionnel. @param {TopNavItem[]} [props.items=[]] - Éléments de navigation (label, href?, onClick?). Optionnel. @param {string} [props.className=""] - Classes CSS additionnelles. Optionnel. @associated bpm.pageLayout, bpm.sidebar, bpm.breadcrumb export interface TopNavItem { label: string; href?: string; onClick?: () => void; } @component bpm.topNav @description Barre de navigation supérieure (titre + liens).
 ```
   title?: React.ReactNode
   titleHref?: string
@@ -1546,6 +1686,7 @@ Toast visuel ; en production préférer useToast().
 ```
 
 ## bpm.tour
+@component bpm.tour @description Visite guidée interactive avec overlay sombre et mise en surbrillance des éléments cibles étape par étape. @example bpm.tour({ steps: [{ target: "#btn", title: "Bienvenue", content: "Cliquez ici" }], isActive: true, onClose: () => setActive(false) }) @param {object} props @param {TourStep[]} props.steps - Liste des étapes (target sélecteur CSS, title, content). Obligatoire. @param {boolean} props.isActive - Active/désactive la visite. Obligatoire. @param {function} [props.onClose] - Callback à la fermeture. Optionnel. @param {string} [props.className=""] - Classes CSS additionnelles. Optionnel. @associated bpm.modal, bpm.stepper export interface TourStep { target: string; title: string; content: string; } @component bpm.tour @description Visite guidée interactive (étapes et popups).
 ```
   steps*: TourStep[]
   isActive*: boolean
@@ -1554,6 +1695,7 @@ Toast visuel ; en production préférer useToast().
 ```
 
 ## bpm.transition
+@component bpm.transition @description Animation de transition entre états.
 ```
   activeIndex*: number  — Index de la page / vue active (0-based).
   variant?: TransitionVariant  — Variant de transition : fade (slide), shimmer, border, grid.
@@ -1564,6 +1706,7 @@ Toast visuel ; en production préférer useToast().
 ```
 
 ## bpm.treemap
+@component bpm.treemap @description Visualisation treemap (carte de chaleur hiérarchique) en SVG avec algorithme squarify. @example bpm.treemap({ data: [{ name: "A", value: 50 }, { name: "B", value: 30 }], width: 400, height: 300 }) @param {object} props @param {TreemapItem[]} props.data - Données à afficher (name, value, fill optionnel). Obligatoire. @param {number} [props.width=400] - Largeur du SVG en pixels. Optionnel. @param {number} [props.height=280] - Hauteur du SVG en pixels. Optionnel. @param {string} [props.className=""] - Classes CSS additionnelles. Optionnel. @param {InterpretContext} [props.context] - Contexte de jugement par tuile : chaque cellule est jugée vs le repère (contour coloré par le verdict hors zone neutre, data-judgment par tuile). Optionnel. @associated bpm.heatmap, bpm.pieChart, bpm.sunburst export interface TreemapItem { name: string; value: number; fill?: string; } @component bpm.treemap @description Carte arborescente (treemap) pour données hiérarchiques.
 ```
   data*: TreemapItem[]
   width?: number
@@ -1573,6 +1716,7 @@ Toast visuel ; en production préférer useToast().
 ```
 
 ## bpm.treeview
+@component bpm.treeview @description Arborescence hiérarchique dépliable avec sélection de nœud. @example bpm.treeview({ nodes: [{ id: "1", label: "Parent", children: [{ id: "1.1", label: "Enfant" }] }], onSelect: handleSelect }) @param {object} props @param {TreeviewNode[]} [props.nodes=[]] - Liste des nœuds racines (id, label, children, defaultOpen). Optionnel. @param {function} [props.onSelect] - Callback à la sélection d'un nœud (node). Optionnel. @param {string|null} [props.selectedId=null] - ID du nœud sélectionné. Optionnel. @param {string} [props.className=""] - Classes CSS additionnelles. Optionnel. @associated bpm.sidebar, bpm.accordion, bpm.menu export interface TreeviewNode { id: string; label: React.ReactNode; children?: TreeviewNode[]; defaultOpen?: boolean; } @component bpm.treeview @description Arbre de nœuds repliables et sélectionnables.
 ```
   nodes?: TreeviewNode[]
   onSelect?: (node: TreeviewNode) => void
@@ -1593,6 +1737,7 @@ Toast visuel ; en production préférer useToast().
 ```
 
 ## bpm.waterfall
+@component bpm.waterfall @description Graphique en cascade (waterfall chart) montrant l'évolution cumulative de valeurs positives/négatives. @example bpm.waterfall({ data: [{ label: "Début", value: 100, type: "start" }, { label: "+Ventes", value: 50 }, { label: "Total", value: 150, type: "total" }] }) @param {object} props @param {WaterfallDatum[]} props.data - Données (label, value, type optionnel: "start"|"delta"|"total"). Obligatoire. @param {number} [props.width=480] - Largeur du SVG en pixels. Optionnel. @param {number} [props.height=260] - Hauteur du SVG en pixels. Optionnel. @param {string} [props.className=""] - Classes CSS additionnelles. Optionnel. @param {InterpretContext} [props.context] - Contexte de jugement : le cumul final de la cascade est jugé vs le repère, verdict révélé sous le graphique. Optionnel. @associated bpm.barChart, bpm.stackedBarChart, bpm.kpi export interface WaterfallDatum { label: string; value: number; type?: "start" | "delta" | "total"; } @component bpm.waterfall @description Graphique en cascade (waterfall).
 ```
   data*: WaterfallDatum[]
   width?: number
@@ -1602,6 +1747,7 @@ Toast visuel ; en production préférer useToast().
 ```
 
 ## bpm.wizardForm
+@component bpm.wizardForm @description Formulaire multi-étapes avec stepper et validation.
 ```
   steps*: WizardStep[]
   onComplete*: () => void

@@ -3,6 +3,10 @@
 import React, { useEffect, useState } from "react";
 import { CodeBlock } from "./CodeBlock";
 
+/**
+ * @component bpm.filePreview
+ * @description Aperçu de fichier (image, PDF, texte/code).
+ */
 export interface FilePreviewProps {
   url: string;
   filename: string;

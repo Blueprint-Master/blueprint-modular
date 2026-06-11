@@ -63,6 +63,10 @@ export type SchedulerResource = {
   label: string;
 };
 
+/**
+ * @component bpm.scheduler
+ * @description Planificateur / agenda (semaine, jour, mois).
+ */
 export type SchedulerProps = {
   view: "day" | "week" | "month";
   events: SchedulerEvent[];

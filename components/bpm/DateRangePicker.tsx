@@ -13,6 +13,10 @@ function formatDisplay(date: Date | string | null | undefined): string {
   return `${day}/${m}/${y}`;
 }
 
+/**
+ * @component bpm.dateRangePicker
+ * @description Sélecteur de plage de dates.
+ */
 export interface DateRangePickerProps {
   label?: string;
   start?: Date | string | null;

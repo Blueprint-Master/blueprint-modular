@@ -13,6 +13,10 @@ export interface NotificationItem {
   onAction?: () => void;
 }
 
+/**
+ * @component bpm.notificationCenter
+ * @description Centre de notifications (liste, marquage, suppression).
+ */
 export interface NotificationCenterProps {
   notifications: NotificationItem[];
   onMarkRead: (id: string) => void;

@@ -21,6 +21,10 @@ export interface TimelineEvent {
   metadata?: Record<string, string>;
 }
 
+/**
+ * @component bpm.timeline
+ * @description Frise chronologique (événements ISO, groupement par date).
+ */
 export interface TimelineProps {
   /** Nouvelle API — fil chronologique riche. */
   events?: TimelineEvent[];

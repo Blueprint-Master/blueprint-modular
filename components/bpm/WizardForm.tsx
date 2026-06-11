@@ -11,6 +11,10 @@ export interface WizardStep {
   validate?: () => boolean | string;
 }
 
+/**
+ * @component bpm.wizardForm
+ * @description Formulaire multi-étapes avec stepper et validation.
+ */
 export interface WizardFormProps {
   steps: WizardStep[];
   onComplete: () => void;

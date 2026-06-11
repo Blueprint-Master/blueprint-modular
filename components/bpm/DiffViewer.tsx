@@ -2,6 +2,10 @@
 
 import React from "react";
 
+/**
+ * @component bpm.diffViewer
+ * @description Visualisation de diff texte/code (split ou unified).
+ */
 export interface DiffViewerProps {
   original: string;
   modified: string;

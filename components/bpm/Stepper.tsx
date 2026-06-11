@@ -11,6 +11,10 @@ export interface StepperStep {
   content?: React.ReactNode;
 }
 
+/**
+ * @component bpm.stepper
+ * @description Progression multi-étapes (horizontal/vertical).
+ */
 export interface StepperProps {
   steps?: StepperStep[];
   currentStep?: number;

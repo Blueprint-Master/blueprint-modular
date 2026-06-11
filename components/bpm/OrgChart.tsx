@@ -12,6 +12,10 @@ export interface OrgChartNode {
   metadata?: Record<string, string>;
 }
 
+/**
+ * @component bpm.orgChart
+ * @description Organigramme hiérarchique HTML/CSS (repliable).
+ */
 export interface OrgChartProps {
   nodes: OrgChartNode[];
   direction?: "vertical" | "horizontal";

@@ -12,6 +12,10 @@ export interface ChatMessage {
   timestamp?: string | Date;
 }
 
+/**
+ * @component bpm.chatInterface
+ * @description Interface de chat (messages, saisie, streaming).
+ */
 export interface ChatInterfaceProps {
   messages: ChatMessage[];
   onSend: (content: string) => void;

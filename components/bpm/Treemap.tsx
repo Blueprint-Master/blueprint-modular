@@ -28,6 +28,10 @@ export interface TreemapItem {
   fill?: string;
 }
 
+/**
+ * @component bpm.treemap
+ * @description Carte arborescente (treemap) pour données hiérarchiques.
+ */
 export interface TreemapProps {
   data: TreemapItem[];
   width?: number;

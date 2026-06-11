@@ -4,6 +4,10 @@ import React from "react";
 
 export type BadgeVariant = "default" | "primary" | "success" | "warning" | "error";
 
+/**
+ * @component bpm.badge
+ * @description Badge / étiquette (success, warning, etc.).
+ */
 export interface BadgeProps {
   /** PARENT: bpm.table (colonne statut) | bpm.metric | bpm.card. INTERDIT: texte long >20 chars — utiliser bpm.chip. ASSOCIÉ: bpm.table, bpm.metric, bpm.statusBox. */
   children: React.ReactNode;

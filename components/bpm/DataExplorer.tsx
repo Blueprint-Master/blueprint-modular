@@ -8,6 +8,10 @@ export type { ColumnDef };
 export type { DataExplorerClassicProps };
 export type { ExplorerAnalyticsColumn, DataExplorerAnalyticsProps } from "./DataExplorerAnalytics";
 
+/**
+ * @component bpm.dataExplorer
+ * @description Explorateur de données unifié (classique ou analytics).
+ */
 export type DataExplorerProps = DataExplorerClassicProps | DataExplorerAnalyticsProps;
 
 /**

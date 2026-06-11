@@ -2,6 +2,10 @@
 
 import React from "react";
 
+/**
+ * @component bpm.barcode
+ * @description Code-barres (EAN-13, Code 128).
+ */
 export interface BarcodeProps {
   value: string;
   format?: "EAN13" | "CODE128";

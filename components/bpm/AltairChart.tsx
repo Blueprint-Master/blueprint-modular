@@ -2,6 +2,10 @@
 
 import React from "react";
 
+/**
+ * @component bpm.altairChart
+ * @description Graphique Altair / Vega-Lite.
+ */
 export interface AltairChartProps {
   /** Spécification Vega-Lite / Altair (JSON). À fournir côté app. */
   spec?: Record<string, unknown>;

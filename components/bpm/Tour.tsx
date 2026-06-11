@@ -22,6 +22,10 @@ export interface TourStep {
   content: string;
 }
 
+/**
+ * @component bpm.tour
+ * @description Visite guidée interactive (étapes et popups).
+ */
 export interface TourProps {
   steps: TourStep[];
   isActive: boolean;

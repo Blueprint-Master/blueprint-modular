@@ -32,6 +32,10 @@ export interface GraphEdge {
 
 export type RelationGraphLayout = "force" | "grid" | "circular";
 
+/**
+ * @component bpm.relationGraph
+ * @description Graphe de relations interactif (nœuds et arêtes).
+ */
 export interface RelationGraphProps {
   nodes: GraphNode[];
   edges: GraphEdge[];

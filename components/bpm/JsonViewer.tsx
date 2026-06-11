@@ -2,6 +2,10 @@
 
 import React, { useState } from "react";
 
+/**
+ * @component bpm.jsonViewer
+ * @description Affichage JSON formaté et repliable.
+ */
 export interface JsonViewerProps {
   /** Objet ou chaîne JSON à afficher. */
   data: unknown;

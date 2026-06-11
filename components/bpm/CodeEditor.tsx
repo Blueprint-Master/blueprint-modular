@@ -2,6 +2,10 @@
 
 import React from "react";
 
+/**
+ * @component bpm.codeEditor
+ * @description Éditeur de code (textarea avec valeur, onChange, readOnly).
+ */
 export interface CodeEditorProps {
   value: string;
   onChange: (value: string) => void;

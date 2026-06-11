@@ -26,6 +26,10 @@ export interface ModelOption {
   contextWindow?: number;
 }
 
+/**
+ * @component bpm.modelSelector
+ * @description Sélecteur de modèle IA (par fournisseur, capacités).
+ */
 export interface ModelSelectorProps {
   models: ModelOption[];
   selected: string;

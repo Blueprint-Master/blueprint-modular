@@ -7,6 +7,10 @@ export interface AutocompleteOption {
   label: string;
 }
 
+/**
+ * @component bpm.autocomplete
+ * @description Champ de saisie avec suggestions.
+ */
 export interface AutocompleteProps {
   label?: string;
   placeholder?: string;

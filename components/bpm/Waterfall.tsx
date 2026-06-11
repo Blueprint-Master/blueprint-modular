@@ -29,6 +29,10 @@ export interface WaterfallDatum {
   type?: "start" | "delta" | "total";
 }
 
+/**
+ * @component bpm.waterfall
+ * @description Graphique en cascade (waterfall).
+ */
 export interface WaterfallProps {
   data: WaterfallDatum[];
   width?: number;

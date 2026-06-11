@@ -29,6 +29,10 @@ export interface SidebarItem {
   icon: string;
 }
 
+/**
+ * @component bpm.pageLayout
+ * @description Layout avec sidebar repliable, titre et zone de contenu.
+ */
 export interface PageLayoutProps {
   title: string;
   items: SidebarItem[];

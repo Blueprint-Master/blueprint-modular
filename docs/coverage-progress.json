@@ -1,0 +1,762 @@
+{
+  "components": [
+    {
+      "component": "accordion",
+      "file": "Accordion.tsx",
+      "status": "done"
+    },
+    {
+      "component": "activityFeed",
+      "file": "ActivityFeed.tsx",
+      "status": "done"
+    },
+    {
+      "component": "addressInput",
+      "file": "AddressInput.tsx",
+      "status": "done"
+    },
+    {
+      "component": "aiQueryBar",
+      "file": "AIQueryBar.tsx",
+      "status": "done"
+    },
+    {
+      "component": "alarmPanel",
+      "file": "AlarmPanel.tsx",
+      "status": "done"
+    },
+    {
+      "component": "altairChart",
+      "file": "AltairChart.tsx",
+      "status": "done"
+    },
+    {
+      "component": "anomalyAlert",
+      "file": "AnomalyAlert.tsx",
+      "status": "done"
+    },
+    {
+      "component": "approvalFlow",
+      "file": "ApprovalFlow.tsx",
+      "status": "done"
+    },
+    {
+      "component": "areaChart",
+      "file": "AreaChart.tsx",
+      "status": "done"
+    },
+    {
+      "component": "assistantPanel",
+      "file": "AssistantPanel.tsx",
+      "status": "done"
+    },
+    {
+      "component": "audio",
+      "file": "Audio.tsx",
+      "status": "done"
+    },
+    {
+      "component": "autocomplete",
+      "file": "Autocomplete.tsx",
+      "status": "done"
+    },
+    {
+      "component": "avatar",
+      "file": "Avatar.tsx",
+      "status": "done"
+    },
+    {
+      "component": "badge",
+      "file": "Badge.tsx",
+      "status": "done"
+    },
+    {
+      "component": "barChart",
+      "file": "BarChart.tsx",
+      "status": "done"
+    },
+    {
+      "component": "barcode",
+      "file": "Barcode.tsx",
+      "status": "done"
+    },
+    {
+      "component": "breadcrumb",
+      "file": "Breadcrumb.tsx",
+      "status": "done"
+    },
+    {
+      "component": "breadcrumbs",
+      "file": "Breadcrumbs.tsx",
+      "status": "done"
+    },
+    {
+      "component": "button",
+      "file": "Button.tsx",
+      "status": "done"
+    },
+    {
+      "component": "crud",
+      "file": "CrudPage.tsx",
+      "status": "done"
+    },
+    {
+      "component": "heatmap",
+      "file": "Heatmap.tsx",
+      "status": "done"
+    },
+    {
+      "component": "highlightBox",
+      "file": "HighlightBox.tsx",
+      "status": "done"
+    },
+    {
+      "component": "html",
+      "file": "Html.tsx",
+      "status": "done"
+    },
+    {
+      "component": "image",
+      "file": "Image.tsx",
+      "status": "done"
+    },
+    {
+      "component": "inlineEdit",
+      "file": "InlineEdit.tsx",
+      "status": "done"
+    },
+    {
+      "component": "input",
+      "file": "Input.tsx",
+      "status": "done"
+    },
+    {
+      "component": "jsonEditor",
+      "file": "JsonEditor.tsx",
+      "status": "done"
+    },
+    {
+      "component": "labelValue",
+      "file": "LabelValue.tsx",
+      "status": "done"
+    },
+    {
+      "component": "liveGauge",
+      "file": "LiveGauge.tsx",
+      "status": "done"
+    },
+    {
+      "component": "machineStatus",
+      "file": "MachineStatus.tsx",
+      "status": "done"
+    },
+    {
+      "component": "map",
+      "file": "Map.tsx",
+      "status": "done"
+    },
+    {
+      "component": "mapView",
+      "file": "MapView.tsx",
+      "status": "done"
+    },
+    {
+      "component": "metric",
+      "file": "Metric.tsx",
+      "status": "done"
+    },
+    {
+      "component": "modal",
+      "file": "Modal.tsx",
+      "status": "done"
+    },
+    {
+      "component": "nfcBadge",
+      "file": "NfcBadge.tsx",
+      "status": "done"
+    },
+    {
+      "component": "numberInput",
+      "file": "NumberInput.tsx",
+      "status": "done"
+    },
+    {
+      "component": "offlineIndicator",
+      "file": "OfflineIndicator.tsx",
+      "status": "done"
+    },
+    {
+      "component": "pagination",
+      "file": "Pagination.tsx",
+      "status": "done"
+    },
+    {
+      "component": "pdfViewer",
+      "file": "PdfViewer.tsx",
+      "status": "done"
+    },
+    {
+      "component": "pivotTable",
+      "file": "PivotTable.tsx",
+      "status": "done"
+    },
+    {
+      "component": "plcConnector",
+      "file": "PLCConnector.tsx",
+      "status": "done"
+    },
+    {
+      "component": "plotlyChart",
+      "file": "PlotlyChart.tsx",
+      "status": "done"
+    },
+    {
+      "component": "popover",
+      "file": "Popover.tsx",
+      "status": "done"
+    },
+    {
+      "component": "predictiveChart",
+      "file": "PredictiveChart.tsx",
+      "status": "done"
+    },
+    {
+      "component": "progressRing",
+      "file": "ProgressRing.tsx",
+      "status": "done"
+    },
+    {
+      "component": "promptInput",
+      "file": "PromptInput.tsx",
+      "status": "done"
+    },
+    {
+      "component": "qrCode",
+      "file": "QRCode.tsx",
+      "status": "done"
+    },
+    {
+      "component": "radarChart",
+      "file": "RadarChart.tsx",
+      "status": "done"
+    },
+    {
+      "component": "radioGroup",
+      "file": "RadioGroup.tsx",
+      "status": "done"
+    },
+    {
+      "component": "rating",
+      "file": "Rating.tsx",
+      "status": "done"
+    },
+    {
+      "component": "richTextEditor",
+      "file": "RichTextEditor.tsx",
+      "status": "done"
+    },
+    {
+      "component": "scrollContainer",
+      "file": "ScrollContainer.tsx",
+      "status": "done"
+    },
+    {
+      "component": "selectbox",
+      "file": "Selectbox.tsx",
+      "status": "done"
+    },
+    {
+      "component": "signaturePad",
+      "file": "SignaturePad.tsx",
+      "status": "done"
+    },
+    {
+      "component": "sparkline",
+      "file": "Sparkline.tsx",
+      "status": "done"
+    },
+    {
+      "component": "spinnerDot",
+      "file": "SpinnerDot.tsx",
+      "status": "done"
+    },
+    {
+      "component": "splitView",
+      "file": "SplitView.tsx",
+      "status": "done"
+    },
+    {
+      "component": "streamingText",
+      "file": "StreamingText.tsx",
+      "status": "done"
+    },
+    {
+      "component": "suggestionCard",
+      "file": "SuggestionCard.tsx",
+      "status": "done"
+    },
+    {
+      "component": "theme",
+      "file": "Theme.tsx",
+      "status": "done"
+    },
+    {
+      "component": "timeInput",
+      "file": "TimeInput.tsx",
+      "status": "done"
+    },
+    {
+      "component": "video",
+      "file": "Video.tsx",
+      "status": "done"
+    },
+    {
+      "component": "caption",
+      "file": "Caption.tsx",
+      "status": "done"
+    },
+    {
+      "component": "card",
+      "file": "Card.tsx",
+      "status": "done"
+    },
+    {
+      "component": "changelog",
+      "file": "Changelog.tsx",
+      "status": "done"
+    },
+    {
+      "component": "chatInterface",
+      "file": "ChatInterface.tsx",
+      "status": "done"
+    },
+    {
+      "component": "checkbox",
+      "file": "Checkbox.tsx",
+      "status": "done"
+    },
+    {
+      "component": "chip",
+      "file": "Chip.tsx",
+      "status": "done"
+    },
+    {
+      "component": "codeBlock",
+      "file": "CodeBlock.tsx",
+      "status": "done"
+    },
+    {
+      "component": "codeEditor",
+      "file": "CodeEditor.tsx",
+      "status": "done"
+    },
+    {
+      "component": "colorPicker",
+      "file": "ColorPicker.tsx",
+      "status": "done"
+    },
+    {
+      "component": "column",
+      "file": "Column.tsx",
+      "status": "done"
+    },
+    {
+      "component": "commandPalette",
+      "file": "CommandPalette.tsx",
+      "status": "done"
+    },
+    {
+      "component": "commentThread",
+      "file": "CommentThread.tsx",
+      "status": "done"
+    },
+    {
+      "component": "comparison",
+      "file": "Comparison.tsx",
+      "status": "done"
+    },
+    {
+      "component": "confirmModal",
+      "file": "ConfirmModal.tsx",
+      "status": "done"
+    },
+    {
+      "component": "container",
+      "file": "Container.tsx",
+      "status": "done"
+    },
+    {
+      "component": "contextMenu",
+      "file": "ContextMenu.tsx",
+      "status": "done"
+    },
+    {
+      "component": "dataExplorer",
+      "file": "DataExplorer.tsx",
+      "status": "done"
+    },
+    {
+      "component": "dateInput",
+      "file": "DateInput.tsx",
+      "status": "done"
+    },
+    {
+      "component": "dateRangePicker",
+      "file": "DateRangePicker.tsx",
+      "status": "done"
+    },
+    {
+      "component": "decisionTree",
+      "file": "DecisionTree.tsx",
+      "status": "done"
+    },
+    {
+      "component": "diffViewer",
+      "file": "DiffViewer.tsx",
+      "status": "done"
+    },
+    {
+      "component": "divider",
+      "file": "Divider.tsx",
+      "status": "done"
+    },
+    {
+      "component": "drawer",
+      "file": "Drawer.tsx",
+      "status": "done"
+    },
+    {
+      "component": "drillDown",
+      "file": "DrillDown.tsx",
+      "status": "done"
+    },
+    {
+      "component": "emailComposer",
+      "file": "EmailComposer.tsx",
+      "status": "done"
+    },
+    {
+      "component": "empty",
+      "file": "Empty.tsx",
+      "status": "done"
+    },
+    {
+      "component": "emptyState",
+      "file": "EmptyState.tsx",
+      "status": "done"
+    },
+    {
+      "component": "expander",
+      "file": "Expander.tsx",
+      "status": "done"
+    },
+    {
+      "component": "exportButton",
+      "file": "ExportButton.tsx",
+      "status": "done"
+    },
+    {
+      "component": "fab",
+      "file": "FAB.tsx",
+      "status": "done"
+    },
+    {
+      "component": "filePreview",
+      "file": "FilePreview.tsx",
+      "status": "done"
+    },
+    {
+      "component": "fileUploader",
+      "file": "FileUploader.tsx",
+      "status": "done"
+    },
+    {
+      "component": "filterPanel",
+      "file": "FilterPanel.tsx",
+      "status": "done"
+    },
+    {
+      "component": "flowDiagram",
+      "file": "FlowDiagram.tsx",
+      "status": "done"
+    },
+    {
+      "component": "funnelChart",
+      "file": "FunnelChart.tsx",
+      "status": "done"
+    },
+    {
+      "component": "gantt",
+      "file": "Gantt.tsx",
+      "status": "done"
+    },
+    {
+      "component": "geofence",
+      "file": "Geofence.tsx",
+      "status": "done"
+    },
+    {
+      "component": "gps",
+      "file": "Gps.tsx",
+      "status": "done"
+    },
+    {
+      "component": "grid",
+      "file": "Grid.tsx",
+      "status": "done"
+    },
+    {
+      "component": "groupedList",
+      "file": "GroupedList.tsx",
+      "status": "done"
+    },
+    {
+      "component": "invoiceTemplate",
+      "file": "InvoiceTemplate.tsx",
+      "status": "done"
+    },
+    {
+      "component": "lineChart",
+      "file": "LineChart.tsx",
+      "status": "done"
+    },
+    {
+      "component": "liveChart",
+      "file": "LiveChart.tsx",
+      "status": "done"
+    },
+    {
+      "component": "markdown",
+      "file": "Markdown.tsx",
+      "status": "done"
+    },
+    {
+      "component": "jsonViewer",
+      "file": "JsonViewer.tsx",
+      "status": "done"
+    },
+    {
+      "component": "loadingBar",
+      "file": "LoadingBar.tsx",
+      "status": "done"
+    },
+    {
+      "component": "masterDetail",
+      "file": "MasterDetail.tsx",
+      "status": "done"
+    },
+    {
+      "component": "message",
+      "file": "Message.tsx",
+      "status": "done"
+    },
+    {
+      "component": "metricRow",
+      "file": "MetricRow.tsx",
+      "status": "done"
+    },
+    {
+      "component": "modelSelector",
+      "file": "ModelSelector.tsx",
+      "status": "done"
+    },
+    {
+      "component": "notificationCenter",
+      "file": "NotificationCenter.tsx",
+      "status": "done"
+    },
+    {
+      "component": "orgChart",
+      "file": "OrgChart.tsx",
+      "status": "done"
+    },
+    {
+      "component": "pageLayout",
+      "file": "PageLayout.tsx",
+      "status": "done"
+    },
+    {
+      "component": "panel",
+      "file": "Panel.tsx",
+      "status": "done"
+    },
+    {
+      "component": "printLayout",
+      "file": "PrintLayout.tsx",
+      "status": "done"
+    },
+    {
+      "component": "progress",
+      "file": "Progress.tsx",
+      "status": "done"
+    },
+    {
+      "component": "relationGraph",
+      "file": "RelationGraph.tsx",
+      "status": "done"
+    },
+    {
+      "component": "reportPage",
+      "file": "ReportPage.tsx",
+      "status": "done"
+    },
+    {
+      "component": "routePlanner",
+      "file": "RoutePlanner.tsx",
+      "status": "done"
+    },
+    {
+      "component": "scatterChart",
+      "file": "ScatterChart.tsx",
+      "status": "done"
+    },
+    {
+      "component": "scheduler",
+      "file": "Scheduler.tsx",
+      "status": "done"
+    },
+    {
+      "component": "sensorGrid",
+      "file": "SensorGrid.tsx",
+      "status": "done"
+    },
+    {
+      "component": "skeleton",
+      "file": "Skeleton.tsx",
+      "status": "done"
+    },
+    {
+      "component": "slider",
+      "file": "Slider.tsx",
+      "status": "done"
+    },
+    {
+      "component": "spinner",
+      "file": "Spinner.tsx",
+      "status": "done"
+    },
+    {
+      "component": "stateMachine",
+      "file": "StateMachine.tsx",
+      "status": "done"
+    },
+    {
+      "component": "statusBox",
+      "file": "StatusBox.tsx",
+      "status": "done"
+    },
+    {
+      "component": "statusTracker",
+      "file": "StatusTracker.tsx",
+      "status": "done"
+    },
+    {
+      "component": "stepper",
+      "file": "Stepper.tsx",
+      "status": "done"
+    },
+    {
+      "component": "table",
+      "file": "Table.tsx",
+      "status": "done"
+    },
+    {
+      "component": "tabs",
+      "file": "Tabs.tsx",
+      "status": "done"
+    },
+    {
+      "component": "text",
+      "file": "Text.tsx",
+      "status": "done"
+    },
+    {
+      "component": "textarea",
+      "file": "Textarea.tsx",
+      "status": "done"
+    },
+    {
+      "component": "timeline",
+      "file": "Timeline.tsx",
+      "status": "done"
+    },
+    {
+      "component": "title",
+      "file": "Title.tsx",
+      "status": "done"
+    },
+    {
+      "component": "title1",
+      "file": "Title.tsx",
+      "status": "done"
+    },
+    {
+      "component": "title2",
+      "file": "Title.tsx",
+      "status": "done"
+    },
+    {
+      "component": "title3",
+      "file": "Title.tsx",
+      "status": "done"
+    },
+    {
+      "component": "title4",
+      "file": "Title.tsx",
+      "status": "done"
+    },
+    {
+      "component": "titleBpm",
+      "file": "Title.tsx",
+      "status": "done"
+    },
+    {
+      "component": "toggle",
+      "file": "Toggle.tsx",
+      "status": "done"
+    },
+    {
+      "component": "tooltip",
+      "file": "Tooltip.tsx",
+      "status": "done"
+    },
+    {
+      "component": "topNav",
+      "file": "TopNav.tsx",
+      "status": "done"
+    },
+    {
+      "component": "tour",
+      "file": "Tour.tsx",
+      "status": "done"
+    },
+    {
+      "component": "transition",
+      "file": "Transition.tsx",
+      "status": "done"
+    },
+    {
+      "component": "treemap",
+      "file": "Treemap.tsx",
+      "status": "done"
+    },
+    {
+      "component": "treeview",
+      "file": "Treeview.tsx",
+      "status": "done"
+    },
+    {
+      "component": "waterfall",
+      "file": "Waterfall.tsx",
+      "status": "done"
+    },
+    {
+      "component": "wizardForm",
+      "file": "WizardForm.tsx",
+      "status": "done"
+    }
+  ],
+  "failures": [],
+  "generated": "2026-06-10",
+  "status": "complete"
+}

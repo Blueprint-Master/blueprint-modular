@@ -4,6 +4,10 @@ import React from "react";
 
 export type ChipVariant = "default" | "primary" | "outline";
 
+/**
+ * @component bpm.chip
+ * @description Pastille / chip (tag supprimable ou non).
+ */
 export interface ChipProps {
   label: React.ReactNode;
   onDelete?: () => void;

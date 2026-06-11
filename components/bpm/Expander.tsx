@@ -2,6 +2,10 @@
 
 import React, { useState } from "react";
 
+/**
+ * @component bpm.expander
+ * @description Bloc repliable avec titre.
+ */
 export interface ExpanderProps {
   title: React.ReactNode;
   children: React.ReactNode;

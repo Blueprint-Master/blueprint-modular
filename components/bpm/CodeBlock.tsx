@@ -2,6 +2,10 @@
 
 import React, { useState } from "react";
 
+/**
+ * @component bpm.codeBlock
+ * @description Bloc de code avec syntaxe colorée et bouton Copier.
+ */
 export interface CodeBlockProps {
   code: string;
   language?: string;

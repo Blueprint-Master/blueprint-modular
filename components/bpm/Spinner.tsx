@@ -17,6 +17,10 @@ export type SpinnerVariant =
   | "hexSegments"
   | "modularGrid";
 
+/**
+ * @component bpm.spinner
+ * @description Indicateur de chargement (roue).
+ */
 export interface SpinnerProps {
   text?: string;
   size?: SpinnerSize;

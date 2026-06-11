@@ -13,6 +13,10 @@ export interface AreaChartDatum {
   y: number;
 }
 
+/**
+ * @component bpm.areaChart
+ * @description Graphique en aires.
+ */
 export interface AreaChartProps {
   data: AreaChartDatum[];
   width?: number;

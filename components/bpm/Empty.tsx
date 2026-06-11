@@ -2,6 +2,10 @@
 
 import React from "react";
 
+/**
+ * @component bpm.empty
+ * @description État vide minimal (icône + message).
+ */
 export interface EmptyProps {
   children?: React.ReactNode;
   className?: string;

@@ -7,6 +7,10 @@ export interface FunnelStage {
   value: number;
 }
 
+/**
+ * @component bpm.funnelChart
+ * @description Graphique en entonnoir (tunnel de conversion).
+ */
 export interface FunnelChartProps {
   stages: FunnelStage[];
   showPercentage?: boolean;

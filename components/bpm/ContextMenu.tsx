@@ -9,6 +9,10 @@ export interface ContextMenuItem {
   onSelect?: () => void;
 }
 
+/**
+ * @component bpm.contextMenu
+ * @description Menu contextuel (clic droit ou clic bouton).
+ */
 export interface ContextMenuProps {
   items: ContextMenuItem[];
   trigger: React.ReactNode;

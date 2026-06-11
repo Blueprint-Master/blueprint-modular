@@ -3,6 +3,10 @@
 import React, { useMemo } from "react";
 import { interpret, judgmentColor, type InterpretContext } from "./interpret";
 
+/**
+ * @component bpm.comparison
+ * @description Tableau de comparaison multi-items.
+ */
 export interface ComparisonProps {
   items: Record<string, unknown>[];
   dimensions: string[];

@@ -2,6 +2,10 @@
 
 import React from "react";
 
+/**
+ * @component bpm.container
+ * @description Conteneur avec titre optionnel.
+ */
 export interface ContainerProps {
   children: React.ReactNode;
   className?: string;

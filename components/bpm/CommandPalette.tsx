@@ -12,6 +12,10 @@ export interface Command {
   action: () => void;
 }
 
+/**
+ * @component bpm.commandPalette
+ * @description Palette de commandes modale (fuzzy search, clavier, Cmd+K).
+ */
 export interface CommandPaletteProps {
   commands: Command[];
   /** Mode contrôlé : si défini, l’ouverture au clavier doit être gérée via `onRequestOpen`. */

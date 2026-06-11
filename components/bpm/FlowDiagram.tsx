@@ -15,6 +15,10 @@ export interface FlowDiagramTransition {
   label: string;
 }
 
+/**
+ * @component bpm.flowDiagram
+ * @description Diagramme d'états et transitions interactif (SVG).
+ */
 export interface FlowDiagramProps {
   states: FlowDiagramState[];
   transitions: FlowDiagramTransition[];

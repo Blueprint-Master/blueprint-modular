@@ -8,6 +8,10 @@ export interface AccordionSection {
   content: React.ReactNode;
 }
 
+/**
+ * @component bpm.accordion
+ * @description Accordéon (sections repliables).
+ */
 export interface AccordionProps {
   sections?: AccordionSection[];
   allowMultiple?: boolean;

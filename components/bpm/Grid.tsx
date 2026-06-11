@@ -2,6 +2,10 @@
 
 import React from "react";
 
+/**
+ * @component bpm.grid
+ * @description Grille responsive avec espacement configurable.
+ */
 export interface GridProps {
   cols?: number | { xs?: number; sm?: number; md?: number; lg?: number };
   gap?: number | string;

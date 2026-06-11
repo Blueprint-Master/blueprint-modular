@@ -7,6 +7,10 @@ export interface ExportColumn<T> {
   header: string;
 }
 
+/**
+ * @component bpm.exportButton
+ * @description Bouton d'export de données (CSV, JSON, Excel).
+ */
 export interface ExportButtonProps<T extends Record<string, unknown>> {
   data: T[] | (() => T[]);
   filename: string;

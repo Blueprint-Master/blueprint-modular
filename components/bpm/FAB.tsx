@@ -2,6 +2,10 @@
 
 import React from "react";
 
+/**
+ * @component bpm.fab
+ * @description Bouton d'action flottant (FAB).
+ */
 export interface FABProps {
   icon?: React.ReactNode;
   label?: string;

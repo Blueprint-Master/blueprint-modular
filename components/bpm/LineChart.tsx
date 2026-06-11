@@ -27,7 +27,11 @@ import {
 export interface LineChartDatum {
   x: number | string;
   y: number;
-}export interface LineChartProps {
+}/**
+ * @component bpm.lineChart
+ * @description Graphique en courbes.
+ */
+export interface LineChartProps {
   data: LineChartDatum[];
   width?: number;
   height?: number;

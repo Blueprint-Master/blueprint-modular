@@ -133,10 +133,10 @@ def parse_props_interface(source: str, interface_name: str) -> list[dict]:
     Extrait les props d'une interface TypeScript.
     Retourne une liste de {name, type, required, doc}
     """
-    # Trouver le bloc de l'interface
+    # Trouver le bloc de l'interface ou du type alias
+    # [^{]* skip generic params and '=' to reach the opening brace
     pattern = re.compile(
-        r"export\s+interface\s+" + re.escape(interface_name) +
-        r"\s*(?:extends\s+[^{]+)?\s*\{",
+        r"export\s+(?:interface|type)\s+" + re.escape(interface_name) + r"[^{]*\{",
         re.DOTALL
     )
     m = pattern.search(source)
@@ -197,8 +197,8 @@ def parse_component_file(path: Path) -> dict | None:
     """
     source = path.read_text(encoding="utf-8", errors="ignore")
 
-    # Chercher la première interface Props exportée
-    iface_m = re.search(r"export\s+interface\s+(\w+Props)\b", source)
+    # Chercher la première interface ou type alias Props exportée
+    iface_m = re.search(r"export\s+(?:interface|type)\s+(\w+Props)\b", source)
     if not iface_m:
         return None
 
@@ -206,12 +206,27 @@ def parse_component_file(path: Path) -> dict | None:
     # Nom du composant = fichier sans extension
     comp_name = path.stem
 
-    # Chercher JSDoc juste avant l'interface
+    # Chercher JSDoc juste avant l'interface/type
     before = source[:iface_m.start()]
     jsdoc_m = re.search(r"/\*\*(.+?)\*/\s*$", before, re.DOTALL)
     doc = parse_jsdoc(jsdoc_m.group(1)) if jsdoc_m else ""
 
-    props = parse_props_interface(source, iface_name)
+    # Détecter si c'est un type alias (export type) ou une interface
+    is_type_alias = bool(re.match(r"export\s+type\s+", source[iface_m.start():iface_m.end() + 20]))
+    if is_type_alias:
+        # Déterminer si c'est une définition inline { ... } ou une union/intersection A | B
+        # On cherche le premier '{' ou ';' après le nom du type (en ignorant les génériques)
+        rest_after_name = source[iface_m.end():]
+        first_brace = rest_after_name.find("{")
+        first_semi = rest_after_name.find(";")
+        if first_brace != -1 and (first_semi == -1 or first_brace < first_semi):
+            # Type alias inline avec corps { ... } : traiter comme une interface
+            props = parse_props_interface(source, iface_name)
+        else:
+            # Union/intersection ou référence externe : pas de props directes
+            props = []
+    else:
+        props = parse_props_interface(source, iface_name)
 
     # Anti-patterns dans les commentaires
     anti = []
@@ -516,6 +531,8 @@ def main():
             "fab": "FAB",
             "html": "Html",
             "empty": "Empty",
+            "aiQueryBar": "AIQueryBar",
+            "plcConnector": "PLCConnector",
         }
         file_stem = alias_map.get(bpm_key, file_stem)
         tsx_file = COMP_DIR / f"{file_stem}.tsx"
