@@ -95,6 +95,16 @@ const en: Dictionary = {
       cta: "Follow the getting-started guide",
     },
   },
+  homeDemo: {
+    revenue: "Monthly revenue",
+    orders: "Orders",
+    gaugeLabel: "Line 2 load",
+    stageCreated: "Created",
+    stageAnalysis: "In analysis",
+    stageValidation: "Validation",
+    stageClosed: "Closed",
+    statusOk: "Operational",
+  },
   gallery: {
     title: "Component gallery",
     caption: "{count} bpm.* components, live",
