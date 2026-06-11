@@ -30,14 +30,16 @@
   les cibles externes (`/llms.txt`, `/llms-core.txt`, PyPI, `docs/DATABASE.md`
   sur GitHub) sont explicitement marquées « Externe ».
 
-### Écart de source assumé
+### Endpoint MCP — décision produit
 
-Le brief mentionnait l'endpoint `https://mcp.blueprint-modular.com/api/mcp`.
-Cette forme **n'existe nulle part dans le code** (registry, route, docs, README,
-SUBMISSION utilisent tous `https://blueprint-modular.com/api/mcp`). Conformément
-à l'invariant « vérité = source », la page expose l'endpoint réel
-`https://blueprint-modular.com/api/mcp`. À trancher côté infra si un sous-domaine
-`mcp.` doit être ajouté.
+Première passe : la page exposait `https://blueprint-modular.com/api/mcp`
+(forme présente partout dans le code) car le sous-domaine `mcp.` n'apparaissait
+nulle part. **Décision utilisateur (tranchée)** : exposer
+`https://mcp.blueprint-modular.com/api/mcp`. Le route handler reste
+`app/api/mcp/route.ts` ; le sous-domaine `mcp.blueprint-modular.com` doit être
+configuré côté infra (DNS + proxy nginx) pour pointer vers `/api/mcp`.
+Note de suivi : `docs/MCP_CONNECTOR.md`, `README.md` et `SUBMISSION.md` citent
+encore l'ancienne forme — à aligner si le sous-domaine devient la référence.
 
 ## 2. Modules (P1) — triage des 32 modules
 
