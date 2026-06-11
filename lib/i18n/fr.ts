@@ -14,6 +14,9 @@ const fr = {
   },
   nav: {
     gallery: "Composants",
+    modules: "Modules",
+    mcp: "MCP",
+    resources: "Ressources",
     docs: "Documentation",
     gettingStarted: "Démarrage",
     ariaMain: "Navigation principale",
@@ -25,9 +28,13 @@ const fr = {
     resources: "Ressources",
     legal: "Légal",
     gallery: "Galerie de composants",
+    modules: "Modules métier",
     catalog: "Catalogue",
     gettingStarted: "Démarrage",
     changelog: "Changelog",
+    docs: "Documentation",
+    resourcesHub: "Ressources & guides",
+    mcp: "Connecteur MCP",
     llms: "llms.txt — référence machine",
     pypi: "Package PyPI",
     privacy: "Confidentialité",
@@ -203,6 +210,20 @@ const fr = {
         },
       ],
     },
+    mcpTeaser: {
+      eyebrow: "Model Context Protocol",
+      title: "Vos agents lisent le catalogue, en direct.",
+      body:
+        "Le connecteur MCP expose les {count} composants à Claude et à tout hôte MCP — props, exemples, compositions — en lecture seule, sans authentification ni donnée personnelle.",
+      cta: "Découvrir le connecteur MCP",
+    },
+    resourcesTeaser: {
+      eyebrow: "Ressources",
+      title: "Documentation, guides et référence, réunis.",
+      body:
+        "Un seul point d'entrée vers la documentation, les guides de démarrage, le catalogue des composants, la référence machine et le connecteur MCP.",
+      cta: "Ouvrir les ressources",
+    },
     cta: {
       title: "Prêt à écrire votre première interface ?",
       body:
@@ -308,6 +329,127 @@ const fr = {
     apiTitle: "Référence d'API",
     apiNote:
       "Extrait de llms.txt, généré depuis les sources TypeScript — la même référence que lisent les agents.",
+  },
+  mcp: {
+    metaTitle: "Connecteur MCP — Blueprint Modular",
+    metaDescription:
+      "Serveur MCP public et read-only qui expose le catalogue de composants Blueprint Modular à Claude et à tout hôte MCP. Sans authentification, sans donnée personnelle.",
+    eyebrow: "Model Context Protocol",
+    title: "Le catalogue Blueprint Modular, ouvert à vos agents.",
+    lead:
+      "Le connecteur MCP expose les {count} composants du package à Claude, ChatGPT et tout hôte compatible Model Context Protocol. En lecture seule, sans authentification, sans donnée personnelle.",
+    endpointLabel: "Endpoint public",
+    ctaComponents: "Voir les composants en direct",
+    ctaDocs: "Lire la documentation",
+    whatTitle: "Un connecteur en lecture seule",
+    whatBody:
+      "Le serveur expose le registre @blueprint-modular/core via JSON-RPC 2.0 sur un transport Streamable HTTP/SSE. Vos agents interrogent le catalogue — noms, descriptions, props, exemples — sans jamais écrire ni accéder à des données privées.",
+    propsTitle: "Ce que garantit le connecteur",
+    props: {
+      readonly: {
+        title: "Lecture seule",
+        body: "Aucune écriture, aucune mutation. Le connecteur ne fait qu'exposer le catalogue.",
+      },
+      noauth: {
+        title: "Sans authentification",
+        body: "Aucune clé, aucun jeton. L'endpoint est public et immédiatement utilisable.",
+      },
+      nopii: {
+        title: "Sans donnée personnelle",
+        body: "Seules les métadonnées de composants transitent. Aucune information privée ni interne.",
+      },
+      count: {
+        title: "{count} composants",
+        body: "Tout le registre, filtrable par catégorie et interrogeable en langage naturel.",
+      },
+    },
+    toolsTitle: "Quatre outils exposés",
+    toolsBody: "Chaque outil renvoie une réponse paginée et bornée, pensée pour le contexte d'un LLM.",
+    toolSigLabel: "Signature",
+    tools: {
+      list_components: "Liste paginée des composants : nom et description, filtrable par catégorie.",
+      search_components: "Recherche par pertinence sur le nom, la description, la catégorie et les tags.",
+      get_component: "Détail d'un composant : description, props et types, exemple d'usage, composants associés.",
+      suggest_composition: "Suggère des composants répondant à un besoin décrit en langage naturel.",
+    },
+    addTitle: "Ajouter le connecteur",
+    addBody:
+      "Le connecteur fonctionne avec tout client MCP. Voici la marche à suivre pour Claude et pour un hôte générique.",
+    addClaude: {
+      title: "Dans Claude",
+      steps: [
+        "Ouvrez Réglages → Connecteurs.",
+        "Choisissez « Ajouter un connecteur personnalisé ».",
+        "Collez l'URL de l'endpoint ci-dessus — aucune authentification à configurer.",
+        "Validez : les quatre outils apparaissent dans vos conversations.",
+      ],
+    },
+    addGeneric: {
+      title: "Dans tout hôte MCP",
+      steps: [
+        "Déclarez un serveur MCP distant pointant vers l'endpoint.",
+        "Transport : Streamable HTTP (SSE). Authentification : aucune.",
+        "Listez les outils via tools/list, puis appelez-les via tools/call.",
+      ],
+    },
+    exampleTitle: "Premier appel",
+    exampleBody: "Une requête initialize en JSON-RPC 2.0 suffit à ouvrir la session :",
+    linksTitle: "Aller plus loin",
+    linkCatalog: "Catalogue des composants",
+    linkGallery: "Galerie live",
+  },
+  resources: {
+    metaTitle: "Ressources & guides — Blueprint Modular",
+    metaDescription:
+      "Documentation, guides de démarrage, catalogue de composants, référence machine et connecteur MCP : tout pour construire avec Blueprint Modular.",
+    eyebrow: "Ressources",
+    title: "Tout pour construire avec Blueprint Modular.",
+    lead:
+      "Documentation, guides pas à pas, catalogue de composants, référence machine pour vos agents et connecteur MCP — rassemblés en un seul point d'entrée.",
+    externalLabel: "Lien externe",
+    groups: {
+      documentation: "Documentation",
+      components: "Composants & modules",
+      agents: "Pour les agents IA",
+    },
+    cards: {
+      docsHome: {
+        title: "Documentation",
+        body: "Le point d'entrée : installation, concepts et parcours complet.",
+      },
+      gettingStarted: {
+        title: "Démarrage",
+        body: "De l'installation à la première application qui tourne, en trois étapes.",
+      },
+      changelog: {
+        title: "Changelog",
+        body: "Versions, ajouts et corrections du package.",
+      },
+      pypi: {
+        title: "Package PyPI",
+        body: "pip install blueprint-modular — le package et son interface en ligne de commande.",
+      },
+      catalog: {
+        title: "Catalogue des composants",
+        body: "Les {count} composants du registre : descriptions, catégories et aperçus.",
+      },
+      gallery: {
+        title: "Galerie live",
+        body: "Chaque composant rendu en situation réelle, avec ses variantes et compositions.",
+      },
+      modules: {
+        title: "Modules métier",
+        body: "Des briques complètes — wiki, devis, gestion de parc — documentées et simulables.",
+      },
+      mcp: {
+        title: "Connecteur MCP",
+        body: "Exposez le catalogue à Claude et à tout hôte MCP, en lecture seule.",
+      },
+      llms: {
+        title: "llms.txt",
+        body: "La référence machine complète, générée depuis les sources. À donner à votre agent.",
+      },
+    },
   },
 };
 
