@@ -3692,6 +3692,21 @@ body.contract-detail-panel-open .pwa-title-bar {
   background: var(--bpm-surface);
 }
 
+/* Carte de ressource entièrement cliquable (page /resources). */
+.site-resource-link {
+  display: block;
+  height: 100%;
+  color: inherit;
+  text-decoration: none;
+}
+.site-resource-link:hover .site-module-name {
+  color: var(--bpm-accent);
+}
+.site-module-card:has(.site-resource-link:hover),
+.site-module-card:has(.site-resource-link:focus-visible) {
+  border-color: var(--bpm-accent);
+}
+
 .site-module-card-head {
   display: flex;
   justify-content: space-between;

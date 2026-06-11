@@ -48,7 +48,7 @@ const MODULES_BY_CATEGORY: Record<(typeof CATEGORY_ORDER)[number], ModuleEntry[]
     { href: "/modules/rapports", label: "Rapports", description: "Création de rapports à partir de données (champs, filtres, graphiques prédéfinis).", icon: Table2, simulatorAndDoc: true },
     { href: "/modules/referentiels", label: "Référentiels", description: "CRUD simple pour listes métier (devises, pays, types) utilisables dans les formulaires.", icon: Table2, simulatorAndDoc: true },
     { href: "/modules/tableaux-de-bord", label: "Tableaux de bord", description: "Disposition de widgets (métriques, graphiques, tableaux) par l'utilisateur.", icon: LayoutDashboard, simulatorAndDoc: true },
-    { href: "/modules/veille", label: "Veille", description: "Veille et flux d'information.", icon: Radio, simulatorAndDoc: false },
+    { href: "/modules/veille", label: "Veille", description: "Sources (RSS, API, pages, alertes), suivi de collecte et remontée des écarts.", icon: Radio, simulatorAndDoc: true, simulateurHref: "/modules/veille" },
   ],
   "Processus & workflow": [
     { href: "/modules/audit-log", label: "Audit / Log", description: "Consultation des changements sur une entité (qui, quand, quoi).", icon: PenTool, simulatorAndDoc: true },

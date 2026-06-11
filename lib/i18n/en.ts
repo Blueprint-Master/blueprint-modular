@@ -14,8 +14,11 @@ const en: Dictionary = {
   },
   nav: {
     gallery: "Components",
+    modules: "Modules",
     docs: "Documentation",
     gettingStarted: "Getting started",
+    resources: "Resources",
+    mcp: "MCP",
     ariaMain: "Main navigation",
     ariaLocale: "Site language",
     ariaHome: "Blueprint Modular — home",
@@ -26,9 +29,13 @@ const en: Dictionary = {
     legal: "Legal",
     gallery: "Component gallery",
     catalog: "Catalog",
+    modules: "Business modules",
     gettingStarted: "Getting started",
     changelog: "Changelog",
+    resourcesHub: "All resources",
+    mcp: "MCP connector",
     llms: "llms.txt — machine reference",
+    llmsCore: "llms-core.txt",
     pypi: "PyPI package",
     privacy: "Privacy",
     terms: "Terms of use",
@@ -308,6 +315,106 @@ const en: Dictionary = {
     apiTitle: "API reference",
     apiNote:
       "Excerpt from llms.txt, generated from the TypeScript sources — the same reference your agents read.",
+  },
+  mcp: {
+    metaTitle: "MCP connector — Blueprint Modular",
+    metaDescription:
+      "Public, read-only MCP server exposing the Blueprint Modular component catalog to Claude, ChatGPT and any MCP host. No authentication.",
+    title: "MCP connector",
+    lead:
+      "A {strong} server that exposes the catalog of {count} components to Claude, ChatGPT and any MCP host, over the Streamable HTTP transport. No authentication: the catalog is public data.",
+    leadStrong: "public, read-only MCP",
+    badgeReadonly: "Read-only",
+    badgeNoauth: "No authentication",
+    badgePublic: "Public catalog",
+    endpointTitle: "Endpoint",
+    endpointNote: "Streamable HTTP transport, stateless. SSE disabled (deprecated by the MCP spec).",
+    toolsTitle: "Exposed tools",
+    toolsNote:
+      "Four read-only tools (readOnlyHint). No writes, no actions, no internal data exposed.",
+    tools: [
+      {
+        name: "list_components",
+        sig: "category?, cursor?",
+        desc: "Cursor-paginated list of components: name and one-line description, filterable by category.",
+      },
+      {
+        name: "search_components",
+        sig: "query, cursor?",
+        desc: "Relevance-ranked, paginated search (name, description, category, tags).",
+      },
+      {
+        name: "get_component",
+        sig: "name",
+        desc: "Component detail: description, props and types, usage example, related components.",
+      },
+      {
+        name: "suggest_composition",
+        sig: "need, limit?",
+        desc: "Suggests components matching a need described in natural language.",
+      },
+    ],
+    categoriesTitle: "Covered categories",
+    addTitle: "Add the connector",
+    addClaude: "In Claude",
+    addClaudeSteps: [
+      "Settings → Connectors → Add custom connector.",
+      "Name: Blueprint Modular.",
+      "Remote MCP server URL: the endpoint above.",
+      "No authentication to configure.",
+    ],
+    addChatgpt: "In ChatGPT (developer mode)",
+    addChatgptSteps: [
+      "Settings → Connectors → Advanced → Developer mode.",
+      "Create / Add custom connector.",
+      "MCP Server URL: the endpoint above, authentication: None.",
+    ],
+    testTitle: "Test locally",
+    testNote:
+      "In development the endpoint is served at http://localhost:3000/api/mcp by npm run dev. Inspect it with MCP Inspector (Transport: Streamable HTTP, Auth: none).",
+    footnote:
+      "Health endpoint: GET /api/health. Privacy: /privacy. A single application serves the site and the connector.",
+    contact: "Contact",
+  },
+  resources: {
+    metaTitle: "Resources — Blueprint Modular",
+    metaDescription:
+      "Documentation, guides, API reference and MCP connector for Blueprint Modular. Everything you need to build, ship and automate.",
+    title: "Resources",
+    lead:
+      "All the documentation, guides and machine references to build, ship and automate with Blueprint Modular. The links point to real pages on this site.",
+    externalBadge: "External",
+    groups: {
+      docs: {
+        title: "Documentation",
+        desc: "Understand the product and start an application.",
+      },
+      guides: {
+        title: "Guides & modules",
+        desc: "Components in context and business modules ready to plug in.",
+      },
+      api: {
+        title: "Machine reference",
+        desc: "The complete API surface, generated from the code — readable by agents.",
+      },
+      mcp: {
+        title: "MCP connector",
+        desc: "Plug the catalog straight into Claude, ChatGPT and any MCP host.",
+      },
+    },
+    cards: {
+      docsHub: { title: "Documentation hub", body: "Overview, installation path and structured links." },
+      gettingStarted: { title: "Getting started", body: "Install, first app, first component — in three steps." },
+      catalog: { title: "Component catalog", body: "The registry components: descriptions, categories, live previews." },
+      changelog: { title: "Changelog", body: "Package versions, additions and fixes." },
+      gallery: { title: "Component gallery", body: "Every component rendered in a real situation, with its variants." },
+      modules: { title: "Business modules", body: "Assembled, documented modules, each with its page and simulator." },
+      database: { title: "Production prerequisites", body: "Prisma tables per module, environment variables, deployment." },
+      llms: { title: "llms.txt", body: "The complete machine reference, generated from the TypeScript sources." },
+      llmsCore: { title: "llms-core.txt", body: "Condensed version: the API essentials in a few thousand tokens." },
+      pypi: { title: "PyPI package", body: "Install blueprint-modular from the official Python index." },
+      mcpConnector: { title: "MCP connector", body: "Public read-only endpoint, four tools, no authentication." },
+    },
   },
 };
 
