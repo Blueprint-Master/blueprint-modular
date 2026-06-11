@@ -6,11 +6,6 @@ const nextConfig = {
   env: {
     NEXT_PUBLIC_FAVICON_V: String(Date.now()),
   },
-  async redirects() {
-    return [
-      { source: "/", destination: "/dashboard", permanent: true },
-    ];
-  },
   async rewrites() {
     return [
       { source: "/favicon.ico", destination: "/img/logo-bpm.png" },
