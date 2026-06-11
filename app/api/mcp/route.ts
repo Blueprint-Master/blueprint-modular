@@ -143,8 +143,10 @@ const mcpHandler = createMcpHandler(
       {
         title: "Détail d'un composant",
         description:
-          "Retourne le détail complet d'un composant : description, props/types, exemple d'usage et " +
-          "composants associés/parents. À UTILISER après list/search pour obtenir la signature exacte " +
+          "Retourne le détail complet d'un composant : description, props/types, exemple d'usage, " +
+          "composants associés/parents et couche sémantique (rôle, frame Ω, type d'indicateur, " +
+          "directionnalité, guidance agent — valeurs proposées, ontologie curée par l'humain). " +
+          "À UTILISER après list/search pour obtenir la signature exacte ET le sens du composant " +
           "avant de générer du code. Le nom accepte 'bpm.metric' ou 'metric'.",
         inputSchema: {
           name: z.string().min(1).describe("Nom du composant (ex. 'bpm.metric' ou 'metric')."),
@@ -171,8 +173,10 @@ const mcpHandler = createMcpHandler(
         title: "Suggérer une composition",
         description:
           "Suggère une liste de composants Blueprint Modular répondant à un besoin décrit en langage " +
-          "naturel. À UTILISER pour partir d'une intention d'écran (ex. 'un dashboard avec des " +
-          "métriques et un graphique') et obtenir les briques pertinentes. Réponse bornée.",
+          "naturel, en raisonnant sur la couche sémantique (rôle, frame Ω, guidance) : chaque " +
+          "suggestion explicite son sens (meaning) et ses associations sémantiques (pairWith). " +
+          "À UTILISER pour partir d'une intention d'écran (ex. 'un dashboard avec des métriques " +
+          "et un graphique') et obtenir les briques pertinentes. Réponse bornée.",
         inputSchema: {
           need: z.string().min(1).describe("Description du besoin / de l'écran à construire."),
           limit: z
@@ -192,7 +196,8 @@ const mcpHandler = createMcpHandler(
     instructions:
       "Catalogue read-only des composants Blueprint Modular (@blueprint-modular/core). " +
       `${TOTAL} composants. Flux conseillé : list_components / search_components pour explorer, ` +
-      "get_component pour la signature exacte (props/exemple), suggest_composition pour partir d'un besoin. " +
+      "get_component pour la signature exacte (props/exemple) et la couche sémantique " +
+      "(rôle, frame Ω, indicateur, guidance), suggest_composition pour partir d'un besoin. " +
       "Aucune écriture, aucune authentification, aucune donnée personnelle.",
   },
   {
