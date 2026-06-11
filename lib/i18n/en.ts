@@ -94,6 +94,122 @@ const en: Dictionary = {
       ],
       cta: "Follow the getting-started guide",
     },
+    showcase: {
+      liveTitle: "The real output, not screenshots.",
+      liveBody:
+        "Every tile below is a package component, mounted live on this page. Hover, read, compare: this is exactly what your application will render.",
+      families: {
+        dataDisplay: "Data display",
+        layout: "Layout",
+        interaction: "Interaction",
+        feedback: "Feedback",
+        navigation: "Navigation",
+        media: "Media",
+        charts: "Charts",
+        utilities: "Utilities",
+        identity: "Identification & traceability",
+        ai: "AI & specialized",
+      },
+      tiles: {
+        metric: "Metric",
+        status: "Status tracker",
+        gauge: "Threshold gauge",
+        progress: "Progress",
+        approval: "Approval flow",
+        activity: "Activity feed",
+        anomaly: "Anomaly detection",
+      },
+      progressLabel: "Quarterly target",
+      badgeReview: "Needs review",
+      approver1: "Marie Dupont",
+      role1: "Manager",
+      approver2: "Jean Martin",
+      role2: "Executive",
+      activityAction: "approved",
+      activityTarget: "quote DV-001",
+      anomalyTitle: "Stock discrepancy detected",
+      anomalyExpected: "100 units",
+      anomalyActual: "85 units",
+    },
+    modules: {
+      title: "{count} business modules ready to plug in.",
+      body:
+        "Beyond components, Blueprint Modular ships complete modules — assembled, documented and testable online. Each one has a documentation page and a live simulator.",
+      cta: "Explore the modules",
+      categories: {
+        auth: "Authentication",
+        content: "Content & productivity",
+        data: "Data & reporting",
+        process: "Process & workflow",
+        integrations: "Integrations & technical",
+        business: "Business",
+      },
+      descriptions: {
+        auth: "Google and e-mail sign-in, sessions, user whitelist.",
+        content: "Calendar, wiki, templates, newsletter, whiteboard, monitor…",
+        data: "Dashboards, reports, reference data, document analysis, exports.",
+        process: "Tasks, workflow, notifications, audit log, approvals.",
+        integrations: "Connectors, webhooks, multi-language, themes, AI assistant.",
+        business: "Product catalog, quotes & invoicing, forms, bookings.",
+      },
+    },
+    whyBpm: {
+      title: "Why Blueprint Modular?",
+      points: [
+        {
+          title: "A single source of truth",
+          body:
+            "The site, the catalog and llms.txt are generated from the TypeScript code. No possible drift between the docs and the component.",
+        },
+        {
+          title: "Accessibility and themes included",
+          body:
+            "Contrast, visible focus, ARIA roles, light and dark: it is all built into the components, not bolted on afterwards.",
+        },
+        {
+          title: "No frontend build to maintain",
+          body:
+            "The Python package ships the already-compiled React. No Node, no bundler, no configuration file to look after.",
+        },
+        {
+          title: "Built for agents",
+          body:
+            "The entire API surface is readable by an LLM. Your agent builds, completes and fixes the interface without guessing.",
+        },
+      ],
+    },
+    faq: {
+      title: "Frequently asked questions",
+      items: [
+        {
+          q: "Do I need to know React?",
+          a: "No. You write Python; the React components are already compiled in the package and are called like functions.",
+        },
+        {
+          q: "Can the theme be customized?",
+          a: "Yes. Colors, logo and light/dark mode go through design tokens; the Themes module enables per-instance or per-client rendering.",
+        },
+        {
+          q: "How does my agent use the library?",
+          a: "Hand it llms.txt: it finds every component with its props, types, defaults and examples, in a format designed for its context window.",
+        },
+        {
+          q: "What database does it need?",
+          a: "Each module documents its Prisma tables and environment variables. See docs/DATABASE.md in the repository for production prerequisites.",
+        },
+        {
+          q: "Is it production-ready?",
+          a: "Yes. The business modules are assembled and documented, with authentication, audit and deployment described — this site runs on its own components.",
+        },
+      ],
+    },
+    cta: {
+      title: "Ready to write your first interface?",
+      body:
+        "Install the package, run bpm run, and serve a complete business application — without touching any HTML.",
+      primary: "Get started",
+      secondary: "Browse components",
+    },
   },
   homeDemo: {
     revenue: "Monthly revenue",
