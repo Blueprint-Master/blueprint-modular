@@ -5,6 +5,8 @@ import { Hero } from "./_home/Hero";
 import { ValueProps } from "./_home/ValueProps";
 import { ComponentShowcase } from "./_home/ComponentShowcase";
 import { Modules } from "./_home/Modules";
+import { McpTeaser } from "./_home/McpTeaser";
+import { ResourcesTeaser } from "./_home/ResourcesTeaser";
 import { GetStarted } from "./_home/GetStarted";
 import { WhyBpm } from "./_home/WhyBpm";
 import { Faq } from "./_home/Faq";
@@ -19,6 +21,8 @@ export function HomeContent() {
       <ValueProps dict={dict} />
       <ComponentShowcase dict={dict} />
       <Modules dict={dict} />
+      <McpTeaser dict={dict} />
+      <ResourcesTeaser dict={dict} />
       <GetStarted dict={dict} />
       <WhyBpm dict={dict} />
       <Faq dict={dict} />
