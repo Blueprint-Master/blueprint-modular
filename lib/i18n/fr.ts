@@ -22,6 +22,8 @@ const fr = {
     ariaMain: "Navigation principale",
     ariaLocale: "Langue du site",
     ariaHome: "Blueprint Modular — accueil",
+    ariaMenu: "Ouvrir le menu",
+    ariaMenuClose: "Fermer le menu",
   },
   footer: {
     product: "Produit",

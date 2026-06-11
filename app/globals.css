@@ -3184,16 +3184,46 @@ body.contract-detail-panel-open .pwa-title-bar {
 .site-nav-inner {
   display: flex;
   align-items: center;
-  gap: 28px;
+  gap: 24px;
   height: 60px;
 }
 
+/* Marque : pictogramme dégradé + libellé, calée à gauche */
 .site-wordmark {
   font-family: var(--site-font-display);
   font-size: 16px;
   letter-spacing: -0.01em;
   color: var(--bpm-text-primary);
   text-decoration: none;
+  white-space: nowrap;
+}
+
+.site-brand {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  flex: 0 0 auto;
+}
+
+.site-brand-mark {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 30px;
+  height: 30px;
+  flex: 0 0 auto;
+  border-radius: 8px;
+  background: linear-gradient(135deg, var(--bpm-accent-cyan), var(--bpm-accent-mint));
+  color: #ffffff;
+  font-family: var(--site-font-display);
+  font-weight: 700;
+  font-size: 18px;
+  line-height: 1;
+  letter-spacing: -0.02em;
+  box-shadow: 0 1px 2px rgba(4, 141, 195, 0.35), inset 0 1px 0 rgba(255, 255, 255, 0.25);
+}
+
+.site-brand-text {
   white-space: nowrap;
 }
 
@@ -3205,9 +3235,7 @@ body.contract-detail-panel-open .pwa-title-bar {
   display: flex;
   align-items: center;
   gap: 4px;
-  flex: 1;
   min-width: 0;
-  overflow-x: auto;
 }
 
 .site-nav-link {
@@ -3230,24 +3258,33 @@ body.contract-detail-panel-open .pwa-title-bar {
   font-weight: 600;
 }
 
+/* Bloc de contrôles : poussé flush à droite */
 .site-nav-actions {
   display: flex;
   align-items: center;
   gap: 12px;
+  margin-left: auto;
+  flex: 0 0 auto;
 }
 
 .site-locale-switch {
   display: inline-flex;
+  align-items: stretch;
   border: 1px solid var(--bpm-border);
-  border-radius: 6px;
+  border-radius: 8px;
   overflow: hidden;
 }
 
 .site-locale-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 44px;
+  min-height: 44px;
   font-size: 12px;
   font-weight: 600;
   letter-spacing: 0.04em;
-  padding: 5px 9px;
+  padding: 0 12px;
   background: transparent;
   border: none;
   color: var(--bpm-text-secondary);
@@ -3262,6 +3299,102 @@ body.contract-detail-panel-open .pwa-title-bar {
 .site-locale-btn[aria-pressed="true"] {
   background: var(--bpm-bg-secondary);
   color: var(--bpm-text-primary);
+}
+
+/* Burger : visible seulement en responsive */
+.site-nav-burger {
+  display: none;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  padding: 0;
+  background: transparent;
+  border: 1px solid var(--bpm-border);
+  border-radius: 8px;
+  color: var(--bpm-text-primary);
+  cursor: pointer;
+  transition: var(--bpm-transition-fast);
+}
+
+.site-nav-burger:hover {
+  border-color: var(--bpm-text-secondary);
+}
+
+.site-nav-burger-bars {
+  display: inline-flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 4px;
+  width: 18px;
+}
+
+.site-nav-burger-bars > span {
+  display: block;
+  height: 2px;
+  width: 100%;
+  border-radius: 2px;
+  background: currentColor;
+  transition: transform 0.18s ease, opacity 0.18s ease;
+}
+
+.site-nav[data-menu-open="true"] .site-nav-burger-bars > span:nth-child(1) {
+  transform: translateY(6px) rotate(45deg);
+}
+
+.site-nav[data-menu-open="true"] .site-nav-burger-bars > span:nth-child(2) {
+  opacity: 0;
+}
+
+.site-nav[data-menu-open="true"] .site-nav-burger-bars > span:nth-child(3) {
+  transform: translateY(-6px) rotate(-45deg);
+}
+
+/* Panneau mobile déroulant */
+.site-nav-mobile {
+  border-bottom: 1px solid var(--bpm-border);
+  background: var(--bpm-bg-primary);
+}
+
+.site-nav-mobile[hidden] {
+  display: none;
+}
+
+.site-nav-mobile-links {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  max-width: var(--site-max-width);
+  margin: 0 auto;
+  padding: 8px 24px 16px;
+}
+
+.site-nav-mobile-link {
+  display: flex;
+  align-items: center;
+  min-height: 44px;
+  padding: 0 12px;
+  font-size: 15px;
+  color: var(--bpm-text-secondary);
+  text-decoration: none;
+  border-radius: 8px;
+}
+
+.site-nav-mobile-link:hover {
+  background: var(--bpm-bg-secondary);
+  color: var(--bpm-text-primary);
+}
+
+.site-nav-mobile-link[aria-current="page"] {
+  color: var(--bpm-text-primary);
+  font-weight: 600;
+  background: var(--bpm-bg-secondary);
+}
+
+.site-nav-mobile-cta {
+  margin-top: 10px;
+  justify-content: center;
+  min-height: 44px;
 }
 
 /* --- Boutons site --- */
@@ -3599,12 +3732,34 @@ body.contract-detail-panel-open .pwa-title-bar {
   }
 }
 
-@media (max-width: 640px) {
+/* En dessous de 860px : navigation repliée dans le burger */
+@media (max-width: 860px) {
   .site-nav-inner {
-    gap: 14px;
+    gap: 16px;
   }
+  .site-nav-links,
   .site-nav-app {
     display: none;
+  }
+  .site-nav-burger {
+    display: inline-flex;
+  }
+  /* Filet de sécurité : la marque tronque plutôt que de déborder */
+  .site-brand {
+    min-width: 0;
+  }
+  .site-brand-text {
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+}
+
+@media (max-width: 640px) {
+  .site-nav-inner {
+    gap: 12px;
+  }
+  .site-nav-actions {
+    gap: 8px;
   }
   .site-hero {
     padding: 56px 0 40px;

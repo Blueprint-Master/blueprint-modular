@@ -22,6 +22,8 @@ const en: Dictionary = {
     ariaMain: "Main navigation",
     ariaLocale: "Site language",
     ariaHome: "Blueprint Modular — home",
+    ariaMenu: "Open menu",
+    ariaMenuClose: "Close menu",
   },
   footer: {
     product: "Product",

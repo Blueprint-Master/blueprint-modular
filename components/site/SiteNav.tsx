@@ -1,5 +1,6 @@
 "use client";
 
+import { useEffect, useId, useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useI18n } from "@/lib/i18n/LocaleProvider";
@@ -16,12 +17,33 @@ const LINKS = [
 export function SiteNav() {
   const { locale, dict, setLocale } = useI18n();
   const pathname = usePathname();
+  const [menuOpen, setMenuOpen] = useState(false);
+  const menuId = useId();
+
+  // Ferme le menu mobile à chaque navigation et sur Échap.
+  useEffect(() => {
+    setMenuOpen(false);
+  }, [pathname]);
+
+  useEffect(() => {
+    if (!menuOpen) return;
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === "Escape") setMenuOpen(false);
+    };
+    document.addEventListener("keydown", onKey);
+    return () => document.removeEventListener("keydown", onKey);
+  }, [menuOpen]);
 
   return (
-    <header className="site-nav">
+    <header className="site-nav" data-menu-open={menuOpen ? "true" : undefined}>
       <div className="site-container site-nav-inner">
-        <Link href="/" className="site-wordmark" aria-label={dict.nav.ariaHome}>
-          <span className="site-wordmark-strong">Blueprint</span> Modular
+        <Link href="/" className="site-wordmark site-brand" aria-label={dict.nav.ariaHome}>
+          <span className="site-brand-mark" aria-hidden="true">
+            b
+          </span>
+          <span className="site-brand-text">
+            <span className="site-wordmark-strong">Blueprint</span> Modular
+          </span>
         </Link>
 
         <nav aria-label={dict.nav.ariaMain} className="site-nav-links">
@@ -54,7 +76,40 @@ export function SiteNav() {
           <Link href="/dashboard" className="site-cta-secondary site-nav-app">
             {dict.common.openApp}
           </Link>
+          <button
+            type="button"
+            className="site-nav-burger"
+            aria-label={menuOpen ? dict.nav.ariaMenuClose : dict.nav.ariaMenu}
+            aria-expanded={menuOpen}
+            aria-controls={menuId}
+            onClick={() => setMenuOpen((v) => !v)}
+          >
+            <span className="site-nav-burger-bars" aria-hidden="true">
+              <span />
+              <span />
+              <span />
+            </span>
+          </button>
         </div>
+      </div>
+
+      {/* Panneau mobile déployé par le burger */}
+      <div id={menuId} className="site-nav-mobile" hidden={!menuOpen}>
+        <nav aria-label={dict.nav.ariaMain} className="site-nav-mobile-links">
+          {LINKS.map((link) => (
+            <Link
+              key={link.href}
+              href={link.href}
+              className="site-nav-mobile-link"
+              aria-current={pathname === link.href ? "page" : undefined}
+            >
+              {dict.nav[link.key]}
+            </Link>
+          ))}
+          <Link href="/dashboard" className="site-cta-secondary site-nav-mobile-cta">
+            {dict.common.openApp}
+          </Link>
+        </nav>
       </div>
     </header>
   );
