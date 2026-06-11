@@ -226,18 +226,22 @@ npm run gate
 
 ## MCP connector (read-only)
 
-A public, read-only **MCP server** exposes the component catalogue to Claude
-(and any MCP host) over **Streamable HTTP** — same deployment, same source of
-truth as the site.
+A public, read-only **MCP server** exposes the component catalogue to Claude,
+ChatGPT (developer mode) and any MCP host over **Streamable HTTP** — same
+deployment, same source of truth as the site. Built to pass a directory review:
+`readOnlyHint` tools, cursor pagination, structured/actionable errors, clean
+output (catalogue data only), per-IP rate limiting.
 
 - **Endpoint** : `POST /api/mcp` (no auth — the catalogue is public)
 - **Tools** : `list_components`, `search_components`, `get_component`, `suggest_composition`
+- **Pages** : docs `/mcp` · privacy `/privacy` · health `GET /api/health`
 - **Source of truth** : generated from `bpm-components.json` + `llms.txt`
   via `npm run generate:mcp-registry` (never hand-authored)
 
 Add it in Claude via **Settings → Connectors → Add custom connector**, URL
-`https://<host>/api/mcp`. Full details — tools, params, local testing — in
-[`docs/MCP_CONNECTOR.md`](docs/MCP_CONNECTOR.md).
+`https://blueprint-modular.com/api/mcp`. Full details — tools, params, local
+testing, MCP Inspector — in [`docs/MCP_CONNECTOR.md`](docs/MCP_CONNECTOR.md).
+Directory submission copy: [`SUBMISSION.md`](SUBMISSION.md).
 
 ---
 

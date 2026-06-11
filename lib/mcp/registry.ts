@@ -4,6 +4,11 @@
  * Source de vérité : lib/generated/mcp-registry.json — fichier GÉNÉRÉ
  * (voir scripts/generate-mcp-registry.mjs) à partir de bpm-components.json + llms.txt.
  * Aucune donnée n'est dupliquée à la main ici.
+ *
+ * HYGIÈNE DES SORTIES : les fonctions publiques ne renvoient QUE de la donnée
+ * catalogue (nom, catégorie, description, props, exemple, associés/parents).
+ * Aucun identifiant interne (slug), chemin de fichier, timestamp ou champ debug
+ * n'est exposé. L'index de recherche `_haystack` reste strictement interne.
  */
 import registry from "@/lib/generated/mcp-registry.json";
 
@@ -17,7 +22,7 @@ export interface BpmComponent {
   example?: string;
   associated?: string[];
   parent?: string[];
-  /** Index de recherche pré-calculé (tout en minuscules). Interne. */
+  /** Index de recherche pré-calculé (tout en minuscules). Interne — jamais exposé. */
   _haystack: string;
 }
 
@@ -25,7 +30,22 @@ const COMPONENTS = registry.components as BpmComponent[];
 
 export const CATEGORIES: string[] = registry.categories;
 export const TOTAL: number = registry.total;
-export const GENERATED_AT: string = registry.generatedAt;
+
+/** Plafonds de pagination — bornent la taille (et donc les tokens) de chaque réponse. */
+export const LIST_PAGE_SIZE = 25;
+export const SEARCH_PAGE_SIZE = 15;
+export const SUGGEST_MAX = 12;
+export const SUGGEST_DEFAULT = 8;
+
+/** Erreur applicative actionnable : message clair + indication pour rebondir. */
+export class RegistryError extends Error {
+  hint?: string;
+  constructor(message: string, hint?: string) {
+    super(message);
+    this.name = "RegistryError";
+    this.hint = hint;
+  }
+}
 
 /** Normalise un nom fourni par l'utilisateur : "bpm.Metric", "Metric", "metric" → "metric". */
 function normalizeName(name: string): string {
@@ -35,7 +55,36 @@ function normalizeName(name: string): string {
     .replace(/^bpm\./, "");
 }
 
-/** Résumé court (une ligne) d'un composant — utilisé pour les listes paginées/scopées. */
+// ---------------------------------------------------------------------------
+// Curseurs opaques (pagination stateless)
+// ---------------------------------------------------------------------------
+
+/** Encode un offset en curseur opaque base64url. */
+function encodeCursor(offset: number): string {
+  return Buffer.from(JSON.stringify({ o: offset }), "utf-8").toString("base64url");
+}
+
+/** Décode un curseur. Retourne 0 si absent. Lève RegistryError si invalide. */
+function decodeCursor(cursor?: string): number {
+  if (cursor === undefined || cursor === null || cursor === "") return 0;
+  try {
+    const parsed = JSON.parse(Buffer.from(cursor, "base64url").toString("utf-8"));
+    const o = parsed?.o;
+    if (typeof o !== "number" || !Number.isInteger(o) || o < 0) throw new Error("bad");
+    return o;
+  } catch {
+    throw new RegistryError(
+      "Curseur de pagination invalide.",
+      "Relancez l'outil sans le paramètre 'cursor' pour repartir du début.",
+    );
+  }
+}
+
+// ---------------------------------------------------------------------------
+// Vues publiques (sortie nettoyée)
+// ---------------------------------------------------------------------------
+
+/** Résumé court (une ligne) — utilisé pour les listes paginées. Aucun champ interne. */
 export interface ComponentSummary {
   name: string;
   category: string;
@@ -54,7 +103,7 @@ export function getComponent(name: string): BpmComponent | undefined {
   );
 }
 
-/** Détail public d'un composant (sans l'index interne _haystack). */
+/** Détail public d'un composant — uniquement de la donnée catalogue. */
 export function componentDetail(c: BpmComponent) {
   return {
     name: c.name,
@@ -68,51 +117,60 @@ export function componentDetail(c: BpmComponent) {
   };
 }
 
+// ---------------------------------------------------------------------------
+// list_components
+// ---------------------------------------------------------------------------
+
 export interface ListResult {
-  total: number;
-  page: number;
-  pageSize: number;
-  totalPages: number;
   category: string | null;
   categories: string[];
+  total: number;
+  returned: number;
   components: ComponentSummary[];
+  nextCursor?: string;
 }
 
-/** Liste paginée des composants, filtrable par catégorie (match insensible à la casse / partiel). */
-export function listComponents(opts: {
-  category?: string;
-  page?: number;
-  pageSize?: number;
-}): ListResult {
-  const page = Math.max(1, opts.page ?? 1);
-  const pageSize = Math.min(100, Math.max(1, opts.pageSize ?? 30));
+/**
+ * Liste paginée (curseur) des composants, filtrable par catégorie.
+ * @throws RegistryError si la catégorie est inconnue ou le curseur invalide.
+ */
+export function listComponents(opts: { category?: string; cursor?: string }): ListResult {
+  const offset = decodeCursor(opts.cursor);
 
   let filtered = COMPONENTS;
   let matchedCategory: string | null = null;
   if (opts.category && opts.category.trim()) {
     const q = opts.category.trim().toLowerCase();
-    matchedCategory =
+    const found =
       CATEGORIES.find((c) => c.toLowerCase() === q) ||
-      CATEGORIES.find((c) => c.toLowerCase().includes(q)) ||
-      opts.category;
-    filtered = COMPONENTS.filter((c) => c.category.toLowerCase() === matchedCategory!.toLowerCase());
+      CATEGORIES.find((c) => c.toLowerCase().includes(q));
+    if (!found) {
+      throw new RegistryError(
+        `Catégorie inconnue : "${opts.category}".`,
+        `Catégories valides : ${CATEGORIES.join(", ")}. Ou appelez list_components sans 'category'.`,
+      );
+    }
+    matchedCategory = found;
+    filtered = COMPONENTS.filter((c) => c.category === found);
   }
 
   const total = filtered.length;
-  const totalPages = Math.max(1, Math.ceil(total / pageSize));
-  const start = (page - 1) * pageSize;
-  const components = filtered.slice(start, start + pageSize).map(summarize);
+  const page = filtered.slice(offset, offset + LIST_PAGE_SIZE);
+  const nextOffset = offset + page.length;
 
   return {
-    total,
-    page,
-    pageSize,
-    totalPages,
     category: matchedCategory,
     categories: CATEGORIES,
-    components,
+    total,
+    returned: page.length,
+    components: page.map(summarize),
+    ...(nextOffset < total ? { nextCursor: encodeCursor(nextOffset) } : {}),
   };
 }
+
+// ---------------------------------------------------------------------------
+// Moteur de score (recherche + suggestion)
+// ---------------------------------------------------------------------------
 
 // Mots vides FR/EN : sans valeur discriminante, ils pollueraient le scoring par sous-chaîne.
 const STOPWORDS = new Set([
@@ -141,7 +199,6 @@ function tokenVariants(t: string): string[] {
   return [...variants];
 }
 
-/** Vrai si l'un des variants du token apparaît dans le texte. */
 function fieldMatches(field: string, token: string): boolean {
   return tokenVariants(token).some((v) => field.includes(v));
 }
@@ -192,21 +249,48 @@ function scoreComponents(query: string): Scored[] {
   return results;
 }
 
+// ---------------------------------------------------------------------------
+// search_components
+// ---------------------------------------------------------------------------
+
 export interface SearchResult {
   query: string;
-  count: number;
+  total: number;
+  returned: number;
   results: Array<ComponentSummary & { matched: string[] }>;
+  nextCursor?: string;
 }
 
-/** Recherche pertinente sur nom / description / catégorie / tags. Scopée (limit). */
-export function searchComponents(query: string, limit = 10): SearchResult {
-  const scored = scoreComponents(query).slice(0, Math.min(50, Math.max(1, limit)));
+/**
+ * Recherche pertinente paginée (curseur) sur nom / description / catégorie / tags.
+ * @throws RegistryError si la requête est vide ou le curseur invalide.
+ */
+export function searchComponents(query: string, cursor?: string): SearchResult {
+  const q = (query ?? "").trim();
+  if (!q) {
+    throw new RegistryError(
+      "Requête de recherche vide.",
+      "Fournissez des termes dans 'query' (ex. 'tableau triable', 'graphique').",
+    );
+  }
+  const offset = decodeCursor(cursor);
+  const scored = scoreComponents(q);
+  const total = scored.length;
+  const page = scored.slice(offset, offset + SEARCH_PAGE_SIZE);
+  const nextOffset = offset + page.length;
+
   return {
-    query,
-    count: scored.length,
-    results: scored.map((s) => ({ ...summarize(s.c), matched: s.matched })),
+    query: q,
+    total,
+    returned: page.length,
+    results: page.map((s) => ({ ...summarize(s.c), matched: s.matched })),
+    ...(nextOffset < total ? { nextCursor: encodeCursor(nextOffset) } : {}),
   };
 }
+
+// ---------------------------------------------------------------------------
+// suggest_composition
+// ---------------------------------------------------------------------------
 
 export interface SuggestResult {
   need: string;
@@ -216,12 +300,21 @@ export interface SuggestResult {
 
 /**
  * Suggère une composition de composants répondant à un besoin décrit en langage naturel.
- * S'appuie sur le même moteur de score que la recherche, avec une sortie orientée "pourquoi".
+ * Réponse bornée (SUGGEST_MAX), pas de curseur.
+ * @throws RegistryError si le besoin est vide.
  */
-export function suggestComposition(need: string, limit = 8): SuggestResult {
-  const scored = scoreComponents(need).slice(0, Math.min(20, Math.max(1, limit)));
+export function suggestComposition(need: string, limit?: number): SuggestResult {
+  const n = (need ?? "").trim();
+  if (!n) {
+    throw new RegistryError(
+      "Besoin vide.",
+      "Décrivez l'écran ou la fonctionnalité dans 'need' (ex. 'un dashboard avec métriques et graphique').",
+    );
+  }
+  const cap = Math.min(SUGGEST_MAX, Math.max(1, limit ?? SUGGEST_DEFAULT));
+  const scored = scoreComponents(n).slice(0, cap);
   return {
-    need,
+    need: n,
     count: scored.length,
     suggestions: scored.map((s) => ({
       ...summarize(s.c),
