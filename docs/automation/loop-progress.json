@@ -56,8 +56,20 @@
       "id": "P1-modules-triage",
       "priority": "P1",
       "title": "Triage des 32 modules : développés / gatés 'bientôt' / needs-human",
-      "status": "pending",
-      "notes": "32 modules sous app/(app)/modules/. La plupart rendent déjà une UI réelle composant bpm.* (doc + simulateur). Triage et renforcement ciblé en cours."
+      "status": "done",
+      "notes": "32 modules smoke-testés (page/documentation/simulateur) : aucune route 500, tous rendent une UI réelle. Triage complet dans loop-report-2026-06-11.md.",
+      "developed": ["veille"],
+      "alreadyStandard": 31,
+      "gatedBientot": [],
+      "needsHuman": []
+    },
+    {
+      "id": "P1-veille",
+      "priority": "P1",
+      "title": "Module Veille : stub → simulateur interactif bpm.*",
+      "status": "done",
+      "notes": "Seul module stub du repo. Refondu en page à onglets Documentation + Simulateur composant metricRow/table+badge/anomalyAlert/activityFeed + formulaire input/selectbox/button (ajout de source câblé). Doc et index mis à jour.",
+      "smoke": "build vert, 200, doc rendue, plus de 'sera enrichi dans une prochaine version'."
     }
   ]
 }
