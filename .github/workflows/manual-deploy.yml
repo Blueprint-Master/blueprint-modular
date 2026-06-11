@@ -1,23 +1,22 @@
 # Déploiement manuel de Blueprint Modular sur le serveur de prod (bpm-prod).
 #
-# Calqué sur le manual-deploy.yml de blueprint-maker : même mécanisme
-# (connexion SSH via appleboy/ssh-action, déclenchement workflow_dispatch),
-# seules les valeurs propres à Modular sont adaptées.
+# Calqué sur le manual-deploy.yml de blueprint-maker : MÊME mécanisme de
+# connexion, c'est-à-dire AUCUNE connexion distante. Le job s'exécute
+# directement sur un runner GitHub self-hosted installé sur bpm-prod
+# (`runs-on: [self-hosted, bpm-prod]`). Il n'y a donc :
+#   - pas de host / port,
+#   - pas d'étape Tailscale,
+#   - pas de secrets SSH (SSH_HOST / SSH_USER / SSH_PRIVATE_KEY / SSH_PORT),
+#   - pas de step appleboy/ssh-action.
+# Le runner EST le serveur : on opère sur le clone présent sur la machine.
 #
 # Déclenchement : onglet « Actions » → « Manual deploy (bpm-prod) » →
 # bouton « Run workflow » (tappable depuis mobile).
 #
-# Secrets requis (mêmes noms que Maker — définis au niveau org Blueprint-Master
-# ou à ajouter au repo Modular) :
-#   SSH_HOST         hôte du serveur bpm-prod
-#   SSH_USER         utilisateur SSH (ubuntu)
-#   SSH_PRIVATE_KEY  clé privée SSH d'accès au serveur
-#   SSH_PORT         port SSH (ex. 22)
-#
 # Ce workflow ne modifie pas deploy-from-git.sh ni la logique applicative :
-# il se contente de mettre le repo à jour sur le serveur puis de lancer
-# le script de déploiement existant (qui gère vitrine, doc, build Next.js,
-# Prisma migrate et le service PM2 « blueprint-app »).
+# il met le clone du serveur à jour sur origin/master puis lance le script
+# de déploiement existant (qui gère vitrine, doc, build Next.js, Prisma
+# migrate et le service PM2 « blueprint-app »).
 
 name: Manual deploy (bpm-prod)
 
@@ -27,19 +26,12 @@ on:
 jobs:
   deploy:
     name: Deploy Blueprint Modular
-    runs-on: ubuntu-latest
+    runs-on: [self-hosted, bpm-prod]
     steps:
-      - name: Deploy over SSH
-        uses: appleboy/ssh-action@v1.2.0
-        with:
-          host: ${{ secrets.SSH_HOST }}
-          username: ${{ secrets.SSH_USER }}
-          key: ${{ secrets.SSH_PRIVATE_KEY }}
-          port: ${{ secrets.SSH_PORT }}
-          script: |
-            set -e
-            cd ~/blueprint-modular
-            git fetch origin
-            git reset --hard origin/master
-            chmod +x deploy/deploy-from-git.sh
-            ./deploy/deploy-from-git.sh
+      - name: Deploy
+        run: |
+          cd ~/blueprint-modular
+          git fetch origin
+          git reset --hard origin/master  # reset --hard : prod doit refléter origin/master exactement, jamais avoir de commits locaux (cf. incident 04/06/2026 côté maker)
+          chmod +x deploy/deploy-from-git.sh
+          ./deploy/deploy-from-git.sh
