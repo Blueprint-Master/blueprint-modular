@@ -4,6 +4,7 @@ import React, { useState, useMemo } from "react";
 import { useIsMobile } from "@/hooks/useIsMobile";
 import { useBPMContext } from "@/lib/ai/context";
 import type { MetricValueLocale } from "./Metric";
+import { interpret, judgmentColor, type InterpretContext } from "./interpret";
 
 /**
  * @component bpm.table
@@ -44,6 +45,8 @@ export interface TableColumn {
   decimals?: number;
   /** Si true, l'en-tête de colonne ne passe pas à la ligne (whitespace-nowrap). */
   noWrap?: boolean;
+  /** Contexte de jugement de la colonne { reference, direction, comparisonFrame? } : chaque cellule numérique est jugée par interpret — valeur colorée par le verdict, écart en title, data-judgment. Ignoré si render est fourni. Additif : sans context, rendu inchangé. */
+  context?: InterpretContext;
 }
 
 /**
@@ -77,6 +80,12 @@ export interface TableProps {
   trackContext?: boolean;
   /** Message affiché quand data est vide. Default: "Aucune donnée disponible". */
   emptyMessage?: string;
+  /** État chargement : affiche des lignes squelettes (aria-busy). Additif : défaut false. */
+  loading?: boolean;
+  /** État erreur : affiche le message en ligne role=alert (prioritaire sur loading/empty). Additif : défaut null. */
+  error?: string | null;
+  /** Densité d'affichage : "normal" (défaut, rendu historique) ou "compact" (padding réduit). */
+  density?: "normal" | "compact";
 }
 
 function getSortValue(val: unknown): string | number {
@@ -130,6 +139,9 @@ export function Table({
   minWidth,
   trackContext = false,
   emptyMessage = "Aucune donnée disponible",
+  loading = false,
+  error = null,
+  density = "normal",
 }: TableProps) {
   const isMobile = useIsMobile(768);
 
@@ -161,7 +173,23 @@ export function Table({
     if (isNumericValue(val)) {
       const num = toNumber(val);
       const decimals = col.decimals ?? valueDecimals;
-      return formatNumber(num, decimals);
+      const formatted = formatNumber(num, decimals);
+      if (col.context) {
+        const j = interpret(num, col.context);
+        return (
+          <span
+            data-judgment={j.level.status}
+            title={`écart ${j.level.gap >= 0 ? "+" : ""}${j.level.gap} vs repère ${col.context.reference}`}
+            style={{
+              color: judgmentColor(j),
+              fontWeight: j.level.status === "unfavorable" ? 600 : undefined,
+            }}
+          >
+            {formatted}
+          </span>
+        );
+      }
+      return formatted;
     }
     return String(val);
   };
@@ -211,6 +239,7 @@ export function Table({
       }}
       data-name={name ?? undefined}
       data-key-column={keyColumn ?? undefined}
+      aria-busy={loading || undefined}
     >
       <div className="bpm-table-container w-full" style={tableMinWidthStyle}>
         <table
@@ -225,7 +254,14 @@ export function Table({
                 <th
                   key={col.key || idx}
                   scope="col"
-                  className={`bpm-table-th px-3 py-2 text-sm font-medium border ${col.noWrap ? "bpm-table-th--nowrap" : ""} ${
+                  aria-sort={
+                    sortColumn === col.key
+                      ? sortDirection === "asc"
+                        ? "ascending"
+                        : "descending"
+                      : undefined
+                  }
+                  className={`bpm-table-th ${density === "compact" ? "px-2 py-1" : "px-3 py-2"} text-sm font-medium border ${col.noWrap ? "bpm-table-th--nowrap" : ""} ${
                     sortColumn === col.key
                       ? `bpm-table-sorted bpm-table-sorted-${sortDirection}`
                       : ""
@@ -252,7 +288,36 @@ export function Table({
             </tr>
           </thead>
           <tbody>
-            {sortedData.length === 0 ? (
+            {error ? (
+              <tr>
+                <td
+                  colSpan={columns.length}
+                  role="alert"
+                  className="px-3 py-8 text-center text-sm"
+                  style={{
+                    color: "var(--bpm-error, #dc2626)",
+                    borderColor: "var(--bpm-border, #e5e7eb)",
+                    backgroundColor: "var(--bpm-error-soft, #fef2f2)",
+                  }}
+                >
+                  {error}
+                </td>
+              </tr>
+            ) : loading ? (
+              Array.from({ length: 3 }, (_, i) => (
+                <tr key={`skeleton-${i}`} className="bpm-table-tr border" style={{ borderColor: "var(--bpm-border, #e5e7eb)" }}>
+                  {columns.map((col, colIdx) => (
+                    <td key={col.key || colIdx} className={`${density === "compact" ? "px-2 py-1" : "px-3 py-2"} border`} style={{ borderColor: "var(--bpm-border, #e5e7eb)" }}>
+                      <span
+                        className="inline-block w-full rounded animate-pulse"
+                        style={{ height: 14, background: "var(--bpm-bg-secondary, #f1f5f9)" }}
+                        aria-hidden
+                      />
+                    </td>
+                  ))}
+                </tr>
+              ))
+            ) : sortedData.length === 0 ? (
               <tr>
                 <td
                   colSpan={columns.length}
@@ -281,7 +346,7 @@ export function Table({
                 {columns.map((col, colIdx) => (
                   <td
                     key={col.key || colIdx}
-                    className={`px-3 py-2 text-sm border ${col.className ?? ""}`}
+                    className={`${density === "compact" ? "px-2 py-1" : "px-3 py-2"} text-sm border ${col.className ?? ""}`}
                     style={{
                       textAlign: getColumnAlign(col, data),
                       borderColor: "var(--bpm-border, #e5e7eb)",

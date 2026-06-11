@@ -1,6 +1,12 @@
 "use client";
 
 import React, { useMemo } from "react";
+import {
+  interpret,
+  judgmentColor,
+  judgmentLabel,
+  type InterpretContext,
+} from "./interpret";
 
 /**
  * @component bpm.waterfall
@@ -13,6 +19,7 @@ import React, { useMemo } from "react";
  * @param {number} [props.width=480] - Largeur du SVG en pixels. Optionnel.
  * @param {number} [props.height=260] - Hauteur du SVG en pixels. Optionnel.
  * @param {string} [props.className=""] - Classes CSS additionnelles. Optionnel.
+ * @param {InterpretContext} [props.context] - Contexte de jugement : le cumul final de la cascade est jugé vs le repère, verdict révélé sous le graphique. Optionnel.
  *
  * @associated bpm.barChart, bpm.stackedBarChart, bpm.kpi
  */
@@ -31,6 +38,8 @@ export interface WaterfallProps {
   width?: number;
   height?: number;
   className?: string;
+  /** Contexte de jugement { reference, direction } : le cumul FINAL de la cascade est jugé par interpret — verdict écart au repère révélé sous le graphique (role=status), data-judgment. Additif : sans context, rendu inchangé. */
+  context?: InterpretContext;
 }
 
 export function Waterfall({
@@ -38,7 +47,17 @@ export function Waterfall({
   width = 480,
   height = 260,
   className = "",
+  context,
 }: WaterfallProps) {
+  const judgment = useMemo(() => {
+    if (!context || data.length === 0) return null;
+    let acc = 0;
+    for (const d of data) {
+      if (d.type === "start") acc = d.value;
+      else if (d.type !== "total") acc += d.value;
+    }
+    return interpret(acc, context);
+  }, [data, context]);
   const { bars, connectors, scale } = useMemo(() => {
     const pad = { l: 48, r: 16, t: 16, b: 36 };
     const innerW = width - pad.l - pad.r;
@@ -105,14 +124,15 @@ export function Waterfall({
     return { bars, connectors, scale: { pad, innerH, minY, span } };
   }, [data, width, height]);
 
-  return (
+  const svg = (
     <svg
       width={width}
       height={height}
-      className={className}
+      className={judgment ? undefined : className}
       style={{ background: "var(--bpm-bg-secondary)", borderRadius: "var(--bpm-radius)" }}
       role="img"
-      aria-label="Waterfall"
+      aria-label={judgment ? `Waterfall — ${judgmentLabel(judgment)}` : "Waterfall"}
+      data-judgment={judgment ? judgment.level.status : undefined}
     >
       <line
         x1={scale.pad.l}
@@ -156,5 +176,15 @@ export function Waterfall({
         </g>
       ))}
     </svg>
+  );
+
+  if (!judgment) return svg;
+  return (
+    <span className={className} style={{ display: "inline-block" }}>
+      {svg}
+      <span role="status" style={{ display: "block", fontSize: 12, marginTop: 4, color: judgmentColor(judgment) }}>
+        {judgmentLabel(judgment)}
+      </span>
+    </span>
   );
 }

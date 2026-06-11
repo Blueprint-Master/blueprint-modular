@@ -2,6 +2,13 @@
 
 import React, { useState } from "react";
 import { Spinner } from "./Spinner";
+import {
+  interpret,
+  judgmentColor,
+  judgmentLabel,
+  type InterpretContext,
+  type TrajectoryPoint,
+} from "./interpret";
 
 /**
  * @component bpm.statusBox
@@ -15,6 +22,10 @@ export interface StatusBoxProps {
   /** Réduit le padding pour contextes denses. */
   compact?: boolean;
   className?: string;
+  /** Valeur mesurée associée au statut (scalaire ou trajectoire v(t) [{t,v}]) — jugée si context est fourni. */
+  value?: number | TrajectoryPoint[];
+  /** Contexte de jugement { reference, direction, comparisonFrame? } : un verdict écart/tendance/anomalie est révélé à droite du libellé et la bordure gauche prend la couleur du jugement. Additif : sans context, rendu inchangé. */
+  context?: InterpretContext;
 }
 
 /**
@@ -29,6 +40,8 @@ export interface StatusBoxProps {
  * - defaultExpanded (boolean, optionnel) — Ouvrir la zone dépliable au montage. Default: true.
  * - compact (boolean, optionnel) — Réduit le padding. Default: false.
  * - className (string, optionnel) — Classes CSS additionnelles.
+ * - value (number | TrajectoryPoint[], optionnel) — Valeur mesurée associée, jugée si context fourni.
+ * - context (InterpretContext, optionnel) — Contexte de jugement : verdict interpret révélé (écart, tendance, anomalie).
  * @usage Indicateur de statut pour tableaux de bord, synchronisation données, connexion API.
  * @context
  * PARENT: bpm.panel | bpm.card | page directe.
@@ -36,8 +49,10 @@ export interface StatusBoxProps {
  * FORBIDDEN: aucun.
  */
 export function StatusBox(p: StatusBoxProps) {
-  const { label, state = "running", children, defaultExpanded = true, compact = false, className = "" } = p;
+  const { label, state = "running", children, defaultExpanded = true, compact = false, className = "", value, context } = p;
   const [expanded, setExpanded] = useState(defaultExpanded);
+  const judgment =
+    context && value != null ? interpret(value, context) : null;
   const icon = state === "running" ? <Spinner size="small" neutral /> : state === "complete" ? "\u2713" : "x";
   const iconColor = state === "running" ? "var(--bpm-text-muted)" : state === "complete" ? "var(--bpm-success)" : "var(--bpm-accent)";
   const paddingClass = compact ? "px-3 py-2" : "px-4 py-3";
@@ -46,6 +61,11 @@ export function StatusBox(p: StatusBoxProps) {
     <div className={`w-full flex items-center gap-2 ${paddingClass} text-left flex-wrap`} style={{ color: "var(--bpm-text)" }}>
       <span style={{ color: iconColor }}>{icon}</span>
       <span className="font-medium">{label}</span>
+      {judgment && (
+        <span role="status" className="text-xs" style={{ color: judgmentColor(judgment) }}>
+          {judgmentLabel(judgment)}
+        </span>
+      )}
       {hasExpandable && (
         <span className="ml-auto text-sm" style={{ color: "var(--bpm-text-muted)" }} aria-hidden>
           {expanded ? "\u2193" : "\u2192"}
@@ -54,7 +74,15 @@ export function StatusBox(p: StatusBoxProps) {
     </div>
   );
   return (
-    <div className={"bpm-status-box rounded-lg border " + className} style={{ borderColor: "var(--bpm-border)", background: "var(--bpm-bg-primary)" }}>
+    <div
+      className={"bpm-status-box rounded-lg border " + className}
+      style={{
+        borderColor: "var(--bpm-border)",
+        background: "var(--bpm-bg-primary)",
+        ...(judgment ? { borderLeftWidth: 4, borderLeftColor: judgmentColor(judgment) } : {}),
+      }}
+      data-judgment={judgment ? judgment.level.status : undefined}
+    >
       {hasExpandable ? (
         <button type="button" onClick={() => setExpanded((e) => !e)} className="w-full border-0 bg-transparent cursor-pointer p-0 text-left">
           {content}

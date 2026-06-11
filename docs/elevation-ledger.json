@@ -1,0 +1,950 @@
+{
+  "mission": "elevate-bpm-components",
+  "branch": "claude/elevate-bpm-components-18r36d",
+  "created": "2026-06-10",
+  "total": 154,
+  "rubrics": {
+    "INSTRUMENT": "accepte context; embarque interpret(v,c) et le révèle visuellement; accepte v(t) (niveau+tendance); représentation réagit au type d écart",
+    "DATA": "états empty/loading/error; variantes de densité; hook d interprétation optionnel par cellule/ligne; a11y; API cohérente",
+    "STRUCTURAL": "design tokens cohérents; slots; responsive; a11y",
+    "INTERACTIF": "états default/hover/disabled/error; validation/contrôlé-non contrôlé; a11y; API cohérente"
+  },
+  "components": [
+    {
+      "key": "anomalyAlert",
+      "class": "INSTRUMENT",
+      "status": "done",
+      "reason": null
+    },
+    {
+      "key": "areaChart",
+      "class": "INSTRUMENT",
+      "status": "done",
+      "reason": null
+    },
+    {
+      "key": "barChart",
+      "class": "INSTRUMENT",
+      "status": "done",
+      "reason": null
+    },
+    {
+      "key": "comparison",
+      "class": "INSTRUMENT",
+      "status": "done",
+      "reason": null
+    },
+    {
+      "key": "funnelChart",
+      "class": "INSTRUMENT",
+      "status": "done",
+      "reason": "Jugement agrege retire: le verdict unique « conversion vs repere » n'etait pas fiable. Le chart est conserve; un jugement par etape reste a definir."
+    },
+    {
+      "key": "heatmap",
+      "class": "INSTRUMENT",
+      "status": "done",
+      "reason": null
+    },
+    {
+      "key": "highlightBox",
+      "class": "STRUCTURAL",
+      "status": "done",
+      "reason": "Declasse: bloc editorial de mise en valeur, pas un instrument. measure/context/interpret retires (ajoutes a tort dans #12)."
+    },
+    {
+      "key": "labelValue",
+      "class": "INSTRUMENT",
+      "status": "done",
+      "reason": null
+    },
+    {
+      "key": "lineChart",
+      "class": "INSTRUMENT",
+      "status": "done",
+      "reason": null
+    },
+    {
+      "key": "liveChart",
+      "class": "INSTRUMENT",
+      "status": "done",
+      "reason": null
+    },
+    {
+      "key": "liveGauge",
+      "class": "INSTRUMENT",
+      "status": "done",
+      "reason": null
+    },
+    {
+      "key": "loadingBar",
+      "class": "STRUCTURAL",
+      "status": "done",
+      "reason": "Declasse: une barre de progression ne porte pas de jugement. context/interpret/verdict retires (ajoutes a tort dans #12)."
+    },
+    {
+      "key": "machineStatus",
+      "class": "INSTRUMENT",
+      "status": "done",
+      "reason": null
+    },
+    {
+      "key": "metric",
+      "class": "INSTRUMENT",
+      "status": "done",
+      "reason": null
+    },
+    {
+      "key": "predictiveChart",
+      "class": "INSTRUMENT",
+      "status": "done",
+      "reason": null
+    },
+    {
+      "key": "progress",
+      "class": "INSTRUMENT",
+      "status": "done",
+      "reason": null
+    },
+    {
+      "key": "progressRing",
+      "class": "INSTRUMENT",
+      "status": "done",
+      "reason": null
+    },
+    {
+      "key": "radarChart",
+      "class": "INSTRUMENT",
+      "status": "done",
+      "reason": "Couleur de verdict agregee (moyenne des axes) retiree du polygone: un verdict unique sur N axes heterogenes n'a pas de sens. Anneau de repere par axe conserve."
+    },
+    {
+      "key": "rating",
+      "class": "INSTRUMENT",
+      "status": "done",
+      "reason": null
+    },
+    {
+      "key": "scatterChart",
+      "class": "INSTRUMENT",
+      "status": "done",
+      "reason": null
+    },
+    {
+      "key": "sensorGrid",
+      "class": "INSTRUMENT",
+      "status": "done",
+      "reason": null
+    },
+    {
+      "key": "sparkline",
+      "class": "INSTRUMENT",
+      "status": "done",
+      "reason": null
+    },
+    {
+      "key": "statusBox",
+      "class": "INSTRUMENT",
+      "status": "done",
+      "reason": null
+    },
+    {
+      "key": "treemap",
+      "class": "INSTRUMENT",
+      "status": "done",
+      "reason": "Verdict agrege sur le total retire (somme de tuiles heterogenes sans sens). Jugement par tuile vs repere conserve."
+    },
+    {
+      "key": "waterfall",
+      "class": "INSTRUMENT",
+      "status": "done",
+      "reason": null
+    },
+    {
+      "key": "activityFeed",
+      "class": "DATA",
+      "status": "todo",
+      "reason": null
+    },
+    {
+      "key": "alarmPanel",
+      "class": "DATA",
+      "status": "todo",
+      "reason": null
+    },
+    {
+      "key": "altairChart",
+      "class": "DATA",
+      "status": "todo",
+      "reason": null
+    },
+    {
+      "key": "approvalFlow",
+      "class": "DATA",
+      "status": "todo",
+      "reason": null
+    },
+    {
+      "key": "barcode",
+      "class": "DATA",
+      "status": "todo",
+      "reason": null
+    },
+    {
+      "key": "changelog",
+      "class": "DATA",
+      "status": "todo",
+      "reason": null
+    },
+    {
+      "key": "codeBlock",
+      "class": "DATA",
+      "status": "todo",
+      "reason": null
+    },
+    {
+      "key": "commentThread",
+      "class": "DATA",
+      "status": "todo",
+      "reason": null
+    },
+    {
+      "key": "crud",
+      "class": "DATA",
+      "status": "todo",
+      "reason": null
+    },
+    {
+      "key": "dataExplorer",
+      "class": "DATA",
+      "status": "todo",
+      "reason": null
+    },
+    {
+      "key": "decisionTree",
+      "class": "DATA",
+      "status": "todo",
+      "reason": null
+    },
+    {
+      "key": "diffViewer",
+      "class": "DATA",
+      "status": "todo",
+      "reason": null
+    },
+    {
+      "key": "drillDown",
+      "class": "DATA",
+      "status": "todo",
+      "reason": null
+    },
+    {
+      "key": "exportButton",
+      "class": "DATA",
+      "status": "todo",
+      "reason": null
+    },
+    {
+      "key": "filePreview",
+      "class": "DATA",
+      "status": "todo",
+      "reason": null
+    },
+    {
+      "key": "filterPanel",
+      "class": "DATA",
+      "status": "todo",
+      "reason": null
+    },
+    {
+      "key": "flowDiagram",
+      "class": "DATA",
+      "status": "todo",
+      "reason": null
+    },
+    {
+      "key": "gantt",
+      "class": "DATA",
+      "status": "todo",
+      "reason": null
+    },
+    {
+      "key": "geofence",
+      "class": "DATA",
+      "status": "todo",
+      "reason": null
+    },
+    {
+      "key": "gps",
+      "class": "DATA",
+      "status": "todo",
+      "reason": null
+    },
+    {
+      "key": "groupedList",
+      "class": "DATA",
+      "status": "todo",
+      "reason": null
+    },
+    {
+      "key": "invoiceTemplate",
+      "class": "DATA",
+      "status": "todo",
+      "reason": null
+    },
+    {
+      "key": "jsonViewer",
+      "class": "DATA",
+      "status": "todo",
+      "reason": null
+    },
+    {
+      "key": "map",
+      "class": "DATA",
+      "status": "todo",
+      "reason": null
+    },
+    {
+      "key": "mapView",
+      "class": "DATA",
+      "status": "todo",
+      "reason": null
+    },
+    {
+      "key": "markdown",
+      "class": "DATA",
+      "status": "todo",
+      "reason": null
+    },
+    {
+      "key": "masterDetail",
+      "class": "DATA",
+      "status": "todo",
+      "reason": null
+    },
+    {
+      "key": "metricRow",
+      "class": "DATA",
+      "status": "todo",
+      "reason": null
+    },
+    {
+      "key": "nfcBadge",
+      "class": "DATA",
+      "status": "todo",
+      "reason": null
+    },
+    {
+      "key": "notificationCenter",
+      "class": "DATA",
+      "status": "todo",
+      "reason": null
+    },
+    {
+      "key": "orgChart",
+      "class": "DATA",
+      "status": "todo",
+      "reason": null
+    },
+    {
+      "key": "pdfViewer",
+      "class": "DATA",
+      "status": "todo",
+      "reason": null
+    },
+    {
+      "key": "pivotTable",
+      "class": "DATA",
+      "status": "todo",
+      "reason": null
+    },
+    {
+      "key": "plcConnector",
+      "class": "DATA",
+      "status": "todo",
+      "reason": null
+    },
+    {
+      "key": "plotlyChart",
+      "class": "DATA",
+      "status": "todo",
+      "reason": null
+    },
+    {
+      "key": "qrCode",
+      "class": "DATA",
+      "status": "todo",
+      "reason": null
+    },
+    {
+      "key": "relationGraph",
+      "class": "DATA",
+      "status": "todo",
+      "reason": null
+    },
+    {
+      "key": "reportPage",
+      "class": "DATA",
+      "status": "todo",
+      "reason": null
+    },
+    {
+      "key": "routePlanner",
+      "class": "DATA",
+      "status": "todo",
+      "reason": null
+    },
+    {
+      "key": "scheduler",
+      "class": "DATA",
+      "status": "todo",
+      "reason": null
+    },
+    {
+      "key": "stateMachine",
+      "class": "DATA",
+      "status": "todo",
+      "reason": null
+    },
+    {
+      "key": "statusTracker",
+      "class": "DATA",
+      "status": "todo",
+      "reason": null
+    },
+    {
+      "key": "streamingText",
+      "class": "DATA",
+      "status": "todo",
+      "reason": null
+    },
+    {
+      "key": "suggestionCard",
+      "class": "DATA",
+      "status": "todo",
+      "reason": null
+    },
+    {
+      "key": "table",
+      "class": "DATA",
+      "status": "done",
+      "reason": null
+    },
+    {
+      "key": "timeline",
+      "class": "DATA",
+      "status": "todo",
+      "reason": null
+    },
+    {
+      "key": "treeview",
+      "class": "DATA",
+      "status": "todo",
+      "reason": null
+    },
+    {
+      "key": "accordion",
+      "class": "STRUCTURAL",
+      "status": "todo",
+      "reason": null
+    },
+    {
+      "key": "audio",
+      "class": "STRUCTURAL",
+      "status": "todo",
+      "reason": null
+    },
+    {
+      "key": "avatar",
+      "class": "STRUCTURAL",
+      "status": "todo",
+      "reason": null
+    },
+    {
+      "key": "badge",
+      "class": "STRUCTURAL",
+      "status": "todo",
+      "reason": null
+    },
+    {
+      "key": "breadcrumb",
+      "class": "STRUCTURAL",
+      "status": "todo",
+      "reason": null
+    },
+    {
+      "key": "breadcrumbs",
+      "class": "STRUCTURAL",
+      "status": "todo",
+      "reason": null
+    },
+    {
+      "key": "caption",
+      "class": "STRUCTURAL",
+      "status": "todo",
+      "reason": null
+    },
+    {
+      "key": "card",
+      "class": "STRUCTURAL",
+      "status": "todo",
+      "reason": null
+    },
+    {
+      "key": "chip",
+      "class": "STRUCTURAL",
+      "status": "todo",
+      "reason": null
+    },
+    {
+      "key": "column",
+      "class": "STRUCTURAL",
+      "status": "todo",
+      "reason": null
+    },
+    {
+      "key": "container",
+      "class": "STRUCTURAL",
+      "status": "todo",
+      "reason": null
+    },
+    {
+      "key": "divider",
+      "class": "STRUCTURAL",
+      "status": "todo",
+      "reason": null
+    },
+    {
+      "key": "drawer",
+      "class": "STRUCTURAL",
+      "status": "todo",
+      "reason": null
+    },
+    {
+      "key": "empty",
+      "class": "STRUCTURAL",
+      "status": "todo",
+      "reason": null
+    },
+    {
+      "key": "emptyState",
+      "class": "STRUCTURAL",
+      "status": "todo",
+      "reason": null
+    },
+    {
+      "key": "expander",
+      "class": "STRUCTURAL",
+      "status": "todo",
+      "reason": null
+    },
+    {
+      "key": "fab",
+      "class": "STRUCTURAL",
+      "status": "todo",
+      "reason": null
+    },
+    {
+      "key": "grid",
+      "class": "STRUCTURAL",
+      "status": "todo",
+      "reason": null
+    },
+    {
+      "key": "html",
+      "class": "STRUCTURAL",
+      "status": "todo",
+      "reason": null
+    },
+    {
+      "key": "image",
+      "class": "STRUCTURAL",
+      "status": "todo",
+      "reason": null
+    },
+    {
+      "key": "message",
+      "class": "STRUCTURAL",
+      "status": "todo",
+      "reason": null
+    },
+    {
+      "key": "modal",
+      "class": "STRUCTURAL",
+      "status": "todo",
+      "reason": null
+    },
+    {
+      "key": "offlineIndicator",
+      "class": "STRUCTURAL",
+      "status": "todo",
+      "reason": null
+    },
+    {
+      "key": "page",
+      "class": "STRUCTURAL",
+      "status": "todo",
+      "reason": null
+    },
+    {
+      "key": "pageLayout",
+      "class": "STRUCTURAL",
+      "status": "todo",
+      "reason": null
+    },
+    {
+      "key": "panel",
+      "class": "STRUCTURAL",
+      "status": "todo",
+      "reason": null
+    },
+    {
+      "key": "popover",
+      "class": "STRUCTURAL",
+      "status": "todo",
+      "reason": null
+    },
+    {
+      "key": "printLayout",
+      "class": "STRUCTURAL",
+      "status": "todo",
+      "reason": null
+    },
+    {
+      "key": "scrollContainer",
+      "class": "STRUCTURAL",
+      "status": "todo",
+      "reason": null
+    },
+    {
+      "key": "skeleton",
+      "class": "STRUCTURAL",
+      "status": "todo",
+      "reason": null
+    },
+    {
+      "key": "spinner",
+      "class": "STRUCTURAL",
+      "status": "todo",
+      "reason": null
+    },
+    {
+      "key": "spinnerDot",
+      "class": "STRUCTURAL",
+      "status": "todo",
+      "reason": null
+    },
+    {
+      "key": "splitView",
+      "class": "STRUCTURAL",
+      "status": "todo",
+      "reason": null
+    },
+    {
+      "key": "tabs",
+      "class": "STRUCTURAL",
+      "status": "todo",
+      "reason": null
+    },
+    {
+      "key": "text",
+      "class": "STRUCTURAL",
+      "status": "todo",
+      "reason": null
+    },
+    {
+      "key": "theme",
+      "class": "STRUCTURAL",
+      "status": "todo",
+      "reason": null
+    },
+    {
+      "key": "title",
+      "class": "STRUCTURAL",
+      "status": "todo",
+      "reason": null
+    },
+    {
+      "key": "title1",
+      "class": "STRUCTURAL",
+      "status": "todo",
+      "reason": null
+    },
+    {
+      "key": "title2",
+      "class": "STRUCTURAL",
+      "status": "todo",
+      "reason": null
+    },
+    {
+      "key": "title3",
+      "class": "STRUCTURAL",
+      "status": "todo",
+      "reason": null
+    },
+    {
+      "key": "title4",
+      "class": "STRUCTURAL",
+      "status": "todo",
+      "reason": null
+    },
+    {
+      "key": "titleBpm",
+      "class": "STRUCTURAL",
+      "status": "todo",
+      "reason": null
+    },
+    {
+      "key": "toast",
+      "class": "STRUCTURAL",
+      "status": "todo",
+      "reason": null
+    },
+    {
+      "key": "tooltip",
+      "class": "STRUCTURAL",
+      "status": "todo",
+      "reason": null
+    },
+    {
+      "key": "topNav",
+      "class": "STRUCTURAL",
+      "status": "todo",
+      "reason": null
+    },
+    {
+      "key": "transition",
+      "class": "STRUCTURAL",
+      "status": "todo",
+      "reason": null
+    },
+    {
+      "key": "video",
+      "class": "STRUCTURAL",
+      "status": "todo",
+      "reason": null
+    },
+    {
+      "key": "addressInput",
+      "class": "INTERACTIF",
+      "status": "todo",
+      "reason": null
+    },
+    {
+      "key": "aiQueryBar",
+      "class": "INTERACTIF",
+      "status": "todo",
+      "reason": null
+    },
+    {
+      "key": "assistantPanel",
+      "class": "INTERACTIF",
+      "status": "todo",
+      "reason": null
+    },
+    {
+      "key": "autocomplete",
+      "class": "INTERACTIF",
+      "status": "todo",
+      "reason": null
+    },
+    {
+      "key": "button",
+      "class": "INTERACTIF",
+      "status": "todo",
+      "reason": null
+    },
+    {
+      "key": "chat",
+      "class": "INTERACTIF",
+      "status": "todo",
+      "reason": null
+    },
+    {
+      "key": "chatInterface",
+      "class": "INTERACTIF",
+      "status": "todo",
+      "reason": null
+    },
+    {
+      "key": "checkbox",
+      "class": "INTERACTIF",
+      "status": "todo",
+      "reason": null
+    },
+    {
+      "key": "codeEditor",
+      "class": "INTERACTIF",
+      "status": "todo",
+      "reason": null
+    },
+    {
+      "key": "colorPicker",
+      "class": "INTERACTIF",
+      "status": "todo",
+      "reason": null
+    },
+    {
+      "key": "commandPalette",
+      "class": "INTERACTIF",
+      "status": "todo",
+      "reason": null
+    },
+    {
+      "key": "confirmModal",
+      "class": "INTERACTIF",
+      "status": "todo",
+      "reason": null
+    },
+    {
+      "key": "contextMenu",
+      "class": "INTERACTIF",
+      "status": "todo",
+      "reason": null
+    },
+    {
+      "key": "dateInput",
+      "class": "INTERACTIF",
+      "status": "todo",
+      "reason": null
+    },
+    {
+      "key": "dateRangePicker",
+      "class": "INTERACTIF",
+      "status": "todo",
+      "reason": null
+    },
+    {
+      "key": "emailComposer",
+      "class": "INTERACTIF",
+      "status": "todo",
+      "reason": null
+    },
+    {
+      "key": "fileUploader",
+      "class": "INTERACTIF",
+      "status": "todo",
+      "reason": null
+    },
+    {
+      "key": "inlineEdit",
+      "class": "INTERACTIF",
+      "status": "todo",
+      "reason": null
+    },
+    {
+      "key": "input",
+      "class": "INTERACTIF",
+      "status": "todo",
+      "reason": null
+    },
+    {
+      "key": "jsonEditor",
+      "class": "INTERACTIF",
+      "status": "todo",
+      "reason": null
+    },
+    {
+      "key": "modelSelector",
+      "class": "INTERACTIF",
+      "status": "todo",
+      "reason": null
+    },
+    {
+      "key": "numberInput",
+      "class": "INTERACTIF",
+      "status": "todo",
+      "reason": null
+    },
+    {
+      "key": "pagination",
+      "class": "INTERACTIF",
+      "status": "todo",
+      "reason": null
+    },
+    {
+      "key": "promptInput",
+      "class": "INTERACTIF",
+      "status": "todo",
+      "reason": null
+    },
+    {
+      "key": "radioGroup",
+      "class": "INTERACTIF",
+      "status": "todo",
+      "reason": null
+    },
+    {
+      "key": "richTextEditor",
+      "class": "INTERACTIF",
+      "status": "todo",
+      "reason": null
+    },
+    {
+      "key": "selectbox",
+      "class": "INTERACTIF",
+      "status": "todo",
+      "reason": null
+    },
+    {
+      "key": "signaturePad",
+      "class": "INTERACTIF",
+      "status": "todo",
+      "reason": null
+    },
+    {
+      "key": "slider",
+      "class": "INTERACTIF",
+      "status": "todo",
+      "reason": null
+    },
+    {
+      "key": "stepper",
+      "class": "INTERACTIF",
+      "status": "todo",
+      "reason": null
+    },
+    {
+      "key": "textarea",
+      "class": "INTERACTIF",
+      "status": "todo",
+      "reason": null
+    },
+    {
+      "key": "timeInput",
+      "class": "INTERACTIF",
+      "status": "todo",
+      "reason": null
+    },
+    {
+      "key": "toggle",
+      "class": "INTERACTIF",
+      "status": "todo",
+      "reason": null
+    },
+    {
+      "key": "tour",
+      "class": "INTERACTIF",
+      "status": "todo",
+      "reason": null
+    },
+    {
+      "key": "wizardForm",
+      "class": "INTERACTIF",
+      "status": "todo",
+      "reason": null
+    }
+  ],
+  "checkpoints": [
+    {
+      "after": 10,
+      "date": "2026-06-10",
+      "review": "Les 10 premiers instruments sont coherents: context+interpret, data-judgment, role=status, judgmentColor/Label partages. Derive constatee: (1) logique trier-trajectoire-et-prendre-le-dernier-point dupliquee dans 4 composants -> helper lastValue() ajoute a interpret.ts pour la suite ; (2) nom de la prop trajectoire variable (value elargi / points / measure / trajectory / history) — choix justifie par l API existante de chaque composant, convention consignee: elargir la prop numerique existante quand elle existe, sinon nom semantique naturel."
+    },
+    {
+      "after": 25,
+      "date": "2026-06-10",
+      "review": "25/25 INSTRUMENT traites. Coherence verifiee sur les 15 derniers vs les 10 premiers : pattern stable (context -> interpret, data-judgment, role=status/img + aria-label, repere pointille pour les representations spatiales, jugement par element pour les representations multi-valeurs : barres, points, cellules, capteurs, tuiles). Deux commits groupes assumes (paire progressRing+progress ; quatuor waterfall/funnel/treemap/radar) pour cause de fichiers registre/tests partages — consigne pour le rapport. Les 4 derniers (waterfall, funnel, treemap, radar) ont un jugement plus agrege (cumul, conversion, total, moyenne) : a relire en revue de design."
+    }
+  ]
+}

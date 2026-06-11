@@ -60,7 +60,11 @@ export function LoadingBar({
   const isDeterminate = pct != null && variant === "iso";
   const role = isDeterminate ? "progressbar" : "status";
   const ariaProps = isDeterminate
-    ? { "aria-valuenow": pct, "aria-valuemin": 0, "aria-valuemax": 100 }
+    ? {
+        "aria-valuenow": pct,
+        "aria-valuemin": 0,
+        "aria-valuemax": 100,
+      }
     : { "aria-label": ariaLabel ?? "Chargement en cours" };
 
   const wrapClass = `bpm-loadingbar bpm-loadingbar--${variant} bpm-loadingbar--${size} ${animated ? "" : "bpm-loadingbar--static"} ${className}`.trim();
@@ -91,7 +95,12 @@ export function LoadingBar({
   if (variant === "iso") {
     const widthStyle = isDeterminate ? { width: `${pct}%` } : undefined;
     return (
-      <div className={wrapClass} role={role} {...ariaProps} aria-hidden={!ariaLabel && !isDeterminate}>
+      <div
+        className={wrapClass}
+        role={role}
+        {...ariaProps}
+        aria-hidden={!ariaLabel && !isDeterminate}
+      >
         <div className="bpm-loadingbar-iso-wrap" data-indeterminate={!isDeterminate ? "true" : undefined}>
           <div className="bpm-loadingbar-iso-top" style={widthStyle} />
           <div className="bpm-loadingbar-iso-track">

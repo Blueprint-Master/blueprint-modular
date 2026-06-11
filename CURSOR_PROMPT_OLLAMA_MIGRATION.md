@@ -8,7 +8,7 @@
 
 Blueprint Modular est un framework Next.js 14 + TypeScript + Prisma.
 Le code IA existant est bien structuré mais pointe vers vLLM/Anthropic.
-On migre vers **Ollama** qui tourne sur le VPS à `http://145.239.199.236:11434`.
+On migre vers **Ollama** qui tourne sur le VPS à `http://<vps-host>:11434`.
 Modèle actif : **qwen3:8b**
 
 L'API Ollama est différente de vLLM sur 3 points :
@@ -300,7 +300,7 @@ Ajoute ou remplace ces variables :
 
 ```bash
 # Ollama — VPS OVH
-AI_SERVER_URL=http://145.239.199.236:11434
+AI_SERVER_URL=http://<vps-host>:11434
 AI_MODEL=qwen3:8b
 AI_MOCK=false
 AI_TIMEOUT=120
@@ -359,7 +359,7 @@ Ouvrir le dashboard → cliquer sur le bouton IA (✦) → vérifier :
 ## SI LE HEALTH CHECK ÉCHOUE
 
 Vérifier dans l'ordre :
-1. `AI_SERVER_URL` dans `.env.local` — doit être `http://145.239.199.236:11434`
+1. `AI_SERVER_URL` dans `.env.local` — doit être `http://<vps-host>:11434`
 2. Ollama tourne sur le VPS : `systemctl status ollama`
 3. Le port n'est pas bloqué côté Next.js (appel serveur → serveur, pas besoin d'ouvrir le firewall)
 4. Le modèle est bien téléchargé : `ollama list` sur le VPS

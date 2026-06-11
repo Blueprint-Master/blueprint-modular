@@ -1,6 +1,11 @@
 "use client";
 
 import React, { useMemo } from "react";
+import {
+  interpret,
+  judgmentColor,
+  type InterpretContext,
+} from "./interpret";
 
 /**
  * @component bpm.treemap
@@ -13,6 +18,7 @@ import React, { useMemo } from "react";
  * @param {number} [props.width=400] - Largeur du SVG en pixels. Optionnel.
  * @param {number} [props.height=280] - Hauteur du SVG en pixels. Optionnel.
  * @param {string} [props.className=""] - Classes CSS additionnelles. Optionnel.
+ * @param {InterpretContext} [props.context] - Contexte de jugement par tuile : chaque cellule est jugée vs le repère (contour coloré par le verdict hors zone neutre, data-judgment par tuile). Optionnel.
  *
  * @associated bpm.heatmap, bpm.pieChart, bpm.sunburst
  */
@@ -31,6 +37,8 @@ export interface TreemapProps {
   width?: number;
   height?: number;
   className?: string;
+  /** Contexte de jugement { reference, direction } : chaque tuile est jugée individuellement par interpret vs le repère (contour coloré par le verdict hors zone neutre, data-judgment par tuile). Pas de verdict agrégé : un total de tuiles hétérogènes n'a pas de jugement unique. Additif : sans context, rendu inchangé. */
+  context?: InterpretContext;
 }
 
 interface Cell extends TreemapItem {
@@ -137,6 +145,7 @@ export function Treemap({
   width = 400,
   height = 280,
   className = "",
+  context,
 }: TreemapProps) {
   const cells = useMemo(
     () => squarify(data, 0, 0, width, height),
@@ -152,16 +161,19 @@ export function Treemap({
       role="img"
       aria-label="Treemap"
     >
-      {cells.map((c, i) => (
-        <g key={i}>
+      {cells.map((c, i) => {
+        const j = context ? interpret(c.value, context) : null;
+        const judged = j && j.level.status !== "neutral";
+        return (
+        <g key={i} data-judgment={j ? j.level.status : undefined}>
           <rect
             x={c.x + 1}
             y={c.y + 1}
             width={Math.max(0, c.w - 2)}
             height={Math.max(0, c.h - 2)}
             fill={c.fill ?? "var(--bpm-accent-soft)"}
-            stroke="var(--bpm-border)"
-            strokeWidth={1}
+            stroke={judged ? judgmentColor(j) : "var(--bpm-border)"}
+            strokeWidth={judged ? 2 : 1}
           />
           {c.w > 48 && c.h > 22 && (
             <text
@@ -175,7 +187,8 @@ export function Treemap({
             </text>
           )}
         </g>
-      ))}
+        );
+      })}
     </svg>
   );
 }

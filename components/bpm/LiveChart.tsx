@@ -1,6 +1,12 @@
 "use client";
 
 import React, { useEffect, useMemo, useState } from "react";
+import {
+  interpret,
+  judgmentColor,
+  judgmentLabel,
+  type InterpretContext,
+} from "./interpret";
 
 /**
  * @component bpm.liveChart
@@ -16,6 +22,7 @@ import React, { useEffect, useMemo, useState } from "react";
  * @param {number} [props.width=400] - Largeur du graphique. Optionnel.
  * @param {number} [props.height=180] - Hauteur du graphique. Optionnel.
  * @param {string} [props.className=""] - Classes CSS additionnelles. Optionnel.
+ * @param {InterpretContext} [props.context] - Contexte de jugement : courbe colorée par le verdict, repère pointillé, verdict sous le graphique. Optionnel.
  *
  * @associated bpm.liveGauge, bpm.lineChart, bpm.sparkline
  */
@@ -36,6 +43,8 @@ export interface LiveChartProps {
   width?: number;
   height?: number;
   className?: string;
+  /** Contexte de jugement { reference, direction, comparisonFrame? } : la fenêtre courante est jugée par interpret (couleur de courbe selon le verdict, repère pointillé, verdict écart/tendance sous le graphique). Additif : sans context, rendu inchangé. */
+  context?: InterpretContext;
 }
 
 interface ChartGeom {
@@ -63,6 +72,7 @@ export function LiveChart({
   width = 400,
   height = 180,
   className = "",
+  context,
 }: LiveChartProps) {
   const [now, setNow] = useState(() => Date.now());
 
@@ -78,11 +88,20 @@ export function LiveChart({
     [data, now, windowMs]
   );
 
+  const judgment = useMemo(() => {
+    if (!context || !filtered.length) return null;
+    return interpret(
+      filtered.map((d) => ({ t: d.timestamp, v: d.value })),
+      context
+    );
+  }, [filtered, context]);
+
   const geom = useMemo((): ChartGeom | null => {
     if (!filtered.length) return null;
     const ts = filtered.map((x) => x.timestamp);
     const vs = filtered.map((x) => x.value);
     const thr = thresholds.map((t) => t.value);
+    if (judgment && context) thr.push(context.reference);
     const minT = Math.min(...ts);
     const maxT = Math.max(...ts);
     const minV = Math.min(...vs, ...(thr.length ? thr : [0]));
@@ -96,7 +115,7 @@ export function LiveChart({
     const sy = (v: number) => height - pad - ((v - minV) / rV) * hInner;
     const linePath = filtered.map((p, i) => `${i === 0 ? "M" : "L"} ${sx(p.timestamp)} ${sy(p.value)}`).join(" ");
     return { linePath, pad, wInner, minT, maxT, minV, maxV, rT, rV, sx, sy };
-  }, [filtered, width, height, thresholds]);
+  }, [filtered, width, height, thresholds, judgment, context]);
 
   const thresholdLines = useMemo(() => {
     if (!geom) return [];
@@ -114,6 +133,9 @@ export function LiveChart({
         width="100%"
         viewBox={`0 0 ${width} ${height}`}
         preserveAspectRatio="xMidYMid meet"
+        role={judgment ? "img" : undefined}
+        aria-label={judgment ? judgmentLabel(judgment) : undefined}
+        data-judgment={judgment ? judgment.level.status : undefined}
         style={{
           display: "block",
           border: "1px solid var(--bpm-border)",
@@ -134,11 +156,23 @@ export function LiveChart({
             opacity={0.9}
           />
         ))}
+        {judgment && context && geom && (
+          <line
+            x1={geom.pad}
+            x2={geom.pad + geom.wInner}
+            y1={geom.sy(context.reference)}
+            y2={geom.sy(context.reference)}
+            stroke="var(--bpm-text-secondary)"
+            strokeWidth={1}
+            strokeDasharray="4 4"
+            opacity={0.6}
+          />
+        )}
         {geom?.linePath ? (
           <path
             d={geom.linePath}
             fill="none"
-            stroke="var(--bpm-accent)"
+            stroke={judgment ? judgmentColor(judgment) : "var(--bpm-accent)"}
             strokeWidth={2}
             strokeLinecap="round"
             strokeLinejoin="round"
@@ -149,6 +183,11 @@ export function LiveChart({
           </text>
         )}
       </svg>
+      {judgment && (
+        <div role="status" style={{ fontSize: 12, marginTop: 4, color: judgmentColor(judgment) }}>
+          {judgmentLabel(judgment)}
+        </div>
+      )}
     </div>
   );
 }

@@ -10,7 +10,7 @@ Remplacez `VOTRE_DOMAINE.fr` par votre domaine réel (ex. `blueprint-modular.fr`
 
 - [ ] Domaine acheté chez OVH (ou autre) et accès à la zone DNS
 - [ ] VPS avec accès SSH (même serveur que MyPortfolio ou dédié)
-- [ ] Clé SSH configurée (ex. `~/.ssh/portfolio_beam_key`) et testée : `ssh -i ... ubuntu@IP_VPS "echo OK"`
+- [ ] Clé SSH configurée (ex. `~/.ssh/<ssh-key-name>`) et testée : `ssh -i ... <vps-user>@IP_VPS "echo OK"`
 - [ ] Fichiers du site prêts dans le dossier `blueprint-modular` : `index.html`, `components.html`, `reference.html`, **Logo BPM.png** (voir [README](./README.md) § Fichiers — si vous avez accès au dépôt et clonez depuis le repo parent, vous pouvez copier un logo depuis `frontend/public` en le renommant en `Logo BPM.png`)
 
 **Fichier exemple Nginx :** vous pouvez partir du fichier **`nginx-bpm-domain.conf.example`** dans ce dossier : copiez-le sur le VPS, renommez-le avec votre domaine, puis remplacez `VOTRE_DOMAINE.fr` dans tout le fichier. Après obtention du SSL, vous pouvez vous inspirer de **`nginx-bpm-domain-https.conf.example`** pour la config HTTPS complète.
@@ -47,7 +47,7 @@ Remplacez `VOTRE_DOMAINE.fr` par votre domaine réel (ex. `blueprint-modular.fr`
 2. Onglet **Zone DNS**.
 3. Ajoutez une entrée **A** :
    - **Sous-domaine** : `@` (pour le domaine nu) et/ou `www` (pour www.VOTRE_DOMAINE.fr).
-   - **Cible** : l’**IP publique de votre VPS** (ex. `145.239.199.236` si c’est le même que MyPortfolio).
+   - **Cible** : l’**IP publique de votre VPS** (ex. `<vps-host>` si c’est le même que MyPortfolio).
    - **TTL** : 300 ou 3600.
 4. Sauvegardez. La propagation peut prendre quelques minutes à 1 h.
 
@@ -81,7 +81,7 @@ Sur le VPS, créez un nouveau fichier de site Nginx (ou copiez `nginx-bpm-domain
 
 ```bash
 # Option : copier l'exemple depuis votre PC (depuis le dossier blueprint-modular)
-# scp -i ~/.ssh/portfolio_beam_key nginx-bpm-domain.conf.example ubuntu@IP_VPS:/tmp/
+# scp -i ~/.ssh/<ssh-key-name> nginx-bpm-domain.conf.example <vps-user>@IP_VPS:/tmp/
 # Puis sur le VPS :
 sudo cp /tmp/nginx-bpm-domain.conf.example /etc/nginx/sites-available/VOTRE_DOMAINE.fr
 sudo sed -i 's/VOTRE_DOMAINE\.fr/votre-domaine-reel.fr/g' /etc/nginx/sites-available/VOTRE_DOMAINE.fr
@@ -215,15 +215,15 @@ cd blueprint-modular
 
 ```bash
 cd blueprint-modular
-rsync -avz -e "ssh -i $HOME/.ssh/portfolio_beam_key" \
+rsync -avz -e "ssh -i $HOME/.ssh/<ssh-key-name>" \
   ./index.html ./components.html ./reference.html "./Logo BPM.png" \
-  ubuntu@145.239.199.236:/var/www/blueprint-modular/
+  <vps-user>@<vps-host>:/var/www/blueprint-modular/
 ```
 
 **Option C — SCP (Windows PowerShell) :**
 
 ```powershell
-scp -i $env:USERPROFILE\.ssh\portfolio_beam_key index.html, components.html, reference.html, "Logo BPM.png" ubuntu@145.239.199.236:/var/www/blueprint-modular/
+scp -i $env:USERPROFILE\.ssh\<ssh-key-name> index.html, components.html, reference.html, "Logo BPM.png" <vps-user>@<vps-host>:/var/www/blueprint-modular/
 ```
 
 (Adapter l’IP si votre VPS est différent.)
@@ -231,7 +231,7 @@ scp -i $env:USERPROFILE\.ssh\portfolio_beam_key index.html, components.html, ref
 Vérifier que les fichiers sont présents sur le serveur :
 
 ```bash
-ssh -i ~/.ssh/portfolio_beam_key ubuntu@145.239.199.236 "ls -la /var/www/blueprint-modular"
+ssh -i ~/.ssh/<ssh-key-name> <vps-user>@<vps-host> "ls -la /var/www/blueprint-modular"
 ```
 
 ---
@@ -290,4 +290,4 @@ sudo nginx -t && sudo systemctl reload nginx
 | Déployer | Depuis `blueprint-modular` : `.\deploy_blueprint_modular.ps1` ou rsync / scp vers `/var/www/blueprint-modular/` |
 | Renouvellement SSL | `sudo certbot renew` puis `sudo systemctl reload nginx` (ou laisser certbot.timer le faire) |
 
-Si vous utilisez un autre utilisateur ou une autre IP pour le VPS, remplacez `ubuntu` et `145.239.199.236` dans le script et les commandes.
+Si vous utilisez un autre utilisateur ou une autre IP pour le VPS, définissez `VPS_USER` et `VPS_HOST` (voir `.env.example`) ; les scripts de déploiement les lisent depuis l'environnement.

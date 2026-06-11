@@ -1,0 +1,33 @@
+# Convergence gate — runs `npm run gate` on every PR targeting master.
+# The gate (scripts/gate.cjs) is self-contained: it installs the packages/core
+# deps and minimal React types itself (with --ignore-scripts to skip the root
+# prisma postinstall), then chains tsc → vite build → doc-sync → vitest.
+# A red gate (exit 1) fails the check and blocks the PR.
+
+name: Convergence gate
+
+on:
+  pull_request:
+    branches:
+      - master
+
+jobs:
+  gate:
+    name: npm run gate
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Run convergence gate
+        run: npm run gate

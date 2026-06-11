@@ -1,6 +1,13 @@
 "use client";
 
 import React from "react";
+import {
+  interpret,
+  judgmentColor,
+  judgmentLabel,
+  type InterpretContext,
+  type TrajectoryPoint,
+} from "./interpret";
 
 export type SensorStatus = "ok" | "warning" | "error" | "offline";
 
@@ -24,6 +31,10 @@ export interface SensorReading {
   unit?: string;
   status: SensorStatus;
   detail?: string;
+  /** Historique v(t) [{t, v}] du capteur — révèle la tendance si context est fourni. */
+  history?: TrajectoryPoint[];
+  /** Contexte de jugement propre au capteur { reference, direction, comparisonFrame? } : la carte est jugée par interpret (bordure colorée par le verdict, ligne écart/tendance). Additif : sans context, rendu inchangé. */
+  context?: InterpretContext;
 }
 
 /**
@@ -58,13 +69,24 @@ export function SensorGrid({ sensors, columns = 3, className = "" }: SensorGridP
     >
       {sensors.map((s) => {
         const st = statusStyle[s.status];
+        const numeric =
+          typeof s.value === "number"
+            ? s.value
+            : Number.isFinite(parseFloat(s.value))
+              ? parseFloat(s.value)
+              : null;
+        const judgment =
+          s.context && (s.history?.length || numeric != null)
+            ? interpret(s.history && s.history.length > 0 ? s.history : (numeric as number), s.context)
+            : null;
         return (
           <div
             key={s.id}
+            data-judgment={judgment ? judgment.level.status : undefined}
             style={{
               borderRadius: "var(--bpm-radius)",
               border: `1px solid var(--bpm-border)`,
-              borderLeft: `4px solid ${st.border}`,
+              borderLeft: `4px solid ${judgment ? judgmentColor(judgment) : st.border}`,
               background: st.accent,
               padding: "12px 14px",
               minHeight: 88,
@@ -79,6 +101,11 @@ export function SensorGrid({ sensors, columns = 3, className = "" }: SensorGridP
               {s.unit ? <span style={{ fontSize: 14, fontWeight: 500, color: "var(--bpm-text-secondary)", marginLeft: 4 }}>{s.unit}</span> : null}
             </div>
             {s.detail ? <div style={{ fontSize: 11, color: "var(--bpm-text-secondary)" }}>{s.detail}</div> : null}
+            {judgment ? (
+              <div role="status" style={{ fontSize: 11, color: judgmentColor(judgment) }}>
+                {judgmentLabel(judgment)}
+              </div>
+            ) : null}
             <div style={{ fontSize: 10, textTransform: "uppercase", letterSpacing: "0.04em", color: st.border }}>{s.status}</div>
           </div>
         );

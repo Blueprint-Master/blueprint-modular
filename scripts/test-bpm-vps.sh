@@ -1,5 +1,5 @@
 #!/bin/bash
-# Test BPM run sur le VPS — à lancer sur le VPS (ssh ubuntu@IP puis bash ce script)
+# Test BPM run sur le VPS — à lancer sur le VPS (ssh <vps-user>@<vps-host> puis bash ce script)
 # Ou copier-coller les commandes ci-dessous après connexion SSH.
 
 set -e

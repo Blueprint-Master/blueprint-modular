@@ -109,6 +109,7 @@ import {
 } from "@/components/bpm";
 import { APP_VERSION } from "@/lib/version";
 import type { NotificationItem } from "@/components/bpm";
+import { ElevationShowcase } from "@/components/showcase/ElevationShowcase";
 
 /** Valeur hex pour props qui n'acceptent pas var() (ex. ColorPicker, Plotly), alignée avec --bpm-accent. */
 const BPM_ACCENT_HEX = "#048dc3";
@@ -1383,6 +1384,8 @@ export default function ComponentsPage() {
             </DemoCard>
           </Grid>
         </section>
+
+        <ElevationShowcase />
       </Container>
     </div>
   );

@@ -303,4 +303,16 @@ export { Treemap } from "./Treemap";
 export type { TreemapItem, TreemapProps } from "./Treemap";
 // —— W ——
 export { Waterfall } from "./Waterfall";
-export type { WaterfallDatum, WaterfallProps } from "./Waterfall";
+export type { WaterfallDatum, WaterfallProps } from "./Waterfall";// —— interpret (primitive de jugement partagée) ——
+export { interpret, judgmentColor, trendArrow, judgmentLabel } from "./interpret";
+export type {
+  InterpretValue,
+  InterpretContext,
+  InterpretDirection,
+  TrajectoryPoint,
+  Judgment,
+  LevelStatus,
+  TrendStatus,
+  AnomalyStatus,
+} from "./interpret";
+export { lastValue } from "./interpret";
