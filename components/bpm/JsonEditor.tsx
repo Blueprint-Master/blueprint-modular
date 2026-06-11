@@ -18,6 +18,8 @@ import { CodeBlock } from "./CodeBlock";
  * @param {string} [props.className=""] - Classes CSS additionnelles. Optionnel.
  *
  * @associated bpm.jsonViewer, bpm.codeBlock
+ * @parent bpm.card, bpm.modal, bpm.drawer
+ * @forbidden Affichage non éditable — utiliser bpm.jsonViewer
  */
 export interface JsonEditorProps {
   value: string;

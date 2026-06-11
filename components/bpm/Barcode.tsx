@@ -32,6 +32,8 @@ export interface BarcodeProps {
  * @param {string} [props.className=""] - Classes CSS additionnelles. Optionnel.
  *
  * @associated bpm.qrCode, bpm.labelValue
+ * @parent bpm.card, bpm.table, bpm.filePreview
+ * @forbidden URL ou vCard — utiliser bpm.qrCode
  */
 export function Barcode({
   value,

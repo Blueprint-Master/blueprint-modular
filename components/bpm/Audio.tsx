@@ -26,6 +26,8 @@ export interface AudioProps {
  * @param {string} [props.className=""] - Classes CSS additionnelles. Optionnel.
  *
  * @associated bpm.video, bpm.filePreview
+ * @parent bpm.card, bpm.container, bpm.modal
+ * @forbidden aucun
  */
 export function Audio(p: AudioProps) {
   const { src, controls = true, loop = false, className = "" } = p;

@@ -17,6 +17,8 @@ import React from "react";
  * @param {string} [props.className=""] - Classes CSS additionnelles. Optionnel.
  *
  * @parent bpm.panel, bpm.card
+ * @associated bpm.table, bpm.list
+ * @forbidden Toute la page défile déjà — inutile
  */
 export interface ScrollContainerProps {
   children: React.ReactNode;

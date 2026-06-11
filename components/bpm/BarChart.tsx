@@ -42,6 +42,8 @@ export interface BarChartProps {
  * @param {InterpretContext} [props.context] - Contexte de jugement : barres colorées par écart individuel au repère + verdict global. Optionnel.
  *
  * @associated bpm.lineChart, bpm.areaChart, bpm.plotlyChart
+ * @parent bpm.card, bpm.grid, bpm.tableauxDeBord
+ * @forbidden Série temporelle continue — utiliser bpm.lineChart
  */
 export function BarChart(p: BarChartProps) {
   const { data, width = 400, height = 200, color = "var(--bpm-accent)", className = "", context } = p;

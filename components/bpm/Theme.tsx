@@ -23,6 +23,8 @@ export type ThemeVariant = "toggle" | "select";
  * @param {string} [props.className=""] - Classes CSS additionnelles. Optionnel.
  *
  * @associated bpm.toggle, bpm.pageLayout
+ * @parent bpm.topNav, bpm.sidebar
+ * @forbidden aucun
  */
 export interface ThemeProps {
   /** Type de contrôle : interrupteur (toggle) ou liste (select). */

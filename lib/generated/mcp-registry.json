@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-06-11T18:12:51.934Z",
+  "generatedAt": "2026-06-11T20:52:43.904Z",
   "source": "lib/generated/bpm-components.json + public/llms.txt",
   "total": 101,
   "categories": [
@@ -136,7 +136,7 @@
     },
     {
       "slug": "jsonviewer",
-      "name": "bpm.jsonviewer",
+      "name": "bpm.jsonViewer",
       "description": "Affichage JSON formaté et repliable.",
       "category": "Affichage de données",
       "fullDescription": "Affichage JSON formaté et repliable.",
@@ -209,13 +209,22 @@
     },
     {
       "slug": "highlightbox",
-      "name": "bpm.highlightbox",
+      "name": "bpm.highlightBox",
       "description": "Carte avec barre latérale (numéro + label) et contenu structuré (titre, moment, RTB, cible).",
       "category": "Mise en page",
       "fullDescription": "Bloc de mise en valeur avec barre latérale colorée, numéro, titre et sections RTB/Cible optionnelles.",
       "props": "  value*: number  — Numéro affiché dans la barre gauche (ex. 1)\n  label*: string  — Texte sous le numéro dans la barre (ex. \"DAILY\")\n  title*: string  — Titre principal du contenu\n  momentDescription?: string | null  — Description \"Moment\" (affichée en italique, gris)\n  rtbPoints?: string[] | null  — Points RTB (affichés séparés par ·)\n  targetPoints?: string | string[] | null  — Points Cible (chaîne ou liste)\n  barColor?: string | null  — Couleur de la barre latérale (hex, rgb ou nom CSS). Par défaut : noir (#212121).\n  className?: string",
       "example": "bpm.highlightBox({ value: 1, label: \"DAILY\", title: \"Objectif quotidien\", rtbPoints: [\"Point 1\", \"Point 2\"] })",
-      "_haystack": "bpm.highlightbox highlightbox carte avec barre latérale (numéro + label) et contenu structuré (titre, moment, rtb, cible). mise en page bloc de mise en valeur avec barre latérale colorée, numéro, titre et sections rtb/cible optionnelles.   value*: number  — numéro affiché dans la barre gauche (ex. 1)\n  label*: string  — texte sous le numéro dans la barre (ex. \"daily\")\n  title*: string  — titre principal du contenu\n  momentdescription?: string | null  — description \"moment\" (affichée en italique, gris)\n  rtbpoints?: string[] | null  — points rtb (affichés séparés par ·)\n  targetpoints?: string | string[] | null  — points cible (chaîne ou liste)\n  barcolor?: string | null  — couleur de la barre latérale (hex, rgb ou nom css). par défaut : noir (#212121).\n  classname?: string bpm.highlightbox({ value: 1, label: \"daily\", title: \"objectif quotidien\", rtbpoints: [\"point 1\", \"point 2\"] })"
+      "associated": [
+        "bpm.metric",
+        "bpm.card"
+      ],
+      "parent": [
+        "bpm.grid",
+        "bpm.column",
+        "bpm.container"
+      ],
+      "_haystack": "bpm.highlightbox highlightbox carte avec barre latérale (numéro + label) et contenu structuré (titre, moment, rtb, cible). mise en page bloc de mise en valeur avec barre latérale colorée, numéro, titre et sections rtb/cible optionnelles.   value*: number  — numéro affiché dans la barre gauche (ex. 1)\n  label*: string  — texte sous le numéro dans la barre (ex. \"daily\")\n  title*: string  — titre principal du contenu\n  momentdescription?: string | null  — description \"moment\" (affichée en italique, gris)\n  rtbpoints?: string[] | null  — points rtb (affichés séparés par ·)\n  targetpoints?: string | string[] | null  — points cible (chaîne ou liste)\n  barcolor?: string | null  — couleur de la barre latérale (hex, rgb ou nom css). par défaut : noir (#212121).\n  classname?: string bpm.highlightbox({ value: 1, label: \"daily\", title: \"objectif quotidien\", rtbpoints: [\"point 1\", \"point 2\"] }) bpm.metric bpm.card"
     },
     {
       "slug": "divider",
@@ -246,7 +255,7 @@
     },
     {
       "slug": "emptystate",
-      "name": "bpm.emptystate",
+      "name": "bpm.emptyState",
       "description": "État vide (aucune donnée).",
       "category": "Mise en page",
       "fullDescription": "État vide illustré (titre, description, action).",
@@ -283,6 +292,11 @@
         "bpm.tooltip",
         "bpm.dropdown"
       ],
+      "parent": [
+        "bpm.button",
+        "bpm.topNav",
+        "bpm.table"
+      ],
       "_haystack": "bpm.popover popover contenu au clic ou au survol (popover). mise en page bulle contextuelle positionnée autour d'un déclencheur avec fermeture au clic extérieur.   trigger*: react.reactnode\n  children*: react.reactnode\n  placement?: \"top\" | \"bottom\" | \"left\" | \"right\"\n  classname?: string bpm.popover({ trigger: <button>info</button>, children: <p>contenu</p>, placement: \"bottom\" }) bpm.tooltip bpm.dropdown"
     },
     {
@@ -305,6 +319,10 @@
       "associated": [
         "bpm.toggle",
         "bpm.pageLayout"
+      ],
+      "parent": [
+        "bpm.topNav",
+        "bpm.sidebar"
       ],
       "_haystack": "bpm.theme theme bascule thème clair / sombre. interaction sélecteur de thème clair/sombre avec toggle ou select, persiste en localstorage.   variant?: themevariant  — type de contrôle : interrupteur (toggle) ou liste (select).\n  label?: react.reactnode  — label à côté du toggle (variant toggle uniquement).\n  lightlabel?: string  — libellé option \"clair\" (variant select).\n  darklabel?: string  — libellé option \"sombre\" (variant select).\n  classname?: string bpm.theme({ variant: \"toggle\", label: \"mode sombre\" }) bpm.toggle bpm.pagelayout"
     },
@@ -330,7 +348,7 @@
     },
     {
       "slug": "numberinput",
-      "name": "bpm.numberinput",
+      "name": "bpm.numberInput",
       "description": "Champ numérique min/max/step.",
       "category": "Interaction",
       "fullDescription": "Champ de saisie numérique avec validation min/max et formatage au blur.",
@@ -385,7 +403,7 @@
     },
     {
       "slug": "radiogroup",
-      "name": "bpm.radiogroup",
+      "name": "bpm.radioGroup",
       "description": "Groupe de boutons radio.",
       "category": "Interaction",
       "fullDescription": "Groupe de boutons radio avec disposition verticale ou horizontale.",
@@ -395,6 +413,11 @@
         "bpm.checkbox",
         "bpm.selectbox",
         "bpm.input"
+      ],
+      "parent": [
+        "bpm.modal",
+        "bpm.card",
+        "bpm.wizardForm"
       ],
       "_haystack": "bpm.radiogroup radiogroup groupe de boutons radio. interaction groupe de boutons radio avec disposition verticale ou horizontale.   name?: string\n  label?: string\n  options?: radiooption[]\n  value?: string\n  onchange?: (value: string) => void\n  disabled?: boolean\n  layout?: \"vertical\" | \"horizontal\"\n  classname?: string bpm.radiogroup({ name: \"choix\", label: \"choisissez\", options: [\"a\", \"b\", \"c\"], value: selected, onchange: setselected }) bpm.checkbox bpm.selectbox bpm.input"
     },
@@ -409,7 +432,7 @@
     },
     {
       "slug": "dateinput",
-      "name": "bpm.dateinput",
+      "name": "bpm.dateInput",
       "description": "Sélecteur de date.",
       "category": "Interaction",
       "fullDescription": "Sélecteur de date.",
@@ -418,7 +441,7 @@
     },
     {
       "slug": "daterangepicker",
-      "name": "bpm.daterangepicker",
+      "name": "bpm.dateRangePicker",
       "description": "Sélecteur de plage de dates.",
       "category": "Interaction",
       "fullDescription": "Sélecteur de plage de dates.",
@@ -427,7 +450,7 @@
     },
     {
       "slug": "timeinput",
-      "name": "bpm.timeinput",
+      "name": "bpm.timeInput",
       "description": "Saisie de l'heure.",
       "category": "Interaction",
       "fullDescription": "Champ de sélection d'heure avec popover heures/minutes.",
@@ -437,6 +460,11 @@
         "bpm.dateInput",
         "bpm.timePickerPopover",
         "bpm.scheduler"
+      ],
+      "parent": [
+        "bpm.modal",
+        "bpm.card",
+        "bpm.wizardForm"
       ],
       "_haystack": "bpm.timeinput timeinput saisie de l'heure. interaction champ de sélection d'heure avec popover heures/minutes.   label?: string\n  value?: date | string | null\n  onchange?: (value: date | null) => void\n  disabled?: boolean\n  min?: string\n  max?: string bpm.timeinput({ label: \"heure de début\", value: time, onchange: settime }) bpm.dateinput bpm.timepickerpopover bpm.scheduler"
     },
@@ -452,11 +480,16 @@
         "bpm.slider",
         "bpm.metric"
       ],
+      "parent": [
+        "bpm.card",
+        "bpm.table",
+        "bpm.commentThread"
+      ],
       "_haystack": "bpm.rating rating notation par étoiles. interaction composant d'évaluation par étoiles cliquables avec taille personnalisable.   value?: number\n  max?: number\n  onchange?: (value: number) => void\n  disabled?: boolean\n  size?: \"small\" | \"medium\" | \"large\"\n  history?: trajectorypoint[]  — historique v(t) [{t, v}] de la note — révèle la tendance si context est fourni.\n  context?: interpretcontext  — contexte de jugement { reference, direction } (ex. note cible 4.0) : les étoiles pleines prennent la couleur du verdict et un suffixe écart/tendance role=status est révélé. additif : sans context, rendu inchangé. bpm.rating({ value: 3, max: 5, onchange: setrating, size: \"medium\" }) bpm.slider bpm.metric"
     },
     {
       "slug": "fileuploader",
-      "name": "bpm.fileuploader",
+      "name": "bpm.fileUploader",
       "description": "Upload de fichier(s).",
       "category": "Interaction",
       "fullDescription": "Upload de fichier(s) par glisser-déposer ou sélection.",
@@ -465,7 +498,7 @@
     },
     {
       "slug": "colorpicker",
-      "name": "bpm.colorpicker",
+      "name": "bpm.colorPicker",
       "description": "Sélecteur de couleur.",
       "category": "Interaction",
       "fullDescription": "Sélecteur de couleur.",
@@ -501,7 +534,7 @@
     },
     {
       "slug": "loadingbar",
-      "name": "bpm.loadingbar",
+      "name": "bpm.loadingBar",
       "description": "Barre de chargement (sweep, blocks, iso, stacked, arc, dots).",
       "category": "Feedback",
       "fullDescription": "Barre de chargement (sweep, blocks, iso, stacked, arc, dots).",
@@ -519,7 +552,7 @@
     },
     {
       "slug": "statusbox",
-      "name": "bpm.statusbox",
+      "name": "bpm.statusBox",
       "description": "Boîte de statut (success, warning, error, info).",
       "category": "Feedback",
       "fullDescription": "Boîte de statut (success, warning, error, info).",
@@ -566,6 +599,11 @@
         "bpm.carousel",
         "bpm.lightbox"
       ],
+      "parent": [
+        "bpm.card",
+        "bpm.container",
+        "bpm.modal"
+      ],
       "_haystack": "bpm.video video lecteur vidéo. média lecteur vidéo html5 avec contrôles natifs et options de lecture en boucle/silencieux.   src*: string\n  controls?: boolean\n  loop?: boolean\n  muted?: boolean\n  width?: number\n  height?: number\n  classname?: string bpm.video({ src: \"/videos/demo.mp4\", controls: true, width: 640, height: 360 }) bpm.image bpm.carousel bpm.lightbox"
     },
     {
@@ -576,11 +614,18 @@
       "fullDescription": "Affiche du HTML brut. À utiliser uniquement avec du contenu de confiance ou préalablement sanitisé.",
       "props": "  html*: string  — HTML brut à afficher (équivalent st.html). À n'utiliser qu'avec du contenu de confiance ou sanitized.\n  className?: string\n  style?: React.CSSProperties",
       "example": "bpm.html({ html: \"<p>Contenu <strong>HTML</strong></p>\" })",
-      "_haystack": "bpm.html html contenu html brut (iframe). média affiche du html brut. à utiliser uniquement avec du contenu de confiance ou préalablement sanitisé.   html*: string  — html brut à afficher (équivalent st.html). à n'utiliser qu'avec du contenu de confiance ou sanitized.\n  classname?: string\n  style?: react.cssproperties bpm.html({ html: \"<p>contenu <strong>html</strong></p>\" })"
+      "associated": [
+        "bpm.markdown"
+      ],
+      "parent": [
+        "bpm.card",
+        "bpm.container"
+      ],
+      "_haystack": "bpm.html html contenu html brut (iframe). média affiche du html brut. à utiliser uniquement avec du contenu de confiance ou préalablement sanitisé.   html*: string  — html brut à afficher (équivalent st.html). à n'utiliser qu'avec du contenu de confiance ou sanitized.\n  classname?: string\n  style?: react.cssproperties bpm.html({ html: \"<p>contenu <strong>html</strong></p>\" }) bpm.markdown"
     },
     {
       "slug": "linechart",
-      "name": "bpm.linechart",
+      "name": "bpm.lineChart",
       "description": "Graphique en courbes.",
       "category": "Graphiques",
       "fullDescription": "Graphique en ligne SVG simple et responsive pour afficher une série de données.",
@@ -591,11 +636,16 @@
         "bpm.barChart",
         "bpm.scatterChart"
       ],
+      "parent": [
+        "bpm.card",
+        "bpm.grid",
+        "bpm.tableauxDeBord"
+      ],
       "_haystack": "bpm.linechart linechart graphique en courbes. graphiques graphique en ligne svg simple et responsive pour afficher une série de données.   data*: linechartdatum[]\n  width?: number\n  height?: number\n  color?: string\n  classname?: string\n  context?: interpretcontext  — contexte de jugement { reference, direction, comparisonframe? } : la série (lue comme trajectoire v(t), t = x) est jugée par interpret — repère tracé en pointillé, couleur de ligne selon le verdict, aria-label. additif : sans context, rendu inchangé. bpm.linechart({ data: [{ x: 0, y: 10 }, { x: 1, y: 25 }], color: \"#3b82f6\" }) bpm.areachart bpm.barchart bpm.scatterchart"
     },
     {
       "slug": "barchart",
-      "name": "bpm.barchart",
+      "name": "bpm.barChart",
       "description": "Graphique en barres.",
       "category": "Graphiques",
       "fullDescription": "Graphique en barres.",
@@ -604,7 +654,7 @@
     },
     {
       "slug": "areachart",
-      "name": "bpm.areachart",
+      "name": "bpm.areaChart",
       "description": "Graphique en aires.",
       "category": "Graphiques",
       "fullDescription": "Graphique en aires.",
@@ -613,7 +663,7 @@
     },
     {
       "slug": "scatterchart",
-      "name": "bpm.scatterchart",
+      "name": "bpm.scatterChart",
       "description": "Graphique en nuage de points.",
       "category": "Graphiques",
       "fullDescription": "Graphique de dispersion (nuage de points) SVG simple et responsive.",
@@ -623,6 +673,10 @@
         "bpm.lineChart",
         "bpm.areaChart",
         "bpm.plotlyChart"
+      ],
+      "parent": [
+        "bpm.card",
+        "bpm.grid"
       ],
       "_haystack": "bpm.scatterchart scatterchart graphique en nuage de points. graphiques graphique de dispersion (nuage de points) svg simple et responsive.   data*: scatterchartdatum[]\n  width?: number\n  height?: number\n  color?: string\n  radius?: number\n  classname?: string\n  context?: interpretcontext  — contexte de jugement { reference, direction, comparisonframe? } : chaque point est jugé (couleur par écart au repère ; anomalie >2σ — du comparisonframe ou, à défaut, du nuage lui-même — cerclée), repère pointillé tracé, verdict global de la série en aria-label + data-judgment. additif : sans context, rendu inchangé. bpm.scatterchart({ data: [{ x: 1, y: 10 }, { x: 2, y: 25 }], color: \"#3b82f6\", radius: 5 }) bpm.linechart bpm.areachart bpm.plotlychart"
     },
@@ -644,7 +698,7 @@
     },
     {
       "slug": "codeblock",
-      "name": "bpm.codeblock",
+      "name": "bpm.codeBlock",
       "description": "Bloc de code avec Copier.",
       "category": "Utilitaires",
       "fullDescription": "Bloc de code avec syntaxe colorée et bouton Copier.",
@@ -653,7 +707,7 @@
     },
     {
       "slug": "topnav",
-      "name": "bpm.topnav",
+      "name": "bpm.topNav",
       "description": "Barre de navigation supérieure (titre + liens).",
       "category": "Navigation",
       "fullDescription": "Barre de navigation horizontale avec titre/logo et liens/boutons.",
@@ -663,6 +717,10 @@
         "bpm.pageLayout",
         "bpm.sidebar",
         "bpm.breadcrumb"
+      ],
+      "parent": [
+        "bpm.page",
+        "bpm.pageLayout"
       ],
       "_haystack": "bpm.topnav topnav barre de navigation supérieure (titre + liens). navigation barre de navigation horizontale avec titre/logo et liens/boutons.   title?: react.reactnode\n  titlehref?: string\n  items?: topnavitem[]\n  classname?: string bpm.topnav({ title: \"mon app\", titlehref: \"/\", items: [{ label: \"accueil\", href: \"/\" }, { label: \"aide\", onclick: showhelp }] }) bpm.pagelayout bpm.sidebar bpm.breadcrumb"
     },
@@ -687,6 +745,11 @@
         "bpm.sidebar",
         "bpm.accordion",
         "bpm.menu"
+      ],
+      "parent": [
+        "bpm.card",
+        "bpm.drawer",
+        "bpm.masterDetail"
       ],
       "_haystack": "bpm.treeview treeview arbre de nœuds repliables et sélectionnables. affichage de données arborescence hiérarchique dépliable avec sélection de nœud.   nodes?: treeviewnode[]\n  onselect?: (node: treeviewnode) => void\n  selectedid?: string | null\n  classname?: string bpm.treeview({ nodes: [{ id: \"1\", label: \"parent\", children: [{ id: \"1.1\", label: \"enfant\" }] }], onselect: handleselect }) bpm.sidebar bpm.accordion bpm.menu"
     },
@@ -771,11 +834,20 @@
       "fullDescription": "Affiche une image avec chargement différé et options de dimensionnement/ajustement.",
       "props": "  src*: string\n  alt*: string\n  title?: string\n  width?: number | string\n  height?: number | string\n  fit?: \"contain\" | \"cover\" | \"fill\" | \"none\"\n  className?: string",
       "example": "bpm.image({ src: \"/photo.jpg\", alt: \"Photo de profil\", width: 200, fit: \"cover\" })",
-      "_haystack": "bpm.image image image avec alt, dimensions et object-fit. média affiche une image avec chargement différé et options de dimensionnement/ajustement.   src*: string\n  alt*: string\n  title?: string\n  width?: number | string\n  height?: number | string\n  fit?: \"contain\" | \"cover\" | \"fill\" | \"none\"\n  classname?: string bpm.image({ src: \"/photo.jpg\", alt: \"photo de profil\", width: 200, fit: \"cover\" })"
+      "associated": [
+        "bpm.avatar",
+        "bpm.filePreview"
+      ],
+      "parent": [
+        "bpm.card",
+        "bpm.grid",
+        "bpm.container"
+      ],
+      "_haystack": "bpm.image image image avec alt, dimensions et object-fit. média affiche une image avec chargement différé et options de dimensionnement/ajustement.   src*: string\n  alt*: string\n  title?: string\n  width?: number | string\n  height?: number | string\n  fit?: \"contain\" | \"cover\" | \"fill\" | \"none\"\n  classname?: string bpm.image({ src: \"/photo.jpg\", alt: \"photo de profil\", width: 200, fit: \"cover\" }) bpm.avatar bpm.filepreview"
     },
     {
       "slug": "pdfviewer",
-      "name": "bpm.pdfviewer",
+      "name": "bpm.pdfViewer",
       "description": "Visualiseur PDF (iframe).",
       "category": "Média",
       "fullDescription": "Visionneuse PDF embarquée en iframe avec dimensions personnalisables.",
@@ -784,6 +856,11 @@
       "associated": [
         "bpm.filePreview",
         "bpm.fileUploader"
+      ],
+      "parent": [
+        "bpm.card",
+        "bpm.modal",
+        "bpm.drawer"
       ],
       "_haystack": "bpm.pdfviewer pdfviewer visualiseur pdf (iframe). média visionneuse pdf embarquée en iframe avec dimensions personnalisables.   src*: string\n  title?: string\n  width?: number | string\n  height?: number | string\n  classname?: string bpm.pdfviewer({ src: \"/documents/rapport.pdf\", title: \"rapport annuel\", height: 600 }) bpm.filepreview bpm.fileuploader"
     },
@@ -798,7 +875,7 @@
     },
     {
       "slug": "plotlychart",
-      "name": "bpm.plotlychart",
+      "name": "bpm.plotlyChart",
       "description": "Graphique Plotly (iframe ou placeholder).",
       "category": "Graphiques",
       "fullDescription": "Graphique interactif Plotly.js avec support de tous types de traces (bar, line, scatter, etc.).",
@@ -828,11 +905,16 @@
         "bpm.mapView",
         "bpm.gps"
       ],
+      "parent": [
+        "bpm.card",
+        "bpm.container",
+        "bpm.modal"
+      ],
       "_haystack": "bpm.map map carte (openstreetmap iframe). média carte openstreetmap embarquée en iframe. utiliser mapview pour des fonctionnalités interactives.   iframesrc?: string\n  lat?: number\n  lng?: number\n  width?: number | string\n  height?: number | string\n  classname?: string bpm.map({ lat: 48.8566, lng: 2.3522, height: 300 }) bpm.mapview bpm.gps"
     },
     {
       "slug": "altairchart",
-      "name": "bpm.altairchart",
+      "name": "bpm.altairChart",
       "description": "Graphique Altair / Vega-Lite.",
       "category": "Graphiques",
       "fullDescription": "Graphique Altair / Vega-Lite.",
@@ -850,7 +932,7 @@
     },
     {
       "slug": "qrcode",
-      "name": "bpm.qrcode",
+      "name": "bpm.qrCode",
       "description": "QR Code (URL, vCard, texte).",
       "category": "Identification & traçabilité",
       "fullDescription": "Génère un QR code SVG à partir d'une valeur texte avec couleurs personnalisables.",
@@ -860,11 +942,16 @@
         "bpm.barcode",
         "bpm.nfcBadge"
       ],
+      "parent": [
+        "bpm.card",
+        "bpm.modal",
+        "bpm.filePreview"
+      ],
       "_haystack": "bpm.qrcode qrcode qr code (url, vcard, texte). identification & traçabilité génère un qr code svg à partir d'une valeur texte avec couleurs personnalisables.   value*: string\n  size?: number\n  fgcolor?: string\n  bgcolor?: string\n  classname?: string bpm.qrcode({ value: \"https://example.com\", size: 150, fgcolor: \"#000\" }) bpm.barcode bpm.nfcbadge"
     },
     {
       "slug": "nfcbadge",
-      "name": "bpm.nfcbadge",
+      "name": "bpm.nfcBadge",
       "description": "Badge / tag NFC (statut Scannable, etc.).",
       "category": "Identification & traçabilité",
       "fullDescription": "Badge indicateur de statut NFC/scannable avec icône et variantes de couleur.",
@@ -874,6 +961,10 @@
         "bpm.badge",
         "bpm.qrCode",
         "bpm.barcode"
+      ],
+      "parent": [
+        "bpm.card",
+        "bpm.table"
       ],
       "_haystack": "bpm.nfcbadge nfcbadge badge / tag nfc (statut scannable, etc.). identification & traçabilité badge indicateur de statut nfc/scannable avec icône et variantes de couleur.   label?: string\n  variant?: \"default\" | \"primary\" | \"success\"\n  classname?: string bpm.nfcbadge({ label: \"actif\", variant: \"success\" }) bpm.badge bpm.qrcode bpm.barcode"
     },
@@ -897,6 +988,11 @@
       "associated": [
         "bpm.table",
         "bpm.crud"
+      ],
+      "parent": [
+        "bpm.table",
+        "bpm.dataExplorer",
+        "bpm.card"
       ],
       "_haystack": "bpm.pagination pagination pagination (page, taille, total) pour listes et tableaux. affichage de données contrôle de pagination avec boutons précédent/suivant, indicateur de page et compteur d'éléments.   page*: number  — page courante (1-based).\n  totalpages*: number  — nombre total de pages.\n  onpagechange*: (page: number) => void  — callback au changement de page. reçoit le numéro de page.\n  pagesize?: number  — taille de page (optionnel, pour affichage).\n  totalitems?: number  — nombre total d’éléments (optionnel).\n  label?: string  — libellé optionnel (ex. \"page 1 sur 5\").\n  classname?: string bpm.pagination({ page: 1, totalpages: 10, onpagechange: setpage, totalitems: 100, pagesize: 10 }) bpm.table bpm.crud"
     },
@@ -938,6 +1034,9 @@
         "bpm.topNav",
         "bpm.sidebar"
       ],
+      "parent": [
+        "bpm.page"
+      ],
       "_haystack": "bpm.pagelayout pagelayout layout avec sidebar repliable, titre et zone de contenu. mise en page layout d'application avec sidebar rétractable, navigation par icônes material et switch de thème.   title*: string\n  items*: sidebaritem[]\n  currentitem*: string\n  onnavigate*: (key: string) => void\n  children*: react.reactnode\n  defaultcollapsed?: boolean\n  theme?: \"light\" | \"dark\"  — thème courant (optionnel). si fourni avec onthemechange, affiche le bouton thème en bas de la sidebar (aligné .maker).\n  onthemechange?: (theme: \"light\" | \"dark\") => void  — callback changement de thème (clair ↔ sombre). affiche le bouton thème en bas si défini. bpm.pagelayout({ title: \"mon app\", items: [{ key: \"home\", label: \"accueil\", icon: \"home\" }], currentitem: \"home\", onnavigate: setpage, children: <content /> }) bpm.topnav bpm.sidebar"
     },
     {
@@ -948,11 +1047,15 @@
       "fullDescription": "Conteneur avec scroll vertical, horizontal ou bidirectionnel et option pour masquer la scrollbar.",
       "props": "  children*: React.ReactNode\n  height?: string | number  — Hauteur du conteneur (défaut '100%').\n  maxHeight?: string | number  — Hauteur max pour limiter le scroll.\n  direction?: \"vertical\" | \"horizontal\" | \"both\"  — Direction du scroll (défaut 'vertical').\n  hideScrollbar?: boolean  — Masquer la scrollbar visuelle (défaut false).\n  className?: string",
       "example": "bpm.scrollContainer({ children: <Content />, height: 400, direction: \"vertical\", hideScrollbar: true })",
+      "associated": [
+        "bpm.table",
+        "bpm.list"
+      ],
       "parent": [
         "bpm.panel",
         "bpm.card"
       ],
-      "_haystack": "bpm.scrollcontainer scrollcontainer conteneur avec défilement interne (hauteur max, scrollbar optionnelle). mise en page conteneur avec scroll vertical, horizontal ou bidirectionnel et option pour masquer la scrollbar.   children*: react.reactnode\n  height?: string | number  — hauteur du conteneur (défaut '100%').\n  maxheight?: string | number  — hauteur max pour limiter le scroll.\n  direction?: \"vertical\" | \"horizontal\" | \"both\"  — direction du scroll (défaut 'vertical').\n  hidescrollbar?: boolean  — masquer la scrollbar visuelle (défaut false).\n  classname?: string bpm.scrollcontainer({ children: <content />, height: 400, direction: \"vertical\", hidescrollbar: true })"
+      "_haystack": "bpm.scrollcontainer scrollcontainer conteneur avec défilement interne (hauteur max, scrollbar optionnelle). mise en page conteneur avec scroll vertical, horizontal ou bidirectionnel et option pour masquer la scrollbar.   children*: react.reactnode\n  height?: string | number  — hauteur du conteneur (défaut '100%').\n  maxheight?: string | number  — hauteur max pour limiter le scroll.\n  direction?: \"vertical\" | \"horizontal\" | \"both\"  — direction du scroll (défaut 'vertical').\n  hidescrollbar?: boolean  — masquer la scrollbar visuelle (défaut false).\n  classname?: string bpm.scrollcontainer({ children: <content />, height: 400, direction: \"vertical\", hidescrollbar: true }) bpm.table bpm.list"
     },
     {
       "slug": "labelvalue",
@@ -984,6 +1087,11 @@
         "bpm.spinner",
         "bpm.loadingBar",
         "bpm.skeleton"
+      ],
+      "parent": [
+        "bpm.button",
+        "bpm.card",
+        "bpm.panel"
       ],
       "_haystack": "bpm.spinnerdot spinnerdot indicateur de chargement (points). feedback spinner compact type cercle tournant pour indicateur de chargement inline.   classname?: string\n  size?: \"small\" | \"medium\" | \"large\"  — taille : small (16px), medium (24px), large (32px). bpm.spinnerdot({ size: \"medium\" }) bpm.spinner bpm.loadingbar bpm.skeleton"
     },
@@ -1042,6 +1150,11 @@
       "associated": [
         "bpm.jsonViewer",
         "bpm.codeBlock"
+      ],
+      "parent": [
+        "bpm.card",
+        "bpm.modal",
+        "bpm.drawer"
       ],
       "_haystack": "bpm.jsoneditor jsoneditor éditeur json avec validation et formatage. utilitaires éditeur json avec validation en temps réel, formatage automatique au blur et indicateur de validité.   value*: string\n  onchange*: (value: string, isvalid: boolean) => void\n  readonly?: boolean\n  height?: string | number\n  showvalidation?: boolean\n  classname?: string bpm.jsoneditor({ value: '{\"key\": \"value\"}', onchange: (v, valid) => console.log(v, valid) }) bpm.jsonviewer bpm.codeblock"
     },
@@ -1135,6 +1248,11 @@
       "associated": [
         "bpm.chatInterface",
         "bpm.promptInput"
+      ],
+      "parent": [
+        "bpm.promptInput",
+        "bpm.chatInterface",
+        "bpm.card"
       ],
       "_haystack": "bpm.modelselector modelselector sélecteur de modèle ia (par fournisseur, capacités). ia & spécialisés sélecteur de modèle ia avec dropdown groupé par fournisseur et affichage des capacités.   models*: modeloption[]\n  selected*: string\n  onchange*: (modelid: string) => void\n  showcapabilities?: boolean\n  classname?: string bpm.modelselector({ models: [{ id: \"gpt-4\", label: \"gpt-4\", provider: \"openai\" }], selected: \"gpt-4\", onchange: setmodel }) bpm.chatinterface bpm.promptinput"
     }

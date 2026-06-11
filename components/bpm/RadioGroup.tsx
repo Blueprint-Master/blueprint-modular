@@ -21,6 +21,8 @@ export type RadioOption = string | { value: string; label?: string };
  * @param {string} [props.className=""] - Classes CSS additionnelles. Optionnel.
  *
  * @associated bpm.checkbox, bpm.selectbox, bpm.input
+ * @parent bpm.modal, bpm.card, bpm.wizardForm
+ * @forbidden Plus de ~6 options — utiliser bpm.selectbox
  */
 export interface RadioGroupProps {
   name?: string;

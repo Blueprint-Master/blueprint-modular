@@ -51,6 +51,16 @@ function formatStageDate(iso?: string): string {
 /**
  * @component bpm.statusTracker
  * @description Historique réel d'un objet : étapes completed / current / pending / error.
+ * @example
+ * bpm.statusTracker({ stages: [{ label: "Reçu", state: "completed" }, { label: "En cours", state: "current" }, { label: "Livré", state: "pending" }] })
+ * @props
+ * - stages (StatusTrackerStage[], obligatoire) — Étapes { label, state: completed|current|pending|error }.
+ * - direction ("horizontal"|"vertical", optionnel) — Orientation. Default: "horizontal".
+ * - compact (boolean, optionnel) — Affichage condensé. Default: false.
+ * - className (string, optionnel) — Classes CSS additionnelles.
+ * @parent bpm.card, bpm.masterDetail, bpm.page
+ * @associated bpm.stepper, bpm.timeline, bpm.badge
+ * @forbidden Saisie multi-étapes — utiliser bpm.stepper/wizardForm
  */
 export function StatusTracker({
   stages,

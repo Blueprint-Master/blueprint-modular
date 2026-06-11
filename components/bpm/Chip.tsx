@@ -33,6 +33,7 @@ export interface ChipProps {
  *
  * @parent bpm.filterPanel, bpm.form
  * @associated bpm.badge, bpm.tag
+ * @forbidden Statut court figé — utiliser bpm.badge
  */
 export function Chip({
   label,

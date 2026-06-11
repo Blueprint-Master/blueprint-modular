@@ -217,6 +217,8 @@ const SPINNER_CSS = "@keyframes bpm-btn-spin{to{transform:rotate(360deg)}}";
  * @param {string} [props.className] - Classes CSS additionnelles. Optionnel.
  *
  * @associated bpm.fab, bpm.iconButton, bpm.buttonGroup
+ * @parent bpm.modal, bpm.card, bpm.panel, bpm.topNav
+ * @forbidden Navigation entre pages — utiliser un lien
  */
 export function Button({
   children,

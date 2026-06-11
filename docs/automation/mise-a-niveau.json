@@ -5,9 +5,7 @@
   "totals": {
     "components": {
       "total": 101,
-      "done": 35,
-      "pending": 10,
-      "needs-relations": 56
+      "done": 101
     },
     "modules": {
       "total": 32,
@@ -42,15 +40,15 @@
       "checks": {
         "source": true,
         "jsdoc": true,
-        "props_doc": false,
+        "props_doc": true,
         "relations": true,
         "semantic": true,
         "example": true,
         "in_llms": true,
         "in_catalog": true
       },
-      "status": "pending",
-      "gap": "props documentées 16/19 (ni @props ni @param)"
+      "status": "done",
+      "gap": ""
     },
     {
       "slug": "title",
@@ -241,14 +239,14 @@
         "source": true,
         "jsdoc": true,
         "props_doc": true,
-        "relations": false,
+        "relations": true,
         "semantic": true,
         "example": true,
         "in_llms": true,
         "in_catalog": true
       },
-      "status": "needs-relations",
-      "gap": "relations manquantes: forbidden"
+      "status": "done",
+      "gap": ""
     },
     {
       "slug": "panel",
@@ -349,14 +347,14 @@
         "source": true,
         "jsdoc": true,
         "props_doc": true,
-        "relations": false,
+        "relations": true,
         "semantic": true,
         "example": true,
         "in_llms": true,
         "in_catalog": true
       },
-      "status": "needs-relations",
-      "gap": "relations manquantes: parent,associated,forbidden"
+      "status": "done",
+      "gap": ""
     },
     {
       "slug": "divider",
@@ -403,14 +401,14 @@
         "source": true,
         "jsdoc": true,
         "props_doc": true,
-        "relations": false,
+        "relations": true,
         "semantic": true,
         "example": true,
         "in_llms": true,
         "in_catalog": true
       },
-      "status": "needs-relations",
-      "gap": "relations manquantes: parent,forbidden"
+      "status": "done",
+      "gap": ""
     },
     {
       "slug": "emptystate",
@@ -457,14 +455,14 @@
         "source": true,
         "jsdoc": true,
         "props_doc": true,
-        "relations": false,
+        "relations": true,
         "semantic": true,
         "example": true,
         "in_llms": true,
         "in_catalog": true
       },
-      "status": "needs-relations",
-      "gap": "relations manquantes: parent,forbidden"
+      "status": "done",
+      "gap": ""
     },
     {
       "slug": "popover",
@@ -475,14 +473,14 @@
         "source": true,
         "jsdoc": true,
         "props_doc": true,
-        "relations": false,
+        "relations": true,
         "semantic": true,
         "example": true,
         "in_llms": true,
         "in_catalog": true
       },
-      "status": "needs-relations",
-      "gap": "relations manquantes: parent,forbidden"
+      "status": "done",
+      "gap": ""
     },
     {
       "slug": "button",
@@ -493,14 +491,14 @@
         "source": true,
         "jsdoc": true,
         "props_doc": true,
-        "relations": false,
+        "relations": true,
         "semantic": true,
         "example": true,
         "in_llms": true,
         "in_catalog": true
       },
-      "status": "needs-relations",
-      "gap": "relations manquantes: parent,forbidden"
+      "status": "done",
+      "gap": ""
     },
     {
       "slug": "theme",
@@ -511,14 +509,14 @@
         "source": true,
         "jsdoc": true,
         "props_doc": true,
-        "relations": false,
+        "relations": true,
         "semantic": true,
         "example": true,
         "in_llms": true,
         "in_catalog": true
       },
-      "status": "needs-relations",
-      "gap": "relations manquantes: parent,forbidden"
+      "status": "done",
+      "gap": ""
     },
     {
       "slug": "selectbox",
@@ -547,14 +545,14 @@
         "source": true,
         "jsdoc": true,
         "props_doc": true,
-        "relations": false,
+        "relations": true,
         "semantic": true,
         "example": true,
         "in_llms": true,
         "in_catalog": true
       },
-      "status": "needs-relations",
-      "gap": "relations manquantes: forbidden"
+      "status": "done",
+      "gap": ""
     },
     {
       "slug": "input",
@@ -619,14 +617,14 @@
         "source": true,
         "jsdoc": true,
         "props_doc": true,
-        "relations": false,
+        "relations": true,
         "semantic": true,
         "example": true,
         "in_llms": true,
         "in_catalog": true
       },
-      "status": "needs-relations",
-      "gap": "relations manquantes: parent,forbidden"
+      "status": "done",
+      "gap": ""
     },
     {
       "slug": "slider",
@@ -655,14 +653,14 @@
         "source": true,
         "jsdoc": true,
         "props_doc": true,
-        "relations": false,
+        "relations": true,
         "semantic": true,
         "example": true,
         "in_llms": true,
         "in_catalog": true
       },
-      "status": "needs-relations",
-      "gap": "relations manquantes: forbidden"
+      "status": "done",
+      "gap": ""
     },
     {
       "slug": "daterangepicker",
@@ -673,14 +671,14 @@
         "source": true,
         "jsdoc": true,
         "props_doc": true,
-        "relations": false,
+        "relations": true,
         "semantic": true,
         "example": true,
         "in_llms": true,
         "in_catalog": true
       },
-      "status": "needs-relations",
-      "gap": "relations manquantes: forbidden"
+      "status": "done",
+      "gap": ""
     },
     {
       "slug": "timeinput",
@@ -691,14 +689,14 @@
         "source": true,
         "jsdoc": true,
         "props_doc": true,
-        "relations": false,
+        "relations": true,
         "semantic": true,
         "example": true,
         "in_llms": true,
         "in_catalog": true
       },
-      "status": "needs-relations",
-      "gap": "relations manquantes: parent,forbidden"
+      "status": "done",
+      "gap": ""
     },
     {
       "slug": "rating",
@@ -709,14 +707,14 @@
         "source": true,
         "jsdoc": true,
         "props_doc": true,
-        "relations": false,
+        "relations": true,
         "semantic": true,
         "example": true,
         "in_llms": true,
         "in_catalog": true
       },
-      "status": "needs-relations",
-      "gap": "relations manquantes: parent,forbidden"
+      "status": "done",
+      "gap": ""
     },
     {
       "slug": "fileuploader",
@@ -727,14 +725,14 @@
         "source": true,
         "jsdoc": true,
         "props_doc": true,
-        "relations": false,
+        "relations": true,
         "semantic": true,
         "example": true,
         "in_llms": true,
         "in_catalog": true
       },
-      "status": "needs-relations",
-      "gap": "relations manquantes: forbidden"
+      "status": "done",
+      "gap": ""
     },
     {
       "slug": "colorpicker",
@@ -745,14 +743,14 @@
         "source": true,
         "jsdoc": true,
         "props_doc": true,
-        "relations": false,
+        "relations": true,
         "semantic": true,
         "example": true,
         "in_llms": true,
         "in_catalog": true
       },
-      "status": "needs-relations",
-      "gap": "relations manquantes: forbidden"
+      "status": "done",
+      "gap": ""
     },
     {
       "slug": "chip",
@@ -763,14 +761,14 @@
         "source": true,
         "jsdoc": true,
         "props_doc": true,
-        "relations": false,
+        "relations": true,
         "semantic": true,
         "example": true,
         "in_llms": true,
         "in_catalog": true
       },
-      "status": "needs-relations",
-      "gap": "relations manquantes: forbidden"
+      "status": "done",
+      "gap": ""
     },
     {
       "slug": "message",
@@ -871,14 +869,14 @@
         "source": true,
         "jsdoc": true,
         "props_doc": true,
-        "relations": false,
+        "relations": true,
         "semantic": true,
         "example": true,
         "in_llms": true,
         "in_catalog": true
       },
-      "status": "needs-relations",
-      "gap": "relations manquantes: forbidden"
+      "status": "done",
+      "gap": ""
     },
     {
       "slug": "stepper",
@@ -888,15 +886,15 @@
       "checks": {
         "source": true,
         "jsdoc": true,
-        "props_doc": false,
-        "relations": false,
+        "props_doc": true,
+        "relations": true,
         "semantic": true,
-        "example": false,
+        "example": true,
         "in_llms": true,
         "in_catalog": true
       },
-      "status": "pending",
-      "gap": "props documentées 0/6 (ni @props ni @param); relations manquantes: parent,associated,forbidden; @example absent"
+      "status": "done",
+      "gap": ""
     },
     {
       "slug": "audio",
@@ -907,14 +905,14 @@
         "source": true,
         "jsdoc": true,
         "props_doc": true,
-        "relations": false,
+        "relations": true,
         "semantic": true,
         "example": true,
         "in_llms": true,
         "in_catalog": true
       },
-      "status": "needs-relations",
-      "gap": "relations manquantes: parent,forbidden"
+      "status": "done",
+      "gap": ""
     },
     {
       "slug": "video",
@@ -925,14 +923,14 @@
         "source": true,
         "jsdoc": true,
         "props_doc": true,
-        "relations": false,
+        "relations": true,
         "semantic": true,
         "example": true,
         "in_llms": true,
         "in_catalog": true
       },
-      "status": "needs-relations",
-      "gap": "relations manquantes: parent,forbidden"
+      "status": "done",
+      "gap": ""
     },
     {
       "slug": "html",
@@ -943,14 +941,14 @@
         "source": true,
         "jsdoc": true,
         "props_doc": true,
-        "relations": false,
+        "relations": true,
         "semantic": true,
         "example": true,
         "in_llms": true,
         "in_catalog": true
       },
-      "status": "needs-relations",
-      "gap": "relations manquantes: parent,associated,forbidden"
+      "status": "done",
+      "gap": ""
     },
     {
       "slug": "linechart",
@@ -961,14 +959,14 @@
         "source": true,
         "jsdoc": true,
         "props_doc": true,
-        "relations": false,
+        "relations": true,
         "semantic": true,
         "example": true,
         "in_llms": true,
         "in_catalog": true
       },
-      "status": "needs-relations",
-      "gap": "relations manquantes: parent,forbidden"
+      "status": "done",
+      "gap": ""
     },
     {
       "slug": "barchart",
@@ -979,14 +977,14 @@
         "source": true,
         "jsdoc": true,
         "props_doc": true,
-        "relations": false,
+        "relations": true,
         "semantic": true,
         "example": true,
         "in_llms": true,
         "in_catalog": true
       },
-      "status": "needs-relations",
-      "gap": "relations manquantes: parent,forbidden"
+      "status": "done",
+      "gap": ""
     },
     {
       "slug": "areachart",
@@ -997,14 +995,14 @@
         "source": true,
         "jsdoc": true,
         "props_doc": true,
-        "relations": false,
+        "relations": true,
         "semantic": true,
         "example": true,
         "in_llms": true,
         "in_catalog": true
       },
-      "status": "needs-relations",
-      "gap": "relations manquantes: parent,forbidden"
+      "status": "done",
+      "gap": ""
     },
     {
       "slug": "scatterchart",
@@ -1015,14 +1013,14 @@
         "source": true,
         "jsdoc": true,
         "props_doc": true,
-        "relations": false,
+        "relations": true,
         "semantic": true,
         "example": true,
         "in_llms": true,
         "in_catalog": true
       },
-      "status": "needs-relations",
-      "gap": "relations manquantes: parent,forbidden"
+      "status": "done",
+      "gap": ""
     },
     {
       "slug": "modal",
@@ -1069,14 +1067,14 @@
         "source": true,
         "jsdoc": true,
         "props_doc": true,
-        "relations": false,
+        "relations": true,
         "semantic": true,
         "example": true,
         "in_llms": true,
         "in_catalog": true
       },
-      "status": "needs-relations",
-      "gap": "relations manquantes: parent,forbidden"
+      "status": "done",
+      "gap": ""
     },
     {
       "slug": "fab",
@@ -1087,14 +1085,14 @@
         "source": true,
         "jsdoc": true,
         "props_doc": true,
-        "relations": false,
+        "relations": true,
         "semantic": true,
         "example": true,
         "in_llms": true,
         "in_catalog": true
       },
-      "status": "needs-relations",
-      "gap": "relations manquantes: parent,forbidden"
+      "status": "done",
+      "gap": ""
     },
     {
       "slug": "treeview",
@@ -1105,14 +1103,14 @@
         "source": true,
         "jsdoc": true,
         "props_doc": true,
-        "relations": false,
+        "relations": true,
         "semantic": true,
         "example": true,
         "in_llms": true,
         "in_catalog": true
       },
-      "status": "needs-relations",
-      "gap": "relations manquantes: parent,forbidden"
+      "status": "done",
+      "gap": ""
     },
     {
       "slug": "timeline",
@@ -1122,15 +1120,15 @@
       "checks": {
         "source": true,
         "jsdoc": true,
-        "props_doc": false,
-        "relations": false,
+        "props_doc": true,
+        "relations": true,
         "semantic": true,
-        "example": false,
+        "example": true,
         "in_llms": true,
         "in_catalog": true
       },
-      "status": "pending",
-      "gap": "props documentées 4/6 (ni @props ni @param); relations manquantes: parent,associated,forbidden; @example absent"
+      "status": "done",
+      "gap": ""
     },
     {
       "slug": "flowdiagram",
@@ -1141,14 +1139,14 @@
         "source": true,
         "jsdoc": true,
         "props_doc": true,
-        "relations": false,
+        "relations": true,
         "semantic": true,
         "example": true,
         "in_llms": true,
         "in_catalog": true
       },
-      "status": "needs-relations",
-      "gap": "relations manquantes: parent,forbidden"
+      "status": "done",
+      "gap": ""
     },
     {
       "slug": "statustracker",
@@ -1158,15 +1156,15 @@
       "checks": {
         "source": true,
         "jsdoc": true,
-        "props_doc": false,
-        "relations": false,
+        "props_doc": true,
+        "relations": true,
         "semantic": true,
-        "example": false,
+        "example": true,
         "in_llms": true,
         "in_catalog": true
       },
-      "status": "pending",
-      "gap": "props documentées 0/4 (ni @props ni @param); relations manquantes: parent,associated,forbidden; @example absent"
+      "status": "done",
+      "gap": ""
     },
     {
       "slug": "activityfeed",
@@ -1177,14 +1175,14 @@
         "source": true,
         "jsdoc": true,
         "props_doc": true,
-        "relations": false,
+        "relations": true,
         "semantic": true,
         "example": true,
         "in_llms": true,
         "in_catalog": true
       },
-      "status": "needs-relations",
-      "gap": "relations manquantes: forbidden"
+      "status": "done",
+      "gap": ""
     },
     {
       "slug": "orgchart",
@@ -1194,15 +1192,15 @@
       "checks": {
         "source": true,
         "jsdoc": true,
-        "props_doc": false,
-        "relations": false,
+        "props_doc": true,
+        "relations": true,
         "semantic": true,
-        "example": false,
+        "example": true,
         "in_llms": true,
         "in_catalog": true
       },
-      "status": "pending",
-      "gap": "props documentées 0/6 (ni @props ni @param); relations manquantes: parent,associated,forbidden; @example absent"
+      "status": "done",
+      "gap": ""
     },
     {
       "slug": "masterdetail",
@@ -1212,15 +1210,15 @@
       "checks": {
         "source": true,
         "jsdoc": true,
-        "props_doc": false,
-        "relations": false,
+        "props_doc": true,
+        "relations": true,
         "semantic": true,
-        "example": false,
+        "example": true,
         "in_llms": true,
         "in_catalog": true
       },
-      "status": "pending",
-      "gap": "props documentées 0/10 (ni @props ni @param); relations manquantes: parent,associated,forbidden; @example absent"
+      "status": "done",
+      "gap": ""
     },
     {
       "slug": "wizardform",
@@ -1230,15 +1228,15 @@
       "checks": {
         "source": true,
         "jsdoc": true,
-        "props_doc": false,
-        "relations": false,
+        "props_doc": true,
+        "relations": true,
         "semantic": true,
-        "example": false,
+        "example": true,
         "in_llms": true,
         "in_catalog": true
       },
-      "status": "pending",
-      "gap": "props documentées 0/6 (ni @props ni @param); relations manquantes: parent,associated,forbidden; @example absent"
+      "status": "done",
+      "gap": ""
     },
     {
       "slug": "commandpalette",
@@ -1249,14 +1247,14 @@
         "source": true,
         "jsdoc": true,
         "props_doc": true,
-        "relations": false,
+        "relations": true,
         "semantic": true,
         "example": true,
         "in_llms": true,
         "in_catalog": true
       },
-      "status": "needs-relations",
-      "gap": "relations manquantes: parent,forbidden"
+      "status": "done",
+      "gap": ""
     },
     {
       "slug": "image",
@@ -1267,14 +1265,14 @@
         "source": true,
         "jsdoc": true,
         "props_doc": true,
-        "relations": false,
+        "relations": true,
         "semantic": true,
         "example": true,
         "in_llms": true,
         "in_catalog": true
       },
-      "status": "needs-relations",
-      "gap": "relations manquantes: parent,associated,forbidden"
+      "status": "done",
+      "gap": ""
     },
     {
       "slug": "pdfviewer",
@@ -1285,14 +1283,14 @@
         "source": true,
         "jsdoc": true,
         "props_doc": true,
-        "relations": false,
+        "relations": true,
         "semantic": true,
         "example": true,
         "in_llms": true,
         "in_catalog": true
       },
-      "status": "needs-relations",
-      "gap": "relations manquantes: parent,forbidden"
+      "status": "done",
+      "gap": ""
     },
     {
       "slug": "autocomplete",
@@ -1303,14 +1301,14 @@
         "source": true,
         "jsdoc": true,
         "props_doc": true,
-        "relations": false,
+        "relations": true,
         "semantic": true,
         "example": true,
         "in_llms": true,
         "in_catalog": true
       },
-      "status": "needs-relations",
-      "gap": "relations manquantes: forbidden"
+      "status": "done",
+      "gap": ""
     },
     {
       "slug": "plotlychart",
@@ -1339,14 +1337,14 @@
         "source": true,
         "jsdoc": true,
         "props_doc": true,
-        "relations": false,
+        "relations": true,
         "semantic": true,
         "example": true,
         "in_llms": true,
         "in_catalog": true
       },
-      "status": "needs-relations",
-      "gap": "relations manquantes: parent,forbidden"
+      "status": "done",
+      "gap": ""
     },
     {
       "slug": "altairchart",
@@ -1357,14 +1355,14 @@
         "source": true,
         "jsdoc": true,
         "props_doc": true,
-        "relations": false,
+        "relations": true,
         "semantic": true,
         "example": true,
         "in_llms": true,
         "in_catalog": true
       },
-      "status": "needs-relations",
-      "gap": "relations manquantes: parent,forbidden"
+      "status": "done",
+      "gap": ""
     },
     {
       "slug": "barcode",
@@ -1375,14 +1373,14 @@
         "source": true,
         "jsdoc": true,
         "props_doc": true,
-        "relations": false,
+        "relations": true,
         "semantic": true,
         "example": true,
         "in_llms": true,
         "in_catalog": true
       },
-      "status": "needs-relations",
-      "gap": "relations manquantes: parent,forbidden"
+      "status": "done",
+      "gap": ""
     },
     {
       "slug": "qrcode",
@@ -1393,14 +1391,14 @@
         "source": true,
         "jsdoc": true,
         "props_doc": true,
-        "relations": false,
+        "relations": true,
         "semantic": true,
         "example": true,
         "in_llms": true,
         "in_catalog": true
       },
-      "status": "needs-relations",
-      "gap": "relations manquantes: parent,forbidden"
+      "status": "done",
+      "gap": ""
     },
     {
       "slug": "nfcbadge",
@@ -1411,14 +1409,14 @@
         "source": true,
         "jsdoc": true,
         "props_doc": true,
-        "relations": false,
+        "relations": true,
         "semantic": true,
         "example": true,
         "in_llms": true,
         "in_catalog": true
       },
-      "status": "needs-relations",
-      "gap": "relations manquantes: parent,forbidden"
+      "status": "done",
+      "gap": ""
     },
     {
       "slug": "drawer",
@@ -1429,14 +1427,14 @@
         "source": true,
         "jsdoc": true,
         "props_doc": true,
-        "relations": false,
+        "relations": true,
         "semantic": true,
         "example": true,
         "in_llms": true,
         "in_catalog": true
       },
-      "status": "needs-relations",
-      "gap": "relations manquantes: parent,forbidden"
+      "status": "done",
+      "gap": ""
     },
     {
       "slug": "pagination",
@@ -1447,14 +1445,14 @@
         "source": true,
         "jsdoc": true,
         "props_doc": true,
-        "relations": false,
+        "relations": true,
         "semantic": true,
         "example": true,
         "in_llms": true,
         "in_catalog": true
       },
-      "status": "needs-relations",
-      "gap": "relations manquantes: parent,forbidden"
+      "status": "done",
+      "gap": ""
     },
     {
       "slug": "filterpanel",
@@ -1465,14 +1463,14 @@
         "source": true,
         "jsdoc": true,
         "props_doc": true,
-        "relations": false,
+        "relations": true,
         "semantic": true,
         "example": true,
         "in_llms": true,
         "in_catalog": true
       },
-      "status": "needs-relations",
-      "gap": "relations manquantes: parent,forbidden"
+      "status": "done",
+      "gap": ""
     },
     {
       "slug": "confirmmodal",
@@ -1483,14 +1481,14 @@
         "source": true,
         "jsdoc": true,
         "props_doc": true,
-        "relations": false,
+        "relations": true,
         "semantic": true,
         "example": true,
         "in_llms": true,
         "in_catalog": true
       },
-      "status": "needs-relations",
-      "gap": "relations manquantes: parent,forbidden"
+      "status": "done",
+      "gap": ""
     },
     {
       "slug": "toast",
@@ -1500,15 +1498,15 @@
       "checks": {
         "source": true,
         "jsdoc": true,
-        "props_doc": false,
-        "relations": false,
+        "props_doc": true,
+        "relations": true,
         "semantic": true,
         "example": true,
         "in_llms": true,
         "in_catalog": true
       },
-      "status": "pending",
-      "gap": "relations manquantes: parent,forbidden"
+      "status": "done",
+      "gap": ""
     },
     {
       "slug": "pagelayout",
@@ -1519,14 +1517,14 @@
         "source": true,
         "jsdoc": true,
         "props_doc": true,
-        "relations": false,
+        "relations": true,
         "semantic": true,
         "example": true,
         "in_llms": true,
         "in_catalog": true
       },
-      "status": "needs-relations",
-      "gap": "relations manquantes: parent,forbidden"
+      "status": "done",
+      "gap": ""
     },
     {
       "slug": "scrollcontainer",
@@ -1537,14 +1535,14 @@
         "source": true,
         "jsdoc": true,
         "props_doc": true,
-        "relations": false,
+        "relations": true,
         "semantic": true,
         "example": true,
         "in_llms": true,
         "in_catalog": true
       },
-      "status": "needs-relations",
-      "gap": "relations manquantes: associated,forbidden"
+      "status": "done",
+      "gap": ""
     },
     {
       "slug": "labelvalue",
@@ -1555,14 +1553,14 @@
         "source": true,
         "jsdoc": true,
         "props_doc": true,
-        "relations": false,
+        "relations": true,
         "semantic": true,
         "example": true,
         "in_llms": true,
         "in_catalog": true
       },
-      "status": "needs-relations",
-      "gap": "relations manquantes: forbidden"
+      "status": "done",
+      "gap": ""
     },
     {
       "slug": "spinnerdot",
@@ -1573,14 +1571,14 @@
         "source": true,
         "jsdoc": true,
         "props_doc": true,
-        "relations": false,
+        "relations": true,
         "semantic": true,
         "example": true,
         "in_llms": true,
         "in_catalog": true
       },
-      "status": "needs-relations",
-      "gap": "relations manquantes: parent,forbidden"
+      "status": "done",
+      "gap": ""
     },
     {
       "slug": "titlebpm",
@@ -1627,14 +1625,14 @@
         "source": true,
         "jsdoc": true,
         "props_doc": true,
-        "relations": false,
+        "relations": true,
         "semantic": true,
         "example": true,
         "in_llms": true,
         "in_catalog": true
       },
-      "status": "needs-relations",
-      "gap": "relations manquantes: parent,forbidden"
+      "status": "done",
+      "gap": ""
     },
     {
       "slug": "crud",
@@ -1645,14 +1643,14 @@
         "source": true,
         "jsdoc": true,
         "props_doc": true,
-        "relations": false,
+        "relations": true,
         "semantic": true,
         "example": true,
         "in_llms": true,
         "in_catalog": true
       },
-      "status": "needs-relations",
-      "gap": "relations manquantes: parent,forbidden"
+      "status": "done",
+      "gap": ""
     },
     {
       "slug": "gps",
@@ -1663,14 +1661,14 @@
         "source": true,
         "jsdoc": true,
         "props_doc": true,
-        "relations": false,
+        "relations": true,
         "semantic": true,
         "example": true,
         "in_llms": true,
         "in_catalog": true
       },
-      "status": "needs-relations",
-      "gap": "relations manquantes: parent,forbidden"
+      "status": "done",
+      "gap": ""
     },
     {
       "slug": "jsoneditor",
@@ -1681,14 +1679,14 @@
         "source": true,
         "jsdoc": true,
         "props_doc": true,
-        "relations": false,
+        "relations": true,
         "semantic": true,
         "example": true,
         "in_llms": true,
         "in_catalog": true
       },
-      "status": "needs-relations",
-      "gap": "relations manquantes: parent,forbidden"
+      "status": "done",
+      "gap": ""
     },
     {
       "slug": "notificationcenter",
@@ -1698,15 +1696,15 @@
       "checks": {
         "source": true,
         "jsdoc": true,
-        "props_doc": false,
-        "relations": false,
+        "props_doc": true,
+        "relations": true,
         "semantic": true,
-        "example": false,
+        "example": true,
         "in_llms": true,
         "in_catalog": true
       },
-      "status": "pending",
-      "gap": "props documentées 0/7 (ni @props ni @param); relations manquantes: parent,associated,forbidden; @example absent"
+      "status": "done",
+      "gap": ""
     },
     {
       "slug": "filepreview",
@@ -1716,15 +1714,15 @@
       "checks": {
         "source": true,
         "jsdoc": true,
-        "props_doc": false,
-        "relations": false,
+        "props_doc": true,
+        "relations": true,
         "semantic": true,
         "example": true,
         "in_llms": true,
         "in_catalog": true
       },
-      "status": "pending",
-      "gap": "props documentées 3/11 (ni @props ni @param); relations manquantes: parent,forbidden"
+      "status": "done",
+      "gap": ""
     },
     {
       "slug": "dataexplorer",
@@ -1735,14 +1733,14 @@
         "source": true,
         "jsdoc": true,
         "props_doc": true,
-        "relations": false,
+        "relations": true,
         "semantic": true,
         "example": true,
         "in_llms": true,
         "in_catalog": true
       },
-      "status": "needs-relations",
-      "gap": "relations manquantes: parent,forbidden"
+      "status": "done",
+      "gap": ""
     },
     {
       "slug": "chatinterface",
@@ -1753,14 +1751,14 @@
         "source": true,
         "jsdoc": true,
         "props_doc": true,
-        "relations": false,
+        "relations": true,
         "semantic": true,
         "example": true,
         "in_llms": true,
         "in_catalog": true
       },
-      "status": "needs-relations",
-      "gap": "relations manquantes: parent,forbidden"
+      "status": "done",
+      "gap": ""
     },
     {
       "slug": "promptinput",
@@ -1771,14 +1769,14 @@
         "source": true,
         "jsdoc": true,
         "props_doc": true,
-        "relations": false,
+        "relations": true,
         "semantic": true,
         "example": true,
         "in_llms": true,
         "in_catalog": true
       },
-      "status": "needs-relations",
-      "gap": "relations manquantes: forbidden"
+      "status": "done",
+      "gap": ""
     },
     {
       "slug": "streamingtext",
@@ -1789,14 +1787,14 @@
         "source": true,
         "jsdoc": true,
         "props_doc": true,
-        "relations": false,
+        "relations": true,
         "semantic": true,
         "example": true,
         "in_llms": true,
         "in_catalog": true
       },
-      "status": "needs-relations",
-      "gap": "relations manquantes: forbidden"
+      "status": "done",
+      "gap": ""
     },
     {
       "slug": "diffviewer",
@@ -1807,14 +1805,14 @@
         "source": true,
         "jsdoc": true,
         "props_doc": true,
-        "relations": false,
+        "relations": true,
         "semantic": true,
         "example": true,
         "in_llms": true,
         "in_catalog": true
       },
-      "status": "needs-relations",
-      "gap": "relations manquantes: parent,forbidden"
+      "status": "done",
+      "gap": ""
     },
     {
       "slug": "modelselector",
@@ -1825,14 +1823,14 @@
         "source": true,
         "jsdoc": true,
         "props_doc": true,
-        "relations": false,
+        "relations": true,
         "semantic": true,
         "example": true,
         "in_llms": true,
         "in_catalog": true
       },
-      "status": "needs-relations",
-      "gap": "relations manquantes: parent,forbidden"
+      "status": "done",
+      "gap": ""
     }
   ],
   "modules": [

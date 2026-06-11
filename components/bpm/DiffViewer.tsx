@@ -63,6 +63,8 @@ function computeUnifiedLines(original: string, modified: string): DiffLine[] {
  * @param {string} [props.className=""] - Classes CSS additionnelles. Optionnel.
  *
  * @associated bpm.changelog, bpm.codeBlock
+ * @parent bpm.card, bpm.modal, bpm.tabs
+ * @forbidden Code sans comparaison — utiliser bpm.codeBlock
  */
 function computeSplitLines(original: string, modified: string): { left: DiffLine[]; right: DiffLine[] } {
   const a = original.split(/\r?\n/);

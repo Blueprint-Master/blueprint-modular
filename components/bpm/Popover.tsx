@@ -15,6 +15,8 @@ import React, { useState, useRef, useEffect } from "react";
  * @param {string} [props.className=""] - Classes CSS additionnelles. Optionnel.
  *
  * @associated bpm.tooltip, bpm.dropdown
+ * @parent bpm.button, bpm.topNav, bpm.table
+ * @forbidden Contenu long ou formulaire — utiliser bpm.modal ou bpm.drawer
  */
 export interface PopoverProps {
   trigger: React.ReactNode;

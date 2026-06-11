@@ -19,6 +19,8 @@ import React, { useState } from "react";
  * @param {function} [props.onThemeChange] - Callback changement de thème. Optionnel.
  *
  * @associated bpm.topNav, bpm.sidebar
+ * @parent bpm.page
+ * @forbidden aucun
  */
 export interface SidebarItem {
   /** Clé unique de l’entrée. */

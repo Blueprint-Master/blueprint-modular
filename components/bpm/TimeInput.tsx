@@ -25,6 +25,8 @@ function toInputValue(d: Date | string | null | undefined): string {
  * @param {string} [props.max] - Heure maximale "HH:MM". Optionnel.
  *
  * @associated bpm.dateInput, bpm.timePickerPopover, bpm.scheduler
+ * @parent bpm.modal, bpm.card, bpm.wizardForm
+ * @forbidden aucun
  */
 export interface TimeInputProps {
   label?: string;

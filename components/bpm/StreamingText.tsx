@@ -17,6 +17,7 @@ import { Markdown } from "./Markdown";
  *
  * @parent bpm.chatInterface
  * @associated bpm.markdown, bpm.promptInput
+ * @forbidden Texte statique — utiliser bpm.markdown/text
  */
 export interface StreamingTextProps {
   /** Texte courant (s'allonge au fil du stream). */

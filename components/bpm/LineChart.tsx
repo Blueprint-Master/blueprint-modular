@@ -23,6 +23,8 @@ import {
  * @param {InterpretContext} [props.context] - Contexte de jugement : ligne de repère pointillée, couleur de série jugée, aria-label descriptif. Optionnel.
  *
  * @associated bpm.areaChart, bpm.barChart, bpm.scatterChart
+ * @parent bpm.card, bpm.grid, bpm.tableauxDeBord
+ * @forbidden Catégories discrètes — utiliser bpm.barChart
  */
 export interface LineChartDatum {
   x: number | string;

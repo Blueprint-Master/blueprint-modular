@@ -36,6 +36,7 @@ export interface AutocompleteProps {
  *
  * @parent bpm.form
  * @associated bpm.select, bpm.input, bpm.combobox
+ * @forbidden Liste figée courte — utiliser bpm.selectbox
  */
 export function Autocomplete(props: AutocompleteProps) {
   const { label, placeholder = "", value = "", onChange, options, className = "" } = props;

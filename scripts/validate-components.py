@@ -174,7 +174,10 @@ def check_component(slug: str, name: str, desc: str, bmap: dict,
         if not checks["props_doc"]:
             notes.append(f"props documentées {doc_n}/{tot_n} (ni @props ni @param)")
     else:
-        checks["props_doc"] = is_local
+        # Pas d'interface *Props (ex. bpm.toast = provider + hook) : documenté via
+        # @props/@param/@example, ou composant local toléré.
+        checks["props_doc"] = bool(has_props_block or n_param > 0
+                                   or re.search(r"@example\b", target_src) or is_local)
 
     # 4. relations (FR + EN : PARENT / ASSOCIÉ|ASSOCIATED / INTERDIT|FORBIDDEN, ou tags @)
     has_parent = bool(re.search(r"@parent\b|PARENT\s*:", target_src))

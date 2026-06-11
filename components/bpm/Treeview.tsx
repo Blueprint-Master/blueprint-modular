@@ -15,6 +15,8 @@ import React, { useState } from "react";
  * @param {string} [props.className=""] - Classes CSS additionnelles. Optionnel.
  *
  * @associated bpm.sidebar, bpm.accordion, bpm.menu
+ * @parent bpm.card, bpm.drawer, bpm.masterDetail
+ * @forbidden Hiérarchie d'organisation — utiliser bpm.orgChart
  */
 export interface TreeviewNode {
   id: string;

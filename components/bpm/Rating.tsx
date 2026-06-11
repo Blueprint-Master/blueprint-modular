@@ -26,6 +26,8 @@ import {
  * @param {InterpretContext} [props.context] - Contexte de jugement (ex. note cible) : étoiles colorées par le verdict + suffixe écart/tendance. Optionnel.
  *
  * @associated bpm.slider, bpm.metric
+ * @parent bpm.card, bpm.table, bpm.commentThread
+ * @forbidden Mesure continue à juger — utiliser bpm.metric avec context
  */
 export interface RatingProps {
   value?: number;

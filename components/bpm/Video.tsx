@@ -18,6 +18,8 @@ import React from "react";
  * @param {string} [props.className=""] - Classes CSS additionnelles. Optionnel.
  *
  * @associated bpm.image, bpm.carousel, bpm.lightbox
+ * @parent bpm.card, bpm.container, bpm.modal
+ * @forbidden aucun
  */
 export interface VideoProps {
   src: string;

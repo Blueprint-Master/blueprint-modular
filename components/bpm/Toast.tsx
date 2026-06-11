@@ -16,6 +16,8 @@ import "./Toast.css";
  * @param {React.ReactNode} props.children - Contenu de l'application. Obligatoire.
  *
  * @associated bpm.message, bpm.notificationCenter
+ * @parent bpm.page, bpm.pageLayout
+ * @forbidden Action requise / confirmation — utiliser bpm.confirmModal
  */
 const TOAST_DURATION_MS = 5000;
 

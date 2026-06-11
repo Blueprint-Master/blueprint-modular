@@ -56,6 +56,8 @@ function commandHaystack(c: Command): string {
  * @param {string} [props.className=""] - Classes CSS additionnelles. Optionnel.
  *
  * @associated bpm.searchModal, bpm.autocomplete
+ * @parent bpm.page, bpm.pageLayout
+ * @forbidden Navigation permanente — utiliser bpm.topNav ou bpm.sidebar
  */
 export function CommandPalette({
   commands,

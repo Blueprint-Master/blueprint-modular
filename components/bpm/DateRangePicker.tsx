@@ -44,6 +44,7 @@ export interface DateRangePickerProps {
  *
  * @parent bpm.filterPanel, bpm.form
  * @associated bpm.dateInput, bpm.datePickerPopover
+ * @forbidden Date unique — utiliser bpm.dateInput
  */
 export function DateRangePicker(p: DateRangePickerProps) {
   const { label, start, end, onChange, disabled = false, min = null, max = null } = p;

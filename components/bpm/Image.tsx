@@ -16,6 +16,9 @@ import React from "react";
  * @param {number|string} [props.height] - Hauteur en pixels ou CSS. Optionnel.
  * @param {"contain"|"cover"|"fill"|"none"} [props.fit="contain"] - Mode d'ajustement object-fit. Optionnel.
  * @param {string} [props.className=""] - Classes CSS additionnelles. Optionnel.
+ * @parent bpm.card, bpm.grid, bpm.container
+ * @associated bpm.avatar, bpm.filePreview
+ * @forbidden Contenu HTML/vidéo — utiliser bpm.html / bpm.video
  */
 export interface ImageProps {
   src: string;

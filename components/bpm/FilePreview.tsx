@@ -60,7 +60,17 @@ function inferMime(filename: string | undefined): string {
  * @param {boolean} [props.showDownload=true] - Affiche le lien de téléchargement. Optionnel.
  * @param {string} [props.className=""] - Classes CSS additionnelles. Optionnel.
  *
+ * @props
+ * - url (string, obligatoire) — URL du fichier à prévisualiser.
+ * - filename (string, obligatoire) — Nom du fichier affiché.
+ * - mimeType (string, optionnel) — Type MIME (auto-inféré depuis l'extension sinon).
+ * - height (string|number, optionnel) — Hauteur de l'aperçu. Default: 400.
+ * - showDownload (boolean, optionnel) — Affiche le bouton de téléchargement. Default: true.
+ * - className (string, optionnel) — Classes CSS additionnelles.
+ * - file_url / file_name / mime_type / show_download / class_name — Alias snake_case (API Python), normalisés en interne.
  * @associated bpm.fileUploader, bpm.codeBlock
+ * @parent bpm.card, bpm.modal, bpm.masterDetail
+ * @forbidden aucun
  */
 export function FilePreview(props: FilePreviewProps) {
   const url = props.url ?? props.file_url ?? "";

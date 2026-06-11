@@ -55,6 +55,22 @@ function rowText<T extends Record<string, unknown>>(item: T, columns: MasterDeta
 /**
  * @component bpm.masterDetail
  * @description Liste à gauche et détail à droite ; sur mobile, le détail s’ouvre en plein cadre avec retour.
+ * @example
+ * bpm.masterDetail({ items, columns: [{ key: "name", label: "Nom" }], renderDetail: (it) => <div>{it.name}</div>, onSelect: setSel })
+ * @props
+ * - items (T[], obligatoire) — Données de la liste.
+ * - columns (MasterDetailColumn[], obligatoire) — Colonnes de la liste de gauche.
+ * - renderDetail (function, obligatoire) — (item) => ReactElement, panneau de détail.
+ * - onSelect (function, obligatoire) — Callback (item) à la sélection.
+ * - selectedId (string, optionnel) — Id sélectionné (mode contrôlé).
+ * - idKey (string, optionnel) — Clé d’identité des items. Default: "id".
+ * - searchable (boolean, optionnel) — Active la barre de recherche.
+ * - emptyDetailMessage (string, optionnel) — Message quand rien n’est sélectionné.
+ * - splitRatio (number, optionnel) — Ratio largeur liste/détail.
+ * - className (string, optionnel) — Classes CSS additionnelles.
+ * @parent bpm.page, bpm.pageLayout
+ * @associated bpm.table, bpm.drawer, bpm.filterPanel
+ * @forbidden Détail ponctuel — utiliser bpm.modal/drawer
  */
 export function MasterDetail<T extends Record<string, unknown>>({
   items,

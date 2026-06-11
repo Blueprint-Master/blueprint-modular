@@ -31,6 +31,7 @@ export interface FileUploaderProps {
  *
  * @parent bpm.form
  * @associated bpm.filePreview, bpm.button
+ * @forbidden aucun
  */
 export function FileUploader({
   accept,

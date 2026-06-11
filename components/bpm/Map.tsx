@@ -17,6 +17,8 @@ import React from "react";
  * @param {string} [props.className=""] - Classes CSS additionnelles. Optionnel.
  *
  * @associated bpm.mapView, bpm.gps
+ * @parent bpm.card, bpm.container, bpm.modal
+ * @forbidden aucun
  */
 export interface MapProps {
   iframeSrc?: string;

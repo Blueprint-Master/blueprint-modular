@@ -50,6 +50,7 @@ export interface DateInputProps {
  *
  * @parent bpm.form
  * @associated bpm.dateRangePicker, bpm.datePickerPopover
+ * @forbidden Plage de dates — utiliser bpm.dateRangePicker
  */
 export function DateInput({
   label,

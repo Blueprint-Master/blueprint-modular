@@ -12,6 +12,9 @@ import React from "react";
  * @param {string} props.html - Contenu HTML brut à afficher. Obligatoire.
  * @param {string} [props.className=""] - Classes CSS additionnelles. Optionnel.
  * @param {React.CSSProperties} [props.style={}] - Styles inline additionnels. Optionnel.
+ * @parent bpm.card, bpm.container
+ * @associated bpm.markdown
+ * @forbidden Contenu non sanitisé — risque XSS ; préférer bpm.markdown
  */
 export interface HtmlProps {
   /** HTML brut à afficher (équivalent st.html). À n'utiliser qu'avec du contenu de confiance ou sanitized. */

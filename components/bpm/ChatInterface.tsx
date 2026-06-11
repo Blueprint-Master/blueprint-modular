@@ -62,6 +62,8 @@ function formatMsgTime(ts: string | Date | undefined): string | null {
  * @param {string} [props.className=""] - Classes CSS additionnelles. Optionnel.
  *
  * @associated bpm.assistantPanel, bpm.aiQueryBar, bpm.promptInput
+ * @parent bpm.page, bpm.card, bpm.drawer
+ * @forbidden aucun
  */
 export function ChatInterface({
   messages,
