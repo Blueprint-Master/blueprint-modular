@@ -110,6 +110,9 @@ import {
 import { APP_VERSION } from "@/lib/version";
 import type { NotificationItem } from "@/components/bpm";
 import { ElevationShowcase } from "@/components/showcase/ElevationShowcase";
+import registry from "@/lib/generated/bpm-components.json";
+import { useI18n } from "@/lib/i18n/LocaleProvider";
+import { fmt } from "@/lib/i18n";
 
 /** Valeur hex pour props qui n'acceptent pas var() (ex. ColorPicker, Plotly), alignée avec --bpm-accent. */
 const BPM_ACCENT_HEX = "#048dc3";
@@ -169,23 +172,27 @@ function DemoRow({
   );
 }
 
-const SECTIONS = [
-  { id: "typography", label: "Typographie" },
-  { id: "button", label: "Button" },
-  { id: "feedback", label: "Feedback & Status" },
-  { id: "forms", label: "Saisie" },
-  { id: "layout", label: "Layout & Conteneurs" },
-  { id: "data", label: "Données & Visualisation" },
-  { id: "navigation", label: "Navigation" },
-  { id: "overlays", label: "Overlays & Interactions" },
-  { id: "media", label: "Médias & Utilitaires" },
-  { id: "business", label: "Systèmes métier" },
-  { id: "specialized", label: "Spécialisés" },
-];
+/** Ids des sections ; libellés résolus depuis le dictionnaire i18n. */
+const SECTION_IDS = [
+  "typography",
+  "button",
+  "feedback",
+  "forms",
+  "layout",
+  "data",
+  "navigation",
+  "overlays",
+  "media",
+  "business",
+  "specialized",
+] as const;
 
-const COMPONENT_COUNT = 104;
+/** Compteur dérivé du registre généré — jamais codé en dur. */
+const COMPONENT_COUNT = registry.components.length;
 
 export default function ComponentsPage() {
+  const { dict } = useI18n();
+  const sections = dict.gallery.sections;
   const [modalOpen, setModalOpen] = useState(false);
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [toggleValue, setToggleValue] = useState(false);
@@ -229,14 +236,14 @@ export default function ComponentsPage() {
   const [modelSelectorId, setModelSelectorId] = useState("gpt-4o");
 
   return (
-    <div style={{ background: "#fff", minHeight: "100vh", paddingBottom: 80, paddingTop: 0 }}>
-      {/* Header fixe — paddingTop sur le container pour ne pas couvrir le contenu sur mobile */}
+    <div style={{ background: "var(--bpm-bg-primary)", minHeight: "100vh", paddingBottom: 80, paddingTop: 0 }}>
+      {/* Header collant sous la nav du site (60px) */}
       <header
         style={{
           position: "sticky",
-          top: 0,
-          zIndex: 100,
-          background: "#fff",
+          top: 60,
+          zIndex: 90,
+          background: "var(--bpm-bg-primary)",
           borderBottom: "1px solid var(--bpm-border)",
           padding: "16px 24px",
           display: "flex",
@@ -247,15 +254,16 @@ export default function ComponentsPage() {
         }}
       >
         <Title level={1} style={{ margin: 0 }}>
-          Blueprint Components
+          {dict.gallery.title}
         </Title>
         <Caption style={{ margin: 0 }}>
-          {COMPONENT_COUNT} composants bpm.*
+          {fmt(dict.gallery.caption, { count: COMPONENT_COUNT })}
         </Caption>
       </header>
 
       {/* Barre de navigation par catégorie */}
       <nav
+        aria-label={dict.gallery.ariaSections}
         style={{
           padding: "12px 24px",
           background: "var(--bpm-bg-secondary)",
@@ -267,17 +275,17 @@ export default function ComponentsPage() {
           whiteSpace: "nowrap",
         }}
       >
-        {SECTIONS.map((s) => (
+        {SECTION_IDS.map((id) => (
           <a
-            key={s.id}
-            href={`#${s.id}`}
+            key={id}
+            href={`#${id}`}
             style={{
               fontSize: "var(--bpm-font-size-base)",
               color: "var(--bpm-accent)",
               textDecoration: "none",
             }}
           >
-            {s.label}
+            {sections[id]}
           </a>
         ))}
       </nav>
@@ -292,7 +300,7 @@ export default function ComponentsPage() {
       >
         {/* SECTION 1 — Typographie */}
         <section id="typography" style={{ marginBottom: 48 }}>
-          <Title2 style={{ marginBottom: 16 }}>Typographie</Title2>
+          <Title2 style={{ marginBottom: 16 }}>{sections.typography}</Title2>
           <Grid cols={2} gap={16}>
             <DemoCard label="bpm.title level 1">
               <Title level={1}>Titre niveau 1</Title>
@@ -439,7 +447,7 @@ export default function ComponentsPage() {
 
         {/* SECTION 2 — Feedback & Status */}
         <section id="feedback" style={{ marginBottom: 48 }}>
-          <Title2 style={{ marginBottom: 16 }}>Feedback & Status</Title2>
+          <Title2 style={{ marginBottom: 16 }}>{sections.feedback}</Title2>
           <Grid cols={2} gap={16}>
             <DemoCard label="bpm.message success">
               <Message type="success">Opération réussie.</Message>
@@ -519,7 +527,7 @@ export default function ComponentsPage() {
 
         {/* SECTION 3 — Saisie */}
         <section id="forms" style={{ marginBottom: 48 }}>
-          <Title2 style={{ marginBottom: 16 }}>Saisie</Title2>
+          <Title2 style={{ marginBottom: 16 }}>{sections.forms}</Title2>
           <Grid cols={2} gap={16}>
             <DemoCard label="bpm.input">
               <Input
@@ -635,7 +643,7 @@ export default function ComponentsPage() {
 
         {/* SECTION 4 — Layout & Conteneurs */}
         <section id="layout" style={{ marginBottom: 48 }}>
-          <Title2 style={{ marginBottom: 16 }}>Layout & Conteneurs</Title2>
+          <Title2 style={{ marginBottom: 16 }}>{sections.layout}</Title2>
           <Grid cols={2} gap={16}>
             <DemoCard label="bpm.panel" wide>
               <Panel title="Panneau standard">
@@ -734,7 +742,7 @@ export default function ComponentsPage() {
 
         {/* SECTION 5 — Données & Visualisation */}
         <section id="data" style={{ marginBottom: 48 }}>
-          <Title2 style={{ marginBottom: 16 }}>Données & Visualisation</Title2>
+          <Title2 style={{ marginBottom: 16 }}>{sections.data}</Title2>
           <Grid cols={1} gap={16}>
             <DemoCard label="bpm.metric + delta" wide>
               <Metric
@@ -931,7 +939,7 @@ export default function ComponentsPage() {
 
         {/* SECTION 6 — Navigation */}
         <section id="navigation" style={{ marginBottom: 48 }}>
-          <Title2 style={{ marginBottom: 16 }}>Navigation</Title2>
+          <Title2 style={{ marginBottom: 16 }}>{sections.navigation}</Title2>
           <Grid cols={1} gap={16}>
             <DemoCard label="bpm.tabs" wide>
               <Tabs
@@ -996,7 +1004,7 @@ export default function ComponentsPage() {
 
         {/* SECTION 7 — Overlays & Interactions */}
         <section id="overlays" style={{ marginBottom: 48 }}>
-          <Title2 style={{ marginBottom: 16 }}>Overlays & Interactions</Title2>
+          <Title2 style={{ marginBottom: 16 }}>{sections.overlays}</Title2>
           <Grid cols={2} gap={16}>
             <DemoCard label="bpm.button + bpm.modal" wide>
               <Button onClick={() => setModalOpen(true)}>Ouvrir modal</Button>
@@ -1084,7 +1092,7 @@ export default function ComponentsPage() {
 
         {/* SECTION 8 — Médias & Utilitaires */}
         <section id="media" style={{ marginBottom: 48 }}>
-          <Title2 style={{ marginBottom: 16 }}>Médias & Utilitaires</Title2>
+          <Title2 style={{ marginBottom: 16 }}>{sections.media}</Title2>
           <Grid cols={2} gap={16}>
             <DemoCard label="bpm.avatar">
               <Avatar initials="JD" size="medium" editable onImageChange={(f) => console.log(f)} />
@@ -1171,7 +1179,7 @@ export default function ComponentsPage() {
 
         {/* SECTION — Systèmes métier (P0) */}
         <section id="business" style={{ marginBottom: 48 }}>
-          <Title2 style={{ marginBottom: 16 }}>Systèmes métier</Title2>
+          <Title2 style={{ marginBottom: 16 }}>{sections.business}</Title2>
           <Grid cols={1} gap={16}>
             <DemoCard label="bpm.flowDiagram" wide>
               <FlowDiagram
@@ -1308,7 +1316,7 @@ export default function ComponentsPage() {
 
         {/* SECTION 9 — Spécialisés */}
         <section id="specialized" style={{ marginBottom: 48 }}>
-          <Title2 style={{ marginBottom: 16 }}>Spécialisés</Title2>
+          <Title2 style={{ marginBottom: 16 }}>{sections.specialized}</Title2>
           <Grid cols={1} gap={16}>
             <DemoCard label="bpm.diffViewer" wide>
               <DiffViewer
