@@ -2,12 +2,6 @@
 
 import React, { useId } from "react";
 import "./LoadingBar.css";
-import {
-  interpret,
-  judgmentColor,
-  judgmentLabel,
-  type InterpretContext,
-} from "./interpret";
 
 export type LoadingBarVariant =
   | "sweep"
@@ -29,8 +23,6 @@ export interface LoadingBarProps {
   className?: string;
   /** Accessibilité : label du progressbar. */
   "aria-label"?: string;
-  /** Contexte de jugement { reference, direction } : sur la barre déterminée (variant "iso" + value), l'avancement est jugé vs le repère attendu — remplissage coloré par le verdict + aria-label enrichi. Additif : sans context, rendu inchangé. */
-  context?: InterpretContext;
 }
 
 const BLOCK_COUNT = 12;
@@ -48,7 +40,6 @@ const DOT_COUNT = 14;
  * - animated (boolean, optionnel) — Animation. Default: true.
  * - className (string, optionnel) — Classes CSS.
  * - aria-label (string, optionnel) — Accessibilité.
- * - context (InterpretContext, optionnel) — Jugement de l'avancement (variant iso déterminé) vs repère attendu.
  * @usage Import en cours, génération de rapport, upload fichier.
  * @context PARENT: bpm.panel | page directe. ASSOCIATED: bpm.spinner, bpm.progress. FORBIDDEN: aucun.
  */
@@ -59,19 +50,16 @@ export function LoadingBar({
   animated = true,
   className = "",
   "aria-label": ariaLabel,
-  context,
 }: LoadingBarProps) {
   const uniqueId = useId().replace(/:/g, "-");
   const pct = value != null ? Math.min(100, Math.max(0, value)) : null;
   const isDeterminate = pct != null && variant === "iso";
-  const judgment = context && isDeterminate ? interpret(pct as number, context) : null;
   const role = isDeterminate ? "progressbar" : "status";
   const ariaProps = isDeterminate
     ? {
         "aria-valuenow": pct,
         "aria-valuemin": 0,
         "aria-valuemax": 100,
-        ...(judgment ? { "aria-label": judgmentLabel(judgment) } : {}),
       }
     : { "aria-label": ariaLabel ?? "Chargement en cours" };
 
@@ -102,21 +90,17 @@ export function LoadingBar({
 
   if (variant === "iso") {
     const widthStyle = isDeterminate ? { width: `${pct}%` } : undefined;
-    const fillStyle = judgment
-      ? { ...widthStyle, background: judgmentColor(judgment) }
-      : widthStyle;
     return (
       <div
         className={wrapClass}
         role={role}
         {...ariaProps}
         aria-hidden={!ariaLabel && !isDeterminate}
-        data-judgment={judgment ? judgment.level.status : undefined}
       >
         <div className="bpm-loadingbar-iso-wrap" data-indeterminate={!isDeterminate ? "true" : undefined}>
           <div className="bpm-loadingbar-iso-top" style={widthStyle} />
           <div className="bpm-loadingbar-iso-track">
-            <div className="bpm-loadingbar-iso-fill" style={fillStyle} />
+            <div className="bpm-loadingbar-iso-fill" style={widthStyle} />
           </div>
           <div className="bpm-loadingbar-iso-side" style={widthStyle} />
         </div>
