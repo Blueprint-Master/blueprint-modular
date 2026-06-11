@@ -224,6 +224,23 @@ npm run gate
 
 ---
 
+## MCP connector (read-only)
+
+A public, read-only **MCP server** exposes the component catalogue to Claude
+(and any MCP host) over **Streamable HTTP** — same deployment, same source of
+truth as the site.
+
+- **Endpoint** : `POST /api/mcp` (no auth — the catalogue is public)
+- **Tools** : `list_components`, `search_components`, `get_component`, `suggest_composition`
+- **Source of truth** : generated from `bpm-components.json` + `llms.txt`
+  via `npm run generate:mcp-registry` (never hand-authored)
+
+Add it in Claude via **Settings → Connectors → Add custom connector**, URL
+`https://<host>/api/mcp`. Full details — tools, params, local testing — in
+[`docs/MCP_CONNECTOR.md`](docs/MCP_CONNECTOR.md).
+
+---
+
 ## License
 
 MIT
