@@ -196,19 +196,19 @@ describe("elevate(instrument): waterfall / funnelChart / treemap / radarChart", 
     expect(container.querySelector("[data-judgment]")).toBeNull();
   });
 
-  it("funnelChart : conversion 4 % vs cible 10 % → unfavorable", () => {
+  it("funnelChart : jugement agrégé retiré — chart rendu, aucun verdict « vs repère »", () => {
     const { container } = render(
       <FunnelChart
         stages={[{ label: "V", value: 1000 }, { label: "C", value: 40 }]}
-        context={{ reference: 10, direction: "higher_is_better" }}
+        showPercentage
       />
     );
-    expect(container.querySelector("[data-judgment]")?.getAttribute("data-judgment")).toBe(
-      "unfavorable"
-    );
+    expect(container.querySelector("[data-judgment]")).toBeNull();
+    expect(container.querySelector('[role="status"]')).toBeNull();
+    expect(container.textContent).toContain("V");
   });
 
-  it("treemap : tuiles jugées individuellement + verdict global", () => {
+  it("treemap : tuiles jugées individuellement, sans verdict agrégé sur le total", () => {
     const { container } = render(
       <Treemap
         data={[{ name: "A", value: 50 }, { name: "B", value: 20 }]}
@@ -216,14 +216,17 @@ describe("elevate(instrument): waterfall / funnelChart / treemap / radarChart", 
       />
     );
     const svg = container.querySelector("svg")!;
-    expect(svg.getAttribute("data-judgment")).toBe("favorable"); // total 70 > 35
+    // pas de jugement global sur la racine (un total de tuiles hétérogènes n'a pas de verdict unique)
+    expect(svg.getAttribute("data-judgment")).toBeNull();
+    expect(svg.getAttribute("aria-label")).toBe("Treemap");
+    // mais chaque tuile reste jugée vs son repère
     const cellJudgments = [...svg.querySelectorAll("g[data-judgment]")].map((g) =>
       g.getAttribute("data-judgment")
     );
     expect(cellJudgments).toEqual(["favorable", "unfavorable"]);
   });
 
-  it("radarChart : moyenne sous le repère → polygone jugé + anneau de repère", () => {
+  it("radarChart : anneau de repère conservé par axe, couleur de verdict agrégée retirée", () => {
     const { container } = render(
       <RadarChart
         axes={["A", "B", "C"]}
@@ -233,8 +236,11 @@ describe("elevate(instrument): waterfall / funnelChart / treemap / radarChart", 
       />
     );
     const svg = container.querySelector("svg")!;
-    expect(svg.getAttribute("data-judgment")).toBe("unfavorable");
-    expect(svg.getAttribute("aria-label")).toContain("moyenne");
+    // plus de verdict agrégé : pas de data-judgment ni de mention « moyenne »
+    expect(svg.getAttribute("data-judgment")).toBeNull();
+    expect(svg.getAttribute("aria-label")).toBe("Radar");
+    // l'anneau de repère pointillé reste tracé
+    expect(svg.querySelector("polygon[stroke-dasharray]")).not.toBeNull();
   });
 });
 
@@ -325,25 +331,17 @@ describe("elevate(instrument): sensorGrid", () => {
   });
 });
 
-describe("elevate(instrument): loadingBar", () => {
-  it("sans context → pas de jugement", () => {
+// Déclassé en STRUCTURAL : une barre de progression ne porte pas de jugement.
+describe("declassé(structural): loadingBar", () => {
+  it("iso déterminé → progressbar a11y, aucun jugement", () => {
     const { container } = render(<LoadingBar variant="iso" value={65} />);
+    const bar = container.querySelector('[role="progressbar"]');
+    expect(bar?.getAttribute("aria-valuenow")).toBe("65");
     expect(container.querySelector("[data-judgment]")).toBeNull();
   });
 
-  it("avancement sous le repère attendu → unfavorable", () => {
-    const { container } = render(
-      <LoadingBar variant="iso" value={35} context={{ reference: 60, direction: "higher_is_better" }} />
-    );
-    expect(container.querySelector("[data-judgment]")?.getAttribute("data-judgment")).toBe(
-      "unfavorable"
-    );
-  });
-
-  it("variant indéterminé + context → pas de jugement (rien à juger)", () => {
-    const { container } = render(
-      <LoadingBar variant="sweep" context={{ reference: 60, direction: "higher_is_better" }} />
-    );
+  it("indéterminé → role=status, aucun jugement", () => {
+    const { container } = render(<LoadingBar variant="sweep" />);
     expect(container.querySelector("[data-judgment]")).toBeNull();
   });
 });
@@ -581,26 +579,15 @@ describe("elevate(instrument): statusBox", () => {
   });
 });
 
-describe("elevate(instrument): highlightBox", () => {
-  it("sans measure/context → pas de jugement", () => {
-    const { container } = render(<HighlightBox value={1} label="DAILY" title="Objectif" />);
-    expect(container.querySelector("[data-judgment]")).toBeNull();
-  });
-
-  it("measure sous le repère & higher_is_better → unfavorable + verdict", () => {
+// Déclassé en STRUCTURAL/éditorial : bloc de mise en valeur, pas un instrument.
+describe("declassé(structural): highlightBox", () => {
+  it("rendu éditorial, aucun jugement (measure/context retirés)", () => {
     const { container } = render(
-      <HighlightBox
-        value={2}
-        label="KPI"
-        title="Conversion"
-        measure={3.1}
-        context={{ reference: 4.5, direction: "higher_is_better" }}
-      />
+      <HighlightBox value={1} label="DAILY" title="Objectif" rtbPoints={["P1", "P2"]} />
     );
-    expect(container.querySelector("[data-judgment]")?.getAttribute("data-judgment")).toBe(
-      "unfavorable"
-    );
-    expect(container.querySelector('[role="status"]')).not.toBeNull();
+    expect(container.querySelector("[data-judgment]")).toBeNull();
+    expect(container.querySelector('[role="status"]')).toBeNull();
+    expect(container.textContent).toContain("Objectif");
   });
 });
 

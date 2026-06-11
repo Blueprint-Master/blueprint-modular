@@ -417,7 +417,6 @@ exports[`bpm prop surface snapshot > prop names match committed snapshot (additi
     "showPercentage",
     "horizontal",
     "className",
-    "context",
   ],
   "gantt": [
     "tasks",
@@ -472,8 +471,6 @@ exports[`bpm prop surface snapshot > prop names match committed snapshot (additi
     "targetPoints",
     "barColor",
     "className",
-    "measure",
-    "context",
   ],
   "html": [
     "html",
@@ -577,7 +574,6 @@ exports[`bpm prop surface snapshot > prop names match committed snapshot (additi
     "size",
     "animated",
     "className",
-    "context",
   ],
   "machineStatus": [
     "title",

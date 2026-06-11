@@ -38,7 +38,7 @@
       "key": "funnelChart",
       "class": "INSTRUMENT",
       "status": "done",
-      "reason": null
+      "reason": "Jugement agrege retire: le verdict unique « conversion vs repere » n'etait pas fiable. Le chart est conserve; un jugement par etape reste a definir."
     },
     {
       "key": "heatmap",
@@ -48,9 +48,9 @@
     },
     {
       "key": "highlightBox",
-      "class": "INSTRUMENT",
+      "class": "STRUCTURAL",
       "status": "done",
-      "reason": null
+      "reason": "Declasse: bloc editorial de mise en valeur, pas un instrument. measure/context/interpret retires (ajoutes a tort dans #12)."
     },
     {
       "key": "labelValue",
@@ -78,9 +78,9 @@
     },
     {
       "key": "loadingBar",
-      "class": "INSTRUMENT",
+      "class": "STRUCTURAL",
       "status": "done",
-      "reason": null
+      "reason": "Declasse: une barre de progression ne porte pas de jugement. context/interpret/verdict retires (ajoutes a tort dans #12)."
     },
     {
       "key": "machineStatus",
@@ -116,7 +116,7 @@
       "key": "radarChart",
       "class": "INSTRUMENT",
       "status": "done",
-      "reason": null
+      "reason": "Couleur de verdict agregee (moyenne des axes) retiree du polygone: un verdict unique sur N axes heterogenes n'a pas de sens. Anneau de repere par axe conserve."
     },
     {
       "key": "rating",
@@ -152,7 +152,7 @@
       "key": "treemap",
       "class": "INSTRUMENT",
       "status": "done",
-      "reason": null
+      "reason": "Verdict agrege sur le total retire (somme de tuiles heterogenes sans sens). Jugement par tuile vs repere conserve."
     },
     {
       "key": "waterfall",

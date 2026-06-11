@@ -252,40 +252,24 @@ export const SHOWCASE: ShowcaseEntry[] = [
   },
   {
     key: "highlightBox",
-    class: "INSTRUMENT",
+    class: "STRUCTURAL",
     examples: [
       {
         name: "défaut",
-        note: "rendu historique inchangé",
+        note: "bloc éditorial — pas de jugement (déclassé STRUCTURAL)",
         render: () => <HighlightBox value={1} label="DAILY" title="Objectif quotidien" rtbPoints={["Point 1", "Point 2"]} />,
       },
       {
-        name: "déviant",
-        note: "measure + context → barre colorée par le verdict + ligne d'écart",
+        name: "cible",
+        note: "sections RTB / Cible, barre latérale colorée (barColor) — purement présentationnel",
         render: () => (
           <HighlightBox
             value={2}
             label="KPI"
             title="Taux de conversion"
-            measure={3.1}
-            context={{ reference: 4.5, direction: "higher_is_better" }}
-          />
-        ),
-      },
-      {
-        name: "trajectoire",
-        note: "measure = v(t) → tendance jugée dans la ligne de verdict",
-        render: () => (
-          <HighlightBox
-            value={3}
-            label="KPI"
-            title="Taux de conversion"
-            measure={[
-              { t: 1, v: 4.8 },
-              { t: 2, v: 4.2 },
-              { t: 3, v: 3.1 },
-            ]}
-            context={{ reference: 4.5, direction: "higher_is_better" }}
+            barColor="#0ea5e9"
+            rtbPoints={["Trafic en hausse", "Tunnel raccourci"]}
+            targetPoints={["Cible 4,5 %"]}
           />
         ),
       },
@@ -559,19 +543,17 @@ export const SHOWCASE: ShowcaseEntry[] = [
   },
   {
     key: "loadingBar",
-    class: "INSTRUMENT",
+    class: "STRUCTURAL",
     examples: [
       {
-        name: "défaut",
-        note: "rendu historique inchangé (iso déterminé)",
+        name: "déterminé",
+        note: "barre iso déterminée (value) — progressbar a11y, pas de jugement (déclassé STRUCTURAL)",
         render: () => <LoadingBar variant="iso" value={65} />,
       },
       {
-        name: "déviant",
-        note: "avancement 35 % vs 60 % attendu → remplissage rouge + aria-label de verdict",
-        render: () => (
-          <LoadingBar variant="iso" value={35} context={{ reference: 60, direction: "higher_is_better" }} />
-        ),
+        name: "indéterminé",
+        note: "variant sweep — chargement indéterminé, role=status",
+        render: () => <LoadingBar variant="sweep" />,
       },
     ],
   },
@@ -768,19 +750,19 @@ export const SHOWCASE: ShowcaseEntry[] = [
     examples: [
       {
         name: "défaut",
-        note: "rendu historique inchangé",
+        note: "entonnoir de conversion — jugement agrégé retiré (pas de verdict unique « vs repère »)",
         render: () => (
           <FunnelChart stages={[{ label: "Visiteurs", value: 1000 }, { label: "Leads", value: 200 }, { label: "Clients", value: 40 }]} showPercentage />
         ),
       },
       {
-        name: "déviant",
-        note: "conversion 4 % vs cible 10 % → verdict défavorable sous l'entonnoir",
+        name: "horizontal",
+        note: "orientation horizontale — même rendu, aucun jugement",
         render: () => (
           <FunnelChart
             stages={[{ label: "Visiteurs", value: 1000 }, { label: "Leads", value: 200 }, { label: "Clients", value: 40 }]}
             showPercentage
-            context={{ reference: 10, direction: "higher_is_better" }}
+            horizontal
           />
         ),
       },
@@ -821,8 +803,8 @@ export const SHOWCASE: ShowcaseEntry[] = [
         render: () => <RadarChart axes={["Vitesse", "Force", "Endurance"]} values={[80, 60, 90]} max={100} width={220} height={220} />,
       },
       {
-        name: "déviant",
-        note: "anneau de repère 75 pointillé, moyenne 63 < 75 → polygone rouge",
+        name: "repère par axe",
+        note: "anneau de repère 75 pointillé conservé (lecture par axe) — pas de couleur de verdict agrégée sur le polygone",
         render: () => (
           <RadarChart
             axes={["Vitesse", "Force", "Endurance"]}

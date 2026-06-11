@@ -1,6 +1,6 @@
 # Blueprint Modular — Agent Context File
 # Version : 0.1.60
-# Date    : 2026-06-10
+# Date    : 2026-06-11
 # URL canonique : https://blueprint-modular.com/llms.txt
 #
 # Ce fichier est la référence machine de @blueprint-modular/core.
@@ -556,7 +556,6 @@ Composant bpm.drillDown — interface non parsée (voir BPM_API.md).
   showPercentage?: boolean
   horizontal?: boolean
   className?: string
-  context?: InterpretContext  — Contexte de jugement { reference (en % de conversion globale), direction } : le taux de conversion dernière/première étape est jugé par interpret — verdict révélé sous l'entonnoir (layout vertical) ou en title/aria (horizontal), data-judgment. Additif : sans context, rendu inchangé.
 ```
 
 ## bpm.gantt
@@ -615,7 +614,7 @@ Composant bpm.groupedList — interface non parsée (voir BPM_API.md).
 ```
 
 ## bpm.highlightBox
-@component bpm.highlightBox @description Bloc de mise en valeur avec barre latérale colorée, numéro, titre et sections RTB/Cible optionnelles. @example bpm.highlightBox({ value: 1, label: "DAILY", title: "Objectif quotidien", rtbPoints: ["Point 1", "Point 2"] }) @param {object} props @param {number} props.value - Numéro affiché dans la barre gauche. Obligatoire. @param {string} props.label - Texte sous le numéro (ex: "DAILY"). Obligatoire. @param {string} props.title - Titre principal du contenu. Obligatoire. @param {string} [props.momentDescription] - Description "Moment" affichée en italique. Optionnel. @param {string[]} [props.rtbPoints] - Points RTB séparés par "·". Optionnel. @param {string|string[]} [props.targetPoints] - Points Cible (chaîne ou liste). Optionnel. @param {string} [props.barColor="#212121"] - Couleur de la barre latérale. Optionnel. @param {string} [props.className=""] - Classes CSS additionnelles. Optionnel. @param {number|TrajectoryPoint[]} [props.measure] - Mesure associée (scalaire ou trajectoire v(t)) jugée si context fourni. Optionnel. @param {InterpretContext} [props.context] - Contexte de jugement : barre colorée selon le verdict + ligne écart/tendance. Optionnel.
+@component bpm.highlightBox @description Bloc de mise en valeur avec barre latérale colorée, numéro, titre et sections RTB/Cible optionnelles. @example bpm.highlightBox({ value: 1, label: "DAILY", title: "Objectif quotidien", rtbPoints: ["Point 1", "Point 2"] }) @param {object} props @param {number} props.value - Numéro affiché dans la barre gauche. Obligatoire. @param {string} props.label - Texte sous le numéro (ex: "DAILY"). Obligatoire. @param {string} props.title - Titre principal du contenu. Obligatoire. @param {string} [props.momentDescription] - Description "Moment" affichée en italique. Optionnel. @param {string[]} [props.rtbPoints] - Points RTB séparés par "·". Optionnel. @param {string|string[]} [props.targetPoints] - Points Cible (chaîne ou liste). Optionnel. @param {string} [props.barColor="#212121"] - Couleur de la barre latérale. Optionnel. @param {string} [props.className=""] - Classes CSS additionnelles. Optionnel.
 ```
   value*: number  — Numéro affiché dans la barre gauche (ex. 1)
   label*: string  — Texte sous le numéro dans la barre (ex. "DAILY")
@@ -625,8 +624,6 @@ Composant bpm.groupedList — interface non parsée (voir BPM_API.md).
   targetPoints?: string | string[] | null  — Points Cible (chaîne ou liste)
   barColor?: string | null  — Couleur de la barre latérale (hex, rgb ou nom CSS). Par défaut : noir (#212121).
   className?: string
-  measure?: number | TrajectoryPoint[]  — Mesure associée au bloc (scalaire ou trajectoire v(t) [{t,v}]) — jugée via interpret si context est fourni.
-  context?: InterpretContext  — Contexte de jugement { reference, direction, comparisonFrame? } : la barre latérale prend la couleur du verdict (sauf barColor explicite) et une ligne écart/tendance est révélée. Additif : sans context, rendu inchangé.
 ```
 
 ## bpm.html
@@ -761,7 +758,6 @@ Composant bpm.groupedList — interface non parsée (voir BPM_API.md).
   size?: "thin" | "default" | "thick"  — Hauteur : thin (6px), default (8px), thick (12px).
   animated?: boolean  — Désactive l'animation (utile pour screenshots ou prefers-reduced-motion).
   className?: string
-  context?: InterpretContext  — Contexte de jugement { reference, direction } : sur la barre déterminée (variant "iso" + value), l'avancement est jugé vs le repère attendu — remplissage coloré par le verdict + aria-label enrichi. Additif : sans context, rendu inchangé.
 ```
 
 ## bpm.machineStatus
@@ -1085,7 +1081,7 @@ Composant bpm.plcConnector — voir @blueprint-modular/core ou BPM_API.md.
   width?: number
   height?: number
   className?: string
-  context?: InterpretContext  — Contexte de jugement { reference, direction } : un anneau de repère pointillé est tracé au niveau de reference, le polygone prend la couleur du verdict global (moyenne des axes), aria-label enrichi, data-judgment. Additif : sans context, rendu inchangé.
+  context?: InterpretContext  — Contexte de repère { reference, direction } : un anneau de repère pointillé est tracé au niveau de reference (même échelle que les axes). Pas de verdict agrégé : un polygone sur N axes hétérogènes n'a pas de couleur de jugement unique — la lecture se fait par axe vs l'anneau. Additif : sans context, rendu inchangé.
 ```
 
 ## bpm.radioGroup
@@ -1573,7 +1569,7 @@ Toast visuel ; en production préférer useToast().
   width?: number
   height?: number
   className?: string
-  context?: InterpretContext  — Contexte de jugement { reference, direction } : chaque tuile est jugée par interpret (contour coloré par le verdict hors zone neutre, data-judgment), et le total reçoit un verdict global (aria-label, data-judgment racine). Additif : sans context, rendu inchangé.
+  context?: InterpretContext  — Contexte de jugement { reference, direction } : chaque tuile est jugée individuellement par interpret vs le repère (contour coloré par le verdict hors zone neutre, data-judgment par tuile). Pas de verdict agrégé : un total de tuiles hétérogènes n'a pas de jugement unique. Additif : sans context, rendu inchangé.
 ```
 
 ## bpm.treeview
