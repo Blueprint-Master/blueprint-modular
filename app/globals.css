@@ -3158,6 +3158,13 @@ body.contract-detail-panel-open .pwa-title-bar {
   --bpm-accent-soft: rgba(4, 141, 195, 0.12);
 }
 
+/* Garde-fou anti-débordement horizontal de la vitrine (clip préserve position:sticky
+   des descendants, ex. en-tête de /components). Le contenu de démo large défile dans
+   sa propre carte (overflow-x:auto) avant d'atteindre cette limite. */
+.site-shell main {
+  overflow-x: clip;
+}
+
 /* Alternance blanc / brume entre sections (rythme de la maquette) */
 .site-shell main > section:nth-of-type(2n):not(.site-cta-band) {
   background: var(--site-mist);

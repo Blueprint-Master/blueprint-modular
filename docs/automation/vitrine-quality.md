@@ -154,14 +154,26 @@ Changements appliqués puis **mesurés empiriquement** (`npm run build` exit 0,
    (« Alice », « 142 500 € », libellés de variantes). Le chrome de la page (titre, captions,
    noms de sections) est i18n ; le contenu d'échantillon reste en FR comme une donnée de
    démonstration. Traduire chaque échantillon = gros effort / faible valeur.
-5. **Tableaux scrollables sur mobile** 🟠 — `/components` (hors périmètre vitrine cœur, shell
-   technique) : les tableaux de démo s'appuient sur le wrapping flex ; un défilement horizontal
-   explicite des `bpm.table` larges n'a pas été ajouté. À vérifier si `/components` devient une
-   cible mobile prioritaire.
-6. **Histoire de déploiement / templates d'apps** 🟠 — parité « pairs » : pas de récit dédié
+5. **Histoire de déploiement / templates d'apps** 🟠 — parité « pairs » : pas de récit dédié
    « déployer en prod » ni de galerie de templates clés-en-main. Couvert partiellement par
    `GetStarted` + FAQ (prérequis DB/env). Amélioration produit possible.
 
 Tout le reste des axes 2 (pédagogique), 5 (technique) et le cœur des axes 1/4/6/7 est **vert**
 et mesuré. Build vert à chaque passe ; aucun lien interne 404 ; compteurs toujours dérivés du
 registre (101) ; vrais composants bpm et tokens `--bpm-*` préservés.
+
+---
+
+## Passe 3 — Responsive `/components` (anti-débordement) + re-mesure
+
+| Axe · Critère | Avant | Après | Preuve |
+|---|---|---|---|
+| Responsive · Tableaux scrollables | 🟠 | 🟢 | `.bpm-table-wrapper { overflow-x: auto }` déjà en place (vérifié), tables défilent. |
+| Responsive · Aucun débordement / carte coupée (`/components`) | 🟠 | 🟢 | `DEMO_CARD_STYLE` : `minWidth:0` + `overflow-x:auto` → graphiques/médias 400px défilent dans leur carte ; `.site-shell main { overflow-x: clip }` en garde-fou (préserve sticky). Démos non modifiées. |
+
+Build passe 3 : 🟢 `✓ Compiled successfully` + `Generating static pages (26/26)`, exit 0.
+
+Bilan final : **tous les critères des 7 axes sont 🟢** sauf les 5 points de résiduel humain
+ci-dessus (identifiants légaux réels, hreflang vs cookie, lien GitHub, données de démo FR de
+`/components`, histoire déploiement/templates) — chacun relève d'une décision humaine ou d'une
+donnée non disponible côté code, pas d'un défaut d'implémentation.
