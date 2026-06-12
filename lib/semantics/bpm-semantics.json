@@ -1,0 +1,1242 @@
+{
+  "version": 1,
+  "ontology": "packages/core/src/schema/app-spec.ts (Ω AppSpec) — frames câblés dans lib/semantics/types.ts (FRAME_SOURCE)",
+  "note": "Valeurs PROPOSÉES par la boucle, jamais arrêtées en autonomie. status: proposed (à valider) | needs-curation (question posée au curateur) | curated (décision humaine). Curation : éditer ce fichier puis régénérer registre + llms.txt (npm run generate:llms && npm run generate:mcp-registry) et valider (python3 scripts/validate-semantics.py).",
+  "components": {
+    "metric": {
+      "semanticRole": "indicateur",
+      "frame": "kpi",
+      "indicator": {
+        "indicatorType": ["scalaire-kpi", "monetaire", "compte", "taux"],
+        "directionality": "contextuel",
+        "temporality": "instantane"
+      },
+      "agentGuidance": {
+        "use": "KPI scalaire en tête de dashboard : une valeur qui porte un jugement (delta, repère via context, tendance via trajectoire).",
+        "pairWith": ["bpm.metricRow", "bpm.lineChart", "bpm.badge"],
+        "avoid": "Valeur descriptive sans jugement (bpm.labelValue) ou liste de faits (bpm.table)."
+      },
+      "indicatorRelations": [
+        { "type": "derive-de", "target": "bpm.lineChart", "note": "la métrique est souvent le dernier point de la série affichée en lineChart" },
+        { "type": "contraste-avec", "target": "bpm.progress", "note": "valeur libre jugée par delta vs avancement borné jugé par cible" }
+      ],
+      "contextHints": [
+        "Nombre ou trajectoire [{t, v}] issue d'un KPIDefinition (formula, aggregation).",
+        "Repère de comparaison (cible, période précédente) pour que le delta ait un sens.",
+        "deltaType normal/inverse selon la polarité du KPI affiché."
+      ],
+      "status": "proposed"
+    },
+    "table": {
+      "semanticRole": "affichage",
+      "frame": "entity",
+      "agentGuidance": {
+        "use": "Collection homogène d'entités à comparer ligne à ligne : chaque ligne est une instance, chaque colonne un champ.",
+        "pairWith": ["bpm.pagination", "bpm.filterPanel", "bpm.badge", "bpm.exportButton"],
+        "avoid": "Mesures agrégées (bpm.metric) ou exploration libre avec tri/recherche/export intégrés (bpm.dataExplorer)."
+      },
+      "contextHints": [
+        "Liste d'objets de même Entity ; colonnes = Fields typés.",
+        "Au-delà de ~50 lignes, associer bpm.pagination ou préférer bpm.dataExplorer."
+      ],
+      "status": "proposed"
+    },
+    "title": {
+      "semanticRole": "affichage",
+      "frame": "section",
+      "agentGuidance": {
+        "use": "Hiérarchiser la page : annoncer une Section Ω et son niveau (1 à 4).",
+        "pairWith": ["bpm.text", "bpm.divider", "bpm.pageLayout"],
+        "avoid": "Mettre en avant une valeur de données (bpm.metric ou bpm.labelValue)."
+      },
+      "contextHints": ["Un seul niveau 1 par écran ; les niveaux suivent la structure des sections."],
+      "status": "proposed"
+    },
+    "title1": {
+      "semanticRole": "affichage",
+      "frame": "section",
+      "agentGuidance": {
+        "use": "Titre de page (niveau 1) : nomme l'écran, une seule occurrence par page.",
+        "pairWith": ["bpm.title2", "bpm.text"],
+        "avoid": "Titres de sous-sections (bpm.title2/title3) ou valeurs de données."
+      },
+      "contextHints": ["Libellé court reflétant la Section Ω racine de l'écran."],
+      "status": "proposed"
+    },
+    "title2": {
+      "semanticRole": "affichage",
+      "frame": "section",
+      "agentGuidance": {
+        "use": "Titre de section (niveau 2) sous un title1.",
+        "pairWith": ["bpm.title1", "bpm.title3", "bpm.divider"],
+        "avoid": "Titre de page (bpm.title1) ou emphase dans un paragraphe (bpm.text stylé)."
+      },
+      "contextHints": ["S'inscrit dans la hiérarchie ouverte par un title1."],
+      "status": "proposed"
+    },
+    "title3": {
+      "semanticRole": "affichage",
+      "frame": "section",
+      "agentGuidance": {
+        "use": "Titre de sous-section (niveau 3) sous un title2.",
+        "pairWith": ["bpm.title2", "bpm.text"],
+        "avoid": "Sauter des niveaux de hiérarchie (title1 → title3 sans title2)."
+      },
+      "contextHints": ["S'inscrit dans la hiérarchie ouverte par un title2."],
+      "status": "proposed"
+    },
+    "text": {
+      "semanticRole": "affichage",
+      "frame": "section",
+      "agentGuidance": {
+        "use": "Texte courant : explication, description, contenu rédactionnel.",
+        "pairWith": ["bpm.title", "bpm.caption", "bpm.markdown"],
+        "avoid": "Texte secondaire atténué (bpm.caption) ou contenu riche structuré (bpm.markdown)."
+      },
+      "contextHints": ["Prose courte ; pour du contenu formaté (listes, liens), préférer bpm.markdown."],
+      "status": "proposed"
+    },
+    "caption": {
+      "semanticRole": "affichage",
+      "frame": "section",
+      "agentGuidance": {
+        "use": "Texte secondaire : légende sous un indicateur, un média ou un champ ; précision de source ou d'unité.",
+        "pairWith": ["bpm.metric", "bpm.image", "bpm.lineChart"],
+        "avoid": "Contenu principal (bpm.text) ou information critique qui doit rester lisible."
+      },
+      "contextHints": ["Donne le contexte de lecture (source, période, unité) d'un élément voisin."],
+      "status": "proposed"
+    },
+    "badge": {
+      "semanticRole": "indicateur",
+      "frame": "workflow",
+      "indicator": {
+        "indicatorType": ["statut"],
+        "directionality": "neutre",
+        "temporality": "instantane"
+      },
+      "agentGuidance": {
+        "use": "Statut ponctuel d'une instance : valeur d'énumération (WorkflowState) dont la couleur porte la sémantique d'état.",
+        "pairWith": ["bpm.table", "bpm.card", "bpm.timeline"],
+        "avoid": "Élément cliquable ou filtre (bpm.chip), message système (bpm.message), bloc de statut détaillé (bpm.statusBox)."
+      },
+      "indicatorRelations": [
+        { "type": "compose-dans", "target": "bpm.statusTracker", "note": "une séquence de statuts forme un suivi de progression" },
+        { "type": "contraste-avec", "target": "bpm.statusBox", "note": "étiquette compacte vs bloc de statut avec explication" }
+      ],
+      "contextHints": [
+        "Valeur d'un EnumValue/WorkflowState avec couleur sémantique (success, warning, error…).",
+        "Le libellé doit être l'état métier, pas une décoration."
+      ],
+      "status": "proposed"
+    },
+    "progress": {
+      "semanticRole": "indicateur",
+      "frame": "kpi",
+      "indicator": {
+        "indicatorType": ["progression", "taux"],
+        "directionality": "borne-cible",
+        "temporality": "cumule"
+      },
+      "agentGuidance": {
+        "use": "Avancement vers une borne connue : complétion d'une tâche, consommation d'un quota, remplissage d'un objectif.",
+        "pairWith": ["bpm.card", "bpm.statusTracker", "bpm.labelValue"],
+        "avoid": "Valeur sans borne ni cible (bpm.metric) ou attente système indéterminée (bpm.spinner, bpm.loadingBar)."
+      },
+      "indicatorRelations": [
+        { "type": "derive-de", "target": "bpm.metric", "note": "progression = valeur courante rapportée à une cible (KPIDefinition.target)" },
+        { "type": "contraste-avec", "target": "bpm.statusTracker", "note": "pourcentage continu vs étapes discrètes d'un workflow" }
+      ],
+      "contextHints": [
+        "Valeur 0-100 ou couple valeur/cible explicite.",
+        "La borne doit être signifiante pour l'utilisateur (objectif, capacité, échéance)."
+      ],
+      "status": "proposed"
+    },
+    "skeleton": {
+      "semanticRole": "feedback",
+      "frame": "section",
+      "agentGuidance": {
+        "use": "Attente de contenu dont la forme est connue : préfigure la mise en page pendant le chargement.",
+        "pairWith": ["bpm.card", "bpm.table", "bpm.grid"],
+        "avoid": "Attente sans forme prévisible (bpm.spinner) ou absence réelle de données (bpm.emptyState)."
+      },
+      "contextHints": ["État transitoire : doit être remplacé par le contenu réel ou un état vide/erreur."],
+      "status": "proposed"
+    },
+    "jsonviewer": {
+      "semanticRole": "affichage",
+      "frame": "entity",
+      "agentGuidance": {
+        "use": "Inspection en lecture d'une structure de données brute (payload, configuration, réponse d'API).",
+        "pairWith": ["bpm.expander", "bpm.codeBlock", "bpm.drawer"],
+        "avoid": "Édition de JSON (bpm.jsonEditor) ou restitution métier mise en forme (bpm.table, bpm.labelValue)."
+      },
+      "contextHints": ["Objet JSON valide ; destiné à un public technique, pas à l'utilisateur final."],
+      "status": "proposed"
+    },
+    "avatar": {
+      "semanticRole": "affichage",
+      "frame": "entity",
+      "agentGuidance": {
+        "use": "Représenter un acteur (utilisateur, contact) de façon compacte : initiales ou photo.",
+        "pairWith": ["bpm.activityFeed", "bpm.commentThread", "bpm.table"],
+        "avoid": "Illustration générique (bpm.image) ou statut d'un acteur (bpm.badge)."
+      },
+      "contextHints": ["Identité d'un acteur : nom pour les initiales, URL d'image optionnelle."],
+      "status": "needs-curation",
+      "curationQuestion": "Ω n'a pas de frame « acteur » : avatar (et orgChart) sont rattachés à entity par défaut. Faut-il introduire un frame acteur/identité dans le seed Ω, ou les rattacher à permission (Role) ?"
+    },
+    "panel": {
+      "semanticRole": "feedback",
+      "frame": "section",
+      "agentGuidance": {
+        "use": "Encart informatif persistant avec sévérité (info, success, warning, error) qui qualifie un contenu de page.",
+        "pairWith": ["bpm.text", "bpm.button", "bpm.card"],
+        "avoid": "Notification transitoire (bpm.toast), réaction à une action (bpm.message), statut d'instance (bpm.statusBox)."
+      },
+      "contextHints": ["L'information reste vraie tant que la page est affichée — pas un événement ponctuel."],
+      "status": "proposed"
+    },
+    "tabs": {
+      "semanticRole": "conteneur",
+      "frame": "section",
+      "agentGuidance": {
+        "use": "Vues alternatives de même rang sur un même sujet : une seule visible à la fois.",
+        "pairWith": ["bpm.card", "bpm.table", "bpm.pageLayout"],
+        "avoid": "Étapes ordonnées d'un processus (bpm.stepper, bpm.wizardForm) ou sections à lecture continue (bpm.accordion)."
+      },
+      "contextHints": ["2 à 6 onglets ; les contenus sont indépendants et de même niveau hiérarchique."],
+      "status": "proposed"
+    },
+    "expander": {
+      "semanticRole": "conteneur",
+      "frame": "section",
+      "agentGuidance": {
+        "use": "Détail secondaire masquable : l'utilisateur choisit d'approfondir.",
+        "pairWith": ["bpm.text", "bpm.jsonViewer", "bpm.table"],
+        "avoid": "Contenu essentiel à la décision (le laisser visible) ou séries de sections (bpm.accordion)."
+      },
+      "contextHints": ["Le titre doit annoncer ce que l'ouverture révèle."],
+      "status": "proposed"
+    },
+    "accordion": {
+      "semanticRole": "conteneur",
+      "frame": "section",
+      "agentGuidance": {
+        "use": "Série de sections repliables homogènes (FAQ, groupes de paramètres) dont une seule importe à la fois.",
+        "pairWith": ["bpm.text", "bpm.labelValue"],
+        "avoid": "Vues alternatives de même rang (bpm.tabs) ou un seul bloc repliable (bpm.expander)."
+      },
+      "contextHints": ["Sections de même nature ; titres scannables."],
+      "status": "proposed"
+    },
+    "card": {
+      "semanticRole": "conteneur",
+      "frame": "section",
+      "agentGuidance": {
+        "use": "Unité de contenu autonome : regrouper ce qui se lit ensemble (un indicateur et sa légende, une entité et ses actions).",
+        "pairWith": ["bpm.grid", "bpm.metric", "bpm.button"],
+        "avoid": "Simple espacement (bpm.container) ou mise en avant éditoriale structurée (bpm.highlightBox)."
+      },
+      "contextHints": ["Le contenu de la carte doit avoir un sujet unique."],
+      "status": "proposed"
+    },
+    "highlightbox": {
+      "semanticRole": "conteneur",
+      "frame": "section",
+      "agentGuidance": {
+        "use": "Mise en avant éditoriale structurée et numérotée (titre, moment, RTB, cible) — argumentaire ou storytelling.",
+        "pairWith": ["bpm.title2", "bpm.text"],
+        "avoid": "Contenu applicatif courant (bpm.card) ou alerte (bpm.panel)."
+      },
+      "contextHints": ["Contenu rédactionnel séquencé : la numérotation porte l'ordre de lecture."],
+      "status": "proposed"
+    },
+    "divider": {
+      "semanticRole": "affichage",
+      "frame": "section",
+      "agentGuidance": {
+        "use": "Marquer une rupture thématique entre deux blocs de même niveau.",
+        "pairWith": ["bpm.title2", "bpm.container"],
+        "avoid": "Compenser un manque de hiérarchie (préférer bpm.title2/title3) ou espacer (marges)."
+      },
+      "contextHints": ["La rupture doit refléter un changement de sujet, pas un choix décoratif."],
+      "status": "proposed"
+    },
+    "grid": {
+      "semanticRole": "conteneur",
+      "frame": "section",
+      "agentGuidance": {
+        "use": "Disposer des éléments homogènes en grille responsive (cartes, métriques, vignettes).",
+        "pairWith": ["bpm.card", "bpm.metric", "bpm.image"],
+        "avoid": "Colonnes de contenus hétérogènes (bpm.column) ou données tabulaires (bpm.table)."
+      },
+      "contextHints": ["Éléments de même nature et de poids visuel comparable."],
+      "status": "proposed"
+    },
+    "column": {
+      "semanticRole": "conteneur",
+      "frame": "section",
+      "agentGuidance": {
+        "use": "Diviser l'écran en colonnes de contenus hétérogènes (formulaire + aide, liste + résumé).",
+        "pairWith": ["bpm.card", "bpm.container"],
+        "avoid": "Grille d'éléments homogènes (bpm.grid) ou vue liste/détail liée (bpm.masterDetail)."
+      },
+      "contextHints": ["Les colonnes coexistent sans dépendance de sélection entre elles."],
+      "status": "proposed"
+    },
+    "emptystate": {
+      "semanticRole": "feedback",
+      "frame": "entity",
+      "agentGuidance": {
+        "use": "Collection vide : expliquer l'absence de données et proposer l'action qui la comble (créer, importer).",
+        "pairWith": ["bpm.button", "bpm.table", "bpm.crud"],
+        "avoid": "Chargement en cours (bpm.skeleton) ou absence ponctuelle minime (bpm.empty)."
+      },
+      "contextHints": ["État légitime d'une Entity sans instances — pas une erreur."],
+      "status": "proposed"
+    },
+    "container": {
+      "semanticRole": "conteneur",
+      "frame": "section",
+      "agentGuidance": {
+        "use": "Regrouper un bloc de contenu, avec titre optionnel, sans la matérialité d'une carte.",
+        "pairWith": ["bpm.title3", "bpm.text", "bpm.table"],
+        "avoid": "Unité autonome détachée du fond (bpm.card) ou zone défilante (bpm.scrollContainer)."
+      },
+      "contextHints": ["Regroupement logique léger ; le titre annonce le contenu."],
+      "status": "proposed"
+    },
+    "empty": {
+      "semanticRole": "feedback",
+      "frame": "entity",
+      "agentGuidance": {
+        "use": "Absence de données minimale (icône + message) dans un espace restreint : cellule, panneau, widget.",
+        "pairWith": ["bpm.card", "bpm.drawer"],
+        "avoid": "État vide pleine page avec action de création (bpm.emptyState)."
+      },
+      "contextHints": ["Espace contraint ; message d'une ligne."],
+      "status": "proposed"
+    },
+    "popover": {
+      "semanticRole": "conteneur",
+      "frame": "section",
+      "agentGuidance": {
+        "use": "Contenu contextuel ancré à un déclencheur (détail, mini-formulaire, menu) sans quitter la page.",
+        "pairWith": ["bpm.button", "bpm.labelValue"],
+        "avoid": "Aide d'un mot (bpm.tooltip), tâche bloquante (bpm.modal), panneau de travail (bpm.drawer)."
+      },
+      "contextHints": ["Contenu court, lié à l'élément déclencheur."],
+      "status": "proposed"
+    },
+    "button": {
+      "semanticRole": "action",
+      "frame": "event",
+      "agentGuidance": {
+        "use": "Déclencher un événement de domaine ou une transition : créer, valider, lancer. La variante reflète la priorité de l'action.",
+        "pairWith": ["bpm.confirmModal", "bpm.modal", "bpm.toast"],
+        "avoid": "Navigation entre pages (lien/bpm.topNav) ou bascule d'état persistante (bpm.checkbox, toggle)."
+      },
+      "contextHints": [
+        "L'action correspond à un DomainEvent.trigger ou à une Transition de workflow.",
+        "Action destructive → garde via bpm.confirmModal (BusinessRule guard)."
+      ],
+      "status": "proposed"
+    },
+    "theme": {
+      "semanticRole": "action",
+      "frame": "meta",
+      "agentGuidance": {
+        "use": "Basculer la préférence d'affichage clair/sombre de l'application.",
+        "pairWith": ["bpm.topNav", "bpm.pageLayout"],
+        "avoid": "Tout réglage métier — la bascule ne touche que la présentation (AppSpecMeta.theme)."
+      },
+      "contextHints": ["Préférence utilisateur persistée côté client."],
+      "status": "proposed"
+    },
+    "selectbox": {
+      "semanticRole": "saisie",
+      "frame": "entity",
+      "agentGuidance": {
+        "use": "Choisir UNE valeur parmi une énumération fermée (Field enum) de taille moyenne (5-15 options).",
+        "pairWith": ["bpm.filterPanel", "bpm.wizardForm", "bpm.input"],
+        "avoid": "≤5 options visibles d'un coup (bpm.radioGroup) ou recherche dans une longue liste/relation (bpm.autocomplete)."
+      },
+      "contextHints": ["Options = EnumValues du Field ; libellés courts."],
+      "status": "proposed"
+    },
+    "numberinput": {
+      "semanticRole": "saisie",
+      "frame": "entity",
+      "agentGuidance": {
+        "use": "Saisir une valeur numérique précise (Field number), avec min/max/step traduisant les contraintes du champ.",
+        "pairWith": ["bpm.wizardForm", "bpm.labelValue"],
+        "avoid": "Valeur approximative dans une plage bornée (bpm.slider) ou texte libre (bpm.input)."
+      },
+      "contextHints": ["min/max/step reflètent Field.min/Field.max et l'unité du champ."],
+      "status": "proposed"
+    },
+    "input": {
+      "semanticRole": "saisie",
+      "frame": "entity",
+      "agentGuidance": {
+        "use": "Saisir un champ texte court d'une entité (nom, référence, email).",
+        "pairWith": ["bpm.wizardForm", "bpm.button", "bpm.autocomplete"],
+        "avoid": "Texte long multiligne (bpm.textarea), nombre (bpm.numberInput), recherche d'entité liée (bpm.autocomplete)."
+      },
+      "contextHints": ["Field string requis/optionnel ; valider côté formulaire avant l'événement de sauvegarde."],
+      "status": "proposed"
+    },
+    "textarea": {
+      "semanticRole": "saisie",
+      "frame": "entity",
+      "agentGuidance": {
+        "use": "Saisir un texte long multiligne : description, commentaire, note.",
+        "pairWith": ["bpm.wizardForm", "bpm.markdown"],
+        "avoid": "Champ court (bpm.input), code (bpm.codeEditor), prompt IA (bpm.promptInput)."
+      },
+      "contextHints": ["Field string long ; prévoir l'affichage en lecture via bpm.text ou bpm.markdown."],
+      "status": "proposed"
+    },
+    "checkbox": {
+      "semanticRole": "saisie",
+      "frame": "entity",
+      "agentGuidance": {
+        "use": "Saisir un booléen (Field boolean) : consentement, option, inclusion dans une sélection multiple.",
+        "pairWith": ["bpm.wizardForm", "bpm.filterPanel"],
+        "avoid": "Choix exclusif entre valeurs (bpm.radioGroup) ou action immédiate (bpm.button)."
+      },
+      "contextHints": ["L'intitulé doit énoncer ce que coche « vrai »."],
+      "status": "proposed"
+    },
+    "radiogroup": {
+      "semanticRole": "saisie",
+      "frame": "entity",
+      "agentGuidance": {
+        "use": "Choix exclusif parmi ≤5 options toutes visibles : l'utilisateur compare avant de choisir.",
+        "pairWith": ["bpm.wizardForm", "bpm.card"],
+        "avoid": "Plus de 5 options (bpm.selectbox) ou choix multiples (bpm.checkbox)."
+      },
+      "contextHints": ["Options = EnumValues ; l'ordre porte du sens (du plus courant au plus rare)."],
+      "status": "proposed"
+    },
+    "slider": {
+      "semanticRole": "saisie",
+      "frame": "entity",
+      "agentGuidance": {
+        "use": "Valeur approximative dans une plage bornée où la position relative compte plus que le chiffre exact.",
+        "pairWith": ["bpm.labelValue", "bpm.numberInput"],
+        "avoid": "Valeur précise à saisir (bpm.numberInput) ou plage non bornée."
+      },
+      "contextHints": ["min/max signifiants (Field.min/max) ; afficher la valeur courante."],
+      "status": "proposed"
+    },
+    "dateinput": {
+      "semanticRole": "saisie",
+      "frame": "entity",
+      "agentGuidance": {
+        "use": "Saisir une date ponctuelle (Field date/datetime) : échéance, date d'événement.",
+        "pairWith": ["bpm.wizardForm", "bpm.timeInput"],
+        "avoid": "Période ou intervalle (bpm.dateRangePicker), heure seule (bpm.timeInput)."
+      },
+      "contextHints": ["Format ISO en donnée, affichage localisé (AppSpecMeta.locale)."],
+      "status": "proposed"
+    },
+    "daterangepicker": {
+      "semanticRole": "saisie",
+      "frame": "entity",
+      "agentGuidance": {
+        "use": "Saisir une période (début/fin) : filtre temporel d'une série, plage de validité.",
+        "pairWith": ["bpm.lineChart", "bpm.filterPanel", "bpm.dataExplorer"],
+        "avoid": "Date unique (bpm.dateInput)."
+      },
+      "contextHints": [
+        "Sert typiquement de cadre temporel aux indicateurs de type série (période-sur-période).",
+        "Début ≤ fin ; bornes incluses à expliciter."
+      ],
+      "status": "proposed"
+    },
+    "timeinput": {
+      "semanticRole": "saisie",
+      "frame": "entity",
+      "agentGuidance": {
+        "use": "Saisir une heure seule (créneau, horaire récurrent).",
+        "pairWith": ["bpm.dateInput", "bpm.wizardForm"],
+        "avoid": "Date complète (bpm.dateInput) ou durée libre (bpm.numberInput + unité)."
+      },
+      "contextHints": ["S'associe à bpm.dateInput quand le champ est un datetime."],
+      "status": "proposed"
+    },
+    "rating": {
+      "semanticRole": "saisie",
+      "frame": "entity",
+      "agentGuidance": {
+        "use": "Saisir une appréciation bornée (1-5 étoiles) : satisfaction, qualité perçue.",
+        "pairWith": ["bpm.textarea", "bpm.card"],
+        "avoid": "Mesure objective (bpm.numberInput) ; en lecture seule, la moyenne des notes devient un indicateur (bpm.metric en taux)."
+      },
+      "contextHints": ["Échelle courte et stable ; la moyenne agrégée relève d'un KPIDefinition (aggregation avg)."],
+      "status": "proposed"
+    },
+    "fileuploader": {
+      "semanticRole": "saisie",
+      "frame": "entity",
+      "agentGuidance": {
+        "use": "Joindre un ou plusieurs fichiers à une entité (pièce jointe, justificatif, import).",
+        "pairWith": ["bpm.filePreview", "bpm.wizardForm"],
+        "avoid": "Saisie de texte structuré (bpm.jsonEditor) ; prévisualisation (bpm.filePreview)."
+      },
+      "contextHints": ["Types et tailles acceptés explicites ; l'upload déclenche souvent un DomainEvent."],
+      "status": "proposed"
+    },
+    "colorpicker": {
+      "semanticRole": "saisie",
+      "frame": "meta",
+      "agentGuidance": {
+        "use": "Choisir une couleur : branding, catégorisation visuelle d'une entité (étiquette, calendrier).",
+        "pairWith": ["bpm.chip", "bpm.badge"],
+        "avoid": "Choix dans une palette fermée imposée (bpm.selectbox d'EnumValues colorées)."
+      },
+      "contextHints": ["Valeur hex ; si la couleur encode un état métier, préférer les couleurs sémantiques d'Ω (EnumValue.color)."],
+      "status": "proposed"
+    },
+    "chip": {
+      "semanticRole": "affichage",
+      "frame": "entity",
+      "agentGuidance": {
+        "use": "Pastille interactive : tag, filtre actif révocable, sélection multiple visible.",
+        "pairWith": ["bpm.filterPanel", "bpm.autocomplete", "bpm.input"],
+        "avoid": "Statut de workflow non interactif (bpm.badge)."
+      },
+      "contextHints": ["Représente une valeur choisie/retirable, pas un état du système."],
+      "status": "proposed"
+    },
+    "message": {
+      "semanticRole": "feedback",
+      "frame": "event",
+      "agentGuidance": {
+        "use": "Réaction inline à une action ou un état : bandeau info/success/warning/error dans le flux de la page.",
+        "pairWith": ["bpm.button", "bpm.wizardForm"],
+        "avoid": "Notification éphémère hors flux (bpm.toast) ou encart durable (bpm.panel)."
+      },
+      "contextHints": ["Lié à un événement récent ; disparaît quand la cause est résolue."],
+      "status": "proposed"
+    },
+    "spinner": {
+      "semanticRole": "feedback",
+      "frame": "section",
+      "agentGuidance": {
+        "use": "Attente courte et indéterminée d'une opération locale.",
+        "pairWith": ["bpm.button", "bpm.card"],
+        "avoid": "Contenu à forme prévisible (bpm.skeleton) ou progression mesurable (bpm.progress)."
+      },
+      "contextHints": ["Si l'attente dépasse quelques secondes, préférer skeleton ou message d'état."],
+      "status": "proposed"
+    },
+    "loadingbar": {
+      "semanticRole": "feedback",
+      "frame": "section",
+      "agentGuidance": {
+        "use": "Chargement global de page ou de zone, avec variantes visuelles (sweep, blocks, iso…).",
+        "pairWith": ["bpm.pageLayout", "bpm.skeleton"],
+        "avoid": "Progression mesurable vers une borne (bpm.progress) ou attente locale (bpm.spinner)."
+      },
+      "contextHints": ["Indéterminé : ne pas l'utiliser pour suggérer un pourcentage réel."],
+      "status": "proposed"
+    },
+    "tooltip": {
+      "semanticRole": "feedback",
+      "frame": "section",
+      "agentGuidance": {
+        "use": "Aide contextuelle d'un mot ou d'une icône au survol : définition, unité, raccourci.",
+        "pairWith": ["bpm.button", "bpm.metric", "bpm.badge"],
+        "avoid": "Contenu indispensable (le rendre visible) ou contenu riche (bpm.popover)."
+      },
+      "contextHints": ["Une phrase maximum ; inaccessible au tactile — jamais d'information critique."],
+      "status": "proposed"
+    },
+    "statusbox": {
+      "semanticRole": "indicateur",
+      "frame": "workflow",
+      "indicator": {
+        "indicatorType": ["statut"],
+        "directionality": "neutre",
+        "temporality": "instantane"
+      },
+      "agentGuidance": {
+        "use": "Statut détaillé d'un objet ou d'un système : l'état (success/warning/error/info) accompagné de son explication.",
+        "pairWith": ["bpm.card", "bpm.labelValue", "bpm.timeline"],
+        "avoid": "Statut compact en liste (bpm.badge) ou réaction à une action (bpm.message)."
+      },
+      "indicatorRelations": [
+        { "type": "contraste-avec", "target": "bpm.badge", "note": "bloc expliqué vs étiquette compacte du même WorkflowState" }
+      ],
+      "contextHints": ["État courant + cause/conséquence ; la couleur suit WorkflowState.color."],
+      "status": "proposed"
+    },
+    "breadcrumb": {
+      "semanticRole": "navigation",
+      "frame": "section",
+      "agentGuidance": {
+        "use": "Situer l'écran dans la hiérarchie (liste → détail → sous-détail) et permettre de remonter.",
+        "pairWith": ["bpm.pageLayout", "bpm.topNav"],
+        "avoid": "Navigation horizontale entre sections de même niveau (bpm.topNav, bpm.tabs)."
+      },
+      "contextHints": ["Reflète la profondeur réelle des Sections Ω ; le dernier élément est la page courante."],
+      "status": "proposed"
+    },
+    "stepper": {
+      "semanticRole": "navigation",
+      "frame": "workflow",
+      "agentGuidance": {
+        "use": "Situer l'utilisateur dans un parcours linéaire à étapes (assistant, onboarding) et matérialiser l'étape courante.",
+        "pairWith": ["bpm.wizardForm", "bpm.button"],
+        "avoid": "Suivi du statut métier réel d'une instance (bpm.statusTracker) ou vues non ordonnées (bpm.tabs)."
+      },
+      "contextHints": ["Étapes connues d'avance et ordonnées ; l'étape courante reflète la position dans le parcours, pas un état persisté."],
+      "status": "proposed"
+    },
+    "audio": {
+      "semanticRole": "affichage",
+      "frame": "entity",
+      "agentGuidance": {
+        "use": "Restituer un contenu audio attaché à une entité (enregistrement, message vocal).",
+        "pairWith": ["bpm.card", "bpm.filePreview"],
+        "avoid": "Fichier non audio (bpm.filePreview) ou vidéo (bpm.video)."
+      },
+      "contextHints": ["URL de média accessible ; prévoir le cas média indisponible."],
+      "status": "proposed"
+    },
+    "video": {
+      "semanticRole": "affichage",
+      "frame": "entity",
+      "agentGuidance": {
+        "use": "Restituer un contenu vidéo (démonstration, captation liée à une entité).",
+        "pairWith": ["bpm.card", "bpm.filePreview"],
+        "avoid": "Simple image (bpm.image) ou audio seul (bpm.audio)."
+      },
+      "contextHints": ["URL de média accessible ; poids/chargement à considérer."],
+      "status": "proposed"
+    },
+    "html": {
+      "semanticRole": "affichage",
+      "frame": "section",
+      "agentGuidance": {
+        "use": "Intégrer un contenu HTML externe isolé (iframe) : widget tiers, page embarquée.",
+        "pairWith": ["bpm.card", "bpm.container"],
+        "avoid": "Contenu rédactionnel (bpm.markdown) ou code à montrer (bpm.codeBlock) ; jamais de HTML non fiable sans sandbox."
+      },
+      "contextHints": ["Source de confiance uniquement ; le contenu échappe au design system."],
+      "status": "proposed"
+    },
+    "linechart": {
+      "semanticRole": "indicateur",
+      "frame": "kpi",
+      "indicator": {
+        "indicatorType": ["tendance"],
+        "directionality": "contextuel",
+        "temporality": "serie"
+      },
+      "agentGuidance": {
+        "use": "Évolution continue d'une mesure dans le temps : tendance, saisonnalité, rupture.",
+        "pairWith": ["bpm.metric", "bpm.dateRangePicker", "bpm.caption"],
+        "avoid": "Comparaison de catégories sans ordre (bpm.barChart) ou corrélation entre deux mesures (bpm.scatterChart). Règle apps générées : bpm.plotlyChart."
+      },
+      "indicatorRelations": [
+        { "type": "contraste-avec", "target": "bpm.barChart", "note": "évolution continue vs comparaison discrète" },
+        { "type": "contraste-avec", "target": "bpm.areaChart", "note": "niveau de la mesure vs volume/cumul" }
+      ],
+      "contextHints": [
+        "Série [{x, y}] avec x ordonné (temps) ; plusieurs séries comparables sur la même unité.",
+        "La période affichée cadre le jugement — l'expliciter (bpm.caption ou bpm.dateRangePicker)."
+      ],
+      "status": "proposed"
+    },
+    "barchart": {
+      "semanticRole": "indicateur",
+      "frame": "kpi",
+      "indicator": {
+        "indicatorType": ["distribution", "compte"],
+        "directionality": "contextuel",
+        "temporality": "instantane"
+      },
+      "agentGuidance": {
+        "use": "Comparer une mesure entre catégories discrètes : répartition, classement, volumes par segment.",
+        "pairWith": ["bpm.metric", "bpm.filterPanel", "bpm.caption"],
+        "avoid": "Évolution temporelle continue (bpm.lineChart). Règle apps générées : bpm.plotlyChart."
+      },
+      "indicatorRelations": [
+        { "type": "contraste-avec", "target": "bpm.lineChart", "note": "comparaison discrète vs évolution continue" }
+      ],
+      "contextHints": ["Catégories en nombre lisible (≤12) ; même unité pour toutes les barres."],
+      "status": "proposed"
+    },
+    "areachart": {
+      "semanticRole": "indicateur",
+      "frame": "kpi",
+      "indicator": {
+        "indicatorType": ["tendance"],
+        "directionality": "contextuel",
+        "temporality": "cumule"
+      },
+      "agentGuidance": {
+        "use": "Évolution où le volume sous la courbe a du sens : cumul, empilement de contributions.",
+        "pairWith": ["bpm.metric", "bpm.dateRangePicker"],
+        "avoid": "Comparaison fine de niveaux entre séries (bpm.lineChart, les aires se masquent). Règle apps générées : bpm.plotlyChart."
+      },
+      "indicatorRelations": [
+        { "type": "derive-de", "target": "bpm.lineChart", "note": "même série, lecture volume/cumul plutôt que niveau" }
+      ],
+      "contextHints": ["Série(s) positives où l'aire est interprétable ; empilement = somme signifiante."],
+      "status": "proposed"
+    },
+    "scatterchart": {
+      "semanticRole": "indicateur",
+      "frame": "kpi",
+      "indicator": {
+        "indicatorType": ["distribution"],
+        "directionality": "neutre",
+        "temporality": "instantane"
+      },
+      "agentGuidance": {
+        "use": "Relation entre deux mesures : corrélation, dispersion, valeurs atypiques.",
+        "pairWith": ["bpm.metric", "bpm.caption"],
+        "avoid": "Évolution d'une seule mesure (bpm.lineChart). Règle apps générées : bpm.plotlyChart."
+      },
+      "indicatorRelations": [
+        { "type": "contraste-avec", "target": "bpm.lineChart", "note": "corrélation entre deux mesures vs évolution d'une mesure" }
+      ],
+      "contextHints": ["Deux mesures continues par point ; assez de points pour qu'un motif émerge."],
+      "status": "proposed"
+    },
+    "modal": {
+      "semanticRole": "conteneur",
+      "frame": "section",
+      "agentGuidance": {
+        "use": "Tâche focale qui interrompt le flux : création/édition courte, décision requise avant de continuer.",
+        "pairWith": ["bpm.input", "bpm.button", "bpm.wizardForm"],
+        "avoid": "Confirmation destructive (bpm.confirmModal), consultation parallèle (bpm.drawer), contenu ancré (bpm.popover)."
+      },
+      "contextHints": ["Une tâche unique et courte ; toujours rendu conditionnellement ({isOpen && bpm.modal(...)})."],
+      "status": "proposed"
+    },
+    "codeblock": {
+      "semanticRole": "affichage",
+      "frame": "section",
+      "agentGuidance": {
+        "use": "Montrer du code ou une commande à copier : extrait figé, exemple d'intégration.",
+        "pairWith": ["bpm.markdown", "bpm.tabs"],
+        "avoid": "Code à modifier (bpm.codeEditor) ou données JSON à inspecter (bpm.jsonViewer)."
+      },
+      "contextHints": ["Contenu exact et copiable ; préciser le langage si utile."],
+      "status": "proposed"
+    },
+    "topnav": {
+      "semanticRole": "navigation",
+      "frame": "section",
+      "agentGuidance": {
+        "use": "Navigation principale horizontale entre les sections de premier niveau de l'application.",
+        "pairWith": ["bpm.pageLayout", "bpm.theme", "bpm.avatar"],
+        "avoid": "Hiérarchie profonde (bpm.breadcrumb) ou navigation lourde multi-niveaux (sidebar de bpm.pageLayout)."
+      },
+      "contextHints": ["Entrées = Sections Ω de premier niveau ; l'entrée active est signalée."],
+      "status": "proposed"
+    },
+    "fab": {
+      "semanticRole": "action",
+      "frame": "event",
+      "agentGuidance": {
+        "use": "Action primaire unique et récurrente d'un écran, accessible en permanence (créer, ajouter).",
+        "pairWith": ["bpm.modal", "bpm.crud", "bpm.toast"],
+        "avoid": "Actions secondaires ou multiples (bpm.button) ; écrans sans action dominante."
+      },
+      "contextHints": ["Une seule FAB par écran ; l'icône doit suffire à dire l'action."],
+      "status": "proposed"
+    },
+    "treeview": {
+      "semanticRole": "affichage",
+      "frame": "entity",
+      "agentGuidance": {
+        "use": "Hiérarchie de nœuds explorables (arborescence de dossiers, taxonomie, relations parent-enfant).",
+        "pairWith": ["bpm.masterDetail", "bpm.drawer", "bpm.labelValue"],
+        "avoid": "Hiérarchie d'acteurs (bpm.orgChart) ou liste plate (bpm.table)."
+      },
+      "contextHints": ["Relation parent-enfant réelle entre entités (Field relation) ; profondeur raisonnable."],
+      "status": "proposed"
+    },
+    "timeline": {
+      "semanticRole": "affichage",
+      "frame": "event",
+      "agentGuidance": {
+        "use": "Historique ordonné d'événements datés : audit d'une instance, jalons d'un dossier.",
+        "pairWith": ["bpm.badge", "bpm.card", "bpm.statusTracker"],
+        "avoid": "Flux social avec acteurs (bpm.activityFeed) ou suivi d'étapes normées (bpm.statusTracker)."
+      },
+      "contextHints": ["Événements ISO datés (DomainEvent), groupables par date ; ordre chronologique signifiant."],
+      "status": "needs-curation",
+      "curationQuestion": "timeline (et activityFeed) : simple affichage d'événements ou indicateur de charge/fréquence (compte d'événements par période) ? Trancher si un bloc indicateur doit être porté et avec quelle temporalité."
+    },
+    "flowdiagram": {
+      "semanticRole": "affichage",
+      "frame": "workflow",
+      "agentGuidance": {
+        "use": "Visualiser un processus : états et transitions (miroir du Workflow Ω), avec état courant éventuel.",
+        "pairWith": ["bpm.statusTracker", "bpm.badge", "bpm.card"],
+        "avoid": "Progression personnelle dans un parcours (bpm.stepper) ou hiérarchie (bpm.orgChart, bpm.treeview)."
+      },
+      "contextHints": ["Nœuds = WorkflowState, arêtes = Transition ; c'est la définition du processus, pas une instance."],
+      "status": "proposed"
+    },
+    "statustracker": {
+      "semanticRole": "indicateur",
+      "frame": "workflow",
+      "indicator": {
+        "indicatorType": ["progression", "statut"],
+        "directionality": "borne-cible",
+        "temporality": "instantane"
+      },
+      "agentGuidance": {
+        "use": "Position réelle d'une instance dans un processus à étapes normées (commande, dossier) : completed/current/pending/error.",
+        "pairWith": ["bpm.timeline", "bpm.badge", "bpm.card"],
+        "avoid": "Parcours de saisie piloté par l'utilisateur (bpm.stepper) ou pourcentage continu (bpm.progress)."
+      },
+      "indicatorRelations": [
+        { "type": "derive-de", "target": "bpm.badge", "note": "séquence d'états dont chaque pas est un statut" },
+        { "type": "contraste-avec", "target": "bpm.progress", "note": "étapes discrètes d'un workflow vs avancement continu" }
+      ],
+      "contextHints": ["Étapes = WorkflowStates ordonnés ; l'étape courante vient du stateField de l'instance."],
+      "status": "proposed"
+    },
+    "activityfeed": {
+      "semanticRole": "affichage",
+      "frame": "event",
+      "agentGuidance": {
+        "use": "Flux d'activité récent avec acteurs (avatars) et dates relatives : qui a fait quoi, quand.",
+        "pairWith": ["bpm.avatar", "bpm.card", "bpm.notificationCenter"],
+        "avoid": "Historique d'audit d'une instance précise (bpm.timeline) ou notifications actionnables (bpm.notificationCenter)."
+      },
+      "contextHints": ["Événements multi-acteurs triés du plus récent au plus ancien ; les dates relatives supposent un flux vivant."],
+      "status": "needs-curation",
+      "curationQuestion": "activityFeed (et timeline) : simple affichage d'événements ou indicateur d'activité (fréquence/volume par période) ? Trancher si un bloc indicateur doit être porté."
+    },
+    "orgchart": {
+      "semanticRole": "affichage",
+      "frame": "entity",
+      "agentGuidance": {
+        "use": "Hiérarchie d'acteurs ou d'unités (organigramme) repliable.",
+        "pairWith": ["bpm.avatar", "bpm.drawer"],
+        "avoid": "Arborescence de données génériques (bpm.treeview) ou processus (bpm.flowDiagram)."
+      },
+      "contextHints": ["Relation hiérarchique entre acteurs ; profondeur et largeur lisibles."],
+      "status": "needs-curation",
+      "curationQuestion": "Ω n'a pas de frame « acteur » : orgChart (et avatar) sont rattachés à entity par défaut. Faut-il introduire un frame acteur/identité dans le seed Ω, ou les rattacher à permission (Role) ?"
+    },
+    "masterdetail": {
+      "semanticRole": "conteneur",
+      "frame": "entity",
+      "agentGuidance": {
+        "use": "Parcourir une collection et consulter le détail de la sélection sans changer de page (liste + détail liés).",
+        "pairWith": ["bpm.table", "bpm.labelValue", "bpm.badge"],
+        "avoid": "Colonnes indépendantes (bpm.column) ou gestion CRUD complète (bpm.crud)."
+      },
+      "contextHints": ["La sélection dans la liste pilote le détail ; correspond au couple LayoutType crud-table + detail."],
+      "status": "proposed"
+    },
+    "wizardform": {
+      "semanticRole": "saisie",
+      "frame": "entity",
+      "agentGuidance": {
+        "use": "Création/édition guidée en plusieurs étapes validées : formulaire long découpé en séquence logique.",
+        "pairWith": ["bpm.stepper", "bpm.input", "bpm.selectbox", "bpm.confirmModal"],
+        "avoid": "Formulaire court d'un seul tenant (bpm.modal + champs) ou suivi d'un processus métier (bpm.statusTracker)."
+      },
+      "contextHints": ["Étapes = groupes de Fields cohérents ; validation par étape avant l'événement final de sauvegarde."],
+      "status": "proposed"
+    },
+    "commandpalette": {
+      "semanticRole": "navigation",
+      "frame": "section",
+      "agentGuidance": {
+        "use": "Accès clavier universel (Cmd+K) aux commandes et destinations : recherche floue sur tout ce que l'app sait faire.",
+        "pairWith": ["bpm.topNav", "bpm.pageLayout"],
+        "avoid": "Navigation primaire visible (bpm.topNav) — la palette complète, elle ne remplace pas."
+      },
+      "contextHints": ["Index des Sections et DomainEvents déclenchables ; public à l'aise avec le clavier."],
+      "status": "proposed"
+    },
+    "image": {
+      "semanticRole": "affichage",
+      "frame": "entity",
+      "agentGuidance": {
+        "use": "Afficher une image avec alt et cadrage maîtrisés : photo d'entité, illustration.",
+        "pairWith": ["bpm.card", "bpm.grid", "bpm.caption"],
+        "avoid": "Identité d'un acteur (bpm.avatar) ou aperçu de fichier quelconque (bpm.filePreview)."
+      },
+      "contextHints": ["alt obligatoire pour le sens ; dimensions/object-fit selon la grille."],
+      "status": "proposed"
+    },
+    "pdfviewer": {
+      "semanticRole": "affichage",
+      "frame": "entity",
+      "agentGuidance": {
+        "use": "Consulter un document PDF attaché (contrat, facture, rapport) sans quitter l'application.",
+        "pairWith": ["bpm.drawer", "bpm.fileUploader", "bpm.labelValue"],
+        "avoid": "Aperçu multi-format (bpm.filePreview) ou contenu éditable."
+      },
+      "contextHints": ["URL de PDF accessible ; prévoir le téléchargement en secours."],
+      "status": "proposed"
+    },
+    "autocomplete": {
+      "semanticRole": "saisie",
+      "frame": "entity",
+      "agentGuidance": {
+        "use": "Trouver une valeur par la frappe dans un grand référentiel : champ relation (Field relation) ou longue énumération.",
+        "pairWith": ["bpm.chip", "bpm.wizardForm", "bpm.input"],
+        "avoid": "Petites listes fermées (bpm.selectbox, bpm.radioGroup) ou texte libre sans référentiel (bpm.input)."
+      },
+      "contextHints": ["Suggestions issues d'une Entity cible ; la valeur retenue est une référence, pas un texte."],
+      "status": "proposed"
+    },
+    "plotlychart": {
+      "semanticRole": "indicateur",
+      "frame": "kpi",
+      "indicator": {
+        "indicatorType": ["tendance", "distribution", "ratio"],
+        "directionality": "contextuel",
+        "temporality": "contextuel"
+      },
+      "agentGuidance": {
+        "use": "Graphique générique des apps générées (règle llms.txt : seul graphique autorisé) : porte le type de mesure que sa trace exprime (ligne=tendance, barres=distribution, jauge=progression…).",
+        "pairWith": ["bpm.metric", "bpm.dateRangePicker", "bpm.dataExplorer"],
+        "avoid": "Visualisations où un composant dédié dit mieux le sens dans CE repo (bpm.lineChart & co servent la vitrine) ; jamais pour une valeur unique (bpm.metric)."
+      },
+      "indicatorRelations": [
+        { "type": "contraste-avec", "target": "bpm.metric", "note": "vue détaillée d'une mesure vs scalaire de synthèse" }
+      ],
+      "contextHints": [
+        "Le sens dépend de la trace Plotly choisie — expliciter type/direction dans la légende.",
+        "Données conformes au schéma de la trace (séries, catégories, valeurs)."
+      ],
+      "status": "needs-curation",
+      "curationQuestion": "plotlyChart est LE graphique des apps générées mais son sens dépend de la trace : faut-il décliner la sémantique par usage (sous-types tendance/distribution/jauge) plutôt qu'un indicatorType multiple avec direction/temporalité contextuelles ?"
+    },
+    "map": {
+      "semanticRole": "affichage",
+      "frame": "entity",
+      "agentGuidance": {
+        "use": "Situer géographiquement des entités (adresses, positions) sur un fond de carte.",
+        "pairWith": ["bpm.labelValue", "bpm.card", "bpm.gps"],
+        "avoid": "Sélection/saisie d'une position (bpm.gps) ou données non géographiques."
+      },
+      "contextHints": ["Champ géo (lat/lng ou adresse) porté par l'Entity ; iframe OpenStreetMap, lecture seule."],
+      "status": "proposed"
+    },
+    "altairchart": {
+      "semanticRole": "indicateur",
+      "frame": "kpi",
+      "indicator": {
+        "indicatorType": ["tendance", "distribution"],
+        "directionality": "contextuel",
+        "temporality": "contextuel"
+      },
+      "agentGuidance": {
+        "use": "Visualisation déclarative Vega-Lite : exploration de specs complexes (facettes, encodages multiples).",
+        "pairWith": ["bpm.dataExplorer", "bpm.metric"],
+        "avoid": "Graphiques standards des apps générées (bpm.plotlyChart, imposé par les règles)."
+      },
+      "contextHints": ["Spec Vega-Lite valide ; le sens (type, direction) est porté par l'encodage de la spec."],
+      "status": "proposed"
+    },
+    "barcode": {
+      "semanticRole": "affichage",
+      "frame": "connector",
+      "agentGuidance": {
+        "use": "Matérialiser l'identifiant d'une entité en code-barres scannable (EAN-13, Code 128) : étiquette, traçabilité logistique.",
+        "pairWith": ["bpm.qrCode", "bpm.labelValue", "bpm.invoiceTemplate"],
+        "avoid": "Lien ou contenu riche à encoder (bpm.qrCode) ou identifiant à lire par un humain (bpm.labelValue)."
+      },
+      "contextHints": ["Identifiant stable et normé de l'entité ; destiné à un scan physique."],
+      "status": "needs-curation",
+      "curationQuestion": "Identification & traçabilité (barcode/qrCode/nfcBadge) : Ω n'a pas de frame identification. Rattachement proposé à connector (pont physique↔numérique) — valider, ou rattacher à entity (identifiant), ou créer un frame dédié dans le seed Ω ?"
+    },
+    "qrcode": {
+      "semanticRole": "affichage",
+      "frame": "connector",
+      "agentGuidance": {
+        "use": "Encoder un lien ou un contenu (URL, vCard, texte) à destination d'un scan mobile : passerelle écran→téléphone.",
+        "pairWith": ["bpm.barcode", "bpm.card"],
+        "avoid": "Identifiant logistique normé (bpm.barcode) ou information à lire à l'œil."
+      },
+      "contextHints": ["Contenu encodé court et stable ; tester la scannabilité à la taille rendue."],
+      "status": "needs-curation",
+      "curationQuestion": "Identification & traçabilité (barcode/qrCode/nfcBadge) : Ω n'a pas de frame identification. Rattachement proposé à connector — valider, ou rattacher à entity, ou créer un frame dédié ?"
+    },
+    "nfcbadge": {
+      "semanticRole": "affichage",
+      "frame": "connector",
+      "agentGuidance": {
+        "use": "Représenter un badge/tag NFC et son état de lecture (Scannable…) : contrôle d'accès, pointage, inventaire.",
+        "pairWith": ["bpm.badge", "bpm.labelValue", "bpm.toast"],
+        "avoid": "Identification visuelle scannable par caméra (bpm.qrCode, bpm.barcode)."
+      },
+      "contextHints": ["Représente le support physique et son statut ; la lecture réelle dépend du matériel (Web NFC)."],
+      "status": "needs-curation",
+      "curationQuestion": "Identification & traçabilité (barcode/qrCode/nfcBadge) : Ω n'a pas de frame identification. Rattachement proposé à connector — valider, ou rattacher à entity, ou créer un frame dédié ?"
+    },
+    "drawer": {
+      "semanticRole": "conteneur",
+      "frame": "section",
+      "agentGuidance": {
+        "use": "Panneau latéral de travail : détail, formulaire ou filtres consultés en parallèle du contenu principal.",
+        "pairWith": ["bpm.labelValue", "bpm.filterPanel", "bpm.button"],
+        "avoid": "Décision bloquante (bpm.modal, bpm.confirmModal) ou contenu ancré ponctuel (bpm.popover)."
+      },
+      "contextHints": ["Le contexte principal reste visible ; contenu plus riche qu'un popover."],
+      "status": "proposed"
+    },
+    "pagination": {
+      "semanticRole": "navigation",
+      "frame": "entity",
+      "agentGuidance": {
+        "use": "Parcourir une collection paginée : situer la page courante et le volume total.",
+        "pairWith": ["bpm.table", "bpm.dataExplorer", "bpm.groupedList"],
+        "avoid": "Petites collections affichables en entier ou défilement continu (bpm.scrollContainer)."
+      },
+      "contextHints": ["Couplée à la source de données (page, taille, total) ; le total renseigne sur l'ampleur de la collection."],
+      "status": "proposed"
+    },
+    "filterpanel": {
+      "semanticRole": "saisie",
+      "frame": "section",
+      "agentGuidance": {
+        "use": "Restreindre une collection selon plusieurs critères typés (select, multiselect, daterange, text, toggle).",
+        "pairWith": ["bpm.table", "bpm.dataExplorer", "bpm.chip", "bpm.pagination"],
+        "avoid": "Critère unique (un bpm.selectbox suffit) ou recherche plein-texte seule (bpm.input)."
+      },
+      "contextHints": ["Critères = Section.filterFields (champs filtrables de l'Entity) ; l'état des filtres cadre la lecture des indicateurs voisins."],
+      "status": "proposed"
+    },
+    "confirmmodal": {
+      "semanticRole": "feedback",
+      "frame": "rule",
+      "agentGuidance": {
+        "use": "Garde avant action irréversible ou coûteuse : exiger une confirmation explicite (danger, warning, info).",
+        "pairWith": ["bpm.button", "bpm.toast", "bpm.crud"],
+        "avoid": "Actions réversibles banales (friction inutile) ou saisie complémentaire (bpm.modal)."
+      },
+      "contextHints": ["Matérialise une BusinessRule de type guard ; le message énonce la conséquence concrète."],
+      "status": "proposed"
+    },
+    "toast": {
+      "semanticRole": "feedback",
+      "frame": "event",
+      "agentGuidance": {
+        "use": "Confirmer brièvement l'issue d'une action (succès, erreur) sans interrompre le flux.",
+        "pairWith": ["bpm.button", "bpm.crud", "bpm.confirmModal"],
+        "avoid": "Information durable (bpm.panel), erreur bloquante (bpm.message inline), flux consultable (bpm.notificationCenter)."
+      },
+      "contextHints": ["Matérialise un EventEffect notify ; éphémère — l'information doit être retrouvable ailleurs si elle compte."],
+      "status": "proposed"
+    },
+    "pagelayout": {
+      "semanticRole": "conteneur",
+      "frame": "section",
+      "agentGuidance": {
+        "use": "Ossature d'écran applicatif : sidebar de navigation repliable, titre, zone de contenu.",
+        "pairWith": ["bpm.topNav", "bpm.breadcrumb", "bpm.container"],
+        "avoid": "Pages sans navigation latérale (bpm.topNav seul) ou sous-zones (bpm.container)."
+      },
+      "contextHints": ["La sidebar liste les Sections Ω ; un seul pageLayout par écran."],
+      "status": "proposed"
+    },
+    "scrollcontainer": {
+      "semanticRole": "conteneur",
+      "frame": "section",
+      "agentGuidance": {
+        "use": "Contenir un contenu long dans une hauteur bornée avec défilement interne (logs, listes denses).",
+        "pairWith": ["bpm.activityFeed", "bpm.codeBlock", "bpm.table"],
+        "avoid": "Pagination de collections (bpm.pagination) ou laisser défiler la page entière."
+      },
+      "contextHints": ["Hauteur max signifiante ; le défilement interne ne doit pas cacher d'information critique."],
+      "status": "proposed"
+    },
+    "labelvalue": {
+      "semanticRole": "affichage",
+      "frame": "entity",
+      "agentGuidance": {
+        "use": "Énoncer un fait : un champ d'entité et sa valeur (référence, date, montant) sans jugement porté.",
+        "pairWith": ["bpm.card", "bpm.masterDetail", "bpm.drawer"],
+        "avoid": "Mesure qui appelle un jugement — delta, cible, tendance (bpm.metric)."
+      },
+      "contextHints": ["Field + valeur formatée selon son type ; copyable pour les références."],
+      "status": "proposed"
+    },
+    "spinnerdot": {
+      "semanticRole": "feedback",
+      "frame": "section",
+      "agentGuidance": {
+        "use": "Attente discrète en points : chargement inline (bouton, frappe IA, cellule).",
+        "pairWith": ["bpm.chatInterface", "bpm.button"],
+        "avoid": "Attente de zone entière (bpm.spinner, bpm.skeleton)."
+      },
+      "contextHints": ["Très court terme et localisé ; en chat, signale la génération en cours."],
+      "status": "proposed"
+    },
+    "titlebpm": {
+      "semanticRole": "affichage",
+      "frame": "section",
+      "agentGuidance": {
+        "use": "Alias de bpm.title (niveaux 1 à 4) : hiérarchiser la page quand title est masqué par un import local.",
+        "pairWith": ["bpm.text", "bpm.divider"],
+        "avoid": "Usage par défaut — préférer bpm.title ou bpm.title1…title4."
+      },
+      "contextHints": ["Même sémantique que bpm.title."],
+      "status": "proposed"
+    },
+    "markdown": {
+      "semanticRole": "affichage",
+      "frame": "section",
+      "agentGuidance": {
+        "use": "Restituer un contenu riche rédigé (listes, liens, titres) de source maîtrisée : doc, note, réponse IA formatée.",
+        "pairWith": ["bpm.streamingText", "bpm.card", "bpm.codeBlock"],
+        "avoid": "Texte brut court (bpm.text) ou HTML arbitraire (bpm.html)."
+      },
+      "contextHints": ["Markdown assaini ; en sortie IA, s'associe au flux (bpm.streamingText option markdown)."],
+      "status": "proposed"
+    },
+    "codeeditor": {
+      "semanticRole": "saisie",
+      "frame": "entity",
+      "agentGuidance": {
+        "use": "Saisir ou modifier du code/texte technique (script, template, expression).",
+        "pairWith": ["bpm.codeBlock", "bpm.diffViewer", "bpm.button"],
+        "avoid": "Lecture seule (bpm.codeBlock), JSON structuré validé (bpm.jsonEditor), prose (bpm.textarea)."
+      },
+      "contextHints": ["La valeur est du code destiné à être exécuté ou interprété — valider avant usage."],
+      "status": "proposed"
+    },
+    "crud": {
+      "semanticRole": "composite",
+      "frame": "entity",
+      "agentGuidance": {
+        "use": "Gestion complète d'une Entity en un composant : liste, formulaire, colonnes, champs, endpoint (LayoutType crud-table).",
+        "pairWith": ["bpm.confirmModal", "bpm.toast", "bpm.filterPanel"],
+        "avoid": "Écrans sur mesure où la composition fine est requise (bpm.table + bpm.modal + champs) ou exploration analytique (bpm.dataExplorer)."
+      },
+      "contextHints": ["Entity avec Fields typés et endpoint REST ; les actions create/update/delete suivent les permissions (Role.actions)."],
+      "status": "proposed"
+    },
+    "gps": {
+      "semanticRole": "saisie",
+      "frame": "entity",
+      "agentGuidance": {
+        "use": "Saisir ou afficher une position GPS (carte + picker) : géolocalisation d'une entité, pointage terrain.",
+        "pairWith": ["bpm.map", "bpm.labelValue", "bpm.wizardForm"],
+        "avoid": "Pure consultation cartographique multi-points (bpm.map)."
+      },
+      "contextHints": ["Champ position (lat/lng) de l'Entity ; la géolocalisation navigateur requiert le consentement."],
+      "status": "proposed"
+    },
+    "jsoneditor": {
+      "semanticRole": "saisie",
+      "frame": "entity",
+      "agentGuidance": {
+        "use": "Éditer une structure JSON avec validation et formatage : configuration, payload, Field json.",
+        "pairWith": ["bpm.jsonViewer", "bpm.button", "bpm.message"],
+        "avoid": "Lecture seule (bpm.jsonViewer) ou code non-JSON (bpm.codeEditor)."
+      },
+      "contextHints": ["Field de type json ; la validation syntaxique précède toute validation métier (BusinessRule)."],
+      "status": "proposed"
+    },
+    "notificationcenter": {
+      "semanticRole": "affichage",
+      "frame": "event",
+      "agentGuidance": {
+        "use": "Centre de notifications persistant : lu/non-lu, marquage, suppression — la mémoire des EventEffects notify.",
+        "pairWith": ["bpm.toast", "bpm.topNav", "bpm.activityFeed"],
+        "avoid": "Confirmation immédiate d'action (bpm.toast) ou flux d'activité d'équipe (bpm.activityFeed)."
+      },
+      "contextHints": ["Notifications datées avec état lu/non-lu ; le non-lu est un compte signifiant (badge sur l'icône)."],
+      "status": "proposed"
+    },
+    "filepreview": {
+      "semanticRole": "affichage",
+      "frame": "entity",
+      "agentGuidance": {
+        "use": "Aperçu adaptatif d'un fichier selon son type (image, PDF, texte/code) : vérification avant/après upload.",
+        "pairWith": ["bpm.fileUploader", "bpm.drawer", "bpm.labelValue"],
+        "avoid": "Type connu et unique (bpm.image, bpm.pdfViewer, bpm.codeBlock directement)."
+      },
+      "contextHints": ["Fichier attaché à une entité ; prévoir le repli téléchargement pour les types non prévisualisables."],
+      "status": "proposed"
+    },
+    "dataexplorer": {
+      "semanticRole": "composite",
+      "frame": "entity",
+      "agentGuidance": {
+        "use": "Exploration autonome d'une collection : table + recherche + tri + pagination + export CSV en un composant.",
+        "pairWith": ["bpm.metric", "bpm.filterPanel", "bpm.plotlyChart"],
+        "avoid": "Affichage simple sans outillage (bpm.table) ou gestion avec écriture (bpm.crud)."
+      },
+      "contextHints": ["Collection d'Entity en lecture ; l'export CSV expose les données — vérifier les permissions (Role read)."],
+      "status": "proposed"
+    },
+    "chatinterface": {
+      "semanticRole": "composite",
+      "frame": "ai",
+      "agentGuidance": {
+        "use": "Dialogue avec un assistant IA : messages, saisie, streaming (AIFeature uiComponent chatInterface).",
+        "pairWith": ["bpm.promptInput", "bpm.streamingText", "bpm.modelSelector", "bpm.spinnerDot"],
+        "avoid": "Question unique sans conversation (bpm.promptInput + bpm.streamingText) ou commentaire entre humains."
+      },
+      "contextHints": ["AIFeature de type assistant ; historique de messages role/content ; l'état streaming pilote spinnerDot."],
+      "status": "proposed"
+    },
+    "promptinput": {
+      "semanticRole": "saisie",
+      "frame": "ai",
+      "agentGuidance": {
+        "use": "Saisir une intention pour l'IA : auto-resize, Cmd+Enter, compteur de tokens — la saisie devient le prompt.",
+        "pairWith": ["bpm.chatInterface", "bpm.streamingText", "bpm.modelSelector"],
+        "avoid": "Champ de formulaire métier (bpm.input, bpm.textarea) ou recherche dans un référentiel (bpm.autocomplete)."
+      },
+      "contextHints": ["La valeur est envoyée à un modèle ; le budget tokens cadre la saisie."],
+      "status": "proposed"
+    },
+    "streamingtext": {
+      "semanticRole": "affichage",
+      "frame": "ai",
+      "agentGuidance": {
+        "use": "Restituer une génération IA au fil de l'eau (curseur, option Markdown) : la progressivité signale que le contenu se construit (AIFeature uiComponent streamingText).",
+        "pairWith": ["bpm.promptInput", "bpm.markdown", "bpm.chatInterface"],
+        "avoid": "Contenu statique connu d'avance (bpm.text, bpm.markdown)."
+      },
+      "contextHints": ["Flux de tokens en cours ; l'état terminé doit figer le rendu (et basculer en markdown si formaté)."],
+      "status": "proposed"
+    },
+    "diffviewer": {
+      "semanticRole": "affichage",
+      "frame": "ai",
+      "agentGuidance": {
+        "use": "Comparer deux versions d'un texte/code (split ou unified) : relecture d'une proposition IA, audit de modification.",
+        "pairWith": ["bpm.codeEditor", "bpm.button", "bpm.confirmModal"],
+        "avoid": "Affichage d'une seule version (bpm.codeBlock) ou comparaison de données tabulaires (bpm.table)."
+      },
+      "contextHints": ["Deux versions comparables du même contenu ; la décision (accepter/rejeter) suit la lecture du diff."],
+      "status": "needs-curation",
+      "curationQuestion": "diffViewer : frame ai (revue de sorties IA, catégorie actuelle) ou entity (versionnage de données métier) ? Le rattachement détermine ses associations sémantiques."
+    },
+    "modelselector": {
+      "semanticRole": "saisie",
+      "frame": "ai",
+      "agentGuidance": {
+        "use": "Choisir le modèle IA (par fournisseur, capacités) qui exécutera la requête.",
+        "pairWith": ["bpm.chatInterface", "bpm.promptInput"],
+        "avoid": "Énumération métier quelconque (bpm.selectbox)."
+      },
+      "contextHints": ["Liste de modèles avec capacités ; le choix conditionne coût/latence/qualité de l'AIFeature."],
+      "status": "proposed"
+    }
+  }
+}

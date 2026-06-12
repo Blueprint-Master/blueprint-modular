@@ -3,9 +3,31 @@ import { notFound } from "next/navigation";
 import registry from "@/lib/generated/bpm-components.json";
 import { getPrevNext } from "@/lib/docPages";
 import { getLlmsPropsBlock } from "@/lib/llmsDoc";
+import { getSemantics } from "@/lib/semantics";
 import { getDict } from "@/lib/i18n/server";
 
 type Props = { params: Promise<{ slug: string }> };
+
+/** Ligne label → contenu de la couche sémantique. */
+function SemanticRow({ label, children }: { label: string; children: React.ReactNode }) {
+  return (
+    <div style={{ display: "flex", gap: 12, alignItems: "baseline" }}>
+      <span
+        style={{
+          flex: "0 0 160px",
+          fontSize: 12,
+          fontWeight: 600,
+          color: "var(--bpm-text-secondary)",
+        }}
+      >
+        {label}
+      </span>
+      <span style={{ fontSize: 13, color: "var(--bpm-text-primary)", lineHeight: 1.6 }}>
+        {children}
+      </span>
+    </div>
+  );
+}
 
 export default async function DocComponentSlugPage({ params }: Props) {
   const { slug } = await params;
@@ -15,6 +37,7 @@ export default async function DocComponentSlugPage({ params }: Props) {
   const { dict } = await getDict();
   const { prev, next } = getPrevNext(slug);
   const propsBlock = getLlmsPropsBlock(entry.name);
+  const semantics = getSemantics(slug);
 
   return (
     <div className="doc-page">
@@ -26,8 +49,82 @@ export default async function DocComponentSlugPage({ params }: Props) {
         <p className="doc-description">{entry.description}</p>
         <div className="doc-meta">
           <span className="doc-badge doc-badge-category">{entry.category}</span>
+          {semantics && (
+            <>
+              <span className="doc-badge doc-badge-category">{semantics.semanticRole}</span>
+              <span className="doc-badge doc-badge-category">Ω {semantics.frame}</span>
+            </>
+          )}
         </div>
       </div>
+
+      {semantics && (
+        <section style={{ marginTop: 24, maxWidth: 760 }}>
+          <h2 className="text-lg font-semibold mb-1" style={{ color: "var(--bpm-text-primary)" }}>
+            {dict.componentPage.semanticTitle}
+          </h2>
+          <p className="text-sm mb-3" style={{ color: "var(--bpm-text-secondary)" }}>
+            {dict.componentPage.semanticNote}
+          </p>
+          <div
+            style={{
+              border: "1px solid var(--bpm-border)",
+              borderRadius: "var(--bpm-radius)",
+              padding: 16,
+              display: "flex",
+              flexDirection: "column",
+              gap: 10,
+            }}
+          >
+            <SemanticRow label={dict.componentPage.semanticRole}>
+              {semantics.semanticRole}
+            </SemanticRow>
+            <SemanticRow label={dict.componentPage.semanticFrame}>{semantics.frame}</SemanticRow>
+            {semantics.indicator && (
+              <>
+                <SemanticRow label={dict.componentPage.semanticIndicatorType}>
+                  {semantics.indicator.indicatorType.join(", ")}
+                </SemanticRow>
+                <SemanticRow label={dict.componentPage.semanticDirectionality}>
+                  {semantics.indicator.directionality}
+                </SemanticRow>
+                <SemanticRow label={dict.componentPage.semanticTemporality}>
+                  {semantics.indicator.temporality}
+                </SemanticRow>
+              </>
+            )}
+            <SemanticRow label={dict.componentPage.semanticGuidanceUse}>
+              {semantics.agentGuidance.use}
+            </SemanticRow>
+            {semantics.agentGuidance.pairWith.length > 0 && (
+              <SemanticRow label={dict.componentPage.semanticGuidancePair}>
+                {semantics.agentGuidance.pairWith.join(", ")}
+              </SemanticRow>
+            )}
+            <SemanticRow label={dict.componentPage.semanticGuidanceAvoid}>
+              {semantics.agentGuidance.avoid}
+            </SemanticRow>
+            {semantics.indicatorRelations && semantics.indicatorRelations.length > 0 && (
+              <SemanticRow label={dict.componentPage.semanticRelations}>
+                {semantics.indicatorRelations
+                  .map((r) => `${r.type} → ${r.target}${r.note ? ` (${r.note})` : ""}`)
+                  .join(" · ")}
+              </SemanticRow>
+            )}
+            <SemanticRow label={dict.componentPage.semanticContext}>
+              {semantics.contextHints.join(" ")}
+            </SemanticRow>
+            <SemanticRow label={dict.componentPage.semanticStatus}>
+              {semantics.status}
+            </SemanticRow>
+            {semantics.curationQuestion && (
+              <SemanticRow label={dict.componentPage.semanticCurationQuestion}>
+                {semantics.curationQuestion}
+              </SemanticRow>
+            )}
+          </div>
+        </section>
+      )}
 
       {propsBlock && (
         <section style={{ marginTop: 24, maxWidth: 760 }}>

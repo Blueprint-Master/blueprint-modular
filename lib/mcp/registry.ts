@@ -11,6 +11,7 @@
  * n'est exposé. L'index de recherche `_haystack` reste strictement interne.
  */
 import registry from "@/lib/generated/mcp-registry.json";
+import type { ComponentSemantics } from "@/lib/semantics/types";
 
 export interface BpmComponent {
   slug: string;
@@ -22,11 +23,18 @@ export interface BpmComponent {
   example?: string;
   associated?: string[];
   parent?: string[];
+  /**
+   * Couche sémantique (rôle, frame Ω, indicateur, guidance agent) — valeurs
+   * PROPOSÉES par la boucle, curées par l'humain (champ status). Source :
+   * lib/semantics/bpm-semantics.json, fusionnée par generate-mcp-registry.mjs.
+   */
+  semantics?: ComponentSemantics;
   /** Index de recherche pré-calculé (tout en minuscules). Interne — jamais exposé. */
   _haystack: string;
 }
 
-const COMPONENTS = registry.components as BpmComponent[];
+// `unknown` d'abord : le JSON généré élargit les unions littérales de ComponentSemantics.
+const COMPONENTS = registry.components as unknown as BpmComponent[];
 
 export const CATEGORIES: string[] = registry.categories;
 export const TOTAL: number = registry.total;
@@ -103,7 +111,7 @@ export function getComponent(name: string): BpmComponent | undefined {
   );
 }
 
-/** Détail public d'un composant — uniquement de la donnée catalogue. */
+/** Détail public d'un composant — donnée catalogue + couche sémantique. */
 export function componentDetail(c: BpmComponent) {
   return {
     name: c.name,
@@ -113,6 +121,7 @@ export function componentDetail(c: BpmComponent) {
     example: c.example ?? null,
     associated: c.associated ?? [],
     parent: c.parent ?? [],
+    semantics: c.semantics ?? null,
     import: "import { bpm } from '@blueprint-modular/core'",
   };
 }
@@ -203,6 +212,27 @@ function fieldMatches(field: string, token: string): boolean {
   return tokenVariants(token).some((v) => field.includes(v));
 }
 
+/** Texte sémantique d'un composant (sens : rôle, frame Ω, types, guidance). */
+function semanticText(c: BpmComponent): string {
+  const s = c.semantics;
+  if (!s) return "";
+  return [
+    s.semanticRole,
+    s.frame,
+    ...(s.indicator
+      ? [...s.indicator.indicatorType, s.indicator.directionality, s.indicator.temporality]
+      : []),
+    s.agentGuidance.use,
+    ...s.agentGuidance.pairWith,
+    ...s.contextHints,
+  ]
+    .join(" ")
+    .toLowerCase();
+}
+
+/** Index sémantique pré-calculé : la signification pèse plus que le simple tag. */
+const SEM_TEXT = new Map<string, string>(COMPONENTS.map((c) => [c.slug, semanticText(c)]));
+
 interface Scored {
   c: BpmComponent;
   score: number;
@@ -218,6 +248,7 @@ function scoreComponents(query: string): Scored[] {
     const nameL = c.name.toLowerCase();
     const descL = c.description.toLowerCase();
     const catL = c.category.toLowerCase();
+    const semL = SEM_TEXT.get(c.slug) ?? "";
     let score = 0;
     const matched: string[] = [];
 
@@ -225,6 +256,10 @@ function scoreComponents(query: string): Scored[] {
       let hit = false;
       if (fieldMatches(nameL, t)) {
         score += 6;
+        hit = true;
+      }
+      if (fieldMatches(semL, t)) {
+        score += 4;
         hit = true;
       }
       if (fieldMatches(descL, t)) {
@@ -292,14 +327,42 @@ export function searchComponents(query: string, cursor?: string): SearchResult {
 // suggest_composition
 // ---------------------------------------------------------------------------
 
+/** Résumé sémantique joint à chaque suggestion : le POURQUOI du composant, pas son rendu. */
+export interface SuggestionMeaning {
+  role: string;
+  frame: string;
+  indicatorType?: string[];
+  directionality?: string;
+  use: string;
+  pairWith: string[];
+  status: string;
+}
+
 export interface SuggestResult {
   need: string;
   count: number;
-  suggestions: Array<ComponentSummary & { why: string }>;
+  suggestions: Array<ComponentSummary & { why: string; meaning?: SuggestionMeaning }>;
+}
+
+function meaningOf(c: BpmComponent): SuggestionMeaning | undefined {
+  const s = c.semantics;
+  if (!s) return undefined;
+  return {
+    role: s.semanticRole,
+    frame: s.frame,
+    ...(s.indicator
+      ? { indicatorType: s.indicator.indicatorType, directionality: s.indicator.directionality }
+      : {}),
+    use: s.agentGuidance.use,
+    pairWith: s.agentGuidance.pairWith,
+    status: s.status,
+  };
 }
 
 /**
  * Suggère une composition de composants répondant à un besoin décrit en langage naturel.
+ * Le scoring et la réponse s'appuient sur la couche sémantique (rôle, frame Ω, guidance) :
+ * chaque suggestion explicite son sens et ses associations sémantiques.
  * Réponse bornée (SUGGEST_MAX), pas de curseur.
  * @throws RegistryError si le besoin est vide.
  */
@@ -321,6 +384,7 @@ export function suggestComposition(need: string, limit?: number): SuggestResult 
       why: s.matched.length
         ? `Correspond à : ${s.matched.join(", ")}`
         : "Pertinent pour le besoin décrit",
+      meaning: meaningOf(s.c),
     })),
   };
 }

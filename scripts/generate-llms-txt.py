@@ -14,6 +14,7 @@ Options :
   --verbose   Affiche les composants parsés
 """
 
+import json
 import os
 import re
 import sys
@@ -30,6 +31,13 @@ BPM_TSX   = REPO_ROOT / "packages" / "core" / "src" / "bpm.tsx"
 COMP_DIR  = REPO_ROOT / "components" / "bpm"
 OUT_FULL  = REPO_ROOT / "public" / "llms.txt"
 OUT_CORE  = REPO_ROOT / "public" / "llms-core.txt"
+SEMANTICS_JSON = REPO_ROOT / "lib" / "semantics" / "bpm-semantics.json"
+
+# Couche sémantique curée (slug minuscule → entrée). Voir lib/semantics/types.ts.
+try:
+    SEMANTICS: dict = json.loads(SEMANTICS_JSON.read_text(encoding="utf-8"))["components"]
+except Exception:
+    SEMANTICS = {}
 
 VERSION_RE = re.compile(r'"version"\s*:\s*"([^"]+)"')
 PKG_JSON   = REPO_ROOT / "package.json"
@@ -408,11 +416,36 @@ export async function POST(req: Request) {
 '''
 
 
+def semantic_lines(bpm_key: str) -> list[str]:
+    """Lignes @semantic/@guidance depuis la couche sémantique curée (si présente)."""
+    sem = SEMANTICS.get(bpm_key.lower())
+    if not sem:
+        return []
+    parts = [f"role={sem['semanticRole']}", f"frame={sem['frame']}"]
+    ind = sem.get("indicator")
+    if ind:
+        parts.append("type=" + ",".join(ind["indicatorType"]))
+        parts.append(f"direction={ind['directionality']}")
+        parts.append(f"temporalite={ind['temporality']}")
+    parts.append(f"status={sem['status']}")
+    g = sem.get("agentGuidance", {})
+    guidance = g.get("use", "")
+    if g.get("pairWith"):
+        guidance += " Associer : " + ", ".join(g["pairWith"]) + "."
+    if g.get("avoid"):
+        guidance += " Éviter : " + g["avoid"]
+    return [
+        "@semantic " + " ".join(parts),
+        "@guidance " + guidance.strip(),
+    ]
+
+
 def format_component_full(comp: dict) -> str:
     name = comp.get("bpm_name") or bpm_name(comp["name"])
     lines = [f"## bpm.{name}"]
     if comp["doc"]:
         lines.append(comp["doc"])
+    lines.extend(semantic_lines(name))
     lines.append("```")
     for p in comp["props"]:
         lines.append(format_prop(p))
