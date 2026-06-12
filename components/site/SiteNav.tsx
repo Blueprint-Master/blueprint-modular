@@ -6,8 +6,9 @@ import { usePathname } from "next/navigation";
 import { useI18n } from "@/lib/i18n/LocaleProvider";
 import { LOCALES } from "@/lib/i18n";
 
+// "Composants" est volontairement absent : la galerie reste accessible depuis
+// « Ouvrir l'app », les Ressources et le MCP — l'entrée de nav serait redondante.
 const LINKS = [
-  { href: "/components", key: "gallery" as const },
   { href: "/modules", key: "modules" as const },
   { href: "/mcp", key: "mcp" as const },
   { href: "/resources", key: "resources" as const },

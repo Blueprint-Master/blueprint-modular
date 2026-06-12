@@ -252,6 +252,7 @@ const fr = {
     statusOk: "Opérationnel",
   },
   gallery: {
+    eyebrow: "Composants",
     title: "Galerie de composants",
     caption: "{count} composants bpm.* en rendu réel",
     ariaSections: "Sections de la galerie",
@@ -270,6 +271,7 @@ const fr = {
     },
   },
   docsHub: {
+    eyebrow: "Documentation",
     title: "Documentation",
     lead:
       "Tout ce qu'il faut pour construire et livrer une application Blueprint Modular : un parcours d'installation, le catalogue des composants et la référence machine pour vos agents.",

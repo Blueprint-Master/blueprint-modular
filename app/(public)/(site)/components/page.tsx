@@ -241,67 +241,57 @@ export default function ComponentsPage() {
 
   return (
     <div style={{ background: "var(--bpm-bg-primary)", minHeight: "100vh", paddingBottom: 80, paddingTop: 0 }}>
-      {/* Header collant sous la nav du site (60px) */}
-      <header
+      {/* HERO — aligné sur les pages MCP et Ressources (eyebrow + titre + lead) */}
+      <section className="site-hero">
+        <div className="site-container">
+          <span className="site-eyebrow">{dict.gallery.eyebrow}</span>
+          <h1>{dict.gallery.title}</h1>
+          <p className="site-lead">{fmt(dict.gallery.caption, { count: COMPONENT_COUNT })}</p>
+        </div>
+      </section>
+
+      {/* Barre de navigation par catégorie — collante sous la nav du site (60px) */}
+      <nav
+        aria-label={dict.gallery.ariaSections}
         style={{
           position: "sticky",
           top: 60,
           zIndex: 90,
-          background: "var(--bpm-bg-primary)",
-          borderBottom: "1px solid var(--bpm-border)",
-          padding: "16px 24px",
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "space-between",
-          flexWrap: "wrap",
-          gap: 12,
-        }}
-      >
-        <Title level={1} style={{ margin: 0 }}>
-          {dict.gallery.title}
-        </Title>
-        <Caption style={{ margin: 0 }}>
-          {fmt(dict.gallery.caption, { count: COMPONENT_COUNT })}
-        </Caption>
-      </header>
-
-      {/* Barre de navigation par catégorie */}
-      <nav
-        aria-label={dict.gallery.ariaSections}
-        style={{
-          padding: "12px 24px",
           background: "var(--bpm-bg-secondary)",
+          borderTop: "1px solid var(--bpm-border)",
           borderBottom: "1px solid var(--bpm-border)",
-          display: "flex",
-          flexWrap: "wrap",
-          gap: 8,
-          overflowX: "auto",
-          whiteSpace: "nowrap",
         }}
       >
-        {SECTION_IDS.map((id) => (
-          <a
-            key={id}
-            href={`#${id}`}
-            style={{
-              fontSize: "var(--bpm-font-size-base)",
-              color: "var(--bpm-accent)",
-              textDecoration: "none",
-            }}
-          >
-            {sections[id]}
-          </a>
-        ))}
+        <div
+          className="site-container"
+          style={{
+            display: "flex",
+            flexWrap: "wrap",
+            gap: 8,
+            overflowX: "auto",
+            whiteSpace: "nowrap",
+            paddingTop: 12,
+            paddingBottom: 12,
+          }}
+        >
+          {SECTION_IDS.map((id) => (
+            <a
+              key={id}
+              href={`#${id}`}
+              style={{
+                fontSize: "var(--bpm-font-size-base)",
+                color: "var(--bpm-accent)",
+                textDecoration: "none",
+              }}
+            >
+              {sections[id]}
+            </a>
+          ))}
+        </div>
       </nav>
 
-      <Container
-        style={{
-          maxWidth: 1200,
-          margin: "0 auto",
-          padding: "24px 16px",
-          paddingTop: 16,
-        }}
-      >
+      <section className="site-section site-section-bordered">
+        <div className="site-container">
         {/* SECTION 1 — Typographie */}
         <section id="typography" style={{ marginBottom: 48 }}>
           <Title2 style={{ marginBottom: 16 }}>{sections.typography}</Title2>
@@ -1398,7 +1388,8 @@ export default function ComponentsPage() {
         </section>
 
         <ElevationShowcase />
-      </Container>
+        </div>
+      </section>
     </div>
   );
 }
