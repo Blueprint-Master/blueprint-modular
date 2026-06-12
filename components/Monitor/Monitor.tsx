@@ -182,13 +182,50 @@ function BpmLogo({ size = 22 }) {
 type PresSlide = { id: number; title: string; script: string; notes: string; kpis: string[] };
 type PresState = { title: string; slides: PresSlide[] };
 
+/**
+ * Présentation de démonstration : le prompteur est utilisable dès l'ouverture,
+ * sans importer de PPTX. Le bouton « Démo » de la barre permet d'y revenir.
+ */
 const DEFAULT_PRES: PresState = {
-  title: "Nouvelle présentation",
-  slides: [{
-    id: 1, title: "Démarrer",
-    script: "Cliquez sur Importer PPTX pour charger votre présentation.\n\nVos slides, scripts et notes du présentateur seront extraits automatiquement.\n\nDouble-cliquez sur le texte pour l'éditer manuellement.",
-    notes: "Importez un fichier .pptx ou saisissez votre contenu directement.", kpis: [],
-  }],
+  title: "Revue trimestrielle T2 2026 — Direction commerciale",
+  slides: [
+    {
+      id: 1, title: "Ouverture & ordre du jour",
+      script: "## Bienvenue\n\nMerci à tous d'être là. Cette revue couvre le deuxième trimestre 2026 : résultats, pipeline, et les deux décisions à prendre aujourd'hui.\n\n- Résultats T2 et écarts vs objectif\n- Pipeline T3 et risques\n- Décision : ouverture du marché belge\n- Décision : renfort de l'équipe grands comptes",
+      notes: "Tenir l'ouverture en 2 minutes maximum. Annoncer que les questions sont prises au fil de l'eau.",
+      kpis: ["Durée cible : 45 min", "2 décisions attendues"],
+    },
+    {
+      id: 2, title: "Résultats T2 — chiffre d'affaires",
+      script: "## CA T2 : 2,41 M€, +9 % vs T1\n\nNous terminons le trimestre à **2,41 M€**, soit 104 % de l'objectif.\n\n- Moteur principal : les renouvellements grands comptes (+18 %)\n- Le mid-market est en retrait de 6 % — concurrence agressive sur les prix\n- Panier moyen en hausse : 11 400 € (+700 €)\n\nInsister : la croissance vient de la base installée, pas de l'acquisition.",
+      notes: "Si question sur le mid-market : le plan de riposte pricing est au slide 4.",
+      kpis: ["CA : 2,41 M€", "Objectif : 104 %", "Panier moyen : 11 400 €"],
+    },
+    {
+      id: 3, title: "Pipeline T3",
+      script: "## Pipeline pondéré : 3,2 M€\n\nLe pipeline entrant en T3 est solide mais concentré.\n\n- 3,2 M€ pondérés, dont **40 % sur 3 comptes** (Nordis, ACME, Globex)\n- Cycle de vente moyen : 74 jours (stable)\n- Risque : la signature Nordis (620 k€) peut glisser en T4\n\n- [ ] Valider le plan de couverture des 3 comptes clés avec chaque responsable",
+      notes: "Ne pas donner le détail des remises en séance — renvoyer au comité pricing.",
+      kpis: ["Pipeline : 3,2 M€", "Top 3 : 40 %", "Cycle : 74 j"],
+    },
+    {
+      id: 4, title: "Décision 1 — Marché belge",
+      script: "## Ouverture Belgique : go / no-go\n\nProposition : ouvrir la Belgique au T4 avec un binôme ventes + avant-vente.\n\n- Investissement année 1 : **180 k€**\n- Point mort estimé : 14 mois\n- 9 prospects entrants belges non adressés ce trimestre\n\nDemander un vote à main levée après les deux questions prévues.",
+      notes: "Le DAF a validé le budget sous réserve d'un point mort < 18 mois. L'avoir en tête si objection.",
+      kpis: ["Budget : 180 k€", "Point mort : 14 mois", "9 prospects en attente"],
+    },
+    {
+      id: 5, title: "Décision 2 — Renfort grands comptes",
+      script: "## Recruter un 4ᵉ responsable grands comptes\n\nLa charge actuelle dépasse le seuil cible.\n\n- 31 comptes actifs pour 3 responsables (cible : 8 par personne)\n- 2 renouvellements majeurs ont glissé faute de disponibilité\n- Coût chargé : 95 k€/an, financé par l'enveloppe vacante\n\n- [ ] Lancer le recrutement la semaine prochaine si accord",
+      notes: "Si la question du télétravail revient, la politique ne change pas ce trimestre.",
+      kpis: ["31 comptes / 3 RGC", "Coût : 95 k€/an"],
+    },
+    {
+      id: 6, title: "Conclusion & prochaines étapes",
+      script: "## En synthèse\n\nUn T2 au-dessus de l'objectif, un T3 qui dépend de 3 signatures, deux décisions actées aujourd'hui.\n\n- Envoi du compte rendu et des décisions sous 48 h\n- Revue pipeline hebdomadaire à partir de lundi\n- Prochaine revue trimestrielle : 18 septembre\n\nRemercier l'équipe — le trimestre a été dense.",
+      notes: "Conclure en moins de 3 minutes. Vérifier que les deux décisions sont bien actées au compte rendu.",
+      kpis: ["CR sous 48 h", "Prochaine revue : 18/09"],
+    },
+  ],
 };
 
 const STORAGE_KEYS = { pres: "bpm-monitor-pres", cur: "bpm-monitor-cur", logged: "bpm-monitor-logged" };
@@ -545,6 +582,10 @@ export default function Monitor() {
             <input ref={fileRef} type="file" accept=".pptx" style={{ display:"none" }} onChange={async e => { const f=e.target.files?.[0]; if(f){await handleImport(f); e.target.value="";} }}/>
             <Btn onClick={() => fileRef.current?.click()} disabled={importing} variant="outline" size="sm">
               {importing ? <><Spinner size={12}/> Import…</> : "↑ PPTX"}
+            </Btn>
+            {/* Présentation de démonstration embarquée */}
+            <Btn onClick={() => { setPres(DEFAULT_PRES); setCur(0); }} disabled={importing} variant="ghost" size="sm">
+              Démo
             </Btn>
             {/* Slide counter */}
             <Badge label={`${cur+1} / ${slides.length}`} variant="neutral"/>
