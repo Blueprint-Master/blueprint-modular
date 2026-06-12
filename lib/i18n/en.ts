@@ -13,6 +13,7 @@ const en: Dictionary = {
     code: "Code",
   },
   nav: {
+    presentation: "Overview",
     gallery: "Components",
     modules: "Modules",
     mcp: "MCP",

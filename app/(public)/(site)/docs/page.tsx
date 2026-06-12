@@ -37,7 +37,7 @@ export default async function DocsPage() {
   };
 
   return (
-    <div className="doc-page">
+    <>
       {/* HERO — aligné sur les pages MCP et Ressources (eyebrow + titre + lead) */}
       <section className="site-hero">
         <div className="site-container">
@@ -88,6 +88,6 @@ export default async function DocsPage() {
           </ul>
         </div>
       </section>
-    </div>
+    </>
   );
 }

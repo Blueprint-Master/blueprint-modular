@@ -861,6 +861,19 @@ h2, .bpm-h2 {
 /* Doc page: largeur utile (réduit la marge blanche à droite), responsive */
 .doc-page { max-width: 1400px; width: 100%; min-width: 0; box-sizing: border-box; }
 
+/* Documentation servie dans le shell site (top-nav, sans sidebar app) :
+   gouttières + centrage alignés sur le reste du site, et tailles de titres
+   équivalentes au shell app (le reset Tailwind neutralise sinon les <h*>). */
+.site-shell .doc-page {
+  max-width: var(--site-max-width);
+  margin: 0 auto;
+  padding: 32px 24px 72px;
+}
+.site-shell .doc-page h1 { font-size: 1.25rem; font-weight: 600; }
+.site-shell .doc-page h2 { font-size: 1.125rem; font-weight: 600; }
+.site-shell .doc-page h3 { font-size: 1rem; font-weight: 600; }
+.site-shell .doc-page .doc-page-header h1 { font-size: 1.75rem; font-weight: 700; }
+
 /* Doc page header */
 .doc-page-header { margin-bottom: 32px; }
 /* Skip-nav : masqué par défaut, visible au focus (A11y) */
