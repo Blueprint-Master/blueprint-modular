@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { getSessionOrTestUser } from "@/lib/auth";
+import { requireWriteRole } from "@/lib/asset-manager/authz";
 import { prisma } from "@/lib/prisma";
 
 export const dynamic = "force-dynamic";
@@ -32,6 +33,8 @@ export async function GET(_request: Request, context: { params: Params }) {
 export async function PUT(request: Request, context: { params: Params }) {
   const result = await getSessionOrTestUser();
   if (!result) return NextResponse.json({ error: "Non autorisé" }, { status: 401 });
+  const forbidden = requireWriteRole(result.user);
+  if (forbidden) return forbidden;
 
   const { id } = await resolveParams(context.params);
   const ticket = await prisma.ticket.findUnique({ where: { id } });

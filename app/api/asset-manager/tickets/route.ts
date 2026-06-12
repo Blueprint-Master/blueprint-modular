@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { getSessionOrTestUser } from "@/lib/auth";
+import { requireWriteRole } from "@/lib/asset-manager/authz";
 import { prisma } from "@/lib/prisma";
 import { generateTicketReference } from "@/lib/asset-manager/numbering";
 import { getDomainConfig } from "@/lib/asset-manager/get-domain-config";
@@ -30,6 +31,8 @@ export async function GET(request: Request) {
 export async function POST(request: Request) {
   const result = await getSessionOrTestUser();
   if (!result) return NextResponse.json({ error: "Non autorisé" }, { status: 401 });
+  const forbidden = requireWriteRole(result.user);
+  if (forbidden) return forbidden;
 
   const body = (await request.json()) as {
     domainId: string;

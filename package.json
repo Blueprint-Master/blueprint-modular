@@ -9,6 +9,7 @@
     "build:standalone": "next build && bash deploy/copy-standalone-assets.sh",
     "start": "next start",
     "lint": "next lint",
+    "test": "vitest run",
     "postinstall": "prisma generate --schema=prisma/schema.prisma",
     "generate:components": "python scripts/generate-bpm-components-json.py",
     "generate:llms": "python scripts/generate-llms-txt.py",

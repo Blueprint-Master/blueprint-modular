@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { Prisma } from "@prisma/client";
 import { getSessionOrTestUser } from "@/lib/auth";
+import { requireWriteRole } from "@/lib/asset-manager/authz";
 import { prisma } from "@/lib/prisma";
 import { getDomainConfig } from "@/lib/asset-manager/get-domain-config";
 
@@ -50,6 +51,8 @@ export async function GET(request: Request) {
 export async function POST(request: Request) {
   const result = await getSessionOrTestUser();
   if (!result) return NextResponse.json({ error: "Non autorisé" }, { status: 401 });
+  const forbidden = requireWriteRole(result.user);
+  if (forbidden) return forbidden;
 
   let body: {
     domainId: string;
