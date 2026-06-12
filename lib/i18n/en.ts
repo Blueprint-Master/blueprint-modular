@@ -252,6 +252,7 @@ const en: Dictionary = {
     statusOk: "Operational",
   },
   gallery: {
+    eyebrow: "Components",
     title: "Component gallery",
     caption: "{count} bpm.* components, live",
     ariaSections: "Gallery sections",
@@ -270,6 +271,7 @@ const en: Dictionary = {
     },
   },
   docsHub: {
+    eyebrow: "Documentation",
     title: "Documentation",
     lead:
       "Everything you need to build and ship a Blueprint Modular application: an installation path, the component catalog, and the machine reference for your agents.",

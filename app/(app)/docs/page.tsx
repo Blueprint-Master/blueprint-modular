@@ -8,85 +8,86 @@ export const metadata: Metadata = {
   alternates: { canonical: "https://app.blueprint-modular.com/docs" },
 };
 
-const CARD_STYLE: React.CSSProperties = {
-  display: "block",
-  border: "1px solid var(--bpm-border)",
-  borderRadius: 12,
-  padding: "18px 20px",
-  background: "var(--bpm-surface)",
-  textDecoration: "none",
-  transition: "var(--bpm-transition-fast)",
+type CardKey = "gettingStarted" | "catalog" | "gallery" | "llms" | "changelog" | "database";
+
+/** Destinations vérifiées : routes internes réelles + liens externes stables. */
+const CARD_HREF: Record<CardKey, { href: string; external: boolean }> = {
+  gettingStarted: { href: "/docs/getting-started", external: false },
+  catalog: { href: "/docs/components", external: false },
+  gallery: { href: "/components", external: false },
+  llms: { href: "/llms.txt", external: true },
+  changelog: { href: "/docs/changelog", external: false },
+  database: {
+    href: "https://github.com/Blueprint-Modular/blueprint-modular/blob/master/docs/DATABASE.md",
+    external: true,
+  },
 };
 
-function DocCard({
-  href,
-  title,
-  body,
-  external = false,
-}: {
-  href: string;
-  title: string;
-  body: string;
-  external?: boolean;
-}) {
-  const content = (
-    <>
-      <span style={{ display: "block", fontSize: 15, fontWeight: 600, color: "var(--bpm-text-primary)", marginBottom: 6 }}>
-        {title}
-      </span>
-      <span style={{ display: "block", fontSize: 13.5, lineHeight: 1.55, color: "var(--bpm-text-secondary)" }}>{body}</span>
-    </>
-  );
-  if (external) {
-    return (
-      <a href={href} style={CARD_STYLE} target={href.startsWith("http") ? "_blank" : undefined} rel="noopener noreferrer">
-        {content}
-      </a>
-    );
-  }
-  return (
-    <Link href={href} style={CARD_STYLE}>
-      {content}
-    </Link>
-  );
-}
+/** Ordre d'affichage des cartes du hub documentation. */
+const CARDS: CardKey[] = ["gettingStarted", "catalog", "gallery", "llms", "changelog", "database"];
 
 export default async function DocsPage() {
   const { dict } = await getDict();
   const hub = dict.docsHub;
   const count = registry.components.length;
 
+  const cardBody = (key: CardKey): string => {
+    const body = hub.cards[key].body;
+    return key === "catalog" ? fmt(body, { count }) : body;
+  };
+
   return (
     <div className="doc-page">
-      <div className="doc-page-header">
-        <h1>{hub.title}</h1>
-        <p className="doc-description">{hub.lead}</p>
-      </div>
+      {/* HERO — aligné sur les pages MCP et Ressources (eyebrow + titre + lead) */}
+      <section className="site-hero">
+        <div className="site-container">
+          <span className="site-eyebrow">{hub.eyebrow}</span>
+          <h1>{hub.title}</h1>
+          <p className="site-lead">{hub.lead}</p>
+        </div>
+      </section>
 
-      <div
-        style={{
-          display: "grid",
-          gridTemplateColumns: "repeat(auto-fill, minmax(260px, 1fr))",
-          gap: 16,
-          marginTop: 8,
-        }}
-      >
-        <DocCard href="/docs/getting-started" title={hub.cards.gettingStarted.title} body={hub.cards.gettingStarted.body} />
-        <DocCard
-          href="/docs/components"
-          title={hub.cards.catalog.title}
-          body={fmt(hub.cards.catalog.body, { count })}
-        />
-        <DocCard href="/components" title={hub.cards.gallery.title} body={hub.cards.gallery.body} />
-        <DocCard href="/llms.txt" title={hub.cards.llms.title} body={hub.cards.llms.body} external />
-        <DocCard href="/docs/changelog" title={hub.cards.changelog.title} body={hub.cards.changelog.body} />
-        <DocCard
-          href="https://github.com/Blueprint-Modular/blueprint-modular/blob/master/docs/DATABASE.md"
-          title={hub.cards.database.title}
-          body={hub.cards.database.body}
-          external
-        />
-      </div>
+      <section className="site-section site-section-bordered">
+        <div className="site-container">
+          <ul className="site-resource-grid">
+            {CARDS.map((key) => {
+              const { href, external } = CARD_HREF[key];
+              const card = hub.cards[key];
+              const inner = (
+                <>
+                  <span className="site-resource-card-title">
+                    {card.title}
+                    {external && (
+                      <span className="site-resource-ext" aria-hidden="true">
+                        ↗
+                      </span>
+                    )}
+                  </span>
+                  <span className="site-resource-card-body">{cardBody(key)}</span>
+                </>
+              );
+              return (
+                <li key={key}>
+                  {external ? (
+                    <a
+                      className="site-resource-card"
+                      href={href}
+                      target={href.startsWith("http") ? "_blank" : undefined}
+                      rel="noopener noreferrer"
+                    >
+                      {inner}
+                    </a>
+                  ) : (
+                    <Link className="site-resource-card" href={href}>
+                      {inner}
+                    </Link>
+                  )}
+                </li>
+              );
+            })}
+          </ul>
+        </div>
+      </section>
     </div>
   );
 }
