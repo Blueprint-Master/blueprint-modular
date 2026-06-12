@@ -14,21 +14,20 @@ import {
   Table,
   useToast,
 } from "@/components/bpm";
+import { useI18n } from "@/lib/i18n/LocaleProvider";
+import type { Locale } from "@/lib/i18n";
+import { STR, type ModeleId, type ModuleStrings, type PeriodeId, type ServiceKey } from "./strings";
 
 /* ------------------------------------------------------------------ */
 /* Types                                                               */
 /* ------------------------------------------------------------------ */
 
-type ModeleId = "ca-mensuel" | "commandes-region" | "effectifs-service";
-type PeriodeId = "annee-2025" | "s1-2025" | "s2-2025";
-
 interface GeneratedReport {
   id: string;
-  nom: string;
   modele: ModeleId;
   periode: PeriodeId;
   genereLe: string; // ISO
-  auteur: string;
+  auteur: string; // nom propre, ou sentinelle YOU_AUTHOR
 }
 
 interface ReportView {
@@ -48,46 +47,26 @@ interface ReportView {
 /* Données seedées (100 % déterministes)                               */
 /* ------------------------------------------------------------------ */
 
-const MODELE_LABEL: Record<ModeleId, string> = {
-  "ca-mensuel": "Chiffre d'affaires mensuel",
-  "commandes-region": "Commandes par région",
-  "effectifs-service": "Effectifs par service",
-};
+/** Sentinelle : auteur « moi », affiché « Vous »/"You" selon la locale. */
+const YOU_AUTHOR = "__you__";
 
-const PERIODE_LABEL: Record<PeriodeId, string> = {
-  "annee-2025": "Année 2025",
-  "s1-2025": "S1 2025",
-  "s2-2025": "S2 2025",
-};
-
-const MODELE_OPTIONS = (Object.keys(MODELE_LABEL) as ModeleId[]).map((id) => ({
-  value: id,
-  label: MODELE_LABEL[id],
-}));
-
-const PERIODE_OPTIONS: { value: PeriodeId; label: string }[] = [
-  { value: "annee-2025", label: "Année 2025" },
-  { value: "s1-2025", label: "S1 2025 (janvier–juin)" },
-  { value: "s2-2025", label: "S2 2025 (juillet–décembre)" },
+/** CA mensuel 2025 avec comparatif 2024 (montants en euros), indexé par mois (0 = janvier). */
+const CA_MENSUEL: { ca2025: number; ca2024: number }[] = [
+  { ca2025: 92400, ca2024: 86100 },
+  { ca2025: 88150, ca2024: 83400 },
+  { ca2025: 104300, ca2024: 97800 },
+  { ca2025: 98700, ca2024: 95200 },
+  { ca2025: 112450, ca2024: 103900 },
+  { ca2025: 119800, ca2024: 108600 },
+  { ca2025: 96200, ca2024: 92750 },
+  { ca2025: 81500, ca2024: 79300 },
+  { ca2025: 117300, ca2024: 110400 },
+  { ca2025: 124900, ca2024: 114800 },
+  { ca2025: 131600, ca2024: 121500 },
+  { ca2025: 138250, ca2024: 127900 },
 ];
 
-/** CA mensuel 2025 avec comparatif 2024 (montants en euros). */
-const CA_MENSUEL: { mois: string; court: string; ca2025: number; ca2024: number }[] = [
-  { mois: "Janvier", court: "Jan", ca2025: 92400, ca2024: 86100 },
-  { mois: "Février", court: "Fév", ca2025: 88150, ca2024: 83400 },
-  { mois: "Mars", court: "Mar", ca2025: 104300, ca2024: 97800 },
-  { mois: "Avril", court: "Avr", ca2025: 98700, ca2024: 95200 },
-  { mois: "Mai", court: "Mai", ca2025: 112450, ca2024: 103900 },
-  { mois: "Juin", court: "Juin", ca2025: 119800, ca2024: 108600 },
-  { mois: "Juillet", court: "Juil", ca2025: 96200, ca2024: 92750 },
-  { mois: "Août", court: "Août", ca2025: 81500, ca2024: 79300 },
-  { mois: "Septembre", court: "Sep", ca2025: 117300, ca2024: 110400 },
-  { mois: "Octobre", court: "Oct", ca2025: 124900, ca2024: 114800 },
-  { mois: "Novembre", court: "Nov", ca2025: 131600, ca2024: 121500 },
-  { mois: "Décembre", court: "Déc", ca2025: 138250, ca2024: 127900 },
-];
-
-/** Commandes par région, détaillées par semestre (panier moyen en euros). */
+/** Commandes par région (noms propres conservés), détaillées par semestre (panier moyen en euros). */
 const COMMANDES_REGION: {
   region: string;
   court: string;
@@ -102,24 +81,23 @@ const COMMANDES_REGION: {
   { region: "Hauts-de-France", court: "HDF", s1: { commandes: 438, panier: 115.8 }, s2: { commandes: 452, panier: 118.4 } },
 ];
 
-/** Effectifs par service : photo de fin de semestre + turnover semestriel (%). */
+/** Effectifs par service (libellés bilingues via strings) : photo de fin de semestre + turnover semestriel (%). */
 const EFFECTIFS_SERVICE: {
-  service: string;
+  service: ServiceKey;
   s1: { effectif: number; etp: number; turnover: number };
   s2: { effectif: number; etp: number; turnover: number };
 }[] = [
-  { service: "Production", s1: { effectif: 64, etp: 61.5, turnover: 3.1 }, s2: { effectif: 66, etp: 63.0, turnover: 2.8 } },
-  { service: "Commercial", s1: { effectif: 28, etp: 27.0, turnover: 5.4 }, s2: { effectif: 30, etp: 29.0, turnover: 4.9 } },
-  { service: "Support client", s1: { effectif: 19, etp: 17.5, turnover: 7.2 }, s2: { effectif: 21, etp: 19.0, turnover: 6.5 } },
-  { service: "Recherche & développement", s1: { effectif: 23, etp: 22.5, turnover: 2.2 }, s2: { effectif: 24, etp: 23.5, turnover: 1.9 } },
-  { service: "Administration & finance", s1: { effectif: 14, etp: 13.2, turnover: 1.8 }, s2: { effectif: 14, etp: 13.2, turnover: 2.1 } },
+  { service: "production", s1: { effectif: 64, etp: 61.5, turnover: 3.1 }, s2: { effectif: 66, etp: 63.0, turnover: 2.8 } },
+  { service: "commercial", s1: { effectif: 28, etp: 27.0, turnover: 5.4 }, s2: { effectif: 30, etp: 29.0, turnover: 4.9 } },
+  { service: "support", s1: { effectif: 19, etp: 17.5, turnover: 7.2 }, s2: { effectif: 21, etp: 19.0, turnover: 6.5 } },
+  { service: "rnd", s1: { effectif: 23, etp: 22.5, turnover: 2.2 }, s2: { effectif: 24, etp: 23.5, turnover: 1.9 } },
+  { service: "adminFinance", s1: { effectif: 14, etp: 13.2, turnover: 1.8 }, s2: { effectif: 14, etp: 13.2, turnover: 2.1 } },
 ];
 
 /** Rapports déjà générés (timestamps figés : rendu identique serveur/client). */
 const INITIAL_REPORTS: GeneratedReport[] = [
   {
     id: "rpt-2",
-    nom: "Chiffre d'affaires mensuel — Année 2025",
     modele: "ca-mensuel",
     periode: "annee-2025",
     genereLe: "2026-06-10T09:12:00",
@@ -127,7 +105,6 @@ const INITIAL_REPORTS: GeneratedReport[] = [
   },
   {
     id: "rpt-1",
-    nom: "Commandes par région — S1 2025",
     modele: "commandes-region",
     periode: "s1-2025",
     genereLe: "2026-06-03T16:45:00",
@@ -139,32 +116,65 @@ const INITIAL_REPORTS: GeneratedReport[] = [
 /* Helpers purs (déterministes : aucune horloge au render)             */
 /* ------------------------------------------------------------------ */
 
-function fmtInt(n: number): string {
-  return Math.round(n)
-    .toString()
-    .replace(/\B(?=(\d{3})+(?!\d))/g, " ");
+function localeTag(loc: Locale): string {
+  return loc === "fr" ? "fr-FR" : "en-GB";
 }
 
-function fmtEuro(n: number): string {
-  return `${fmtInt(n)} €`;
+function fmtInt(n: number, loc: Locale): string {
+  return new Intl.NumberFormat(localeTag(loc), { maximumFractionDigits: 0 }).format(Math.round(n));
 }
 
-function fmtDec(n: number, decimals = 1): string {
-  return n.toFixed(decimals).replace(".", ",");
+function fmtEuro(n: number, loc: Locale): string {
+  return new Intl.NumberFormat(localeTag(loc), {
+    style: "currency",
+    currency: "EUR",
+    minimumFractionDigits: 0,
+    maximumFractionDigits: 0,
+  }).format(n);
 }
 
-/** "2026-06-10T09:12:00" → "10/06/2026 à 09:12" (parsing pur, sans Date). */
-function fmtIso(iso: string): string {
-  const [date, time] = iso.split("T");
-  if (!date || !time) return iso;
-  const [y, m, d] = date.split("-");
-  return `${d}/${m}/${y} à ${time.slice(0, 5)}`;
+function fmtEuroDec(n: number, loc: Locale): string {
+  return new Intl.NumberFormat(localeTag(loc), {
+    style: "currency",
+    currency: "EUR",
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2,
+  }).format(n);
+}
+
+function fmtDec(n: number, loc: Locale, decimals = 1): string {
+  return new Intl.NumberFormat(localeTag(loc), {
+    minimumFractionDigits: decimals,
+    maximumFractionDigits: decimals,
+  }).format(n);
+}
+
+/** "2026-06-10T09:12:00" → "10/06/2026 à 09:12" (fr) / "10/06/2026, 09:12" (en). */
+function fmtIso(iso: string, loc: Locale): string {
+  const d = new Date(iso);
+  if (Number.isNaN(d.getTime())) return iso;
+  const s = STR[loc];
+  const date = d.toLocaleDateString(localeTag(loc));
+  const time = d.toLocaleTimeString(localeTag(loc), { hour: "2-digit", minute: "2-digit" });
+  return `${date}${s.dateTimeSep}${time}`;
+}
+
+/** Nom localisé d'un rapport : « Modèle — Période ». */
+function reportName(report: Pick<GeneratedReport, "modele" | "periode">, loc: Locale): string {
+  const s = STR[loc];
+  return `${s.models[report.modele]} — ${s.periods[report.periode]}`;
+}
+
+/** Auteur affiché (sentinelle « moi » localisée, les noms propres restent tels quels). */
+function authorLabel(auteur: string, s: ModuleStrings): string {
+  return auteur === YOU_AUTHOR ? s.you : auteur;
 }
 
 function moisPourPeriode(periode: PeriodeId) {
-  if (periode === "s1-2025") return CA_MENSUEL.slice(0, 6);
-  if (periode === "s2-2025") return CA_MENSUEL.slice(6, 12);
-  return CA_MENSUEL;
+  const indexed = CA_MENSUEL.map((m, idx) => ({ idx, ...m }));
+  if (periode === "s1-2025") return indexed.slice(0, 6);
+  if (periode === "s2-2025") return indexed.slice(6, 12);
+  return indexed;
 }
 
 function regionsPourPeriode(periode: PeriodeId) {
@@ -186,52 +196,53 @@ function servicesPourPeriode(periode: PeriodeId) {
   });
 }
 
-/** Construit l'aperçu complet (métriques, graphique, tableau) d'un rapport. */
-function buildView(modele: ModeleId, periode: PeriodeId): ReportView {
-  const titre = `${MODELE_LABEL[modele]} — ${PERIODE_LABEL[periode]}`;
+/** Construit l'aperçu complet (métriques, graphique, tableau) d'un rapport, dans la locale courante. */
+function buildView(modele: ModeleId, periode: PeriodeId, loc: Locale): ReportView {
+  const s = STR[loc];
+  const titre = reportName({ modele, periode }, loc);
 
   if (modele === "ca-mensuel") {
     const mois = moisPourPeriode(periode);
-    const total = mois.reduce((s, m) => s + m.ca2025, 0);
-    const totalN1 = mois.reduce((s, m) => s + m.ca2024, 0);
+    const total = mois.reduce((acc, m) => acc + m.ca2025, 0);
+    const totalN1 = mois.reduce((acc, m) => acc + m.ca2024, 0);
     const meilleur = mois.reduce((best, m) => (m.ca2025 > best.ca2025 ? m : best), mois[0]);
     const variation = ((total - totalN1) / totalN1) * 100;
     return {
       titre,
       metrics: [
-        { label: "CA total de la période", value: fmtEuro(total) },
-        { label: "Meilleur mois", value: `${meilleur.mois} (${fmtEuro(meilleur.ca2025)})` },
-        { label: "Variation vs 2024", value: `${variation >= 0 ? "+" : ""}${fmtDec(variation)} %` },
+        { label: s.mCaTotal, value: fmtEuro(total, loc) },
+        { label: s.mBestMonth, value: `${s.monthsFull[meilleur.idx]} (${fmtEuro(meilleur.ca2025, loc)})` },
+        { label: s.mYoY, value: `${variation >= 0 ? "+" : ""}${fmtDec(variation, loc)} %` },
       ],
       chart: (
         <LineChart
-          data={mois.map((m) => ({ x: m.court, y: m.ca2025 }))}
+          data={mois.map((m) => ({ x: s.monthsShort[m.idx], y: m.ca2025 }))}
           width={640}
           height={220}
           color="var(--bpm-accent-cyan, var(--bpm-accent))"
         />
       ),
       columns: [
-        { key: "mois", label: "Mois" },
-        { key: "ca2025", label: "CA 2025", align: "right", render: (v) => fmtEuro(v as number) },
-        { key: "ca2024", label: "CA 2024", align: "right", render: (v) => fmtEuro(v as number) },
+        { key: "mois", label: s.colMonth },
+        { key: "ca2025", label: s.colCa2025, align: "right", render: (v) => fmtEuro(v as number, loc) },
+        { key: "ca2024", label: s.colCa2024, align: "right", render: (v) => fmtEuro(v as number, loc) },
         {
           key: "variation",
-          label: "Variation N-1",
+          label: s.colYoY,
           align: "right",
           render: (v) => {
             const n = v as number;
             return (
               <Badge variant={n >= 0 ? "success" : "error"}>
                 {n >= 0 ? "+" : ""}
-                {fmtDec(n)} %
+                {fmtDec(n, loc)} %
               </Badge>
             );
           },
         },
       ],
       rows: mois.map((m) => ({
-        mois: m.mois,
+        mois: s.monthsFull[m.idx],
         ca2025: m.ca2025,
         ca2024: m.ca2024,
         variation: ((m.ca2025 - m.ca2024) / m.ca2024) * 100,
@@ -241,15 +252,15 @@ function buildView(modele: ModeleId, periode: PeriodeId): ReportView {
 
   if (modele === "commandes-region") {
     const regions = regionsPourPeriode(periode);
-    const totalCmd = regions.reduce((s, r) => s + r.commandes, 0);
-    const panierGlobal = regions.reduce((s, r) => s + r.commandes * r.panier, 0) / totalCmd;
+    const totalCmd = regions.reduce((acc, r) => acc + r.commandes, 0);
+    const panierGlobal = regions.reduce((acc, r) => acc + r.commandes * r.panier, 0) / totalCmd;
     const top = regions.reduce((best, r) => (r.commandes > best.commandes ? r : best), regions[0]);
     return {
       titre,
       metrics: [
-        { label: "Commandes totales", value: fmtInt(totalCmd) },
-        { label: "Panier moyen global", value: `${fmtDec(panierGlobal, 2)} €` },
-        { label: "Région la plus active", value: `${top.court} (${fmtInt(top.commandes)} cmd)` },
+        { label: s.mTotalOrders, value: fmtInt(totalCmd, loc) },
+        { label: s.mAvgBasket, value: fmtEuroDec(panierGlobal, loc) },
+        { label: s.mTopRegion, value: `${top.court} (${fmtInt(top.commandes, loc)} ${s.ordersAbbr})` },
       ],
       chart: (
         <BarChart
@@ -260,10 +271,10 @@ function buildView(modele: ModeleId, periode: PeriodeId): ReportView {
         />
       ),
       columns: [
-        { key: "region", label: "Région" },
-        { key: "commandes", label: "Commandes", align: "right", render: (v) => fmtInt(v as number) },
-        { key: "panier", label: "Panier moyen", align: "right", render: (v) => `${fmtDec(v as number, 2)} €` },
-        { key: "caEstime", label: "CA estimé", align: "right", render: (v) => fmtEuro(v as number) },
+        { key: "region", label: s.colRegion },
+        { key: "commandes", label: s.colOrders, align: "right", render: (v) => fmtInt(v as number, loc) },
+        { key: "panier", label: s.colBasket, align: "right", render: (v) => fmtEuroDec(v as number, loc) },
+        { key: "caEstime", label: s.colEstimatedCa, align: "right", render: (v) => fmtEuro(v as number, loc) },
       ],
       rows: regions.map((r) => ({
         region: r.region,
@@ -276,56 +287,61 @@ function buildView(modele: ModeleId, periode: PeriodeId): ReportView {
 
   // effectifs-service
   const services = servicesPourPeriode(periode);
-  const effectifTotal = services.reduce((s, x) => s + x.effectif, 0);
-  const etpTotal = services.reduce((s, x) => s + x.etp, 0);
-  const turnoverMoyen = services.reduce((s, x) => s + x.turnover * x.effectif, 0) / effectifTotal;
+  const effectifTotal = services.reduce((acc, x) => acc + x.effectif, 0);
+  const etpTotal = services.reduce((acc, x) => acc + x.etp, 0);
+  const turnoverMoyen = services.reduce((acc, x) => acc + x.turnover * x.effectif, 0) / effectifTotal;
   return {
     titre,
     metrics: [
-      { label: "Effectif total", value: `${fmtInt(effectifTotal)} pers.` },
-      { label: "ETP total", value: fmtDec(etpTotal, 1) },
-      { label: "Turnover moyen", value: `${fmtDec(turnoverMoyen)} %` },
+      { label: s.mHeadcount, value: `${fmtInt(effectifTotal, loc)} ${s.peopleUnit}` },
+      { label: s.mFte, value: fmtDec(etpTotal, loc, 1) },
+      { label: s.mAvgTurnover, value: `${fmtDec(turnoverMoyen, loc)} %` },
     ],
     chart: null,
     columns: [
-      { key: "service", label: "Service" },
-      { key: "effectif", label: "Effectif", align: "right", render: (v) => fmtInt(v as number) },
-      { key: "etp", label: "ETP", align: "right", render: (v) => fmtDec(v as number, 1) },
+      { key: "service", label: s.colService },
+      { key: "effectif", label: s.colWorkforce, align: "right", render: (v) => fmtInt(v as number, loc) },
+      { key: "etp", label: s.colFte, align: "right", render: (v) => fmtDec(v as number, loc, 1) },
       {
         key: "turnover",
-        label: "Turnover",
+        label: s.colTurnover,
         align: "right",
         render: (v) => {
           const n = v as number;
-          return <Badge variant={n > 6 ? "warning" : "success"}>{fmtDec(n)} %</Badge>;
+          return <Badge variant={n > 6 ? "warning" : "success"}>{fmtDec(n, loc)} %</Badge>;
         },
       },
     ],
-    rows: services.map((s) => ({ ...s })),
+    rows: services.map((x) => ({ ...x, service: s.services[x.service] })),
   };
 }
 
-/** Construit le contenu CSV (séparateur « ; », compatible Excel FR). */
-function buildCsv(modele: ModeleId, periode: PeriodeId): string {
+/** Décimales CSV : virgule en français (Excel FR), point en anglais. */
+function csvDec(n: number, decimals: number, loc: Locale): string {
+  const fixed = n.toFixed(decimals);
+  return loc === "fr" ? fixed.replace(".", ",") : fixed;
+}
+
+/** Construit le contenu CSV (séparateur « ; ») avec entêtes et libellés traduits à l'export. */
+function buildCsv(modele: ModeleId, periode: PeriodeId, loc: Locale): string {
+  const s = STR[loc];
   const lines: string[] = [];
   if (modele === "ca-mensuel") {
-    lines.push("Mois;CA 2025 (EUR);CA 2024 (EUR);Variation N-1 (%)");
+    lines.push(s.csvHeaderCa);
     for (const m of moisPourPeriode(periode)) {
       const variation = ((m.ca2025 - m.ca2024) / m.ca2024) * 100;
-      lines.push(`${m.mois};${m.ca2025};${m.ca2024};${variation.toFixed(1).replace(".", ",")}`);
+      lines.push(`${s.monthsFull[m.idx]};${m.ca2025};${m.ca2024};${csvDec(variation, 1, loc)}`);
     }
   } else if (modele === "commandes-region") {
-    lines.push("Région;Commandes;Panier moyen (EUR);CA estimé (EUR)");
+    lines.push(s.csvHeaderRegion);
     for (const r of regionsPourPeriode(periode)) {
-      lines.push(
-        `${r.region};${r.commandes};${r.panier.toFixed(2).replace(".", ",")};${Math.round(r.commandes * r.panier)}`
-      );
+      lines.push(`${r.region};${r.commandes};${csvDec(r.panier, 2, loc)};${Math.round(r.commandes * r.panier)}`);
     }
   } else {
-    lines.push("Service;Effectif;ETP;Turnover (%)");
-    for (const s of servicesPourPeriode(periode)) {
+    lines.push(s.csvHeaderService);
+    for (const x of servicesPourPeriode(periode)) {
       lines.push(
-        `${s.service};${s.effectif};${s.etp.toFixed(1).replace(".", ",")};${s.turnover.toFixed(1).replace(".", ",")}`
+        `${s.services[x.service]};${x.effectif};${csvDec(x.etp, 1, loc)};${csvDec(x.turnover, 1, loc)}`
       );
     }
   }
@@ -338,122 +354,145 @@ function buildCsv(modele: ModeleId, periode: PeriodeId): string {
 
 export default function RapportsSimulateur() {
   const { showToast } = useToast();
+  const { locale } = useI18n();
+  const s = STR[locale];
 
   const [reports, setReports] = useState<GeneratedReport[]>(INITIAL_REPORTS);
   const [toDelete, setToDelete] = useState<GeneratedReport | null>(null);
 
   const [modele, setModele] = useState<string | null>(null);
   const [periode, setPeriode] = useState<string | null>("annee-2025");
-  const [formError, setFormError] = useState<string | null>(null);
+  const [formError, setFormError] = useState(false);
 
   /** Rapport actuellement affiché dans la zone d'aperçu. */
   const [apercu, setApercu] = useState<GeneratedReport | null>(INITIAL_REPORTS[0]);
 
-  const view = useMemo(() => (apercu ? buildView(apercu.modele, apercu.periode) : null), [apercu]);
+  const view = useMemo(
+    () => (apercu ? buildView(apercu.modele, apercu.periode, locale) : null),
+    [apercu, locale]
+  );
 
-  const derniereGeneration = reports.length > 0 ? fmtIso(reports[0].genereLe) : "—";
+  const modeleOptions = useMemo(
+    () =>
+      (Object.keys(s.models) as ModeleId[]).map((id) => ({
+        value: id,
+        label: s.models[id],
+      })),
+    [s]
+  );
+
+  const periodeOptions = useMemo(
+    () =>
+      (["annee-2025", "s1-2025", "s2-2025"] as PeriodeId[]).map((id) => ({
+        value: id,
+        label: s.periodOptions[id],
+      })),
+    [s]
+  );
+
+  const derniereGeneration = reports.length > 0 ? fmtIso(reports[0].genereLe, locale) : "—";
 
   const handleGenerate = () => {
     if (!modele || !periode) {
-      setFormError("Choisissez un modèle de rapport et une période.");
+      setFormError(true);
       return;
     }
-    setFormError(null);
+    setFormError(false);
     const m = modele as ModeleId;
     const p = periode as PeriodeId;
     const now = new Date(); // autorisé : handler d'événement uniquement
     const report: GeneratedReport = {
       id: `rpt-${now.getTime()}`,
-      nom: `${MODELE_LABEL[m]} — ${PERIODE_LABEL[p]}`,
       modele: m,
       periode: p,
       genereLe: now.toISOString(),
-      auteur: "Vous",
+      auteur: YOU_AUTHOR,
     };
     setReports((prev) => [report, ...prev]);
     setApercu(report);
     showToast(
-      `« ${report.nom} » généré : aperçu mis à jour, export CSV disponible dans la liste.`,
+      s.toastGenerated(reportName(report, locale)),
       "success",
       5000,
-      "Rapport généré",
-      "Rapports",
+      s.toastGeneratedTitle,
+      s.toastSource,
       null
     );
   };
 
   const handleDownload = (report: GeneratedReport) => {
-    const csv = buildCsv(report.modele, report.periode);
+    const csv = buildCsv(report.modele, report.periode, locale);
     const blob = new Blob(["\uFEFF" + csv], { type: "text/csv;charset=utf-8;" });
     const url = URL.createObjectURL(blob);
     const a = document.createElement("a");
     a.href = url;
-    a.download = `rapport-${report.modele}-${report.periode}.csv`;
+    const fileName = `rapport-${report.modele}-${report.periode}.csv`;
+    a.download = fileName;
     document.body.appendChild(a);
     a.click();
     a.remove();
     URL.revokeObjectURL(url);
-    showToast(
-      `Fichier « rapport-${report.modele}-${report.periode}.csv » téléchargé.`,
-      "info",
-      4000,
-      "Export CSV",
-      "Rapports",
-      null
-    );
+    showToast(s.toastExport(fileName), "info", 4000, s.toastExportTitle, s.toastSource, null);
   };
 
   const confirmDelete = () => {
     if (!toDelete) return;
     setReports((prev) => prev.filter((r) => r.id !== toDelete.id));
     if (apercu && apercu.id === toDelete.id) setApercu(null);
-    showToast(`Rapport « ${toDelete.nom} » supprimé.`, "info", 4000, "Rapport supprimé", "Rapports", null);
+    showToast(
+      s.toastDeleted(reportName(toDelete, locale)),
+      "info",
+      4000,
+      s.toastDeletedTitle,
+      s.toastSource,
+      null
+    );
     setToDelete(null);
   };
 
   const reportColumns = [
     {
       key: "nom",
-      label: "Rapport",
+      label: s.colReport,
       render: (value: unknown, row: Record<string, unknown>) => (
         <div>
           <div style={{ color: "var(--bpm-text-primary)", fontWeight: 500 }}>{String(value)}</div>
           <div className="text-xs" style={{ color: "var(--bpm-text-secondary)" }}>
-            par {String(row.auteur)}
+            {s.byAuthor(authorLabel(String(row.auteur), s))}
           </div>
         </div>
       ),
     },
     {
       key: "modele",
-      label: "Modèle",
-      render: (value: unknown) => <Badge variant="default">{MODELE_LABEL[value as ModeleId]}</Badge>,
+      label: s.colTemplate,
+      render: (value: unknown) => <Badge variant="default">{s.models[value as ModeleId]}</Badge>,
     },
     {
       key: "periode",
-      label: "Période",
-      render: (value: unknown) => PERIODE_LABEL[value as PeriodeId],
+      label: s.colPeriod,
+      render: (value: unknown) => s.periods[value as PeriodeId],
     },
     {
       key: "genereLe",
-      label: "Généré le",
-      render: (value: unknown) => fmtIso(String(value)),
+      label: s.colGeneratedOn,
+      render: (value: unknown) => fmtIso(String(value), locale),
     },
     {
       key: "id",
-      label: "Actions",
+      label: s.colActions,
       render: (_: unknown, row: Record<string, unknown>) => {
         const report = row as unknown as GeneratedReport;
         return (
           <div className="flex flex-wrap gap-2">
             <Button size="small" variant="secondary" onClick={() => setApercu(report)}>
-              Afficher
+              {s.buttonShow}
             </Button>
             <Button size="small" variant="secondary" onClick={() => handleDownload(report)}>
-              Télécharger CSV
+              {s.buttonDownloadCsv}
             </Button>
             <Button size="small" variant="destructive" onClick={() => setToDelete(report)}>
-              Supprimer
+              {s.buttonDelete}
             </Button>
           </div>
         );
@@ -461,45 +500,55 @@ export default function RapportsSimulateur() {
     },
   ];
 
+  /** Lignes de l'historique avec nom localisé (recalculé à chaque changement de locale). */
+  const reportRows = useMemo(
+    () => reports.map((r) => ({ ...r, nom: reportName(r, locale) })),
+    [reports, locale]
+  );
+
   return (
     <div className="space-y-6">
       <MetricRow>
-        <Metric label="Rapports générés (30 j)" value={String(reports.length)} />
-        <Metric label="Modèles disponibles" value={String(MODELE_OPTIONS.length)} />
-        <Metric label="Dernière génération" value={derniereGeneration} />
+        <Metric label={s.metricGenerated30d} value={String(reports.length)} />
+        <Metric label={s.metricTemplates} value={String(modeleOptions.length)} />
+        <Metric label={s.metricLastGenerated} value={derniereGeneration} />
       </MetricRow>
 
-      <Panel variant="info" title="Générer un rapport">
+      <Panel variant="info" title={s.panelGenerate}>
         <div className="grid gap-3 md:grid-cols-2">
           <Selectbox
-            label="Modèle de rapport"
-            options={MODELE_OPTIONS}
+            label={s.labelTemplate}
+            options={modeleOptions}
             value={modele}
             onChange={setModele}
-            placeholder="Choisir un modèle"
+            placeholder={s.placeholderTemplate}
           />
           <Selectbox
-            label="Période"
-            options={PERIODE_OPTIONS}
+            label={s.labelPeriod}
+            options={periodeOptions}
             value={periode}
             onChange={setPeriode}
-            placeholder="Choisir une période"
+            placeholder={s.placeholderPeriod}
           />
         </div>
         {formError && (
           <p className="mt-2 text-sm" style={{ color: "var(--bpm-error, #dc2626)" }}>
-            {formError}
+            {s.formError}
           </p>
         )}
         <Button className="mt-4" onClick={handleGenerate}>
-          Générer
+          {s.buttonGenerate}
         </Button>
       </Panel>
 
       {view && apercu && (
-        <Panel variant="info" title={`Aperçu — ${view.titre}`}>
+        <Panel variant="info" title={`${s.previewTitle} — ${view.titre}`}>
           <p className="mb-4 text-sm" style={{ color: "var(--bpm-text-secondary)" }}>
-            Généré le {fmtIso(apercu.genereLe)} par {apercu.auteur} · période : {PERIODE_LABEL[apercu.periode]}
+            {s.previewMeta(
+              fmtIso(apercu.genereLe, locale),
+              authorLabel(apercu.auteur, s),
+              s.periods[apercu.periode]
+            )}
           </p>
           <MetricRow>
             {view.metrics.map((m) => (
@@ -511,27 +560,24 @@ export default function RapportsSimulateur() {
         </Panel>
       )}
 
-      <Panel variant="info" title="Rapports générés">
+      <Panel variant="info" title={s.panelHistory}>
         {reports.length > 0 ? (
-          <Table columns={reportColumns} data={reports as unknown as Record<string, unknown>[]} striped hover />
+          <Table columns={reportColumns} data={reportRows as unknown as Record<string, unknown>[]} striped hover />
         ) : (
           <p className="text-sm" style={{ color: "var(--bpm-text-secondary)" }}>
-            Aucun rapport pour l&apos;instant : choisissez un modèle et une période ci-dessus, puis cliquez
-            sur « Générer ».
+            {s.emptyHistory}
           </p>
         )}
       </Panel>
 
       <ConfirmModal
         isOpen={toDelete !== null}
-        title="Supprimer le rapport"
+        title={s.confirmTitle}
         message={
-          toDelete
-            ? `« ${toDelete.nom} » (généré le ${fmtIso(toDelete.genereLe)}) sera retiré de la liste. Cette action est immédiate.`
-            : ""
+          toDelete ? s.confirmMessage(reportName(toDelete, locale), fmtIso(toDelete.genereLe, locale)) : ""
         }
-        confirmLabel="Supprimer"
-        cancelLabel="Annuler"
+        confirmLabel={s.confirmLabel}
+        cancelLabel={s.cancelLabel}
         variant="danger"
         onConfirm={confirmDelete}
         onCancel={() => setToDelete(null)}
