@@ -13,15 +13,27 @@ import {
   Table,
   useToast,
 } from "@/components/bpm";
+import { useI18n } from "@/lib/i18n/LocaleProvider";
+import { STR, type ModuleStrings } from "./strings";
 
 type WebhookStatus = "active" | "error" | "paused";
+
+/**
+ * Dernier envoi stocké sous forme structurée (et non en texte) pour être
+ * rendu dans la locale courante. Les codes HTTP restent dans `info`.
+ */
+type LastSent =
+  | { kind: "minutes"; value: number; info: string }
+  | { kind: "hours"; value: number; info: string }
+  | { kind: "yesterday"; time: string; info: string }
+  | { kind: "now"; info: string };
 
 interface Webhook {
   id: string;
   evenement: string;
   url: string;
   statut: WebhookStatus;
-  dernierEnvoi: string;
+  dernierEnvoi: LastSent;
   tauxSucces: number;
   secret: string;
   livraisons24h: number;
@@ -36,13 +48,13 @@ interface Delivery {
   horodatage: string;
 }
 
-const EVENT_OPTIONS = [
-  { value: "commande.creee", label: "commande.creee — nouvelle commande" },
-  { value: "commande.expediee", label: "commande.expediee — commande expédiée" },
-  { value: "stock.seuil_atteint", label: "stock.seuil_atteint — seuil de stock" },
-  { value: "facture.payee", label: "facture.payee — facture encaissée" },
-  { value: "client.cree", label: "client.cree — nouveau client" },
-];
+const EVENT_CODES = [
+  "commande.creee",
+  "commande.expediee",
+  "stock.seuil_atteint",
+  "facture.payee",
+  "client.cree",
+] as const;
 
 const STATUS_VARIANT: Record<WebhookStatus, "success" | "error" | "default"> = {
   active: "success",
@@ -50,16 +62,10 @@ const STATUS_VARIANT: Record<WebhookStatus, "success" | "error" | "default"> = {
   paused: "default",
 };
 
-const STATUS_LABEL: Record<WebhookStatus, string> = {
-  active: "Actif",
-  error: "Erreur",
-  paused: "En pause",
-};
-
 /**
  * Seeds 100 % déterministes : libellés relatifs figés et horodatages ISO
  * littéraux (aucun Date.now()/Math.random() au render — rendu identique
- * serveur/client).
+ * serveur/client). URLs, secrets et codes HTTP inchangés.
  */
 const INITIAL_WEBHOOKS: Webhook[] = [
   {
@@ -67,7 +73,7 @@ const INITIAL_WEBHOOKS: Webhook[] = [
     evenement: "commande.creee",
     url: "https://hooks.slack.com/services/T024/B11/xxx",
     statut: "active",
-    dernierEnvoi: "il y a 4 min · HTTP 200",
+    dernierEnvoi: { kind: "minutes", value: 4, info: "HTTP 200" },
     tauxSucces: 99,
     secret: "whsec_8fK2mQ9pL4xT7vB1",
     livraisons24h: 142,
@@ -77,7 +83,7 @@ const INITIAL_WEBHOOKS: Webhook[] = [
     evenement: "stock.seuil_atteint",
     url: "https://erp.acme.fr/webhooks/stock",
     statut: "active",
-    dernierEnvoi: "il y a 1 h · HTTP 200",
+    dernierEnvoi: { kind: "hours", value: 1, info: "HTTP 200" },
     tauxSucces: 97,
     secret: "whsec_4nD7rW2sJ9kP5mC3",
     livraisons24h: 36,
@@ -87,7 +93,7 @@ const INITIAL_WEBHOOKS: Webhook[] = [
     evenement: "facture.payee",
     url: "https://compta.acme.fr/api/events",
     statut: "error",
-    dernierEnvoi: "il y a 23 min · HTTP 500",
+    dernierEnvoi: { kind: "minutes", value: 23, info: "HTTP 500" },
     tauxSucces: 62,
     secret: "whsec_6tG3yH8uK1lM4qZ9",
     livraisons24h: 18,
@@ -97,7 +103,7 @@ const INITIAL_WEBHOOKS: Webhook[] = [
     evenement: "client.cree",
     url: "https://crm.acme.fr/hooks",
     statut: "paused",
-    dernierEnvoi: "hier 17:42 · HTTP 200",
+    dernierEnvoi: { kind: "yesterday", time: "17:42", info: "HTTP 200" },
     tauxSucces: 100,
     secret: "whsec_2bV5cX1zN6aS8dF4",
     livraisons24h: 0,
@@ -132,8 +138,29 @@ function maskSecret(secret: string): string {
   return `${secret.slice(0, 6)}••••${secret.slice(-4)}`;
 }
 
+/** Rend le « dernier envoi » dans la locale courante. */
+function formatLastSent(last: LastSent, S: ModuleStrings): string {
+  let rel: string;
+  switch (last.kind) {
+    case "minutes":
+      rel = S.lastSentMinutes(last.value);
+      break;
+    case "hours":
+      rel = S.lastSentHours(last.value);
+      break;
+    case "yesterday":
+      rel = S.lastSentYesterday(last.time);
+      break;
+    default:
+      rel = S.lastSentNow;
+  }
+  return `${rel} · ${last.info}`;
+}
+
 export default function WebhooksSimulateur() {
   const { showToast } = useToast();
+  const { locale } = useI18n();
+  const S = STR[locale];
   const [webhooks, setWebhooks] = useState<Webhook[]>(INITIAL_WEBHOOKS);
   const [deliveries, setDeliveries] = useState<Delivery[]>(INITIAL_DELIVERIES);
   const [testingId, setTestingId] = useState<string | null>(null);
@@ -145,6 +172,15 @@ export default function WebhooksSimulateur() {
 
   const nextId = useRef(5);
 
+  const eventOptions = useMemo(
+    () =>
+      EVENT_CODES.map((code) => ({
+        value: code,
+        label: `${code} — ${S.eventDescriptions[code]}`,
+      })),
+    [S]
+  );
+
   const stats = useMemo(() => {
     const actifs = webhooks.filter((w) => w.statut === "active").length;
     const livraisons = webhooks.reduce((sum, w) => sum + w.livraisons24h, 0);
@@ -152,7 +188,7 @@ export default function WebhooksSimulateur() {
       webhooks.length > 0
         ? webhooks.reduce((sum, w) => sum + w.tauxSucces, 0) / webhooks.length
         : 0;
-    return { actifs, livraisons, taux: taux.toFixed(1).replace(".", ",") };
+    return { actifs, livraisons, taux };
   }, [webhooks]);
 
   const pushDelivery = (evt: string, cible: string, code: number, duree: number) => {
@@ -175,27 +211,31 @@ export default function WebhooksSimulateur() {
       setWebhooks((prev) =>
         prev.map((w) =>
           w.id === wh.id
-            ? { ...w, dernierEnvoi: `à l'instant · HTTP ${code}`, livraisons24h: w.livraisons24h + 1 }
+            ? {
+                ...w,
+                dernierEnvoi: { kind: "now", info: `HTTP ${code}` },
+                livraisons24h: w.livraisons24h + 1,
+              }
             : w
         )
       );
       setTestingId(null);
       if (fails) {
         showToast(
-          `${wh.url} a répondu HTTP 500 en ${duree} ms. La livraison sera retentée automatiquement.`,
+          S.toastFailMsg(wh.url, duree),
           "error",
           6000,
-          "Échec de la livraison",
-          "Webhooks",
+          S.toastFailTitle,
+          S.toastSource,
           null
         );
       } else {
         showToast(
-          `${wh.url} a répondu HTTP 200 en ${duree} ms.`,
+          S.toastOkMsg(wh.url, duree),
           "success",
           5000,
-          "Livraison réussie",
-          "Webhooks",
+          S.toastOkTitle,
+          S.toastSource,
           null
         );
       }
@@ -208,13 +248,11 @@ export default function WebhooksSimulateur() {
       prev.map((w) => (w.id === wh.id ? { ...w, statut: actif ? "active" : "paused" } : w))
     );
     showToast(
-      actif
-        ? `Le webhook « ${wh.evenement} » est de nouveau actif : les prochains événements seront livrés.`
-        : `Le webhook « ${wh.evenement} » est suspendu : aucun événement ne sera envoyé.`,
+      actif ? S.toastResumedMsg(wh.evenement) : S.toastSuspendedMsg(wh.evenement),
       actif ? "success" : "warning",
       4000,
-      actif ? "Webhook activé" : "Webhook suspendu",
-      "Webhooks",
+      actif ? S.toastResumedTitle : S.toastSuspendedTitle,
+      S.toastSource,
       null
     );
   };
@@ -223,11 +261,11 @@ export default function WebhooksSimulateur() {
     if (!toDelete) return;
     setWebhooks((prev) => prev.filter((w) => w.id !== toDelete.id));
     showToast(
-      `« ${toDelete.evenement} → ${toDelete.url} » a été supprimé. Le secret associé est révoqué.`,
+      S.toastDeletedMsg(toDelete.evenement, toDelete.url),
       "info",
       4000,
-      "Webhook supprimé",
-      "Webhooks",
+      S.toastDeletedTitle,
+      S.toastSource,
       null
     );
     setToDelete(null);
@@ -235,16 +273,16 @@ export default function WebhooksSimulateur() {
 
   const handleCreate = () => {
     if (!evenement) {
-      setFormError("Choisissez un événement déclencheur.");
+      setFormError(S.errorChooseEvent);
       return;
     }
     const cible = url.trim();
     if (!cible.startsWith("https://")) {
-      setFormError("L'URL doit commencer par https:// (TLS obligatoire pour la signature).");
+      setFormError(S.errorUrlHttps);
       return;
     }
     if (cible.length < 12 || !cible.slice(8).includes(".")) {
-      setFormError("Indiquez une URL complète, par exemple https://votre-app.fr/webhooks.");
+      setFormError(S.errorUrlComplete);
       return;
     }
     setFormError(null);
@@ -258,7 +296,7 @@ export default function WebhooksSimulateur() {
         evenement,
         url: cible,
         statut: "active",
-        dernierEnvoi: "à l'instant · ping HTTP 200",
+        dernierEnvoi: { kind: "now", info: "ping HTTP 200" },
         tauxSucces: 100,
         secret,
         livraisons24h: 1,
@@ -267,11 +305,11 @@ export default function WebhooksSimulateur() {
     ]);
     pushDelivery(evenement, cible, 200, duree);
     showToast(
-      `« ${evenement} » sera livré sur ${cible}. Secret de signature : ${maskSecret(secret)}.`,
+      S.toastCreatedMsg(evenement, cible, maskSecret(secret)),
       "success",
       6000,
-      "Webhook créé",
-      "Webhooks",
+      S.toastCreatedTitle,
+      S.toastSource,
       null
     );
     setEvenement(null);
@@ -281,7 +319,7 @@ export default function WebhooksSimulateur() {
   const webhookColumns = [
     {
       key: "evenement",
-      label: "Webhook",
+      label: S.colWebhook,
       render: (value: unknown, row: Record<string, unknown>) => (
         <div>
           <div style={{ color: "var(--bpm-text-primary)", fontWeight: 500 }}>
@@ -295,22 +333,26 @@ export default function WebhooksSimulateur() {
     },
     {
       key: "statut",
-      label: "Statut",
+      label: S.colStatus,
       render: (value: unknown) => {
         const s = value as WebhookStatus;
-        return <Badge variant={STATUS_VARIANT[s]}>{STATUS_LABEL[s]}</Badge>;
+        return <Badge variant={STATUS_VARIANT[s]}>{S.statusLabels[s]}</Badge>;
       },
     },
-    { key: "dernierEnvoi", label: "Dernier envoi" },
+    {
+      key: "dernierEnvoi",
+      label: S.colLastSent,
+      render: (value: unknown) => <span>{formatLastSent(value as LastSent, S)}</span>,
+    },
     {
       key: "tauxSucces",
-      label: "Succès",
+      label: S.colSuccess,
       align: "right" as const,
-      render: (value: unknown) => <span>{String(value)} %</span>,
+      render: (value: unknown) => <span>{S.fmtPercent(Number(value))}</span>,
     },
     {
       key: "secret",
-      label: "Secret",
+      label: S.colSecret,
       render: (value: unknown) => (
         <code className="text-xs" style={{ color: "var(--bpm-text-secondary)" }}>
           {maskSecret(String(value))}
@@ -319,20 +361,20 @@ export default function WebhooksSimulateur() {
     },
     {
       key: "id",
-      label: "Actions",
+      label: S.colActions,
       render: (_: unknown, row: Record<string, unknown>) => {
         const wh = row as unknown as Webhook;
         const sending = testingId === wh.id;
         return (
           <div className="flex flex-wrap gap-2">
             <Button size="small" variant="secondary" disabled={testingId !== null} onClick={() => testWebhook(wh)}>
-              {sending ? "Envoi…" : "Tester"}
+              {sending ? S.btnSending : S.btnTest}
             </Button>
             <Button size="small" variant="secondary" onClick={() => toggleStatus(wh)}>
-              {wh.statut === "active" ? "Suspendre" : "Activer"}
+              {wh.statut === "active" ? S.btnSuspend : S.btnResume}
             </Button>
             <Button size="small" variant="destructive" onClick={() => setToDelete(wh)}>
-              Supprimer
+              {S.btnDelete}
             </Button>
           </div>
         );
@@ -343,29 +385,29 @@ export default function WebhooksSimulateur() {
   const deliveryColumns = [
     {
       key: "evenement",
-      label: "Événement",
+      label: S.colEvent,
       render: (value: unknown) => <code>{String(value)}</code>,
     },
-    { key: "url", label: "URL cible" },
+    { key: "url", label: S.colTargetUrl },
     {
       key: "code",
-      label: "Code HTTP",
+      label: S.colHttpCode,
       render: (value: unknown) => (
         <Badge variant={Number(value) < 400 ? "success" : "error"}>{String(value)}</Badge>
       ),
     },
     {
       key: "duree",
-      label: "Durée",
+      label: S.colDuration,
       align: "right" as const,
-      render: (value: unknown) => <span>{String(value)} ms</span>,
+      render: (value: unknown) => <span>{S.fmtDuration(Number(value))}</span>,
     },
     {
       key: "horodatage",
-      label: "Horodatage",
+      label: S.colTimestamp,
       render: (value: unknown) => (
         <span className="text-xs" style={{ color: "var(--bpm-text-secondary)" }}>
-          {String(value).slice(0, 19).replace("T", " ")}
+          {S.fmtTimestamp(String(value))}
         </span>
       ),
     },
@@ -374,27 +416,27 @@ export default function WebhooksSimulateur() {
   return (
     <div className="space-y-6">
       <MetricRow>
-        <Metric label="Webhooks actifs" value={String(stats.actifs)} />
-        <Metric label="Livraisons 24 h" value={String(stats.livraisons)} />
-        <Metric label="Taux de succès global" value={`${stats.taux} %`} />
+        <Metric label={S.metricActive} value={String(stats.actifs)} />
+        <Metric label={S.metricDeliveries} value={String(stats.livraisons)} />
+        <Metric label={S.metricSuccessRate} value={S.fmtRate(stats.taux)} />
       </MetricRow>
 
-      <Panel variant="info" title="Webhooks configurés">
+      <Panel variant="info" title={S.panelConfigured}>
         <Table columns={webhookColumns} data={webhooks as unknown as Record<string, unknown>[]} striped hover />
       </Panel>
 
-      <Panel variant="info" title="Ajouter un webhook">
+      <Panel variant="info" title={S.panelAdd}>
         <div className="grid gap-3 md:grid-cols-2">
           <Selectbox
-            label="Événement déclencheur"
-            options={EVENT_OPTIONS}
+            label={S.selectLabel}
+            options={eventOptions}
             value={evenement}
             onChange={setEvenement}
-            placeholder="Choisir un événement"
+            placeholder={S.selectPlaceholder}
           />
           <Input
-            label="URL de destination (https obligatoire)"
-            placeholder="https://votre-app.fr/webhooks"
+            label={S.inputLabel}
+            placeholder={S.inputPlaceholder}
             value={url}
             onChange={setUrl}
           />
@@ -405,24 +447,20 @@ export default function WebhooksSimulateur() {
           </p>
         )}
         <Button className="mt-4" onClick={handleCreate}>
-          Créer le webhook
+          {S.createButton}
         </Button>
       </Panel>
 
-      <Panel variant="info" title="Journal des livraisons">
+      <Panel variant="info" title={S.panelLog}>
         <Table columns={deliveryColumns} data={deliveries as unknown as Record<string, unknown>[]} striped hover />
       </Panel>
 
       <ConfirmModal
         isOpen={toDelete !== null}
-        title="Supprimer le webhook"
-        message={
-          toDelete
-            ? `« ${toDelete.evenement} » ne sera plus livré sur ${toDelete.url} et le secret de signature sera révoqué. Cette action est immédiate.`
-            : ""
-        }
-        confirmLabel="Supprimer"
-        cancelLabel="Annuler"
+        title={S.confirmDeleteTitle}
+        message={toDelete ? S.confirmDeleteMsg(toDelete.evenement, toDelete.url) : ""}
+        confirmLabel={S.btnDelete}
+        cancelLabel={S.cancelLabel}
         variant="danger"
         onConfirm={confirmDelete}
         onCancel={() => setToDelete(null)}
