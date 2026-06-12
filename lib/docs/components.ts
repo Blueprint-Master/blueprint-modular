@@ -120,7 +120,7 @@ export const COMPONENTS_DOC: ComponentDoc[] = [
     ],
     examples: [
       { title: "Basique", code: "bpm.progress(value=60)" },
-      { title: "Avec label", code: 'bpm.progress(value=75, label="Avancement", showValue=True)' },
+      { title: "Avec label", code: 'bpm.progress(value=75, label="Avancement", show_value=True)' },
     ],
     relatedComponents: ["metric", "skeleton"],
   },
@@ -324,6 +324,82 @@ export const COMPONENTS_DOC: ComponentDoc[] = [
       { title: "En cours", code: 'bpm.statusbox("En cours", status="info")' },
     ],
     relatedComponents: ["badge", "message", "progress"],
+  },
+  {
+    name: "livegauge",
+    category: "display",
+    description: "Jauge demi-cercle avec aiguille et zones colorées (seuils warning/critical).",
+    props: [
+      { name: "value", type: "number", required: true, description: "Valeur actuelle affichée" },
+      { name: "min", type: "number", required: false, default: "0", description: "Borne basse de l'échelle" },
+      { name: "max", type: "number", required: false, default: "100", description: "Borne haute de l'échelle" },
+      { name: "warning_above", type: "number", required: false, description: "Seuil d'avertissement (zone jaune)" },
+      { name: "critical_above", type: "number", required: false, description: "Seuil critique (zone rouge)" },
+      { name: "label", type: "string", required: false, description: "Libellé sous la jauge" },
+      { name: "size", type: "'sm' | 'md' | 'lg'", required: false, default: "md", description: "Taille de la jauge" },
+    ],
+    examples: [
+      { title: "Basique", code: 'bpm.live_gauge(value=62, label="CPU %")' },
+      { title: "Avec seuils", code: 'bpm.live_gauge(value=76, warning_above=70, critical_above=90, label="Charge ligne 2")' },
+    ],
+    relatedComponents: ["metric", "progress", "statusbox"],
+  },
+  {
+    name: "statustracker",
+    category: "display",
+    description: "Suivi de statut en étapes (completed / current / pending / error).",
+    props: [
+      { name: "stages", type: "list[tuple | dict]", required: true, description: "Étapes : (label, status) ou {label, status}" },
+      { name: "direction", type: "'vertical' | 'horizontal'", required: false, default: "vertical", description: "Sens d'affichage" },
+      { name: "compact", type: "boolean", required: false, default: "false", description: "Densité réduite" },
+    ],
+    examples: [
+      { title: "Basique", code: 'bpm.status_tracker(stages=[("Créé", "completed"), ("Validation", "current"), ("Clôturé", "pending")])' },
+      { title: "Horizontal compact", code: 'bpm.status_tracker(stages=[("Créé", "completed"), ("Validation", "current")], compact=True, direction="horizontal")' },
+    ],
+    relatedComponents: ["stepper", "timeline", "approvalflow"],
+  },
+  {
+    name: "approvalflow",
+    category: "display",
+    description: "Flux de validation multi-étapes (approuvé / en attente / rejeté).",
+    props: [
+      { name: "steps", type: "list[tuple | dict]", required: true, description: "Étapes : (approver, role, status) ou {id, approver, role, status}" },
+      { name: "direction", type: "'vertical' | 'horizontal'", required: false, default: "vertical", description: "Sens d'affichage" },
+    ],
+    examples: [
+      { title: "Basique", code: 'bpm.approval_flow(steps=[("Marie Dupont", "Responsable", "approved"), ("Jean Martin", "Direction", "pending")])' },
+    ],
+    relatedComponents: ["statustracker", "activityfeed"],
+  },
+  {
+    name: "activityfeed",
+    category: "display",
+    description: "Flux chronologique d'activités (avatars, horodatage relatif, état vide).",
+    props: [
+      { name: "activities", type: "list[tuple | dict]", required: true, description: "Entrées : (actor, action, target, color?) ou {id, actor, action, target, timestamp, color}" },
+      { name: "compact", type: "boolean", required: false, default: "false", description: "Densité réduite" },
+      { name: "max_items", type: "number", required: false, description: "Nombre max d'entrées visibles" },
+    ],
+    examples: [
+      { title: "Basique", code: 'bpm.activity_feed(activities=[("Marie Dupont", "a validé", "le devis DV-001", "success")])' },
+    ],
+    relatedComponents: ["timeline", "statustracker"],
+  },
+  {
+    name: "anomalyalert",
+    category: "feedback",
+    description: "Alerte d'anomalie : valeur attendue vs réelle.",
+    props: [
+      { name: "expected", type: "string | number", required: true, description: "Valeur attendue" },
+      { name: "actual", type: "string | number", required: true, description: "Valeur réelle" },
+      { name: "title", type: "string", required: false, description: "Titre de l'alerte" },
+      { name: "severity", type: "'info' | 'warning' | 'critical'", required: false, default: "warning", description: "Gravité affichée" },
+    ],
+    examples: [
+      { title: "Basique", code: 'bpm.anomaly_alert(title="Écart de stock", expected="100 unités", actual="85 unités", severity="warning")' },
+    ],
+    relatedComponents: ["message", "statusbox", "metric"],
   },
 ];
 

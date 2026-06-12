@@ -283,6 +283,12 @@
       "category": "Feedback"
     },
     {
+      "slug": "anomalyalert",
+      "name": "bpm.anomalyAlert",
+      "description": "Alerte d'anomalie : valeur attendue vs réelle (severity info/warning/critical).",
+      "category": "Feedback"
+    },
+    {
       "slug": "breadcrumb",
       "name": "bpm.breadcrumb",
       "description": "Fil d'Ariane.",
@@ -388,6 +394,18 @@
       "slug": "activityfeed",
       "name": "bpm.activityFeed",
       "description": "Fil d'activité avec avatars et dates relatives.",
+      "category": "Affichage de données"
+    },
+    {
+      "slug": "livegauge",
+      "name": "bpm.liveGauge",
+      "description": "Jauge demi-cercle à seuils (warning/critical) avec aiguille.",
+      "category": "Affichage de données"
+    },
+    {
+      "slug": "approvalflow",
+      "name": "bpm.approvalFlow",
+      "description": "Flux de validation multi-étapes (approuvé / en attente / rejeté).",
       "category": "Affichage de données"
     },
     {

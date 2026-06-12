@@ -66,6 +66,7 @@ COMPONENT_DOC: list[ComponentDoc] = [
     {"slug": "loadingbar", "name": "bpm.loadingBar", "description": "Barre de chargement (sweep, blocks, iso, stacked, arc, dots).", "category": "Feedback"},
     {"slug": "tooltip", "name": "bpm.tooltip", "description": "Info-bulle au survol.", "category": "Feedback"},
     {"slug": "statusbox", "name": "bpm.statusBox", "description": "Boîte de statut (success, warning, error, info).", "category": "Feedback"},
+    {"slug": "anomalyalert", "name": "bpm.anomalyAlert", "description": "Alerte d'anomalie : valeur attendue vs réelle (severity info/warning/critical).", "category": "Feedback"},
     # Navigation & structure
     {"slug": "breadcrumb", "name": "bpm.breadcrumb", "description": "Fil d'Ariane.", "category": "Navigation"},
     {"slug": "stepper", "name": "bpm.stepper", "description": "Progression multi-étapes (horizontal/vertical, tailles sm/md/lg).", "category": "Navigation"},
@@ -89,6 +90,8 @@ COMPONENT_DOC: list[ComponentDoc] = [
     {"slug": "flowdiagram", "name": "bpm.flowDiagram", "description": "Diagramme d'états et transitions interactif (SVG).", "category": "Affichage de données"},
     {"slug": "statustracker", "name": "bpm.statusTracker", "description": "Suivi de statut réel (barre, étapes completed/current/pending/error).", "category": "Affichage de données"},
     {"slug": "activityfeed", "name": "bpm.activityFeed", "description": "Fil d'activité avec avatars et dates relatives.", "category": "Affichage de données"},
+    {"slug": "livegauge", "name": "bpm.liveGauge", "description": "Jauge demi-cercle à seuils (warning/critical) avec aiguille.", "category": "Affichage de données"},
+    {"slug": "approvalflow", "name": "bpm.approvalFlow", "description": "Flux de validation multi-étapes (approuvé / en attente / rejeté).", "category": "Affichage de données"},
     {"slug": "orgchart", "name": "bpm.orgChart", "description": "Organigramme hiérarchique HTML/CSS (repliable).", "category": "Mise en page"},
     {"slug": "masterdetail", "name": "bpm.masterDetail", "description": "Vue liste + détail responsive (recherche, mobile).", "category": "Mise en page"},
     {"slug": "wizardform", "name": "bpm.wizardForm", "description": "Formulaire multi-étapes avec stepper et validation.", "category": "Interaction"},
