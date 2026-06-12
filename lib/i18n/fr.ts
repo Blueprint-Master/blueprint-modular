@@ -252,6 +252,44 @@ const fr = {
     stageClosed: "Clôturé",
     statusOk: "Opérationnel",
   },
+  presentationPage: {
+    metaTitle: "Présentation — Blueprint Modular",
+    metaDescription:
+      "Blueprint Modular en un coup d'œil : des composants React appelés comme des fonctions Python, des modules métier prêts à brancher, un connecteur MCP pour vos agents et une documentation générée depuis le code.",
+    eyebrow: "Présentation",
+    title: "Blueprint Modular, en un coup d'œil.",
+    lead:
+      "Une bibliothèque d'interfaces métier pilotée depuis Python : {components} composants en rendu réel, {modules} modules prêts à brancher, un connecteur MCP pour vos agents — une seule source de vérité, du code au catalogue.",
+    ctaPrimary: "Commencer",
+    ctaSecondary: "Ouvrir l'app",
+    ecosystem: {
+      title: "Un produit, cinq points d'entrée.",
+      lead:
+        "Chaque brique se découvre, se teste et se documente au même endroit. Voici par où entrer.",
+      cards: {
+        components: {
+          title: "Composants",
+          body: "Les {components} composants bpm.* rendus en situation réelle, avec variantes et compositions.",
+        },
+        modules: {
+          title: "Modules métier",
+          body: "{modules} modules prêts à brancher — auth, wiki, veille, contrats, tableaux de bord — chacun avec sa doc et son simulateur.",
+        },
+        mcp: {
+          title: "Connecteur MCP",
+          body: "Le catalogue ouvert à vos agents : lecture seule, sans authentification, sans donnée personnelle.",
+        },
+        docs: {
+          title: "Documentation",
+          body: "Parcours d'installation, catalogue détaillé et référence machine, du premier composant à la mise en production.",
+        },
+        resources: {
+          title: "Ressources",
+          body: "Guides, changelog, package PyPI et llms.txt — tout pour construire, réunis en un point d'entrée.",
+        },
+      },
+    },
+  },
   gallery: {
     eyebrow: "Composants",
     title: "Galerie de composants",
