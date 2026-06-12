@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useState, useEffect, useRef } from "react";
 import { Sidebar } from "@/components/Sidebar";
@@ -122,9 +123,17 @@ function AppLayoutInner({ children }: { children: React.ReactNode }) {
         className={`app-content-column flex-1 flex flex-col min-h-screen transition-[margin-left] duration-200 ease-in-out ${collapsed ? "md:ml-16" : "md:ml-64"}`}
       >
           <header
-            className="pwa-title-bar sticky top-0 z-30 max-md:z-50 flex h-14 shrink-0 items-center justify-end px-3 sm:px-4 gap-2"
+            className="pwa-title-bar sticky top-0 z-30 max-md:z-50 flex h-14 shrink-0 items-center justify-between md:justify-end px-3 sm:px-4 gap-2"
             style={{ background: "var(--bpm-bg-primary)" }}
           >
+            {/* Marque visible uniquement en mobile (desktop : la sidebar porte déjà la marque) */}
+            <Link href="/dashboard" className="app-titlebar-brand md:hidden" aria-label="Blueprint Modular — accueil">
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img src="/img/logo-bpm.png" alt="" className="bpm-brand-logo" width={28} height={28} />
+              <span className="app-titlebar-brand-text">
+                <strong>Blueprint</strong> Modular
+              </span>
+            </Link>
             <div className="flex items-center gap-1 flex-shrink-0" style={{ color: "var(--bpm-text-primary)" }}>
               <AIHeaderIconButtons />
               <NotificationBell />
