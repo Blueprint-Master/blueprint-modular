@@ -15,26 +15,18 @@ import {
   type TableColumn,
   useToast,
 } from "@/components/bpm";
+import { useI18n } from "@/lib/i18n/LocaleProvider";
+import type { Locale } from "@/lib/i18n";
+import { STR, type ModuleStrings } from "./strings";
 
 /* ------------------------------------------------------------------ */
 /* Données seedées (100 % déterministes — aucun Date.now() au render) */
 /* ------------------------------------------------------------------ */
 
-const VENTES_12_MOIS = [
-  { x: "Juil.", y: 96.4 },
-  { x: "Août", y: 88.1 },
-  { x: "Sept.", y: 104.7 },
-  { x: "Oct.", y: 112.3 },
-  { x: "Nov.", y: 121.8 },
-  { x: "Déc.", y: 138.6 },
-  { x: "Janv.", y: 109.2 },
-  { x: "Févr.", y: 115.4 },
-  { x: "Mars", y: 124.9 },
-  { x: "Avr.", y: 128.3 },
-  { x: "Mai", y: 135.7 },
-  { x: "Juin", y: 142.5 },
-];
+/** Valeurs mensuelles (k€) ; les libellés de mois sont résolus selon la locale. */
+const VENTES_12_MOIS_Y = [96.4, 88.1, 104.7, 112.3, 121.8, 138.6, 109.2, 115.4, 124.9, 128.3, 135.7, 142.5];
 
+// Les régions françaises restent telles quelles dans les deux langues.
 const CA_PAR_REGION = [
   { x: "Île-de-France", y: 48.2 },
   { x: "Auvergne-Rhône-Alpes", y: 27.6 },
@@ -44,6 +36,7 @@ const CA_PAR_REGION = [
   { x: "Grand Est", y: 13.4 },
 ];
 
+// Les noms de produits restent tels quels dans les deux langues.
 const TOP_PRODUITS = [
   { ref: "PRD-1042", nom: "Pompe centrifuge X200", ca: 18450 },
   { ref: "PRD-0871", nom: "Vanne motorisée V35", ca: 15920 },
@@ -52,23 +45,15 @@ const TOP_PRODUITS = [
   { ref: "PRD-0998", nom: "Kit de maintenance M3", ca: 8210 },
 ];
 
-const TOP_PRODUITS_COLUMNS: TableColumn[] = [
-  { key: "ref", label: "Réf.", noWrap: true },
-  { key: "nom", label: "Produit" },
-  {
-    key: "ca",
-    label: "CA",
-    align: "right",
-    render: (value) => `${Number(value).toLocaleString("fr-FR")} €`,
-  },
-];
-
-const DERNIERES_COMMANDES: ActivityItem[] = [
-  { id: "c1", actor: "Boutique Lyon", action: "a passé la commande", target: "CMD-2026-1847 — 2 340 €", timestamp: "2026-06-12T09:42:00", color: "success" },
-  { id: "c2", actor: "Atelier Nantes", action: "a passé la commande", target: "CMD-2026-1846 — 1 120 €", timestamp: "2026-06-12T08:15:00", color: "success" },
-  { id: "c3", actor: "Distrib. Lille", action: "a modifié la commande", target: "CMD-2026-1839 — quantités révisées", timestamp: "2026-06-11T17:28:00", color: "info" },
-  { id: "c4", actor: "Garage Toulouse", action: "a annulé la commande", target: "CMD-2026-1833 — 480 €", timestamp: "2026-06-11T14:03:00", color: "warning" },
-];
+/** Format monétaire via Intl, selon la locale courante. */
+function formatCurrency(value: number, locale: Locale, decimals = 0): string {
+  return new Intl.NumberFormat(locale === "en" ? "en-US" : "fr-FR", {
+    style: "currency",
+    currency: "EUR",
+    minimumFractionDigits: decimals,
+    maximumFractionDigits: decimals,
+  }).format(value);
+}
 
 /* ------------------------------------------------------------------ */
 /* Catalogue de widgets                                                */
@@ -94,80 +79,85 @@ interface WidgetDef {
   render: () => ReactNode;
 }
 
-const WIDGET_CATALOG: WidgetDef[] = [
-  {
-    id: "metric-ca",
-    title: "CA du mois",
-    description: "Chiffre d'affaires du mois en cours, avec variation vs mois précédent.",
-    defaultSize: 1,
-    render: () => <Metric label="CA du mois" value="142,5 k€" delta="+12,3 %" subtext="vs mai 2026" />,
-  },
-  {
-    id: "metric-commandes",
-    title: "Commandes",
-    description: "Nombre de commandes du mois, avec variation vs mois précédent.",
-    defaultSize: 1,
-    render: () => <Metric label="Commandes" value={1248} valueLocale="fr-FR" delta="+8 %" subtext="vs mai 2026" />,
-  },
-  {
-    id: "metric-panier",
-    title: "Panier moyen",
-    description: "Montant moyen d'une commande sur le mois en cours.",
-    defaultSize: 1,
-    render: () => <Metric label="Panier moyen" value="114,20 €" delta="+3,9 %" subtext="vs mai 2026" />,
-  },
-  {
-    id: "line-ventes",
-    title: "Ventes — 12 derniers mois",
-    description: "Évolution mensuelle du chiffre d'affaires (k€) sur un an glissant.",
-    defaultSize: 2,
-    render: () => <LineChart data={VENTES_12_MOIS} height={220} />,
-  },
-  {
-    id: "bar-regions",
-    title: "CA par région",
-    description: "Répartition du chiffre d'affaires (k€) sur les 6 premières régions.",
-    defaultSize: 1,
-    render: () => <BarChart data={CA_PAR_REGION} height={220} />,
-  },
-  {
-    id: "table-top-produits",
-    title: "Top 5 produits",
-    description: "Les 5 produits qui génèrent le plus de chiffre d'affaires ce mois-ci.",
-    defaultSize: 1,
-    render: () => (
-      <Table columns={TOP_PRODUITS_COLUMNS} data={TOP_PRODUITS} keyColumn="ref" density="compact" />
+/**
+ * Ids et tailles par défaut du catalogue — stables quelle que soit la locale
+ * (la disposition persistée dans localStorage référence ces ids).
+ */
+const WIDGET_DEFAULT_SIZES: Record<WidgetId, WidgetSize> = {
+  "metric-ca": 1,
+  "metric-commandes": 1,
+  "metric-panier": 1,
+  "line-ventes": 2,
+  "bar-regions": 1,
+  "table-top-produits": 1,
+  "ring-objectif": 1,
+  "feed-commandes": 2,
+};
+
+const WIDGET_IDS = Object.keys(WIDGET_DEFAULT_SIZES) as WidgetId[];
+const KNOWN_WIDGET_IDS = new Set<string>(WIDGET_IDS);
+
+/** Construit le catalogue avec les libellés et formats de la locale courante. */
+function buildCatalog(s: ModuleStrings, locale: Locale): WidgetDef[] {
+  const ventes12Mois = VENTES_12_MOIS_Y.map((y, i) => ({ x: s.months[i], y }));
+
+  const topProduitsColumns: TableColumn[] = [
+    { key: "ref", label: s.tableColRef, noWrap: true },
+    { key: "nom", label: s.tableColProduct },
+    {
+      key: "ca",
+      label: s.tableColRevenue,
+      align: "right",
+      render: (value) => formatCurrency(Number(value), locale),
+    },
+  ];
+
+  const dernieresCommandes: ActivityItem[] = [
+    { id: "c1", actor: "Boutique Lyon", action: s.orderPlaced, target: `CMD-2026-1847 — ${formatCurrency(2340, locale)}`, timestamp: "2026-06-12T09:42:00", color: "success" },
+    { id: "c2", actor: "Atelier Nantes", action: s.orderPlaced, target: `CMD-2026-1846 — ${formatCurrency(1120, locale)}`, timestamp: "2026-06-12T08:15:00", color: "success" },
+    { id: "c3", actor: "Distrib. Lille", action: s.orderModified, target: `CMD-2026-1839 — ${s.quantitiesRevised}`, timestamp: "2026-06-11T17:28:00", color: "info" },
+    { id: "c4", actor: "Garage Toulouse", action: s.orderCancelled, target: `CMD-2026-1833 — ${formatCurrency(480, locale)}`, timestamp: "2026-06-11T14:03:00", color: "warning" },
+  ];
+
+  const renderers: Record<WidgetId, () => ReactNode> = {
+    "metric-ca": () => (
+      <Metric label={s.widgets["metric-ca"].title} value={s.metricCaValue} delta={s.metricCaDelta} subtext={s.vsLastMonth} />
     ),
-  },
-  {
-    id: "ring-objectif",
-    title: "Objectif trimestre",
-    description: "Avancement vers l'objectif de CA du trimestre (T2 2026).",
-    defaultSize: 1,
-    render: () => (
+    "metric-commandes": () => (
+      <Metric label={s.widgets["metric-commandes"].title} value={1248} valueLocale={s.numberLocale} delta={s.metricCommandesDelta} subtext={s.vsLastMonth} />
+    ),
+    "metric-panier": () => (
+      <Metric label={s.widgets["metric-panier"].title} value={formatCurrency(114.2, locale, 2)} delta={s.metricPanierDelta} subtext={s.vsLastMonth} />
+    ),
+    "line-ventes": () => <LineChart data={ventes12Mois} height={220} />,
+    "bar-regions": () => <BarChart data={CA_PAR_REGION} height={220} />,
+    "table-top-produits": () => (
+      <Table columns={topProduitsColumns} data={TOP_PRODUITS} keyColumn="ref" density="compact" />
+    ),
+    "ring-objectif": () => (
       <div className="flex items-center gap-4">
         <ProgressRing value={78} max={100} size={110} />
         <div>
           <p className="text-sm font-medium" style={{ color: "var(--bpm-text-primary)" }}>
-            78 % de l&apos;objectif T2
+            {s.ringPercentLabel}
           </p>
           <p className="text-sm" style={{ color: "var(--bpm-text-secondary)" }}>
-            312 k€ réalisés sur 400 k€ — 18 jours restants.
+            {s.ringDetail}
           </p>
         </div>
       </div>
     ),
-  },
-  {
-    id: "feed-commandes",
-    title: "Dernières commandes",
-    description: "Flux des dernières commandes passées, modifiées ou annulées.",
-    defaultSize: 2,
-    render: () => <ActivityFeed activities={DERNIERES_COMMANDES} compact />,
-  },
-];
+    "feed-commandes": () => <ActivityFeed activities={dernieresCommandes} compact />,
+  };
 
-const WIDGET_BY_ID = new Map(WIDGET_CATALOG.map((w) => [w.id, w]));
+  return WIDGET_IDS.map((id) => ({
+    id,
+    title: s.widgets[id].title,
+    description: s.widgets[id].description,
+    defaultSize: WIDGET_DEFAULT_SIZES[id],
+    render: renderers[id],
+  }));
+}
 
 /* ------------------------------------------------------------------ */
 /* Disposition (ordre + taille + visibilité) et persistance            */
@@ -198,7 +188,7 @@ function parseStoredLayout(raw: string): PlacedWidget[] | null {
     for (const item of parsed) {
       if (typeof item !== "object" || item === null) return null;
       const { id, size } = item as { id?: unknown; size?: unknown };
-      if (typeof id !== "string" || !WIDGET_BY_ID.has(id as WidgetId) || seen.has(id)) return null;
+      if (typeof id !== "string" || !KNOWN_WIDGET_IDS.has(id) || seen.has(id)) return null;
       if (size !== 1 && size !== 2) return null;
       seen.add(id);
       layout.push({ id: id as WidgetId, size });
@@ -214,12 +204,17 @@ function parseStoredLayout(raw: string): PlacedWidget[] | null {
 /* ------------------------------------------------------------------ */
 
 export default function TableauxDeBordSimulateur() {
+  const { locale } = useI18n();
+  const s = STR[locale];
   const { showToast } = useToast();
   const [layout, setLayout] = useState<PlacedWidget[]>(DEFAULT_LAYOUT);
   const [editing, setEditing] = useState(false);
   const [confirmReset, setConfirmReset] = useState(false);
   /** Devient true après lecture de localStorage : on ne persiste qu'à partir de là. */
   const [hydrated, setHydrated] = useState(false);
+
+  const catalog = useMemo(() => buildCatalog(s, locale), [s, locale]);
+  const widgetById = useMemo(() => new Map(catalog.map((w) => [w.id, w])), [catalog]);
 
   // Rechargement de la disposition sauvegardée (rendu initial = défaut, SSR-safe).
   useEffect(() => {
@@ -239,8 +234,8 @@ export default function TableauxDeBordSimulateur() {
 
   const hiddenWidgets = useMemo(() => {
     const placed = new Set(layout.map((w) => w.id));
-    return WIDGET_CATALOG.filter((w) => !placed.has(w.id));
-  }, [layout]);
+    return catalog.filter((w) => !placed.has(w.id));
+  }, [layout, catalog]);
 
   const moveWidget = (index: number, direction: -1 | 1) => {
     setLayout((prev) => {
@@ -260,29 +255,29 @@ export default function TableauxDeBordSimulateur() {
 
   const hideWidget = (id: WidgetId) => {
     setLayout((prev) => prev.filter((w) => w.id !== id));
-    const def = WIDGET_BY_ID.get(id);
+    const def = widgetById.get(id);
     showToast(
-      `Le widget « ${def?.title ?? id} » a été masqué. Retrouvez-le dans la bibliothèque.`,
+      s.widgetHiddenMsg(def?.title ?? id),
       "info",
       4000,
-      "Widget masqué",
-      "Tableaux de bord",
+      s.widgetHiddenTitle,
+      s.toastSource,
       null
     );
   };
 
   const addWidget = (id: WidgetId) => {
-    const def = WIDGET_BY_ID.get(id);
+    const def = widgetById.get(id);
     if (!def) return;
     setLayout((prev) =>
       prev.some((w) => w.id === id) ? prev : [...prev, { id, size: def.defaultSize }]
     );
     showToast(
-      `Le widget « ${def.title} » a été ajouté en bas du tableau de bord.`,
+      s.widgetAddedMsg(def.title),
       "success",
       4000,
-      "Widget ajouté",
-      "Tableaux de bord",
+      s.widgetAddedTitle,
+      s.toastSource,
       null
     );
   };
@@ -292,11 +287,11 @@ export default function TableauxDeBordSimulateur() {
     setConfirmReset(false);
     window.localStorage.removeItem(STORAGE_KEY);
     showToast(
-      "La disposition par défaut a été restaurée et la sauvegarde locale supprimée.",
+      s.resetToastMsg,
       "success",
       4000,
-      "Disposition réinitialisée",
-      "Tableaux de bord",
+      s.resetToastTitle,
+      s.toastSource,
       null
     );
   };
@@ -306,23 +301,22 @@ export default function TableauxDeBordSimulateur() {
       {/* Barre d'actions globale */}
       <div className="flex flex-wrap items-center justify-between gap-3 mb-4">
         <p className="text-sm m-0" style={{ color: "var(--bpm-text-secondary)" }}>
-          {layout.length} widget{layout.length > 1 ? "s" : ""} affiché
-          {layout.length > 1 ? "s" : ""} · {hiddenWidgets.length} dans la bibliothèque
-          {editing ? " — mode personnalisation actif" : ""}
+          {s.statusLine(layout.length, hiddenWidgets.length)}
+          {editing ? s.editingSuffix : ""}
         </p>
         <div className="flex items-center gap-2">
           {editing && (
             <Button variant="ghost" size="small" onClick={() => setConfirmReset(true)}>
-              Réinitialiser la disposition
+              {s.resetLayout}
             </Button>
           )}
           {editing ? (
             <Button variant="primary" size="small" onClick={() => setEditing(false)}>
-              Terminer
+              {s.done}
             </Button>
           ) : (
             <Button variant="outline" size="small" onClick={() => setEditing(true)}>
-              Personnaliser
+              {s.customize}
             </Button>
           )}
         </div>
@@ -330,17 +324,15 @@ export default function TableauxDeBordSimulateur() {
 
       {/* Grille de widgets */}
       {layout.length === 0 ? (
-        <Panel variant="info" title="Tableau de bord vide">
+        <Panel variant="info" title={s.emptyTitle}>
           <p className="text-sm m-0" style={{ color: "var(--bpm-text-secondary)" }}>
-            Tous les widgets sont masqués. {editing
-              ? "Ajoutez-en depuis la bibliothèque ci-dessous."
-              : "Cliquez sur « Personnaliser » puis ajoutez des widgets depuis la bibliothèque."}
+            {s.emptyAllHidden} {editing ? s.emptyEditingHint : s.emptyIdleHint}
           </p>
         </Panel>
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           {layout.map((placed, index) => {
-            const def = WIDGET_BY_ID.get(placed.id);
+            const def = widgetById.get(placed.id);
             if (!def) return null;
             return (
               <section
@@ -357,13 +349,13 @@ export default function TableauxDeBordSimulateur() {
                     {def.title}
                   </h3>
                   {editing && (
-                    <div className="flex items-center gap-1" role="toolbar" aria-label={`Outils — ${def.title}`}>
+                    <div className="flex items-center gap-1" role="toolbar" aria-label={s.toolbarLabel(def.title)}>
                       <Button
                         variant="ghost"
                         size="small"
                         disabled={index === 0}
                         onClick={() => moveWidget(index, -1)}
-                        aria-label={`Monter « ${def.title} »`}
+                        aria-label={s.moveUpLabel(def.title)}
                       >
                         ↑
                       </Button>
@@ -372,7 +364,7 @@ export default function TableauxDeBordSimulateur() {
                         size="small"
                         disabled={index === layout.length - 1}
                         onClick={() => moveWidget(index, 1)}
-                        aria-label={`Descendre « ${def.title} »`}
+                        aria-label={s.moveDownLabel(def.title)}
                       >
                         ↓
                       </Button>
@@ -381,15 +373,13 @@ export default function TableauxDeBordSimulateur() {
                         size="small"
                         onClick={() => toggleSize(placed.id)}
                         aria-label={
-                          placed.size === 1
-                            ? `Agrandir « ${def.title} » sur 2 colonnes`
-                            : `Réduire « ${def.title} » à 1 colonne`
+                          placed.size === 1 ? s.enlargeLabel(def.title) : s.shrinkLabel(def.title)
                         }
                       >
-                        ⤢ {placed.size === 1 ? "2 col." : "1 col."}
+                        ⤢ {placed.size === 1 ? s.twoColsShort : s.oneColShort}
                       </Button>
                       <Button variant="ghost" size="small" onClick={() => hideWidget(placed.id)}>
-                        Masquer
+                        {s.hide}
                       </Button>
                     </div>
                   )}
@@ -404,10 +394,10 @@ export default function TableauxDeBordSimulateur() {
       {/* Bibliothèque de widgets (mode personnalisation) */}
       {editing && (
         <div className="mt-6">
-          <Panel title="Bibliothèque de widgets" icon={false}>
+          <Panel title={s.libraryTitle} icon={false}>
             {hiddenWidgets.length === 0 ? (
               <p className="text-sm m-0" style={{ color: "var(--bpm-text-secondary)" }}>
-                Tous les widgets du catalogue sont déjà affichés sur le tableau de bord.
+                {s.libraryAllShown}
               </p>
             ) : (
               <ul className="m-0 p-0 list-none space-y-3">
@@ -422,11 +412,11 @@ export default function TableauxDeBordSimulateur() {
                         {def.title}
                       </p>
                       <p className="text-sm m-0" style={{ color: "var(--bpm-text-secondary)" }}>
-                        {def.description} ({def.defaultSize === 2 ? "2 colonnes" : "1 colonne"} par défaut)
+                        {def.description} {s.libraryDefaultSize(def.defaultSize)}
                       </p>
                     </div>
                     <Button variant="secondary" size="small" onClick={() => addWidget(def.id)}>
-                      Ajouter
+                      {s.add}
                     </Button>
                   </li>
                 ))}
@@ -440,10 +430,10 @@ export default function TableauxDeBordSimulateur() {
         isOpen={confirmReset}
         onConfirm={resetLayout}
         onCancel={() => setConfirmReset(false)}
-        title="Réinitialiser la disposition ?"
-        message="Le tableau de bord reviendra à sa disposition par défaut (5 widgets) et la sauvegarde locale sera supprimée. Cette action est immédiate."
-        confirmLabel="Réinitialiser"
-        cancelLabel="Annuler"
+        title={s.confirmResetTitle}
+        message={s.confirmResetMessage}
+        confirmLabel={s.confirmResetLabel}
+        cancelLabel={s.cancelLabel}
         variant="warning"
       />
     </div>
