@@ -1,23 +1,24 @@
 "use client";
 
 import Link from "next/link";
-import { Panel, Table, Button, Badge } from "@/components/bpm";
-
-const lignes = [{ designation: "Prestation A", qté: "1", pu: "1 000 €", total: "1 000 €" }];
+import DevisFacturationSimulateur from "../simulateur-content";
 
 export default function DevisFacturationSimulateurPage() {
   return (
     <div className="doc-page">
       <div className="doc-page-header">
-        <div className="doc-breadcrumb"><Link href="/modules">Modules</Link> → <Link href="/modules/devis-facturation">Devis / Facturation</Link> → Simulateur</div>
+        <div className="doc-breadcrumb">
+          <Link href="/modules">Modules</Link> →{" "}
+          <Link href="/modules/devis-facturation">Devis / Facturation</Link> → Simulateur
+        </div>
         <h1>Simulateur — Devis / Facturation</h1>
-        <p className="doc-description">Devis de démo (lignes, statut, PDF).</p>
+        <p className="doc-description">
+          Trois devis seedés (ACME en brouillon, Nordis envoyé, Globex payé). Sélectionnez un devis
+          dans la liste, ajoutez ou modifiez des lignes, envoyez-le au client, marquez-le payé,
+          ouvrez l&apos;aperçu imprimable : métriques et totaux sont recalculés à chaque action.
+        </p>
       </div>
-      <Panel variant="info" title="Devis #2025-001">
-        <div className="flex gap-2 mb-4"><Badge variant="warning">Brouillon</Badge><Button size="small">Envoyer</Button><Button size="small" variant="outline">Télécharger PDF</Button></div>
-        <Table columns={[{ key: "designation", label: "Désignation" }, { key: "qté", label: "Qté" }, { key: "pu", label: "P.U." }, { key: "total", label: "Total" }]} data={lignes} striped hover />
-        <p className="text-sm mt-4" style={{ color: "var(--bpm-text-primary)" }}>Total TTC : 1 000 €</p>
-      </Panel>
+      <DevisFacturationSimulateur />
     </div>
   );
 }
