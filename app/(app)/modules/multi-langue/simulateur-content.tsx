@@ -14,6 +14,8 @@ import {
   Table,
   useToast,
 } from "@/components/bpm";
+import { useI18n } from "@/lib/i18n/LocaleProvider";
+import { STR } from "./strings";
 
 type Locale = "fr" | "en" | "es";
 
@@ -27,7 +29,6 @@ const LOCALES: { code: Locale; label: string; intl: string }[] = [
 ];
 
 const INTL_BY_LOCALE: Record<Locale, string> = { fr: "fr-FR", en: "en-US", es: "es-ES" };
-const LOCALE_NAME: Record<Locale, string> = { fr: "français", en: "anglais", es: "espagnol" };
 
 /**
  * Dictionnaires seedés. Convention :
@@ -150,7 +151,11 @@ function applyPlural(raw: string, count: number, intl: string): string {
 
 export default function MultiLangueSimulateur() {
   const { showToast } = useToast();
+  const { locale: uiLocale } = useI18n();
+  const s = STR[uiLocale];
 
+  // Locale de la DÉMO : pilotée par le sélecteur interne FR/EN/ES,
+  // indépendante de la locale globale de l'interface (uiLocale).
   const [locale, setLocale] = useState<Locale>("fr");
   const [dicts, setDicts] = useState<Record<Locale, Record<string, string>>>({
     fr: DICT_FR,
@@ -188,7 +193,7 @@ export default function MultiLangueSimulateur() {
     if (!r.fallback) return <>{r.text}</>;
     return (
       <span
-        title={`Clé « ${k} » manquante en ${LOCALE_NAME[locale]} — valeur de repli (français)`}
+        title={s.fallbackTooltip(k, s.demoLocaleNames[locale])}
         style={{
           textDecorationLine: "underline",
           textDecorationStyle: "dotted",
@@ -218,14 +223,7 @@ export default function MultiLangueSimulateur() {
     setLocale(next);
     window.localStorage.setItem(STORAGE_KEY, next);
     const label = LOCALES.find((l) => l.code === next)?.label ?? next;
-    showToast(
-      `Aperçu basculé en ${label} — choix mémorisé pour vos prochaines visites.`,
-      "info",
-      3000,
-      "Langue changée",
-      "Multi-langue",
-      null
-    );
+    showToast(s.toastLocaleChanged(label), "info", 3000, s.toastLocaleChangedTitle, s.toastSource, null);
   };
 
   const openEditor = (key: string) => {
@@ -238,18 +236,18 @@ export default function MultiLangueSimulateur() {
     if (!editingKey) return;
     const value = editValue.trim();
     if (value.length === 0) {
-      setEditError("Saisissez la traduction espagnole avant de valider.");
+      setEditError(s.editorEmptyError);
       return;
     }
     setDicts((prev) => ({ ...prev, es: { ...prev.es, [editingKey]: value } }));
     const remaining = coverage.missingEs.length - 1;
     const newPct = Math.round(((ALL_KEYS.length - remaining) / ALL_KEYS.length) * 100);
     showToast(
-      `« ${editingKey} » traduite en espagnol (« ${value} »). Couverture ES : ${newPct} %.`,
+      s.toastTranslationAdded(editingKey, value, newPct),
       "success",
       5000,
-      "Traduction ajoutée",
-      "Multi-langue",
+      s.toastTranslationAddedTitle,
+      s.toastSource,
       null
     );
     setEditingKey(null);
@@ -259,11 +257,11 @@ export default function MultiLangueSimulateur() {
 
   const validerCommande = () => {
     showToast(
-      `La mini-application a exécuté « ${tr("action.valider").text} » (locale ${intl}).`,
+      s.toastDemoAction(tr("action.valider").text, intl),
       "success",
       4000,
-      "Action de démonstration",
-      "Multi-langue",
+      s.toastDemoActionTitle,
+      s.toastSource,
       null
     );
   };
@@ -302,21 +300,21 @@ export default function MultiLangueSimulateur() {
   const keyColumns = [
     {
       key: "cle",
-      label: "Clé",
+      label: s.colKey,
       render: (value: unknown) => <code className="text-xs">{String(value)}</code>,
     },
-    { key: "fr", label: "FR (référence)" },
-    { key: "en", label: "EN" },
+    { key: "fr", label: s.colFrReference },
+    { key: "en", label: s.colEn },
     {
       key: "es",
-      label: "ES",
+      label: s.colEs,
       render: (value: unknown, row: Record<string, unknown>) => {
         if (value !== null && value !== undefined) return <span>{String(value)}</span>;
         return (
           <div className="flex items-center gap-2">
-            <Badge variant="warning">Manquante</Badge>
+            <Badge variant="warning">{s.badgeMissing}</Badge>
             <Button size="small" variant="secondary" onClick={() => openEditor(String(row.cle))}>
-              Traduire
+              {s.btnTranslate}
             </Button>
           </div>
         );
@@ -336,15 +334,17 @@ export default function MultiLangueSimulateur() {
   return (
     <div className="space-y-6">
       <MetricRow>
-        <Metric label="Langues" value={String(LOCALES.length)} />
-        <Metric label="Clés de traduction" value={String(ALL_KEYS.length)} />
-        <Metric label="Couverture ES" value={`${coverage.es} %`} />
+        <Metric label={s.metricLanguages} value={String(LOCALES.length)} />
+        <Metric label={s.metricKeys} value={String(ALL_KEYS.length)} />
+        <Metric label={s.metricEsCoverage} value={`${coverage.es} %`} />
       </MetricRow>
 
-      <Panel variant="info" title="Langue de l'interface">
+      <Panel variant="info" title={s.panelDemoLanguage}>
+        <p className="mb-1 text-sm font-medium" style={{ color: "var(--bpm-text-primary)" }}>
+          {s.demoHelp}
+        </p>
         <p className="mb-3 text-sm" style={{ color: "var(--bpm-text-secondary)" }}>
-          Basculez la langue : tous les textes, montants et dates de l&apos;aperçu ci-dessous sont
-          retraduits et reformatés. Le choix est mémorisé en local (localStorage).
+          {s.panelDemoLanguageBody}
         </p>
         <div className="flex flex-wrap gap-2">
           {LOCALES.map((l) => (
@@ -359,16 +359,12 @@ export default function MultiLangueSimulateur() {
         </div>
         {locale === "es" && coverage.missingEs.length > 0 && (
           <div className="mt-3">
-            <Message type="warning">
-              {coverage.missingEs.length} clé{coverage.missingEs.length > 1 ? "s" : ""} manquante
-              {coverage.missingEs.length > 1 ? "s" : ""} en espagnol — repli sur le français (langue
-              de référence). Les textes repliés sont soulignés en pointillé dans l&apos;aperçu.
-            </Message>
+            <Message type="warning">{s.missingEsPreview(coverage.missingEs.length)}</Message>
           </div>
         )}
       </Panel>
 
-      <Panel variant="info" title="Aperçu — Suivi des commandes">
+      <Panel variant="info" title={s.panelPreview}>
         {/* Barre d'application de la mini-app */}
         <div
           className="flex flex-wrap items-center justify-between gap-3 rounded-lg border px-4 py-3"
@@ -442,38 +438,34 @@ export default function MultiLangueSimulateur() {
         )}
       </Panel>
 
-      <Panel variant="info" title="Couverture des traductions">
+      <Panel variant="info" title={s.panelCoverage}>
         {coverage.missingEs.length > 0 ? (
-          <Message type="warning">
-            {coverage.missingEs.length} clé{coverage.missingEs.length > 1 ? "s" : ""} manquante
-            {coverage.missingEs.length > 1 ? "s" : ""} en espagnol — repli sur le français. Complétez
-            les traductions ci-dessous : l&apos;aperçu se met à jour immédiatement.
-          </Message>
+          <Message type="warning">{s.coverageWarning(coverage.missingEs.length)}</Message>
         ) : (
-          <Message type="success">
-            Toutes les clés sont traduites dans les trois langues — plus aucun repli nécessaire.
-          </Message>
+          <Message type="success">{s.coverageSuccess}</Message>
         )}
         <div className="mt-4 space-y-3">
-          <Progress label="Français (référence)" value={coverage.fr} max={100} showValue />
-          <Progress label="English" value={coverage.en} max={100} showValue />
-          <Progress label="Español" value={coverage.es} max={100} showValue />
+          <Progress label={s.progressFr} value={coverage.fr} max={100} showValue />
+          <Progress label={s.progressEn} value={coverage.en} max={100} showValue />
+          <Progress label={s.progressEs} value={coverage.es} max={100} showValue />
         </div>
         {missingRows.length > 0 && (
           <div className="mt-4">
             <h4 className="mb-2 text-sm font-semibold" style={{ color: "var(--bpm-text-primary)" }}>
-              Clés manquantes en espagnol
+              {s.missingKeysHeading}
             </h4>
             <Table columns={keyColumns} data={missingRows as unknown as Record<string, unknown>[]} striped hover />
           </div>
         )}
       </Panel>
 
-      <Panel variant="info" title="Dictionnaire complet (clé, FR, EN, ES)">
+      <Panel variant="info" title={s.panelDictionary}>
         <p className="mb-3 text-sm" style={{ color: "var(--bpm-text-secondary)" }}>
-          Les valeurs utilisent <code>{"{prenom}"}</code> pour l&apos;interpolation et{" "}
-          <code>one|other</code> pour le pluriel. Cliquez sur « Traduire » pour compléter une clé
-          espagnole manquante.
+          {s.dict1}
+          <code>{"{prenom}"}</code>
+          {s.dict2}
+          <code>one|other</code>
+          {s.dict3}
         </p>
         <Table columns={keyColumns} data={keyRows as unknown as Record<string, unknown>[]} striped hover />
       </Panel>
@@ -482,27 +474,26 @@ export default function MultiLangueSimulateur() {
         <Modal
           isOpen={true}
           onClose={() => setEditingKey(null)}
-          title={`Traduire « ${editingKey} » en espagnol`}
+          title={s.modalTitle(editingKey)}
           size="medium"
         >
           <div className="space-y-3">
             <div className="text-sm" style={{ color: "var(--bpm-text-secondary)" }}>
               <div>
-                <strong>FR (référence)</strong> : {dicts.fr[editingKey]}
+                <strong>{s.colFrReference}</strong> : {dicts.fr[editingKey]}
               </div>
               <div>
-                <strong>EN</strong> : {dicts.en[editingKey]}
+                <strong>{s.colEn}</strong> : {dicts.en[editingKey]}
               </div>
             </div>
             <Input
-              label="Traduction espagnole"
+              label={s.inputLabel}
               value={editValue}
               onChange={setEditValue}
-              placeholder={ES_SUGGESTIONS[editingKey] ?? "Saisir la traduction…"}
+              placeholder={ES_SUGGESTIONS[editingKey] ?? s.inputPlaceholder}
             />
             <p className="text-xs" style={{ color: "var(--bpm-text-secondary)" }}>
-              Conservez les variables telles quelles ({"{prenom}"}, {"{count}"}) et le séparateur de
-              pluriel « | » si la clé en contient.
+              {s.editorHint}
             </p>
             {editError && (
               <p className="text-sm" style={{ color: "var(--bpm-error, #dc2626)" }}>
@@ -511,9 +502,9 @@ export default function MultiLangueSimulateur() {
             )}
             <div className="flex justify-end gap-2">
               <Button variant="secondary" onClick={() => setEditingKey(null)}>
-                Annuler
+                {s.btnCancel}
               </Button>
-              <Button onClick={saveTranslation}>Ajouter la traduction</Button>
+              <Button onClick={saveTranslation}>{s.btnAddTranslation}</Button>
             </div>
           </div>
         </Modal>
