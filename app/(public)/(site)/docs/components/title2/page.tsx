@@ -4,9 +4,98 @@ import { useState } from "react";
 import Link from "next/link";
 import { Title2, CodeBlock } from "@/components/bpm";
 import { getPrevNext } from "@/lib/docPages";
+import { useI18n } from "@/lib/i18n/LocaleProvider";
+
+const fr = {
+  breadcrumb: "Composants",
+  desc1: "Titre de niveau 2 (h2, 1.5rem, gras 600). Raccourci de ",
+  desc2: " avec ",
+  desc3: " préréglé : mêmes options (gras, couleur, barre, inversé), sans avoir à préciser le niveau.",
+  category: "Affichage de données",
+  demoTitle: "Synthèse commerciale",
+  boldLabel: "bold (optionnel)",
+  boldDefault: "Défaut du niveau (600)",
+  boldYes: "Oui (700)",
+  boldNo: "Non (400)",
+  colorLabel: "color (optionnel)",
+  colorPlaceholder: "ex. var(--bpm-accent), #333",
+  barLabel: "bar (optionnel)",
+  barText: "Barre verticale à gauche",
+  invertedLabel: "inverted (optionnel)",
+  invertedText: "Couleur inversée (blanc sur fond sombre)",
+  barColorLabel: "barColor (optionnel)",
+  barColorPlaceholder: "ex. #048dc3, #1d1d1f",
+  invertedBackgroundLabel: "invertedBackground (optionnel)",
+  invertedBackgroundPlaceholder: "ex. #1d1d1f, #048dc3",
+  copy: "Copier",
+  thDefault: "Défaut",
+  thRequired: "Requis",
+  thDescription: "Description",
+  yes: "Oui",
+  no: "Non",
+  childrenDesc: "Texte du titre.",
+  sizeDesc: "Taille CSS — surcharge le défaut du niveau 2.",
+  boldDesc: "Gras : true=700, false=400, ou nombre.",
+  colorDesc: "Couleur CSS du texte.",
+  barDesc: "Barre verticale sombre à gauche (style en-tête de section).",
+  barColorDesc: "Couleur de la barre. Pris en compte si bar=True.",
+  invertedDesc: "Fond sombre, texte blanc (style badge / scénario).",
+  invertedBackgroundDesc: "Couleur de fond quand inverted=True.",
+  note1: "Toutes les props de ",
+  note2: " s'appliquent, à l'exception de ",
+  note3: " qui est fixé à 2 (et de ",
+  note4: ", réservé au niveau 1).",
+  examples: "Exemples",
+};
+
+const en: typeof fr = {
+  breadcrumb: "Components",
+  desc1: "Level 2 heading (h2, 1.5rem, weight 600). Shorthand for ",
+  desc2: " with ",
+  desc3: " preset: same options (bold, color, bar, inverted), without having to specify the level.",
+  category: "Data display",
+  demoTitle: "Sales summary",
+  boldLabel: "bold (optional)",
+  boldDefault: "Level default (600)",
+  boldYes: "Yes (700)",
+  boldNo: "No (400)",
+  colorLabel: "color (optional)",
+  colorPlaceholder: "e.g. var(--bpm-accent), #333",
+  barLabel: "bar (optional)",
+  barText: "Vertical bar on the left",
+  invertedLabel: "inverted (optional)",
+  invertedText: "Inverted color (white on a dark background)",
+  barColorLabel: "barColor (optional)",
+  barColorPlaceholder: "e.g. #048dc3, #1d1d1f",
+  invertedBackgroundLabel: "invertedBackground (optional)",
+  invertedBackgroundPlaceholder: "e.g. #1d1d1f, #048dc3",
+  copy: "Copy",
+  thDefault: "Default",
+  thRequired: "Required",
+  thDescription: "Description",
+  yes: "Yes",
+  no: "No",
+  childrenDesc: "Heading text.",
+  sizeDesc: "CSS size — overrides the level 2 default.",
+  boldDesc: "Bold: true=700, false=400, or a number.",
+  colorDesc: "CSS color of the text.",
+  barDesc: "Dark vertical bar on the left (section header style).",
+  barColorDesc: "Bar color. Applied when bar=True.",
+  invertedDesc: "Dark background, white text (badge / scenario style).",
+  invertedBackgroundDesc: "Background color when inverted=True.",
+  note1: "All props of ",
+  note2: " apply, except ",
+  note3: ", which is fixed to 2 (and ",
+  note4: ", reserved for level 1).",
+  examples: "Examples",
+};
+
+const L = { fr, en } as const;
 
 export default function DocTitle2Page() {
-  const [children, setChildren] = useState("Synthèse commerciale");
+  const { locale } = useI18n();
+  const t = L[locale];
+  const [children, setChildren] = useState<string | null>(null);
   const [bold, setBold] = useState<string>("");
   const [color, setColor] = useState("");
   const [bar, setBar] = useState(false);
@@ -14,12 +103,13 @@ export default function DocTitle2Page() {
   const [inverted, setInverted] = useState(false);
   const [invertedBackground, setInvertedBackground] = useState("");
 
+  const text = children ?? t.demoTitle;
   const boldProp = bold === "true" ? true : bold === "false" ? false : null;
   const colorProp = color.trim() || null;
   const barColorProp = barColor.trim() || null;
   const invertedBgProp = invertedBackground.trim() || null;
 
-  const args: string[] = [`"${children.replace(/"/g, '\\"')}"`];
+  const args: string[] = [`"${text.replace(/"/g, '\\"')}"`];
   if (bold === "true") args.push("bold=True");
   if (bold === "false") args.push("bold=False");
   if (colorProp) args.push(`color="${colorProp.replace(/"/g, '\\"')}"`);
@@ -34,17 +124,19 @@ export default function DocTitle2Page() {
     <div className="doc-page">
       <div className="doc-page-header">
         <div className="doc-breadcrumb">
-          <Link href="/docs/components">Composants</Link> → bpm.title2
+          <Link href="/docs/components">{t.breadcrumb}</Link> → bpm.title2
         </div>
         <h1>bpm.title2</h1>
         <p className="doc-description">
-          Titre de niveau 2 (h2, 1.5rem, gras 600). Raccourci de{" "}
-          <Link href="/docs/components/title">bpm.title</Link> avec <code>level=2</code> préréglé :
-          mêmes options (gras, couleur, barre, inversé), sans avoir à préciser le niveau.
+          {t.desc1}
+          <Link href="/docs/components/title">bpm.title</Link>
+          {t.desc2}
+          <code>level=2</code>
+          {t.desc3}
         </p>
         <div className="doc-meta">
           <span className="doc-badge doc-badge-stable">Stable</span>
-          <span className="doc-badge doc-badge-category">Affichage de données</span>
+          <span className="doc-badge doc-badge-category">{t.category}</span>
           <span className="doc-reading-time">⏱ 1 min</span>
         </div>
       </div>
@@ -59,64 +151,64 @@ export default function DocTitle2Page() {
             inverted={inverted}
             invertedBackground={invertedBgProp}
           >
-            {children}
+            {text}
           </Title2>
         </div>
         <div className="sandbox-controls">
           <div className="sandbox-control-group">
             <label>children</label>
-            <input type="text" value={children} onChange={(e) => setChildren(e.target.value)} />
+            <input type="text" value={text} onChange={(e) => setChildren(e.target.value)} />
           </div>
           <div className="sandbox-control-group">
-            <label>bold (optionnel)</label>
+            <label>{t.boldLabel}</label>
             <select value={bold} onChange={(e) => setBold(e.target.value)}>
-              <option value="">Défaut du niveau (600)</option>
-              <option value="true">Oui (700)</option>
-              <option value="false">Non (400)</option>
+              <option value="">{t.boldDefault}</option>
+              <option value="true">{t.boldYes}</option>
+              <option value="false">{t.boldNo}</option>
             </select>
           </div>
           <div className="sandbox-control-group">
-            <label>color (optionnel)</label>
+            <label>{t.colorLabel}</label>
             <input
               type="text"
               value={color}
               onChange={(e) => setColor(e.target.value)}
-              placeholder="ex. var(--bpm-accent), #333"
+              placeholder={t.colorPlaceholder}
             />
           </div>
           <div className="sandbox-control-group">
-            <label>bar (optionnel)</label>
+            <label>{t.barLabel}</label>
             <label className="flex items-center gap-2 cursor-pointer">
               <input type="checkbox" checked={bar} onChange={(e) => setBar(e.target.checked)} />
-              Barre verticale à gauche
+              {t.barText}
             </label>
           </div>
           <div className="sandbox-control-group">
-            <label>inverted (optionnel)</label>
+            <label>{t.invertedLabel}</label>
             <label className="flex items-center gap-2 cursor-pointer">
               <input type="checkbox" checked={inverted} onChange={(e) => setInverted(e.target.checked)} />
-              Couleur inversée (blanc sur fond sombre)
+              {t.invertedText}
             </label>
           </div>
           {bar && (
             <div className="sandbox-control-group">
-              <label>barColor (optionnel)</label>
+              <label>{t.barColorLabel}</label>
               <input
                 type="text"
                 value={barColor}
                 onChange={(e) => setBarColor(e.target.value)}
-                placeholder="ex. #048dc3, #1d1d1f"
+                placeholder={t.barColorPlaceholder}
               />
             </div>
           )}
           {inverted && (
             <div className="sandbox-control-group">
-              <label>invertedBackground (optionnel)</label>
+              <label>{t.invertedBackgroundLabel}</label>
               <input
                 type="text"
                 value={invertedBackground}
                 onChange={(e) => setInvertedBackground(e.target.value)}
-                placeholder="ex. #1d1d1f, #048dc3"
+                placeholder={t.invertedBackgroundPlaceholder}
               />
             </div>
           )}
@@ -124,7 +216,7 @@ export default function DocTitle2Page() {
         <div className="sandbox-code">
           <div className="sandbox-code-header">
             <span>Python</span>
-            <button type="button" onClick={() => navigator.clipboard.writeText(pythonCode)}>Copier</button>
+            <button type="button" onClick={() => navigator.clipboard.writeText(pythonCode)}>{t.copy}</button>
           </div>
           <pre><code>{pythonCode}</code></pre>
         </div>
@@ -132,26 +224,30 @@ export default function DocTitle2Page() {
 
       <table className="props-table">
         <thead>
-          <tr><th>Prop</th><th>Type</th><th>Défaut</th><th>Requis</th><th>Description</th></tr>
+          <tr><th>Prop</th><th>Type</th><th>{t.thDefault}</th><th>{t.thRequired}</th><th>{t.thDescription}</th></tr>
         </thead>
         <tbody>
-          <tr><td><code>children</code></td><td><code>ReactNode</code></td><td>—</td><td>Oui</td><td>Texte du titre.</td></tr>
-          <tr><td><code>size</code></td><td><code>string</code></td><td>1.5rem</td><td>Non</td><td>Taille CSS — surcharge le défaut du niveau 2.</td></tr>
-          <tr><td><code>bold</code></td><td><code>boolean | number</code></td><td>600</td><td>Non</td><td>Gras : true=700, false=400, ou nombre.</td></tr>
-          <tr><td><code>color</code></td><td><code>string</code></td><td>—</td><td>Non</td><td>Couleur CSS du texte.</td></tr>
-          <tr><td><code>bar</code></td><td><code>boolean</code></td><td>false</td><td>Non</td><td>Barre verticale sombre à gauche (style en-tête de section).</td></tr>
-          <tr><td><code>barColor</code></td><td><code>string</code></td><td>—</td><td>Non</td><td>Couleur de la barre. Pris en compte si bar=True.</td></tr>
-          <tr><td><code>inverted</code></td><td><code>boolean</code></td><td>false</td><td>Non</td><td>Fond sombre, texte blanc (style badge / scénario).</td></tr>
-          <tr><td><code>invertedBackground</code></td><td><code>string</code></td><td>#1d1d1f</td><td>Non</td><td>Couleur de fond quand inverted=True.</td></tr>
+          <tr><td><code>children</code></td><td><code>ReactNode</code></td><td>—</td><td>{t.yes}</td><td>{t.childrenDesc}</td></tr>
+          <tr><td><code>size</code></td><td><code>string</code></td><td>1.5rem</td><td>{t.no}</td><td>{t.sizeDesc}</td></tr>
+          <tr><td><code>bold</code></td><td><code>boolean | number</code></td><td>600</td><td>{t.no}</td><td>{t.boldDesc}</td></tr>
+          <tr><td><code>color</code></td><td><code>string</code></td><td>—</td><td>{t.no}</td><td>{t.colorDesc}</td></tr>
+          <tr><td><code>bar</code></td><td><code>boolean</code></td><td>false</td><td>{t.no}</td><td>{t.barDesc}</td></tr>
+          <tr><td><code>barColor</code></td><td><code>string</code></td><td>—</td><td>{t.no}</td><td>{t.barColorDesc}</td></tr>
+          <tr><td><code>inverted</code></td><td><code>boolean</code></td><td>false</td><td>{t.no}</td><td>{t.invertedDesc}</td></tr>
+          <tr><td><code>invertedBackground</code></td><td><code>string</code></td><td>#1d1d1f</td><td>{t.no}</td><td>{t.invertedBackgroundDesc}</td></tr>
         </tbody>
       </table>
       <p className="text-sm mt-2">
-        Toutes les props de <Link href="/docs/components/title">bpm.title</Link> s&apos;appliquent,
-        à l&apos;exception de <code>level</code> qui est fixé à 2 (et de <code>logoUrl</code>,
-        réservé au niveau 1).
+        {t.note1}
+        <Link href="/docs/components/title">bpm.title</Link>
+        {t.note2}
+        <code>level</code>
+        {t.note3}
+        <code>logoUrl</code>
+        {t.note4}
       </p>
 
-      <h2 className="text-lg font-semibold mt-8 mb-2">Exemples</h2>
+      <h2 className="text-lg font-semibold mt-8 mb-2">{t.examples}</h2>
       <CodeBlock code={'bpm.title2("Synthèse commerciale")'} language="python" />
       <CodeBlock code={'bpm.title2("Quel go-to-market ? 3 scénarios évalués", bar=True)'} language="python" />
       <CodeBlock code={'# Équivalent explicite avec bpm.title\nbpm.title(level=2, content="Synthèse commerciale")'} language="python" />
