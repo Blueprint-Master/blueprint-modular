@@ -90,6 +90,129 @@ def metric(
     _node("metric", **props)
 
 
+# --- Composants métier (registrent le type de nœud canonique du core React) ---
+# Les paramètres sont snake_case (Python) ; les props de nœud sont camelCase pour
+# coller 1:1 aux composants @blueprint-modular/core (warningAbove, showValue, …).
+
+def badge(label: str, *, variant: str = "default") -> None:
+    """Badge / étiquette colorée (variant: success, warning, error, info, default)."""
+    _node("badge", children=str(label), variant=variant)
+
+
+def progress(
+    value: float,
+    max: float = 100,
+    *,
+    label: Optional[str] = None,
+    show_value: bool = False,
+) -> None:
+    """Barre de progression (value sur une échelle 0..max). show_value affiche la valeur."""
+    _node("progress", value=value, max=max, label=label, showValue=show_value)
+
+
+def live_gauge(
+    value: float,
+    min: float = 0,
+    max: float = 100,
+    *,
+    warning_above: Optional[float] = None,
+    critical_above: Optional[float] = None,
+    label: Optional[str] = None,
+    size: str = "md",
+) -> None:
+    """Jauge demi-cercle avec aiguille et zones colorées (seuils warning/critical)."""
+    _node(
+        "liveGauge",
+        value=value,
+        min=min,
+        max=max,
+        warningAbove=warning_above,
+        criticalAbove=critical_above,
+        label=label,
+        size=size,
+    )
+
+
+def status_tracker(
+    stages: list[Any],
+    *,
+    direction: str = "vertical",
+    compact: bool = False,
+) -> None:
+    """Suivi de statut en étapes. stages: liste de (label, status) ou de dicts {label, status}.
+
+    status ∈ completed | current | pending | error.
+    """
+    norm = [
+        s if isinstance(s, dict) else {"label": s[0], "status": s[1]}
+        for s in stages
+    ]
+    _node("statusTracker", stages=norm, direction=direction, compact=compact)
+
+
+def approval_flow(steps: list[Any], *, direction: str = "vertical") -> None:
+    """Flux de validation multi-étapes. steps: liste de (approver, role, status) ou de dicts.
+
+    status ∈ approved | pending | rejected.
+    """
+    norm = []
+    for i, s in enumerate(steps):
+        if isinstance(s, dict):
+            norm.append({"id": str(s.get("id", i + 1)), **s})
+        else:
+            norm.append(
+                {"id": str(i + 1), "approver": s[0], "role": s[1], "status": s[2]}
+            )
+    _node("approvalFlow", steps=norm, direction=direction)
+
+
+def activity_feed(
+    activities: list[Any],
+    *,
+    compact: bool = False,
+    max_items: Optional[int] = None,
+) -> None:
+    """Flux chronologique d'activités. activities: liste de (actor, action, target, color?) ou de dicts.
+
+    Chaque entrée : actor, action, target, timestamp (ISO), color? (success|warning|…).
+    """
+    from datetime import datetime, timezone
+
+    norm = []
+    for i, a in enumerate(activities):
+        if isinstance(a, dict):
+            norm.append({"id": str(a.get("id", i + 1)), **a})
+        else:
+            norm.append(
+                {
+                    "id": str(i + 1),
+                    "actor": a[0],
+                    "action": a[1],
+                    "target": a[2],
+                    "color": a[3] if len(a) > 3 else None,
+                    "timestamp": datetime.now(timezone.utc).isoformat(),
+                }
+            )
+    _node("activityFeed", activities=norm, compact=compact, maxItems=max_items)
+
+
+def anomaly_alert(
+    *,
+    expected: Any,
+    actual: Any,
+    title: Optional[str] = None,
+    severity: str = "warning",
+) -> None:
+    """Alerte d'anomalie : valeur attendue vs réelle (severity: info | warning | critical)."""
+    _node(
+        "anomalyAlert",
+        title=title,
+        expected=expected,
+        actual=actual,
+        severity=severity,
+    )
+
+
 def table(data: Any) -> None:
     """Accepte une liste de dicts ou un objet avec .to_dict('records')."""
     if hasattr(data, "to_dict"):
