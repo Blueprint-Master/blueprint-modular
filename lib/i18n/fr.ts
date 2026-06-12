@@ -493,22 +493,18 @@ const fr = {
     notice: {
       metaTitle: "Mentions légales — Blueprint Modular",
       metaDescription:
-        "Mentions légales de Blueprint Modular : éditeur, directeur de publication, hébergement, propriété intellectuelle et licence open-source du package.",
+        "Mentions légales de Blueprint Modular : éditeur, hébergement, propriété intellectuelle et licence open-source du package.",
       title: "Mentions légales",
       intro:
         "Les présentes mentions légales s'appliquent au site Blueprint Modular et au connecteur MCP associé. Pour toute question, écrivez à l'adresse de contact indiquée ci-dessous.",
       sections: [
         {
           h: "Éditeur du site",
-          p: "Le site Blueprint Modular est édité par le projet Blueprint Modular. Pour toute demande relative à l'identité de l'éditeur (raison sociale, immatriculation), contactez l'éditeur à l'adresse de contact ci-dessous.",
-        },
-        {
-          h: "Directeur de la publication",
-          p: "Le directeur de la publication est le responsable du projet Blueprint Modular, joignable à l'adresse de contact ci-dessous.",
+          p: "Le site est édité par BEAM Consulting, société à responsabilité limitée à associé unique (EURL) au capital de 500 €, immatriculée au Registre du commerce et des sociétés de Paris sous le numéro 930 217 609 (RCS Paris). Siège social : 60 rue François Ier, 75008 Paris, France. SIREN : 930 217 609.",
         },
         {
           h: "Hébergement",
-          p: "Le site est servi par une application Next.js déployée sur l'infrastructure retenue par l'éditeur. Les coordonnées de l'hébergeur sont communiquées sur demande à l'adresse de contact.",
+          p: "OVH SAS, 2 rue Kellermann, 59100 Roubaix, France — RCS Lille Métropole 424 761 419.",
         },
         {
           h: "Propriété intellectuelle",

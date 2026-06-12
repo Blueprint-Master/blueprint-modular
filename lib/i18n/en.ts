@@ -493,22 +493,18 @@ const en: Dictionary = {
     notice: {
       metaTitle: "Legal notice — Blueprint Modular",
       metaDescription:
-        "Legal notice for Blueprint Modular: publisher, publication director, hosting, intellectual property and the package's open-source license.",
+        "Legal notice for Blueprint Modular: publisher, hosting, intellectual property and the package's open-source license.",
       title: "Legal notice",
       intro:
         "This legal notice applies to the Blueprint Modular website and its MCP connector. For any question, write to the contact address listed below.",
       sections: [
         {
           h: "Site publisher",
-          p: "The Blueprint Modular website is published by the Blueprint Modular project. For any request regarding the publisher's identity (legal name, registration), contact the publisher at the address below.",
-        },
-        {
-          h: "Publication director",
-          p: "The publication director is the lead of the Blueprint Modular project, reachable at the contact address below.",
+          p: "This site is published by BEAM Consulting, a single-member limited liability company (SARL à associé unique) with share capital of €500, registered with the Paris Trade and Companies Register under number 930 217 609 (RCS Paris). Registered office: 60 rue François Ier, 75008 Paris, France. SIREN: 930 217 609.",
         },
         {
           h: "Hosting",
-          p: "The site is served by a Next.js application deployed on the infrastructure chosen by the publisher. Hosting provider details are available on request at the contact address.",
+          p: "OVH SAS, 2 rue Kellermann, 59100 Roubaix, France — RCS Lille Métropole 424 761 419.",
         },
         {
           h: "Intellectual property",
