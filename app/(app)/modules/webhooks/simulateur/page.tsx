@@ -1,20 +1,24 @@
 "use client";
 
 import Link from "next/link";
-import { Panel, Input, Button } from "@/components/bpm";
+import WebhooksSimulateur from "../simulateur-content";
 
 export default function WebhooksSimulateurPage() {
   return (
     <div className="doc-page">
       <div className="doc-page-header">
-        <div className="doc-breadcrumb"><Link href="/modules">Modules</Link> → <Link href="/modules/webhooks">Webhooks</Link> → Simulateur</div>
+        <div className="doc-breadcrumb">
+          <Link href="/modules">Modules</Link> →{" "}
+          <Link href="/modules/webhooks">Webhooks</Link> → Simulateur
+        </div>
         <h1>Simulateur — Webhooks</h1>
-        <p className="doc-description">Ajouter une URL (démo).</p>
+        <p className="doc-description">
+          Quatre webhooks déjà configurés (Slack, ERP, compta, CRM). Testez une livraison, créez un
+          webhook avec validation de l&apos;URL, suspendez ou supprimez : chaque action met à jour le
+          tableau, les métriques et le journal des livraisons.
+        </p>
       </div>
-      <Panel variant="info" title="Webhook">
-        <Input label="URL" placeholder="https://votre-app.com/webhook" value="" onChange={() => {}} />
-        <Button className="mt-4">Enregistrer</Button>
-      </Panel>
+      <WebhooksSimulateur />
     </div>
   );
 }
