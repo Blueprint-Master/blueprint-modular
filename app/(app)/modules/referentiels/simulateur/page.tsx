@@ -1,22 +1,25 @@
 "use client";
 
 import Link from "next/link";
-import { Panel, Table, Button } from "@/components/bpm";
-
-const refData = [{ code: "EUR", libelle: "Euro" }, { code: "USD", libelle: "Dollar US" }];
+import ReferentielsSimulateur from "../simulateur-content";
 
 export default function ReferentielsSimulateurPage() {
   return (
     <div className="doc-page">
       <div className="doc-page-header">
-        <div className="doc-breadcrumb"><Link href="/modules">Modules</Link> → <Link href="/modules/referentiels">Référentiels</Link> → Simulateur</div>
+        <div className="doc-breadcrumb">
+          <Link href="/modules">Modules</Link> →{" "}
+          <Link href="/modules/referentiels">Référentiels</Link> → Simulateur
+        </div>
         <h1>Simulateur — Référentiels</h1>
-        <p className="doc-description">Liste devises (démo).</p>
+        <p className="doc-description">
+          Quatre tables de codes seedées (devises, pays, taux de TVA, unités de mesure).
+          Ajoutez une entrée, modifiez-la, désactivez-la, exportez le référentiel en CSV :
+          chaque action met à jour le tableau, les métriques et l&apos;historique. La suppression
+          est refusée si l&apos;entrée est encore utilisée (ex. EUR).
+        </p>
       </div>
-      <Panel variant="info" title="Devises">
-        <Table columns={[{ key: "code", label: "Code" }, { key: "libelle", label: "Libellé" }]} data={refData} striped hover />
-        <Button size="small" className="mt-4">Ajouter</Button>
-      </Panel>
+      <ReferentielsSimulateur />
     </div>
   );
 }
