@@ -5,10 +5,12 @@ import { Timeline, CodeBlock } from "@/components/bpm";
 import type { TimelineItem } from "@/components/bpm";
 import { getPrevNext } from "@/lib/docPages";
 
+// Jalons d'un projet de déploiement CRM
 const items: TimelineItem[] = [
-  { title: "Étape 1", description: "Première étape", date: "Jan 2025", status: "done" },
-  { title: "Étape 2", description: "En cours", date: "Fév 2025", status: "current" },
-  { title: "Étape 3", description: "À venir", date: "Mar 2025", status: "upcoming" },
+  { title: "Cadrage", description: "Ateliers besoins et périmètre validé", date: "12 jan. 2026", status: "done" },
+  { title: "Développement", description: "Sprints 1 à 4 livrés", date: "26 jan. – 13 mars 2026", status: "done" },
+  { title: "Recette", description: "Tests métier en cours sur la préproduction", date: "16 mars – 3 avr. 2026", status: "current" },
+  { title: "Mise en production", description: "Bascule et formation des utilisateurs", date: "15 avr. 2026", status: "upcoming" },
 ];
 
 export default function DocTimelinePage() {
@@ -18,7 +20,7 @@ export default function DocTimelinePage() {
       <div className="doc-page-header">
         <div className="doc-breadcrumb"><Link href="/docs/components">Composants</Link> → bpm.timeline</div>
         <h1>bpm.timeline</h1>
-        <p className="doc-description">Frise chronologique verticale : étapes avec titre, description, date et statut (done, current, upcoming).</p>
+        <p className="doc-description">Frise chronologique verticale : étapes avec titre, description, date et statut (done, current, upcoming). Démo : jalons d&apos;un projet de déploiement CRM.</p>
         <div className="doc-meta">
           <span className="doc-badge doc-badge-stable">Stable</span>
           <span className="doc-badge doc-badge-category">Affichage</span>
@@ -31,7 +33,7 @@ export default function DocTimelinePage() {
         </div>
         <div className="sandbox-code mt-3">
           <div className="sandbox-code-header"><span>Python</span><button type="button" onClick={() => navigator.clipboard.writeText("bpm.timeline(items=[...])")}>Copier</button></div>
-          <pre><code>{"bpm.timeline(items=[{\"title\": \"Étape 1\", \"date\": \"Jan 2025\", \"status\": \"done\"}, ...])"}</code></pre>
+          <pre><code>{"bpm.timeline(items=[{\"title\": \"Cadrage\", \"date\": \"12 jan. 2026\", \"status\": \"done\"}, ..., {\"title\": \"Mise en production\", \"date\": \"15 avr. 2026\", \"status\": \"upcoming\"}])"}</code></pre>
         </div>
       </div>
       <h2 className="text-lg font-semibold mt-8 mb-2">Props</h2>
@@ -55,7 +57,7 @@ export default function DocTimelinePage() {
         </tbody>
       </table>
       <h2 className="text-lg font-semibold mt-8 mb-2">Exemples</h2>
-      <CodeBlock code={'bpm.timeline(items=[{"title": "Inscription", "date": "Jan 2025", "status": "done"}, {"title": "Validation", "status": "current"}])'} language="python" />
+      <CodeBlock code={'bpm.timeline(items=[{"title": "Cadrage", "date": "12 jan. 2026", "status": "done"}, {"title": "Développement", "date": "26 jan. – 13 mars 2026", "status": "done"}, {"title": "Recette", "date": "16 mars – 3 avr. 2026", "status": "current"}, {"title": "Mise en production", "date": "15 avr. 2026", "status": "upcoming"}])'} language="python" />
       <nav className="doc-pagination mt-12">
         {prev ? <Link href={"/docs/components/" + prev}>← bpm.{prev}</Link> : <span />}
         {next ? <Link href={"/docs/components/" + next}>bpm.{next} →</Link> : <span />}

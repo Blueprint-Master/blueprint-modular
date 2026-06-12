@@ -5,13 +5,30 @@ import Link from "next/link";
 import { AltairChart, CodeBlock } from "@/components/bpm";
 import { getPrevNext } from "@/lib/docPages";
 
+// Spec Vega-Lite : ventes par trimestre 2025 (k€)
+const SAMPLE_SPEC: Record<string, unknown> = {
+  $schema: "https://vega.github.io/schema/vega-lite/v5.json",
+  description: "Ventes par trimestre 2025 (k€)",
+  data: { values: [
+    { trimestre: "T1 2025", ventes: 260 },
+    { trimestre: "T2 2025", ventes: 315 },
+    { trimestre: "T3 2025", ventes: 309 },
+    { trimestre: "T4 2025", ventes: 393 },
+  ]},
+  mark: "bar",
+  encoding: {
+    x: { field: "trimestre", type: "nominal", title: "Trimestre" },
+    y: { field: "ventes", type: "quantitative", title: "Ventes (k€)" },
+  },
+};
+
 export default function DocAltairChartPage() {
   const [width, setWidth] = useState<number | string>("100%");
   const [height, setHeight] = useState<number | string>(400);
 
   const pyWidth = width !== "100%" ? (typeof width === "number" ? `, width=${width}` : `, width="${width}"`) : "";
   const pyHeight = height !== 400 ? (typeof height === "number" ? `, height=${height}` : `, height="${height}"`) : "";
-  const pythonCode = `bpm.altairChart(spec=vega_spec${pyWidth}${pyHeight})`;
+  const pythonCode = `bpm.altairChart(spec=spec_ventes_trimestre${pyWidth}${pyHeight})  # ventes par trimestre 2025 (k€)`;
   const { prev, next } = getPrevNext("altairchart");
 
   return (
@@ -19,7 +36,7 @@ export default function DocAltairChartPage() {
       <div className="doc-page-header">
         <div className="doc-breadcrumb"><Link href="/docs/components">Composants</Link> → bpm.altairChart</div>
         <h1>bpm.altairChart</h1>
-        <p className="doc-description">Graphique Altair / Vega-Lite.</p>
+        <p className="doc-description">Graphique Altair / Vega-Lite. Démo : ventes par trimestre 2025 (k€) en barres Vega-Lite.</p>
         <div className="doc-meta">
           <span className="doc-badge doc-badge-stable">Stable</span>
           <span className="doc-badge doc-badge-category">Graphiques</span>
@@ -29,7 +46,7 @@ export default function DocAltairChartPage() {
 
       <div className="sandbox-container">
         <div className="sandbox-preview" style={{ minHeight: 200 }}>
-          <AltairChart width={width} height={height} />
+          <AltairChart spec={SAMPLE_SPEC} width={width} height={height} />
         </div>
         <div className="sandbox-controls">
           <div className="sandbox-control-group">
@@ -70,10 +87,10 @@ export default function DocAltairChartPage() {
       </table>
 
       <h2 className="text-lg font-semibold mt-8 mb-2">Exemples</h2>
-      <CodeBlock code={'bpm.altairChart(spec=vega_spec)'} language="python" />
-      <CodeBlock code={'bpm.altairChart(spec=chart.to_dict())'} language="python" />
-      <CodeBlock code={'bpm.altairChart(iframeSrc="/charts/altair-view.json")'} language="python" />
-      <CodeBlock code={'bpm.altairChart(spec=spec, width=600, height=300)'} language="python" />
+      <CodeBlock code={'spec_ventes_trimestre = {"data": {"values": [{"trimestre": "T1 2025", "ventes": 260}, {"trimestre": "T2 2025", "ventes": 315}, {"trimestre": "T3 2025", "ventes": 309}, {"trimestre": "T4 2025", "ventes": 393}]}, "mark": "bar", "encoding": {"x": {"field": "trimestre", "type": "nominal"}, "y": {"field": "ventes", "type": "quantitative", "title": "Ventes (k€)"}}}\nbpm.altairChart(spec=spec_ventes_trimestre)'} language="python" />
+      <CodeBlock code={'chart = alt.Chart(df_ventes).mark_bar().encode(x="trimestre", y="ventes")\nbpm.altairChart(spec=chart.to_dict())'} language="python" />
+      <CodeBlock code={'bpm.altairChart(iframeSrc="/charts/ventes-trimestre-2025.json")'} language="python" />
+      <CodeBlock code={'bpm.altairChart(spec=spec_ventes_trimestre, width=600, height=300)'} language="python" />
 
       <nav className="doc-pagination">
         {prev ? <Link href={"/docs/components/" + prev}>← bpm.{prev}</Link> : <span />}

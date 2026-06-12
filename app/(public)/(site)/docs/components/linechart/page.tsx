@@ -4,7 +4,12 @@ import Link from "next/link";
 import { LineChart, CodeBlock } from "@/components/bpm";
 import { getPrevNext } from "@/lib/docPages";
 
-const sampleData = [{ x: "Jan", y: 10 }, { x: "Fév", y: 20 }, { x: "Mar", y: 15 }, { x: "Avr", y: 28 }, { x: "Mai", y: 22 }];
+// Chiffre d'affaires mensuel 2025 (k€) — saisonnalité avec creux en août
+const sampleData = [
+  { x: "Jan", y: 82 }, { x: "Fév", y: 85 }, { x: "Mar", y: 93 }, { x: "Avr", y: 98 },
+  { x: "Mai", y: 105 }, { x: "Juin", y: 112 }, { x: "Juil", y: 104 }, { x: "Août", y: 88 },
+  { x: "Sep", y: 117 }, { x: "Oct", y: 124 }, { x: "Nov", y: 131 }, { x: "Déc", y: 138 },
+];
 
 export default function DocLineChartPage() {
   const { prev, next } = getPrevNext("linechart");
@@ -13,7 +18,7 @@ export default function DocLineChartPage() {
       <div className="doc-page-header">
         <div className="doc-breadcrumb"><Link href="/docs/components">Composants</Link> → bpm.linechart</div>
         <h1>bpm.linechart</h1>
-        <p className="doc-description">Graphique en courbes (ligne). Données : liste de {`{ x, y }`}.</p>
+        <p className="doc-description">Graphique en courbes (ligne). Données : liste de {`{ x, y }`}. Démo : chiffre d&apos;affaires mensuel 2025 (k€).</p>
         <div className="doc-meta"><span className="doc-badge doc-badge-category">Graphiques</span></div>
       </div>
       <div className="sandbox-container">
@@ -23,7 +28,7 @@ export default function DocLineChartPage() {
           </div>
         </div>
         <div className="sandbox-code">
-          <pre><code>{'bpm.linechart(data=[{"x": "Jan", "y": 10}, {"x": "Fév", "y": 20}, ...])'}</code></pre>
+          <pre><code>{'bpm.linechart(data=[{"x": "Jan", "y": 82}, {"x": "Fév", "y": 85}, ..., {"x": "Déc", "y": 138}])  # CA 2025 (k€)'}</code></pre>
         </div>
       </div>
       <table className="props-table">
@@ -36,7 +41,7 @@ export default function DocLineChartPage() {
         </tbody>
       </table>
       <h2 className="text-lg font-semibold mt-8 mb-2">Exemple</h2>
-      <CodeBlock code={'bpm.linechart("Jan,10;Fév,20;Mar,15;Avr,28;Mai,22")  # format sandbox'} language="python" />
+      <CodeBlock code={'bpm.linechart("Jan,82;Fév,85;Mar,93;Avr,98;Mai,105;Juin,112;Juil,104;Août,88;Sep,117;Oct,124;Nov,131;Déc,138")  # CA mensuel 2025 (k€), format sandbox'} language="python" />
       <nav className="doc-pagination mt-8">
         {prev ? <Link href={"/docs/components/" + prev}>← bpm.{prev}</Link> : <span />}
         {next ? <Link href={"/docs/components/" + next}>bpm.{next} →</Link> : <span />}

@@ -6,20 +6,28 @@ import { Treeview } from "@/components/bpm";
 import type { TreeviewNode } from "@/components/bpm";
 import { getPrevNext } from "@/lib/docPages";
 
+// Arborescence d'un projet front (src/)
 const sampleNodes: TreeviewNode[] = [
-  { id: "1", label: "Racine", defaultOpen: true, children: [
-    { id: "1-1", label: "Dossier A", children: [
-      { id: "1-1-1", label: "Fichier 1" },
-      { id: "1-1-2", label: "Fichier 2" },
+  { id: "src", label: "src/", defaultOpen: true, children: [
+    { id: "src-components", label: "components/", defaultOpen: true, children: [
+      { id: "src-components-button", label: "Button.tsx" },
+      { id: "src-components-modal", label: "Modal.tsx" },
+      { id: "src-components-navbar", label: "Navbar.tsx" },
     ]},
-    { id: "1-2", label: "Dossier B", children: [{ id: "1-2-1", label: "Fichier 3" }] },
+    { id: "src-hooks", label: "hooks/", children: [
+      { id: "src-hooks-useauth", label: "useAuth.ts" },
+      { id: "src-hooks-usefetch", label: "useFetch.ts" },
+    ]},
+    { id: "src-lib", label: "lib/", children: [{ id: "src-lib-api", label: "api.ts" }] },
+    { id: "src-app", label: "App.tsx" },
   ]},
-  { id: "2", label: "Autre noeud" },
+  { id: "package-json", label: "package.json" },
+  { id: "tsconfig-json", label: "tsconfig.json" },
 ];
 
 export default function DocTreeviewPage() {
   const [selectedId, setSelectedId] = useState<string | null>(null);
-  const pythonCode = "bpm.treeview(nodes=[...], on_select=...)";
+  const pythonCode = 'bpm.treeview(nodes=[{"id": "src", "label": "src/", "children": [{"id": "src-components", "label": "components/", "children": [{"id": "btn", "label": "Button.tsx"}]}]}], on_select=...)';
   const { prev, next } = getPrevNext("treeview");
 
   return (
@@ -27,7 +35,7 @@ export default function DocTreeviewPage() {
       <div className="doc-page-header">
         <div className="doc-breadcrumb"><Link href="/docs/components">Composants</Link> → bpm.treeview</div>
         <h1>bpm.treeview</h1>
-        <p className="doc-description">Arbre de noeuds repliables et sélectionnables.</p>
+        <p className="doc-description">Arbre de noeuds repliables et sélectionnables. Démo : arborescence d&apos;un projet front (src/, components/, hooks/…).</p>
         <div className="doc-meta"><span className="doc-badge doc-badge-category">Affichage de données</span></div>
       </div>
       <div className="sandbox-container">
