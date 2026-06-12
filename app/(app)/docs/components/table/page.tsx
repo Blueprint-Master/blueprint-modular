@@ -58,26 +58,30 @@ export default function DocTablePage() {
 
       <div className="sandbox-container">
         <div className="sandbox-preview">
-          <Table
-            columns={COLUMNS}
-            data={DEMO_DATA}
-            striped={striped}
-            hover={hover}
-            defaultSortColumn={defaultSortColumn}
-            defaultSortDirection="asc"
-            onRowClick={(row) => setSelectedRow(row)}
-            valueLocale={valueLocale}
-            valueDecimals={valueDecimals}
-            valueGrouping={valueGrouping}
-          />
-          {selectedRow && (
-            <div className="mt-3 p-3 rounded-lg text-sm border" style={{ borderColor: "var(--bpm-border)", background: "var(--bpm-bg-secondary)", color: "var(--bpm-text-secondary)" }}>
-              <strong>Ligne cliquée :</strong> {String(selectedRow.Produit ?? "")} — {String(selectedRow.Prix ?? "")} € — Stock {String(selectedRow.Stock ?? "")} — {String(selectedRow.Statut ?? "")}
-            </div>
-          )}
-          {!selectedRow && (
-            <p className="mt-2 text-xs" style={{ color: "var(--bpm-text-secondary)" }}>Cliquez sur une ligne pour afficher le détail.</p>
-          )}
+          {/* w-full : la légende et l'encart se placent SOUS le tableau (et non à sa droite),
+              le conteneur d'aperçu étant en flex centré. */}
+          <div className="w-full">
+            <Table
+              columns={COLUMNS}
+              data={DEMO_DATA}
+              striped={striped}
+              hover={hover}
+              defaultSortColumn={defaultSortColumn}
+              defaultSortDirection="asc"
+              onRowClick={(row) => setSelectedRow(row)}
+              valueLocale={valueLocale}
+              valueDecimals={valueDecimals}
+              valueGrouping={valueGrouping}
+            />
+            {selectedRow && (
+              <div className="mt-3 p-3 rounded-lg text-sm border" style={{ borderColor: "var(--bpm-border)", background: "var(--bpm-bg-secondary)", color: "var(--bpm-text-secondary)" }}>
+                <strong>Ligne cliquée :</strong> {String(selectedRow.Produit ?? "")} — {String(selectedRow.Prix ?? "")} € — Stock {String(selectedRow.Stock ?? "")} — {String(selectedRow.Statut ?? "")}
+              </div>
+            )}
+            {!selectedRow && (
+              <p className="mt-2 text-xs" style={{ color: "var(--bpm-text-secondary)" }}>Cliquez sur une ligne pour afficher le détail.</p>
+            )}
+          </div>
         </div>
         <div className="sandbox-controls">
           <div className="sandbox-control-group">
