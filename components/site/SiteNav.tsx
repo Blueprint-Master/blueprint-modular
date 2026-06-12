@@ -6,10 +6,12 @@ import { usePathname } from "next/navigation";
 import { useI18n } from "@/lib/i18n/LocaleProvider";
 import { LOCALES } from "@/lib/i18n";
 
-// "Composants" est volontairement absent : la galerie reste accessible depuis
-// « Ouvrir l'app », les Ressources et le MCP — l'entrée de nav serait redondante.
+// "Composants" et "Modules" sont volontairement absents : ces vues font partie
+// de l'app et restent accessibles via « Ouvrir l'app », les Ressources et le MCP
+// — les dupliquer dans la nav serait redondant. La nav publique présente le
+// produit (Présentation) puis ses points d'entrée documentaires.
 const LINKS = [
-  { href: "/modules", key: "modules" as const },
+  { href: "/", key: "presentation" as const },
   { href: "/mcp", key: "mcp" as const },
   { href: "/resources", key: "resources" as const },
   { href: "/docs", key: "docs" as const },
@@ -19,6 +21,10 @@ export function SiteNav() {
   const { locale, dict, setLocale } = useI18n();
   const pathname = usePathname();
   const [menuOpen, setMenuOpen] = useState(false);
+
+  // Lien actif : exact pour l'accueil, préfixe pour les sections (ex. /docs/...).
+  const isActive = (href: string) =>
+    href === "/" ? pathname === "/" : pathname === href || (pathname?.startsWith(href + "/") ?? false);
 
   // Ferme le menu mobile à chaque changement de route.
   useEffect(() => {
@@ -51,7 +57,7 @@ export function SiteNav() {
               key={link.href}
               href={link.href}
               className="site-nav-link"
-              aria-current={pathname === link.href ? "page" : undefined}
+              aria-current={isActive(link.href) ? "page" : undefined}
             >
               {dict.nav[link.key]}
             </Link>
@@ -103,7 +109,7 @@ export function SiteNav() {
               key={link.href}
               href={link.href}
               className="site-mobile-link"
-              aria-current={pathname === link.href ? "page" : undefined}
+              aria-current={isActive(link.href) ? "page" : undefined}
               onClick={() => setMenuOpen(false)}
             >
               {dict.nav[link.key]}

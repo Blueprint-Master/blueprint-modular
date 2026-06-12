@@ -13,6 +13,7 @@ const fr = {
     code: "Code",
   },
   nav: {
+    presentation: "Présentation",
     gallery: "Composants",
     modules: "Modules",
     mcp: "MCP",
