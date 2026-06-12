@@ -1,21 +1,25 @@
 "use client";
 
 import Link from "next/link";
-import { Panel, Selectbox, Input, Button } from "@/components/bpm";
+import NotificationsCibleesSimulateur from "../simulateur-content";
 
 export default function NotificationsCibleesSimulateurPage() {
   return (
     <div className="doc-page">
       <div className="doc-page-header">
-        <div className="doc-breadcrumb"><Link href="/modules">Modules</Link> → <Link href="/modules/notifications-ciblees">Notifications ciblées</Link> → Simulateur</div>
+        <div className="doc-breadcrumb">
+          <Link href="/modules">Modules</Link> →{" "}
+          <Link href="/modules/notifications-ciblees">Notifications ciblées</Link> → Simulateur
+        </div>
         <h1>Simulateur — Notifications ciblées</h1>
-        <p className="doc-description">Créer une règle (démo).</p>
+        <p className="doc-description">
+          Cinq règles déjà configurées (validation, gros devis, ticket critique, échéance contrat,
+          rupture de stock). Créez une règle, suspendez, dupliquez, supprimez — puis émettez un
+          événement dans le banc d&apos;essai : le moteur évalue les règles, alimente le journal et
+          pousse les notifications in-app dans la cloche du header.
+        </p>
       </div>
-      <Panel variant="info" title="Règle">
-        <Selectbox options={[{ value: "validation", label: "Validation document" }]} value={null} onChange={() => {}} placeholder="Événement" label="Événement" />
-        <Input label="Destinataires" placeholder="admin@, équipe" value="" onChange={() => {}} className="mt-4" />
-        <Button className="mt-4">Enregistrer</Button>
-      </Panel>
+      <NotificationsCibleesSimulateur />
     </div>
   );
 }
