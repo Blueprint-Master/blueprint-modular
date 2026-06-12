@@ -523,8 +523,6 @@ const fr = {
           p: "L'éditeur s'efforce de fournir des informations exactes et à jour, sans garantir l'exhaustivité ni l'absence d'erreur. L'usage du site et du package se fait sous la responsabilité de l'utilisateur.",
         },
       ],
-      contactTitle: "Contact",
-      contactBody: "Pour toute question relative à ces mentions légales :",
     },
     privacy: {
       metaTitle: "Politique de confidentialité — Blueprint Modular",
@@ -557,8 +555,6 @@ const fr = {
       rgpdTitle: "RGPD et vos droits",
       rgpdBody:
         "Aucune donnée personnelle n'étant collectée, il n'existe pas de traitement au sens du RGPD nécessitant un consentement. Si vous estimez néanmoins qu'une donnée vous concernant a été traitée, vous disposez d'un droit d'accès, de rectification et d'effacement que vous pouvez exercer à l'adresse de contact.",
-      contactTitle: "Contact",
-      contactBody: "Pour toute question relative à cette politique :",
     },
     terms: {
       metaTitle: "Conditions d'utilisation — Blueprint Modular",
@@ -593,8 +589,6 @@ const fr = {
           p: "Ces conditions peuvent être mises à jour. La version applicable est celle publiée sur cette page à la date de votre utilisation.",
         },
       ],
-      contactTitle: "Contact",
-      contactBody: "Pour toute question relative à ces conditions :",
     },
   },
 };

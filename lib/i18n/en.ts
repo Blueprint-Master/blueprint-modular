@@ -523,8 +523,6 @@ const en: Dictionary = {
           p: "The publisher strives to provide accurate, up-to-date information, without guaranteeing completeness or the absence of errors. Use of the site and package is at the user's own responsibility.",
         },
       ],
-      contactTitle: "Contact",
-      contactBody: "For any question regarding this legal notice:",
     },
     privacy: {
       metaTitle: "Privacy policy — Blueprint Modular",
@@ -557,8 +555,6 @@ const en: Dictionary = {
       rgpdTitle: "GDPR and your rights",
       rgpdBody:
         "Since no personal data is collected, there is no processing under the GDPR requiring consent. Should you nonetheless consider that data concerning you has been processed, you have a right of access, rectification and erasure, which you may exercise at the contact address.",
-      contactTitle: "Contact",
-      contactBody: "For any question regarding this policy:",
     },
     terms: {
       metaTitle: "Terms of use — Blueprint Modular",
@@ -593,8 +589,6 @@ const en: Dictionary = {
           p: "These terms may be updated. The applicable version is the one published on this page at the date of your use.",
         },
       ],
-      contactTitle: "Contact",
-      contactBody: "For any question regarding these terms:",
     },
   },
 };
