@@ -12,13 +12,29 @@ import {
 import type { Dictionary } from "@/lib/i18n";
 import { fmt } from "@/lib/i18n";
 import { COMPONENT_COUNT, FAMILY_ORDER, familyCounts } from "./data";
+import { ShowcaseSource } from "./ShowcaseSource";
 
 export function ComponentShowcase({ dict }: { dict: Dictionary }) {
   const catalog = dict.home.catalog;
   const showcase = dict.home.showcase;
+  const demo = dict.homeDemo;
   const families = showcase.families;
   const tiles = showcase.tiles;
   const counts = familyCounts();
+
+  // Surface Python : la ligne exacte qui produit chaque tuile. Les libellés sont
+  // tirés du même dictionnaire que le rendu → fidélité garantie et parité FR/EN.
+  const source = {
+    metric: `bpm.metric(label="${demo.revenue}", value="142 500 €", delta=12)`,
+    status: `bpm.status_tracker(stages=[("${demo.stageCreated}", "completed"), ("${demo.stageValidation}", "current"), ("${demo.stageClosed}", "pending")])`,
+    gauge: `bpm.live_gauge(value=76, warning_above=70, critical_above=90, label="${demo.gaugeLabel}")`,
+    progress: `bpm.progress(value=74, label="${showcase.progressLabel}", show_value=True)\nbpm.badge("${demo.statusOk}", variant="success")\nbpm.badge("${showcase.badgeReview}", variant="warning")`,
+    approval: `bpm.approval_flow(steps=[("${showcase.approver1}", "${showcase.role1}", "approved"), ("${showcase.approver2}", "${showcase.role2}", "pending")])`,
+    activity: `bpm.activity_feed(activities=[("${showcase.approver1}", "${showcase.activityAction}", "${showcase.activityTarget}")])`,
+    anomaly: `bpm.anomaly_alert(title="${showcase.anomalyTitle}", expected="${showcase.anomalyExpected}", actual="${showcase.anomalyActual}", severity="warning")`,
+  };
+
+  const copyLabels = { copy: showcase.copy, copied: showcase.copied };
 
   return (
     <section className="site-section site-section-bordered">
@@ -40,11 +56,11 @@ export function ComponentShowcase({ dict }: { dict: Dictionary }) {
         <h3 className="site-showcase-subtitle">{showcase.liveTitle}</h3>
         <p className="site-section-body">{showcase.liveBody}</p>
         <div className="site-showcase-grid">
-          <ShowcaseTile family={tiles.metric}>
+          <ShowcaseTile family={tiles.metric} source={source.metric} copy={copyLabels}>
             <Metric label={dict.homeDemo.revenue} value="142 500 €" delta={12} currency="%" />
           </ShowcaseTile>
 
-          <ShowcaseTile family={tiles.status}>
+          <ShowcaseTile family={tiles.status} source={source.status} copy={copyLabels}>
             <StatusTracker
               compact
               direction="horizontal"
@@ -56,7 +72,7 @@ export function ComponentShowcase({ dict }: { dict: Dictionary }) {
             />
           </ShowcaseTile>
 
-          <ShowcaseTile family={tiles.gauge}>
+          <ShowcaseTile family={tiles.gauge} source={source.gauge} copy={copyLabels}>
             <div className="site-showcase-center">
               <LiveGauge
                 value={76}
@@ -70,7 +86,7 @@ export function ComponentShowcase({ dict }: { dict: Dictionary }) {
             </div>
           </ShowcaseTile>
 
-          <ShowcaseTile family={tiles.progress}>
+          <ShowcaseTile family={tiles.progress} source={source.progress} copy={copyLabels}>
             <Progress value={74} max={100} label={showcase.progressLabel} showValue />
             <div className="site-showcase-badges">
               <Badge variant="success">{dict.homeDemo.statusOk}</Badge>
@@ -78,7 +94,7 @@ export function ComponentShowcase({ dict }: { dict: Dictionary }) {
             </div>
           </ShowcaseTile>
 
-          <ShowcaseTile family={tiles.approval}>
+          <ShowcaseTile family={tiles.approval} source={source.approval} copy={copyLabels}>
             <ApprovalFlow
               direction="vertical"
               steps={[
@@ -88,7 +104,7 @@ export function ComponentShowcase({ dict }: { dict: Dictionary }) {
             />
           </ShowcaseTile>
 
-          <ShowcaseTile family={tiles.activity}>
+          <ShowcaseTile family={tiles.activity} source={source.activity} copy={copyLabels}>
             <ActivityFeed
               compact
               activities={[
@@ -104,7 +120,7 @@ export function ComponentShowcase({ dict }: { dict: Dictionary }) {
             />
           </ShowcaseTile>
 
-          <ShowcaseTile family={tiles.anomaly}>
+          <ShowcaseTile family={tiles.anomaly} source={source.anomaly} copy={copyLabels}>
             <AnomalyAlert
               title={showcase.anomalyTitle}
               expected={showcase.anomalyExpected}
@@ -127,11 +143,22 @@ export function ComponentShowcase({ dict }: { dict: Dictionary }) {
   );
 }
 
-function ShowcaseTile({ family, children }: { family: string; children: React.ReactNode }) {
+function ShowcaseTile({
+  family,
+  source,
+  copy,
+  children,
+}: {
+  family: string;
+  source: string;
+  copy: { copy: string; copied: string };
+  children: React.ReactNode;
+}) {
   return (
     <figure className="site-showcase-tile">
       <div className="site-demo-panel">{children}</div>
       <figcaption className="site-showcase-tile-caption">{family}</figcaption>
+      <ShowcaseSource source={source} label={family} copyLabel={copy.copy} copiedLabel={copy.copied} />
     </figure>
   );
 }
