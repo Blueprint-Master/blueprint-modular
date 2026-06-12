@@ -3758,10 +3758,16 @@ body.contract-detail-panel-open .pwa-title-bar {
 
 .site-showcase-tile {
   margin: 0;
+  display: flex;
+  flex-direction: column;
 }
 
+/* Le panneau de rendu absorbe la hauteur restante (flex) au lieu d'un height:100%
+   qui, sur une tuile étirée par la grille, débordait la légende + la source
+   hors de la tuile et chevauchait la rangée suivante. Les tuiles d'une même
+   rangée restent alignées, légende et source toujours à l'intérieur. */
 .site-showcase-tile .site-demo-panel {
-  height: 100%;
+  flex: 1 1 auto;
 }
 
 .site-showcase-tile-caption {

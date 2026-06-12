@@ -22,15 +22,16 @@ export function ComponentShowcase({ dict }: { dict: Dictionary }) {
   const tiles = showcase.tiles;
   const counts = familyCounts();
 
-  // Surface Python : la ligne exacte qui produit chaque tuile. Les libellés sont
-  // tirés du même dictionnaire que le rendu → fidélité garantie et parité FR/EN.
+  // Surface Python : la ligne exacte qui produit chaque tuile. Chaque appel est une
+  // fonction réelle du paquet bpm (cf. bpm/__init__.py) — noms et arguments vérifiés.
+  // Les libellés viennent du même dictionnaire que le rendu → parité FR/EN automatique.
   const source = {
     metric: `bpm.metric(label="${demo.revenue}", value="142 500 €", delta=12)`,
-    status: `bpm.status_tracker(stages=[("${demo.stageCreated}", "completed"), ("${demo.stageValidation}", "current"), ("${demo.stageClosed}", "pending")])`,
+    status: `bpm.status_tracker(stages=[("${demo.stageCreated}", "completed"), ("${demo.stageValidation}", "current"), ("${demo.stageClosed}", "pending")], compact=True, direction="horizontal")`,
     gauge: `bpm.live_gauge(value=76, warning_above=70, critical_above=90, label="${demo.gaugeLabel}")`,
-    progress: `bpm.progress(value=74, label="${showcase.progressLabel}", show_value=True)\nbpm.badge("${demo.statusOk}", variant="success")\nbpm.badge("${showcase.badgeReview}", variant="warning")`,
+    progress: `bpm.progress(value=74, max=100, label="${showcase.progressLabel}", show_value=True)\nbpm.badge("${demo.statusOk}", variant="success")\nbpm.badge("${showcase.badgeReview}", variant="warning")`,
     approval: `bpm.approval_flow(steps=[("${showcase.approver1}", "${showcase.role1}", "approved"), ("${showcase.approver2}", "${showcase.role2}", "pending")])`,
-    activity: `bpm.activity_feed(activities=[("${showcase.approver1}", "${showcase.activityAction}", "${showcase.activityTarget}")])`,
+    activity: `bpm.activity_feed(activities=[("${showcase.approver1}", "${showcase.activityAction}", "${showcase.activityTarget}", "success")])`,
     anomaly: `bpm.anomaly_alert(title="${showcase.anomalyTitle}", expected="${showcase.anomalyExpected}", actual="${showcase.anomalyActual}", severity="warning")`,
   };
 
