@@ -451,8 +451,8 @@ revue humaine attendue.
 | 3 | referentiels | #68 |
 | 3 | taches | #66 |
 | 3 | monitor | #69 |
-| 4 | fiches pdfViewer, map, gps, image, topNav | (en cours) |
-| 4 | réalisme données fiches charts | (en cours) |
+| 4 | fiches pdfViewer, map, gps, image, topNav | #71 |
+| 4 | réalisme données fiches charts | #70 |
 
 Après merge de ces PR : les 12 coquilles vides modules et les 5 modules « à
 reprendre » cochent la rubrique ; les 104 composants ont tous une fiche
