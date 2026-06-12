@@ -5,6 +5,7 @@ import Link from "next/link";
 import { useSession } from "next-auth/react";
 import { useSearchParams } from "next/navigation";
 import { Badge, Button, Panel } from "@/components/bpm";
+import { HighlightedText } from "@/components/wiki/HighlightedText";
 
 type Hit = {
   id: string;
@@ -69,12 +70,6 @@ export default function WikiSearchPage() {
     if (q && status !== "loading") runSearch();
   }, [q, status]);
 
-  const highlight = (text: string, term: string) => {
-    if (!term || !text) return text;
-    const re = new RegExp(`(${term.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")})`, "gi");
-    return text.replace(re, "<mark style='background:var(--bpm-accent-mint);color:inherit'>$1</mark>");
-  };
-
   return (
     <div className="doc-page">
       <div className="doc-page-header mb-6">
@@ -128,10 +123,12 @@ export default function WikiSearchPage() {
                   <li key={a.id} className="p-4 rounded border" style={{ borderColor: "var(--bpm-border)", background: "var(--bpm-bg-secondary)" }}>
                     <Link href={`/modules/wiki/${a.slug}`} className="block no-underline group">
                       <h3 className="text-lg font-semibold group-hover:underline" style={{ color: "var(--bpm-accent-cyan)" }}>
-                        <span dangerouslySetInnerHTML={{ __html: highlight(a.title, query.trim()) }} />
+                        <HighlightedText text={a.title} term={query.trim()} />
                       </h3>
                       {a.excerpt && (
-                        <p className="text-sm mt-1 line-clamp-2" style={{ color: "var(--bpm-text-secondary)" }} dangerouslySetInnerHTML={{ __html: highlight(a.excerpt, query.trim()) }} />
+                        <p className="text-sm mt-1 line-clamp-2" style={{ color: "var(--bpm-text-secondary)" }}>
+                          <HighlightedText text={a.excerpt} term={query.trim()} />
+                        </p>
                       )}
                       <div className="flex flex-wrap items-center gap-2 mt-2">
                         {Array.isArray(a.tags) && a.tags.slice(0, 5).map((t) => (

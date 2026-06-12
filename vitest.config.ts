@@ -3,7 +3,8 @@ import { resolve } from "path";
 
 /**
  * Config Vitest racine — couvre les tests d'autorisation (RBAC) du module
- * asset-manager. Les tests de `packages/core/gate` ont leur propre exécution
+ * asset-manager et le rendu inerte du contenu utilisateur (XSS, #2b). Les
+ * tests de `packages/core/gate` ont leur propre exécution
  * (`npm run gate:test` dans packages/core).
  */
 export default defineConfig({
@@ -14,6 +15,6 @@ export default defineConfig({
   },
   test: {
     environment: "node",
-    include: ["tests/**/*.test.ts"],
+    include: ["tests/**/*.test.{ts,tsx}"],
   },
 });
