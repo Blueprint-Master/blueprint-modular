@@ -17,13 +17,13 @@ export default function manifest(): MetadataRoute.Manifest {
     lang: "fr",
     icons: [
       {
-        src: `/img/logo-bpm.png${FAVICON_V}`,
+        src: `/img/icon-pwa-192.png${FAVICON_V}`,
         sizes: "192x192",
         type: "image/png",
         purpose: "any",
       },
       {
-        src: `/img/logo-bpm.png${FAVICON_V}`,
+        src: `/img/icon-pwa-512.png${FAVICON_V}`,
         sizes: "512x512",
         type: "image/png",
         purpose: "maskable",

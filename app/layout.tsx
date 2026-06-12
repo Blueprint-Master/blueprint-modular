@@ -29,10 +29,10 @@ export const metadata: Metadata = {
   alternates: { canonical: BASE_URL },
   icons: {
     icon: [
-      { url: `/img/logo-bpm.png${FAVICON_QUERY}`, type: "image/png", sizes: "512x512" },
-      { url: `/img/logo-bpm.png${FAVICON_QUERY}`, type: "image/png", sizes: "192x192" },
+      { url: `/img/icon-pwa-192.png${FAVICON_QUERY}`, type: "image/png", sizes: "192x192" },
+      { url: `/img/icon-pwa-512.png${FAVICON_QUERY}`, type: "image/png", sizes: "512x512" },
     ],
-    apple: `/img/logo-bpm.png${FAVICON_QUERY}`,
+    apple: `/img/icon-pwa-512.png${FAVICON_QUERY}`,
   },
   appleWebApp: { capable: true, statusBarStyle: "default", title: "BPM" },
   openGraph: {
@@ -67,7 +67,7 @@ export default async function RootLayout({
           rel="stylesheet"
           href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200"
         />
-        <link rel="icon" href={`/img/logo-bpm.png${FAVICON_QUERY}`} type="image/png" sizes="512x512" />
+        <link rel="icon" href={`/img/icon-pwa-192.png${FAVICON_QUERY}`} type="image/png" sizes="192x192" />
         <meta charSet="utf-8" />
         <meta name="apple-mobile-web-app-capable" content="yes" />
         <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />

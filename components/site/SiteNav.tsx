@@ -38,7 +38,7 @@ export function SiteNav() {
       <div className="site-container site-nav-inner">
         <Link href="/" className="site-wordmark" aria-label={dict.nav.ariaHome}>
           {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img src="/img/logo-bpm.png" alt="" className="site-brand-logo" width={30} height={30} />
+          <img src="/img/icon-pwa-192.png" alt="" className="site-brand-logo" width={30} height={30} />
           <span className="site-wordmark-text">
             <span className="site-wordmark-strong">Blueprint</span> Modular
           </span>
