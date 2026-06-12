@@ -496,7 +496,7 @@ const en: Dictionary = {
         "Legal notice for Blueprint Modular: publisher, hosting, intellectual property and the package's open-source license.",
       title: "Legal notice",
       intro:
-        "This legal notice applies to the Blueprint Modular website and its MCP connector. For any question, write to the contact address listed below.",
+        "This legal notice applies to the Blueprint Modular website and its MCP connector. For any question, write to us at the publisher's address listed in this legal notice.",
       sections: [
         {
           h: "Site publisher",
@@ -550,7 +550,7 @@ const en: Dictionary = {
         "The site uses no tracking, analytics or advertising cookies. A single technical cookie (bpm-locale) remembers your language choice; it is strictly necessary for operation and does not require prior consent.",
       rgpdTitle: "GDPR and your rights",
       rgpdBody:
-        "Since no personal data is collected, there is no processing under the GDPR requiring consent. Should you nonetheless consider that data concerning you has been processed, you have a right of access, rectification and erasure, which you may exercise at the contact address.",
+        "Since no personal data is collected, there is no processing under the GDPR requiring consent. Should you nonetheless consider that data concerning you has been processed, you have a right of access, rectification and erasure, which you may exercise at the publisher's address listed in the legal notice.",
     },
     terms: {
       metaTitle: "Terms of use — Blueprint Modular",

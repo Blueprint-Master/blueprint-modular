@@ -496,7 +496,7 @@ const fr = {
         "Mentions légales de Blueprint Modular : éditeur, hébergement, propriété intellectuelle et licence open-source du package.",
       title: "Mentions légales",
       intro:
-        "Les présentes mentions légales s'appliquent au site Blueprint Modular et au connecteur MCP associé. Pour toute question, écrivez à l'adresse de contact indiquée ci-dessous.",
+        "Les présentes mentions légales s'appliquent au site Blueprint Modular et au connecteur MCP associé. Pour toute question, écrivez-nous à l'adresse de l'éditeur indiquée dans les présentes mentions légales.",
       sections: [
         {
           h: "Éditeur du site",
@@ -550,7 +550,7 @@ const fr = {
         "Le site n'utilise aucun cookie de suivi, de mesure d'audience ni de publicité. Un unique cookie technique (bpm-locale) mémorise votre choix de langue ; il est strictement nécessaire au fonctionnement et ne requiert pas de consentement préalable.",
       rgpdTitle: "RGPD et vos droits",
       rgpdBody:
-        "Aucune donnée personnelle n'étant collectée, il n'existe pas de traitement au sens du RGPD nécessitant un consentement. Si vous estimez néanmoins qu'une donnée vous concernant a été traitée, vous disposez d'un droit d'accès, de rectification et d'effacement que vous pouvez exercer à l'adresse de contact.",
+        "Aucune donnée personnelle n'étant collectée, il n'existe pas de traitement au sens du RGPD nécessitant un consentement. Si vous estimez néanmoins qu'une donnée vous concernant a été traitée, vous disposez d'un droit d'accès, de rectification et d'effacement que vous pouvez exercer à l'adresse de l'éditeur indiquée dans les mentions légales.",
     },
     terms: {
       metaTitle: "Conditions d'utilisation — Blueprint Modular",
