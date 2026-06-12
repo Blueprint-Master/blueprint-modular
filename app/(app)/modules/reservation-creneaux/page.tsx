@@ -2,33 +2,30 @@
 
 import Link from "next/link";
 import { CodeBlock, Tabs } from "@/components/bpm";
+import { useI18n } from "@/lib/i18n/LocaleProvider";
+import { STR, type ModuleStrings } from "./strings";
 import ReservationCreneauxSimulateur from "./simulateur-content";
 
-const docContent = (
-  <div className="prose-sm">
-    <h2 className="text-lg font-semibold mt-0 mb-2" style={{ color: "var(--bpm-text-primary)" }}>
-      À propos
-    </h2>
-    <p className="mb-4" style={{ color: "var(--bpm-text-secondary)", maxWidth: "62ch" }}>
-      Le module Réservation / Créneaux gère la réservation de ressources partagées — ici trois
-      salles de réunion (Salle Hugo, Salle Colette, Box Rimbaud). Le planning hebdomadaire affiche
-      en un coup d&apos;œil les créneaux libres et occupés de la salle sélectionnée : un clic sur
-      une case libre ouvre le formulaire de réservation (titre, organisateur, durée 1 h ou 2 h avec
-      contrôle de conflit), un clic sur une case occupée affiche le détail en lecture seule. Vos
-      propres réservations sont mises en évidence et annulables à tout moment.
-    </p>
-    <h3 className="text-base font-semibold mt-6 mb-2" style={{ color: "var(--bpm-text-primary)" }}>
-      Composants utilisés
-    </h3>
-    <p className="mb-4" style={{ color: "var(--bpm-text-secondary)" }}>
-      <code>bpm.metricRow</code> (réservations, taux d&apos;occupation, salle la plus demandée),{" "}
-      <code>bpm.selectbox</code> (choix de la ressource et de la durée), <code>bpm.modal</code>{" "}
-      (réservation et détail), <code>bpm.confirmModal</code> (annulation), <code>bpm.input</code>,{" "}
-      <code>bpm.badge</code>, <code>bpm.button</code> et <code>bpm.toast</code>. La grille du
-      planning est une grille CSS locale (Lun→Ven × créneaux 09:00–18:00).
-    </p>
-    <CodeBlock
-      code={`import bpm
+function docContent(s: ModuleStrings) {
+  return (
+    <div className="prose-sm">
+      <h2 className="text-lg font-semibold mt-0 mb-2" style={{ color: "var(--bpm-text-primary)" }}>
+        {s.aboutTitle}
+      </h2>
+      <p className="mb-4" style={{ color: "var(--bpm-text-secondary)", maxWidth: "62ch" }}>
+        {s.aboutText}
+      </p>
+      <h3 className="text-base font-semibold mt-6 mb-2" style={{ color: "var(--bpm-text-primary)" }}>
+        {s.componentsTitle}
+      </h3>
+      <p className="mb-4" style={{ color: "var(--bpm-text-secondary)" }}>
+        <code>bpm.metricRow</code> {s.compSegMetric} <code>bpm.selectbox</code> {s.compSegSelect}{" "}
+        <code>bpm.modal</code> {s.compSegModal} <code>bpm.confirmModal</code> {s.compSegConfirm}{" "}
+        <code>bpm.input</code>, <code>bpm.badge</code>, <code>bpm.button</code> {s.and}{" "}
+        <code>bpm.toast</code>. {s.compSegGrid}
+      </p>
+      <CodeBlock
+        code={`import bpm
 
 salle = bpm.selectbox("Ressource", options=["Salle Hugo", "Salle Colette", "Box Rimbaud"])
 
@@ -48,39 +45,35 @@ bpm.modal(
         bpm.button("Confirmer la réservation", on_click=reserver),
     ],
 )`}
-      language="python"
-    />
-    <h3 className="text-base font-semibold mt-6 mb-2" style={{ color: "var(--bpm-text-primary)" }}>
-      Paramétrage
-    </h3>
-    <p className="mb-2 text-sm" style={{ color: "var(--bpm-text-secondary)" }}>
-      Le simulateur fonctionne entièrement en local (réservations seedées, aucune API requise). En
-      production, brancher les ressources et réservations sur votre backend et synchroniser avec
-      l&apos;agenda des collaborateurs. Voir la{" "}
-      <Link href="/modules/reservation-creneaux/documentation" style={{ color: "var(--bpm-accent-cyan)" }}>
-        documentation
-      </Link>{" "}
-      pour le modèle ressource / créneau / réservation, les règles de conflit et l&apos;intégration
-      calendrier.
-    </p>
-  </div>
-);
+        language="python"
+      />
+      <h3 className="text-base font-semibold mt-6 mb-2" style={{ color: "var(--bpm-text-primary)" }}>
+        {s.settingsTitle}
+      </h3>
+      <p className="mb-2 text-sm" style={{ color: "var(--bpm-text-secondary)" }}>
+        {s.settingsText1}{" "}
+        <Link href="/modules/reservation-creneaux/documentation" style={{ color: "var(--bpm-accent-cyan)" }}>
+          {s.settingsDocLink}
+        </Link>{" "}
+        {s.settingsText2}
+      </p>
+    </div>
+  );
+}
 
 export default function ReservationCreneauxModulePage() {
+  const { locale } = useI18n();
+  const s = STR[locale];
   return (
     <div className="doc-page">
       <div className="doc-page-header">
         <div className="doc-breadcrumb">
-          <Link href="/modules">Modules</Link> → Réservation / Créneaux
+          <Link href="/modules">{s.modules}</Link> → {s.moduleName}
         </div>
-        <h1>Réservation / Créneaux</h1>
-        <p className="doc-description">
-          Réservez vos salles de réunion sur un planning hebdomadaire : créneaux libres cliquables,
-          contrôle de conflit (1 h / 2 h), annulation, taux d&apos;occupation. Tout est manipulable
-          dans le Simulateur.
-        </p>
+        <h1>{s.moduleName}</h1>
+        <p className="doc-description">{s.pageDescription}</p>
         <div className="doc-meta">
-          <span className="doc-badge doc-badge-category">Métier</span>
+          <span className="doc-badge doc-badge-category">{s.categoryBadge}</span>
         </div>
         <p className="mt-3 text-sm" style={{ color: "var(--bpm-text-secondary)" }}>
           <Link
@@ -88,14 +81,14 @@ export default function ReservationCreneauxModulePage() {
             className="font-medium underline"
             style={{ color: "var(--bpm-accent-cyan)" }}
           >
-            Ouvrir le simulateur
+            {s.openSimulator}
           </Link>
         </p>
       </div>
       <Tabs
         tabs={[
-          { label: "Documentation", content: docContent },
-          { label: "Simulateur", content: <ReservationCreneauxSimulateur /> },
+          { label: s.documentation, content: docContent(s) },
+          { label: s.simulator, content: <ReservationCreneauxSimulateur /> },
         ]}
         defaultTab={0}
       />

@@ -13,12 +13,14 @@ import {
   Selectbox,
   useToast,
 } from "@/components/bpm";
+import { useI18n } from "@/lib/i18n/LocaleProvider";
+import { STR, type LocalizedText } from "./strings";
 
 interface Ressource {
   id: string;
-  nom: string;
+  nom: LocalizedText;
   capacite: number;
-  equipements: string[];
+  equipements: LocalizedText[];
 }
 
 interface Reservation {
@@ -30,28 +32,47 @@ interface Reservation {
   heure: number;
   /** Durée en heures (1 ou 2). */
   duree: number;
-  titre: string;
+  /** Titre bilingue (les créations de l'utilisateur portent le même texte dans les deux langues). */
+  titre: LocalizedText;
+  /** Nom propre de l'organisateur ; chaîne vide = l'utilisateur courant (affiché « Vous » / "You"). */
   organisateur: string;
   participants?: number;
-  /** true si la réservation a été faite par « Vous ». */
+  /** true si la réservation appartient à l'utilisateur courant. */
   mienne: boolean;
 }
 
+const EQUIPEMENTS = {
+  ecran: { fr: "Écran", en: "Screen" },
+  visio: { fr: "Visio", en: "Video" },
+  tableauBlanc: { fr: "Tableau blanc", en: "Whiteboard" },
+  telephone: { fr: "Téléphone", en: "Phone" },
+} satisfies Record<string, LocalizedText>;
+
 const RESSOURCES: Ressource[] = [
-  { id: "hugo", nom: "Salle Hugo", capacite: 8, equipements: ["Écran", "Visio"] },
-  { id: "colette", nom: "Salle Colette", capacite: 4, equipements: ["Tableau blanc"] },
-  { id: "rimbaud", nom: "Box Rimbaud", capacite: 2, equipements: ["Téléphone"] },
+  {
+    id: "hugo",
+    nom: { fr: "Salle Hugo", en: "Hugo Room" },
+    capacite: 8,
+    equipements: [EQUIPEMENTS.ecran, EQUIPEMENTS.visio],
+  },
+  {
+    id: "colette",
+    nom: { fr: "Salle Colette", en: "Colette Room" },
+    capacite: 4,
+    equipements: [EQUIPEMENTS.tableauBlanc],
+  },
+  {
+    id: "rimbaud",
+    nom: { fr: "Box Rimbaud", en: "Rimbaud Booth" },
+    capacite: 2,
+    equipements: [EQUIPEMENTS.telephone],
+  },
 ];
 
-const JOURS = ["Lundi 15", "Mardi 16", "Mercredi 17", "Jeudi 18", "Vendredi 19"];
+const NB_JOURS = 5; // Lun→Ven / Mon→Fri
 /** Créneaux d'1 h de 09:00 à 18:00 (9 créneaux par jour). */
 const HEURES = [9, 10, 11, 12, 13, 14, 15, 16, 17];
-const CRENEAUX_PAR_SALLE = JOURS.length * HEURES.length; // 45
-
-const DUREE_OPTIONS = [
-  { value: "1", label: "1 heure" },
-  { value: "2", label: "2 heures" },
-];
+const CRENEAUX_PAR_SALLE = NB_JOURS * HEURES.length; // 45
 
 function heureLabel(h: number): string {
   return `${String(h).padStart(2, "0")}:00`;
@@ -64,22 +85,30 @@ function plageLabel(heure: number, duree: number): string {
 /** Jeu de démonstration déterministe : 11 réservations réparties sur les 3 salles. */
 const INITIAL_RESERVATIONS: Reservation[] = [
   // Salle Hugo
-  { id: "rsv-1", ressourceId: "hugo", jour: 0, heure: 9, duree: 2, titre: "Comité de direction", organisateur: "Claire Morel", participants: 7, mienne: false },
-  { id: "rsv-2", ressourceId: "hugo", jour: 1, heure: 14, duree: 1, titre: "Revue de sprint", organisateur: "Karim Benali", participants: 6, mienne: false },
-  { id: "rsv-3", ressourceId: "hugo", jour: 2, heure: 10, duree: 1, titre: "Présentation client Nexa", organisateur: "Sophie Lambert", participants: 8, mienne: false },
-  { id: "rsv-4", ressourceId: "hugo", jour: 3, heure: 16, duree: 1, titre: "Formation outils internes", organisateur: "Hugo Mercier", participants: 5, mienne: false },
+  { id: "rsv-1", ressourceId: "hugo", jour: 0, heure: 9, duree: 2, titre: { fr: "Comité de direction", en: "Executive committee" }, organisateur: "Claire Morel", participants: 7, mienne: false },
+  { id: "rsv-2", ressourceId: "hugo", jour: 1, heure: 14, duree: 1, titre: { fr: "Revue de sprint", en: "Sprint review" }, organisateur: "Karim Benali", participants: 6, mienne: false },
+  { id: "rsv-3", ressourceId: "hugo", jour: 2, heure: 10, duree: 1, titre: { fr: "Présentation client Nexa", en: "Nexa client presentation" }, organisateur: "Sophie Lambert", participants: 8, mienne: false },
+  { id: "rsv-4", ressourceId: "hugo", jour: 3, heure: 16, duree: 1, titre: { fr: "Formation outils internes", en: "Internal tools training" }, organisateur: "Hugo Mercier", participants: 5, mienne: false },
   // Salle Colette
-  { id: "rsv-5", ressourceId: "colette", jour: 0, heure: 11, duree: 1, titre: "Point hebdo marketing", organisateur: "Inès Rousseau", participants: 4, mienne: false },
-  { id: "rsv-6", ressourceId: "colette", jour: 1, heure: 9, duree: 1, titre: "Entretien candidat dev", organisateur: "Karim Benali", participants: 3, mienne: false },
-  { id: "rsv-7", ressourceId: "colette", jour: 2, heure: 15, duree: 2, titre: "Atelier roadmap produit", organisateur: "Claire Morel", participants: 4, mienne: false },
-  { id: "rsv-8", ressourceId: "colette", jour: 4, heure: 10, duree: 1, titre: "Brief campagne T3", organisateur: "Vous", participants: 3, mienne: true },
+  { id: "rsv-5", ressourceId: "colette", jour: 0, heure: 11, duree: 1, titre: { fr: "Point hebdo marketing", en: "Weekly marketing check-in" }, organisateur: "Inès Rousseau", participants: 4, mienne: false },
+  { id: "rsv-6", ressourceId: "colette", jour: 1, heure: 9, duree: 1, titre: { fr: "Entretien candidat dev", en: "Dev candidate interview" }, organisateur: "Karim Benali", participants: 3, mienne: false },
+  { id: "rsv-7", ressourceId: "colette", jour: 2, heure: 15, duree: 2, titre: { fr: "Atelier roadmap produit", en: "Product roadmap workshop" }, organisateur: "Claire Morel", participants: 4, mienne: false },
+  { id: "rsv-8", ressourceId: "colette", jour: 4, heure: 10, duree: 1, titre: { fr: "Brief campagne T3", en: "Q3 campaign brief" }, organisateur: "", participants: 3, mienne: true },
   // Box Rimbaud
-  { id: "rsv-9", ressourceId: "rimbaud", jour: 0, heure: 14, duree: 1, titre: "Call fournisseur Adexo", organisateur: "Inès Rousseau", participants: 2, mienne: false },
-  { id: "rsv-10", ressourceId: "rimbaud", jour: 2, heure: 9, duree: 1, titre: "Point RH confidentiel", organisateur: "Sophie Lambert", participants: 2, mienne: false },
-  { id: "rsv-11", ressourceId: "rimbaud", jour: 3, heure: 11, duree: 1, titre: "Visio partenaire Berlin", organisateur: "Hugo Mercier", participants: 2, mienne: false },
+  { id: "rsv-9", ressourceId: "rimbaud", jour: 0, heure: 14, duree: 1, titre: { fr: "Call fournisseur Adexo", en: "Adexo supplier call" }, organisateur: "Inès Rousseau", participants: 2, mienne: false },
+  { id: "rsv-10", ressourceId: "rimbaud", jour: 2, heure: 9, duree: 1, titre: { fr: "Point RH confidentiel", en: "Confidential HR check-in" }, organisateur: "Sophie Lambert", participants: 2, mienne: false },
+  { id: "rsv-11", ressourceId: "rimbaud", jour: 3, heure: 11, duree: 1, titre: { fr: "Visio partenaire Berlin", en: "Berlin partner video call" }, organisateur: "Hugo Mercier", participants: 2, mienne: false },
 ];
 
+/** Erreur du modal de réservation, stockée structurée pour rester réactive à la langue. */
+type ModalError =
+  | { type: "titleRequired" }
+  | { type: "outOfRange" }
+  | { type: "conflict"; range: string };
+
 export default function ReservationCreneauxSimulateur() {
+  const { locale } = useI18n();
+  const s = STR[locale];
   const { showToast } = useToast();
   const [reservations, setReservations] = useState<Reservation[]>(INITIAL_RESERVATIONS);
   const [ressourceId, setRessourceId] = useState<string>("hugo");
@@ -87,9 +116,9 @@ export default function ReservationCreneauxSimulateur() {
   // Modal de réservation (case libre cliquée)
   const [slotCible, setSlotCible] = useState<{ jour: number; heure: number } | null>(null);
   const [titre, setTitre] = useState("");
-  const [organisateur, setOrganisateur] = useState("Vous");
+  const [organisateur, setOrganisateur] = useState(s.you);
   const [duree, setDuree] = useState<string>("1");
-  const [modalError, setModalError] = useState<string | null>(null);
+  const [modalError, setModalError] = useState<ModalError | null>(null);
 
   // Modal lecture seule (case occupée cliquée)
   const [detail, setDetail] = useState<Reservation | null>(null);
@@ -97,6 +126,26 @@ export default function ReservationCreneauxSimulateur() {
   const [aAnnuler, setAAnnuler] = useState<Reservation | null>(null);
 
   const ressource = RESSOURCES.find((r) => r.id === ressourceId) ?? RESSOURCES[0];
+
+  const JOURS = s.days;
+  const DUREE_OPTIONS = [
+    { value: "1", label: s.duration1h },
+    { value: "2", label: s.duration2h },
+  ];
+
+  /** Nom de l'organisateur à afficher (chaîne vide = l'utilisateur courant). */
+  const organisateurLabel = (r: Reservation) => r.organisateur || s.you;
+
+  const modalErrorLabel = (e: ModalError): string => {
+    switch (e.type) {
+      case "titleRequired":
+        return s.errTitleRequired;
+      case "outOfRange":
+        return s.errOutOfRange;
+      case "conflict":
+        return s.errConflict(e.range);
+    }
+  };
 
   /** Carte d'occupation de la salle affichée : "jour-heure" → réservation. */
   const occupation = useMemo(() => {
@@ -127,9 +176,9 @@ export default function ReservationCreneauxSimulateur() {
         topId = res.id;
       }
     }
-    const topNom = RESSOURCES.find((r) => r.id === topId)?.nom ?? "—";
+    const topNom = RESSOURCES.find((r) => r.id === topId)?.nom[locale] ?? "—";
     return { totalSemaine, taux, topNom, topCount: Math.max(topCount, 0) };
-  }, [reservations, ressourceId]);
+  }, [reservations, ressourceId, locale]);
 
   const mesReservations = useMemo(
     () =>
@@ -141,7 +190,7 @@ export default function ReservationCreneauxSimulateur() {
 
   const ouvrirReservation = (jour: number, heure: number) => {
     setTitre("");
-    setOrganisateur("Vous");
+    setOrganisateur(s.you);
     setDuree("1");
     setModalError(null);
     setSlotCible({ jour, heure });
@@ -155,54 +204,58 @@ export default function ReservationCreneauxSimulateur() {
   const confirmerReservation = () => {
     if (!slotCible) return;
     if (!titre.trim()) {
-      setModalError("Le titre de la réunion est requis.");
+      setModalError({ type: "titleRequired" });
       return;
     }
     const dureeH = parseInt(duree, 10) || 1;
     if (dureeH === 2) {
       const heureSuivante = slotCible.heure + 1;
       if (heureSuivante > 17) {
-        setModalError("Impossible de réserver 2 h : le créneau suivant est en dehors du planning (09:00–18:00).");
+        setModalError({ type: "outOfRange" });
         return;
       }
       if (occupation.has(`${slotCible.jour}-${heureSuivante}`)) {
-        setModalError(`Impossible de réserver 2 h : le créneau ${plageLabel(heureSuivante, 1)} est déjà occupé. Choisissez 1 heure ou un autre créneau.`);
+        setModalError({ type: "conflict", range: plageLabel(heureSuivante, 1) });
         return;
       }
     }
+    const titreSaisi = titre.trim();
+    const orgSaisi = organisateur.trim();
+    // « Vous » / "You" (ou champ vide) = l'utilisateur courant → chaîne vide, résolue à l'affichage.
+    const estVous = orgSaisi === "" || orgSaisi === STR.fr.you || orgSaisi === STR.en.you;
     const nouvelle: Reservation = {
       id: `rsv-${Date.now()}`,
       ressourceId: ressource.id,
       jour: slotCible.jour,
       heure: slotCible.heure,
       duree: dureeH,
-      titre: titre.trim(),
-      organisateur: organisateur.trim() || "Vous",
+      titre: { fr: titreSaisi, en: titreSaisi },
+      organisateur: estVous ? "" : orgSaisi,
       mienne: true,
     };
     setReservations((prev) => [...prev, nouvelle]);
     setSlotCible(null);
     setModalError(null);
     showToast(
-      `${ressource.nom} réservée le ${JOURS[nouvelle.jour].toLowerCase()} juin, ${plageLabel(nouvelle.heure, nouvelle.duree)} — « ${nouvelle.titre} ».`,
+      s.toastBookedMsg(ressource.nom[locale], nouvelle.jour, plageLabel(nouvelle.heure, nouvelle.duree), titreSaisi),
       "success",
       5000,
-      "Réservation confirmée",
-      "Réservation de créneaux",
+      s.toastBookedTitle,
+      s.toastSource,
       null
     );
   };
 
   const confirmerAnnulation = () => {
     if (!aAnnuler) return;
-    const salle = RESSOURCES.find((r) => r.id === aAnnuler.ressourceId)?.nom ?? "Salle";
+    const salle = RESSOURCES.find((r) => r.id === aAnnuler.ressourceId)?.nom[locale] ?? s.roomFallback;
     setReservations((prev) => prev.filter((r) => r.id !== aAnnuler.id));
     showToast(
-      `« ${aAnnuler.titre} » (${salle}, ${JOURS[aAnnuler.jour].toLowerCase()} juin, ${plageLabel(aAnnuler.heure, aAnnuler.duree)}) a été annulée. Le créneau est de nouveau libre.`,
+      s.toastCancelledMsg(aAnnuler.titre[locale], salle, aAnnuler.jour, plageLabel(aAnnuler.heure, aAnnuler.duree)),
       "info",
       5000,
-      "Réservation annulée",
-      "Réservation de créneaux",
+      s.toastCancelledTitle,
+      s.toastSource,
       null
     );
     setAAnnuler(null);
@@ -211,26 +264,26 @@ export default function ReservationCreneauxSimulateur() {
   return (
     <div className="space-y-6">
       <MetricRow>
-        <Metric label="Réservations cette semaine" value={String(stats.totalSemaine)} />
-        <Metric label={`Taux d'occupation — ${ressource.nom}`} value={`${stats.taux} %`} />
-        <Metric label="Salle la plus demandée" value={stats.topNom} />
+        <Metric label={s.metricWeekBookings} value={String(stats.totalSemaine)} />
+        <Metric label={s.metricOccupancy(ressource.nom[locale])} value={s.percent(stats.taux)} />
+        <Metric label={s.metricTopRoom} value={stats.topNom} />
       </MetricRow>
 
-      <Panel variant="info" title="Planning hebdomadaire — Semaine du 15 juin">
+      <Panel variant="info" title={s.planningTitle}>
         <div className="mb-4 flex flex-wrap items-end gap-4">
           <div className="min-w-[220px]">
             <Selectbox
-              label="Ressource"
-              options={RESSOURCES.map((r) => ({ value: r.id, label: r.nom }))}
+              label={s.resourceLabel}
+              options={RESSOURCES.map((r) => ({ value: r.id, label: r.nom[locale] }))}
               value={ressourceId}
               onChange={(v) => setRessourceId(v)}
-              placeholder="Choisir une salle"
+              placeholder={s.resourcePlaceholder}
             />
           </div>
           <div className="flex flex-wrap items-center gap-2 pb-1">
-            <Badge variant="default">{ressource.capacite} places</Badge>
+            <Badge variant="default">{s.seats(ressource.capacite)}</Badge>
             {ressource.equipements.map((eq) => (
-              <Badge key={eq} variant="primary">{eq}</Badge>
+              <Badge key={eq.fr} variant="primary">{eq[locale]}</Badge>
             ))}
           </div>
         </div>
@@ -251,7 +304,7 @@ export default function ReservationCreneauxSimulateur() {
               className="px-2 py-2 text-xs font-medium border-b border-r"
               style={{ borderColor: "var(--bpm-border)", background: "var(--bpm-bg-secondary)", color: "var(--bpm-text-secondary)" }}
             >
-              Heure
+              {s.hourHeader}
             </div>
             {JOURS.map((j, i) => (
               <div
@@ -285,14 +338,14 @@ export default function ReservationCreneauxSimulateur() {
                         onClick={() => ouvrirReservation(jour, h)}
                         className={`group relative text-left px-1.5 py-1 transition-colors cursor-pointer ${borders} hover:bg-[rgba(0,163,226,0.12)]`}
                         style={{ borderColor: "var(--bpm-border)", background: "transparent", minHeight: 44 }}
-                        title={`Réserver ${ressource.nom} — ${JOURS[jour]} juin, ${plageLabel(h, 1)}`}
-                        aria-label={`Réserver le créneau ${JOURS[jour]} ${plageLabel(h, 1)}`}
+                        title={s.bookSlotTitle(ressource.nom[locale], jour, plageLabel(h, 1))}
+                        aria-label={s.bookSlotAria(jour, plageLabel(h, 1))}
                       >
                         <span
                           className="hidden group-hover:inline text-xs font-medium"
                           style={{ color: "var(--bpm-accent-cyan)" }}
                         >
-                          + Réserver
+                          {s.bookCta}
                         </span>
                       </button>
                     );
@@ -311,22 +364,22 @@ export default function ReservationCreneauxSimulateur() {
                         borderLeft: `3px solid ${couleur}`,
                         minHeight: 44,
                       }}
-                      title={`${rsv.titre} — ${rsv.organisateur}${rsv.participants ? ` (${rsv.participants} participants)` : ""}`}
-                      aria-label={`Détail de la réservation ${rsv.titre}`}
+                      title={s.occupiedTooltip(rsv.titre[locale], organisateurLabel(rsv), rsv.participants)}
+                      aria-label={s.detailAria(rsv.titre[locale])}
                     >
                       {estDebut ? (
                         <>
                           <span className="block text-xs font-medium truncate" style={{ color: "var(--bpm-text-primary)" }}>
-                            {rsv.titre}
+                            {rsv.titre[locale]}
                           </span>
                           <span className="block text-[11px] truncate" style={{ color: "var(--bpm-text-secondary)" }}>
-                            {rsv.mienne ? "À vous" : rsv.organisateur}
+                            {rsv.mienne ? s.yours : organisateurLabel(rsv)}
                             {rsv.duree > 1 ? ` · ${rsv.duree} h` : ""}
                           </span>
                         </>
                       ) : (
                         <span className="block text-[11px] italic truncate" style={{ color: "var(--bpm-text-secondary)" }}>
-                          (suite)
+                          {s.continued}
                         </span>
                       )}
                     </button>
@@ -341,28 +394,28 @@ export default function ReservationCreneauxSimulateur() {
         <div className="mt-3 flex flex-wrap items-center gap-4 text-xs" style={{ color: "var(--bpm-text-secondary)" }}>
           <span className="flex items-center gap-1.5">
             <span className="inline-block w-3 h-3 rounded-sm border" style={{ borderColor: "var(--bpm-border)" }} />
-            Libre (cliquer pour réserver)
+            {s.legendFree}
           </span>
           <span className="flex items-center gap-1.5">
             <span className="inline-block w-3 h-3 rounded-sm" style={{ background: "rgba(0,163,226,0.4)" }} />
-            Occupé
+            {s.legendBusy}
           </span>
           <span className="flex items-center gap-1.5">
             <span className="inline-block w-3 h-3 rounded-sm" style={{ background: "rgba(39,174,96,0.5)" }} />
-            Vos réservations
+            {s.legendMine}
           </span>
         </div>
       </Panel>
 
-      <Panel variant="info" title="Mes réservations">
+      <Panel variant="info" title={s.myBookingsTitle}>
         {mesReservations.length === 0 ? (
           <p className="text-sm m-0" style={{ color: "var(--bpm-text-secondary)" }}>
-            Aucune réservation à votre nom cette semaine. Cliquez sur une case libre du planning pour en créer une.
+            {s.myBookingsEmpty}
           </p>
         ) : (
           <ul className="m-0 p-0 list-none space-y-2">
             {mesReservations.map((r) => {
-              const salle = RESSOURCES.find((x) => x.id === r.ressourceId)?.nom ?? "Salle";
+              const salle = RESSOURCES.find((x) => x.id === r.ressourceId)?.nom[locale] ?? s.roomFallback;
               return (
                 <li
                   key={r.id}
@@ -371,16 +424,16 @@ export default function ReservationCreneauxSimulateur() {
                 >
                   <div className="min-w-0">
                     <div className="text-sm font-medium truncate" style={{ color: "var(--bpm-text-primary)" }}>
-                      {r.titre}
+                      {r.titre[locale]}
                     </div>
                     <div className="text-xs" style={{ color: "var(--bpm-text-secondary)" }}>
-                      {salle} · {JOURS[r.jour]} juin · {plageLabel(r.heure, r.duree)}
+                      {salle} · {s.dayMonth(r.jour)} · {plageLabel(r.heure, r.duree)}
                     </div>
                   </div>
                   <div className="flex items-center gap-2">
-                    <Badge variant="success">À vous</Badge>
+                    <Badge variant="success">{s.yours}</Badge>
                     <Button size="small" variant="destructive" onClick={() => setAAnnuler(r)}>
-                      Annuler
+                      {s.cancel}
                     </Button>
                   </div>
                 </li>
@@ -394,7 +447,7 @@ export default function ReservationCreneauxSimulateur() {
       <Modal
         isOpen={slotCible !== null}
         onClose={fermerReservation}
-        title="Réserver un créneau"
+        title={s.bookModalTitle}
         size="small"
       >
         {slotCible && (
@@ -403,38 +456,38 @@ export default function ReservationCreneauxSimulateur() {
               className="rounded-lg border px-3 py-2 text-sm"
               style={{ borderColor: "var(--bpm-border)", background: "var(--bpm-bg-secondary)", color: "var(--bpm-text-primary)" }}
             >
-              <div className="font-medium">{ressource.nom}</div>
+              <div className="font-medium">{ressource.nom[locale]}</div>
               <div className="text-xs" style={{ color: "var(--bpm-text-secondary)" }}>
-                {JOURS[slotCible.jour]} juin · à partir de {heureLabel(slotCible.heure)} · {ressource.capacite} places ·{" "}
-                {ressource.equipements.join(", ")}
+                {s.dayMonth(slotCible.jour)} · {s.fromHour(heureLabel(slotCible.heure))} · {s.seats(ressource.capacite)} ·{" "}
+                {ressource.equipements.map((eq) => eq[locale]).join(", ")}
               </div>
             </div>
             <Input
-              label="Titre de la réunion"
+              label={s.meetingTitleLabel}
               value={titre}
               onChange={setTitre}
-              placeholder="Ex. : Point projet hebdomadaire"
+              placeholder={s.meetingTitlePlaceholder}
               required
             />
             <Input
-              label="Organisateur"
+              label={s.organizerLabel}
               value={organisateur}
               onChange={setOrganisateur}
-              placeholder="Vous"
+              placeholder={s.you}
             />
             <Selectbox
-              label="Durée"
+              label={s.durationLabel}
               options={DUREE_OPTIONS}
               value={duree}
               onChange={(v) => {
                 setDuree(v);
                 setModalError(null);
               }}
-              placeholder="Durée"
+              placeholder={s.durationPlaceholder}
             />
             {duree === "2" && (
               <p className="m-0 text-xs" style={{ color: "var(--bpm-text-secondary)" }}>
-                Créneau demandé : {plageLabel(slotCible.heure, 2)} (le créneau suivant doit être libre).
+                {s.twoHourHint(plageLabel(slotCible.heure, 2))}
               </p>
             )}
             {modalError && (
@@ -446,15 +499,15 @@ export default function ReservationCreneauxSimulateur() {
                   background: "rgba(220,38,38,0.08)",
                 }}
               >
-                {modalError}
+                {modalErrorLabel(modalError)}
               </p>
             )}
             <div className="flex gap-2 pt-1">
               <Button variant="primary" onClick={confirmerReservation}>
-                Confirmer la réservation
+                {s.confirmBooking}
               </Button>
               <Button variant="secondary" onClick={fermerReservation}>
-                Annuler
+                {s.cancel}
               </Button>
             </div>
           </div>
@@ -465,29 +518,29 @@ export default function ReservationCreneauxSimulateur() {
       <Modal
         isOpen={detail !== null}
         onClose={() => setDetail(null)}
-        title={detail?.titre}
+        title={detail ? detail.titre[locale] : undefined}
         size="small"
       >
         {detail && (
           <div className="space-y-2 text-sm" style={{ color: "var(--bpm-text-primary)" }}>
             <p className="m-0">
-              <strong>Salle :</strong> {RESSOURCES.find((r) => r.id === detail.ressourceId)?.nom ?? "—"}
+              <strong>{s.roomLabel}</strong> {RESSOURCES.find((r) => r.id === detail.ressourceId)?.nom[locale] ?? "—"}
             </p>
             <p className="m-0">
-              <strong>Créneau :</strong> {JOURS[detail.jour]} juin · {plageLabel(detail.heure, detail.duree)}
+              <strong>{s.slotLabel}</strong> {s.dayMonth(detail.jour)} · {plageLabel(detail.heure, detail.duree)}
             </p>
             <p className="m-0">
-              <strong>Organisateur :</strong> {detail.organisateur}{" "}
-              {detail.mienne && <Badge variant="success">À vous</Badge>}
+              <strong>{s.organizerLabelColon}</strong> {organisateurLabel(detail)}{" "}
+              {detail.mienne && <Badge variant="success">{s.yours}</Badge>}
             </p>
             {detail.participants !== undefined && (
               <p className="m-0">
-                <strong>Participants :</strong> {detail.participants}
+                <strong>{s.participantsLabel}</strong> {detail.participants}
               </p>
             )}
             {!detail.mienne && (
               <p className="m-0 text-xs" style={{ color: "var(--bpm-text-secondary)" }}>
-                Réservation faite par un autre collaborateur — consultation seule.
+                {s.readOnlyNote}
               </p>
             )}
             <div className="flex gap-2 pt-2">
@@ -500,11 +553,11 @@ export default function ReservationCreneauxSimulateur() {
                     setDetail(null);
                   }}
                 >
-                  Annuler la réservation
+                  {s.cancelBooking}
                 </Button>
               )}
               <Button size="small" variant="secondary" onClick={() => setDetail(null)}>
-                Fermer
+                {s.close}
               </Button>
             </div>
           </div>
@@ -514,14 +567,19 @@ export default function ReservationCreneauxSimulateur() {
       {/* Confirmation d'annulation */}
       <ConfirmModal
         isOpen={aAnnuler !== null}
-        title="Annuler la réservation"
+        title={s.confirmCancelTitle}
         message={
           aAnnuler
-            ? `« ${aAnnuler.titre} » (${RESSOURCES.find((r) => r.id === aAnnuler.ressourceId)?.nom ?? "Salle"}, ${JOURS[aAnnuler.jour]} juin, ${plageLabel(aAnnuler.heure, aAnnuler.duree)}) sera annulée et le créneau redeviendra libre.`
+            ? s.confirmCancelMsg(
+                aAnnuler.titre[locale],
+                RESSOURCES.find((r) => r.id === aAnnuler.ressourceId)?.nom[locale] ?? s.roomFallback,
+                aAnnuler.jour,
+                plageLabel(aAnnuler.heure, aAnnuler.duree)
+              )
             : ""
         }
-        confirmLabel="Annuler la réservation"
-        cancelLabel="Conserver"
+        confirmLabel={s.cancelBooking}
+        cancelLabel={s.keep}
         variant="danger"
         onConfirm={confirmerAnnulation}
         onCancel={() => setAAnnuler(null)}
