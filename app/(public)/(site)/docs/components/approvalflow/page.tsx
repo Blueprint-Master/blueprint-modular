@@ -5,21 +5,84 @@ import Link from "next/link";
 import { ApprovalFlow, CodeBlock } from "@/components/bpm";
 import type { ApprovalStep } from "@/components/bpm";
 import { getPrevNext } from "@/lib/docPages";
+import { useI18n } from "@/lib/i18n/LocaleProvider";
+
+const fr = {
+  breadcrumb: "Composants",
+  description:
+    "Flux de validation multi-étapes (approuvé / en attente / rejeté) : chaque approbateur peut approuver ou rejeter l'étape en cours avec un commentaire.",
+  category: "Affichage de données",
+  roles: { "1": "Demandeur", "2": "Manager", "3": "DAF" } as Record<string, string>,
+  initialComment: "Devis n° DV-2026-0481 — 12 400 € HT.",
+  hint:
+    "Validation du devis DV-2026-0481 : utilisez les boutons Approuver / Rejeter de l'étape en attente pour faire avancer le circuit.",
+  directionAuto: "auto (horizontal si < 5 étapes)",
+  reset: "Réinitialiser le circuit",
+  copy: "Copier",
+  thDefault: "Défaut",
+  thRequired: "Requis",
+  yes: "Oui",
+  no: "Non",
+  props: {
+    steps: (
+      <>
+        Étapes du circuit. <code>status</code> ∈ pending | approved | rejected | skipped.
+      </>
+    ),
+    onApprove:
+      "Callback d'approbation de l'étape en attente ; affiche le bouton « Approuver ».",
+    onReject: "Callback de rejet de l'étape en attente ; affiche le bouton « Rejeter ».",
+    direction: "Orientation. Par défaut : horizontal si moins de 5 étapes, vertical sinon.",
+    showCommentInput:
+      "Affiche le champ commentaire sous l'étape en attente (transmis aux callbacks).",
+    className: "Classes CSS additionnelles.",
+  },
+  examples: "Exemples",
+};
+
+const en: typeof fr = {
+  breadcrumb: "Components",
+  description:
+    "Multi-step approval flow (approved / pending / rejected): each approver can approve or reject the current step with a comment.",
+  category: "Data display",
+  roles: { "1": "Requester", "2": "Manager", "3": "CFO" } as Record<string, string>,
+  initialComment: "Quote no. DV-2026-0481 — €12,400 excl. tax.",
+  hint:
+    "Approval of quote DV-2026-0481: use the approve / reject buttons on the pending step to move the flow forward.",
+  directionAuto: "auto (horizontal if < 5 steps)",
+  reset: "Reset the flow",
+  copy: "Copy",
+  thDefault: "Default",
+  thRequired: "Required",
+  yes: "Yes",
+  no: "No",
+  props: {
+    steps: (
+      <>
+        Steps of the approval flow. <code>status</code> ∈ pending | approved | rejected | skipped.
+      </>
+    ),
+    onApprove: "Approval callback for the pending step; displays the approve button.",
+    onReject: "Rejection callback for the pending step; displays the reject button.",
+    direction: "Orientation. By default: horizontal with fewer than 5 steps, vertical otherwise.",
+    showCommentInput:
+      "Displays the comment field under the pending step (passed to the callbacks).",
+    className: "Additional CSS classes.",
+  },
+  examples: "Examples",
+};
+
+const L = { fr, en };
 
 const INITIAL_STEPS: ApprovalStep[] = [
-  {
-    id: "1",
-    approver: "Sophie Leroy",
-    role: "Demandeur",
-    status: "approved",
-    date: "2026-06-10T09:15:00",
-    comment: "Devis n° DV-2026-0481 — 12 400 € HT.",
-  },
-  { id: "2", approver: "Karim Benali", role: "Manager", status: "pending" },
-  { id: "3", approver: "Claire Moreau", role: "DAF", status: "pending" },
+  { id: "1", approver: "Sophie Leroy", status: "approved", date: "2026-06-10T09:15:00" },
+  { id: "2", approver: "Karim Benali", status: "pending" },
+  { id: "3", approver: "Claire Moreau", status: "pending" },
 ];
 
 export default function DocApprovalFlowPage() {
+  const { locale } = useI18n();
+  const t = L[locale];
   const [steps, setSteps] = useState<ApprovalStep[]>(INITIAL_STEPS);
   const [direction, setDirection] = useState<"auto" | "horizontal" | "vertical">("auto");
   const [showCommentInput, setShowCommentInput] = useState(true);
@@ -34,7 +97,13 @@ export default function DocApprovalFlowPage() {
     );
   };
 
-  const stepsArg = steps
+  const localizedSteps: ApprovalStep[] = steps.map((s) => ({
+    ...s,
+    role: t.roles[s.id],
+    comment: s.id === "1" ? t.initialComment : s.comment,
+  }));
+
+  const stepsArg = localizedSteps
     .map((s) => `("${s.approver}", "${s.role ?? ""}", "${s.status}")`)
     .join(", ");
   const parts = [`steps=[${stepsArg}]`];
@@ -46,16 +115,13 @@ export default function DocApprovalFlowPage() {
     <div className="doc-page">
       <div className="doc-page-header">
         <div className="doc-breadcrumb">
-          <Link href="/docs/components">Composants</Link> → bpm.approvalFlow
+          <Link href="/docs/components">{t.breadcrumb}</Link> → bpm.approvalFlow
         </div>
         <h1>bpm.approvalFlow</h1>
-        <p className="doc-description">
-          Flux de validation multi-étapes (approuvé / en attente / rejeté) : chaque
-          approbateur peut approuver ou rejeter l&apos;étape en cours avec un commentaire.
-        </p>
+        <p className="doc-description">{t.description}</p>
         <div className="doc-meta">
           <span className="doc-badge doc-badge-stable">Stable</span>
-          <span className="doc-badge doc-badge-category">Affichage de données</span>
+          <span className="doc-badge doc-badge-category">{t.category}</span>
           <span className="doc-reading-time">⏱ 2 min</span>
         </div>
       </div>
@@ -64,15 +130,14 @@ export default function DocApprovalFlowPage() {
         <div className="sandbox-preview">
           <div className="w-full">
             <ApprovalFlow
-              steps={steps}
+              steps={localizedSteps}
               direction={direction === "auto" ? undefined : direction}
               showCommentInput={showCommentInput}
               onApprove={(id, comment) => decide(id, "approved", comment)}
               onReject={(id, comment) => decide(id, "rejected", comment)}
             />
             <p style={{ fontSize: 12, color: "var(--bpm-text-secondary)", marginTop: 12 }}>
-              Validation du devis DV-2026-0481 : utilisez les boutons Approuver / Rejeter
-              de l&apos;étape en attente pour faire avancer le circuit.
+              {t.hint}
             </p>
           </div>
         </div>
@@ -83,7 +148,7 @@ export default function DocApprovalFlowPage() {
               value={direction}
               onChange={(e) => setDirection(e.target.value as "auto" | "horizontal" | "vertical")}
             >
-              <option value="auto">auto (horizontal si &lt; 5 étapes)</option>
+              <option value="auto">{t.directionAuto}</option>
               <option value="horizontal">horizontal</option>
               <option value="vertical">vertical</option>
             </select>
@@ -100,14 +165,14 @@ export default function DocApprovalFlowPage() {
           </div>
           <div className="sandbox-control-group">
             <button type="button" onClick={() => setSteps(INITIAL_STEPS)}>
-              Réinitialiser le circuit
+              {t.reset}
             </button>
           </div>
         </div>
         <div className="sandbox-code">
           <div className="sandbox-code-header">
             <span>Python</span>
-            <button type="button" onClick={() => navigator.clipboard.writeText(pythonCode)}>Copier</button>
+            <button type="button" onClick={() => navigator.clipboard.writeText(pythonCode)}>{t.copy}</button>
           </div>
           <pre><code>{pythonCode}</code></pre>
         </div>
@@ -115,19 +180,19 @@ export default function DocApprovalFlowPage() {
 
       <table className="props-table">
         <thead>
-          <tr><th>Prop</th><th>Type</th><th>Défaut</th><th>Requis</th><th>Description</th></tr>
+          <tr><th>Prop</th><th>Type</th><th>{t.thDefault}</th><th>{t.thRequired}</th><th>Description</th></tr>
         </thead>
         <tbody>
-          <tr><td><code>steps</code></td><td><code>&#123; id, approver, role?, status, comment?, date?, avatar? &#125;[]</code></td><td>—</td><td>Oui</td><td>Étapes du circuit. <code>status</code> ∈ pending | approved | rejected | skipped.</td></tr>
-          <tr><td><code>onApprove</code></td><td><code>(stepId: string, comment?: string) =&gt; void</code></td><td>—</td><td>Non</td><td>Callback d&apos;approbation de l&apos;étape en attente ; affiche le bouton « Approuver ».</td></tr>
-          <tr><td><code>onReject</code></td><td><code>(stepId: string, comment?: string) =&gt; void</code></td><td>—</td><td>Non</td><td>Callback de rejet de l&apos;étape en attente ; affiche le bouton « Rejeter ».</td></tr>
-          <tr><td><code>direction</code></td><td><code>&quot;horizontal&quot; | &quot;vertical&quot;</code></td><td>auto</td><td>Non</td><td>Orientation. Par défaut : horizontal si moins de 5 étapes, vertical sinon.</td></tr>
-          <tr><td><code>showCommentInput</code></td><td><code>boolean</code></td><td>true</td><td>Non</td><td>Affiche le champ commentaire sous l&apos;étape en attente (transmis aux callbacks).</td></tr>
-          <tr><td><code>className</code></td><td><code>string</code></td><td>—</td><td>Non</td><td>Classes CSS additionnelles.</td></tr>
+          <tr><td><code>steps</code></td><td><code>&#123; id, approver, role?, status, comment?, date?, avatar? &#125;[]</code></td><td>—</td><td>{t.yes}</td><td>{t.props.steps}</td></tr>
+          <tr><td><code>onApprove</code></td><td><code>(stepId: string, comment?: string) =&gt; void</code></td><td>—</td><td>{t.no}</td><td>{t.props.onApprove}</td></tr>
+          <tr><td><code>onReject</code></td><td><code>(stepId: string, comment?: string) =&gt; void</code></td><td>—</td><td>{t.no}</td><td>{t.props.onReject}</td></tr>
+          <tr><td><code>direction</code></td><td><code>&quot;horizontal&quot; | &quot;vertical&quot;</code></td><td>auto</td><td>{t.no}</td><td>{t.props.direction}</td></tr>
+          <tr><td><code>showCommentInput</code></td><td><code>boolean</code></td><td>true</td><td>{t.no}</td><td>{t.props.showCommentInput}</td></tr>
+          <tr><td><code>className</code></td><td><code>string</code></td><td>—</td><td>{t.no}</td><td>{t.props.className}</td></tr>
         </tbody>
       </table>
 
-      <h2 className="text-lg font-semibold mt-8 mb-2">Exemples</h2>
+      <h2 className="text-lg font-semibold mt-8 mb-2">{t.examples}</h2>
       <CodeBlock
         code={'bpm.approval_flow(steps=[("Sophie Leroy", "Demandeur", "approved"), ("Karim Benali", "Manager", "pending"), ("Claire Moreau", "DAF", "pending")])'}
         language="python"
