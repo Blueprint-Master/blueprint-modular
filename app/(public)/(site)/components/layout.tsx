@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-  alternates: { canonical: "https://app.blueprint-modular.com/components" },
+  alternates: { canonical: "https://blueprint-modular.com/components" },
 };
 
 export default function ComponentsLayout({
