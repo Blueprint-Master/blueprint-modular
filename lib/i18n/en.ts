@@ -290,6 +290,21 @@ const en: Dictionary = {
       },
     },
   },
+  changelogPage: {
+    title: "Changelog",
+    lead: "Every change, derived from the merged pull request history. Generated from git, never hand-written.",
+    backToDocs: "Back to documentation",
+    empty: "No entries yet.",
+    types: {
+      feat: "Feature",
+      fix: "Fix",
+      perf: "Performance",
+      refactor: "Refactor",
+      style: "Style",
+      docs: "Docs",
+      other: "Change",
+    },
+  },
   gallery: {
     eyebrow: "Components",
     title: "Component gallery",
