@@ -15,23 +15,48 @@ import {
   Table,
   useToast,
 } from "@/components/bpm";
+import { useI18n } from "@/lib/i18n/LocaleProvider";
+import { STR, type ConnecteursStrings } from "./strings";
 
 type ConnecteurType = "API REST" | "SFTP" | "PostgreSQL" | "MySQL";
 type ConnecteurStatut = "connected" | "error" | "paused";
+type Lang = "fr" | "en";
+
+/** Chaîne bilingue résolue au render selon la locale courante. */
+type L = { fr: string; en: string };
+
+/** Construit une chaîne bilingue à partir du dictionnaire de chaque langue. */
+const bi = (f: (s: ConnecteursStrings, lang: Lang) => string): L => ({
+  fr: f(STR.fr, "fr"),
+  en: f(STR.en, "en"),
+});
+
+/** Chaîne identique dans les deux langues (noms propres, valeurs techniques). */
+const same = (value: string): L => ({ fr: value, en: value });
 
 interface Connecteur {
   id: string;
-  nom: string;
+  nom: L;
   type: ConnecteurType;
   hote: string;
   identifiant: string;
   statut: ConnecteurStatut;
-  planification: string;
-  derniereSynchro: string;
+  planification: L;
+  derniereSynchro: L;
   lignes24h: number;
   synchros24h: number;
   /** false tant que les identifiants sont invalides (test/synchro échouent). */
   authValide: boolean;
+}
+
+/** Entrée de journal stockée dans les deux langues, résolue au render. */
+interface JournalEntry {
+  id: string;
+  actor: L;
+  action: L;
+  target: L;
+  timestamp: string;
+  color: NonNullable<ActivityItem["color"]>;
 }
 
 const TYPE_OPTIONS: { value: ConnecteurType; label: string }[] = [
@@ -49,12 +74,6 @@ const SYNC_DELTA: Record<ConnecteurType, number> = {
   MySQL: 880,
 };
 
-const STATUT_LABEL: Record<ConnecteurStatut, string> = {
-  connected: "Connecté",
-  error: "Erreur",
-  paused: "En pause",
-};
-
 /**
  * Jeu de démonstration déterministe : libellés relatifs figés, aucune
  * date calculée au render (rendu identique serveur/client).
@@ -62,63 +81,91 @@ const STATUT_LABEL: Record<ConnecteurStatut, string> = {
 const INITIAL_CONNECTEURS: Connecteur[] = [
   {
     id: "con-1",
-    nom: "ERP Sage — API REST",
+    nom: same("ERP Sage — API REST"),
     type: "API REST",
     hote: "https://api.sage.acme.fr/v3",
     identifiant: "svc-bpm-sage",
     statut: "connected",
-    planification: "Toutes les heures",
-    derniereSynchro: "il y a 25 min",
+    planification: bi((s) => s.schedHourly),
+    derniereSynchro: bi((s) => s.last25min),
     lignes24h: 12400,
     synchros24h: 24,
     authValide: true,
   },
   {
     id: "con-2",
-    nom: "Banque BNP — SFTP relevés",
+    nom: bi((s) => s.seedNameBnp),
     type: "SFTP",
     hote: "sftp.bnpparibas.com:22/releves",
     identifiant: "acme-treso",
     statut: "connected",
-    planification: "Quotidien à 06:00",
-    derniereSynchro: "ce matin 06:00",
+    planification: bi((s) => s.schedDaily6),
+    derniereSynchro: bi((s) => s.lastMorning6),
     lignes24h: 310,
     synchros24h: 1,
     authValide: true,
   },
   {
     id: "con-3",
-    nom: "Datawarehouse — PostgreSQL",
+    nom: same("Datawarehouse — PostgreSQL"),
     type: "PostgreSQL",
     hote: "dwh.acme.internal:5432/analytics",
     identifiant: "bpm_reader",
     statut: "error",
-    planification: "Toutes les 6 h",
-    derniereSynchro: "il y a 3 j",
+    planification: bi((s) => s.schedEvery6h),
+    derniereSynchro: bi((s) => s.last3days),
     lignes24h: 0,
     synchros24h: 0,
     authValide: false,
   },
   {
     id: "con-4",
-    nom: "CRM HubSpot — API REST",
+    nom: same("CRM HubSpot — API REST"),
     type: "API REST",
     hote: "https://api.hubapi.com/crm/v3",
     identifiant: "svc-bpm-hubspot",
     statut: "paused",
-    planification: "Toutes les 4 h (suspendu)",
-    derniereSynchro: "il y a 5 j",
+    planification: bi((s) => s.schedEvery4hPaused),
+    derniereSynchro: bi((s) => s.last5days),
     lignes24h: 0,
     synchros24h: 0,
     authValide: true,
   },
 ];
 
-const INITIAL_ACTIVITY: ActivityItem[] = [
-  { id: "j1", actor: "Planificateur", action: "a synchronisé", target: "ERP Sage — API REST (518 lignes importées)", timestamp: "2026-06-12T09:00:00", color: "success" as const },
-  { id: "j2", actor: "Planificateur", action: "a synchronisé", target: "Banque BNP — SFTP relevés (310 lignes importées)", timestamp: "2026-06-12T06:00:00", color: "success" as const },
-  { id: "j3", actor: "Planificateur", action: "a échoué sur", target: "Datawarehouse — PostgreSQL (authentification refusée)", timestamp: "2026-06-09T08:00:00", color: "error" as const },
-  { id: "j4", actor: "Admin", action: "a mis en pause", target: "CRM HubSpot — API REST (migration en cours côté CRM)", timestamp: "2026-06-07T11:32:00", color: "warning" as const },
+const INITIAL_ACTIVITY: JournalEntry[] = [
+  {
+    id: "j1",
+    actor: bi((s) => s.actorScheduler),
+    action: bi((s) => s.actSynced),
+    target: bi((s) => `ERP Sage — API REST (${s.linesImported(518)})`),
+    timestamp: "2026-06-12T09:00:00",
+    color: "success",
+  },
+  {
+    id: "j2",
+    actor: bi((s) => s.actorScheduler),
+    action: bi((s) => s.actSynced),
+    target: bi((s) => `${s.seedNameBnp} (${s.linesImported(310)})`),
+    timestamp: "2026-06-12T06:00:00",
+    color: "success",
+  },
+  {
+    id: "j3",
+    actor: bi((s) => s.actorScheduler),
+    action: bi((s) => s.actFailedOn),
+    target: bi((s) => `Datawarehouse — PostgreSQL (${s.authRefused})`),
+    timestamp: "2026-06-09T08:00:00",
+    color: "error",
+  },
+  {
+    id: "j4",
+    actor: bi((s) => s.actorAdmin),
+    action: bi((s) => s.actPausedConnector),
+    target: bi((s) => `CRM HubSpot — API REST (${s.crmMigration})`),
+    timestamp: "2026-06-07T11:32:00",
+    color: "warning",
+  },
 ];
 
 /** Hôte/URL plausible : URL http(s)/sftp, ou hôte (avec port/chemin optionnels). */
@@ -126,8 +173,10 @@ const HOTE_RE = /^((https?|sftp):\/\/)?[a-z0-9]([a-z0-9.-]*[a-z0-9])?\.[a-z]{2,}
 
 export default function ConnecteursSimulateur() {
   const { showToast } = useToast();
+  const { locale } = useI18n();
+  const S = STR[locale];
   const [connecteurs, setConnecteurs] = useState<Connecteur[]>(INITIAL_CONNECTEURS);
-  const [activity, setActivity] = useState<ActivityItem[]>(INITIAL_ACTIVITY);
+  const [activity, setActivity] = useState<JournalEntry[]>(INITIAL_ACTIVITY);
   const [toDelete, setToDelete] = useState<Connecteur | null>(null);
   const [testingId, setTestingId] = useState<string | null>(null);
 
@@ -151,12 +200,13 @@ export default function ConnecteursSimulateur() {
     return { actifs, synchros, lignes };
   }, [connecteurs]);
 
-  const pushActivity = (
-    actor: string,
-    action: string,
-    target: string,
-    color: "default" | "info" | "success" | "warning" | "error"
-  ) => {
+  const statutLabel: Record<ConnecteurStatut, string> = {
+    connected: S.statusConnected,
+    error: S.statusError,
+    paused: S.statusPaused,
+  };
+
+  const pushActivity = (actor: L, action: L, target: L, color: JournalEntry["color"]) => {
     setActivity((prev) => [
       { id: `j${Date.now()}`, actor, action, target, timestamp: new Date().toISOString(), color },
       ...prev,
@@ -170,60 +220,65 @@ export default function ConnecteursSimulateur() {
       setTestingId(null);
       if (!con.authValide) {
         setConnecteurs((prev) => prev.map((c) => (c.id === con.id ? { ...c, statut: "error" } : c)));
-        pushActivity("Admin", "a testé (échec)", `${con.nom} — authentification refusée`, "error");
+        pushActivity(
+          bi((s) => s.actorAdmin),
+          bi((s) => s.actTestedFail),
+          bi((s, lang) => `${con.nom[lang]} — ${s.authRefused}`),
+          "error"
+        );
         showToast(
-          `Connexion à « ${con.nom} » refusée : authentification refusée (identifiant « ${con.identifiant} » invalide). Corrigez l'identifiant puis relancez le test.`,
+          S.toastTestFail(con.nom[locale], con.identifiant),
           "error",
           6000,
-          "Test échoué",
-          "Connecteurs",
+          S.toastTestFailTitle,
+          S.pageTitle,
           null
         );
         return;
       }
       setConnecteurs((prev) => prev.map((c) => (c.id === con.id ? { ...c, statut: "connected" } : c)));
-      pushActivity("Admin", "a testé avec succès", `${con.nom} (${con.type} — ${con.hote})`, "success");
-      showToast(
-        `Connexion à « ${con.nom} » établie en 0,6 s. Statut : Connecté.`,
-        "success",
-        5000,
-        "Test réussi",
-        "Connecteurs",
-        null
+      pushActivity(
+        bi((s) => s.actorAdmin),
+        bi((s) => s.actTestedOk),
+        bi((_, lang) => `${con.nom[lang]} (${con.type} — ${con.hote})`),
+        "success"
       );
+      showToast(S.toastTestOk(con.nom[locale]), "success", 5000, S.toastTestOkTitle, S.pageTitle, null);
     }, 600);
   };
 
   const synchroniser = (con: Connecteur) => {
     if (!con.authValide) {
-      pushActivity("Admin", "a échoué sur", `${con.nom} — synchronisation refusée (authentification refusée)`, "error");
-      showToast(
-        `Synchronisation de « ${con.nom} » impossible : authentification refusée. Corrigez l'identifiant via « Corriger ».`,
-        "error",
-        6000,
-        "Synchronisation échouée",
-        "Connecteurs",
-        null
+      pushActivity(
+        bi((s) => s.actorAdmin),
+        bi((s) => s.actFailedOn),
+        bi((s, lang) => `${con.nom[lang]} — ${s.syncRefused}`),
+        "error"
       );
+      showToast(S.toastSyncFail(con.nom[locale]), "error", 6000, S.toastSyncFailTitle, S.pageTitle, null);
       return;
     }
     const delta = SYNC_DELTA[con.type];
     setConnecteurs((prev) =>
       prev.map((c) =>
         c.id === con.id
-          ? { ...c, derniereSynchro: "à l'instant", lignes24h: c.lignes24h + delta, synchros24h: c.synchros24h + 1, statut: "connected" }
+          ? {
+              ...c,
+              derniereSynchro: bi((s) => s.justNow),
+              lignes24h: c.lignes24h + delta,
+              synchros24h: c.synchros24h + 1,
+              statut: "connected",
+            }
           : c
       )
     );
-    pushActivity("Admin", "a synchronisé (manuel)", `${con.nom} (${delta.toLocaleString("fr-FR")} lignes importées)`, "info");
-    showToast(
-      `« ${con.nom} » synchronisé : ${delta.toLocaleString("fr-FR")} lignes importées.`,
-      "success",
-      5000,
-      "Synchronisation terminée",
-      "Connecteurs",
-      null
+    pushActivity(
+      bi((s) => s.actorAdmin),
+      bi((s) => s.actSyncedManual),
+      bi((s, lang) => `${con.nom[lang]} (${s.linesImported(delta)})`),
+      "info"
     );
+    showToast(S.toastSyncOk(con.nom[locale], delta), "success", 5000, S.toastSyncOkTitle, S.pageTitle, null);
   };
 
   const openFix = (con: Connecteur) => {
@@ -236,25 +291,23 @@ export default function ConnecteursSimulateur() {
     if (!fixing) return;
     const value = fixIdentifiant.trim();
     if (!value) {
-      setFixError("L'identifiant ne peut pas être vide.");
+      setFixError(S.errFixEmpty);
       return;
     }
     if (value === fixing.identifiant) {
-      setFixError("Saisissez un identifiant différent de l'identifiant refusé.");
+      setFixError(S.errFixSame);
       return;
     }
     setConnecteurs((prev) =>
       prev.map((c) => (c.id === fixing.id ? { ...c, identifiant: value, authValide: true } : c))
     );
-    pushActivity("Admin", "a corrigé l'identifiant de", `${fixing.nom} (nouvel identifiant : ${value})`, "info");
-    showToast(
-      `Identifiant de « ${fixing.nom} » mis à jour. Lancez « Tester » pour rétablir la connexion.`,
-      "info",
-      5000,
-      "Identifiant corrigé",
-      "Connecteurs",
-      null
+    pushActivity(
+      bi((s) => s.actorAdmin),
+      bi((s) => s.actFixedId),
+      bi((s, lang) => `${fixing.nom[lang]} (${s.newUsername(value)})`),
+      "info"
     );
+    showToast(S.toastFix(fixing.nom[locale]), "info", 5000, S.toastFixTitle, S.pageTitle, null);
     setFixing(null);
     setFixIdentifiant("");
     setFixError(null);
@@ -263,8 +316,13 @@ export default function ConnecteursSimulateur() {
   const confirmDelete = () => {
     if (!toDelete) return;
     setConnecteurs((prev) => prev.filter((c) => c.id !== toDelete.id));
-    pushActivity("Admin", "a supprimé le connecteur", `${toDelete.nom} (${toDelete.type})`, "error");
-    showToast(`Connecteur « ${toDelete.nom} » supprimé.`, "info", 4000, "Connecteur supprimé", "Connecteurs", null);
+    pushActivity(
+      bi((s) => s.actorAdmin),
+      bi((s) => s.actDeleted),
+      bi((_, lang) => `${toDelete.nom[lang]} (${toDelete.type})`),
+      "error"
+    );
+    showToast(S.toastDelete(toDelete.nom[locale]), "info", 4000, S.toastDeleteTitle, S.pageTitle, null);
     setToDelete(null);
   };
 
@@ -274,36 +332,36 @@ export default function ConnecteursSimulateur() {
     const hoteTrim = hote.trim();
     const idTrim = identifiant.trim();
     if (!nomTrim) {
-      setFormError("Indiquez un nom de connecteur.");
+      setFormError(S.errName);
       return;
     }
     if (!type) {
-      setFormError("Choisissez un type de connecteur.");
+      setFormError(S.errType);
       return;
     }
     if (!hoteTrim) {
-      setFormError("Indiquez l'hôte ou l'URL de la source.");
+      setFormError(S.errHost);
       return;
     }
     if (!HOTE_RE.test(hoteTrim)) {
-      setFormError("Hôte/URL invalide. Exemples : https://api.exemple.fr/v1, sftp.exemple.fr:22, db.exemple.fr:5432/base");
+      setFormError(S.errHostInvalid);
       return;
     }
     if (!idTrim) {
-      setFormError("Indiquez l'identifiant de connexion (compte de service).");
+      setFormError(S.errId);
       return;
     }
     setFormError(null);
     setCreating(true);
     const newCon: Connecteur = {
       id: `con-${Date.now()}`,
-      nom: nomTrim,
+      nom: same(nomTrim),
       type: type as ConnecteurType,
       hote: hoteTrim,
       identifiant: idTrim,
       statut: "connected",
-      planification: "Manuelle (à planifier)",
-      derniereSynchro: "jamais",
+      planification: bi((s) => s.schedManual),
+      derniereSynchro: bi((s) => s.never),
       lignes24h: 0,
       synchros24h: 0,
       authValide: true,
@@ -311,15 +369,13 @@ export default function ConnecteursSimulateur() {
     setTimeout(() => {
       setCreating(false);
       setConnecteurs((prev) => [newCon, ...prev]);
-      pushActivity("Admin", "a créé et testé", `${newCon.nom} (${newCon.type} — ${newCon.hote})`, "success");
-      showToast(
-        `Connecteur « ${newCon.nom} » créé. Test de connexion réussi : statut Connecté.`,
-        "success",
-        6000,
-        "Connecteur créé",
-        "Connecteurs",
-        null
+      pushActivity(
+        bi((s) => s.actorAdmin),
+        bi((s) => s.actCreated),
+        bi((_, lang) => `${newCon.nom[lang]} (${newCon.type} — ${newCon.hote})`),
+        "success"
       );
+      showToast(S.toastCreate(newCon.nom[locale]), "success", 6000, S.toastCreateTitle, S.pageTitle, null);
       setNom("");
       setType(null);
       setHote("");
@@ -330,57 +386,61 @@ export default function ConnecteursSimulateur() {
   const columns = [
     {
       key: "nom",
-      label: "Connecteur",
+      label: S.colConnector,
       render: (value: unknown, row: Record<string, unknown>) => (
         <div>
-          <div style={{ color: "var(--bpm-text-primary)", fontWeight: 500 }}>{String(value)}</div>
+          <div style={{ color: "var(--bpm-text-primary)", fontWeight: 500 }}>{(value as L)[locale]}</div>
           <div className="text-xs" style={{ color: "var(--bpm-text-secondary)" }}>
-            {String(row.hote)} · {String(row.planification)}
+            {String(row.hote)} · {(row.planification as L)[locale]}
           </div>
         </div>
       ),
     },
     {
       key: "type",
-      label: "Type",
+      label: S.colType,
       render: (value: unknown) => <Badge variant="default">{String(value)}</Badge>,
     },
     {
       key: "statut",
-      label: "Statut",
+      label: S.colStatus,
       render: (value: unknown) => {
         const statut = value as ConnecteurStatut;
         const variant = statut === "connected" ? "success" : statut === "error" ? "error" : "default";
-        return <Badge variant={variant}>{STATUT_LABEL[statut]}</Badge>;
+        return <Badge variant={variant}>{statutLabel[statut]}</Badge>;
       },
     },
-    { key: "derniereSynchro", label: "Dernière synchro" },
+    {
+      key: "derniereSynchro",
+      label: S.colLastSync,
+      render: (value: unknown) => <span>{(value as L)[locale]}</span>,
+    },
     {
       key: "lignes24h",
-      label: "Volumétrie (24 h)",
+      label: S.colVolume,
       align: "right" as const,
-      render: (value: unknown) => <span>{Number(value).toLocaleString("fr-FR")} lignes</span>,
+      render: (value: unknown) => <span>{S.rowsCell(Number(value))}</span>,
     },
     {
       key: "id",
-      label: "Actions",
+      label: S.colActions,
       render: (_: unknown, row: Record<string, unknown>) => {
         const con = row as unknown as Connecteur;
         return (
           <div className="flex flex-wrap gap-2">
             <Button size="small" variant="secondary" disabled={testingId !== null} onClick={() => tester(con)}>
-              {testingId === con.id ? "Test…" : "Tester"}
+              {testingId === con.id ? S.btnTesting : S.btnTest}
             </Button>
             <Button size="small" variant="secondary" onClick={() => synchroniser(con)}>
-              Synchroniser
+              {S.btnSync}
             </Button>
             {!con.authValide && (
               <Button size="small" variant="outline" onClick={() => openFix(con)}>
-                Corriger
+                {S.btnFix}
               </Button>
             )}
             <Button size="small" variant="destructive" onClick={() => setToDelete(con)}>
-              Supprimer
+              {S.btnDelete}
             </Button>
           </div>
         );
@@ -391,24 +451,23 @@ export default function ConnecteursSimulateur() {
   return (
     <div className="space-y-6">
       <MetricRow>
-        <Metric label="Connecteurs actifs" value={String(stats.actifs)} />
-        <Metric label="Synchros 24 h" value={String(stats.synchros)} />
-        <Metric label="Lignes importées (24 h)" value={stats.lignes.toLocaleString("fr-FR")} />
+        <Metric label={S.metricActive} value={String(stats.actifs)} />
+        <Metric label={S.metricSyncs} value={String(stats.synchros)} />
+        <Metric label={S.metricRows} value={S.num(stats.lignes)} />
       </MetricRow>
 
-      <Panel variant="info" title="Connecteurs de données">
+      <Panel variant="info" title={S.panelConnectors}>
         <Table columns={columns} data={connecteurs as unknown as Record<string, unknown>[]} striped hover />
       </Panel>
 
       {fixing && (
-        <Panel variant="info" title={`Corriger l'identifiant — ${fixing.nom}`}>
+        <Panel variant="info" title={S.fixTitle(fixing.nom[locale])}>
           <p className="mb-3 text-sm" style={{ color: "var(--bpm-text-secondary)" }}>
-            La dernière tentative a été refusée avec l&apos;identifiant « {fixing.identifiant} ».
-            Saisissez un identifiant valide puis relancez « Tester ».
+            {S.fixIntro(fixing.identifiant)}
           </p>
           <Input
-            label="Identifiant de connexion"
-            placeholder="ex. bpm_reader_v2"
+            label={S.fixLabel}
+            placeholder={S.fixPlaceholder}
             value={fixIdentifiant}
             onChange={setFixIdentifiant}
           />
@@ -418,25 +477,31 @@ export default function ConnecteursSimulateur() {
             </p>
           )}
           <div className="mt-4 flex gap-2">
-            <Button onClick={saveFix}>Enregistrer l&apos;identifiant</Button>
+            <Button onClick={saveFix}>{S.btnSaveId}</Button>
             <Button variant="ghost" onClick={() => { setFixing(null); setFixError(null); }}>
-              Annuler
+              {S.btnCancel}
             </Button>
           </div>
         </Panel>
       )}
 
-      <Panel variant="info" title="Ajouter un connecteur">
+      <Panel variant="info" title={S.panelAdd}>
         <div className="grid gap-3 md:grid-cols-2">
-          <Input label="Nom" placeholder="ex. Paie Silae — API REST" value={nom} onChange={setNom} />
-          <Selectbox label="Type" options={TYPE_OPTIONS} value={type} onChange={setType} placeholder="Choisir un type" />
+          <Input label={S.formNameLabel} placeholder={S.formNamePlaceholder} value={nom} onChange={setNom} />
+          <Selectbox
+            label={S.formTypeLabel}
+            options={TYPE_OPTIONS}
+            value={type}
+            onChange={setType}
+            placeholder={S.formTypePlaceholder}
+          />
           <Input
-            label="Hôte / URL"
-            placeholder="https://api.exemple.fr/v1 ou db.exemple.fr:5432/base"
+            label={S.formHostLabel}
+            placeholder={S.formHostPlaceholder}
             value={hote}
             onChange={setHote}
           />
-          <Input label="Identifiant" placeholder="compte de service, ex. svc-bpm-paie" value={identifiant} onChange={setIdentifiant} />
+          <Input label={S.formIdLabel} placeholder={S.formIdPlaceholder} value={identifiant} onChange={setIdentifiant} />
         </div>
         {formError && (
           <p className="mt-2 text-sm" style={{ color: "var(--bpm-accent-red, #dc2626)" }}>
@@ -444,24 +509,31 @@ export default function ConnecteursSimulateur() {
           </p>
         )}
         <Button className="mt-4" disabled={creating} onClick={handleCreate}>
-          {creating ? "Test de connexion…" : "Créer et tester"}
+          {creating ? S.btnCreating : S.btnCreate}
         </Button>
       </Panel>
 
-      <Panel variant="info" title="Journal de synchronisation">
-        <ActivityFeed activities={activity} maxItems={8} compact />
+      <Panel variant="info" title={S.panelJournal}>
+        <ActivityFeed
+          activities={activity.map((entry) => ({
+            id: entry.id,
+            actor: entry.actor[locale],
+            action: entry.action[locale],
+            target: entry.target[locale],
+            timestamp: entry.timestamp,
+            color: entry.color,
+          }))}
+          maxItems={8}
+          compact
+        />
       </Panel>
 
       <ConfirmModal
         isOpen={toDelete !== null}
-        title="Supprimer le connecteur"
-        message={
-          toDelete
-            ? `« ${toDelete.nom} » (${toDelete.type}) ne sera plus synchronisé. Les données déjà importées sont conservées. Cette action est immédiate.`
-            : ""
-        }
-        confirmLabel="Supprimer"
-        cancelLabel="Annuler"
+        title={S.confirmDeleteTitle}
+        message={toDelete ? S.confirmDeleteMessage(toDelete.nom[locale], toDelete.type) : ""}
+        confirmLabel={S.btnDelete}
+        cancelLabel={S.btnCancel}
         variant="danger"
         onConfirm={confirmDelete}
         onCancel={() => setToDelete(null)}

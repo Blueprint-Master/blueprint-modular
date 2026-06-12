@@ -2,32 +2,34 @@
 
 import Link from "next/link";
 import { CodeBlock, Tabs } from "@/components/bpm";
+import { useI18n } from "@/lib/i18n/LocaleProvider";
 import ConnecteursSimulateur from "./simulateur-content";
+import { STR } from "./strings";
 
-const docContent = (
-  <div className="prose-sm">
-    <h2 className="text-lg font-semibold mt-0 mb-2" style={{ color: "var(--bpm-text-primary)" }}>
-      À propos
-    </h2>
-    <p className="mb-4" style={{ color: "var(--bpm-text-secondary)", maxWidth: "62ch" }}>
-      Le module Connecteurs centralise vos intégrations de données entrantes : l&apos;ERP expose
-      ses écritures via API REST, la banque dépose ses relevés sur un SFTP, le datawarehouse se
-      lit en PostgreSQL. Chaque connecteur déclare une source (type + hôte + identifiant), une
-      planification de synchronisation et remonte son état de santé : statut, dernière synchro,
-      volumétrie importée. Tout est pilotable à la main — tester la connexion, lancer une
-      synchronisation, corriger un identifiant refusé, supprimer.
-    </p>
-    <h3 className="text-base font-semibold mt-6 mb-2" style={{ color: "var(--bpm-text-primary)" }}>
-      Composants utilisés
-    </h3>
-    <p className="mb-4" style={{ color: "var(--bpm-text-secondary)" }}>
-      <code>bpm.metricRow</code>, <code>bpm.table</code> (type et statut rendus par{" "}
-      <code>bpm.badge</code>, actions par <code>bpm.button</code>), <code>bpm.selectbox</code>,{" "}
-      <code>bpm.input</code> (validation hôte/URL), <code>bpm.confirmModal</code>,{" "}
-      <code>bpm.activityFeed</code> (journal de synchronisation) et <code>bpm.toast</code>.
-    </p>
-    <CodeBlock
-      code={`import bpm
+export default function ConnecteursModulePage() {
+  const { locale } = useI18n();
+  const S = STR[locale];
+
+  const docContent = (
+    <div className="prose-sm">
+      <h2 className="text-lg font-semibold mt-0 mb-2" style={{ color: "var(--bpm-text-primary)" }}>
+        {S.aboutTitle}
+      </h2>
+      <p className="mb-4" style={{ color: "var(--bpm-text-secondary)", maxWidth: "62ch" }}>
+        {S.aboutText}
+      </p>
+      <h3 className="text-base font-semibold mt-6 mb-2" style={{ color: "var(--bpm-text-primary)" }}>
+        {S.componentsTitle}
+      </h3>
+      <p className="mb-4" style={{ color: "var(--bpm-text-secondary)" }}>
+        <code>bpm.metricRow</code>, <code>bpm.table</code> ({S.compBadge}{" "}
+        <code>bpm.badge</code>, {S.compButton} <code>bpm.button</code>),{" "}
+        <code>bpm.selectbox</code>, <code>bpm.input</code> ({S.compInput}),{" "}
+        <code>bpm.confirmModal</code>, <code>bpm.activityFeed</code> ({S.compFeed}) {S.and}{" "}
+        <code>bpm.toast</code>.
+      </p>
+      <CodeBlock
+        code={`import bpm
 
 bpm.metricRow([
     bpm.metric("Connecteurs actifs", 2),
@@ -40,38 +42,31 @@ bpm.table(
 )
 
 bpm.button("Créer et tester", on_click=creer_et_tester)`}
-      language="python"
-    />
-    <h3 className="text-base font-semibold mt-6 mb-2" style={{ color: "var(--bpm-text-primary)" }}>
-      Paramétrage
-    </h3>
-    <p className="mb-2 text-sm" style={{ color: "var(--bpm-text-secondary)" }}>
-      Le simulateur fonctionne entièrement en local (données seedées, aucune API requise). En
-      production, brancher le test de connexion et les synchronisations sur vos workers, et
-      stocker les secrets dans un coffre dédié. Voir la{" "}
-      <Link href="/modules/connecteurs/documentation" style={{ color: "var(--bpm-accent-cyan)" }}>
-        documentation
-      </Link>{" "}
-      pour le modèle de données, la gestion des secrets et la planification des synchros.
-    </p>
-  </div>
-);
+        language="python"
+      />
+      <h3 className="text-base font-semibold mt-6 mb-2" style={{ color: "var(--bpm-text-primary)" }}>
+        {S.setupTitle}
+      </h3>
+      <p className="mb-2 text-sm" style={{ color: "var(--bpm-text-secondary)" }}>
+        {S.setupText1}{" "}
+        <Link href="/modules/connecteurs/documentation" style={{ color: "var(--bpm-accent-cyan)" }}>
+          {S.setupLinkLabel}
+        </Link>{" "}
+        {S.setupText2}
+      </p>
+    </div>
+  );
 
-export default function ConnecteursModulePage() {
   return (
     <div className="doc-page">
       <div className="doc-page-header">
         <div className="doc-breadcrumb">
-          <Link href="/modules">Modules</Link> → Connecteurs
+          <Link href="/modules">Modules</Link> → {S.pageTitle}
         </div>
-        <h1>Connecteurs</h1>
-        <p className="doc-description">
-          Hub d&apos;intégrations entrantes : API REST, SFTP, PostgreSQL, MySQL. Testez les
-          connexions, lancez des synchronisations, suivez la volumétrie — tout est visible dans le
-          Simulateur.
-        </p>
+        <h1>{S.pageTitle}</h1>
+        <p className="doc-description">{S.pageDescription}</p>
         <div className="doc-meta">
-          <span className="doc-badge doc-badge-category">Intégrations &amp; technique</span>
+          <span className="doc-badge doc-badge-category">{S.badgeCategory}</span>
         </div>
         <p className="mt-3 text-sm" style={{ color: "var(--bpm-text-secondary)" }}>
           <Link
@@ -79,14 +74,14 @@ export default function ConnecteursModulePage() {
             className="font-medium underline"
             style={{ color: "var(--bpm-accent-cyan)" }}
           >
-            Ouvrir le simulateur
+            {S.openSimulator}
           </Link>
         </p>
       </div>
       <Tabs
         tabs={[
-          { label: "Documentation", content: docContent },
-          { label: "Simulateur", content: <ConnecteursSimulateur /> },
+          { label: S.tabDocumentation, content: docContent },
+          { label: S.tabSimulator, content: <ConnecteursSimulateur /> },
         ]}
         defaultTab={0}
       />
