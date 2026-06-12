@@ -2,117 +2,95 @@
 
 import Link from "next/link";
 import { CodeBlock } from "@/components/bpm";
+import { useI18n } from "@/lib/i18n/LocaleProvider";
+import { STR, type Rich } from "../strings";
+
+// Snippet python : identique dans les deux langues (non traduit).
+const PYTHON_CALCULS = `total_ligne_ht = quantite * prix_unitaire * (1 - remise_pct / 100)
+total_ht       = somme(total_ligne_ht)
+tva            = total_ht * 0.20          # TVA 20 %
+total_ttc      = total_ht + tva`;
+
+/** Rend un paragraphe riche (texte / code inline / gras). */
+function RichText({ segs }: { segs: Rich }) {
+  return (
+    <>
+      {segs.map((seg, i) =>
+        "c" in seg ? (
+          <code key={i}>{seg.c}</code>
+        ) : "b" in seg ? (
+          <strong key={i}>{seg.b}</strong>
+        ) : "l" in seg ? (
+          <span key={i}>{seg.l}</span>
+        ) : (
+          <span key={i}>{seg.t}</span>
+        )
+      )}
+    </>
+  );
+}
 
 export default function DevisFacturationDocumentationPage() {
+  const { locale } = useI18n();
+  const M = STR[locale].module;
+  const D = STR[locale].doc;
+
   return (
     <div className="doc-page">
       <div className="doc-page-header">
         <nav className="doc-breadcrumb">
           <Link href="/modules">Modules</Link> →{" "}
-          <Link href="/modules/devis-facturation">Devis / Facturation</Link> → Documentation
+          <Link href="/modules/devis-facturation">{M.title}</Link> → {D.breadcrumbDocumentation}
         </nav>
-        <h1>Documentation — Devis / Facturation</h1>
-        <p className="doc-description">
-          Modèle de données devis / ligne, règles de calcul (remises, TVA 20 %), cycle de statuts
-          et numérotation des documents.
-        </p>
+        <h1>{D.title}</h1>
+        <p className="doc-description">{D.description}</p>
       </div>
 
       <h2 className="text-lg font-semibold mt-6 mb-2" style={{ color: "var(--bpm-text-primary)" }}>
-        Modèle de données
+        {D.modelTitle}
       </h2>
       <p className="mb-4" style={{ color: "var(--bpm-text-secondary)", maxWidth: "62ch" }}>
-        Un devis porte l&apos;en-tête commerciale (numéro, client, objet, dates) et son statut ;
-        les montants ne sont jamais stockés : ils sont dérivés des lignes. Une ligne décrit une
-        prestation avec sa quantité, son prix unitaire HT et une remise en pourcentage optionnelle.
+        {D.modelBody}
       </p>
-      <CodeBlock
-        code={`{
-  "numero": "DV-2026-104",
-  "client": "ACME Industries",
-  "objet": "Refonte site vitrine",
-  "statut": "brouillon",          // brouillon | envoye | paye
-  "dateCreation": "2026-06-09",
-  "dateEnvoi": null,               // renseignée au passage en "envoye"
-  "datePaiement": null,            // renseignée au passage en "paye"
-  "lignes": [
-    {
-      "designation": "Maquettes UI (5 gabarits desktop + mobile)",
-      "quantite": 5,
-      "prixUnitaire": 480.0,       // HT, en euros
-      "remisePct": 0               // 0–100, optionnelle (0 = aucune)
-    }
-  ]
-}`}
-        language="json"
-      />
+      <CodeBlock code={D.modelCode} language="json" />
 
       <h2 className="text-lg font-semibold mt-6 mb-2" style={{ color: "var(--bpm-text-primary)" }}>
-        Calculs et TVA
+        {D.calcTitle}
       </h2>
       <p className="mb-2 text-sm" style={{ color: "var(--bpm-text-secondary)", maxWidth: "62ch" }}>
-        La remise s&apos;applique ligne par ligne, avant la TVA. Le taux unique de 20 % correspond
-        aux prestations de services standard ; il suffit de paramétrer <code>TVA_RATE</code> pour
-        un autre taux (ou un taux par ligne si votre activité mélange les régimes).
+        <RichText segs={D.calcBody1} />
       </p>
-      <CodeBlock
-        code={`total_ligne_ht = quantite * prix_unitaire * (1 - remise_pct / 100)
-total_ht       = somme(total_ligne_ht)
-tva            = total_ht * 0.20          # TVA 20 %
-total_ttc      = total_ht + tva`}
-        language="python"
-      />
+      <CodeBlock code={PYTHON_CALCULS} language="python" />
       <p className="mb-4 text-sm" style={{ color: "var(--bpm-text-secondary)", maxWidth: "62ch" }}>
-        Les totaux sont recalculés à chaque ajout, édition ou suppression de ligne (mémoïsation
-        côté interface) — aucun risque d&apos;écart entre les lignes et le pied de document.
+        {D.calcBody2}
       </p>
 
       <h2 className="text-lg font-semibold mt-6 mb-2" style={{ color: "var(--bpm-text-primary)" }}>
-        Cycle de statuts
+        {D.cycleTitle}
       </h2>
       <ul className="mb-4 list-disc pl-5 text-sm space-y-1" style={{ color: "var(--bpm-text-secondary)" }}>
-        <li>
-          <strong>Brouillon</strong> — état initial à la création. Lignes librement éditables ;
-          l&apos;envoi est bloqué tant que le devis est vide.
-        </li>
-        <li>
-          <strong>Envoyé</strong> — action « Envoyer au client » : <code>dateEnvoi</code> est
-          renseignée et le montant TTC entre dans l&apos;encours « en attente ». Les lignes restent
-          modifiables (avenant avant acceptation).
-        </li>
-        <li>
-          <strong>Payé</strong> — action « Marquer payé » : <code>datePaiement</code> est
-          renseignée, le montant bascule dans « Encaissé » et le document devient en lecture seule
-          (valeur probante : on ne modifie pas un document réglé, on en émet un nouveau).
-        </li>
+        {D.cycleItems.map((item, i) => (
+          <li key={i}>
+            <RichText segs={item} />
+          </li>
+        ))}
       </ul>
       <p className="mb-4 text-sm" style={{ color: "var(--bpm-text-secondary)", maxWidth: "62ch" }}>
-        Les transitions sont strictement séquentielles (brouillon → envoyé → payé) ; il n&apos;y a
-        pas de retour en arrière. Pour annuler un devis envoyé, on le laisse expirer (validité
-        30 jours) ou on émet un devis correctif.
+        {D.cycleBody}
       </p>
 
       <h2 className="text-lg font-semibold mt-6 mb-2" style={{ color: "var(--bpm-text-primary)" }}>
-        Numérotation
+        {D.numberingTitle}
       </h2>
       <p className="mb-4 text-sm" style={{ color: "var(--bpm-text-secondary)", maxWidth: "62ch" }}>
-        Format <code>DV-AAAA-NNN</code> : préfixe document (<code>DV</code> pour devis,{" "}
-        <code>FA</code> pour la facture émise à l&apos;acceptation), année d&apos;émission, puis
-        compteur séquentiel sans trou ni réutilisation — exigence comptable. Dans le simulateur, le
-        compteur reprend après le dernier numéro seedé (<code>DV-2026-104</code> → le prochain
-        devis créé reçoit <code>DV-2026-105</code>). En production, le numéro est attribué par la
-        base (séquence) au moment de la création, jamais côté client.
+        <RichText segs={D.numberingBody} />
       </p>
 
       <h2 className="text-lg font-semibold mt-6 mb-2" style={{ color: "var(--bpm-text-primary)" }}>
-        Impression et intégration
+        {D.printTitle}
       </h2>
       <p className="mb-4 text-sm" style={{ color: "var(--bpm-text-secondary)", maxWidth: "62ch" }}>
-        L&apos;aperçu met en forme l&apos;en-tête société, le client, les lignes et les totaux,
-        puis s&apos;appuie sur <code>window.print()</code> (seule la zone du devis est imprimée).
-        Pour aller plus loin : persister devis et lignes en base, déclencher l&apos;envoi
-        d&apos;e-mail au passage en « envoyé », et générer le PDF côté serveur si vous devez
-        archiver les documents émis.
+        <RichText segs={D.printBody} />
       </p>
 
       <p className="mt-6 text-sm" style={{ color: "var(--bpm-text-secondary)" }}>
@@ -121,7 +99,7 @@ total_ttc      = total_ht + tva`}
           className="font-medium underline"
           style={{ color: "var(--bpm-accent-cyan)" }}
         >
-          Ouvrir le simulateur
+          {D.openSimulator}
         </Link>
       </p>
     </div>

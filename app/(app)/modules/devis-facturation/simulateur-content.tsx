@@ -14,12 +14,17 @@ import {
   Table,
   useToast,
 } from "@/components/bpm";
+import { useI18n } from "@/lib/i18n/LocaleProvider";
+import { STR, NEW_QUOTE_SUBJECT, fmtDate, fmtEUR, lt, pick, todayISO, type L10n } from "./strings";
 
 type Statut = "brouillon" | "envoye" | "paye";
 
+/** Sentinelle « à l'instant » / "just now" pour les dates posées pendant la session. */
+const NOW = "now";
+
 interface LigneDevis {
   id: string;
-  designation: string;
+  designation: L10n;
   quantite: number;
   prixUnitaire: number;
   /** Remise en % appliquée sur la ligne (0 = aucune). */
@@ -29,8 +34,9 @@ interface LigneDevis {
 interface Devis {
   numero: string;
   client: string;
-  objet: string;
+  objet: L10n;
   statut: Statut;
+  /** Dates ISO (AAAA-MM-JJ) ou sentinelle NOW ; affichage localisé au render. */
   dateCreation: string;
   dateEnvoi: string | null;
   datePaiement: string | null;
@@ -39,16 +45,11 @@ interface Devis {
 
 const TVA_RATE = 0.2;
 
+// Raison sociale et coordonnées légales : non traduites.
 const SOCIETE = {
   nom: "Studio Méridien SAS",
   adresse: "12 rue des Ateliers, 69002 Lyon",
   siret: "SIRET 842 519 637 00021 — TVA FR 64 842519637",
-};
-
-const STATUT_LABEL: Record<Statut, string> = {
-  brouillon: "Brouillon",
-  envoye: "Envoyé",
-  paye: "Payé",
 };
 
 const STATUT_VARIANT: Record<Statut, "default" | "warning" | "success"> = {
@@ -62,47 +63,107 @@ const INITIAL_DEVIS: Devis[] = [
   {
     numero: "DV-2026-104",
     client: "ACME Industries",
-    objet: "Refonte site vitrine",
+    objet: { fr: "Refonte site vitrine", en: "Showcase website redesign" },
     statut: "brouillon",
-    dateCreation: "9 juin 2026",
+    dateCreation: "2026-06-09",
     dateEnvoi: null,
     datePaiement: null,
     lignes: [
-      { id: "l104-1", designation: "Maquettes UI (5 gabarits desktop + mobile)", quantite: 5, prixUnitaire: 480, remisePct: 0 },
-      { id: "l104-2", designation: "Intégration front responsive (jours)", quantite: 8, prixUnitaire: 560, remisePct: 0 },
-      { id: "l104-3", designation: "Recette, SEO de base et mise en ligne (jours)", quantite: 2, prixUnitaire: 450, remisePct: 10 },
+      {
+        id: "l104-1",
+        designation: {
+          fr: "Maquettes UI (5 gabarits desktop + mobile)",
+          en: "UI mockups (5 desktop + mobile templates)",
+        },
+        quantite: 5,
+        prixUnitaire: 480,
+        remisePct: 0,
+      },
+      {
+        id: "l104-2",
+        designation: {
+          fr: "Intégration front responsive (jours)",
+          en: "Responsive front-end integration (days)",
+        },
+        quantite: 8,
+        prixUnitaire: 560,
+        remisePct: 0,
+      },
+      {
+        id: "l104-3",
+        designation: {
+          fr: "Recette, SEO de base et mise en ligne (jours)",
+          en: "Acceptance testing, basic SEO and go-live (days)",
+        },
+        quantite: 2,
+        prixUnitaire: 450,
+        remisePct: 10,
+      },
     ],
   },
   {
     numero: "DV-2026-103",
     client: "Nordis Logistique",
-    objet: "Maintenance annuelle",
+    objet: { fr: "Maintenance annuelle", en: "Annual maintenance" },
     statut: "envoye",
-    dateCreation: "2 juin 2026",
-    dateEnvoi: "5 juin 2026",
+    dateCreation: "2026-06-02",
+    dateEnvoi: "2026-06-05",
     datePaiement: null,
     lignes: [
-      { id: "l103-1", designation: "Forfait maintenance applicative (mois)", quantite: 12, prixUnitaire: 320, remisePct: 5 },
-      { id: "l103-2", designation: "Astreinte prioritaire — mise en place", quantite: 1, prixUnitaire: 1200, remisePct: 0 },
+      {
+        id: "l103-1",
+        designation: {
+          fr: "Forfait maintenance applicative (mois)",
+          en: "Application maintenance plan (months)",
+        },
+        quantite: 12,
+        prixUnitaire: 320,
+        remisePct: 5,
+      },
+      {
+        id: "l103-2",
+        designation: {
+          fr: "Astreinte prioritaire — mise en place",
+          en: "Priority on-call support — setup",
+        },
+        quantite: 1,
+        prixUnitaire: 1200,
+        remisePct: 0,
+      },
     ],
   },
   {
     numero: "DV-2026-102",
     client: "Globex Finance",
-    objet: "Audit sécurité",
+    objet: { fr: "Audit sécurité", en: "Security audit" },
     statut: "paye",
-    dateCreation: "18 mai 2026",
-    dateEnvoi: "20 mai 2026",
-    datePaiement: "4 juin 2026",
+    dateCreation: "2026-05-18",
+    dateEnvoi: "2026-05-20",
+    datePaiement: "2026-06-04",
     lignes: [
-      { id: "l102-1", designation: "Audit technique et tests d'intrusion (jours)", quantite: 4, prixUnitaire: 950, remisePct: 0 },
-      { id: "l102-2", designation: "Rapport détaillé et restitution sur site", quantite: 1, prixUnitaire: 800, remisePct: 0 },
+      {
+        id: "l102-1",
+        designation: {
+          fr: "Audit technique et tests d'intrusion (jours)",
+          en: "Technical audit and penetration testing (days)",
+        },
+        quantite: 4,
+        prixUnitaire: 950,
+        remisePct: 0,
+      },
+      {
+        id: "l102-2",
+        designation: {
+          fr: "Rapport détaillé et restitution sur site",
+          en: "Detailed report and on-site debrief",
+        },
+        quantite: 1,
+        prixUnitaire: 800,
+        remisePct: 0,
+      },
     ],
   },
 ];
-
-const fmtEUR = (n: number) =>
-  n.toLocaleString("fr-FR", { style: "currency", currency: "EUR", minimumFractionDigits: 2, maximumFractionDigits: 2 });
 
 const ligneTotalHT = (l: LigneDevis) => l.quantite * l.prixUnitaire * (1 - l.remisePct / 100);
 
@@ -113,9 +174,17 @@ const totauxDevis = (d: Devis) => {
 };
 
 export default function DevisFacturationSimulateur() {
+  const { locale } = useI18n();
+  const S = STR[locale].sim;
   const { showToast } = useToast();
   const [devisList, setDevisList] = useState<Devis[]>(INITIAL_DEVIS);
   const [selectedNumero, setSelectedNumero] = useState<string>("DV-2026-104");
+
+  const fmt = (n: number) => fmtEUR(n, locale);
+  /** Affiche une date stockée (ISO ou sentinelle NOW) dans la locale courante. */
+  const dispDate = (value: string) => (value === NOW ? S.justNow : fmtDate(value, locale));
+  /** Variante avec complément (« le 4 juin 2026 » / "on June 4, 2026"), NOW inchangé. */
+  const dispDateOn = (value: string) => (value === NOW ? S.justNow : S.onDate(fmtDate(value, locale)));
 
   // Formulaire de ligne (ajout ou édition selon editingLineId).
   const [editingLineId, setEditingLineId] = useState<string | null>(null);
@@ -172,20 +241,20 @@ export default function DevisFacturationSimulateur() {
     if (!selected || readOnly) return;
     const des = designation.trim();
     if (!des) {
-      setLigneError("La désignation est obligatoire.");
+      setLigneError(S.errDesignation);
       return;
     }
     if (quantite == null || quantite <= 0) {
-      setLigneError("La quantité doit être supérieure à zéro.");
+      setLigneError(S.errQty);
       return;
     }
     if (prixUnitaire == null || prixUnitaire < 0) {
-      setLigneError("Indiquez un prix unitaire (HT) valide.");
+      setLigneError(S.errUnitPrice);
       return;
     }
     const remise = remisePct ?? 0;
     if (remise < 0 || remise > 100) {
-      setLigneError("La remise doit être comprise entre 0 et 100 %.");
+      setLigneError(S.errDiscount);
       return;
     }
     setLigneError(null);
@@ -194,25 +263,25 @@ export default function DevisFacturationSimulateur() {
       updateDevis(selected.numero, (d) => ({
         ...d,
         lignes: d.lignes.map((l) =>
-          l.id === editingLineId ? { ...l, designation: des, quantite, prixUnitaire, remisePct: remise } : l
+          l.id === editingLineId ? { ...l, designation: lt(des), quantite, prixUnitaire, remisePct: remise } : l
         ),
       }));
-      showToast(`Ligne « ${des} » mise à jour.`, "success", 4000, "Ligne modifiée", "Devis & facturation", null);
+      showToast(S.toastLineUpdated(des), "success", 4000, S.toastLineUpdatedTitle, S.toastCategory, null);
     } else {
       const ligne: LigneDevis = {
         id: `l${Date.now()}`,
-        designation: des,
+        designation: lt(des),
         quantite,
         prixUnitaire,
         remisePct: remise,
       };
       updateDevis(selected.numero, (d) => ({ ...d, lignes: [...d.lignes, ligne] }));
       showToast(
-        `Ligne « ${des} » ajoutée (${fmtEUR(ligneTotalHT(ligne))} HT).`,
+        S.toastLineAdded(des, fmt(ligneTotalHT(ligne))),
         "success",
         4000,
-        "Ligne ajoutée",
-        "Devis & facturation",
+        S.toastLineAddedTitle,
+        S.toastCategory,
         null
       );
     }
@@ -221,7 +290,7 @@ export default function DevisFacturationSimulateur() {
 
   const startEditLigne = (l: LigneDevis) => {
     setEditingLineId(l.id);
-    setDesignation(l.designation);
+    setDesignation(pick(l.designation, locale));
     setQuantite(l.quantite);
     setPrixUnitaire(l.prixUnitaire);
     setRemisePct(l.remisePct);
@@ -233,11 +302,11 @@ export default function DevisFacturationSimulateur() {
     updateDevis(selected.numero, (d) => ({ ...d, lignes: d.lignes.filter((l) => l.id !== ligneASupprimer.id) }));
     if (editingLineId === ligneASupprimer.id) resetLigneForm();
     showToast(
-      `Ligne « ${ligneASupprimer.designation} » supprimée.`,
+      S.toastLineDeleted(pick(ligneASupprimer.designation, locale)),
       "info",
       4000,
-      "Ligne supprimée",
-      "Devis & facturation",
+      S.toastLineDeletedTitle,
+      S.toastCategory,
       null
     );
     setLigneASupprimer(null);
@@ -246,37 +315,30 @@ export default function DevisFacturationSimulateur() {
   const handleEnvoyer = () => {
     if (!selected || selected.statut !== "brouillon") return;
     if (selected.lignes.length === 0) {
-      showToast(
-        "Ajoutez au moins une ligne avant d'envoyer le devis.",
-        "warning",
-        5000,
-        "Devis vide",
-        "Devis & facturation",
-        null
-      );
+      showToast(S.toastEmpty, "warning", 5000, S.toastEmptyTitle, S.toastCategory, null);
       return;
     }
-    updateDevis(selected.numero, (d) => ({ ...d, statut: "envoye", dateEnvoi: "à l'instant" }));
+    updateDevis(selected.numero, (d) => ({ ...d, statut: "envoye", dateEnvoi: NOW }));
     showToast(
-      `Devis ${selected.numero} envoyé à ${selected.client} (${fmtEUR(totaux.ttc)} TTC).`,
+      S.toastSent(selected.numero, selected.client, fmt(totaux.ttc)),
       "success",
       5000,
-      "Devis envoyé",
-      "Devis & facturation",
+      S.toastSentTitle,
+      S.toastCategory,
       null
     );
   };
 
   const handleMarquerPaye = () => {
     if (!selected || selected.statut !== "envoye") return;
-    updateDevis(selected.numero, (d) => ({ ...d, statut: "paye", datePaiement: "à l'instant" }));
+    updateDevis(selected.numero, (d) => ({ ...d, statut: "paye", datePaiement: NOW }));
     resetLigneForm();
     showToast(
-      `Paiement de ${fmtEUR(totaux.ttc)} enregistré pour ${selected.numero}. Le devis passe en lecture seule.`,
+      S.toastPaid(fmt(totaux.ttc), selected.numero),
       "success",
       5000,
-      "Devis payé",
-      "Devis & facturation",
+      S.toastPaidTitle,
+      S.toastCategory,
       null
     );
   };
@@ -284,18 +346,19 @@ export default function DevisFacturationSimulateur() {
   const handleCreateDevis = () => {
     const client = newClient.trim();
     if (!client) {
-      setNewError("Le nom du client est obligatoire.");
+      setNewError(S.errClient);
       return;
     }
     setNewError(null);
     const numero = `DV-2026-${compteur.current}`;
     compteur.current += 1;
+    const objetSaisi = newObjet.trim();
     const devis: Devis = {
       numero,
       client,
-      objet: newObjet.trim() || "Nouveau devis",
+      objet: objetSaisi ? lt(objetSaisi) : NEW_QUOTE_SUBJECT,
       statut: "brouillon",
-      dateCreation: new Date().toLocaleDateString("fr-FR", { day: "numeric", month: "long", year: "numeric" }),
+      dateCreation: todayISO(),
       dateEnvoi: null,
       datePaiement: null,
       lignes: [],
@@ -306,39 +369,32 @@ export default function DevisFacturationSimulateur() {
     setNewOpen(false);
     setNewClient("");
     setNewObjet("");
-    showToast(
-      `Devis ${numero} créé pour ${client} (brouillon). Ajoutez des lignes puis envoyez-le.`,
-      "success",
-      5000,
-      "Devis créé",
-      "Devis & facturation",
-      null
-    );
+    showToast(S.toastCreated(numero, client), "success", 5000, S.toastCreatedTitle, S.toastCategory, null);
   };
 
   const listColumns = [
     {
       key: "numero",
-      label: "Numéro",
+      label: S.colNumber,
       render: (value: unknown) => (
         <span style={{ fontWeight: selectedNumero === String(value) ? 700 : 500, color: "var(--bpm-text-primary)" }}>
           {String(value)}
         </span>
       ),
     },
-    { key: "client", label: "Client" },
-    { key: "objet", label: "Objet" },
+    { key: "client", label: S.colClient },
+    { key: "objet", label: S.colSubject },
     {
       key: "ttc",
-      label: "Total TTC",
+      label: S.colTotalTTC,
       align: "right" as const,
-      render: (value: unknown) => <span style={{ fontVariantNumeric: "tabular-nums" }}>{fmtEUR(Number(value))}</span>,
+      render: (value: unknown) => <span style={{ fontVariantNumeric: "tabular-nums" }}>{fmt(Number(value))}</span>,
     },
     {
       key: "statut",
-      label: "Statut",
+      label: S.colStatus,
       render: (value: unknown) => (
-        <Badge variant={STATUT_VARIANT[value as Statut]}>{STATUT_LABEL[value as Statut]}</Badge>
+        <Badge variant={STATUT_VARIANT[value as Statut]}>{S.status[value as Statut]}</Badge>
       ),
     },
   ];
@@ -346,35 +402,35 @@ export default function DevisFacturationSimulateur() {
   const listRows = devisList.map((d) => ({
     numero: d.numero,
     client: d.client,
-    objet: d.objet,
+    objet: pick(d.objet, locale),
     ttc: totauxDevis(d).ttc,
     statut: d.statut,
   }));
 
   const ligneColumns = [
-    { key: "designation", label: "Désignation" },
-    { key: "quantite", label: "Qté", align: "right" as const },
+    { key: "designation", label: S.colDesignation },
+    { key: "quantite", label: S.colQty, align: "right" as const },
     {
       key: "prixUnitaire",
-      label: "P.U. HT",
+      label: S.colUnitPrice,
       align: "right" as const,
-      render: (value: unknown) => fmtEUR(Number(value)),
+      render: (value: unknown) => fmt(Number(value)),
     },
     {
       key: "remisePct",
-      label: "Remise",
+      label: S.colDiscount,
       align: "right" as const,
-      render: (value: unknown) => (Number(value) > 0 ? `${Number(value)} %` : "—"),
+      render: (value: unknown) => (Number(value) > 0 ? S.pct(Number(value)) : "—"),
     },
     {
       key: "totalHT",
-      label: "Total HT",
+      label: S.colLineTotal,
       align: "right" as const,
-      render: (value: unknown) => <span style={{ fontVariantNumeric: "tabular-nums" }}>{fmtEUR(Number(value))}</span>,
+      render: (value: unknown) => <span style={{ fontVariantNumeric: "tabular-nums" }}>{fmt(Number(value))}</span>,
     },
     {
       key: "id",
-      label: "Actions",
+      label: S.colActions,
       render: (_: unknown, row: Record<string, unknown>) => {
         const ligne = (selected?.lignes ?? []).find((l) => l.id === row.id);
         if (!ligne) return null;
@@ -384,10 +440,10 @@ export default function DevisFacturationSimulateur() {
               size="small"
               variant="secondary"
               disabled={readOnly}
-              aria-label={`Modifier la ligne ${ligne.designation}`}
+              aria-label={S.editLineAria(pick(ligne.designation, locale))}
               onClick={() => startEditLigne(ligne)}
             >
-              ✎ Modifier
+              {S.editLineBtn}
             </Button>
             <Button
               size="small"
@@ -395,7 +451,7 @@ export default function DevisFacturationSimulateur() {
               disabled={readOnly}
               onClick={() => setLigneASupprimer(ligne)}
             >
-              Supprimer
+              {S.deleteLineBtn}
             </Button>
           </div>
         );
@@ -405,7 +461,7 @@ export default function DevisFacturationSimulateur() {
 
   const ligneRows = (selected?.lignes ?? []).map((l) => ({
     id: l.id,
-    designation: l.designation,
+    designation: pick(l.designation, locale),
     quantite: l.quantite,
     prixUnitaire: l.prixUnitaire,
     remisePct: l.remisePct,
@@ -413,28 +469,33 @@ export default function DevisFacturationSimulateur() {
   }));
 
   const previewColumns = [
-    { key: "designation", label: "Désignation" },
-    { key: "quantite", label: "Qté", align: "right" as const },
-    { key: "prixUnitaire", label: "P.U. HT", align: "right" as const, render: (v: unknown) => fmtEUR(Number(v)) },
-    { key: "remisePct", label: "Remise", align: "right" as const, render: (v: unknown) => (Number(v) > 0 ? `${Number(v)} %` : "—") },
-    { key: "totalHT", label: "Total HT", align: "right" as const, render: (v: unknown) => fmtEUR(Number(v)) },
+    { key: "designation", label: S.colDesignation },
+    { key: "quantite", label: S.colQty, align: "right" as const },
+    { key: "prixUnitaire", label: S.colUnitPrice, align: "right" as const, render: (v: unknown) => fmt(Number(v)) },
+    {
+      key: "remisePct",
+      label: S.colDiscount,
+      align: "right" as const,
+      render: (v: unknown) => (Number(v) > 0 ? S.pct(Number(v)) : "—"),
+    },
+    { key: "totalHT", label: S.colLineTotal, align: "right" as const, render: (v: unknown) => fmt(Number(v)) },
   ];
 
   return (
     <div className="space-y-6">
       <MetricRow>
-        <Metric label="Devis en cours" value={String(stats.enCours)} />
-        <Metric label="Montant TTC en attente" value={fmtEUR(stats.enAttente)} />
-        <Metric label="Encaissé" value={fmtEUR(stats.encaisse)} />
+        <Metric label={S.metricOpen} value={String(stats.enCours)} />
+        <Metric label={S.metricPending} value={fmt(stats.enAttente)} />
+        <Metric label={S.metricCollected} value={fmt(stats.encaisse)} />
       </MetricRow>
 
-      <Panel variant="info" title="Devis">
+      <Panel variant="info" title={S.quotesPanelTitle}>
         <div className="mb-3 flex items-center justify-between gap-3 flex-wrap">
           <p className="text-sm m-0" style={{ color: "var(--bpm-text-secondary)" }}>
-            Cliquez sur une ligne pour ouvrir le devis dans l&apos;éditeur ci-dessous.
+            {S.listHint}
           </p>
           <Button variant="primary" onClick={() => { setNewError(null); setNewOpen(true); }}>
-            Nouveau devis
+            {S.newQuote}
           </Button>
         </div>
         <Table
@@ -447,37 +508,36 @@ export default function DevisFacturationSimulateur() {
       </Panel>
 
       {selected && (
-        <Panel variant="info" title={`Éditeur — ${selected.numero} · ${selected.objet}`}>
+        <Panel variant="info" title={S.editorTitle(selected.numero, pick(selected.objet, locale))}>
           <div className="flex flex-wrap items-center gap-2 mb-4">
-            <Badge variant={STATUT_VARIANT[selected.statut]}>{STATUT_LABEL[selected.statut]}</Badge>
+            <Badge variant={STATUT_VARIANT[selected.statut]}>{S.status[selected.statut]}</Badge>
             <span className="text-sm" style={{ color: "var(--bpm-text-secondary)" }}>
-              {selected.client} · créé le {selected.dateCreation}
-              {selected.dateEnvoi ? ` · envoyé ${selected.dateEnvoi}` : ""}
-              {selected.datePaiement ? ` · payé ${selected.datePaiement}` : ""}
+              {selected.client} · {S.createdOn(dispDate(selected.dateCreation))}
+              {selected.dateEnvoi ? ` · ${S.sentOn(dispDate(selected.dateEnvoi))}` : ""}
+              {selected.datePaiement ? ` · ${S.paidOn(dispDate(selected.datePaiement))}` : ""}
             </span>
             <span className="flex-1" />
             {selected.statut === "brouillon" && (
               <Button variant="primary" onClick={handleEnvoyer}>
-                Envoyer au client
+                {S.sendToClient}
               </Button>
             )}
             {selected.statut === "envoye" && (
               <Button variant="primary" onClick={handleMarquerPaye}>
-                Marquer payé
+                {S.markPaid}
               </Button>
             )}
             <Button variant="outline" onClick={() => setPreviewOpen(true)}>
-              Aperçu / Imprimer
+              {S.previewPrint}
             </Button>
           </div>
 
-          {readOnly && (
+          {readOnly && selected.datePaiement && (
             <p
               className="text-sm mb-3 rounded px-3 py-2"
               style={{ color: "var(--bpm-text-secondary)", background: "var(--bpm-bg-secondary)" }}
             >
-              Devis payé le {selected.datePaiement} : document verrouillé, les lignes ne sont plus modifiables
-              (lecture seule). Créez un nouveau devis pour une prestation complémentaire.
+              {S.readOnlyBanner(dispDateOn(selected.datePaiement))}
             </p>
           )}
 
@@ -486,51 +546,51 @@ export default function DevisFacturationSimulateur() {
             data={ligneRows as unknown as Record<string, unknown>[]}
             striped
             hover
-            emptyMessage="Aucune ligne — ajoutez la première prestation ci-dessous."
+            emptyMessage={S.emptyLines}
           />
 
           <div className="mt-4 ml-auto" style={{ maxWidth: 280 }}>
             <div className="flex justify-between text-sm py-1" style={{ color: "var(--bpm-text-secondary)" }}>
-              <span>Total HT</span>
-              <span style={{ fontVariantNumeric: "tabular-nums" }}>{fmtEUR(totaux.ht)}</span>
+              <span>{S.totalHT}</span>
+              <span style={{ fontVariantNumeric: "tabular-nums" }}>{fmt(totaux.ht)}</span>
             </div>
             <div className="flex justify-between text-sm py-1" style={{ color: "var(--bpm-text-secondary)" }}>
-              <span>TVA 20 %</span>
-              <span style={{ fontVariantNumeric: "tabular-nums" }}>{fmtEUR(totaux.tva)}</span>
+              <span>{S.vat20}</span>
+              <span style={{ fontVariantNumeric: "tabular-nums" }}>{fmt(totaux.tva)}</span>
             </div>
             <div
               className="flex justify-between py-2 font-semibold"
               style={{ color: "var(--bpm-text-primary)", borderTop: "2px solid var(--bpm-accent)" }}
             >
-              <span>Total TTC</span>
-              <span style={{ fontVariantNumeric: "tabular-nums" }}>{fmtEUR(totaux.ttc)}</span>
+              <span>{S.totalTTC}</span>
+              <span style={{ fontVariantNumeric: "tabular-nums" }}>{fmt(totaux.ttc)}</span>
             </div>
           </div>
 
           <div className="mt-4 pt-4" style={{ borderTop: "1px solid var(--bpm-border)" }}>
             <h3 className="text-sm font-semibold mb-3" style={{ color: "var(--bpm-text-primary)" }}>
-              {editingLineId ? "Modifier la ligne" : "Ajouter une ligne"}
+              {editingLineId ? S.formEditTitle : S.formAddTitle}
             </h3>
             <div className="grid gap-3 md:grid-cols-4">
               <Input
-                label="Désignation"
-                placeholder="Ex. Atelier de cadrage (jour)"
+                label={S.fieldDesignation}
+                placeholder={S.fieldDesignationPlaceholder}
                 value={designation}
                 onChange={setDesignation}
                 disabled={readOnly}
               />
-              <NumberInput label="Quantité" value={quantite} onChange={setQuantite} min={0} step={1} disabled={readOnly} />
+              <NumberInput label={S.fieldQty} value={quantite} onChange={setQuantite} min={0} step={1} disabled={readOnly} />
               <NumberInput
-                label="P.U. HT (€)"
+                label={S.fieldUnitPrice}
                 value={prixUnitaire}
                 onChange={setPrixUnitaire}
                 min={0}
                 step={10}
                 disabled={readOnly}
-                placeholder="0,00"
+                placeholder={S.fieldUnitPricePlaceholder}
               />
               <NumberInput
-                label="Remise (%)"
+                label={S.fieldDiscount}
                 value={remisePct}
                 onChange={setRemisePct}
                 min={0}
@@ -546,17 +606,17 @@ export default function DevisFacturationSimulateur() {
             )}
             <div className="mt-3 flex gap-2">
               <Button onClick={handleSubmitLigne} disabled={readOnly}>
-                {editingLineId ? "Enregistrer la ligne" : "Ajouter la ligne"}
+                {editingLineId ? S.saveLine : S.addLine}
               </Button>
               {editingLineId && (
                 <Button variant="ghost" onClick={resetLigneForm}>
-                  Annuler la modification
+                  {S.cancelEdit}
                 </Button>
               )}
             </div>
             {readOnly && (
               <p className="mt-2 text-xs" style={{ color: "var(--bpm-text-secondary)" }}>
-                Édition désactivée : un devis payé ne peut plus être modifié.
+                {S.readOnlyHint}
               </p>
             )}
           </div>
@@ -564,7 +624,7 @@ export default function DevisFacturationSimulateur() {
       )}
 
       {previewOpen && selected && (
-        <Modal isOpen onClose={() => setPreviewOpen(false)} title={`Aperçu — ${selected.numero}`} size="large">
+        <Modal isOpen onClose={() => setPreviewOpen(false)} title={S.previewTitle(selected.numero)} size="large">
           <style>{`
             @media print {
               body * { visibility: hidden; }
@@ -579,12 +639,12 @@ export default function DevisFacturationSimulateur() {
               style={{ borderBottom: "2px solid var(--bpm-accent)" }}
             >
               <div>
-                <h2 className="text-xl font-bold m-0">Devis {selected.numero}</h2>
+                <h2 className="text-xl font-bold m-0">{S.quoteNo(selected.numero)}</h2>
                 <p className="text-sm m-0 mt-1" style={{ color: "var(--bpm-text-secondary)" }}>
-                  {selected.objet}
+                  {pick(selected.objet, locale)}
                 </p>
                 <p className="text-sm m-0" style={{ color: "var(--bpm-text-secondary)" }}>
-                  Émis le {selected.dateCreation} · Validité 30 jours
+                  {S.issuedValidity(dispDate(selected.dateCreation))}
                 </p>
               </div>
               <div className="text-right text-sm" style={{ color: "var(--bpm-text-secondary)" }}>
@@ -594,49 +654,49 @@ export default function DevisFacturationSimulateur() {
               </div>
             </div>
             <p className="text-sm mb-4">
-              <strong>Client :</strong> {selected.client}
+              <strong>{S.clientLabel}</strong> {selected.client}
             </p>
             <Table columns={previewColumns} data={ligneRows as unknown as Record<string, unknown>[]} striped />
             <div className="mt-4 ml-auto" style={{ maxWidth: 260 }}>
               <div className="flex justify-between text-sm py-1" style={{ color: "var(--bpm-text-secondary)" }}>
-                <span>Total HT</span>
-                <span>{fmtEUR(totaux.ht)}</span>
+                <span>{S.totalHT}</span>
+                <span>{fmt(totaux.ht)}</span>
               </div>
               <div className="flex justify-between text-sm py-1" style={{ color: "var(--bpm-text-secondary)" }}>
-                <span>TVA 20 %</span>
-                <span>{fmtEUR(totaux.tva)}</span>
+                <span>{S.vat20}</span>
+                <span>{fmt(totaux.tva)}</span>
               </div>
               <div
                 className="flex justify-between py-2 font-semibold"
                 style={{ borderTop: "2px solid var(--bpm-accent)" }}
               >
-                <span>Total TTC</span>
-                <span>{fmtEUR(totaux.ttc)}</span>
+                <span>{S.totalTTC}</span>
+                <span>{fmt(totaux.ttc)}</span>
               </div>
             </div>
             <p className="mt-6 text-xs" style={{ color: "var(--bpm-text-secondary)" }}>
-              Conditions : acompte de 30 % à la commande, solde à la livraison. TVA 20 % — paiement à 30 jours.
+              {S.terms}
             </p>
           </div>
           <div className="devis-no-print mt-5 flex justify-end gap-2">
             <Button variant="ghost" onClick={() => setPreviewOpen(false)}>
-              Fermer
+              {S.close}
             </Button>
             <Button variant="primary" onClick={() => window.print()}>
-              Imprimer
+              {S.print}
             </Button>
           </div>
         </Modal>
       )}
 
       {newOpen && (
-        <Modal isOpen onClose={() => setNewOpen(false)} title="Nouveau devis" size="small">
+        <Modal isOpen onClose={() => setNewOpen(false)} title={S.newQuoteTitle} size="small">
           <p className="text-sm mb-3" style={{ color: "var(--bpm-text-secondary)" }}>
-            Le numéro DV-2026-{compteur.current} sera attribué automatiquement (brouillon).
+            {S.newQuoteIntro(`DV-2026-${compteur.current}`)}
           </p>
           <div className="space-y-3">
-            <Input label="Client (obligatoire)" placeholder="Ex. Initech SARL" value={newClient} onChange={setNewClient} />
-            <Input label="Objet" placeholder="Ex. Application mobile interne" value={newObjet} onChange={setNewObjet} />
+            <Input label={S.newClientLabel} placeholder={S.newClientPlaceholder} value={newClient} onChange={setNewClient} />
+            <Input label={S.newSubjectLabel} placeholder={S.newSubjectPlaceholder} value={newObjet} onChange={setNewObjet} />
           </div>
           {newError && (
             <p className="mt-2 text-sm" style={{ color: "var(--bpm-error, #dc2626)" }}>
@@ -645,10 +705,10 @@ export default function DevisFacturationSimulateur() {
           )}
           <div className="mt-4 flex justify-end gap-2">
             <Button variant="ghost" onClick={() => setNewOpen(false)}>
-              Annuler
+              {S.cancel}
             </Button>
             <Button variant="primary" onClick={handleCreateDevis}>
-              Créer le devis
+              {S.createQuote}
             </Button>
           </div>
         </Modal>
@@ -656,14 +716,14 @@ export default function DevisFacturationSimulateur() {
 
       <ConfirmModal
         isOpen={ligneASupprimer !== null}
-        title="Supprimer la ligne"
+        title={S.confirmDeleteTitle}
         message={
           ligneASupprimer
-            ? `« ${ligneASupprimer.designation} » (${fmtEUR(ligneTotalHT(ligneASupprimer))} HT) sera retirée du devis. Les totaux seront recalculés.`
+            ? S.confirmDeleteMsg(pick(ligneASupprimer.designation, locale), fmt(ligneTotalHT(ligneASupprimer)))
             : ""
         }
-        confirmLabel="Supprimer"
-        cancelLabel="Annuler"
+        confirmLabel={S.confirmDelete}
+        cancelLabel={S.cancel}
         variant="danger"
         onConfirm={confirmDeleteLigne}
         onCancel={() => setLigneASupprimer(null)}

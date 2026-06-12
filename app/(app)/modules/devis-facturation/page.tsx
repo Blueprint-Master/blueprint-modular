@@ -2,33 +2,12 @@
 
 import Link from "next/link";
 import { CodeBlock, Tabs } from "@/components/bpm";
+import { useI18n } from "@/lib/i18n/LocaleProvider";
 import DevisFacturationSimulateur from "./simulateur-content";
+import { STR, type Rich } from "./strings";
 
-const docContent = (
-  <div className="prose-sm">
-    <h2 className="text-lg font-semibold mt-0 mb-2" style={{ color: "var(--bpm-text-primary)" }}>
-      À propos
-    </h2>
-    <p className="mb-4" style={{ color: "var(--bpm-text-secondary)", maxWidth: "62ch" }}>
-      Le module Devis / Facturation couvre le quotidien d&apos;une petite structure de services :
-      créer un devis pour un client, le composer ligne par ligne (désignation, quantité, prix
-      unitaire, remise optionnelle), suivre les totaux HT / TVA 20 % / TTC recalculés en direct,
-      puis dérouler le cycle de vie — brouillon, envoyé au client, payé. Un devis payé est
-      verrouillé ; l&apos;aperçu imprimable produit un document propre via l&apos;impression du
-      navigateur.
-    </p>
-    <h3 className="text-base font-semibold mt-6 mb-2" style={{ color: "var(--bpm-text-primary)" }}>
-      Composants utilisés
-    </h3>
-    <p className="mb-4" style={{ color: "var(--bpm-text-secondary)" }}>
-      <code>bpm.metricRow</code>, <code>bpm.table</code> (liste des devis avec{" "}
-      <code>onRowClick</code>, lignes du devis, aperçu), <code>bpm.badge</code> (statuts),{" "}
-      <code>bpm.input</code> / <code>bpm.numberInput</code> (formulaire de ligne),{" "}
-      <code>bpm.modal</code> (aperçu imprimable, nouveau devis), <code>bpm.confirmModal</code>{" "}
-      (suppression de ligne) et <code>bpm.toast</code>.
-    </p>
-    <CodeBlock
-      code={`import bpm
+// Snippet python : identique dans les deux langues (non traduit).
+const PYTHON_SNIPPET = `import bpm
 
 bpm.metricRow([
     bpm.metric("Devis en cours", 2),
@@ -43,47 +22,73 @@ bpm.table(
 )
 
 bpm.button("Envoyer au client", on_click=envoyer)   # brouillon -> envoyé
-bpm.button("Marquer payé", on_click=encaisser)      # envoyé -> payé (lecture seule)`}
-      language="python"
-    />
-    <h3 className="text-base font-semibold mt-6 mb-2" style={{ color: "var(--bpm-text-primary)" }}>
-      Calculs
-    </h3>
-    <p className="mb-4 text-sm" style={{ color: "var(--bpm-text-secondary)", maxWidth: "62ch" }}>
-      Chaque ligne vaut <code>quantité × P.U. × (1 − remise/100)</code> ; le total HT est la somme
-      des lignes, la TVA est appliquée à 20 % et le TTC en découle. Tout est recalculé à chaque
-      ajout, modification ou suppression de ligne — aucun montant n&apos;est stocké en double.
-    </p>
-    <h3 className="text-base font-semibold mt-6 mb-2" style={{ color: "var(--bpm-text-primary)" }}>
-      Paramétrage
-    </h3>
-    <p className="mb-2 text-sm" style={{ color: "var(--bpm-text-secondary)" }}>
-      Le simulateur fonctionne entièrement en local (trois devis seedés, aucune API requise). En
-      production, brancher la persistance sur votre base, l&apos;envoi sur votre service e-mail et
-      la génération PDF sur l&apos;impression navigateur ou un moteur dédié. Voir la{" "}
-      <Link href="/modules/devis-facturation/documentation" style={{ color: "var(--bpm-accent-cyan)" }}>
-        documentation
-      </Link>{" "}
-      pour le modèle de données, la numérotation et le cycle de statuts.
-    </p>
-  </div>
-);
+bpm.button("Marquer payé", on_click=encaisser)      # envoyé -> payé (lecture seule)`;
+
+/** Rend un paragraphe riche (texte / code inline / gras / lien interne). */
+function RichText({ segs, linkHref }: { segs: Rich; linkHref?: string }) {
+  return (
+    <>
+      {segs.map((seg, i) =>
+        "c" in seg ? (
+          <code key={i}>{seg.c}</code>
+        ) : "b" in seg ? (
+          <strong key={i}>{seg.b}</strong>
+        ) : "l" in seg ? (
+          <Link key={i} href={linkHref ?? "#"} style={{ color: "var(--bpm-accent-cyan)" }}>
+            {seg.l}
+          </Link>
+        ) : (
+          <span key={i}>{seg.t}</span>
+        )
+      )}
+    </>
+  );
+}
 
 export default function DevisFacturationModulePage() {
+  const { locale } = useI18n();
+  const M = STR[locale].module;
+
+  const docContent = (
+    <div className="prose-sm">
+      <h2 className="text-lg font-semibold mt-0 mb-2" style={{ color: "var(--bpm-text-primary)" }}>
+        {M.aboutTitle}
+      </h2>
+      <p className="mb-4" style={{ color: "var(--bpm-text-secondary)", maxWidth: "62ch" }}>
+        {M.aboutBody}
+      </p>
+      <h3 className="text-base font-semibold mt-6 mb-2" style={{ color: "var(--bpm-text-primary)" }}>
+        {M.componentsTitle}
+      </h3>
+      <p className="mb-4" style={{ color: "var(--bpm-text-secondary)" }}>
+        <RichText segs={M.componentsBody} />
+      </p>
+      <CodeBlock code={PYTHON_SNIPPET} language="python" />
+      <h3 className="text-base font-semibold mt-6 mb-2" style={{ color: "var(--bpm-text-primary)" }}>
+        {M.calcTitle}
+      </h3>
+      <p className="mb-4 text-sm" style={{ color: "var(--bpm-text-secondary)", maxWidth: "62ch" }}>
+        <RichText segs={M.calcBody} />
+      </p>
+      <h3 className="text-base font-semibold mt-6 mb-2" style={{ color: "var(--bpm-text-primary)" }}>
+        {M.setupTitle}
+      </h3>
+      <p className="mb-2 text-sm" style={{ color: "var(--bpm-text-secondary)" }}>
+        <RichText segs={M.setupBody} linkHref="/modules/devis-facturation/documentation" />
+      </p>
+    </div>
+  );
+
   return (
     <div className="doc-page">
       <div className="doc-page-header">
         <div className="doc-breadcrumb">
-          <Link href="/modules">Modules</Link> → Devis / Facturation
+          <Link href="/modules">Modules</Link> → {M.title}
         </div>
-        <h1>Devis / Facturation</h1>
-        <p className="doc-description">
-          Composez vos devis ligne par ligne (quantités, prix, remises), suivez les totaux HT /
-          TVA / TTC en direct et déroulez le cycle brouillon → envoyé → payé, avec aperçu
-          imprimable. Tout est manipulable dans le Simulateur.
-        </p>
+        <h1>{M.title}</h1>
+        <p className="doc-description">{M.description}</p>
         <div className="doc-meta">
-          <span className="doc-badge doc-badge-category">Métier</span>
+          <span className="doc-badge doc-badge-category">{M.badgeCategory}</span>
         </div>
         <p className="mt-3 text-sm" style={{ color: "var(--bpm-text-secondary)" }}>
           <Link
@@ -91,14 +96,14 @@ export default function DevisFacturationModulePage() {
             className="font-medium underline"
             style={{ color: "var(--bpm-accent-cyan)" }}
           >
-            Ouvrir le simulateur
+            {M.openSimulator}
           </Link>
         </p>
       </div>
       <Tabs
         tabs={[
-          { label: "Documentation", content: docContent },
-          { label: "Simulateur", content: <DevisFacturationSimulateur /> },
+          { label: M.tabDocumentation, content: docContent },
+          { label: M.tabSimulator, content: <DevisFacturationSimulateur /> },
         ]}
         defaultTab={0}
       />

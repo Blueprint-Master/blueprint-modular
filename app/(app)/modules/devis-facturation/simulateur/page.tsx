@@ -1,22 +1,24 @@
 "use client";
 
 import Link from "next/link";
+import { useI18n } from "@/lib/i18n/LocaleProvider";
 import DevisFacturationSimulateur from "../simulateur-content";
+import { STR } from "../strings";
 
 export default function DevisFacturationSimulateurPage() {
+  const { locale } = useI18n();
+  const M = STR[locale].module;
+  const SP = STR[locale].simPage;
+
   return (
     <div className="doc-page">
       <div className="doc-page-header">
         <div className="doc-breadcrumb">
           <Link href="/modules">Modules</Link> →{" "}
-          <Link href="/modules/devis-facturation">Devis / Facturation</Link> → Simulateur
+          <Link href="/modules/devis-facturation">{M.title}</Link> → {SP.breadcrumbSimulator}
         </div>
-        <h1>Simulateur — Devis / Facturation</h1>
-        <p className="doc-description">
-          Trois devis seedés (ACME en brouillon, Nordis envoyé, Globex payé). Sélectionnez un devis
-          dans la liste, ajoutez ou modifiez des lignes, envoyez-le au client, marquez-le payé,
-          ouvrez l&apos;aperçu imprimable : métriques et totaux sont recalculés à chaque action.
-        </p>
+        <h1>{SP.title}</h1>
+        <p className="doc-description">{SP.description}</p>
       </div>
       <DevisFacturationSimulateur />
     </div>
