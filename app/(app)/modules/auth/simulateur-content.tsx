@@ -2,6 +2,8 @@
 
 import { useState } from "react";
 import { Badge, Button, Input, Message, Panel, Tabs, useToast } from "@/components/bpm";
+import { useI18n } from "@/lib/i18n/LocaleProvider";
+import { STR, inlineCode, type AuthJournalEntry, type JournalEventKey } from "./strings";
 
 interface DemoAccount {
   email: string;
@@ -36,11 +38,14 @@ function initials(nom: string): string {
  */
 export default function AuthSimulateur() {
   const { showToast } = useToast();
+  const { locale } = useI18n();
+  const s = STR[locale].sim;
   const [accounts, setAccounts] = useState<DemoAccount[]>(INITIAL_ACCOUNTS);
   const [session, setSession] = useState<DemoAccount | null>(null);
-  const [journal, setJournal] = useState<string[]>([
-    "Connexion réussie — alice.martin@acme.fr (il y a 2 h)",
-    "Tentative refusée — intrus@exemple.com : domaine hors whitelist (hier)",
+  // Journal structuré : les entrées sont résolues dans la locale courante au rendu.
+  const [journal, setJournal] = useState<AuthJournalEntry[]>([
+    { kind: "seed", key: "seed1" },
+    { kind: "seed", key: "seed2" },
   ]);
 
   // Connexion
@@ -62,60 +67,68 @@ export default function AuthSimulateur() {
   const [resetError, setResetError] = useState<string | null>(null);
   const [resetDone, setResetDone] = useState(false);
 
-  const log = (line: string) => setJournal((prev) => [`${line} (à l'instant)`, ...prev].slice(0, 8));
+  const log = (key: JournalEventKey, mail: string) =>
+    setJournal((prev) => [{ kind: "event", key, mail } as AuthJournalEntry, ...prev].slice(0, 8));
+
+  const renderJournalEntry = (entry: AuthJournalEntry): string =>
+    entry.kind === "seed"
+      ? s.journalSeeds[entry.key]
+      : `${s.journalEvents[entry.key](entry.mail)} ${s.journalJustNow}`;
 
   const whitelisted = (mail: string) => WHITELIST.some((d) => mail.toLowerCase().endsWith(`@${d}`));
+
+  const whitelistLabel = WHITELIST.map((d) => "@" + d).join(", ");
 
   const handleLogin = () => {
     const mail = email.trim().toLowerCase();
     if (!EMAIL_RE.test(mail)) {
-      setLoginError("Adresse e-mail invalide.");
+      setLoginError(s.errors.invalidEmail);
       return;
     }
     if (!whitelisted(mail)) {
-      setLoginError(`Domaine non autorisé — whitelist : ${WHITELIST.map((d) => "@" + d).join(", ")}.`);
-      log(`Tentative refusée — ${mail} : domaine hors whitelist`);
+      setLoginError(s.errors.domainNotAllowed(whitelistLabel));
+      log("refusedDomain", mail);
       return;
     }
     const account = accounts.find((a) => a.email === mail);
     if (!account) {
-      setLoginError("Aucun compte pour cette adresse. Créez-en un dans l'onglet Inscription.");
-      log(`Tentative refusée — ${mail} : compte inconnu`);
+      setLoginError(s.errors.unknownAccount);
+      log("refusedUnknown", mail);
       return;
     }
     if (account.password !== password) {
-      setLoginError("Mot de passe incorrect. (Comptes de démo : demo1234)");
-      log(`Tentative refusée — ${mail} : mot de passe incorrect`);
+      setLoginError(s.errors.wrongPassword);
+      log("refusedPassword", mail);
       return;
     }
     setLoginError(null);
     setSession(account);
     setPassword("");
-    log(`Connexion réussie — ${mail}`);
-    showToast(`Bienvenue, ${account.nom}.`, "success", 4000, "Connexion réussie", "Auth", null);
+    log("loginOk", mail);
+    showToast(s.toasts.welcome(account.nom), "success", 4000, s.toasts.welcomeTitle, "Auth", null);
   };
 
   const handleRegister = () => {
     const mail = regEmail.trim().toLowerCase();
     if (!regNom.trim()) {
-      setRegError("Indiquez votre nom complet.");
+      setRegError(s.errors.fullNameRequired);
       return;
     }
     if (!EMAIL_RE.test(mail)) {
-      setRegError("Adresse e-mail invalide.");
+      setRegError(s.errors.invalidEmail);
       return;
     }
     if (!whitelisted(mail)) {
-      setRegError(`Inscription limitée aux domaines : ${WHITELIST.map((d) => "@" + d).join(", ")}.`);
-      log(`Inscription refusée — ${mail} : domaine hors whitelist`);
+      setRegError(s.errors.regDomainLimited(whitelistLabel));
+      log("regRefusedDomain", mail);
       return;
     }
     if (accounts.some((a) => a.email === mail)) {
-      setRegError("Un compte existe déjà pour cette adresse.");
+      setRegError(s.errors.accountExists);
       return;
     }
     if (regPassword.length < 8) {
-      setRegError("Mot de passe : 8 caractères minimum.");
+      setRegError(s.errors.passwordTooShort);
       return;
     }
     setRegError(null);
@@ -125,31 +138,31 @@ export default function AuthSimulateur() {
     setRegNom("");
     setRegEmail("");
     setRegPassword("");
-    log(`Compte créé — ${mail}`);
-    showToast(`Compte créé pour ${account.nom} — vous êtes connecté.`, "success", 5000, "Inscription réussie", "Auth", null);
+    log("accountCreated", mail);
+    showToast(s.toasts.accountCreated(account.nom), "success", 5000, s.toasts.accountCreatedTitle, "Auth", null);
   };
 
   const handleResetRequest = () => {
     const mail = resetEmail.trim().toLowerCase();
     if (!accounts.some((a) => a.email === mail)) {
-      setResetError("Adresse inconnue de l'annuaire de démo.");
+      setResetError(s.errors.unknownResetEmail);
       return;
     }
     setResetError(null);
     // Code « envoyé par e-mail » — affiché ici car le bac à sable n'envoie rien.
     setResetCode("493 217");
     setResetDone(false);
-    log(`Code de réinitialisation envoyé — ${mail}`);
-    showToast(`Code envoyé à ${mail} (affiché dans la démo).`, "info", 5000, "Réinitialisation", "Auth", null);
+    log("resetCodeSent", mail);
+    showToast(s.toasts.codeSent(mail), "info", 5000, s.toasts.codeSentTitle, "Auth", null);
   };
 
   const handleResetConfirm = () => {
     if (resetCodeInput.replace(/\s/g, "") !== "493217") {
-      setResetError("Code incorrect — reprenez celui affiché ci-dessus.");
+      setResetError(s.errors.wrongCode);
       return;
     }
     if (resetNewPassword.length < 8) {
-      setResetError("Nouveau mot de passe : 8 caractères minimum.");
+      setResetError(s.errors.newPasswordTooShort);
       return;
     }
     const mail = resetEmail.trim().toLowerCase();
@@ -159,26 +172,25 @@ export default function AuthSimulateur() {
     setResetCode(null);
     setResetCodeInput("");
     setResetNewPassword("");
-    log(`Mot de passe réinitialisé — ${mail}`);
-    showToast("Mot de passe mis à jour — reconnectez-vous.", "success", 5000, "Réinitialisation réussie", "Auth", null);
+    log("passwordReset", mail);
+    showToast(s.toasts.passwordUpdated, "success", 5000, s.toasts.passwordUpdatedTitle, "Auth", null);
   };
 
   const handleLogout = () => {
     if (!session) return;
-    log(`Déconnexion — ${session.email}`);
-    showToast(`À bientôt, ${session.nom}.`, "info", 3000, "Déconnexion", "Auth", null);
+    log("signedOut", session.email);
+    showToast(s.toasts.goodbye(session.nom), "info", 3000, s.toasts.goodbyeTitle, "Auth", null);
     setSession(null);
   };
 
   const loginTab = (
     <div className="max-w-md">
       <p className="text-sm mb-4" style={{ color: "var(--bpm-text-secondary)" }}>
-        Comptes de démo : <code>alice.martin@acme.fr</code> ou <code>bob.durand@acme.fr</code> —
-        mot de passe <code>demo1234</code>. Essayez aussi un domaine hors whitelist pour voir le refus.
+        {inlineCode(s.demoHint)}
       </p>
-      <Input label="Adresse e-mail" type="email" value={email} onChange={setEmail} placeholder="prenom.nom@acme.fr" />
+      <Input label={s.emailLabel} type="email" value={email} onChange={setEmail} placeholder="prenom.nom@acme.fr" />
       <div className="mt-3">
-        <Input label="Mot de passe" type="password" value={password} onChange={setPassword} placeholder="demo1234" />
+        <Input label={s.passwordLabel} type="password" value={password} onChange={setPassword} placeholder="demo1234" />
       </div>
       {loginError && (
         <div className="mt-3">
@@ -186,19 +198,19 @@ export default function AuthSimulateur() {
         </div>
       )}
       <Button className="mt-4" onClick={handleLogin}>
-        Se connecter
+        {s.signIn}
       </Button>
     </div>
   );
 
   const registerTab = (
     <div className="max-w-md">
-      <Input label="Nom complet" value={regNom} onChange={setRegNom} placeholder="Claire Petit" />
+      <Input label={s.fullNameLabel} value={regNom} onChange={setRegNom} placeholder="Claire Petit" />
       <div className="mt-3">
-        <Input label="Adresse e-mail" type="email" value={regEmail} onChange={setRegEmail} placeholder="claire.petit@acme.fr" />
+        <Input label={s.emailLabel} type="email" value={regEmail} onChange={setRegEmail} placeholder="claire.petit@acme.fr" />
       </div>
       <div className="mt-3">
-        <Input label="Mot de passe (8 caractères min.)" type="password" value={regPassword} onChange={setRegPassword} />
+        <Input label={s.regPasswordLabel} type="password" value={regPassword} onChange={setRegPassword} />
       </div>
       {regError && (
         <div className="mt-3">
@@ -206,28 +218,28 @@ export default function AuthSimulateur() {
         </div>
       )}
       <Button className="mt-4" onClick={handleRegister}>
-        Créer le compte
+        {s.createAccount}
       </Button>
     </div>
   );
 
   const resetTab = (
     <div className="max-w-md">
-      <Input label="Adresse e-mail du compte" type="email" value={resetEmail} onChange={setResetEmail} placeholder="alice.martin@acme.fr" />
+      <Input label={s.resetEmailLabel} type="email" value={resetEmail} onChange={setResetEmail} placeholder="alice.martin@acme.fr" />
       <Button className="mt-4" variant="secondary" onClick={handleResetRequest}>
-        Envoyer le code
+        {s.sendCode}
       </Button>
       {resetCode && (
         <div className="mt-4 space-y-3">
-          <Message type="info">{`Code envoyé par e-mail (démo) : ${resetCode}`}</Message>
-          <Input label="Code reçu" value={resetCodeInput} onChange={setResetCodeInput} placeholder="000 000" />
-          <Input label="Nouveau mot de passe" type="password" value={resetNewPassword} onChange={setResetNewPassword} />
-          <Button onClick={handleResetConfirm}>Réinitialiser le mot de passe</Button>
+          <Message type="info">{s.codeSentInfo(resetCode)}</Message>
+          <Input label={s.codeReceivedLabel} value={resetCodeInput} onChange={setResetCodeInput} placeholder="000 000" />
+          <Input label={s.newPasswordLabel} type="password" value={resetNewPassword} onChange={setResetNewPassword} />
+          <Button onClick={handleResetConfirm}>{s.resetButton}</Button>
         </div>
       )}
       {resetDone && (
         <div className="mt-3">
-          <Message type="success">Mot de passe mis à jour — testez-le dans l'onglet Connexion.</Message>
+          <Message type="success">{s.resetDone}</Message>
         </div>
       )}
       {resetError && (
@@ -240,7 +252,7 @@ export default function AuthSimulateur() {
 
   return (
     <div className="space-y-6">
-      <Panel variant="info" title="Session simulée">
+      <Panel variant="info" title={s.sessionPanelTitle}>
         {session ? (
           <div className="flex flex-wrap items-center gap-4">
             <span
@@ -261,35 +273,34 @@ export default function AuthSimulateur() {
               </div>
             </div>
             <Badge variant={session.role === "admin" ? "primary" : "default"}>
-              {session.role === "admin" ? "Administrateur" : "Membre"}
+              {session.role === "admin" ? s.badgeAdmin : s.badgeMember}
             </Badge>
             <Button variant="secondary" onClick={handleLogout}>
-              Se déconnecter
+              {s.signOut}
             </Button>
           </div>
         ) : (
           <p className="text-sm m-0" style={{ color: "var(--bpm-text-secondary)" }}>
-            Personne n&apos;est connecté dans le bac à sable. Utilisez les onglets ci-dessous —
-            la vraie session de l&apos;application n&apos;est jamais modifiée.
+            {s.noSession}
           </p>
         )}
       </Panel>
 
-      <Panel variant="info" title="Flux d'authentification (bac à sable)">
+      <Panel variant="info" title={s.flowsPanelTitle}>
         <Tabs
           tabs={[
-            { label: "Connexion", content: loginTab },
-            { label: "Inscription", content: registerTab },
-            { label: "Mot de passe oublié", content: resetTab },
+            { label: s.tabLogin, content: loginTab },
+            { label: s.tabRegister, content: registerTab },
+            { label: s.tabReset, content: resetTab },
           ]}
           defaultTab={0}
         />
       </Panel>
 
-      <Panel variant="info" title="Journal des événements">
+      <Panel variant="info" title={s.journalPanelTitle}>
         <ul className="m-0 pl-5 text-sm space-y-1" style={{ color: "var(--bpm-text-secondary)" }}>
-          {journal.map((line, i) => (
-            <li key={i}>{line}</li>
+          {journal.map((entry, i) => (
+            <li key={i}>{renderJournalEntry(entry)}</li>
           ))}
         </ul>
       </Panel>

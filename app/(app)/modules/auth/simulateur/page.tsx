@@ -2,6 +2,8 @@
 
 import Link from "next/link";
 import AuthSimulateur from "../simulateur-content";
+import { useI18n } from "@/lib/i18n/LocaleProvider";
+import { STR } from "../strings";
 
 const cardStyle = {
   background: "var(--bpm-bg-primary)",
@@ -43,6 +45,9 @@ function ModelCard({
 }
 
 export default function AuthSimulateurPage() {
+  const { locale } = useI18n();
+  const s = STR[locale].simPage;
+
   return (
     <div className="doc-page">
       <div className="doc-page-header">
@@ -51,48 +56,46 @@ export default function AuthSimulateurPage() {
           {" → "}
           <Link href="/modules/auth">Auth</Link>
           {" → "}
-          Simulateur
+          {s.breadcrumbSim}
         </div>
-        <h1>Simulateur — Auth</h1>
+        <h1>{s.title}</h1>
         <p className="doc-description">
-          Jouez les flux complets dans le bac à sable : connexion (comptes de démo, whitelist de
-          domaines, erreurs), inscription, mot de passe oublié — sans toucher la vraie session.
-          Les trois modèles de page restent consultables en bas.
+          {s.description}
         </p>
       </div>
 
       <AuthSimulateur />
 
       <h2 className="text-lg font-semibold mt-10 mb-3" style={{ color: "var(--bpm-text-primary)" }}>
-        Modèles de page de connexion
+        {s.templatesTitle}
       </h2>
       <div className="grid gap-6 mb-8" style={{ gridTemplateColumns: "repeat(auto-fill, minmax(300px, 1fr))" }}>
         <ModelCard
-          title="1. Carte centrée (par défaut)"
-          description="Formulaire dans une carte centrée, option Google + e-mail."
+          title={s.card1Title}
+          description={s.card1Desc}
           links={[
-            { href: "/login", label: "Aperçu connexion" },
-            { href: "/register", label: "Aperçu inscription" },
+            { href: "/login", label: s.previewLogin },
+            { href: "/register", label: s.previewRegister },
           ]}
         />
         <ModelCard
-          title="2. Modèle split"
-          description="Formulaire à gauche, image à droite (équipe, collaboration)."
+          title={s.card2Title}
+          description={s.card2Desc}
           links={[
-            { href: "/login?layout=split", label: "Aperçu connexion" },
-            { href: "/register?layout=split", label: "Aperçu inscription" },
+            { href: "/login?layout=split", label: s.previewLogin },
+            { href: "/register?layout=split", label: s.previewRegister },
           ]}
         />
         <ModelCard
-          title="3. Google seul"
-          description="Un seul bouton « Google », pas de formulaire e-mail."
-          links={[{ href: "/login?showEmailOption=false", label: "Aperçu connexion" }]}
+          title={s.card3Title}
+          description={s.card3Desc}
+          links={[{ href: "/login?showEmailOption=false", label: s.previewLogin }]}
         />
       </div>
 
       <nav className="doc-pagination">
         <Link href="/modules/auth" className="text-sm font-medium hover:underline" style={linkStyle}>
-          ← Retour au module Auth
+          {s.backToModule}
         </Link>
       </nav>
     </div>
