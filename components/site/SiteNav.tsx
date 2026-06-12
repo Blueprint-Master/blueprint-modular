@@ -37,7 +37,11 @@ export function SiteNav() {
     <header className="site-nav" data-menu-open={menuOpen ? "true" : undefined}>
       <div className="site-container site-nav-inner">
         <Link href="/" className="site-wordmark" aria-label={dict.nav.ariaHome}>
-          <span className="site-wordmark-strong">Blueprint</span> Modular
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img src="/img/logo-bpm.png" alt="" className="site-brand-logo" width={30} height={30} />
+          <span className="site-wordmark-text">
+            <span className="site-wordmark-strong">Blueprint</span> Modular
+          </span>
         </Link>
 
         <nav aria-label={dict.nav.ariaMain} className="site-nav-links">

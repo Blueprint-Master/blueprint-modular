@@ -3196,12 +3196,73 @@ body.contract-detail-panel-open .pwa-title-bar {
 }
 
 .site-wordmark {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  flex: 0 0 auto;
   font-family: var(--site-font-display);
   font-size: 16px;
   letter-spacing: -0.01em;
   color: var(--bpm-text-primary);
   text-decoration: none;
   white-space: nowrap;
+}
+
+.site-wordmark-text {
+  white-space: nowrap;
+}
+
+/* Logo de marque (asset réel de l'app : public/img/logo-bpm.png).
+   Chip blanc + bordille pour rester lisible en thème clair comme sombre.
+   Traitement partagé entre nav site, sidebar et barre de titre de l'app. */
+.site-brand-logo,
+.bpm-brand-logo {
+  flex: 0 0 auto;
+  border-radius: 7px;
+  object-fit: contain;
+  background: #ffffff;
+  padding: 2px;
+  border: 1px solid var(--bpm-border);
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.12);
+}
+
+.site-brand-logo {
+  width: 30px;
+  height: 30px;
+}
+
+.app-titlebar-brand .bpm-brand-logo {
+  width: 28px;
+  height: 28px;
+}
+
+.bpm-sidebar-title .bpm-brand-logo {
+  width: 24px;
+  height: 24px;
+  border-radius: 6px;
+}
+
+/* Marque dans la barre de titre de l'app (mobile uniquement) */
+.app-titlebar-brand {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  min-width: 0;
+  text-decoration: none;
+  color: var(--bpm-text-primary);
+  font-family: var(--site-font-display);
+  font-size: 15px;
+  letter-spacing: -0.01em;
+}
+
+.app-titlebar-brand-text {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.app-titlebar-brand-text strong {
+  font-weight: 700;
 }
 
 .site-wordmark-strong {
