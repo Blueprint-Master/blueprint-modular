@@ -108,7 +108,9 @@ const fr = {
     showcase: {
       liveTitle: "Le rendu réel, pas des captures.",
       liveBody:
-        "Chaque tuile ci-dessous est un composant du package, monté en direct sur cette page. Survolez, lisez, comparez : c'est exactement ce que votre application affichera.",
+        "Chaque tuile est un composant du package, exécuté en direct dans votre navigateur — et sous chacune, la ligne exacte qui la produit. Le code que vous lisez est le code qui tourne. C'est ce que votre application affichera, au pixel près.",
+      copy: "Copier",
+      copied: "Copié",
       families: {
         dataDisplay: "Affichage de données",
         layout: "Mise en page",

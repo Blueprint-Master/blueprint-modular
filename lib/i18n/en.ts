@@ -108,7 +108,9 @@ const en: Dictionary = {
     showcase: {
       liveTitle: "The real output, not screenshots.",
       liveBody:
-        "Every tile below is a package component, mounted live on this page. Hover, read, compare: this is exactly what your application will render.",
+        "Each tile is a package component, executed live in your browser — and beneath each one, the exact line that produces it. The code you read is the code that runs. This is exactly what your application will render, pixel for pixel.",
+      copy: "Copy",
+      copied: "Copied",
       families: {
         dataDisplay: "Data display",
         layout: "Layout",
