@@ -1,23 +1,23 @@
 "use client";
 
 import Link from "next/link";
+import { useI18n } from "@/lib/i18n/LocaleProvider";
 import TachesSimulateur from "../simulateur-content";
+import { STR } from "../strings";
 
 export default function TachesSimulateurPage() {
+  const { locale } = useI18n();
+  const s = STR[locale];
+
   return (
     <div className="doc-page">
       <div className="doc-page-header">
         <div className="doc-breadcrumb">
-          <Link href="/modules">Modules</Link> → <Link href="/modules/taches">Tâches</Link> →
-          Simulateur
+          <Link href="/modules">Modules</Link> → <Link href="/modules/taches">{s.breadcrumb.tasks}</Link> →{" "}
+          {s.breadcrumb.simulator}
         </div>
-        <h1>Simulateur — Tâches</h1>
-        <p className="doc-description">
-          Huit tâches du sprint en cours (équipe produit, référence au 12/06/2026). Créez une
-          tâche, faites-la avancer (« Démarrer », « Terminer »), modifiez l&apos;assigné ou
-          l&apos;échéance, supprimez : métriques, compteurs et badges « En retard » se mettent à
-          jour en direct. Les filtres statut, assigné et recherche se combinent.
-        </p>
+        <h1>{s.simPage.title}</h1>
+        <p className="doc-description">{s.simPage.description}</p>
       </div>
       <TachesSimulateur />
     </div>
