@@ -2,31 +2,31 @@
 
 import Link from "next/link";
 import { CodeBlock, Tabs } from "@/components/bpm";
+import { useI18n } from "@/lib/i18n/LocaleProvider";
 import ExportPlanifieSimulateur from "./simulateur-content";
+import { STR, type ModuleStrings } from "./strings";
 
-const docContent = (
-  <div className="prose-sm">
-    <h2 className="text-lg font-semibold mt-0 mb-2" style={{ color: "var(--bpm-text-primary)" }}>
-      À propos
-    </h2>
-    <p className="mb-4" style={{ color: "var(--bpm-text-secondary)", maxWidth: "62ch" }}>
-      Le module Export planifié envoie automatiquement vos rapports (PDF ou CSV) par e-mail :
-      la DAF reçoit sa position de trésorerie chaque matin, la direction commerciale sa synthèse
-      des ventes chaque lundi. On planifie une fois (rapport + fréquence + heure + destinataires),
-      le planificateur fait le reste — et chaque planification reste pilotable : envoi manuel,
-      suspension, reprise, suppression.
-    </p>
-    <h3 className="text-base font-semibold mt-6 mb-2" style={{ color: "var(--bpm-text-primary)" }}>
-      Composants utilisés
-    </h3>
-    <p className="mb-4" style={{ color: "var(--bpm-text-secondary)" }}>
-      <code>bpm.metricRow</code>, <code>bpm.table</code> (statut et format rendus par{" "}
-      <code>bpm.badge</code>, actions par <code>bpm.button</code>), <code>bpm.selectbox</code>,{" "}
-      <code>bpm.input</code> (validation e-mail), <code>bpm.confirmModal</code>,{" "}
-      <code>bpm.activityFeed</code> et <code>bpm.toast</code>.
-    </p>
-    <CodeBlock
-      code={`import bpm
+function DocContent({ t }: { t: ModuleStrings }) {
+  return (
+    <div className="prose-sm">
+      <h2 className="text-lg font-semibold mt-0 mb-2" style={{ color: "var(--bpm-text-primary)" }}>
+        {t.aboutHeading}
+      </h2>
+      <p className="mb-4" style={{ color: "var(--bpm-text-secondary)", maxWidth: "62ch" }}>
+        {t.aboutBody}
+      </p>
+      <h3 className="text-base font-semibold mt-6 mb-2" style={{ color: "var(--bpm-text-primary)" }}>
+        {t.componentsHeading}
+      </h3>
+      <p className="mb-4" style={{ color: "var(--bpm-text-secondary)" }}>
+        <code>bpm.metricRow</code>, <code>bpm.table</code> ({t.compsTableParen1}{" "}
+        <code>bpm.badge</code>, {t.compsTableParen2} <code>bpm.button</code>),{" "}
+        <code>bpm.selectbox</code>, <code>bpm.input</code> ({t.compsInputParen}),{" "}
+        <code>bpm.confirmModal</code>, <code>bpm.activityFeed</code> {t.andWord}{" "}
+        <code>bpm.toast</code>.
+      </p>
+      <CodeBlock
+        code={`import bpm
 
 bpm.metricRow([
     bpm.metric("Exports actifs", 3),
@@ -39,38 +39,35 @@ bpm.table(
 )
 
 bpm.button("Planifier l'export", on_click=planifier)`}
-      language="python"
-    />
-    <h3 className="text-base font-semibold mt-6 mb-2" style={{ color: "var(--bpm-text-primary)" }}>
-      Paramétrage
-    </h3>
-    <p className="mb-2 text-sm" style={{ color: "var(--bpm-text-secondary)" }}>
-      Le simulateur fonctionne entièrement en local (données seedées, aucune API requise). En
-      production, brancher la création sur votre planificateur (cron, worker) et l&apos;envoi sur
-      votre service e-mail. Voir la{" "}
-      <Link href="/modules/export-planifie/documentation" style={{ color: "var(--bpm-accent-cyan)" }}>
-        documentation
-      </Link>{" "}
-      pour le modèle de données et les points d&apos;intégration.
-    </p>
-  </div>
-);
+        language="python"
+      />
+      <h3 className="text-base font-semibold mt-6 mb-2" style={{ color: "var(--bpm-text-primary)" }}>
+        {t.configHeading}
+      </h3>
+      <p className="mb-2 text-sm" style={{ color: "var(--bpm-text-secondary)" }}>
+        {t.configBody1}{" "}
+        <Link href="/modules/export-planifie/documentation" style={{ color: "var(--bpm-accent-cyan)" }}>
+          {t.configLinkLabel}
+        </Link>{" "}
+        {t.configBody2}
+      </p>
+    </div>
+  );
+}
 
 export default function ExportPlanifieModulePage() {
+  const { locale } = useI18n();
+  const t = STR[locale];
   return (
     <div className="doc-page">
       <div className="doc-page-header">
         <div className="doc-breadcrumb">
-          <Link href="/modules">Modules</Link> → Export planifié
+          <Link href="/modules">Modules</Link> → {t.moduleTitle}
         </div>
-        <h1>Export planifié</h1>
-        <p className="doc-description">
-          Envoyez automatiquement vos rapports PDF/CSV par e-mail — quotidien, hebdomadaire ou
-          mensuel. Planifiez, suspendez, déclenchez un envoi manuel : tout est visible dans le
-          Simulateur.
-        </p>
+        <h1>{t.moduleTitle}</h1>
+        <p className="doc-description">{t.moduleDescription}</p>
         <div className="doc-meta">
-          <span className="doc-badge doc-badge-category">Données &amp; reporting</span>
+          <span className="doc-badge doc-badge-category">{t.categoryBadge}</span>
         </div>
         <p className="mt-3 text-sm" style={{ color: "var(--bpm-text-secondary)" }}>
           <Link
@@ -78,14 +75,14 @@ export default function ExportPlanifieModulePage() {
             className="font-medium underline"
             style={{ color: "var(--bpm-accent-cyan)" }}
           >
-            Ouvrir le simulateur
+            {t.openSimulator}
           </Link>
         </p>
       </div>
       <Tabs
         tabs={[
-          { label: "Documentation", content: docContent },
-          { label: "Simulateur", content: <ExportPlanifieSimulateur /> },
+          { label: t.docLabel, content: <DocContent t={t} /> },
+          { label: t.simLabel, content: <ExportPlanifieSimulateur /> },
         ]}
         defaultTab={0}
       />

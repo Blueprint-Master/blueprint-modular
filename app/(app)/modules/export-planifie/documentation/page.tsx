@@ -2,29 +2,32 @@
 
 import Link from "next/link";
 import { CodeBlock } from "@/components/bpm";
+import { useI18n } from "@/lib/i18n/LocaleProvider";
+import { STR } from "../strings";
 
 export default function ExportPlanifieDocumentationPage() {
+  const { locale } = useI18n();
+  const t = STR[locale];
   return (
     <div className="doc-page">
       <div className="doc-page-header">
         <nav className="doc-breadcrumb">
           <Link href="/modules">Modules</Link> →{" "}
-          <Link href="/modules/export-planifie">Export planifié</Link> → Documentation
+          <Link href="/modules/export-planifie">{t.moduleTitle}</Link> → {t.docLabel}
         </nav>
-        <h1>Documentation — Export planifié</h1>
-        <p className="doc-description">
-          Envoi périodique de rapports PDF/CSV par e-mail : modèle de données, cycle de vie et
-          points d&apos;intégration.
-        </p>
+        <h1>{t.docPageTitle}</h1>
+        <p className="doc-description">{t.docPageDescription}</p>
       </div>
 
       <h2 className="text-lg font-semibold mt-6 mb-2" style={{ color: "var(--bpm-text-primary)" }}>
-        Modèle de données
+        {t.dataModelHeading}
       </h2>
       <p className="mb-4" style={{ color: "var(--bpm-text-secondary)", maxWidth: "62ch" }}>
-        Une planification associe un rapport à une fréquence, une heure d&apos;envoi, un format et
-        une liste de destinataires. Le statut (<code>actif</code>) permet de suspendre sans
-        supprimer ; <code>prochainEnvoi</code> est recalculé à chaque changement.
+        {t.dataModelP1}
+        <code>actif</code>
+        {t.dataModelP2}
+        <code>prochainEnvoi</code>
+        {t.dataModelP3}
       </p>
       <CodeBlock
         code={`{
@@ -39,23 +42,26 @@ export default function ExportPlanifieDocumentationPage() {
       />
 
       <h2 className="text-lg font-semibold mt-6 mb-2" style={{ color: "var(--bpm-text-primary)" }}>
-        Cycle de vie
+        {t.lifecycleHeading}
       </h2>
       <ul className="mb-4 list-disc pl-5 text-sm space-y-1" style={{ color: "var(--bpm-text-secondary)" }}>
-        <li><strong>Planifier</strong> — validation des adresses, calcul du prochain envoi, ajout en tête de liste.</li>
-        <li><strong>Envoyer maintenant</strong> — déclenchement manuel sans toucher à la planification.</li>
-        <li><strong>Suspendre / Reprendre</strong> — bascule du statut ; le prochain envoi est recalculé à la reprise.</li>
-        <li><strong>Supprimer</strong> — confirmation explicite (<code>bpm.confirmModal</code>), action tracée dans l&apos;historique.</li>
+        <li><strong>{t.lcScheduleTitle}</strong> — {t.lcScheduleDesc}</li>
+        <li><strong>{t.lcSendTitle}</strong> — {t.lcSendDesc}</li>
+        <li><strong>{t.lcPauseTitle}</strong> — {t.lcPauseDesc}</li>
+        <li>
+          <strong>{t.lcDeleteTitle}</strong> — {t.lcDeleteDesc1}
+          <code>bpm.confirmModal</code>
+          {t.lcDeleteDesc2}
+        </li>
       </ul>
 
       <h2 className="text-lg font-semibold mt-6 mb-2" style={{ color: "var(--bpm-text-primary)" }}>
-        Intégration en production
+        {t.integrationHeading}
       </h2>
       <p className="mb-4 text-sm" style={{ color: "var(--bpm-text-secondary)", maxWidth: "62ch" }}>
-        Le simulateur fonctionne en local (état React seedé). Pour brancher un vrai backend :
-        persister les planifications (table <code>scheduled_exports</code>), déclencher les envois
-        via un cron/worker qui génère le rapport (PDF/CSV) et l&apos;envoie par votre service
-        e-mail, puis journaliser chaque envoi (l&apos;équivalent du flux « Derniers envois »).
+        {t.integrationP1}
+        <code>scheduled_exports</code>
+        {t.integrationP2}
       </p>
 
       <p className="mt-6 text-sm" style={{ color: "var(--bpm-text-secondary)" }}>
@@ -64,7 +70,7 @@ export default function ExportPlanifieDocumentationPage() {
           className="font-medium underline"
           style={{ color: "var(--bpm-accent-cyan)" }}
         >
-          Ouvrir le simulateur
+          {t.openSimulator}
         </Link>
       </p>
     </div>
