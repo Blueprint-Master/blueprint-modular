@@ -30,8 +30,6 @@ export default async function TermsPage() {
       title={t.title}
       intro={t.intro}
       sections={t.sections}
-      contactTitle={t.contactTitle}
-      contactBody={t.contactBody}
     />
   );
 }

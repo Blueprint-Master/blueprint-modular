@@ -30,8 +30,6 @@ export default async function LegalNoticePage() {
       title={n.title}
       intro={n.intro}
       sections={n.sections}
-      contactTitle={n.contactTitle}
-      contactBody={n.contactBody}
     />
   );
 }

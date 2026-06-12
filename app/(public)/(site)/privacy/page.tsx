@@ -30,8 +30,6 @@ export default async function PrivacyPage() {
       title={p.title}
       intro={p.intro}
       sections={p.sections}
-      contactTitle={p.contactTitle}
-      contactBody={p.contactBody}
     >
       <div className="site-legal-section">
         <h2>{p.cookiesTitle}</h2>

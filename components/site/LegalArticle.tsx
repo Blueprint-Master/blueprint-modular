@@ -1,6 +1,5 @@
 import Link from "next/link";
 import { fmt, type Dictionary, type Locale } from "@/lib/i18n";
-import { CONTACT_EMAIL } from "@/lib/mcp/meta";
 
 /** Date de dernière révision des pages légales (constante, pas la date du jour). */
 export const LEGAL_LAST_UPDATED_ISO = "2026-06-11";
@@ -25,8 +24,6 @@ export function LegalArticle({
   title,
   intro,
   sections,
-  contactTitle,
-  contactBody,
   children,
 }: {
   dict: Dictionary;
@@ -34,8 +31,6 @@ export function LegalArticle({
   title: string;
   intro: string;
   sections: readonly Section[];
-  contactTitle: string;
-  contactBody: string;
   children?: React.ReactNode;
 }) {
   return (
@@ -53,14 +48,6 @@ export function LegalArticle({
         ))}
 
         {children}
-
-        <div className="site-legal-section">
-          <h2>{contactTitle}</h2>
-          <p>
-            {contactBody}{" "}
-            <a href={`mailto:${CONTACT_EMAIL}`}>{CONTACT_EMAIL}</a>.
-          </p>
-        </div>
 
         <p className="site-legal-back">
           <Link href="/">← {dict.legal.backHome}</Link>
