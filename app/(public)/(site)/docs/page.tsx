@@ -5,7 +5,7 @@ import { getDict } from "@/lib/i18n/server";
 import { fmt } from "@/lib/i18n";
 
 export const metadata: Metadata = {
-  alternates: { canonical: "https://app.blueprint-modular.com/docs" },
+  alternates: { canonical: "https://blueprint-modular.com/docs" },
 };
 
 type CardKey = "gettingStarted" | "catalog" | "gallery" | "llms" | "changelog" | "database";
@@ -37,7 +37,7 @@ export default async function DocsPage() {
   };
 
   return (
-    <div className="doc-page">
+    <>
       {/* HERO — aligné sur les pages MCP et Ressources (eyebrow + titre + lead) */}
       <section className="site-hero">
         <div className="site-container">
@@ -88,6 +88,6 @@ export default async function DocsPage() {
           </ul>
         </div>
       </section>
-    </div>
+    </>
   );
 }

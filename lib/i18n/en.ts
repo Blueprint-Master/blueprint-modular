@@ -13,6 +13,7 @@ const en: Dictionary = {
     code: "Code",
   },
   nav: {
+    presentation: "Overview",
     gallery: "Components",
     modules: "Modules",
     mcp: "MCP",
@@ -250,6 +251,44 @@ const en: Dictionary = {
     stageValidation: "Validation",
     stageClosed: "Closed",
     statusOk: "Operational",
+  },
+  presentationPage: {
+    metaTitle: "Overview — Blueprint Modular",
+    metaDescription:
+      "Blueprint Modular at a glance: React components called like Python functions, ready-to-wire business modules, an MCP connector for your agents, and documentation generated from the code.",
+    eyebrow: "Overview",
+    title: "Blueprint Modular, at a glance.",
+    lead:
+      "A business-UI library driven from Python: {components} components rendered live, {modules} ready-to-wire modules, an MCP connector for your agents — one source of truth, from code to catalog.",
+    ctaPrimary: "Get started",
+    ctaSecondary: "Open the app",
+    ecosystem: {
+      title: "One product, five entry points.",
+      lead:
+        "Every building block is discovered, tested and documented in the same place. Here's where to start.",
+      cards: {
+        components: {
+          title: "Components",
+          body: "The {components} bpm.* components rendered in real situations, with variants and compositions.",
+        },
+        modules: {
+          title: "Business modules",
+          body: "{modules} ready-to-wire modules — auth, wiki, monitoring, contracts, dashboards — each with its docs and simulator.",
+        },
+        mcp: {
+          title: "MCP connector",
+          body: "The catalog opened to your agents: read-only, no authentication, no personal data.",
+        },
+        docs: {
+          title: "Documentation",
+          body: "Install path, detailed catalog and machine reference, from first component to production.",
+        },
+        resources: {
+          title: "Resources",
+          body: "Guides, changelog, PyPI package and llms.txt — everything to build, in one entry point.",
+        },
+      },
+    },
   },
   gallery: {
     eyebrow: "Components",
