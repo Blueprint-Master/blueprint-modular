@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import Link from "next/link";
 import { useParams } from "next/navigation";
 import { Panel, Button, Spinner, Badge, Metric, Divider } from "@/components/bpm";
+import { Markdown } from "@/components/bpm/Markdown";
 import { FicheHeader, FicheSectionCard, FicheNav, FicheSkeleton } from "@/components/fiche";
 
 type KnowledgeArticle = {
@@ -102,18 +103,7 @@ export default function AssetManagerKnowledgeDetailPage() {
 
       <Divider thickness={1} color="var(--bpm-border)" className="my-4" />
       <FicheSectionCard title="Contenu" className="mt-4">
-        <div
-          className="prose prose-sm max-w-none"
-          style={{ color: "var(--bpm-text-primary)" }}
-          dangerouslySetInnerHTML={{
-            __html: article.content
-              .replace(/\n/g, "<br />")
-              .replace(/\*\*(.+?)\*\*/g, "<strong>$1</strong>")
-              .replace(/\*(.+?)\*/g, "<em>$1</em>")
-              .replace(/^## (.+)$/gm, "<h2 class='text-lg font-semibold mt-4 mb-2'>$1</h2>")
-              .replace(/^# (.+)$/gm, "<h1 class='text-xl font-bold mt-2 mb-2'>$1</h1>"),
-          }}
-        />
+        <Markdown text={article.content} className="prose prose-sm max-w-none" />
       </FicheSectionCard>
 
       <FicheNav backLink={`/modules/asset-manager/${domainId}/knowledge`} backLabel="← Connaissances" />
