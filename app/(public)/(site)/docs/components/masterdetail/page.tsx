@@ -5,6 +5,7 @@ import Link from "next/link";
 import { MasterDetail, CodeBlock } from "@/components/bpm";
 import type { MasterDetailColumn } from "@/components/bpm";
 import { getPrevNext } from "@/lib/docPages";
+import { useI18n } from "@/lib/i18n/LocaleProvider";
 
 type Client = Record<string, unknown> & {
   id: string;
@@ -24,18 +25,125 @@ const CLIENTS: Client[] = [
   { id: "c4", name: "Maison Lefèvre", city: "Lille", segment: "Commerce de détail", contact: "Julien Lefèvre", email: "julien@maison-lefevre.fr", revenue: "248 900 €", since: "2020" },
 ];
 
-const COLUMNS: MasterDetailColumn<Client>[] = [
-  { key: "name", label: "Client" },
-  { key: "city", label: "Ville" },
-];
+const frDict = {
+  breadcrumb: "Composants",
+  description: (
+    <>
+      Vue maître/détail responsive : liste à gauche, panneau de détail à droite, avec recherche
+      optionnelle. Sur mobile, le détail s&apos;ouvre en plein cadre avec un bouton retour.
+      Idéal pour parcourir une collection (clients, tickets, commandes) tout en gardant le
+      détail de l&apos;élément sélectionné sous les yeux.
+    </>
+  ),
+  category: "Mise en page",
+  colClient: "Client",
+  colCity: "Ville",
+  fieldSegment: "Segment",
+  fieldContact: "Contact",
+  fieldEmail: "E-mail",
+  fieldRevenue: "CA annuel",
+  fieldSince: "Client depuis",
+  searchableLabel: "searchable (barre de recherche)",
+  splitRatioLabel: (pct: number) => `splitRatio (largeur liste : ${pct} %)`,
+  emptyDetailDemo: "Sélectionnez un client dans la liste.",
+  emptyDetailPlaceholder: "Sélectionnez un élément dans la liste.",
+  resetSelection: "Réinitialiser la sélection",
+  copy: "Copier",
+  thDefault: "Défaut",
+  thRequired: "Requis",
+  yes: "Oui",
+  no: "Non",
+  examples: "Exemples",
+  propItems: (
+    <>
+      Données de la liste maître (objets indexés par <code>idKey</code>).
+    </>
+  ),
+  propColumns: (
+    <>
+      Colonnes affichées dans la liste de gauche (la première est en gras) ;{" "}
+      <code>render</code> personnalise le rendu d&apos;une cellule.
+    </>
+  ),
+  propRenderDetail: <>Rendu du panneau de détail pour l&apos;élément sélectionné.</>,
+  propOnSelect: <>Callback à la sélection d&apos;un élément de la liste.</>,
+  propSelectedId: <>Id de l&apos;élément sélectionné (mode contrôlé).</>,
+  propIdKey: <>Clé d&apos;identité des items.</>,
+  propSearchable: <>Affiche une barre de recherche filtrant la liste sur le texte des colonnes.</>,
+  propEmptyDetail: <>Message affiché dans le panneau quand rien n&apos;est sélectionné.</>,
+  propSplitRatio: <>Largeur de la liste en pourcentage du conteneur (le détail occupe le reste).</>,
+  propClassName: (
+    <>
+      Classes CSS additionnelles sur le conteneur <code>.bpm-master-detail</code>.
+    </>
+  ),
+};
+
+const enDict: typeof frDict = {
+  breadcrumb: "Components",
+  description: (
+    <>
+      Responsive master/detail view: list on the left, detail panel on the right, with optional
+      search. On mobile, the detail opens full-frame with a back button.
+      Ideal for browsing a collection (clients, tickets, orders) while keeping the details of
+      the selected item in view.
+    </>
+  ),
+  category: "Layout",
+  colClient: "Client",
+  colCity: "City",
+  fieldSegment: "Segment",
+  fieldContact: "Contact",
+  fieldEmail: "Email",
+  fieldRevenue: "Annual revenue",
+  fieldSince: "Customer since",
+  searchableLabel: "searchable (search bar)",
+  splitRatioLabel: (pct: number) => `splitRatio (list width: ${pct}%)`,
+  emptyDetailDemo: "Select a client from the list.",
+  emptyDetailPlaceholder: "Select an item from the list.",
+  resetSelection: "Reset selection",
+  copy: "Copy",
+  thDefault: "Default",
+  thRequired: "Required",
+  yes: "Yes",
+  no: "No",
+  examples: "Examples",
+  propItems: (
+    <>
+      Master list data (objects keyed by <code>idKey</code>).
+    </>
+  ),
+  propColumns: (
+    <>
+      Columns displayed in the left-hand list (the first one is bold);{" "}
+      <code>render</code> customizes how a cell is rendered.
+    </>
+  ),
+  propRenderDetail: <>Renders the detail panel for the selected item.</>,
+  propOnSelect: <>Callback when a list item is selected.</>,
+  propSelectedId: <>Id of the selected item (controlled mode).</>,
+  propIdKey: <>Identity key of the items.</>,
+  propSearchable: <>Shows a search bar that filters the list on the column text.</>,
+  propEmptyDetail: <>Message displayed in the panel when nothing is selected.</>,
+  propSplitRatio: <>List width as a percentage of the container (the detail takes the rest).</>,
+  propClassName: (
+    <>
+      Additional CSS classes on the <code>.bpm-master-detail</code> container.
+    </>
+  ),
+};
+
+const L = { fr: frDict, en: enDict } as const;
 
 function ClientDetail({ client }: { client: Client }) {
+  const { locale } = useI18n();
+  const t = L[locale];
   const rows: Array<[string, string]> = [
-    ["Segment", client.segment],
-    ["Contact", client.contact],
-    ["E-mail", client.email],
-    ["CA annuel", client.revenue],
-    ["Client depuis", client.since],
+    [t.fieldSegment, client.segment],
+    [t.fieldContact, client.contact],
+    [t.fieldEmail, client.email],
+    [t.fieldRevenue, client.revenue],
+    [t.fieldSince, client.since],
   ];
   return (
     <div>
@@ -54,10 +162,23 @@ function ClientDetail({ client }: { client: Client }) {
 }
 
 export default function DocMasterDetailPage() {
+  const { locale } = useI18n();
+  const t = L[locale];
   const [selectedId, setSelectedId] = useState<string | undefined>("c1");
   const [searchable, setSearchable] = useState(true);
   const [splitRatio, setSplitRatio] = useState(40);
-  const [emptyDetailMessage, setEmptyDetailMessage] = useState("Sélectionnez un client dans la liste.");
+  const [emptyDetailStr, setEmptyDetailStr] = useState(L.fr.emptyDetailDemo);
+
+  // Le message de démo suit la langue tant qu'il n'a pas été personnalisé.
+  const emptyDetailMessage =
+    emptyDetailStr === L.fr.emptyDetailDemo || emptyDetailStr === L.en.emptyDetailDemo
+      ? t.emptyDetailDemo
+      : emptyDetailStr;
+
+  const columns: MasterDetailColumn<Client>[] = [
+    { key: "name", label: t.colClient },
+    { key: "city", label: t.colCity },
+  ];
 
   const esc = (s: string) => s.replace(/"/g, '\\"');
   const opts: string[] = [];
@@ -76,18 +197,13 @@ export default function DocMasterDetailPage() {
     <div className="doc-page">
       <div className="doc-page-header">
         <div className="doc-breadcrumb">
-          <Link href="/docs/components">Composants</Link> → bpm.masterDetail
+          <Link href="/docs/components">{t.breadcrumb}</Link> → bpm.masterDetail
         </div>
         <h1>bpm.masterDetail</h1>
-        <p className="doc-description">
-          Vue maître/détail responsive : liste à gauche, panneau de détail à droite, avec recherche
-          optionnelle. Sur mobile, le détail s&apos;ouvre en plein cadre avec un bouton retour.
-          Idéal pour parcourir une collection (clients, tickets, commandes) tout en gardant le
-          détail de l&apos;élément sélectionné sous les yeux.
-        </p>
+        <p className="doc-description">{t.description}</p>
         <div className="doc-meta">
           <span className="doc-badge doc-badge-stable">Stable</span>
-          <span className="doc-badge doc-badge-category">Mise en page</span>
+          <span className="doc-badge doc-badge-category">{t.category}</span>
           <span className="doc-reading-time">⏱ 2 min</span>
         </div>
       </div>
@@ -97,7 +213,7 @@ export default function DocMasterDetailPage() {
           <div className="w-full">
             <MasterDetail<Client>
               items={CLIENTS}
-              columns={COLUMNS}
+              columns={columns}
               renderDetail={(client) => <ClientDetail client={client} />}
               selectedId={selectedId}
               onSelect={(client) => setSelectedId(client.id)}
@@ -115,11 +231,11 @@ export default function DocMasterDetailPage() {
                 checked={searchable}
                 onChange={(e) => setSearchable(e.target.checked)}
               />{" "}
-              searchable (barre de recherche)
+              {t.searchableLabel}
             </label>
           </div>
           <div className="sandbox-control-group">
-            <label>splitRatio (largeur liste : {splitRatio} %)</label>
+            <label>{t.splitRatioLabel(splitRatio)}</label>
             <input
               type="range"
               min={25}
@@ -134,20 +250,20 @@ export default function DocMasterDetailPage() {
             <input
               type="text"
               value={emptyDetailMessage}
-              onChange={(e) => setEmptyDetailMessage(e.target.value)}
-              placeholder="Sélectionnez un élément dans la liste."
+              onChange={(e) => setEmptyDetailStr(e.target.value)}
+              placeholder={t.emptyDetailPlaceholder}
             />
           </div>
           <div className="sandbox-control-group">
             <button type="button" onClick={() => setSelectedId(undefined)}>
-              Réinitialiser la sélection
+              {t.resetSelection}
             </button>
           </div>
         </div>
         <div className="sandbox-code">
           <div className="sandbox-code-header">
             <span>Python</span>
-            <button type="button" onClick={() => navigator.clipboard.writeText(pythonCode)}>Copier</button>
+            <button type="button" onClick={() => navigator.clipboard.writeText(pythonCode)}>{t.copy}</button>
           </div>
           <pre><code>{pythonCode}</code></pre>
         </div>
@@ -155,23 +271,23 @@ export default function DocMasterDetailPage() {
 
       <table className="props-table">
         <thead>
-          <tr><th>Prop</th><th>Type</th><th>Défaut</th><th>Requis</th><th>Description</th></tr>
+          <tr><th>Prop</th><th>Type</th><th>{t.thDefault}</th><th>{t.thRequired}</th><th>Description</th></tr>
         </thead>
         <tbody>
-          <tr><td><code>items</code></td><td><code>T[]</code></td><td>—</td><td>Oui</td><td>Données de la liste maître (objets indexés par <code>idKey</code>).</td></tr>
-          <tr><td><code>columns</code></td><td><code>&#123; key, label, render? &#125;[]</code></td><td>—</td><td>Oui</td><td>Colonnes affichées dans la liste de gauche (la première est en gras) ; <code>render</code> personnalise le rendu d&apos;une cellule.</td></tr>
-          <tr><td><code>renderDetail</code></td><td><code>(item: T) =&gt; ReactElement</code></td><td>—</td><td>Oui</td><td>Rendu du panneau de détail pour l&apos;élément sélectionné.</td></tr>
-          <tr><td><code>onSelect</code></td><td><code>(item: T) =&gt; void</code></td><td>—</td><td>Oui</td><td>Callback à la sélection d&apos;un élément de la liste.</td></tr>
-          <tr><td><code>selectedId</code></td><td><code>string</code></td><td>—</td><td>Non</td><td>Id de l&apos;élément sélectionné (mode contrôlé).</td></tr>
-          <tr><td><code>idKey</code></td><td><code>string</code></td><td>&quot;id&quot;</td><td>Non</td><td>Clé d&apos;identité des items.</td></tr>
-          <tr><td><code>searchable</code></td><td><code>boolean</code></td><td>false</td><td>Non</td><td>Affiche une barre de recherche filtrant la liste sur le texte des colonnes.</td></tr>
-          <tr><td><code>emptyDetailMessage</code></td><td><code>string</code></td><td>&quot;Sélectionnez un élément dans la liste.&quot;</td><td>Non</td><td>Message affiché dans le panneau quand rien n&apos;est sélectionné.</td></tr>
-          <tr><td><code>splitRatio</code></td><td><code>number</code></td><td>40</td><td>Non</td><td>Largeur de la liste en pourcentage du conteneur (le détail occupe le reste).</td></tr>
-          <tr><td><code>className</code></td><td><code>string</code></td><td>&quot;&quot;</td><td>Non</td><td>Classes CSS additionnelles sur le conteneur <code>.bpm-master-detail</code>.</td></tr>
+          <tr><td><code>items</code></td><td><code>T[]</code></td><td>—</td><td>{t.yes}</td><td>{t.propItems}</td></tr>
+          <tr><td><code>columns</code></td><td><code>&#123; key, label, render? &#125;[]</code></td><td>—</td><td>{t.yes}</td><td>{t.propColumns}</td></tr>
+          <tr><td><code>renderDetail</code></td><td><code>(item: T) =&gt; ReactElement</code></td><td>—</td><td>{t.yes}</td><td>{t.propRenderDetail}</td></tr>
+          <tr><td><code>onSelect</code></td><td><code>(item: T) =&gt; void</code></td><td>—</td><td>{t.yes}</td><td>{t.propOnSelect}</td></tr>
+          <tr><td><code>selectedId</code></td><td><code>string</code></td><td>—</td><td>{t.no}</td><td>{t.propSelectedId}</td></tr>
+          <tr><td><code>idKey</code></td><td><code>string</code></td><td>&quot;id&quot;</td><td>{t.no}</td><td>{t.propIdKey}</td></tr>
+          <tr><td><code>searchable</code></td><td><code>boolean</code></td><td>false</td><td>{t.no}</td><td>{t.propSearchable}</td></tr>
+          <tr><td><code>emptyDetailMessage</code></td><td><code>string</code></td><td>&quot;Sélectionnez un élément dans la liste.&quot;</td><td>{t.no}</td><td>{t.propEmptyDetail}</td></tr>
+          <tr><td><code>splitRatio</code></td><td><code>number</code></td><td>40</td><td>{t.no}</td><td>{t.propSplitRatio}</td></tr>
+          <tr><td><code>className</code></td><td><code>string</code></td><td>&quot;&quot;</td><td>{t.no}</td><td>{t.propClassName}</td></tr>
         </tbody>
       </table>
 
-      <h2 className="text-lg font-semibold mt-8 mb-2">Exemples</h2>
+      <h2 className="text-lg font-semibold mt-8 mb-2">{t.examples}</h2>
       <CodeBlock
         code={'columns = [{"key": "name", "label": "Client"}, {"key": "city", "label": "Ville"}]\nbpm.master_detail(items=clients, columns=columns, render_detail=render_client, on_select=on_select)'}
         language="python"
