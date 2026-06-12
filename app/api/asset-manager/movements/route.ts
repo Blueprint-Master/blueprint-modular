@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { getSessionOrTestUser } from "@/lib/auth";
+import { requireWriteRole } from "@/lib/asset-manager/authz";
 import { prisma } from "@/lib/prisma";
 
 export const dynamic = "force-dynamic";
@@ -39,6 +40,8 @@ export async function GET(request: Request) {
 export async function POST(request: Request) {
   const result = await getSessionOrTestUser();
   if (!result) return NextResponse.json({ error: "Non autorisé" }, { status: 401 });
+  const forbidden = requireWriteRole(result.user);
+  if (forbidden) return forbidden;
 
   const body = (await request.json()) as {
     assetId: string;
@@ -62,7 +65,7 @@ export async function POST(request: Request) {
   const asset = await prisma.asset.findUnique({ where: { id: body.assetId } });
   if (!asset) return NextResponse.json({ error: "Actif introuvable" }, { status: 404 });
 
-  const userId = result.user?.id ?? "test-user";
+  const userId = result.user.id;
   const movement = await prisma.assetMovement.create({
     data: {
       assetId: body.assetId,

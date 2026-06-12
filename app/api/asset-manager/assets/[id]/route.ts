@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { getSessionOrTestUser } from "@/lib/auth";
+import { requireWriteRole } from "@/lib/asset-manager/authz";
 import { prisma } from "@/lib/prisma";
 import { writeAuditLog, getClientIpAndAgent } from "@/lib/asset-manager/audit";
 
@@ -34,6 +35,8 @@ export async function GET(_request: Request, context: { params: Params }) {
 export async function PUT(request: Request, context: { params: Params }) {
   const result = await getSessionOrTestUser();
   if (!result) return NextResponse.json({ error: "Non autorisé" }, { status: 401 });
+  const forbidden = requireWriteRole(result.user);
+  if (forbidden) return forbidden;
 
   const { id } = await resolveParams(context.params);
   const asset = await prisma.asset.findUnique({ where: { id } });
@@ -75,7 +78,7 @@ export async function PUT(request: Request, context: { params: Params }) {
   const { ipAddress, userAgent } = getClientIpAndAgent(request);
   await writeAuditLog({
     domainId: asset.domainId,
-    userId: result.user?.id ?? "anonymous",
+    userId: result.user.id,
     action: "update",
     resourceType: "asset",
     resourceId: id,
@@ -112,6 +115,8 @@ export async function PUT(request: Request, context: { params: Params }) {
 export async function DELETE(_request: Request, context: { params: Params }) {
   const result = await getSessionOrTestUser();
   if (!result) return NextResponse.json({ error: "Non autorisé" }, { status: 401 });
+  const forbidden = requireWriteRole(result.user);
+  if (forbidden) return forbidden;
 
   const { id } = await resolveParams(context.params);
   const asset = await prisma.asset.findUnique({ where: { id } });
@@ -119,7 +124,7 @@ export async function DELETE(_request: Request, context: { params: Params }) {
   const { ipAddress, userAgent } = getClientIpAndAgent(_request);
   await writeAuditLog({
     domainId: asset.domainId,
-    userId: result.user?.id ?? "anonymous",
+    userId: result.user.id,
     action: "delete",
     resourceType: "asset",
     resourceId: id,

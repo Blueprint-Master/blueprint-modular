@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { getSessionOrTestUser } from "@/lib/auth";
+import { requireWriteRole } from "@/lib/asset-manager/authz";
 import { prisma } from "@/lib/prisma";
 
 export const dynamic = "force-dynamic";
@@ -59,6 +60,8 @@ export async function GET(request: Request) {
 export async function POST(request: Request) {
   const result = await getSessionOrTestUser();
   if (!result) return NextResponse.json({ error: "Non autorisé" }, { status: 401 });
+  const forbidden = requireWriteRole(result.user);
+  if (forbidden) return forbidden;
 
   const body = (await request.json()) as {
     domainId: string;
@@ -75,7 +78,7 @@ export async function POST(request: Request) {
   if (!body.content?.trim()) return NextResponse.json({ error: "content requis" }, { status: 400 });
   if (!body.categoryId?.trim()) return NextResponse.json({ error: "categoryId requis" }, { status: 400 });
 
-  const userId = result.user?.id ?? "test-user";
+  const userId = result.user.id;
   const baseSlug = slugify(body.title);
   let slug = baseSlug;
   let n = 0;

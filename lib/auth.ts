@@ -119,8 +119,27 @@ export function requireRole(role: Role): Role[] {
   return order.slice(i);
 }
 
-export function canEdit(_user: { role?: string }, _resource: unknown): boolean {
-  return true;
+/**
+ * Politique d'écriture par défaut (mono-tenant, calquée sur `canContributeToWiki`).
+ * Écriture (create/update/delete) réservée à OWNER/ADMIN ; USER = lecture seule.
+ * Les actifs appartiennent à l'org, pas à un utilisateur : pas de filtrage par ownership.
+ */
+export function hasWriteRole(user: { role?: string } | null | undefined): boolean {
+  const r = user?.role ?? "USER";
+  return r === "OWNER" || r === "ADMIN";
+}
+
+export function canEdit(user: { role?: string }, _resource?: unknown): boolean {
+  return hasWriteRole(user);
+}
+
+/**
+ * Workflow CAB privilégié : approuver / rejeter une change request est réservé
+ * à ADMIN/OWNER (même ensemble de rôles que l'écriture, gate explicite côté route).
+ */
+export function canApproveChange(user: { role?: string } | null | undefined): boolean {
+  const r = user?.role ?? "USER";
+  return r === "OWNER" || r === "ADMIN";
 }
 
 export function canContributeToWiki(user: { role?: string }): boolean {
