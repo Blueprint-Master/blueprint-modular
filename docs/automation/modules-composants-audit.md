@@ -421,3 +421,39 @@ rapports, reservation-creneaux, tableaux-de-bord, themes, webhooks.
 
 *Document produit par le Chantier 0. Validation humaine attendue avant toute PR
 d'exécution.*
+
+## 6. Suivi d'exécution (mis à jour le 2026-06-12)
+
+Chaque PR est basée sur `master`, branche dédiée, tsc 0 + build Next vert sur
+l'arbre d'intégration + smoke test HTTP des pages livrées. Aucune n'est mergée :
+revue humaine attendue.
+
+| Vague | Périmètre | PR |
+|---|---|---|
+| 0 | Audit + backlog (ce document) | #46 |
+| 1 | export-planifie | #47 |
+| 1 | rapports | #51 |
+| 1 | webhooks | #52 |
+| 1 | connecteurs | #53 |
+| 1 | themes | #54 |
+| 1 | tableaux-de-bord | #55 |
+| 1 | catalogue-produits | #56 |
+| 1 | formulaire-dynamique | #57 |
+| 1 | audit-log | #58 |
+| 1 | notifications-ciblees | #59 |
+| 1 | reservation-creneaux | #60 |
+| 1 | multi-langue | #61 |
+| 2 | fiches flowDiagram, statusTracker, approvalFlow, wizardForm | #63 |
+| 2 | fiches activityFeed, liveGauge, anomalyAlert, masterDetail | #64 |
+| 2 | fiches orgChart, commandPalette, title1/2/3 | #65 |
+| 3 | auth | #62 |
+| 3 | devis-facturation | #67 |
+| 3 | referentiels | #68 |
+| 3 | taches | #66 |
+| 3 | monitor | #69 |
+| 4 | fiches pdfViewer, map, gps, image, topNav | (en cours) |
+| 4 | réalisme données fiches charts | (en cours) |
+
+Après merge de ces PR : les 12 coquilles vides modules et les 5 modules « à
+reprendre » cochent la rubrique ; les 104 composants ont tous une fiche
+interactive dédiée.
