@@ -39,8 +39,9 @@ try:
 except Exception:
     SEMANTICS = {}
 
-VERSION_RE = re.compile(r'"version"\s*:\s*"([^"]+)"')
-PKG_JSON   = REPO_ROOT / "package.json"
+VERSION_RE    = re.compile(r'"version"\s*:\s*"([^"]+)"')
+CORE_PKG_JSON = REPO_ROOT / "packages" / "core" / "package.json"
+PYPROJECT     = REPO_ROOT / "pyproject.toml"
 
 # Composants prioritaires pour llms-core.txt (tier local Qwen)
 CORE_COMPONENTS = {
@@ -73,10 +74,21 @@ EXTRA_COMPONENTS: dict[str, str] = {
 # Parser
 # ---------------------------------------------------------------------------
 
-def get_version() -> str:
+def get_core_version() -> str:
+    """Version npm publiée du paquet @blueprint-modular/core (surface React)."""
     try:
-        txt = PKG_JSON.read_text(encoding="utf-8")
+        txt = CORE_PKG_JSON.read_text(encoding="utf-8")
         m = VERSION_RE.search(txt)
+        return m.group(1) if m else "unknown"
+    except Exception:
+        return "unknown"
+
+
+def get_python_version() -> str:
+    """Version PyPI publiée du paquet blueprint-modular (surface Python)."""
+    try:
+        txt = PYPROJECT.read_text(encoding="utf-8")
+        m = re.search(r'^version\s*=\s*"([^"]+)"', txt, re.MULTILINE)
         return m.group(1) if m else "unknown"
     except Exception:
         return "unknown"
@@ -315,7 +327,8 @@ def parse_bpm_tsx_local_interfaces(source: str) -> list[dict]:
 
 HEADER_FULL = """\
 # Blueprint Modular — Agent Context File
-# Version : {version}
+# Version React (@blueprint-modular/core, npm) : {core_version}
+# Version Python (blueprint-modular, PyPI)      : {python_version}
 # Date    : {date}
 # URL canonique : https://blueprint-modular.com/llms.txt
 #
@@ -346,7 +359,8 @@ INTERDIT : import {{ bpm.modal }} ou tout autre destructuring
 
 HEADER_CORE = """\
 # Blueprint Modular — Agent Context File (CORE)
-# Version : {version}
+# Version React (@blueprint-modular/core, npm) : {core_version}
+# Version Python (blueprint-modular, PyPI)      : {python_version}
 # Date    : {date}
 # Format compact pour modèles locaux (Qwen, Mistral)
 # Composants essentiels uniquement — référence complète : blueprint-modular.com/llms.txt
@@ -480,7 +494,8 @@ def main():
     parser.add_argument("--verbose", action="store_true", help="Détails des composants parsés")
     args = parser.parse_args()
 
-    version = get_version()
+    core_version   = get_core_version()
+    python_version = get_python_version()
     today   = date.today().isoformat()
 
     # --- Barrel = source de vérité : extraire les noms bpm.* ---
@@ -633,7 +648,7 @@ def main():
     print(f"Générés : {len(components)} composants ({len(skipped)} exclus, {extras_added} extras)")
 
     # --- Générer llms.txt complet ---
-    full_lines = [HEADER_FULL.format(version=version, date=today)]
+    full_lines = [HEADER_FULL.format(core_version=core_version, python_version=python_version, date=today)]
     full_lines.append("## COMPOSANTS\n")
     for comp in components:
         full_lines.append(format_component_full(comp))
@@ -643,7 +658,7 @@ def main():
 
     # --- Générer llms-core.txt compact ---
     core_comps = [c for c in components if (c.get("bpm_name") or bpm_name(c["name"])) in CORE_COMPONENTS]
-    core_lines = [HEADER_CORE.format(version=version, date=today)]
+    core_lines = [HEADER_CORE.format(core_version=core_version, python_version=python_version, date=today)]
     core_lines.append("## COMPOSANTS ESSENTIELS\n")
     for comp in core_comps:
         core_lines.append(format_component_core(comp))
