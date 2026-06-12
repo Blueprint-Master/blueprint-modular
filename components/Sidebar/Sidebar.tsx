@@ -152,7 +152,7 @@ export function Sidebar() {
           {!collapsed && (
             <Link href="/dashboard" className="bpm-sidebar-title">
               {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img src="/img/logo-bpm.png" alt="" className="bpm-brand-logo" width={24} height={24} />
+              <img src="/img/icon-pwa-192.png" alt="" className="bpm-brand-logo" width={24} height={24} />
               <span className="bpm-sidebar-item-label">.Modular</span>
             </Link>
           )}
