@@ -16,26 +16,31 @@ import {
   Table,
   useToast,
 } from "@/components/bpm";
+import { useI18n } from "@/lib/i18n/LocaleProvider";
+import type { Locale } from "@/lib/i18n";
+import { STR, type LText, type Strings } from "./strings";
 
 type ChampType = "text" | "number" | "choice";
 
 interface ChampDef {
   key: string;
-  label: string;
+  label: LText;
   type: ChampType;
   placeholder?: string;
   align?: "left" | "center" | "right";
-  options?: { value: string; label: string }[];
+  options?: { value: string; label: LText }[];
   /** Formatage d'affichage (colonnes du tableau et export CSV). */
-  format?: (value: string | number) => string;
+  format?: (value: string | number, locale: Locale) => string;
 }
 
 interface RefDef {
   id: string;
-  nom: string;
-  description: string;
+  nom: LText;
+  /** Segment du nom de fichier CSV, par locale. */
+  slug: LText;
+  description: LText;
   codeRegex: RegExp;
-  codeHint: string;
+  codeHint: LText;
   codePlaceholder: string;
   champs: ChampDef[];
 }
@@ -43,7 +48,7 @@ interface RefDef {
 interface RefEntry {
   id: string;
   code: string;
-  libelle: string;
+  libelle: LText;
   actif: boolean;
   /** Nombre d'enregistrements applicatifs qui référencent cette entrée — bloque la suppression. */
   utilisations: number;
@@ -53,16 +58,28 @@ interface RefEntry {
 const REFERENTIELS: RefDef[] = [
   {
     id: "devises",
-    nom: "Devises",
-    description: "Devises acceptées dans les documents commerciaux (ISO 4217).",
+    nom: { fr: "Devises", en: "Currencies" },
+    slug: { fr: "devises", en: "currencies" },
+    description: {
+      fr: "Devises acceptées dans les documents commerciaux (ISO 4217).",
+      en: "Currencies accepted in commercial documents (ISO 4217).",
+    },
     codeRegex: /^[A-Z]{3}$/,
-    codeHint: "3 lettres majuscules (ISO 4217)",
+    codeHint: {
+      fr: "3 lettres majuscules (ISO 4217)",
+      en: "3 uppercase letters, ISO 4217",
+    },
     codePlaceholder: "EUR",
     champs: [
-      { key: "symbole", label: "Symbole", type: "text", placeholder: "€" },
+      {
+        key: "symbole",
+        label: { fr: "Symbole", en: "Symbol" },
+        type: "text",
+        placeholder: "€",
+      },
       {
         key: "decimales",
-        label: "Décimales",
+        label: { fr: "Décimales", en: "Decimals" },
         type: "number",
         placeholder: "2",
         align: "right",
@@ -71,59 +88,81 @@ const REFERENTIELS: RefDef[] = [
   },
   {
     id: "pays",
-    nom: "Pays",
-    description: "Pays de facturation et de livraison (ISO 3166-1 alpha-2).",
+    nom: { fr: "Pays", en: "Countries" },
+    slug: { fr: "pays", en: "countries" },
+    description: {
+      fr: "Pays de facturation et de livraison (ISO 3166-1 alpha-2).",
+      en: "Billing and shipping countries (ISO 3166-1 alpha-2).",
+    },
     codeRegex: /^[A-Z]{2}$/,
-    codeHint: "2 lettres majuscules (ISO 3166-1)",
+    codeHint: {
+      fr: "2 lettres majuscules (ISO 3166-1)",
+      en: "2 uppercase letters, ISO 3166-1",
+    },
     codePlaceholder: "FR",
     champs: [
       {
         key: "ue",
-        label: "Union européenne",
+        label: { fr: "Union européenne", en: "European Union" },
         type: "choice",
         options: [
-          { value: "oui", label: "UE" },
-          { value: "non", label: "Hors UE" },
+          { value: "oui", label: { fr: "UE", en: "EU" } },
+          { value: "non", label: { fr: "Hors UE", en: "Non-EU" } },
         ],
       },
     ],
   },
   {
     id: "tva",
-    nom: "Taux de TVA",
-    description: "Taux de TVA applicables sur les lignes de facture.",
+    nom: { fr: "Taux de TVA", en: "VAT rates" },
+    slug: { fr: "tva", en: "vat-rates" },
+    description: {
+      fr: "Taux de TVA applicables sur les lignes de facture.",
+      en: "VAT rates applicable to invoice lines.",
+    },
     codeRegex: /^[A-Z0-9_]{2,10}$/,
-    codeHint: "2 à 10 caractères (majuscules, chiffres, _)",
+    codeHint: {
+      fr: "2 à 10 caractères (majuscules, chiffres, _)",
+      en: "2 to 10 characters (uppercase letters, digits, _)",
+    },
     codePlaceholder: "TVA20",
     champs: [
       {
         key: "taux",
-        label: "Taux (%)",
+        label: { fr: "Taux (%)", en: "Rate (%)" },
         type: "number",
         placeholder: "20",
         align: "right",
-        format: (v) => `${String(v).replace(".", ",")} %`,
+        format: (v, locale) =>
+          locale === "fr" ? `${String(v).replace(".", ",")} %` : `${String(v)} %`,
       },
     ],
   },
   {
     id: "unites",
-    nom: "Unités de mesure",
-    description: "Unités utilisées sur les articles et les lignes de commande.",
+    nom: { fr: "Unités de mesure", en: "Units of measure" },
+    slug: { fr: "unites", en: "units" },
+    description: {
+      fr: "Unités utilisées sur les articles et les lignes de commande.",
+      en: "Units used on items and order lines.",
+    },
     codeRegex: /^[A-Z0-9]{1,6}$/,
-    codeHint: "1 à 6 caractères (majuscules, chiffres)",
+    codeHint: {
+      fr: "1 à 6 caractères (majuscules, chiffres)",
+      en: "1 to 6 characters, uppercase letters and digits",
+    },
     codePlaceholder: "KG",
     champs: [
       {
         key: "famille",
-        label: "Famille",
+        label: { fr: "Famille", en: "Family" },
         type: "choice",
         options: [
-          { value: "Masse", label: "Masse" },
-          { value: "Longueur", label: "Longueur" },
-          { value: "Volume", label: "Volume" },
-          { value: "Quantité", label: "Quantité" },
-          { value: "Temps", label: "Temps" },
+          { value: "Masse", label: { fr: "Masse", en: "Mass" } },
+          { value: "Longueur", label: { fr: "Longueur", en: "Length" } },
+          { value: "Volume", label: { fr: "Volume", en: "Volume" } },
+          { value: "Quantité", label: { fr: "Quantité", en: "Quantity" } },
+          { value: "Temps", label: { fr: "Temps", en: "Time" } },
         ],
       },
     ],
@@ -133,74 +172,151 @@ const REFERENTIELS: RefDef[] = [
 /** Jeu de démonstration déterministe (aucun Date.now() au render). */
 const INITIAL_DATA: Record<string, RefEntry[]> = {
   devises: [
-    { id: "dev-1", code: "EUR", libelle: "Euro", actif: true, utilisations: 42, champs: { symbole: "€", decimales: 2 } },
-    { id: "dev-2", code: "USD", libelle: "Dollar américain", actif: true, utilisations: 18, champs: { symbole: "$", decimales: 2 } },
-    { id: "dev-3", code: "GBP", libelle: "Livre sterling", actif: true, utilisations: 7, champs: { symbole: "£", decimales: 2 } },
-    { id: "dev-4", code: "CHF", libelle: "Franc suisse", actif: true, utilisations: 3, champs: { symbole: "CHF", decimales: 2 } },
-    { id: "dev-5", code: "JPY", libelle: "Yen japonais", actif: true, utilisations: 0, champs: { symbole: "¥", decimales: 0 } },
-    { id: "dev-6", code: "CAD", libelle: "Dollar canadien", actif: false, utilisations: 0, champs: { symbole: "$ CA", decimales: 2 } },
+    { id: "dev-1", code: "EUR", libelle: { fr: "Euro", en: "Euro" }, actif: true, utilisations: 42, champs: { symbole: "€", decimales: 2 } },
+    { id: "dev-2", code: "USD", libelle: { fr: "Dollar américain", en: "US Dollar" }, actif: true, utilisations: 18, champs: { symbole: "$", decimales: 2 } },
+    { id: "dev-3", code: "GBP", libelle: { fr: "Livre sterling", en: "Pound sterling" }, actif: true, utilisations: 7, champs: { symbole: "£", decimales: 2 } },
+    { id: "dev-4", code: "CHF", libelle: { fr: "Franc suisse", en: "Swiss franc" }, actif: true, utilisations: 3, champs: { symbole: "CHF", decimales: 2 } },
+    { id: "dev-5", code: "JPY", libelle: { fr: "Yen japonais", en: "Japanese yen" }, actif: true, utilisations: 0, champs: { symbole: "¥", decimales: 0 } },
+    { id: "dev-6", code: "CAD", libelle: { fr: "Dollar canadien", en: "Canadian dollar" }, actif: false, utilisations: 0, champs: { symbole: "$ CA", decimales: 2 } },
   ],
   pays: [
-    { id: "pay-1", code: "FR", libelle: "France", actif: true, utilisations: 35, champs: { ue: "oui" } },
-    { id: "pay-2", code: "DE", libelle: "Allemagne", actif: true, utilisations: 21, champs: { ue: "oui" } },
-    { id: "pay-3", code: "IT", libelle: "Italie", actif: true, utilisations: 9, champs: { ue: "oui" } },
-    { id: "pay-4", code: "ES", libelle: "Espagne", actif: true, utilisations: 6, champs: { ue: "oui" } },
-    { id: "pay-5", code: "BE", libelle: "Belgique", actif: true, utilisations: 11, champs: { ue: "oui" } },
-    { id: "pay-6", code: "CH", libelle: "Suisse", actif: true, utilisations: 4, champs: { ue: "non" } },
-    { id: "pay-7", code: "GB", libelle: "Royaume-Uni", actif: true, utilisations: 8, champs: { ue: "non" } },
-    { id: "pay-8", code: "US", libelle: "États-Unis", actif: true, utilisations: 0, champs: { ue: "non" } },
+    { id: "pay-1", code: "FR", libelle: { fr: "France", en: "France" }, actif: true, utilisations: 35, champs: { ue: "oui" } },
+    { id: "pay-2", code: "DE", libelle: { fr: "Allemagne", en: "Germany" }, actif: true, utilisations: 21, champs: { ue: "oui" } },
+    { id: "pay-3", code: "IT", libelle: { fr: "Italie", en: "Italy" }, actif: true, utilisations: 9, champs: { ue: "oui" } },
+    { id: "pay-4", code: "ES", libelle: { fr: "Espagne", en: "Spain" }, actif: true, utilisations: 6, champs: { ue: "oui" } },
+    { id: "pay-5", code: "BE", libelle: { fr: "Belgique", en: "Belgium" }, actif: true, utilisations: 11, champs: { ue: "oui" } },
+    { id: "pay-6", code: "CH", libelle: { fr: "Suisse", en: "Switzerland" }, actif: true, utilisations: 4, champs: { ue: "non" } },
+    { id: "pay-7", code: "GB", libelle: { fr: "Royaume-Uni", en: "United Kingdom" }, actif: true, utilisations: 8, champs: { ue: "non" } },
+    { id: "pay-8", code: "US", libelle: { fr: "États-Unis", en: "United States" }, actif: true, utilisations: 0, champs: { ue: "non" } },
   ],
   tva: [
-    { id: "tva-1", code: "TVA20", libelle: "Taux normal", actif: true, utilisations: 28, champs: { taux: 20 } },
-    { id: "tva-2", code: "TVA10", libelle: "Taux intermédiaire", actif: true, utilisations: 12, champs: { taux: 10 } },
-    { id: "tva-3", code: "TVA055", libelle: "Taux réduit", actif: true, utilisations: 9, champs: { taux: 5.5 } },
-    { id: "tva-4", code: "TVA196", libelle: "Ancien taux normal", actif: false, utilisations: 0, champs: { taux: 19.6 } },
+    { id: "tva-1", code: "TVA20", libelle: { fr: "Taux normal", en: "Standard rate" }, actif: true, utilisations: 28, champs: { taux: 20 } },
+    { id: "tva-2", code: "TVA10", libelle: { fr: "Taux intermédiaire", en: "Intermediate rate" }, actif: true, utilisations: 12, champs: { taux: 10 } },
+    { id: "tva-3", code: "TVA055", libelle: { fr: "Taux réduit", en: "Reduced rate" }, actif: true, utilisations: 9, champs: { taux: 5.5 } },
+    { id: "tva-4", code: "TVA196", libelle: { fr: "Ancien taux normal", en: "Former standard rate" }, actif: false, utilisations: 0, champs: { taux: 19.6 } },
   ],
   unites: [
-    { id: "uni-1", code: "KG", libelle: "Kilogramme", actif: true, utilisations: 12, champs: { famille: "Masse" } },
-    { id: "uni-2", code: "G", libelle: "Gramme", actif: true, utilisations: 5, champs: { famille: "Masse" } },
-    { id: "uni-3", code: "M", libelle: "Mètre", actif: true, utilisations: 8, champs: { famille: "Longueur" } },
-    { id: "uni-4", code: "L", libelle: "Litre", actif: true, utilisations: 6, champs: { famille: "Volume" } },
-    { id: "uni-5", code: "U", libelle: "Unité", actif: true, utilisations: 14, champs: { famille: "Quantité" } },
-    { id: "uni-6", code: "FT", libelle: "Pied", actif: false, utilisations: 0, champs: { famille: "Longueur" } },
+    { id: "uni-1", code: "KG", libelle: { fr: "Kilogramme", en: "Kilogram" }, actif: true, utilisations: 12, champs: { famille: "Masse" } },
+    { id: "uni-2", code: "G", libelle: { fr: "Gramme", en: "Gram" }, actif: true, utilisations: 5, champs: { famille: "Masse" } },
+    { id: "uni-3", code: "M", libelle: { fr: "Mètre", en: "Metre" }, actif: true, utilisations: 8, champs: { famille: "Longueur" } },
+    { id: "uni-4", code: "L", libelle: { fr: "Litre", en: "Litre" }, actif: true, utilisations: 6, champs: { famille: "Volume" } },
+    { id: "uni-5", code: "U", libelle: { fr: "Unité", en: "Unit" }, actif: true, utilisations: 14, champs: { famille: "Quantité" } },
+    { id: "uni-6", code: "FT", libelle: { fr: "Pied", en: "Foot" }, actif: false, utilisations: 0, champs: { famille: "Longueur" } },
   ],
 };
 
-const INITIAL_ACTIVITY: ActivityItem[] = [
+type HistKind =
+  | "added"
+  | "edited"
+  | "edited-label"
+  | "enabled"
+  | "disabled"
+  | "deleted"
+  | "exported";
+
+/**
+ * Entrée d'historique stockée sous forme structurée (acteur, action, référentiel, code) :
+ * le texte affiché est résolu au render dans la locale active, y compris pour les
+ * entrées créées dynamiquement par l'utilisateur.
+ */
+interface HistEntry {
+  id: string;
+  /** `null` = utilisateur courant (« Vous » / "You"). */
+  actor: string | null;
+  kind: HistKind;
+  refId: string;
+  code?: string;
+  count?: number;
+  timestamp: string;
+  color: "default" | "info" | "success" | "warning" | "error";
+}
+
+const INITIAL_ACTIVITY: HistEntry[] = [
   {
     id: "h1",
     actor: "Marie Lefèvre",
-    action: "a ajouté",
-    target: "CHF à Devises",
+    kind: "added",
+    refId: "devises",
+    code: "CHF",
     timestamp: "2026-06-10T09:12:00",
     color: "success",
   },
   {
     id: "h2",
     actor: "Karim Benali",
-    action: "a désactivé",
-    target: "TVA196 dans Taux de TVA",
+    kind: "disabled",
+    refId: "tva",
+    code: "TVA196",
     timestamp: "2026-06-08T14:30:00",
     color: "warning",
   },
   {
     id: "h3",
     actor: "Sophie Marchand",
-    action: "a modifié",
-    target: "GB dans Pays (libellé)",
+    kind: "edited-label",
+    refId: "pays",
+    code: "GB",
     timestamp: "2026-06-05T11:05:00",
     color: "info",
   },
 ];
 
-const REF_OPTIONS = REFERENTIELS.map((r) => ({ value: r.id, label: r.nom }));
+function refName(refId: string, locale: Locale): string {
+  return REFERENTIELS.find((r) => r.id === refId)?.nom[locale] ?? refId;
+}
 
-function champDisplay(champ: ChampDef, value: string | number): string {
+/** Résout une entrée d'historique structurée en item ActivityFeed dans la locale active. */
+function resolveActivity(h: HistEntry, locale: Locale, s: Strings): ActivityItem {
+  const name = refName(h.refId, locale);
+  const code = h.code ?? "";
+  let action: string;
+  let target: string;
+  switch (h.kind) {
+    case "added":
+      action = s.actAdded;
+      target = s.targetAdded(code, name);
+      break;
+    case "edited":
+      action = s.actEdited;
+      target = s.targetIn(code, name);
+      break;
+    case "edited-label":
+      action = s.actEdited;
+      target = s.targetEditedLabel(code, name);
+      break;
+    case "enabled":
+      action = s.actEnabled;
+      target = s.targetIn(code, name);
+      break;
+    case "disabled":
+      action = s.actDisabled;
+      target = s.targetIn(code, name);
+      break;
+    case "deleted":
+      action = s.actDeleted;
+      target = s.targetDeleted(code, name);
+      break;
+    case "exported":
+      action = s.actExported;
+      target = s.targetExported(name, h.count ?? 0);
+      break;
+  }
+  return {
+    id: h.id,
+    actor: h.actor ?? s.you,
+    action,
+    target,
+    timestamp: h.timestamp,
+    color: h.color,
+  };
+}
+
+function champDisplay(champ: ChampDef, value: string | number, locale: Locale): string {
   if (champ.type === "choice") {
     const opt = champ.options?.find((o) => o.value === String(value));
-    return opt ? opt.label : String(value);
+    return opt ? opt.label[locale] : String(value);
   }
-  if (champ.format) return champ.format(value);
+  if (champ.format) return champ.format(value, locale);
   return String(value);
 }
 
@@ -218,12 +334,15 @@ function csvEscape(value: string): string {
 
 export default function ReferentielsSimulateur() {
   const { showToast } = useToast();
+  const { locale } = useI18n();
+  const s = STR[locale];
   const [data, setData] = useState<Record<string, RefEntry[]>>(INITIAL_DATA);
   const [refId, setRefId] = useState<string>("devises");
   const [search, setSearch] = useState("");
-  const [activity, setActivity] = useState<ActivityItem[]>(INITIAL_ACTIVITY);
+  const [activity, setActivity] = useState<HistEntry[]>(INITIAL_ACTIVITY);
 
   const def = REFERENTIELS.find((r) => r.id === refId) ?? REFERENTIELS[0];
+  const defNom = def.nom[locale];
   const entries = data[def.id] ?? [];
 
   const [addForm, setAddForm] = useState<Record<string, string>>(() => emptyForm(REFERENTIELS[0]));
@@ -234,6 +353,11 @@ export default function ReferentielsSimulateur() {
   const [editError, setEditError] = useState<string | null>(null);
 
   const [toDelete, setToDelete] = useState<RefEntry | null>(null);
+
+  const refOptions = useMemo(
+    () => REFERENTIELS.map((r) => ({ value: r.id, label: r.nom[locale] })),
+    [locale]
+  );
 
   const stats = useMemo(() => {
     const all = Object.values(data).flat();
@@ -248,21 +372,23 @@ export default function ReferentielsSimulateur() {
     const q = search.trim().toLowerCase();
     if (!q) return entries;
     return entries.filter(
-      (e) => e.code.toLowerCase().includes(q) || e.libelle.toLowerCase().includes(q)
+      (e) => e.code.toLowerCase().includes(q) || e.libelle[locale].toLowerCase().includes(q)
     );
-  }, [entries, search]);
+  }, [entries, search, locale]);
 
   const pushActivity = (
-    action: string,
-    target: string,
+    kind: HistKind,
+    detail: { code?: string; count?: number },
     color: "success" | "warning" | "info" | "error"
   ) => {
     setActivity((prev) => [
       {
         id: `h${Date.now()}-${prev.length}`,
-        actor: "Vous",
-        action,
-        target,
+        actor: null,
+        kind,
+        refId: def.id,
+        code: detail.code,
+        count: detail.count,
         timestamp: new Date().toISOString(),
         color,
       },
@@ -285,23 +411,23 @@ export default function ReferentielsSimulateur() {
     excludeId: string | null
   ): { error: string } | { code: string; libelle: string; champs: Record<string, string | number> } => {
     const code = (form.code ?? "").trim().toUpperCase();
-    if (!code) return { error: "Le code est requis." };
+    if (!code) return { error: s.errCodeRequired };
     if (!def.codeRegex.test(code)) {
-      return { error: `Format de code invalide — attendu : ${def.codeHint}.` };
+      return { error: s.errCodeFormat(def.codeHint[locale]) };
     }
     if (entries.some((e) => e.id !== excludeId && e.code === code)) {
-      return { error: `Le code ${code} existe déjà dans « ${def.nom} ».` };
+      return { error: s.errCodeExists(code, defNom) };
     }
     const libelle = (form.libelle ?? "").trim();
-    if (!libelle) return { error: "Le libellé est requis." };
+    if (!libelle) return { error: s.errLabelRequired };
     const champs: Record<string, string | number> = {};
     for (const champ of def.champs) {
       const raw = (form[champ.key] ?? "").trim();
-      if (!raw) return { error: `Le champ « ${champ.label} » est requis.` };
+      if (!raw) return { error: s.errFieldRequired(champ.label[locale]) };
       if (champ.type === "number") {
         const n = Number(raw.replace(",", "."));
         if (Number.isNaN(n) || n < 0) {
-          return { error: `« ${champ.label} » doit être un nombre positif.` };
+          return { error: s.errFieldPositiveNumber(champ.label[locale]) };
         }
         champs[champ.key] = n;
       } else {
@@ -321,26 +447,27 @@ export default function ReferentielsSimulateur() {
     const entry: RefEntry = {
       id: `${def.id}-${Date.now()}`,
       code: result.code,
-      libelle: result.libelle,
+      // Le libellé saisi vaut pour les deux locales tant qu'il n'est pas différencié.
+      libelle: { fr: result.libelle, en: result.libelle },
       actif: true,
       utilisations: 0,
       champs: result.champs,
     };
     setData((prev) => ({ ...prev, [def.id]: [...(prev[def.id] ?? []), entry] }));
-    pushActivity("a ajouté", `${result.code} à ${def.nom}`, "success");
+    pushActivity("added", { code: result.code }, "success");
     showToast(
-      `${result.code} — ${result.libelle} ajouté au référentiel « ${def.nom} ».`,
+      s.toastAdded(result.code, result.libelle, defNom),
       "success",
       4000,
-      "Entrée ajoutée",
-      "Référentiels",
+      s.toastAddedTitle,
+      s.moduleName,
       null
     );
     setAddForm(emptyForm(def));
   };
 
   const openEdit = (entry: RefEntry) => {
-    const form: Record<string, string> = { code: entry.code, libelle: entry.libelle };
+    const form: Record<string, string> = { code: entry.code, libelle: entry.libelle[locale] };
     def.champs.forEach((c) => {
       form[c.key] = String(entry.champs[c.key] ?? "");
     });
@@ -356,21 +483,28 @@ export default function ReferentielsSimulateur() {
       setEditError(result.error);
       return;
     }
+    // Met à jour le libellé dans la locale active ; l'autre locale suit tant
+    // qu'elle n'avait pas été différenciée (entrées créées par l'utilisateur).
+    const old = editing.libelle;
+    const libelle: LText =
+      locale === "fr"
+        ? { fr: result.libelle, en: old.en === old.fr ? result.libelle : old.en }
+        : { en: result.libelle, fr: old.fr === old.en ? result.libelle : old.fr };
     setData((prev) => ({
       ...prev,
       [def.id]: (prev[def.id] ?? []).map((e) =>
         e.id === editing.id
-          ? { ...e, code: result.code, libelle: result.libelle, champs: result.champs }
+          ? { ...e, code: result.code, libelle, champs: result.champs }
           : e
       ),
     }));
-    pushActivity("a modifié", `${result.code} dans ${def.nom}`, "info");
+    pushActivity("edited", { code: result.code }, "info");
     showToast(
-      `${result.code} — ${result.libelle} mis à jour dans « ${def.nom} ».`,
+      s.toastEdited(result.code, result.libelle, defNom),
       "success",
       4000,
-      "Entrée modifiée",
-      "Référentiels",
+      s.toastEditedTitle,
+      s.moduleName,
       null
     );
     setEditing(null);
@@ -382,15 +516,13 @@ export default function ReferentielsSimulateur() {
       ...prev,
       [def.id]: (prev[def.id] ?? []).map((e) => (e.id === entry.id ? { ...e, actif } : e)),
     }));
-    pushActivity(actif ? "a activé" : "a désactivé", `${entry.code} dans ${def.nom}`, actif ? "success" : "warning");
+    pushActivity(actif ? "enabled" : "disabled", { code: entry.code }, actif ? "success" : "warning");
     showToast(
-      actif
-        ? `${entry.code} est de nouveau proposé dans les formulaires.`
-        : `${entry.code} n'est plus proposé dans les formulaires (les données existantes sont conservées).`,
+      actif ? s.toastEnabled(entry.code) : s.toastDisabled(entry.code),
       actif ? "success" : "warning",
       4000,
-      actif ? "Entrée activée" : "Entrée désactivée",
-      "Référentiels",
+      actif ? s.toastEnabledTitle : s.toastDisabledTitle,
+      s.moduleName,
       null
     );
   };
@@ -398,11 +530,11 @@ export default function ReferentielsSimulateur() {
   const requestDelete = (entry: RefEntry) => {
     if (entry.utilisations > 0) {
       showToast(
-        `${entry.code} est référencé par ${entry.utilisations} enregistrement(s). Désactivez l'entrée plutôt que de la supprimer.`,
+        s.toastDeleteRefused(entry.code, entry.utilisations),
         "error",
         6000,
-        "Suppression refusée",
-        "Référentiels",
+        s.toastDeleteRefusedTitle,
+        s.moduleName,
         null
       );
       return;
@@ -416,50 +548,58 @@ export default function ReferentielsSimulateur() {
       ...prev,
       [def.id]: (prev[def.id] ?? []).filter((e) => e.id !== toDelete.id),
     }));
-    pushActivity("a supprimé", `${toDelete.code} de ${def.nom}`, "error");
+    pushActivity("deleted", { code: toDelete.code }, "error");
     showToast(
-      `${toDelete.code} — ${toDelete.libelle} supprimé du référentiel « ${def.nom} ».`,
+      s.toastDeleted(toDelete.code, toDelete.libelle[locale], defNom),
       "info",
       4000,
-      "Entrée supprimée",
-      "Référentiels",
+      s.toastDeletedTitle,
+      s.moduleName,
       null
     );
     setToDelete(null);
   };
 
   const exportCsv = () => {
-    const headers = ["code", "libelle", ...def.champs.map((c) => c.label), "actif", "utilisations"];
+    // Entêtes et valeurs traduites au moment de l'export, dans la locale active.
+    const headers = [
+      s.csvHeaderCode,
+      s.csvHeaderLabel,
+      ...def.champs.map((c) => c.label[locale]),
+      s.csvHeaderActive,
+      s.csvHeaderUses,
+    ];
     const lines = [
       headers.map(csvEscape).join(";"),
       ...entries.map((e) =>
         [
           e.code,
-          e.libelle,
-          ...def.champs.map((c) => champDisplay(c, e.champs[c.key] ?? "")),
-          e.actif ? "oui" : "non",
+          e.libelle[locale],
+          ...def.champs.map((c) => champDisplay(c, e.champs[c.key] ?? "", locale)),
+          e.actif ? s.csvYes : s.csvNo,
           String(e.utilisations),
         ]
           .map(csvEscape)
           .join(";")
       ),
     ];
+    const fileName = s.csvFileName(def.slug[locale]);
     const blob = new Blob(["\uFEFF" + lines.join("\n")], { type: "text/csv;charset=utf-8;" });
     const url = URL.createObjectURL(blob);
     const a = document.createElement("a");
     a.href = url;
-    a.download = `referentiel-${def.id}.csv`;
+    a.download = fileName;
     document.body.appendChild(a);
     a.click();
     a.remove();
     URL.revokeObjectURL(url);
-    pushActivity("a exporté", `${def.nom} (${entries.length} entrées, CSV)`, "info");
+    pushActivity("exported", { count: entries.length }, "info");
     showToast(
-      `referentiel-${def.id}.csv téléchargé (${entries.length} entrées).`,
+      s.toastExport(fileName, entries.length),
       "success",
       4000,
-      "Export CSV",
-      "Référentiels",
+      s.toastExportTitle,
+      s.moduleName,
       null
     );
   };
@@ -474,18 +614,18 @@ export default function ReferentielsSimulateur() {
       return (
         <Selectbox
           key={champ.key}
-          label={champ.label}
-          options={champ.options ?? []}
+          label={champ.label[locale]}
+          options={(champ.options ?? []).map((o) => ({ value: o.value, label: o.label[locale] }))}
           value={form[champ.key] || null}
           onChange={(v) => setForm((prev) => ({ ...prev, [champ.key]: v }))}
-          placeholder="Choisir"
+          placeholder={s.choosePlaceholder}
         />
       );
     }
     return (
       <Input
         key={champ.key}
-        label={champ.label}
+        label={champ.label[locale]}
         value={form[champ.key] ?? ""}
         onChange={(v) => setForm((prev) => ({ ...prev, [champ.key]: v }))}
         placeholder={champ.placeholder}
@@ -496,23 +636,25 @@ export default function ReferentielsSimulateur() {
   const columns = [
     {
       key: "code",
-      label: "Code",
+      label: s.colCode,
       render: (value: unknown) => (
         <span style={{ color: "var(--bpm-text-primary)", fontWeight: 600, fontFamily: "var(--bpm-font-mono, monospace)" }}>
           {String(value)}
         </span>
       ),
     },
-    { key: "libelle", label: "Libellé" },
+    { key: "libelle", label: s.colLabel },
     ...def.champs.map((champ) => ({
       key: champ.key,
-      label: champ.label,
+      label: champ.label[locale],
       align: champ.align,
-      render: (value: unknown) => <span>{champDisplay(champ, value as string | number)}</span>,
+      render: (value: unknown) => (
+        <span>{champDisplay(champ, value as string | number, locale)}</span>
+      ),
     })),
     {
       key: "utilisations",
-      label: "Utilisations",
+      label: s.colUses,
       align: "right" as const,
       render: (value: unknown) => {
         const n = Number(value);
@@ -521,26 +663,26 @@ export default function ReferentielsSimulateur() {
     },
     {
       key: "actif",
-      label: "Statut",
+      label: s.colStatus,
       render: (value: unknown) =>
-        value ? <Badge variant="success">Actif</Badge> : <Badge variant="default">Inactif</Badge>,
+        value ? <Badge variant="success">{s.badgeActive}</Badge> : <Badge variant="default">{s.badgeInactive}</Badge>,
     },
     {
       key: "id",
-      label: "Actions",
+      label: s.colActions,
       render: (value: unknown) => {
         const entry = entries.find((e) => e.id === value);
         if (!entry) return null;
         return (
           <div className="flex flex-wrap gap-2">
             <Button size="small" variant="secondary" onClick={() => openEdit(entry)}>
-              Modifier
+              {s.actionEdit}
             </Button>
             <Button size="small" variant="secondary" onClick={() => toggleActive(entry)}>
-              {entry.actif ? "Désactiver" : "Activer"}
+              {entry.actif ? s.actionDisable : s.actionEnable}
             </Button>
             <Button size="small" variant="destructive" onClick={() => requestDelete(entry)}>
-              Supprimer
+              {s.actionDelete}
             </Button>
           </div>
         );
@@ -552,65 +694,67 @@ export default function ReferentielsSimulateur() {
     ...e.champs,
     id: e.id,
     code: e.code,
-    libelle: e.libelle,
+    libelle: e.libelle[locale],
     actif: e.actif,
     utilisations: e.utilisations,
   })) as Record<string, unknown>[];
 
+  const activityItems = activity.map((h) => resolveActivity(h, locale, s));
+
   return (
     <div className="space-y-6">
       <MetricRow>
-        <Metric label="Référentiels" value={String(stats.referentiels)} />
-        <Metric label="Entrées totales" value={String(stats.total)} />
-        <Metric label="Entrées inactives" value={String(stats.inactives)} />
+        <Metric label={s.metricReferentiels} value={String(stats.referentiels)} />
+        <Metric label={s.metricTotalEntries} value={String(stats.total)} />
+        <Metric label={s.metricInactiveEntries} value={String(stats.inactives)} />
       </MetricRow>
 
-      <Panel variant="info" title={`Référentiel « ${def.nom} » — ${entries.length} entrée(s)`}>
+      <Panel variant="info" title={s.refPanelTitle(defNom, entries.length)}>
         <div className="grid gap-3 md:grid-cols-3">
           <Selectbox
-            label="Référentiel"
-            options={REF_OPTIONS}
+            label={s.selectorLabel}
+            options={refOptions}
             value={refId}
             onChange={selectRef}
-            placeholder="Choisir un référentiel"
+            placeholder={s.selectorPlaceholder}
           />
           <Input
-            label="Recherche (code ou libellé)"
+            label={s.searchLabel}
             value={search}
             onChange={setSearch}
-            placeholder="ex. EUR, Euro…"
+            placeholder={s.searchPlaceholder}
             type="search"
           />
           <div className="flex items-end">
             <Button variant="outline" onClick={exportCsv}>
-              Exporter en CSV
+              {s.exportCsv}
             </Button>
           </div>
         </div>
         <p className="mt-2 mb-3 text-sm" style={{ color: "var(--bpm-text-secondary)" }}>
-          {def.description}
+          {def.description[locale]}
         </p>
         <Table columns={columns} data={tableData} striped hover />
         {filtered.length === 0 && (
           <p className="mt-3 text-sm" style={{ color: "var(--bpm-text-secondary)" }}>
-            Aucune entrée ne correspond à « {search} ».
+            {s.noSearchMatch(search)}
           </p>
         )}
       </Panel>
 
-      <Panel variant="info" title={`Ajouter une entrée à « ${def.nom} »`}>
+      <Panel variant="info" title={s.addPanelTitle(defNom)}>
         <div className="grid gap-3 md:grid-cols-2">
           <Input
-            label={`Code — ${def.codeHint}`}
+            label={s.codeFieldLabel(def.codeHint[locale])}
             value={addForm.code ?? ""}
             onChange={(v) => setAddForm((prev) => ({ ...prev, code: v }))}
             placeholder={def.codePlaceholder}
           />
           <Input
-            label="Libellé"
+            label={s.labelFieldLabel}
             value={addForm.libelle ?? ""}
             onChange={(v) => setAddForm((prev) => ({ ...prev, libelle: v }))}
-            placeholder="Libellé affiché dans les formulaires"
+            placeholder={s.labelFieldPlaceholder}
           />
           {def.champs.map((champ) => renderChampInput(champ, addForm, setAddForm))}
         </div>
@@ -620,30 +764,30 @@ export default function ReferentielsSimulateur() {
           </p>
         )}
         <Button className="mt-4" onClick={handleAdd}>
-          Ajouter l&apos;entrée
+          {s.addEntryButton}
         </Button>
       </Panel>
 
-      <Panel variant="info" title="Historique des modifications">
-        <ActivityFeed activities={activity} maxItems={6} compact />
+      <Panel variant="info" title={s.historyTitle}>
+        <ActivityFeed activities={activityItems} maxItems={6} compact />
       </Panel>
 
       {editing && (
         <Modal
           isOpen
           onClose={() => setEditing(null)}
-          title={`Modifier ${editing.code} — ${def.nom}`}
+          title={s.editModalTitle(editing.code, defNom)}
           size="medium"
         >
           <div className="grid gap-3 md:grid-cols-2">
             <Input
-              label={`Code — ${def.codeHint}`}
+              label={s.codeFieldLabel(def.codeHint[locale])}
               value={editForm.code ?? ""}
               onChange={(v) => setEditForm((prev) => ({ ...prev, code: v }))}
               placeholder={def.codePlaceholder}
             />
             <Input
-              label="Libellé"
+              label={s.labelFieldLabel}
               value={editForm.libelle ?? ""}
               onChange={(v) => setEditForm((prev) => ({ ...prev, libelle: v }))}
             />
@@ -656,23 +800,23 @@ export default function ReferentielsSimulateur() {
           )}
           <div className="mt-4 flex justify-end gap-2">
             <Button variant="secondary" onClick={() => setEditing(null)}>
-              Annuler
+              {s.cancel}
             </Button>
-            <Button onClick={handleSaveEdit}>Enregistrer</Button>
+            <Button onClick={handleSaveEdit}>{s.save}</Button>
           </div>
         </Modal>
       )}
 
       <ConfirmModal
         isOpen={toDelete !== null}
-        title="Supprimer l'entrée"
+        title={s.deleteModalTitle}
         message={
           toDelete
-            ? `${toDelete.code} — ${toDelete.libelle} sera retiré du référentiel « ${def.nom} ». Cette entrée n'est utilisée par aucun enregistrement.`
+            ? s.deleteModalMessage(toDelete.code, toDelete.libelle[locale], defNom)
             : ""
         }
-        confirmLabel="Supprimer"
-        cancelLabel="Annuler"
+        confirmLabel={s.actionDelete}
+        cancelLabel={s.cancel}
         variant="danger"
         onConfirm={confirmDelete}
         onCancel={() => setToDelete(null)}

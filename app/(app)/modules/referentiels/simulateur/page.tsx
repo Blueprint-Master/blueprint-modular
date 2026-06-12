@@ -1,23 +1,22 @@
 "use client";
 
 import Link from "next/link";
+import { useI18n } from "@/lib/i18n/LocaleProvider";
 import ReferentielsSimulateur from "../simulateur-content";
+import { STR } from "../strings";
 
 export default function ReferentielsSimulateurPage() {
+  const { locale } = useI18n();
+  const s = STR[locale];
   return (
     <div className="doc-page">
       <div className="doc-page-header">
         <div className="doc-breadcrumb">
           <Link href="/modules">Modules</Link> →{" "}
-          <Link href="/modules/referentiels">Référentiels</Link> → Simulateur
+          <Link href="/modules/referentiels">{s.moduleName}</Link> → {s.tabSimulator}
         </div>
-        <h1>Simulateur — Référentiels</h1>
-        <p className="doc-description">
-          Quatre tables de codes seedées (devises, pays, taux de TVA, unités de mesure).
-          Ajoutez une entrée, modifiez-la, désactivez-la, exportez le référentiel en CSV :
-          chaque action met à jour le tableau, les métriques et l&apos;historique. La suppression
-          est refusée si l&apos;entrée est encore utilisée (ex. EUR).
-        </p>
+        <h1>{s.simulatorPageTitle}</h1>
+        <p className="doc-description">{s.simulatorPageDescription}</p>
       </div>
       <ReferentielsSimulateur />
     </div>
