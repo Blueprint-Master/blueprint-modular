@@ -1,4 +1,13 @@
 import React from 'react'
+import { bpm } from '@blueprint-modular/core'
+
+/**
+ * Table de rendu du core : chaque clé est un type de nœud (camelCase, ex. liveGauge,
+ * statusTracker, approvalFlow…) et chaque valeur monte le vrai composant React du
+ * paquet @blueprint-modular/core. Permet au runtime `bpm run` d'afficher l'intégralité
+ * du catalogue sans recoder chaque composant ici.
+ */
+const coreComponents = bpm as Record<string, (props: Record<string, unknown>) => React.ReactNode>
 
 interface Node {
   type: string
@@ -148,7 +157,16 @@ export function NodeRenderer({ node, onAction }: Props) {
         </div>
       )
 
-    default:
+    default: {
+      // Délégation au catalogue @blueprint-modular/core : monte le vrai composant
+      // (liveGauge, statusTracker, progress, badge, approvalFlow, activityFeed,
+      // anomalyAlert, charts…) avec les props du nœud. C'est ce qui rend la promesse
+      // « le code Python que vous lisez est le code qui tourne » vraie jusque dans bpm run.
+      const Component = coreComponents[type]
+      if (Component) {
+        return <>{Component(props)}</>
+      }
       return <div style={{ color: 'var(--bpm-text-secondary)', fontSize: '0.8rem' }}>[{type}]</div>
+    }
   }
 }
