@@ -13,6 +13,8 @@ import {
   Slider,
   useToast,
 } from "@/components/bpm";
+import { useI18n } from "@/lib/i18n/LocaleProvider";
+import { STR } from "./strings";
 
 interface Theme {
   id: string;
@@ -116,8 +118,13 @@ function slug(nom: string): string {
     .replace(/^-+|-+$/g, "") || "theme";
 }
 
+/** Clé de la mention « dernière modification » (résolue selon la locale au rendu). */
+type LastModifiedKey = "timeThreeDaysAgo" | "timeJustNow";
+
 export default function ThemesSimulateur() {
   const { showToast } = useToast();
+  const { locale } = useI18n();
+  const s = STR[locale];
   const [themes, setThemes] = useState<Theme[]>(INITIAL_THEMES);
   const [defaultId, setDefaultId] = useState<string>("theme-blueprint");
   const [selectedId, setSelectedId] = useState<string>("theme-blueprint");
@@ -126,7 +133,10 @@ export default function ThemesSimulateur() {
   const [nomError, setNomError] = useState<string | null>(null);
   const [toDelete, setToDelete] = useState<Theme | null>(null);
   // Libellé figé au premier rendu (déterministe), puis « à l'instant » après action.
-  const [derniereModif, setDerniereModif] = useState("il y a 3 jours");
+  const [derniereModif, setDerniereModif] = useState<LastModifiedKey>("timeThreeDaysAgo");
+
+  /** Nom affiché : les thèmes seedés sont localisés, les autres gardent leur nom saisi. */
+  const themeName = (theme: Theme): string => s.seedNames[theme.id] ?? theme.nom;
 
   const selected = useMemo(
     () => themes.find((t) => t.id === selectedId) ?? themes[0],
@@ -159,11 +169,11 @@ export default function ThemesSimulateur() {
   const handleSaveAsNew = () => {
     const nom = nouveauNom.trim();
     if (!nom) {
-      setNomError("Indiquez un nom pour le nouveau thème.");
+      setNomError(s.errNameRequired);
       return;
     }
     if (themes.some((t) => t.nom.toLowerCase() === nom.toLowerCase())) {
-      setNomError(`Un thème nommé « ${nom} » existe déjà.`);
+      setNomError(s.errNameExists(nom));
       return;
     }
     setNomError(null);
@@ -181,13 +191,13 @@ export default function ThemesSimulateur() {
     setSelectedId(nouveau.id);
     setDraft(draftFrom(nouveau));
     setNouveauNom("");
-    setDerniereModif("à l'instant");
+    setDerniereModif("timeJustNow");
     showToast(
-      `Thème « ${nom} » enregistré (${themes.length + 1} thèmes disponibles).`,
+      s.toastSavedMsg(nom, themes.length + 1),
       "success",
       5000,
-      "Thème enregistré",
-      "Thèmes",
+      s.toastSavedTitle,
+      s.toastSource,
       null
     );
   };
@@ -195,23 +205,23 @@ export default function ThemesSimulateur() {
   const handleSetDefault = () => {
     if (selected.id === defaultId) {
       showToast(
-        `« ${selected.nom} » est déjà le thème par défaut.`,
+        s.toastNoChangeMsg(themeName(selected)),
         "info",
         4000,
-        "Aucun changement",
-        "Thèmes",
+        s.toastNoChangeTitle,
+        s.toastSource,
         null
       );
       return;
     }
     setDefaultId(selected.id);
-    setDerniereModif("à l'instant");
+    setDerniereModif("timeJustNow");
     showToast(
-      `« ${selected.nom} » est désormais appliqué par défaut aux nouvelles instances.`,
+      s.toastDefaultMsg(themeName(selected)),
       "success",
       5000,
-      "Thème par défaut",
-      "Thèmes",
+      s.toastDefaultTitle,
+      s.toastSource,
       null
     );
   };
@@ -229,13 +239,13 @@ export default function ThemesSimulateur() {
       return reste;
     });
     setToDelete(null);
-    setDerniereModif("à l'instant");
+    setDerniereModif("timeJustNow");
     showToast(
-      `Thème « ${supprime.nom} » supprimé. Les instances qui l'utilisaient repassent sur « ${defaultTheme.nom} ».`,
+      s.toastDeletedMsg(themeName(supprime), themeName(defaultTheme)),
       "info",
       5000,
-      "Thème supprimé",
-      "Thèmes",
+      s.toastDeletedTitle,
+      s.toastSource,
       null
     );
   };
@@ -265,11 +275,11 @@ export default function ThemesSimulateur() {
     a.remove();
     URL.revokeObjectURL(url);
     showToast(
-      `« ${apercu.nom} » exporté dans ${fichier}.`,
+      s.toastExportMsg(themeName(apercu), fichier),
       "success",
       5000,
-      "Export JSON",
-      "Thèmes",
+      s.toastExportTitle,
+      s.toastSource,
       null
     );
   };
@@ -281,14 +291,14 @@ export default function ThemesSimulateur() {
   return (
     <div className="space-y-6">
       <MetricRow>
-        <Metric label="Thèmes disponibles" value={String(themes.length)} />
-        <Metric label="Thème par défaut" value={defaultTheme.nom} />
-        <Metric label="Dernière modification" value={derniereModif} />
+        <Metric label={s.metricAvailable} value={String(themes.length)} />
+        <Metric label={s.metricDefault} value={themeName(defaultTheme)} />
+        <Metric label={s.metricLastModified} value={s[derniereModif]} />
       </MetricRow>
 
       <div className="grid gap-6 lg:grid-cols-2">
         <div className="space-y-6">
-          <Panel variant="info" title="Thèmes">
+          <Panel variant="info" title={s.panelThemes}>
             <div className="space-y-2">
               {themes.map((theme) => {
                 const actif = theme.id === selectedId;
@@ -320,66 +330,66 @@ export default function ThemesSimulateur() {
                     </span>
                     <span className="flex-1 min-w-0">
                       <span className="block text-sm font-medium truncate" style={{ color: "var(--bpm-text-primary)" }}>
-                        {theme.nom}
+                        {themeName(theme)}
                       </span>
                       <span className="block text-xs truncate" style={{ color: "var(--bpm-text-secondary)" }}>
-                        {theme.couleurApp} · accent {theme.accent} · rayon {theme.rayon}px
+                        {s.themeMeta(theme.couleurApp, theme.accent, theme.rayon)}
                       </span>
                     </span>
-                    {theme.id === defaultId && <Badge variant="primary">Par défaut</Badge>}
+                    {theme.id === defaultId && <Badge variant="primary">{s.badgeDefault}</Badge>}
                   </button>
                 );
               })}
             </div>
             <div className="mt-4 flex flex-wrap gap-2">
               <Button variant="secondary" onClick={handleSetDefault}>
-                Définir par défaut
+                {s.btnSetDefault}
               </Button>
               <Button variant="outline" onClick={handleExport}>
-                Exporter JSON
+                {s.btnExportJson}
               </Button>
               <Button
                 variant="destructive"
                 disabled={selected.id === defaultId}
                 onClick={() => setToDelete(selected)}
               >
-                Supprimer
+                {s.btnDelete}
               </Button>
             </div>
             {selected.id === defaultId && (
               <p className="mt-2 text-xs" style={{ color: "var(--bpm-text-secondary)" }}>
-                Le thème par défaut ne peut pas être supprimé : définissez d&apos;abord un autre
-                thème par défaut.
+                {s.cannotDeleteDefault}
               </p>
             )}
           </Panel>
 
-          <Panel variant="info" title="Personnaliser">
+          <Panel variant="info" title={s.panelCustomize}>
             <p className="mb-3 text-sm" style={{ color: "var(--bpm-text-secondary)" }}>
-              Base : <strong style={{ color: "var(--bpm-text-primary)" }}>{selected.nom}</strong>.
-              Chaque changement se reflète immédiatement dans l&apos;aperçu.
+              {s.customizeBasePrefix}
+              <strong style={{ color: "var(--bpm-text-primary)" }}>{themeName(selected)}</strong>
+              {s.customizeBaseSuffix}
             </p>
             <div className="space-y-4">
               <Input
-                label="Nom de l'app (affiché dans la barre)"
-                placeholder="Blueprint Modular"
+                label={s.labelAppName}
+                placeholder={s.placeholderAppName}
                 value={draft.couleurApp}
                 onChange={(value: string) => setDraft((d) => ({ ...d, couleurApp: value }))}
               />
               <div className="grid gap-4 sm:grid-cols-2">
                 <ColorPicker
-                  label="Couleur d'accent"
+                  label={s.labelAccentColor}
                   value={draft.accent}
                   onChange={(value: string) => setDraft((d) => ({ ...d, accent: value }))}
                 />
                 <ColorPicker
-                  label="Couleur de fond"
+                  label={s.labelBackgroundColor}
                   value={draft.fond}
                   onChange={(value: string) => setDraft((d) => ({ ...d, fond: value }))}
                 />
               </div>
               <Slider
-                label="Rayon de bordure (px)"
+                label={s.labelBorderRadius}
                 value={draft.rayon}
                 min={0}
                 max={16}
@@ -389,15 +399,14 @@ export default function ThemesSimulateur() {
             </div>
             {estModifie && (
               <p className="mt-3 text-xs" style={{ color: "var(--bpm-text-secondary)" }}>
-                Modifications non enregistrées — visibles dans l&apos;aperçu. Enregistrez-les comme
-                nouveau thème pour les conserver.
+                {s.unsavedChanges}
               </p>
             )}
             <div className="mt-4 flex flex-wrap items-end gap-2">
               <div className="flex-1 min-w-[200px]">
                 <Input
-                  label="Nom du nouveau thème"
-                  placeholder="ACME Corp — sombre"
+                  label={s.labelNewThemeName}
+                  placeholder={s.placeholderNewThemeName}
                   value={nouveauNom}
                   onChange={(value: string) => {
                     setNouveauNom(value);
@@ -405,7 +414,7 @@ export default function ThemesSimulateur() {
                   }}
                 />
               </div>
-              <Button onClick={handleSaveAsNew}>Enregistrer comme nouveau thème</Button>
+              <Button onClick={handleSaveAsNew}>{s.btnSaveAsNew}</Button>
             </div>
             {nomError && (
               <p className="mt-2 text-sm" style={{ color: "var(--bpm-accent-red, #dc2626)" }}>
@@ -415,10 +424,9 @@ export default function ThemesSimulateur() {
           </Panel>
         </div>
 
-        <Panel variant="info" title="Aperçu">
+        <Panel variant="info" title={s.panelPreview}>
           <p className="mb-3 text-sm" style={{ color: "var(--bpm-text-secondary)" }}>
-            Rendu scopé au conteneur ci-dessous : les variables du thème ne touchent jamais le
-            reste de l&apos;application.
+            {s.previewIntro}
           </p>
           {/* Conteneur scopé : tout le style provient du thème sélectionné + personnalisations. */}
           <div
@@ -451,7 +459,7 @@ export default function ThemesSimulateur() {
                   {initiales(apercu.couleurApp)}
                 </span>
                 <span className="text-sm font-semibold truncate" style={{ color: apercu.texte }}>
-                  {apercu.couleurApp.trim() || "Sans nom"}
+                  {apercu.couleurApp.trim() || s.previewUntitled}
                 </span>
               </div>
               <span
@@ -462,7 +470,7 @@ export default function ThemesSimulateur() {
                   borderRadius: radius,
                 }}
               >
-                Production
+                {s.previewEnvBadge}
               </span>
             </div>
 
@@ -477,13 +485,13 @@ export default function ThemesSimulateur() {
                 }}
               >
                 <div className="text-xs" style={{ color: apercu.texte, opacity: 0.65 }}>
-                  Commandes du mois
+                  {s.kpiOrdersLabel}
                 </div>
                 <div className="text-xl font-bold tabular-nums" style={{ color: apercu.texte }}>
-                  1 284
+                  {s.kpiOrdersValue}
                 </div>
                 <div className="text-xs font-medium" style={{ color: apercu.accent }}>
-                  +12 % vs mai
+                  {s.kpiOrdersDelta}
                 </div>
               </div>
               <div
@@ -495,13 +503,13 @@ export default function ThemesSimulateur() {
                 }}
               >
                 <div className="text-xs" style={{ color: apercu.texte, opacity: 0.65 }}>
-                  Taux de service
+                  {s.kpiServiceLabel}
                 </div>
                 <div className="text-xl font-bold tabular-nums" style={{ color: apercu.texte }}>
-                  98,2 %
+                  {s.kpiServiceValue}
                 </div>
                 <div className="text-xs font-medium" style={{ color: apercu.accent }}>
-                  objectif atteint
+                  {s.kpiServiceDelta}
                 </div>
               </div>
             </div>
@@ -512,7 +520,7 @@ export default function ThemesSimulateur() {
                 type="text"
                 readOnly
                 value=""
-                placeholder="Rechercher une commande…"
+                placeholder={s.previewSearchPlaceholder}
                 className="flex-1 min-w-0 px-3 py-2 text-sm outline-none"
                 style={{
                   background: apercu.surface,
@@ -533,16 +541,16 @@ export default function ThemesSimulateur() {
                 }}
                 onClick={() =>
                   showToast(
-                    `Action de démonstration dans l'aperçu « ${apercu.couleurApp.trim() || apercu.nom} ».`,
+                    s.toastPreviewMsg(apercu.couleurApp.trim() || themeName(apercu)),
                     "info",
                     3000,
-                    "Aperçu",
-                    "Thèmes",
+                    s.toastPreviewTitle,
+                    s.toastSource,
                     null
                   )
                 }
               >
-                Nouvelle commande
+                {s.previewPrimaryAction}
               </button>
             </div>
           </div>
@@ -551,14 +559,10 @@ export default function ThemesSimulateur() {
 
       <ConfirmModal
         isOpen={toDelete !== null}
-        title="Supprimer le thème"
-        message={
-          toDelete
-            ? `Le thème « ${toDelete.nom} » sera retiré de la bibliothèque. Les instances qui l'utilisent repasseront sur le thème par défaut (« ${defaultTheme.nom} »).`
-            : ""
-        }
-        confirmLabel="Supprimer"
-        cancelLabel="Annuler"
+        title={s.modalDeleteTitle}
+        message={toDelete ? s.modalDeleteMsg(themeName(toDelete), themeName(defaultTheme)) : ""}
+        confirmLabel={s.modalConfirm}
+        cancelLabel={s.modalCancel}
         variant="danger"
         onConfirm={confirmDelete}
         onCancel={() => setToDelete(null)}
