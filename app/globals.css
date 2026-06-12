@@ -3205,22 +3205,18 @@ body.contract-detail-panel-open .pwa-title-bar {
   flex: 0 0 auto;
 }
 
-.site-brand-mark {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
+/* Logo de marque (asset réel de l'app : public/img/logo-bpm.png).
+   Chip blanc + bordille pour rester lisible en thème clair comme sombre. */
+.site-brand-logo {
   width: 30px;
   height: 30px;
   flex: 0 0 auto;
-  border-radius: 8px;
-  background: linear-gradient(135deg, var(--bpm-accent-cyan), var(--bpm-accent-mint));
-  color: #ffffff;
-  font-family: var(--site-font-display);
-  font-weight: 700;
-  font-size: 18px;
-  line-height: 1;
-  letter-spacing: -0.02em;
-  box-shadow: 0 1px 2px rgba(4, 141, 195, 0.35), inset 0 1px 0 rgba(255, 255, 255, 0.25);
+  border-radius: 7px;
+  object-fit: contain;
+  background: #ffffff;
+  padding: 2px;
+  border: 1px solid var(--bpm-border);
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.12);
 }
 
 .site-brand-text {

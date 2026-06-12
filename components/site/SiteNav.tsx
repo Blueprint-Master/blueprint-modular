@@ -38,9 +38,7 @@ export function SiteNav() {
     <header className="site-nav" data-menu-open={menuOpen ? "true" : undefined}>
       <div className="site-container site-nav-inner">
         <Link href="/" className="site-wordmark site-brand" aria-label={dict.nav.ariaHome}>
-          <span className="site-brand-mark" aria-hidden="true">
-            b
-          </span>
+          <img src="/img/logo-bpm.png" alt="" className="site-brand-logo" width={30} height={30} />
           <span className="site-brand-text">
             <span className="site-wordmark-strong">Blueprint</span> Modular
           </span>
