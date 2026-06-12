@@ -1,12 +1,46 @@
 "use client";
 
 import Link from "next/link";
+import AuthSimulateur from "../simulateur-content";
 
 const cardStyle = {
   background: "var(--bpm-bg-primary)",
   borderColor: "var(--bpm-border)",
 };
 const linkStyle = { color: "var(--bpm-accent-cyan)" };
+
+function ModelCard({
+  title,
+  description,
+  links,
+}: {
+  title: string;
+  description: string;
+  links: { href: string; label: string }[];
+}) {
+  return (
+    <div className="p-5 rounded-xl border" style={cardStyle}>
+      <h3 className="text-lg font-semibold mb-2" style={{ color: "var(--bpm-text-primary)" }}>
+        {title}
+      </h3>
+      <p className="text-sm mb-4" style={{ color: "var(--bpm-text-secondary)" }}>
+        {description}
+      </p>
+      <div className="flex flex-wrap gap-3">
+        {links.map((l) => (
+          <Link
+            key={l.href}
+            href={l.href}
+            className="inline-flex items-center px-4 py-2 rounded-lg text-sm font-medium border transition hover:opacity-90"
+            style={{ ...linkStyle, borderColor: "var(--bpm-border)", background: "var(--bpm-bg-secondary)" }}
+          >
+            {l.label}
+          </Link>
+        ))}
+      </div>
+    </div>
+  );
+}
 
 export default function AuthSimulateurPage() {
   return (
@@ -21,78 +55,39 @@ export default function AuthSimulateurPage() {
         </div>
         <h1>Simulateur — Auth</h1>
         <p className="doc-description">
-          Testez les trois modèles de page de connexion : carte centrée, split et Google seul.
+          Jouez les flux complets dans le bac à sable : connexion (comptes de démo, whitelist de
+          domaines, erreurs), inscription, mot de passe oublié — sans toucher la vraie session.
+          Les trois modèles de page restent consultables en bas.
         </p>
       </div>
 
+      <AuthSimulateur />
+
+      <h2 className="text-lg font-semibold mt-10 mb-3" style={{ color: "var(--bpm-text-primary)" }}>
+        Modèles de page de connexion
+      </h2>
       <div className="grid gap-6 mb-8" style={{ gridTemplateColumns: "repeat(auto-fill, minmax(300px, 1fr))" }}>
-        <div className="p-5 rounded-xl border" style={cardStyle}>
-          <h2 className="text-lg font-semibold mb-2" style={{ color: "var(--bpm-text-primary)" }}>
-            1. Carte centrée (par défaut)
-          </h2>
-          <p className="text-sm mb-4" style={{ color: "var(--bpm-text-secondary)" }}>
-            Formulaire dans une carte centrée, option Google + e-mail.
-          </p>
-          <div className="flex flex-wrap gap-3">
-            <Link
-              href="/login"
-              className="inline-flex items-center px-4 py-2 rounded-lg text-sm font-medium border transition hover:opacity-90"
-              style={{ ...linkStyle, borderColor: "var(--bpm-border)", background: "var(--bpm-bg-secondary)" }}
-            >
-              Aperçu connexion
-            </Link>
-            <Link
-              href="/register"
-              className="inline-flex items-center px-4 py-2 rounded-lg text-sm font-medium border transition hover:opacity-90"
-              style={{ ...linkStyle, borderColor: "var(--bpm-border)", background: "var(--bpm-bg-secondary)" }}
-            >
-              Aperçu inscription
-            </Link>
-          </div>
-        </div>
-
-        <div className="p-5 rounded-xl border" style={cardStyle}>
-          <h2 className="text-lg font-semibold mb-2" style={{ color: "var(--bpm-text-primary)" }}>
-            2. Modèle split
-          </h2>
-          <p className="text-sm mb-4" style={{ color: "var(--bpm-text-secondary)" }}>
-            Formulaire à gauche, image à droite (équipe, collaboration).
-          </p>
-          <div className="flex flex-wrap gap-3">
-            <Link
-              href="/login?layout=split"
-              className="inline-flex items-center px-4 py-2 rounded-lg text-sm font-medium border transition hover:opacity-90"
-              style={{ ...linkStyle, borderColor: "var(--bpm-border)", background: "var(--bpm-bg-secondary)" }}
-            >
-              Aperçu connexion
-            </Link>
-            <Link
-              href="/register?layout=split"
-              className="inline-flex items-center px-4 py-2 rounded-lg text-sm font-medium border transition hover:opacity-90"
-              style={{ ...linkStyle, borderColor: "var(--bpm-border)", background: "var(--bpm-bg-secondary)" }}
-            >
-              Aperçu inscription
-            </Link>
-          </div>
-        </div>
-
-        <div className="p-5 rounded-xl border" style={cardStyle}>
-          <h2 className="text-lg font-semibold mb-2" style={{ color: "var(--bpm-text-primary)" }}>
-            3. Google seul
-          </h2>
-          <p className="text-sm mb-4" style={{ color: "var(--bpm-text-secondary)" }}>
-            Un seul bouton « Google », pas de formulaire e-mail.
-          </p>
-          <div className="flex flex-wrap gap-3">
-            <Link
-              href="/login?showEmailOption=false"
-              className="inline-flex items-center px-4 py-2 rounded-lg text-sm font-medium border transition hover:opacity-90"
-              style={{ ...linkStyle, borderColor: "var(--bpm-border)", background: "var(--bpm-bg-secondary)" }}
-            >
-              Aperçu connexion
-            </Link>
-          </div>
-        </div>
+        <ModelCard
+          title="1. Carte centrée (par défaut)"
+          description="Formulaire dans une carte centrée, option Google + e-mail."
+          links={[
+            { href: "/login", label: "Aperçu connexion" },
+            { href: "/register", label: "Aperçu inscription" },
+          ]}
+        />
+        <ModelCard
+          title="2. Modèle split"
+          description="Formulaire à gauche, image à droite (équipe, collaboration)."
+          links={[
+            { href: "/login?layout=split", label: "Aperçu connexion" },
+            { href: "/register?layout=split", label: "Aperçu inscription" },
+          ]}
+        />
+        <ModelCard
+          title="3. Google seul"
+          description="Un seul bouton « Google », pas de formulaire e-mail."
+          links={[{ href: "/login?showEmailOption=false", label: "Aperçu connexion" }]}
+        />
       </div>
 
       <nav className="doc-pagination">
