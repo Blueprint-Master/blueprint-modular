@@ -702,20 +702,19 @@ html[data-theme="dark"] .bpm-app-sidebar .bpm-sidebar-footer-wrap {
   width: 100%;
   table-layout: auto;
   border: none;
+  border-collapse: collapse;
 }
+/* Tableaux nets : aucun quadrillage vertical. Seulement un séparateur horizontal
+   fin entre les lignes et un trait sous l'en-tête ; le cadre vient du wrapper arrondi. */
 .bpm-table thead th,
 .bpm-table tbody td {
-  border: 1px solid var(--bpm-border) !important;
+  border: none !important;
+  border-bottom: 1px solid var(--bpm-border) !important;
 }
-/* Bordure externe 1px uniquement : pas de double trait avec les bords des cellules */
-/* Bordure externe : on supprime gauche / haut / bas des cellules pour éviter double trait avec le wrapper ; on garde la bordure droite de la dernière cellule pour un cadre complet. */
-.bpm-table-wrapper .bpm-table thead th:first-child,
-.bpm-table-wrapper .bpm-table tbody td:first-child {
-  border-left: none !important;
+.bpm-table tbody tr {
+  border: none !important;
 }
-.bpm-table-wrapper .bpm-table thead th {
-  border-top: none !important;
-}
+/* Dernière ligne sans trait : elle rejoint proprement le cadre du wrapper. */
 .bpm-table-wrapper .bpm-table tbody tr:last-child td {
   border-bottom: none !important;
 }
