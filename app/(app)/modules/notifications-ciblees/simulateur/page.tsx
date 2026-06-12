@@ -1,23 +1,22 @@
 "use client";
 
 import Link from "next/link";
+import { useI18n } from "@/lib/i18n/LocaleProvider";
 import NotificationsCibleesSimulateur from "../simulateur-content";
+import { STR } from "../strings";
 
 export default function NotificationsCibleesSimulateurPage() {
+  const { locale } = useI18n();
+  const s = STR[locale];
   return (
     <div className="doc-page">
       <div className="doc-page-header">
         <div className="doc-breadcrumb">
           <Link href="/modules">Modules</Link> →{" "}
-          <Link href="/modules/notifications-ciblees">Notifications ciblées</Link> → Simulateur
+          <Link href="/modules/notifications-ciblees">{s.moduleName}</Link> → {s.breadcrumbSim}
         </div>
-        <h1>Simulateur — Notifications ciblées</h1>
-        <p className="doc-description">
-          Cinq règles déjà configurées (validation, gros devis, ticket critique, échéance contrat,
-          rupture de stock). Créez une règle, suspendez, dupliquez, supprimez — puis émettez un
-          événement dans le banc d&apos;essai : le moteur évalue les règles, alimente le journal et
-          pousse les notifications in-app dans la cloche du header.
-        </p>
+        <h1>{s.simPageTitle}</h1>
+        <p className="doc-description">{s.simPageDescription}</p>
       </div>
       <NotificationsCibleesSimulateur />
     </div>

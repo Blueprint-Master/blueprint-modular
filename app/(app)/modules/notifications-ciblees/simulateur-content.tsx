@@ -19,44 +19,51 @@ import {
 } from "@/components/bpm";
 import { useNotificationHistory } from "@/contexts/NotificationHistoryContext";
 import { getNotificationLevel } from "@/lib/notificationLevels";
-
-type Canal = "in-app" | "e-mail" | "SMS";
+import { useI18n } from "@/lib/i18n/LocaleProvider";
+import {
+  CANAUX,
+  EVENT_CODES,
+  STR,
+  TEAM_KEYS,
+  type Canal,
+  type EventCode,
+  type LText,
+  type TeamKey,
+} from "./strings";
 
 interface Regle {
   id: string;
-  nom: string;
-  evenement: string;
+  nom: LText; // nom bilingue, résolu au render selon la locale
+  evenement: string; // code technique, jamais traduit (matching)
   condition: string; // texte lisible, vide si aucune condition
-  destinataires: string; // rôle / équipe
+  destinataires: TeamKey; // clé stable d'équipe / rôle (libellé résolu au render)
   canaux: Canal[];
   actif: boolean;
   declenchements7j: number;
 }
 
-const EVENEMENT_OPTIONS = [
-  { value: "document.valide", label: "document.valide — Document validé" },
-  { value: "devis.cree", label: "devis.cree — Devis créé" },
-  { value: "ticket.critique", label: "ticket.critique — Ticket critique ouvert" },
-  { value: "contrat.echeance_30j", label: "contrat.echeance_30j — Contrat à échéance (30 j)" },
-  { value: "stock.rupture", label: "stock.rupture — Rupture de stock" },
-  { value: "facture.impayee", label: "facture.impayee — Facture impayée" },
-];
+/** Entrée structurée du journal : résolue au render selon la locale. */
+interface JournalEntry {
+  id: string;
+  nom: LText;
+  destinataires: TeamKey;
+  canaux: Canal[];
+  montant: number | null;
+  timestamp: string;
+  color: ActivityItem["color"];
+}
 
-const EQUIPE_OPTIONS = [
-  { value: "Auteur du document", label: "Auteur du document" },
-  { value: "Direction commerciale", label: "Direction commerciale" },
-  { value: "Astreinte technique", label: "Astreinte technique" },
-  { value: "Service juridique", label: "Service juridique" },
-  { value: "Équipe achats", label: "Équipe achats" },
-];
-
-const CANAUX: Canal[] = ["in-app", "e-mail", "SMS"];
+/** Nom bilingue d'une règle seedée. */
+const seedNom = (key: keyof typeof STR.fr.seedRules): LText => ({
+  fr: STR.fr.seedRules[key],
+  en: STR.en.seedRules[key],
+});
 
 /** Jeu de démonstration 100 % déterministe (aucun Date.now() au render). */
 const INITIAL_REGLES: Regle[] = [
   {
     id: "r-1",
-    nom: "Document validé → auteur",
+    nom: seedNom("r1"),
     evenement: "document.valide",
     condition: "",
     destinataires: "Auteur du document",
@@ -66,7 +73,7 @@ const INITIAL_REGLES: Regle[] = [
   },
   {
     id: "r-2",
-    nom: "Gros devis → direction commerciale",
+    nom: seedNom("r2"),
     evenement: "devis.cree",
     condition: "montant > 10 000",
     destinataires: "Direction commerciale",
@@ -76,7 +83,7 @@ const INITIAL_REGLES: Regle[] = [
   },
   {
     id: "r-3",
-    nom: "Ticket critique → astreinte",
+    nom: seedNom("r3"),
     evenement: "ticket.critique",
     condition: "",
     destinataires: "Astreinte technique",
@@ -86,7 +93,7 @@ const INITIAL_REGLES: Regle[] = [
   },
   {
     id: "r-4",
-    nom: "Échéance contrat → juridique",
+    nom: seedNom("r4"),
     evenement: "contrat.echeance_30j",
     condition: "",
     destinataires: "Service juridique",
@@ -96,7 +103,7 @@ const INITIAL_REGLES: Regle[] = [
   },
   {
     id: "r-5",
-    nom: "Rupture de stock → achats",
+    nom: seedNom("r5"),
     evenement: "stock.rupture",
     condition: "",
     destinataires: "Équipe achats",
@@ -106,32 +113,44 @@ const INITIAL_REGLES: Regle[] = [
   },
 ];
 
-const INITIAL_JOURNAL: ActivityItem[] = [
+const INITIAL_JOURNAL: JournalEntry[] = [
   {
     id: "j-1",
-    actor: "Moteur de règles",
-    action: "a déclenché",
-    target: "Document validé → auteur · Auteur du document · in-app",
+    nom: seedNom("r1"),
+    destinataires: "Auteur du document",
+    canaux: ["in-app"],
+    montant: null,
     timestamp: "2026-06-12T08:42:00",
     color: "success",
   },
   {
     id: "j-2",
-    actor: "Moteur de règles",
-    action: "a déclenché",
-    target: "Gros devis → direction commerciale · Direction commerciale · e-mail, in-app (montant : 18 400 €)",
+    nom: seedNom("r2"),
+    destinataires: "Direction commerciale",
+    canaux: ["e-mail", "in-app"],
+    montant: 18400,
     timestamp: "2026-06-11T17:05:00",
     color: "info",
   },
   {
     id: "j-3",
-    actor: "Moteur de règles",
-    action: "a déclenché",
-    target: "Ticket critique → astreinte · Astreinte technique · SMS",
+    nom: seedNom("r3"),
+    destinataires: "Astreinte technique",
+    canaux: ["SMS"],
+    montant: null,
     timestamp: "2026-06-10T03:21:00",
     color: "warning",
   },
 ];
+
+/** Résultat du banc d'essai, stocké structuré et résolu au render selon la locale. */
+type SimResultat =
+  | { kind: "no-event" }
+  | { kind: "bad-amount"; raw: string }
+  | { kind: "none"; evenement: string; montant: number | null; detail: "condition" | "paused" | null }
+  | { kind: "triggered"; count: number; total: number; noms: LText[] };
+
+type FormErrorKey = keyof typeof STR.fr.errors;
 
 /** Extrait une condition de montant (« montant > 10 000 ») si présente. */
 function parseConditionMontant(condition: string): { op: ">" | ">=" | "<" | "<=" ; seuil: number } | null {
@@ -172,11 +191,13 @@ const CANAL_BADGE_VARIANT: Record<Canal, "primary" | "default" | "warning"> = {
 };
 
 function CanauxBadges({ canaux }: { canaux: Canal[] }) {
+  const { locale } = useI18n();
+  const s = STR[locale];
   return (
     <div className="flex flex-wrap gap-1">
       {canaux.map((c) => (
         <Badge key={c} variant={CANAL_BADGE_VARIANT[c]} size="sm">
-          {c}
+          {s.channels[c]}
         </Badge>
       ))}
     </div>
@@ -186,9 +207,11 @@ function CanauxBadges({ canaux }: { canaux: Canal[] }) {
 export default function NotificationsCibleesSimulateur() {
   const { showToast } = useToast();
   const { addNotification } = useNotificationHistory();
+  const { locale } = useI18n();
+  const s = STR[locale];
 
   const [regles, setRegles] = useState<Regle[]>(INITIAL_REGLES);
-  const [journal, setJournal] = useState<ActivityItem[]>(INITIAL_JOURNAL);
+  const [journal, setJournal] = useState<JournalEntry[]>(INITIAL_JOURNAL);
   const [toDelete, setToDelete] = useState<Regle | null>(null);
 
   // Formulaire de création
@@ -196,12 +219,21 @@ export default function NotificationsCibleesSimulateur() {
   const [condition, setCondition] = useState("");
   const [equipe, setEquipe] = useState<string | null>(null);
   const [canauxChoisis, setCanauxChoisis] = useState<Canal[]>(["in-app"]);
-  const [formError, setFormError] = useState<string | null>(null);
+  const [formError, setFormError] = useState<FormErrorKey | null>(null);
 
   // Banc d'essai
   const [simEvenement, setSimEvenement] = useState<string | null>("devis.cree");
   const [simMontant, setSimMontant] = useState("");
-  const [simResultat, setSimResultat] = useState<{ type: "success" | "warning"; texte: string } | null>(null);
+  const [simResultat, setSimResultat] = useState<SimResultat | null>(null);
+
+  const eventOptions = useMemo(
+    () => EVENT_CODES.map((code) => ({ value: code, label: `${code} — ${s.events[code]}` })),
+    [s]
+  );
+  const equipeOptions = useMemo(
+    () => TEAM_KEYS.map((key) => ({ value: key, label: s.teams[key] })),
+    [s]
+  );
 
   const stats = useMemo(() => {
     const actives = regles.filter((r) => r.actif).length;
@@ -210,19 +242,34 @@ export default function NotificationsCibleesSimulateur() {
     return { actives, declenchements, canaux };
   }, [regles]);
 
-  const pushJournal = (target: string, color: ActivityItem["color"], action = "a déclenché") => {
+  const pushJournal = (
+    entry: Omit<JournalEntry, "id" | "timestamp">
+  ) => {
     setJournal((prev) => [
       {
+        ...entry,
         id: `j-${Date.now()}-${Math.random().toString(36).slice(2, 7)}`,
-        actor: "Moteur de règles",
-        action,
-        target,
         timestamp: new Date().toISOString(),
-        color,
       },
       ...prev,
     ]);
   };
+
+  /** Le journal est stocké structuré ; on le résout ici selon la locale active. */
+  const journalItems = useMemo<ActivityItem[]>(
+    () =>
+      journal.map((e) => ({
+        id: e.id,
+        actor: s.journalActor,
+        action: s.journalAction,
+        target: `${e.nom[locale]} · ${s.teams[e.destinataires]} · ${e.canaux
+          .map((c) => s.channels[c])
+          .join(", ")}${e.montant !== null ? s.amountNote(e.montant) : ""}`,
+        timestamp: e.timestamp,
+        color: e.color,
+      })),
+    [journal, locale, s]
+  );
 
   const toggleCanal = (canal: Canal, checked: boolean) => {
     setCanauxChoisis((prev) => (checked ? [...prev, canal] : prev.filter((c) => c !== canal)));
@@ -232,13 +279,11 @@ export default function NotificationsCibleesSimulateur() {
     const actif = !regle.actif;
     setRegles((prev) => prev.map((r) => (r.id === regle.id ? { ...r, actif } : r)));
     showToast(
-      actif
-        ? `La règle « ${regle.nom} » est de nouveau active.`
-        : `La règle « ${regle.nom} » est suspendue : elle ne sera plus évaluée.`,
+      actif ? s.toastRuleEnabled(regle.nom[locale]) : s.toastRuleSuspended(regle.nom[locale]),
       actif ? "success" : "warning",
       4000,
-      actif ? "Règle activée" : "Règle suspendue",
-      "Notifications ciblées",
+      actif ? s.toastRuleEnabledTitle : s.toastRuleSuspendedTitle,
+      s.toastSource,
       null
     );
   };
@@ -247,7 +292,10 @@ export default function NotificationsCibleesSimulateur() {
     const copie: Regle = {
       ...regle,
       id: `r-${Date.now()}`,
-      nom: `${regle.nom} (copie)`,
+      nom: {
+        fr: `${regle.nom.fr}${STR.fr.copySuffix}`,
+        en: `${regle.nom.en}${STR.en.copySuffix}`,
+      },
       actif: false,
       declenchements7j: 0,
     };
@@ -258,11 +306,11 @@ export default function NotificationsCibleesSimulateur() {
       return next;
     });
     showToast(
-      `« ${copie.nom} » créée en pause : ajustez-la puis activez-la.`,
+      s.toastDuplicated(copie.nom[locale]),
       "info",
       4000,
-      "Règle dupliquée",
-      "Notifications ciblées",
+      s.toastDuplicatedTitle,
+      s.toastSource,
       null
     );
   };
@@ -271,11 +319,11 @@ export default function NotificationsCibleesSimulateur() {
     if (!toDelete) return;
     setRegles((prev) => prev.filter((r) => r.id !== toDelete.id));
     showToast(
-      `Règle « ${toDelete.nom} » supprimée.`,
+      s.toastDeleted(toDelete.nom[locale]),
       "info",
       4000,
-      "Règle supprimée",
-      "Notifications ciblées",
+      s.toastDeletedTitle,
+      s.toastSource,
       null
     );
     setToDelete(null);
@@ -283,36 +331,45 @@ export default function NotificationsCibleesSimulateur() {
 
   const handleCreate = () => {
     if (!evenement) {
-      setFormError("Choisissez l'événement déclencheur.");
+      setFormError("event");
       return;
     }
     if (!equipe) {
-      setFormError("Choisissez les destinataires (équipe ou rôle).");
+      setFormError("team");
       return;
     }
     if (canauxChoisis.length === 0) {
-      setFormError("Sélectionnez au moins un canal (in-app, e-mail ou SMS).");
+      setFormError("channels");
       return;
     }
     setFormError(null);
-    const evtLabel = EVENEMENT_OPTIONS.find((o) => o.value === evenement)?.label.split(" — ")[1] ?? evenement;
+    const evtCode = evenement as EventCode;
+    const teamKey = equipe as TeamKey;
     const nouvelle: Regle = {
       id: `r-${Date.now()}`,
-      nom: `${evtLabel} → ${equipe.toLowerCase()}`,
+      nom: {
+        fr: `${STR.fr.events[evtCode]} → ${STR.fr.teams[teamKey].toLowerCase()}`,
+        en: `${STR.en.events[evtCode]} → ${STR.en.teams[teamKey].toLowerCase()}`,
+      },
       evenement,
       condition: condition.trim(),
-      destinataires: equipe,
+      destinataires: teamKey,
       canaux: CANAUX.filter((c) => canauxChoisis.includes(c)),
       actif: true,
       declenchements7j: 0,
     };
     setRegles((prev) => [nouvelle, ...prev]);
     showToast(
-      `Sur « ${evenement} »${nouvelle.condition ? ` (si ${nouvelle.condition})` : ""}, ${equipe} sera notifié via ${nouvelle.canaux.join(", ")}.`,
+      s.toastCreated(
+        evenement,
+        nouvelle.condition,
+        s.teams[teamKey],
+        nouvelle.canaux.map((c) => s.channels[c]).join(", ")
+      ),
       "success",
       6000,
-      "Règle créée",
-      "Notifications ciblées",
+      s.toastCreatedTitle,
+      s.toastSource,
       null
     );
     setEvenement(null);
@@ -324,13 +381,13 @@ export default function NotificationsCibleesSimulateur() {
   /** BANC D'ESSAI : émet un événement et évalue réellement les règles actives. */
   const emettreEvenement = () => {
     if (!simEvenement) {
-      setSimResultat({ type: "warning", texte: "Choisissez un événement à émettre." });
+      setSimResultat({ kind: "no-event" });
       return;
     }
     const montantBrut = simMontant.replace(/[\s€.]/g, "").replace(",", ".");
     const montant = simMontant.trim() === "" ? null : Number(montantBrut);
     if (montant !== null && Number.isNaN(montant)) {
-      setSimResultat({ type: "warning", texte: `Contexte « ${simMontant} » illisible : indiquez un montant numérique (ex. 12500).` });
+      setSimResultat({ kind: "bad-amount", raw: simMontant });
       return;
     }
 
@@ -343,12 +400,11 @@ export default function NotificationsCibleesSimulateur() {
       const condNonRemplie = regles.some(
         (r) => r.actif && r.evenement === simEvenement && !conditionSatisfaite(r, montant)
       );
-      let detail = "";
-      if (condNonRemplie) detail = " Une règle correspond à l'événement mais sa condition de montant n'est pas remplie.";
-      else if (enPause) detail = " Une règle correspond à l'événement mais elle est en pause.";
       setSimResultat({
-        type: "warning",
-        texte: `Aucune règle déclenchée pour « ${simEvenement} »${montant !== null ? ` (montant : ${montant.toLocaleString("fr-FR")} €)` : ""}.${detail}`,
+        kind: "none",
+        evenement: simEvenement,
+        montant,
+        detail: condNonRemplie ? "condition" : enPause ? "paused" : null,
       });
       return;
     }
@@ -360,83 +416,131 @@ export default function NotificationsCibleesSimulateur() {
     );
 
     declenchees.forEach((r) => {
-      pushJournal(
-        `${r.nom} · ${r.destinataires} · ${r.canaux.join(", ")}${montant !== null ? ` (montant : ${montant.toLocaleString("fr-FR")} €)` : ""}`,
-        "success"
-      );
-      // Canal in-app : vraie notification dans la cloche du header (module Notification).
+      pushJournal({
+        nom: r.nom,
+        destinataires: r.destinataires,
+        canaux: r.canaux,
+        montant,
+        color: "success",
+      });
+      // Canal in-app : vraie notification dans la cloche du header (module Notification),
+      // rédigée dans la locale active au moment du déclenchement.
       if (r.canaux.includes("in-app")) {
         const payload = {
-          message: `Règle « ${r.nom} » : ${r.destinataires} notifié (événement ${r.evenement}${montant !== null ? `, montant ${montant.toLocaleString("fr-FR")} €` : ""}).`,
+          message: s.bellMessage(r.nom[locale], s.teams[r.destinataires], r.evenement, montant),
           type: "info" as const,
-          title: "Notification ciblée",
-          pageName: "Notifications ciblées",
+          title: s.bellTitle,
+          pageName: s.toastSource,
         };
         addNotification({ ...payload, level: getNotificationLevel(payload) });
       }
     });
 
     setSimResultat({
-      type: "success",
-      texte: `${declenchees.length} règle${declenchees.length > 1 ? "s" : ""} déclenchée${declenchees.length > 1 ? "s" : ""} → ${totalNotifications} notification${totalNotifications > 1 ? "s" : ""} (${declenchees.map((r) => r.nom).join(" ; ")}).`,
+      kind: "triggered",
+      count: declenchees.length,
+      total: totalNotifications,
+      noms: declenchees.map((r) => r.nom),
     });
     showToast(
-      `${declenchees.length} règle${declenchees.length > 1 ? "s" : ""} déclenchée${declenchees.length > 1 ? "s" : ""} → ${totalNotifications} notification${totalNotifications > 1 ? "s" : ""}. Les envois in-app sont visibles dans la cloche du header.`,
+      s.toastEmitted(declenchees.length, totalNotifications),
       "success",
       6000,
-      "Événement émis",
-      "Notifications ciblées",
+      s.toastEmittedTitle,
+      s.toastSource,
       null
     );
   };
 
+  /** Résout le résultat du banc d'essai dans la locale active. */
+  const simMessage = useMemo<{ type: "success" | "warning"; texte: string } | null>(() => {
+    if (!simResultat) return null;
+    switch (simResultat.kind) {
+      case "no-event":
+        return { type: "warning", texte: s.simNoEvent };
+      case "bad-amount":
+        return { type: "warning", texte: s.simBadAmount(simResultat.raw) };
+      case "none": {
+        let detail = "";
+        if (simResultat.detail === "condition") detail = s.simNoneDetailCondition;
+        else if (simResultat.detail === "paused") detail = s.simNoneDetailPaused;
+        return {
+          type: "warning",
+          texte: `${s.simNone(
+            simResultat.evenement,
+            simResultat.montant !== null ? s.amountNote(simResultat.montant) : ""
+          )}${detail}`,
+        };
+      }
+      case "triggered":
+        return {
+          type: "success",
+          texte: s.simTriggered(
+            simResultat.count,
+            simResultat.total,
+            simResultat.noms.map((n) => n[locale]).join(s.namesSeparator)
+          ),
+        };
+    }
+  }, [simResultat, s, locale]);
+
   const columns = [
     {
       key: "nom",
-      label: "Règle",
+      label: s.colRule,
       render: (value: unknown, row: Record<string, unknown>) => (
         <div>
-          <div style={{ color: "var(--bpm-text-primary)", fontWeight: 500 }}>{String(value)}</div>
+          <div style={{ color: "var(--bpm-text-primary)", fontWeight: 500 }}>
+            {(value as LText)[locale]}
+          </div>
           <div className="text-xs" style={{ color: "var(--bpm-text-secondary)" }}>
             <code>{String(row.evenement)}</code>
-            {String(row.condition) ? ` · si ${String(row.condition)}` : ""}
+            {String(row.condition) ? s.conditionNote(String(row.condition)) : ""}
           </div>
         </div>
       ),
     },
-    { key: "destinataires", label: "Destinataires" },
+    {
+      key: "destinataires",
+      label: s.colRecipients,
+      render: (value: unknown) => <span>{s.teams[value as TeamKey]}</span>,
+    },
     {
       key: "canaux",
-      label: "Canaux",
+      label: s.colChannels,
       render: (value: unknown) => <CanauxBadges canaux={value as Canal[]} />,
     },
     {
       key: "declenchements7j",
-      label: "Déclenchements (7 j)",
+      label: s.colTriggers,
       align: "right" as const,
       render: (value: unknown) => <span>{String(value)}</span>,
     },
     {
       key: "actif",
-      label: "Statut",
+      label: s.colStatus,
       render: (value: unknown) =>
-        value ? <Badge variant="success">Active</Badge> : <Badge variant="default">En pause</Badge>,
+        value ? (
+          <Badge variant="success">{s.statusActive}</Badge>
+        ) : (
+          <Badge variant="default">{s.statusPaused}</Badge>
+        ),
     },
     {
       key: "id",
-      label: "Actions",
+      label: s.colActions,
       render: (_: unknown, row: Record<string, unknown>) => {
         const regle = row as unknown as Regle;
         return (
           <div className="flex flex-wrap gap-2">
             <Button size="small" variant="secondary" onClick={() => toggleActif(regle)}>
-              {regle.actif ? "Suspendre" : "Activer"}
+              {regle.actif ? s.actionSuspend : s.actionEnable}
             </Button>
             <Button size="small" variant="secondary" onClick={() => dupliquer(regle)}>
-              Dupliquer
+              {s.actionDuplicate}
             </Button>
             <Button size="small" variant="destructive" onClick={() => setToDelete(regle)}>
-              Supprimer
+              {s.actionDelete}
             </Button>
           </div>
         );
@@ -447,46 +551,46 @@ export default function NotificationsCibleesSimulateur() {
   return (
     <div className="space-y-6">
       <MetricRow>
-        <Metric label="Règles actives" value={String(stats.actives)} />
-        <Metric label="Déclenchements (7 j)" value={String(stats.declenchements)} />
-        <Metric label="Canaux configurés" value={String(stats.canaux)} />
+        <Metric label={s.metricActiveRules} value={String(stats.actives)} />
+        <Metric label={s.metricTriggers7d} value={String(stats.declenchements)} />
+        <Metric label={s.metricChannels} value={String(stats.canaux)} />
       </MetricRow>
 
-      <Panel variant="info" title="Règles de notification">
+      <Panel variant="info" title={s.panelRules}>
         <Table columns={columns} data={regles as unknown as Record<string, unknown>[]} striped hover />
       </Panel>
 
-      <Panel variant="info" title="Créer une règle">
+      <Panel variant="info" title={s.panelCreate}>
         <div className="grid gap-3 md:grid-cols-2">
           <Selectbox
-            label="Événement déclencheur"
-            options={EVENEMENT_OPTIONS}
+            label={s.formEventLabel}
+            options={eventOptions}
             value={evenement}
             onChange={setEvenement}
-            placeholder="Choisir un événement"
+            placeholder={s.formEventPlaceholder}
           />
           <Input
-            label="Condition (optionnelle)"
-            placeholder="ex. montant > 10 000"
+            label={s.formConditionLabel}
+            placeholder={s.formConditionPlaceholder}
             value={condition}
             onChange={setCondition}
           />
           <Selectbox
-            label="Destinataires (équipe ou rôle)"
-            options={EQUIPE_OPTIONS}
+            label={s.formTeamLabel}
+            options={equipeOptions}
             value={equipe}
             onChange={setEquipe}
-            placeholder="Choisir une équipe"
+            placeholder={s.formTeamPlaceholder}
           />
           <div>
             <div className="text-sm font-medium mb-2" style={{ color: "var(--bpm-text-primary)" }}>
-              Canaux (au moins un)
+              {s.formChannelsLabel}
             </div>
             <div className="flex flex-wrap gap-4">
               {CANAUX.map((canal) => (
                 <Checkbox
                   key={canal}
-                  label={canal}
+                  label={s.channels[canal]}
                   checked={canauxChoisis.includes(canal)}
                   onChange={(checked) => toggleCanal(canal, checked)}
                 />
@@ -496,59 +600,57 @@ export default function NotificationsCibleesSimulateur() {
         </div>
         {formError && (
           <p className="mt-3 text-sm" style={{ color: "var(--bpm-accent-red, #dc2626)" }}>
-            {formError}
+            {s.errors[formError]}
           </p>
         )}
         <Button className="mt-4" onClick={handleCreate}>
-          Créer la règle
+          {s.formSubmit}
         </Button>
       </Panel>
 
-      <Panel variant="info" title="Banc d'essai — simuler un événement">
+      <Panel variant="info" title={s.panelBench}>
         <p className="mb-3 text-sm" style={{ color: "var(--bpm-text-secondary)", maxWidth: "62ch" }}>
-          Émettez un événement métier : le moteur évalue les règles actives (événement + condition de
-          montant le cas échéant), journalise chaque déclenchement et pousse les notifications in-app
-          dans la cloche du header.
+          {s.benchIntro}
         </p>
         <div className="grid gap-3 md:grid-cols-2">
           <Selectbox
-            label="Événement à émettre"
-            options={EVENEMENT_OPTIONS}
+            label={s.benchEventLabel}
+            options={eventOptions}
             value={simEvenement}
             onChange={setSimEvenement}
-            placeholder="Choisir un événement"
+            placeholder={s.formEventPlaceholder}
           />
           <Input
-            label="Contexte — montant en € (optionnel)"
-            placeholder="ex. 12500"
+            label={s.benchAmountLabel}
+            placeholder={s.benchAmountPlaceholder}
             value={simMontant}
             onChange={setSimMontant}
           />
         </div>
         <Button className="mt-4" onClick={emettreEvenement}>
-          Émettre l&apos;événement
+          {s.benchSubmit}
         </Button>
-        {simResultat && (
-          <Message type={simResultat.type} className="mt-4">
-            {simResultat.texte}
+        {simMessage && (
+          <Message type={simMessage.type} className="mt-4">
+            {simMessage.texte}
           </Message>
         )}
       </Panel>
 
-      <Panel variant="info" title="Journal des déclenchements">
-        <ActivityFeed activities={journal} maxItems={8} compact />
+      <Panel variant="info" title={s.panelJournal}>
+        <ActivityFeed activities={journalItems} maxItems={8} compact />
       </Panel>
 
       <ConfirmModal
         isOpen={toDelete !== null}
-        title="Supprimer la règle"
+        title={s.deleteTitle}
         message={
           toDelete
-            ? `« ${toDelete.nom} » (${toDelete.evenement}) ne notifiera plus ${toDelete.destinataires}. Cette action est immédiate.`
+            ? s.deleteMessage(toDelete.nom[locale], toDelete.evenement, s.teams[toDelete.destinataires])
             : ""
         }
-        confirmLabel="Supprimer"
-        cancelLabel="Annuler"
+        confirmLabel={s.deleteConfirm}
+        cancelLabel={s.deleteCancel}
         variant="danger"
         onConfirm={confirmDelete}
         onCancel={() => setToDelete(null)}
