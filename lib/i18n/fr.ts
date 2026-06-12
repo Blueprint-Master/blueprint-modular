@@ -308,6 +308,13 @@ const fr = {
       business: "Systèmes métier",
       specialized: "Spécialisés",
     },
+    demo: {
+      staticPreview: "aperçu statique",
+      uploaded: "Sélectionné : {files}",
+      wizardDone: "Parcours terminé — onComplete appelé.",
+      loggedOut: "Déconnexion (démo) — onLogout appelé.",
+      toastReplay: "Rejouer la notification",
+    },
   },
   docsHub: {
     eyebrow: "Documentation",

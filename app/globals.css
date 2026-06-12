@@ -1007,6 +1007,22 @@ textarea.bpm-textarea:focus {
 .doc-pagination a { color: var(--bpm-accent); text-decoration: none; font-size: var(--bpm-font-size-base); }
 .doc-pagination a:hover { text-decoration: underline; }
 
+/* Galerie : badge « aperçu statique » sur les compositions illustratives non interactives */
+.demo-static-tag {
+  display: inline-block;
+  margin-left: 8px;
+  padding: 1px 7px;
+  border-radius: 999px;
+  background: var(--bpm-bg-secondary);
+  border: 1px solid var(--bpm-border);
+  font-size: 10px;
+  font-weight: 500;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+  color: var(--bpm-text-muted);
+  vertical-align: middle;
+}
+
 /* Buttons */
 .btn-primary { background: var(--bpm-accent); color: white; border: none; padding: 8px 16px; border-radius: 8px; font-size: 14px; font-weight: 500; cursor: pointer; text-decoration: none; display: inline-block; }
 .btn-primary:hover { background: #0376a3; }
