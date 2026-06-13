@@ -2,6 +2,12 @@
 
 import { useRef, useState } from "react";
 import { Button } from "@/components/bpm";
+import { useI18n } from "@/lib/i18n/LocaleProvider";
+import {
+  strings,
+  selectedFilesLabel,
+  upToFilesLabel,
+} from "@/app/(app)/modules/documents/strings";
 
 export interface DocumentAnalysisImportProps {
   /** Titre de la section (ex. "Analyse de documents") */
@@ -54,6 +60,8 @@ export function DocumentAnalysisImport({
   disabled = false,
   onAnalyze,
 }: DocumentAnalysisImportProps) {
+  const { locale } = useI18n();
+  const t = strings(locale).import;
   const inputRef = useRef<HTMLInputElement>(null);
   const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
   const [isDragging, setIsDragging] = useState(false);
@@ -135,18 +143,18 @@ export function DocumentAnalysisImport({
             <polyline points="17 8 12 3 7 8" />
             <line x1="12" y1="3" x2="12" y2="15" />
           </svg>
-          <p className="drop-title">Glissez-déposez vos fichiers ici</p>
-          <p className="drop-subtitle">ou</p>
+          <p className="drop-title">{t.dropTitle}</p>
+          <p className="drop-subtitle">{t.or}</p>
           <Button
             type="button"
             variant="primary"
             onClick={() => handleClick()}
-            aria-label="Parcourir les fichiers"
+            aria-label={t.browseAria}
           >
             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="w-4 h-4 mr-2" aria-hidden="true">
               <path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z" />
             </svg>
-            Parcourir les fichiers
+            {t.browse}
           </Button>
           <div className="drop-formats">
             {accept.split(",").map((ext, i) => (
@@ -154,11 +162,11 @@ export function DocumentAnalysisImport({
             ))}
           </div>
           <p className="drop-subtitle" style={{ fontSize: "12px", marginTop: "4px" }}>
-            Jusqu&apos;à {maxFiles} fichiers simultanément
+            {upToFilesLabel(maxFiles, locale)}
           </p>
           {selectedFiles.length > 0 && (
             <p className="text-xs mt-2" style={{ color: "var(--bpm-accent)" }}>
-              {selectedFiles.length} fichier{selectedFiles.length > 1 ? "s" : ""} sélectionné{selectedFiles.length > 1 ? "s" : ""}
+              {selectedFilesLabel(selectedFiles.length, locale)}
             </p>
           )}
         </div>
@@ -169,12 +177,12 @@ export function DocumentAnalysisImport({
             onClick={handleSubmit}
             disabled={disabled || selectedFiles.length === 0}
             className="doc-import-analyze-button"
-            aria-label={selectedFiles.length === 0 ? "Sélectionnez au moins un fichier pour continuer" : "Analyser les documents"}
+            aria-label={selectedFiles.length === 0 ? t.selectAtLeastOne : t.analyzeAria}
           >
             {disabled ? (
               <>
                 <span className="animate-spin inline-block mr-2">⟳</span>
-                Analyse en cours...
+                {t.analyzing}
               </>
             ) : (
               <>
