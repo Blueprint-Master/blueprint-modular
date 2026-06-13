@@ -96,6 +96,28 @@ run("node scripts/generate-versions.mjs --check", {
 step("Steps d+e — Smoke render + prop-surface snapshot (vitest)");
 run("npx vitest run gate/", { cwd: CORE_DIR, label: "vitest gate/" });
 
+// ── Step f: Garde secrets connecteurs ─────────────────────────────────────────
+// Échoue si une VALEUR de secret est committée sous lib/connectors/**.
+// Pur Node, aucune dépendance — la garde précède ce qu'elle garde (PR1).
+step("Step f — Garde secrets connecteurs (lib/connectors/**)");
+run("node scripts/check-connector-secrets.mjs", {
+  cwd: REPO_ROOT,
+  label: "check-connector-secrets.mjs",
+});
+
+// ── Step g: Tests du pilier Connecteurs (schéma + mapping) ────────────────────
+// Tests racine, isolés à tests/connectors-* (n'entraînent pas prisma/next).
+// On installe vitest + zod à la racine comme le gate le fait déjà pour React.
+step("Step g — Tests connecteurs (schéma + mapping)");
+run(
+  "npm install --no-save --ignore-scripts vitest zod",
+  { cwd: REPO_ROOT, label: "install vitest + zod (tests connecteurs)" }
+);
+run("npx vitest run tests/connectors-*.test.ts", {
+  cwd: REPO_ROOT,
+  label: "vitest tests/connectors-*",
+});
+
 // ── Summary ───────────────────────────────────────────────────────────────────
 console.log(`\n${"═".repeat(60)}`);
 if (exitCode === 0) {
