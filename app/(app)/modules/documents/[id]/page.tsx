@@ -4,6 +4,8 @@ import { useEffect, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 import Link from "next/link";
 import { Panel, Spinner, Message, Button } from "@/components/bpm";
+import { useI18n } from "@/lib/i18n/LocaleProvider";
+import { strings, fmtDate, uploadedOn } from "../strings";
 
 type Document = {
   id: string;
@@ -21,6 +23,8 @@ type Document = {
 };
 
 export default function DocumentDetailPage() {
+  const { locale } = useI18n();
+  const t = strings(locale).detail;
   const params = useParams();
   const router = useRouter();
   const id = params.id as string;
@@ -53,7 +57,7 @@ export default function DocumentDetailPage() {
   }, [id, isProcessing]);
 
   const handleDelete = async () => {
-    if (!confirm("Supprimer ce document ?")) return;
+    if (!confirm(t.deleteConfirm)) return;
     setDeleting(true);
     try {
       const res = await fetch(`/api/documents/${id}`, { method: "DELETE", credentials: "include" });
@@ -64,12 +68,12 @@ export default function DocumentDetailPage() {
   };
 
   if (loading && !doc) {
-    return <Spinner text="Chargement..." />;
+    return <Spinner text={t.loading} />;
   }
   if (!doc) {
     return (
-      <Panel variant="error" title="Document introuvable">
-        <Link href="/modules/documents" style={{ color: "var(--bpm-accent-cyan)" }}>Retour à la liste</Link>
+      <Panel variant="error" title={t.notFoundTitle}>
+        <Link href="/modules/documents" style={{ color: "var(--bpm-accent-cyan)" }}>{t.backToList}</Link>
       </Panel>
     );
   }
@@ -84,53 +88,53 @@ export default function DocumentDetailPage() {
           {doc.filename}
         </h1>
         <div className="flex items-center gap-2 text-sm" style={{ color: "var(--bpm-text-secondary)" }}>
-          Envoyé le {new Date(doc.createdAt).toLocaleDateString("fr-FR")}
+          {uploadedOn(doc.createdAt, locale)}
           <span>
-            {doc.analysisStatus === "done" && "✓"}
-            {doc.analysisStatus === "error" && "✗ Erreur"}
-            {doc.analysisStatus === "processing" && "⏳ Analyse en cours"}
-            {doc.analysisStatus === "pending" && "⏳ En attente"}
+            {doc.analysisStatus === "done" && t.statusDone}
+            {doc.analysisStatus === "error" && t.statusError}
+            {doc.analysisStatus === "processing" && t.statusProcessing}
+            {doc.analysisStatus === "pending" && t.statusPending}
           </span>
           <Button variant="outline" size="small" onClick={handleDelete} disabled={deleting}>
-            Supprimer
+            {t.deleteButton}
           </Button>
         </div>
       </div>
 
       {doc.analysisStatus === "processing" && (
-        <Spinner text="Analyse IA en cours..." size="large" />
+        <Spinner text={t.analyzing} size="large" />
       )}
 
       {doc.analysisStatus === "error" && (
         <Message type="error">
-          L&apos;analyse a échoué. Vous pouvez supprimer le document ou réessayer plus tard.
+          {t.analysisFailed}
         </Message>
       )}
 
       {doc.analysisStatus === "done" && (
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <Panel variant="info" title="Fournisseur">
+          <Panel variant="info" title={t.supplier}>
             {doc.supplier ?? "—"}
           </Panel>
-          <Panel variant="info" title="Client">
+          <Panel variant="info" title={t.client}>
             {doc.client ?? "—"}
           </Panel>
-          <Panel variant="info" title="Date de contrat">
-            {doc.contractDate ? new Date(doc.contractDate).toLocaleDateString("fr-FR") : "—"}
+          <Panel variant="info" title={t.contractDate}>
+            {fmtDate(doc.contractDate, locale)}
           </Panel>
-          <Panel variant="info" title="Date de signature">
-            {doc.signatureDate ? new Date(doc.signatureDate).toLocaleDateString("fr-FR") : "—"}
+          <Panel variant="info" title={t.signatureDate}>
+            {fmtDate(doc.signatureDate, locale)}
           </Panel>
-          <Panel variant="info" title="Date de dénonciation">
-            {doc.terminationDate ? new Date(doc.terminationDate).toLocaleDateString("fr-FR") : "—"}
+          <Panel variant="info" title={t.terminationDate}>
+            {fmtDate(doc.terminationDate, locale)}
           </Panel>
           {doc.summary && (
-            <Panel variant="info" title="Synthèse" className="md:col-span-2">
+            <Panel variant="info" title={t.summary} className="md:col-span-2">
               {doc.summary}
             </Panel>
           )}
           {keyPointsArr.length > 0 && (
-            <Panel variant="info" title="Points clés" className="md:col-span-2">
+            <Panel variant="info" title={t.keyPoints} className="md:col-span-2">
               <ul className="list-disc pl-4 space-y-1">
                 {keyPointsArr.map((p, i) => (
                   <li key={i}>{p}</li>
@@ -139,7 +143,7 @@ export default function DocumentDetailPage() {
             </Panel>
           )}
           {commitmentsArr.length > 0 && (
-            <Panel variant="info" title="Engagements" className="md:col-span-2">
+            <Panel variant="info" title={t.commitments} className="md:col-span-2">
               <ul className="list-disc pl-4 space-y-1">
                 {commitmentsArr.map((c, i) => (
                   <li key={i}>{c}</li>
@@ -151,9 +155,9 @@ export default function DocumentDetailPage() {
       )}
 
       <nav className="doc-pagination mt-8">
-        <Link href="/modules/documents" style={{ color: "var(--bpm-accent-cyan)" }}>← Retour à l&apos;Analyse de documents</Link>
-        <Link href="/modules/documents#documentation" style={{ color: "var(--bpm-accent-cyan)" }}>Analyser un document</Link>
-        <Link href="/modules/documents/documentation" style={{ color: "var(--bpm-accent-cyan)" }}>Documentation</Link>
+        <Link href="/modules/documents" style={{ color: "var(--bpm-accent-cyan)" }}>{t.backToAnalysis}</Link>
+        <Link href="/modules/documents#documentation" style={{ color: "var(--bpm-accent-cyan)" }}>{t.analyzeNav}</Link>
+        <Link href="/modules/documents/documentation" style={{ color: "var(--bpm-accent-cyan)" }}>{t.documentationNav}</Link>
       </nav>
     </div>
   );
