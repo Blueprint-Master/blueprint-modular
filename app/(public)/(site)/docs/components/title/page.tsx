@@ -4,8 +4,77 @@ import { useState } from "react";
 import Link from "next/link";
 import { Title, CodeBlock } from "@/components/bpm";
 import { getPrevNext } from "@/lib/docPages";
+import { useI18n } from "@/lib/i18n/LocaleProvider";
+
+const fr = {
+  breadcrumb: "Composants",
+  description: "Titre avec niveaux 1 à 4 (h1–h4). Taille, gras et couleur paramétrables.",
+  category: "Affichage de données",
+  copy: "Copier",
+  thDefault: "Défaut",
+  thRequired: "Requis",
+  yes: "Oui",
+  no: "Non",
+  examples: "Exemples",
+  sizeOptional: "size (optionnel)",
+  boldOptional: "bold (optionnel)",
+  colorOptional: "color (optionnel)",
+  barOptional: "bar (optionnel)",
+  invertedOptional: "inverted (optionnel)",
+  barColorOptional: "barColor (optionnel)",
+  invertedBgOptional: "invertedBackground (optionnel)",
+  boldDefaultLevel: "Défaut du niveau",
+  boldYes: "Oui (700)",
+  boldNo: "Non (400)",
+  barCheckbox: "Barre verticale à gauche",
+  invertedCheckbox: "Couleur inversée (blanc sur noir)",
+  descLevel: "Niveau (h1–h4). Définit taille et gras par défaut.",
+  descChildren: "Texte du titre.",
+  descSize: "Taille CSS (ex. 1.5rem, 24px). Surcharge le niveau.",
+  descBold: "Gras : true=700, false=400, ou nombre. Surcharge le niveau.",
+  descColor: "Couleur CSS (ex. var(--bpm-text-primary), #333).",
+  descBar: "Barre verticale sombre à gauche du titre (style en-tête de section).",
+  descBarColor: "Couleur de la barre gauche (hex, rgb ou nom CSS). Pris en compte si bar=True.",
+  descInverted: "Couleur inversée : fond sombre, texte blanc (style badge / scénario).",
+  descInvertedBg: "Couleur de fond quand inverted=True (hex, rgb ou nom CSS).",
+};
+const en: typeof fr = {
+  breadcrumb: "Components",
+  description: "Title with levels 1 to 4 (h1–h4). Configurable size, weight and color.",
+  category: "Data display",
+  copy: "Copy",
+  thDefault: "Default",
+  thRequired: "Required",
+  yes: "Yes",
+  no: "No",
+  examples: "Examples",
+  sizeOptional: "size (optional)",
+  boldOptional: "bold (optional)",
+  colorOptional: "color (optional)",
+  barOptional: "bar (optional)",
+  invertedOptional: "inverted (optional)",
+  barColorOptional: "barColor (optional)",
+  invertedBgOptional: "invertedBackground (optional)",
+  boldDefaultLevel: "Level default",
+  boldYes: "Yes (700)",
+  boldNo: "No (400)",
+  barCheckbox: "Vertical bar on the left",
+  invertedCheckbox: "Inverted color (white on black)",
+  descLevel: "Level (h1–h4). Sets default size and weight.",
+  descChildren: "Title text.",
+  descSize: "CSS size (e.g. 1.5rem, 24px). Overrides the level.",
+  descBold: "Weight: true=700, false=400, or a number. Overrides the level.",
+  descColor: "CSS color (e.g. var(--bpm-text-primary), #333).",
+  descBar: "Dark vertical bar on the left of the title (section header style).",
+  descBarColor: "Color of the left bar (hex, rgb or CSS name). Applied when bar=True.",
+  descInverted: "Inverted color: dark background, white text (badge / scenario style).",
+  descInvertedBg: "Background color when inverted=True (hex, rgb or CSS name).",
+};
+const L = { fr, en } as const;
 
 export default function DocTitlePage() {
+  const { locale } = useI18n();
+  const t = L[locale];
   const [level, setLevel] = useState<1 | 2 | 3 | 4>(1);
   const [children, setChildren] = useState("Titre de la page");
   const [size, setSize] = useState<string>("");
@@ -37,12 +106,12 @@ export default function DocTitlePage() {
   return (
     <div className="doc-page">
       <div className="doc-page-header">
-        <div className="doc-breadcrumb"><Link href="/docs/components">Composants</Link> → bpm.title</div>
+        <div className="doc-breadcrumb"><Link href="/docs/components">{t.breadcrumb}</Link> → bpm.title</div>
         <h1>bpm.title</h1>
-        <p className="doc-description">Titre avec niveaux 1 à 4 (h1–h4). Taille, gras et couleur paramétrables.</p>
+        <p className="doc-description">{t.description}</p>
         <div className="doc-meta">
           <span className="doc-badge doc-badge-stable">Stable</span>
-          <span className="doc-badge doc-badge-category">Affichage de données</span>
+          <span className="doc-badge doc-badge-category">{t.category}</span>
           <span className="doc-reading-time">⏱ 2 min</span>
         </div>
       </div>
@@ -76,7 +145,7 @@ export default function DocTitlePage() {
             <input type="text" value={children} onChange={(e) => setChildren(e.target.value)} />
           </div>
           <div className="sandbox-control-group">
-            <label>size (optionnel)</label>
+            <label>{t.sizeOptional}</label>
             <input
               type="text"
               value={size}
@@ -85,15 +154,15 @@ export default function DocTitlePage() {
             />
           </div>
           <div className="sandbox-control-group">
-            <label>bold (optionnel)</label>
+            <label>{t.boldOptional}</label>
             <select value={bold} onChange={(e) => setBold(e.target.value)}>
-              <option value="">Défaut du niveau</option>
-              <option value="true">Oui (700)</option>
-              <option value="false">Non (400)</option>
+              <option value="">{t.boldDefaultLevel}</option>
+              <option value="true">{t.boldYes}</option>
+              <option value="false">{t.boldNo}</option>
             </select>
           </div>
           <div className="sandbox-control-group">
-            <label>color (optionnel)</label>
+            <label>{t.colorOptional}</label>
             <input
               type="text"
               value={color}
@@ -102,22 +171,22 @@ export default function DocTitlePage() {
             />
           </div>
           <div className="sandbox-control-group">
-            <label>bar (optionnel)</label>
+            <label>{t.barOptional}</label>
             <label className="flex items-center gap-2 cursor-pointer">
               <input type="checkbox" checked={bar} onChange={(e) => setBar(e.target.checked)} />
-              Barre verticale à gauche
+              {t.barCheckbox}
             </label>
           </div>
           <div className="sandbox-control-group">
-            <label>inverted (optionnel)</label>
+            <label>{t.invertedOptional}</label>
             <label className="flex items-center gap-2 cursor-pointer">
               <input type="checkbox" checked={inverted} onChange={(e) => setInverted(e.target.checked)} />
-              Couleur inversée (blanc sur noir)
+              {t.invertedCheckbox}
             </label>
           </div>
           {bar && (
             <div className="sandbox-control-group">
-              <label>barColor (optionnel)</label>
+              <label>{t.barColorOptional}</label>
               <input
                 type="text"
                 value={barColor}
@@ -128,7 +197,7 @@ export default function DocTitlePage() {
           )}
           {inverted && (
             <div className="sandbox-control-group">
-              <label>invertedBackground (optionnel)</label>
+              <label>{t.invertedBgOptional}</label>
               <input
                 type="text"
                 value={invertedBackground}
@@ -139,25 +208,25 @@ export default function DocTitlePage() {
           )}
         </div>
         <div className="sandbox-code">
-          <div className="sandbox-code-header"><span>Python</span><button type="button" onClick={() => navigator.clipboard.writeText(pythonCode)}>Copier</button></div>
+          <div className="sandbox-code-header"><span>Python</span><button type="button" onClick={() => navigator.clipboard.writeText(pythonCode)}>{t.copy}</button></div>
           <pre><code>{pythonCode}</code></pre>
         </div>
       </div>
       <table className="props-table">
-        <thead><tr><th>Prop</th><th>Type</th><th>Défaut</th><th>Requis</th><th>Description</th></tr></thead>
+        <thead><tr><th>Prop</th><th>Type</th><th>{t.thDefault}</th><th>{t.thRequired}</th><th>Description</th></tr></thead>
         <tbody>
-          <tr><td><code>level</code></td><td><code>1|2|3|4</code></td><td>1</td><td>Non</td><td>Niveau (h1–h4). Définit taille et gras par défaut.</td></tr>
-          <tr><td><code>children</code></td><td><code>ReactNode</code></td><td>—</td><td>Oui</td><td>Texte du titre.</td></tr>
-          <tr><td><code>size</code></td><td><code>string</code></td><td>—</td><td>Non</td><td>Taille CSS (ex. 1.5rem, 24px). Surcharge le niveau.</td></tr>
-          <tr><td><code>bold</code></td><td><code>boolean | number</code></td><td>—</td><td>Non</td><td>Gras : true=700, false=400, ou nombre. Surcharge le niveau.</td></tr>
-          <tr><td><code>color</code></td><td><code>string</code></td><td>—</td><td>Non</td><td>Couleur CSS (ex. var(--bpm-text-primary), #333).</td></tr>
-          <tr><td><code>bar</code></td><td><code>boolean</code></td><td>false</td><td>Non</td><td>Barre verticale sombre à gauche du titre (style en-tête de section).</td></tr>
-          <tr><td><code>barColor</code></td><td><code>string</code></td><td>—</td><td>Non</td><td>Couleur de la barre gauche (hex, rgb ou nom CSS). Pris en compte si bar=True.</td></tr>
-          <tr><td><code>inverted</code></td><td><code>boolean</code></td><td>false</td><td>Non</td><td>Couleur inversée : fond sombre, texte blanc (style badge / scénario).</td></tr>
-          <tr><td><code>invertedBackground</code></td><td><code>string</code></td><td>#1d1d1f</td><td>Non</td><td>Couleur de fond quand inverted=True (hex, rgb ou nom CSS).</td></tr>
+          <tr><td><code>level</code></td><td><code>1|2|3|4</code></td><td>1</td><td>{t.no}</td><td>{t.descLevel}</td></tr>
+          <tr><td><code>children</code></td><td><code>ReactNode</code></td><td>—</td><td>{t.yes}</td><td>{t.descChildren}</td></tr>
+          <tr><td><code>size</code></td><td><code>string</code></td><td>—</td><td>{t.no}</td><td>{t.descSize}</td></tr>
+          <tr><td><code>bold</code></td><td><code>boolean | number</code></td><td>—</td><td>{t.no}</td><td>{t.descBold}</td></tr>
+          <tr><td><code>color</code></td><td><code>string</code></td><td>—</td><td>{t.no}</td><td>{t.descColor}</td></tr>
+          <tr><td><code>bar</code></td><td><code>boolean</code></td><td>false</td><td>{t.no}</td><td>{t.descBar}</td></tr>
+          <tr><td><code>barColor</code></td><td><code>string</code></td><td>—</td><td>{t.no}</td><td>{t.descBarColor}</td></tr>
+          <tr><td><code>inverted</code></td><td><code>boolean</code></td><td>false</td><td>{t.no}</td><td>{t.descInverted}</td></tr>
+          <tr><td><code>invertedBackground</code></td><td><code>string</code></td><td>#1d1d1f</td><td>{t.no}</td><td>{t.descInvertedBg}</td></tr>
         </tbody>
       </table>
-      <h2 className="text-lg font-semibold mt-8 mb-2">Exemples</h2>
+      <h2 className="text-lg font-semibold mt-8 mb-2">{t.examples}</h2>
       <CodeBlock code={'bpm.title(level=1, content="Tableau de bord")'} language="python" />
       <CodeBlock code={'bpm.title(level=2, content="Section")'} language="python" />
       <CodeBlock code={'bpm.title(level=3, content="Sous-titre", size="1.5rem", bold=True, color="var(--bpm-accent)")'} language="python" />

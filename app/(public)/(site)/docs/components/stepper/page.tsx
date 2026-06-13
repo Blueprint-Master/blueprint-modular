@@ -4,8 +4,53 @@ import { useState } from "react";
 import Link from "next/link";
 import { Stepper, CodeBlock } from "@/components/bpm";
 import { getPrevNext } from "@/lib/docPages";
+import { useI18n } from "@/lib/i18n/LocaleProvider";
+
+const fr = {
+  breadcrumb: "Composants",
+  category: "Navigation",
+  description: "Stepper : liste d’étapes avec indicateur d’avancement (étape courante, complétées).",
+  copy: "Copier",
+  examples: "Exemples",
+  thDefault: "Défaut",
+  thRequired: "Requis",
+  no: "Non",
+  stepsLabel: "steps (labels séparés par des virgules)",
+  stepsPlaceholder: "Étape 1, Étape 2, Étape 3",
+  currentStepLabel: "currentStep (index 0 à",
+  descSteps: "Liste des étapes (",
+  descStepsEnd: " requis).",
+  descCurrentStep: "Index de l’étape courante (0-based).",
+  descDirection: "Disposition des étapes.",
+  descSize: "Taille des cercles (32 / 40 / 48 px).",
+  descOnStepClick: "Callback : étapes déjà complétées cliquables pour revenir en arrière.",
+  descClassName: "Classes CSS additionnelles.",
+};
+const en: typeof fr = {
+  breadcrumb: "Components",
+  category: "Navigation",
+  description: "Stepper: list of steps with a progress indicator (current step, completed steps).",
+  copy: "Copy",
+  examples: "Examples",
+  thDefault: "Default",
+  thRequired: "Required",
+  no: "No",
+  stepsLabel: "steps (labels separated by commas)",
+  stepsPlaceholder: "Step 1, Step 2, Step 3",
+  currentStepLabel: "currentStep (index 0 to",
+  descSteps: "List of steps (",
+  descStepsEnd: " required).",
+  descCurrentStep: "Index of the current step (0-based).",
+  descDirection: "Layout of the steps.",
+  descSize: "Size of the circles (32 / 40 / 48 px).",
+  descOnStepClick: "Callback: already completed steps are clickable to go back.",
+  descClassName: "Additional CSS classes.",
+};
+const L = { fr, en } as const;
 
 export default function DocStepperPage() {
+  const { locale } = useI18n();
+  const t = L[locale];
   const [stepsStr, setStepsStr] = useState("Informations, Paiement, Confirmation");
   const [currentStep, setCurrentStep] = useState(0);
 
@@ -29,15 +74,15 @@ export default function DocStepperPage() {
     <div className="doc-page">
       <div className="doc-page-header">
         <div className="doc-breadcrumb">
-          <Link href="/docs/components">Composants</Link> → bpm.stepper
+          <Link href="/docs/components">{t.breadcrumb}</Link> → bpm.stepper
         </div>
         <h1>bpm.stepper</h1>
         <p className="doc-description">
-          Stepper : liste d&apos;étapes avec indicateur d&apos;avancement (étape courante, complétées).
+          {t.description}
         </p>
         <div className="doc-meta">
           <span className="doc-badge doc-badge-stable">Stable</span>
-          <span className="doc-badge doc-badge-category">Navigation</span>
+          <span className="doc-badge doc-badge-category">{t.category}</span>
           <span className="doc-reading-time">⏱ 2 min</span>
         </div>
       </div>
@@ -54,16 +99,16 @@ export default function DocStepperPage() {
         </div>
         <div className="sandbox-controls">
           <div className="sandbox-control-group">
-            <label>steps (labels séparés par des virgules)</label>
+            <label>{t.stepsLabel}</label>
             <input
               type="text"
               value={stepsStr}
               onChange={(e) => setStepsStr(e.target.value)}
-              placeholder="Étape 1, Étape 2, Étape 3"
+              placeholder={t.stepsPlaceholder}
             />
           </div>
           <div className="sandbox-control-group">
-            <label>currentStep (index 0 à {maxStep})</label>
+            <label>{t.currentStepLabel} {maxStep})</label>
             <input
               type="number"
               min={0}
@@ -76,7 +121,7 @@ export default function DocStepperPage() {
         <div className="sandbox-code">
           <div className="sandbox-code-header">
             <span>Python</span>
-            <button type="button" onClick={() => navigator.clipboard.writeText(pythonCode)}>Copier</button>
+            <button type="button" onClick={() => navigator.clipboard.writeText(pythonCode)}>{t.copy}</button>
           </div>
           <pre><code>{pythonCode}</code></pre>
         </div>
@@ -84,19 +129,19 @@ export default function DocStepperPage() {
 
       <table className="props-table">
         <thead>
-          <tr><th>Prop</th><th>Type</th><th>Défaut</th><th>Requis</th><th>Description</th></tr>
+          <tr><th>Prop</th><th>Type</th><th>{t.thDefault}</th><th>{t.thRequired}</th><th>Description</th></tr>
         </thead>
         <tbody>
-          <tr><td><code>steps</code></td><td><code>&#123; id?, label, description?, icon?, optional?, content? &#125;[]</code></td><td>[]</td><td>Non</td><td>Liste des étapes (<code>label</code> requis).</td></tr>
-          <tr><td><code>currentStep</code></td><td><code>number</code></td><td>0</td><td>Non</td><td>Index de l&apos;étape courante (0-based).</td></tr>
-          <tr><td><code>direction</code></td><td><code>&quot;horizontal&quot; | &quot;vertical&quot;</code></td><td>horizontal</td><td>Non</td><td>Disposition des étapes.</td></tr>
-          <tr><td><code>size</code></td><td><code>&quot;sm&quot; | &quot;md&quot; | &quot;lg&quot;</code></td><td>md</td><td>Non</td><td>Taille des cercles (32 / 40 / 48 px).</td></tr>
-          <tr><td><code>onStepClick</code></td><td><code>(index: number) =&gt; void</code></td><td>—</td><td>Non</td><td>Callback : étapes déjà complétées cliquables pour revenir en arrière.</td></tr>
-          <tr><td><code>className</code></td><td><code>string</code></td><td>—</td><td>Non</td><td>Classes CSS additionnelles.</td></tr>
+          <tr><td><code>steps</code></td><td><code>&#123; id?, label, description?, icon?, optional?, content? &#125;[]</code></td><td>[]</td><td>{t.no}</td><td>{t.descSteps}<code>label</code>{t.descStepsEnd}</td></tr>
+          <tr><td><code>currentStep</code></td><td><code>number</code></td><td>0</td><td>{t.no}</td><td>{t.descCurrentStep}</td></tr>
+          <tr><td><code>direction</code></td><td><code>&quot;horizontal&quot; | &quot;vertical&quot;</code></td><td>horizontal</td><td>{t.no}</td><td>{t.descDirection}</td></tr>
+          <tr><td><code>size</code></td><td><code>&quot;sm&quot; | &quot;md&quot; | &quot;lg&quot;</code></td><td>md</td><td>{t.no}</td><td>{t.descSize}</td></tr>
+          <tr><td><code>onStepClick</code></td><td><code>(index: number) =&gt; void</code></td><td>—</td><td>{t.no}</td><td>{t.descOnStepClick}</td></tr>
+          <tr><td><code>className</code></td><td><code>string</code></td><td>—</td><td>{t.no}</td><td>{t.descClassName}</td></tr>
         </tbody>
       </table>
 
-      <h2 className="text-lg font-semibold mt-8 mb-2">Exemples</h2>
+      <h2 className="text-lg font-semibold mt-8 mb-2">{t.examples}</h2>
       <CodeBlock code={'bpm.stepper(steps=[{"label": "Infos"}, {"label": "Paiement"}, {"label": "Confirmation"}])'} language="python" />
       <CodeBlock code={'bpm.stepper(steps=[{"label": "A"}, {"label": "B"}], current_step=1)'} language="python" />
 

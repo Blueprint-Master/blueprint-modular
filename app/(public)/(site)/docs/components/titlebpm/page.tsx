@@ -4,10 +4,61 @@ import { useState } from "react";
 import Link from "next/link";
 import { Title, CodeBlock } from "@/components/bpm";
 import { getPrevNext } from "@/lib/docPages";
+import { useI18n } from "@/lib/i18n/LocaleProvider";
 
 type Level = 1 | 2 | 3 | 4;
 
+const fr = {
+  breadcrumb: "Composants",
+  description: "Titre (alias bpm.title, niveaux 1 à 4).",
+  category: "Affichage de données",
+  copy: "Copier",
+  thDefault: "Défaut",
+  thRequired: "Requis",
+  yes: "Oui",
+  no: "Non",
+  examples: "Exemples",
+  childrenLabel: "children (texte)",
+  descChildren: "Texte du titre.",
+  descLevel: "Niveau hiérarchique.",
+  descSize: "Taille de police (surcharge le défaut du niveau).",
+  descBold: "Gras (true = 700, false = 400).",
+  descColor: "Couleur du texte.",
+  descBar: "Barre verticale à gauche du titre.",
+  descBarColor: "Couleur de la barre (si bar=true).",
+  descInverted: "Fond sombre, texte blanc.",
+  descInvertedBg: "Couleur de fond quand inverted=true.",
+  descLogoUrl: "URL logo (affiché seulement si level=1).",
+  descOnLogoClick: "Clic sur le logo.",
+};
+const en: typeof fr = {
+  breadcrumb: "Components",
+  description: "Title (alias of bpm.title, levels 1 to 4).",
+  category: "Data display",
+  copy: "Copy",
+  thDefault: "Default",
+  thRequired: "Required",
+  yes: "Yes",
+  no: "No",
+  examples: "Examples",
+  childrenLabel: "children (text)",
+  descChildren: "Title text.",
+  descLevel: "Hierarchical level.",
+  descSize: "Font size (overrides the level default).",
+  descBold: "Weight (true = 700, false = 400).",
+  descColor: "Text color.",
+  descBar: "Vertical bar on the left of the title.",
+  descBarColor: "Bar color (when bar=true).",
+  descInverted: "Dark background, white text.",
+  descInvertedBg: "Background color when inverted=true.",
+  descLogoUrl: "Logo URL (shown only when level=1).",
+  descOnLogoClick: "Logo click handler.",
+};
+const L = { fr, en } as const;
+
 export default function DocTitleBpmPage() {
+  const { locale } = useI18n();
+  const t = L[locale];
   const [children, setChildren] = useState("Titre de la page");
   const [level, setLevel] = useState<Level>(1);
   const [bar, setBar] = useState(false);
@@ -22,12 +73,12 @@ export default function DocTitleBpmPage() {
   return (
     <div className="doc-page">
       <div className="doc-page-header">
-        <div className="doc-breadcrumb"><Link href="/docs/components">Composants</Link> → bpm.titleBpm</div>
+        <div className="doc-breadcrumb"><Link href="/docs/components">{t.breadcrumb}</Link> → bpm.titleBpm</div>
         <h1>bpm.titleBpm</h1>
-        <p className="doc-description">Titre (alias bpm.title, niveaux 1 à 4).</p>
+        <p className="doc-description">{t.description}</p>
         <div className="doc-meta">
           <span className="doc-badge doc-badge-stable">Stable</span>
-          <span className="doc-badge doc-badge-category">Affichage de données</span>
+          <span className="doc-badge doc-badge-category">{t.category}</span>
           <span className="doc-reading-time">⏱ 2 min</span>
         </div>
       </div>
@@ -40,7 +91,7 @@ export default function DocTitleBpmPage() {
         </div>
         <div className="sandbox-controls">
           <div className="sandbox-control-group">
-            <label>children (texte)</label>
+            <label>{t.childrenLabel}</label>
             <input type="text" value={children} onChange={(e) => setChildren(e.target.value)} />
           </div>
           <div className="sandbox-control-group">
@@ -70,7 +121,7 @@ export default function DocTitleBpmPage() {
         <div className="sandbox-code">
           <div className="sandbox-code-header">
             <span>Python</span>
-            <button type="button" onClick={() => navigator.clipboard.writeText(pythonCode)}>Copier</button>
+            <button type="button" onClick={() => navigator.clipboard.writeText(pythonCode)}>{t.copy}</button>
           </div>
           <pre><code>{pythonCode}</code></pre>
         </div>
@@ -81,27 +132,27 @@ export default function DocTitleBpmPage() {
           <tr>
             <th>Prop</th>
             <th>Type</th>
-            <th>Défaut</th>
-            <th>Requis</th>
+            <th>{t.thDefault}</th>
+            <th>{t.thRequired}</th>
             <th>Description</th>
           </tr>
         </thead>
         <tbody>
-          <tr><td><code>children</code></td><td><code>ReactNode</code></td><td>—</td><td>Oui</td><td>Texte du titre.</td></tr>
-          <tr><td><code>level</code></td><td><code>1 | 2 | 3 | 4</code></td><td>1</td><td>Non</td><td>Niveau hiérarchique.</td></tr>
-          <tr><td><code>size</code></td><td><code>string | null</code></td><td>—</td><td>Non</td><td>Taille de police (surcharge le défaut du niveau).</td></tr>
-          <tr><td><code>bold</code></td><td><code>boolean | number | null</code></td><td>—</td><td>Non</td><td>Gras (true = 700, false = 400).</td></tr>
-          <tr><td><code>color</code></td><td><code>string | null</code></td><td>—</td><td>Non</td><td>Couleur du texte.</td></tr>
-          <tr><td><code>bar</code></td><td><code>boolean</code></td><td>false</td><td>Non</td><td>Barre verticale à gauche du titre.</td></tr>
-          <tr><td><code>barColor</code></td><td><code>string | null</code></td><td>—</td><td>Non</td><td>Couleur de la barre (si bar=true).</td></tr>
-          <tr><td><code>inverted</code></td><td><code>boolean</code></td><td>false</td><td>Non</td><td>Fond sombre, texte blanc.</td></tr>
-          <tr><td><code>invertedBackground</code></td><td><code>string | null</code></td><td>—</td><td>Non</td><td>Couleur de fond quand inverted=true.</td></tr>
-          <tr><td><code>logoUrl</code></td><td><code>string | null</code></td><td>—</td><td>Non</td><td>URL logo (affiché seulement si level=1).</td></tr>
-          <tr><td><code>onLogoClick</code></td><td><code>() =&gt; void</code></td><td>—</td><td>Non</td><td>Clic sur le logo.</td></tr>
+          <tr><td><code>children</code></td><td><code>ReactNode</code></td><td>—</td><td>{t.yes}</td><td>{t.descChildren}</td></tr>
+          <tr><td><code>level</code></td><td><code>1 | 2 | 3 | 4</code></td><td>1</td><td>{t.no}</td><td>{t.descLevel}</td></tr>
+          <tr><td><code>size</code></td><td><code>string | null</code></td><td>—</td><td>{t.no}</td><td>{t.descSize}</td></tr>
+          <tr><td><code>bold</code></td><td><code>boolean | number | null</code></td><td>—</td><td>{t.no}</td><td>{t.descBold}</td></tr>
+          <tr><td><code>color</code></td><td><code>string | null</code></td><td>—</td><td>{t.no}</td><td>{t.descColor}</td></tr>
+          <tr><td><code>bar</code></td><td><code>boolean</code></td><td>false</td><td>{t.no}</td><td>{t.descBar}</td></tr>
+          <tr><td><code>barColor</code></td><td><code>string | null</code></td><td>—</td><td>{t.no}</td><td>{t.descBarColor}</td></tr>
+          <tr><td><code>inverted</code></td><td><code>boolean</code></td><td>false</td><td>{t.no}</td><td>{t.descInverted}</td></tr>
+          <tr><td><code>invertedBackground</code></td><td><code>string | null</code></td><td>—</td><td>{t.no}</td><td>{t.descInvertedBg}</td></tr>
+          <tr><td><code>logoUrl</code></td><td><code>string | null</code></td><td>—</td><td>{t.no}</td><td>{t.descLogoUrl}</td></tr>
+          <tr><td><code>onLogoClick</code></td><td><code>() =&gt; void</code></td><td>—</td><td>{t.no}</td><td>{t.descOnLogoClick}</td></tr>
         </tbody>
       </table>
 
-      <h2 className="text-lg font-semibold mt-8 mb-2">Exemples</h2>
+      <h2 className="text-lg font-semibold mt-8 mb-2">{t.examples}</h2>
       <CodeBlock code={'bpm.titleBpm("Dashboard Production")'} language="python" />
       <CodeBlock code={'bpm.titleBpm("Section", level=2)'} language="python" />
       <CodeBlock code={'bpm.titleBpm("Encadré", level=3, bar=True)'} language="python" />
