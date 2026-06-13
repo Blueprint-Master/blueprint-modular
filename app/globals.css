@@ -1007,6 +1007,27 @@ textarea.bpm-textarea:focus {
 .doc-pagination a { color: var(--bpm-accent); text-decoration: none; font-size: var(--bpm-font-size-base); }
 .doc-pagination a:hover { text-decoration: underline; }
 
+/* Changelog — entrées dérivées des PR (généré, voir scripts/generate-changelog.mjs) */
+.changelog-group { margin-bottom: 40px; }
+.changelog-group h2 { font-family: var(--site-font-mono); font-size: 13px; font-weight: 600; letter-spacing: 0.04em; text-transform: uppercase; color: var(--bpm-text-secondary); margin: 0 0 16px; }
+.changelog-list { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 0; }
+.changelog-entry { display: flex; flex-wrap: wrap; align-items: baseline; gap: 10px; padding: 12px 0; border-bottom: 1px solid var(--bpm-border); }
+.changelog-badge { flex: 0 0 auto; font-size: 11px; font-weight: 600; padding: 2px 8px; border-radius: 6px; text-transform: uppercase; letter-spacing: 0.03em; }
+.changelog-entry-title { flex: 1 1 280px; min-width: 0; color: var(--bpm-text-primary); font-size: 15px; line-height: 1.5; }
+.changelog-entry-scope { color: var(--bpm-text-secondary); font-family: var(--site-font-mono); font-size: 13px; }
+.changelog-entry-breaking { color: var(--bpm-color-error, #c0392b); }
+.changelog-entry-meta { flex: 0 0 auto; font-size: 13px; color: var(--bpm-text-secondary); white-space: nowrap; }
+.changelog-entry-meta a { color: var(--bpm-accent); text-decoration: none; }
+.changelog-entry-meta a:hover { text-decoration: underline; }
+.changelog-back { color: var(--bpm-accent); text-decoration: none; }
+.changelog-back:hover { text-decoration: underline; }
+.changelog-badge-feat { background: rgba(69, 208, 158, 0.18); color: #0f7a52; }
+.changelog-badge-fix { background: rgba(230, 160, 30, 0.18); color: #9a6a00; }
+.changelog-badge-perf { background: rgba(4, 141, 195, 0.16); color: #045d80; }
+.changelog-badge-other { background: var(--bpm-border); color: var(--bpm-text-secondary); }
+[data-theme="dark"] .changelog-badge-feat { background: rgba(69, 208, 158, 0.22); color: var(--bpm-accent-mint); }
+[data-theme="dark"] .changelog-badge-fix { background: rgba(230, 160, 30, 0.22); color: #f0c060; }
+[data-theme="dark"] .changelog-badge-perf { background: rgba(4, 141, 195, 0.28); color: #6fc4e6; }
 /* Galerie : exemple de code copiable replié sous chaque carte (dérivé du registre) */
 .demo-code { margin-top: 8px; }
 .demo-code-summary {

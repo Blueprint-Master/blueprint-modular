@@ -6,6 +6,8 @@ import { useParams } from "next/navigation";
 import { Monitor, Ticket, UserCheck, FileText, BookOpen, RefreshCw } from "lucide-react";
 import { Button, Spinner, Metric, Table, Panel } from "@/components/bpm";
 import type { DomainConfig } from "@/lib/asset-manager/get-domain-config";
+import { useI18n } from "@/lib/i18n/LocaleProvider";
+import { STR, dateLocale } from "../strings";
 
 const ACCENT = {
   assets: "#2563eb",
@@ -16,12 +18,12 @@ const ACCENT = {
   changes: "#ec4899",
 } as const;
 
-function formatLastUpdated(iso: string | null | undefined): string {
+function formatLastUpdated(iso: string | null | undefined, locale: "fr" | "en"): string {
   if (!iso) return "—";
   try {
     const d = new Date(iso);
     if (!Number.isFinite(d.getTime())) return "—";
-    return d.toLocaleDateString("fr-FR", { day: "2-digit", month: "2-digit", year: "numeric" });
+    return d.toLocaleDateString(dateLocale(locale), { day: "2-digit", month: "2-digit", year: "numeric" });
   } catch {
     return "—";
   }
@@ -39,6 +41,8 @@ type Asset = {
 
 export default function AssetManagerDomainPage() {
   const params = useParams();
+  const { locale } = useI18n();
+  const t = STR[locale];
   const domainId = typeof params?.domainId === "string" ? params.domainId : "";
   const [config, setConfig] = useState<DomainConfig | null>(null);
   const [assets, setAssets] = useState<Asset[]>([]);
@@ -163,29 +167,29 @@ export default function AssetManagerDomainPage() {
       <div className="doc-page">
         <div className="doc-page-header mb-6">
           <nav className="doc-breadcrumb">
-            <Link href="/modules">Modules</Link> → Gestion de parc
+            <Link href="/modules">{t.common.breadcrumbModules}</Link> → {t.common.moduleTitle}
           </nav>
           <h1 className="text-2xl font-bold" style={{ color: "var(--bpm-text-primary)" }}>
-            Gestion de parc
+            {t.common.moduleTitle}
           </h1>
         </div>
-        <Panel variant="warning" title="Configuration introuvable">
-          Le domaine &quot;{domainId}&quot; n&apos;existe pas ou n&apos;est pas configuré.
+        <Panel variant="warning" title={t.hub.configNotFoundTitle}>
+          {t.hub.domainNotConfigured(domainId)}
         </Panel>
         <nav className="doc-pagination mt-6">
-          <Link href="/modules" style={{ color: "var(--bpm-accent-cyan)" }}>← Retour aux modules</Link>
+          <Link href="/modules" style={{ color: "var(--bpm-accent-cyan)" }}>{t.common.backToModules}</Link>
         </nav>
       </div>
     );
   }
 
   const columns = [
-    { key: "reference", label: "Référence" },
-    { key: "label", label: "Libellé" },
-    { key: "assetTypeId", label: "Type" },
+    { key: "reference", label: t.hub.colReference },
+    { key: "label", label: t.hub.colLabel },
+    { key: "assetTypeId", label: t.hub.colType },
     {
       key: "statusId",
-      label: "Statut",
+      label: t.hub.colStatus,
       render: (val: unknown) => {
         const id = String(val ?? "");
         return (
@@ -216,14 +220,14 @@ export default function AssetManagerDomainPage() {
         <div className="flex flex-wrap items-center justify-between gap-3">
           <div>
             <h1 className="doc-page-title text-2xl font-semibold" style={{ color: "var(--bpm-text-primary)" }}>
-              Gestion de parc
+              {t.common.moduleTitle}
             </h1>
             <p className="doc-description mt-0.5" style={{ color: "var(--bpm-text-secondary)" }}>
-              {config.asset_label_plural}, Tickets et {config.assignment_label}s. Tableau de bord et accès rapides.
+              {t.hub.dashboardSubtitle(config.asset_label_plural, config.assignment_label)}
             </p>
           </div>
           <Link href={`/modules/asset-manager/${domainId}/assets/nouveau`} className="asset-manager-cta-button">
-            <Button variant="primary" size="small">+ Nouvel actif</Button>
+            <Button variant="primary" size="small">{t.hub.newAsset}</Button>
           </Link>
         </div>
       </div>
@@ -233,11 +237,11 @@ export default function AssetManagerDomainPage() {
           type="button"
           className="asset-manager-carousel-btn asset-manager-carousel-btn--left"
           onClick={() => scrollCarousel("left")}
-          aria-label="Défiler vers la gauche"
+          aria-label={t.hub.scrollLeft}
         >
           ←
         </button>
-        <div className="asset-manager-metrics-carousel" ref={metricsCarouselRef} role="region" aria-label="Métriques du tableau de bord">
+        <div className="asset-manager-metrics-carousel" ref={metricsCarouselRef} role="region" aria-label={t.hub.metricsAriaLabel}>
           <Link href={`/modules/asset-manager/${domainId}/assets`} className="block min-w-0 overflow-hidden asset-manager-metrics-grid">
             <Metric
               label={config.asset_label_plural}
@@ -246,7 +250,7 @@ export default function AssetManagerDomainPage() {
               border={false}
               icon={<Monitor size={iconSize} />}
               accentColor={ACCENT.assets}
-              subtext={assets.length === 0 ? "Aucun actif enregistré" : `Mise à jour : ${formatLastUpdated(lastUpdated.assets)}`}
+              subtext={assets.length === 0 ? t.hub.noAssetRegistered : t.hub.updatedAt(formatLastUpdated(lastUpdated.assets, locale))}
             />
           </Link>
           <Link href={`/modules/asset-manager/${domainId}/tickets`} className="block min-w-0 overflow-hidden asset-manager-metrics-grid">
@@ -257,7 +261,7 @@ export default function AssetManagerDomainPage() {
               border={false}
               icon={<Ticket size={iconSize} />}
               accentColor={ACCENT.tickets}
-              subtext={ticketCount === 0 ? "Aucun ticket" : `Mise à jour : ${formatLastUpdated(lastUpdated.tickets)}`}
+              subtext={ticketCount === 0 ? t.hub.noTicket : t.hub.updatedAt(formatLastUpdated(lastUpdated.tickets, locale))}
             />
           </Link>
           <Link href={`/modules/asset-manager/${domainId}/assignments`} className="block min-w-0 overflow-hidden asset-manager-metrics-grid">
@@ -268,40 +272,40 @@ export default function AssetManagerDomainPage() {
               border={false}
               icon={<UserCheck size={iconSize} />}
               accentColor={ACCENT.assignments}
-              subtext={assignmentCount === 0 ? "Aucune MAD" : `Mise à jour : ${formatLastUpdated(lastUpdated.assignments)}`}
+              subtext={assignmentCount === 0 ? t.hub.noAssignment : t.hub.updatedAt(formatLastUpdated(lastUpdated.assignments, locale))}
             />
           </Link>
           <Link href={`/modules/asset-manager/${domainId}/contracts`} className="block min-w-0 overflow-hidden asset-manager-metrics-grid">
             <Metric
-              label="Contrats"
+              label={t.hub.contracts}
               value={contractCount}
               compact
               border={false}
               icon={<FileText size={iconSize} />}
               accentColor={ACCENT.contracts}
-              subtext={contractCount === 0 ? "Aucun contrat" : `Mise à jour : ${formatLastUpdated(lastUpdated.contracts)}`}
+              subtext={contractCount === 0 ? t.hub.noContract : t.hub.updatedAt(formatLastUpdated(lastUpdated.contracts, locale))}
             />
           </Link>
           <Link href={`/modules/asset-manager/${domainId}/knowledge`} className="block min-w-0 overflow-hidden asset-manager-metrics-grid">
             <Metric
-              label="Connaissances"
+              label={t.hub.knowledge}
               value={knowledgeCount}
               compact
               border={false}
               icon={<BookOpen size={iconSize} />}
               accentColor={ACCENT.knowledge}
-              subtext={knowledgeCount === 0 ? "Aucun article" : `Mise à jour : ${formatLastUpdated(lastUpdated.knowledge)}`}
+              subtext={knowledgeCount === 0 ? t.hub.noArticle : t.hub.updatedAt(formatLastUpdated(lastUpdated.knowledge, locale))}
             />
           </Link>
           <Link href={`/modules/asset-manager/${domainId}/changes`} className="block min-w-0 overflow-hidden asset-manager-metrics-grid">
             <Metric
-              label="Changements"
+              label={t.hub.changes}
               value={changeCount}
               compact
               border={false}
               icon={<RefreshCw size={iconSize} />}
               accentColor={ACCENT.changes}
-              subtext={changeCount === 0 ? "Aucun changement" : `Mise à jour : ${formatLastUpdated(lastUpdated.changes)}`}
+              subtext={changeCount === 0 ? t.hub.noChange : t.hub.updatedAt(formatLastUpdated(lastUpdated.changes, locale))}
             />
           </Link>
         </div>
@@ -309,7 +313,7 @@ export default function AssetManagerDomainPage() {
           type="button"
           className="asset-manager-carousel-btn asset-manager-carousel-btn--right"
           onClick={() => scrollCarousel("right")}
-          aria-label="Défiler vers la droite"
+          aria-label={t.hub.scrollRight}
         >
           →
         </button>
@@ -325,10 +329,10 @@ export default function AssetManagerDomainPage() {
             padding: 16,
           }}
           role="region"
-          aria-label="Alertes"
+          aria-label={t.hub.alerts}
         >
           <h2 className="text-sm font-semibold m-0 mb-3" style={{ color: "var(--bpm-text-secondary)", letterSpacing: "0.04em" }}>
-            Alertes
+            {t.hub.alerts}
           </h2>
           <div className="grid gap-4 grid-cols-1 md:grid-cols-3 text-sm">
             {alerts.contractsExpiring30 > 0 && (
@@ -340,7 +344,7 @@ export default function AssetManagerDomainPage() {
                 <span className="font-semibold" style={{ color: "var(--bpm-accent-amber, #f59e0b)" }}>
                   {alerts.contractsExpiring30}
                 </span>
-                <span style={{ color: "var(--bpm-text-primary)" }}>contrat(s) arrivant à échéance sous 30 jours</span>
+                <span style={{ color: "var(--bpm-text-primary)" }}>{t.hub.contractsExpiring(alerts.contractsExpiring30)}</span>
               </Link>
             )}
             {alerts.ticketsSlaRisk > 0 && (
@@ -350,7 +354,7 @@ export default function AssetManagerDomainPage() {
                 style={{ borderColor: "var(--bpm-border)", background: "var(--bpm-bg-secondary)" }}
               >
                 <span className="font-semibold" style={{ color: "var(--bpm-accent)" }}>{alerts.ticketsSlaRisk}</span>
-                <span style={{ color: "var(--bpm-text-primary)" }}>ticket(s) en danger ou dépassement SLA</span>
+                <span style={{ color: "var(--bpm-text-primary)" }}>{t.hub.ticketsSlaRisk}</span>
               </Link>
             )}
             {alerts.assetsOutOfService > 0 && (
@@ -360,7 +364,7 @@ export default function AssetManagerDomainPage() {
                 style={{ borderColor: "var(--bpm-border)", background: "var(--bpm-bg-secondary)" }}
               >
                 <span className="font-semibold" style={{ color: "var(--bpm-accent)" }}>{alerts.assetsOutOfService}</span>
-                <span style={{ color: "var(--bpm-text-primary)" }}>actif(s) hors service</span>
+                <span style={{ color: "var(--bpm-text-primary)" }}>{t.hub.assetsOutOfService}</span>
               </Link>
             )}
           </div>
@@ -383,12 +387,12 @@ export default function AssetManagerDomainPage() {
             {config.asset_label_plural}
           </h2>
           <Link href={`/modules/asset-manager/${domainId}/cmdb-graph`} className="asset-manager-cta-button">
-            <Button variant="outline" size="small">Cartographie CMDB</Button>
+            <Button variant="outline" size="small">{t.hub.cmdbButton}</Button>
           </Link>
         </div>
         {assets.length === 0 ? (
           <p className="text-sm m-0" style={{ color: "var(--bpm-text-secondary)" }}>
-            Aucun actif. Cliquez sur « Nouvel actif » pour en créer un.
+            {t.hub.noAssetsHint}
           </p>
         ) : (
           <div className="rounded-lg border overflow-hidden" style={{ borderColor: "var(--bpm-border)" }}>

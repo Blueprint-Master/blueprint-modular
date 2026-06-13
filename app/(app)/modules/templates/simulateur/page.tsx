@@ -3,33 +3,12 @@
 import React, { useState } from "react";
 import Link from "next/link";
 import { Selectbox, Input, Button, useToast } from "@/components/bpm";
-
-const TEMPLATE_OPTIONS = [
-  { value: "rapport", label: "Rapport mensuel" },
-  { value: "fiche", label: "Fiche projet" },
-  { value: "email", label: "Email type" },
-];
-
-/** Champs démo par type de modèle (P8 amorce) */
-const TEMPLATE_FIELDS: Record<string, { key: string; label: string; type: string; placeholder: string }[]> = {
-  rapport: [
-    { key: "periode", label: "Période", type: "text", placeholder: "Ex. Mars 2025" },
-    { key: "responsable", label: "Responsable", type: "text", placeholder: "Nom du responsable" },
-    { key: "ca_realise", label: "CA réalisé (€)", type: "number", placeholder: "0" },
-  ],
-  fiche: [
-    { key: "projet", label: "Nom du projet", type: "text", placeholder: "Ex. Refonte site" },
-    { key: "chef", label: "Chef de projet", type: "text", placeholder: "Nom" },
-    { key: "date_limite", label: "Date limite", type: "text", placeholder: "JJ/MM/AAAA" },
-  ],
-  email: [
-    { key: "destinataire", label: "Destinataire", type: "text", placeholder: "email@exemple.com" },
-    { key: "objet", label: "Objet", type: "text", placeholder: "Objet du message" },
-    { key: "corps", label: "Message", type: "text", placeholder: "Contenu..." },
-  ],
-};
+import { useI18n } from "@/lib/i18n/LocaleProvider";
+import { STR } from "../strings";
 
 export default function TemplatesSimulateurPage() {
+  const { locale } = useI18n();
+  const s = STR[locale];
   const [selectedModel, setSelectedModel] = useState<string | null>(null);
   const [documentName, setDocumentName] = useState("");
   const [formError, setFormError] = useState<string | null>(null);
@@ -37,16 +16,16 @@ export default function TemplatesSimulateurPage() {
   const { showToast } = useToast();
 
   const canCreate = Boolean(selectedModel && documentName.trim());
-  const fields = selectedModel ? TEMPLATE_FIELDS[selectedModel] ?? [] : [];
+  const fields = selectedModel ? s.simulatorFields[selectedModel] ?? [] : [];
 
   const handleCreate = () => {
     if (!selectedModel || !documentName.trim()) {
-      setFormError("Veuillez sélectionner un modèle et saisir un nom de document.");
+      setFormError(s.validationError);
       return;
     }
     setFormError(null);
-    const modelLabel = TEMPLATE_OPTIONS.find((o) => o.value === selectedModel)?.label ?? selectedModel;
-    showToast(`Document « ${documentName.trim()} » créé à partir du modèle « ${modelLabel} ».`, "success", 5000, "Création réussie", "Templates", null);
+    const modelLabel = s.templateOptions.find((o) => o.value === selectedModel)?.label ?? selectedModel;
+    showToast(s.toastCreated(documentName.trim(), modelLabel), "success", 5000, s.toastTitle, s.moduleName, null);
   };
 
   const updateField = (key: string, value: string) => {
@@ -57,10 +36,10 @@ export default function TemplatesSimulateurPage() {
     <div className="doc-page">
       <div className="doc-page-header">
         <div className="doc-breadcrumb">
-          <Link href="/modules">Modules</Link> → <Link href="/modules/templates">Templates</Link> → Simulateur
+          <Link href="/modules">Modules</Link> → <Link href="/modules/templates">{s.moduleName}</Link> → {s.breadcrumbSimulator}
         </div>
-        <h1>Simulateur — Templates</h1>
-        <p className="doc-description">Choisir un modèle et remplir les champs (démo).</p>
+        <h1>{s.simulatorTitle}</h1>
+        <p className="doc-description">{s.simulatorDescription}</p>
       </div>
 
       <div
@@ -71,28 +50,28 @@ export default function TemplatesSimulateurPage() {
         }}
       >
         <p className="text-xs font-medium mb-4" style={{ color: "var(--bpm-text-secondary)" }}>
-          Étape 1 — Choisir un modèle
+          {s.step1}
         </p>
         <Selectbox
-          options={TEMPLATE_OPTIONS}
+          options={s.templateOptions}
           value={selectedModel}
           onChange={(v) => {
             setSelectedModel(v);
             setFieldValues({});
             setFormError(null);
           }}
-          placeholder="Choisir un modèle..."
-          label="Modèle"
+          placeholder={s.selectboxPlaceholder}
+          label={s.selectboxLabel}
         />
 
         {selectedModel && (
           <>
             <p className="text-xs font-medium mt-6 mb-4" style={{ color: "var(--bpm-text-secondary)" }}>
-              Étape 2 — Remplir les champs
+              {s.step2}
             </p>
             <Input
-              label="Nom du document"
-              placeholder="Ex. Rapport mars 2025"
+              label={s.documentNameLabel}
+              placeholder={s.documentNamePlaceholder}
               value={documentName}
               onChange={setDocumentName}
               className="mb-4"
@@ -118,7 +97,7 @@ export default function TemplatesSimulateurPage() {
             )}
             <div className="mt-4">
               <Button onClick={handleCreate} disabled={!canCreate}>
-                Créer à partir du modèle
+                {s.createButton}
               </Button>
             </div>
           </>
@@ -126,14 +105,14 @@ export default function TemplatesSimulateurPage() {
 
         {!selectedModel && (
           <p className="text-sm mt-4" style={{ color: "var(--bpm-text-secondary)" }}>
-            Sélectionnez un modèle pour afficher les champs à remplir et créer un document.
+            {s.emptyStateLong}
           </p>
         )}
       </div>
 
       <p className="mt-6 text-sm" style={{ color: "var(--bpm-text-secondary)" }}>
         <Link href="/modules/templates" className="font-medium underline" style={{ color: "var(--bpm-accent-cyan)" }}>
-          ← Retour au module Templates
+          {s.backToModule}
         </Link>
       </p>
     </div>

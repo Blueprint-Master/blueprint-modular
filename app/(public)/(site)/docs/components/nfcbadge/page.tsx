@@ -4,11 +4,56 @@ import { useState } from "react";
 import Link from "next/link";
 import { NfcBadge, CodeBlock } from "@/components/bpm";
 import { getPrevNext } from "@/lib/docPages";
+import { useI18n } from "@/lib/i18n/LocaleProvider";
 
 type NfcVariant = "default" | "primary" | "success";
 
 export default function DocNfcBadgePage() {
-  const [label, setLabel] = useState("Scannable");
+  const { locale } = useI18n();
+  const fr = {
+    breadcrumb: "Composants",
+    description: (
+      <>
+        Badge visuel pour statut NFC (Scannable, etc.). Indication que l&apos;élément est lié à un tag NFC.
+      </>
+    ),
+    category: "Identification & traçabilité",
+    copy: "Copier",
+    propsTitle: "Props",
+    head: { prop: "Prop", type: "Type", def: "Défaut", req: "Requis", desc: "Description" },
+    no: "Non",
+    rows: {
+      label: "Texte du badge (statut affiché).",
+      variant: "Style et couleur du badge.",
+      className: "Classes CSS additionnelles.",
+    },
+    examples: "Exemples",
+    demoLabel: "Scannable",
+  };
+  const en: typeof fr = {
+    breadcrumb: "Components",
+    description: (
+      <>
+        Visual badge for NFC status (Scannable, etc.). Indicates the element is linked to an NFC tag.
+      </>
+    ),
+    category: "Identification & traceability",
+    copy: "Copy",
+    propsTitle: "Props",
+    head: { prop: "Prop", type: "Type", def: "Default", req: "Required", desc: "Description" },
+    no: "No",
+    rows: {
+      label: "Badge text (status shown).",
+      variant: "Badge style and color.",
+      className: "Additional CSS classes.",
+    },
+    examples: "Examples",
+    demoLabel: "Scannable",
+  };
+  const L = { fr, en } as const;
+  const t = L[locale];
+
+  const [label, setLabel] = useState(t.demoLabel);
   const [variant, setVariant] = useState<NfcVariant>("default");
   const { prev, next } = getPrevNext("nfcbadge");
 
@@ -19,15 +64,13 @@ export default function DocNfcBadgePage() {
     <div className="doc-page">
       <div className="doc-page-header">
         <div className="doc-breadcrumb">
-          <Link href="/docs/components">Composants</Link> → bpm.nfcbadge
+          <Link href="/docs/components">{t.breadcrumb}</Link> → bpm.nfcbadge
         </div>
         <h1>bpm.nfcbadge</h1>
-        <p className="doc-description">
-          Badge visuel pour statut NFC (Scannable, etc.). Indication que l&apos;élément est lié à un tag NFC.
-        </p>
+        <p className="doc-description">{t.description}</p>
         <div className="doc-meta">
           <span className="doc-badge doc-badge-stable">Stable</span>
-          <span className="doc-badge doc-badge-category">Identification & traçabilité</span>
+          <span className="doc-badge doc-badge-category">{t.category}</span>
           <span className="doc-reading-time">⏱ 2 min</span>
         </div>
       </div>
@@ -39,7 +82,7 @@ export default function DocNfcBadgePage() {
         <div className="sandbox-controls">
           <div className="sandbox-control-group">
             <label>label</label>
-            <input type="text" value={label} onChange={(e) => setLabel(e.target.value)} placeholder="Scannable" />
+            <input type="text" value={label} onChange={(e) => setLabel(e.target.value)} placeholder={t.demoLabel} />
           </div>
           <div className="sandbox-control-group">
             <label>variant</label>
@@ -53,21 +96,21 @@ export default function DocNfcBadgePage() {
         <div className="sandbox-code">
           <div className="sandbox-code-header">
             <span>Python</span>
-            <button type="button" onClick={() => navigator.clipboard.writeText(pythonCode)}>Copier</button>
+            <button type="button" onClick={() => navigator.clipboard.writeText(pythonCode)}>{t.copy}</button>
           </div>
           <pre><code>{pythonCode}</code></pre>
         </div>
       </div>
 
-      <h2 className="text-lg font-semibold mt-8 mb-2">Props</h2>
+      <h2 className="text-lg font-semibold mt-8 mb-2">{t.propsTitle}</h2>
       <table className="props-table">
         <thead>
           <tr>
-            <th>Prop</th>
-            <th>Type</th>
-            <th>Défaut</th>
-            <th>Requis</th>
-            <th>Description</th>
+            <th>{t.head.prop}</th>
+            <th>{t.head.type}</th>
+            <th>{t.head.def}</th>
+            <th>{t.head.req}</th>
+            <th>{t.head.desc}</th>
           </tr>
         </thead>
         <tbody>
@@ -75,27 +118,27 @@ export default function DocNfcBadgePage() {
             <td><code>label</code></td>
             <td><code>string</code></td>
             <td>Scannable</td>
-            <td>Non</td>
-            <td>Texte du badge (statut affiché).</td>
+            <td>{t.no}</td>
+            <td>{t.rows.label}</td>
           </tr>
           <tr>
             <td><code>variant</code></td>
             <td><code>&quot;default&quot; | &quot;primary&quot; | &quot;success&quot;</code></td>
             <td>default</td>
-            <td>Non</td>
-            <td>Style et couleur du badge.</td>
+            <td>{t.no}</td>
+            <td>{t.rows.variant}</td>
           </tr>
           <tr>
             <td><code>className</code></td>
             <td><code>string</code></td>
             <td>—</td>
-            <td>Non</td>
-            <td>Classes CSS additionnelles.</td>
+            <td>{t.no}</td>
+            <td>{t.rows.className}</td>
           </tr>
         </tbody>
       </table>
 
-      <h2 className="text-lg font-semibold mt-8 mb-2">Exemples</h2>
+      <h2 className="text-lg font-semibold mt-8 mb-2">{t.examples}</h2>
       <CodeBlock code={'bpm.nfcbadge()'} language="python" />
       <CodeBlock code={'bpm.nfcbadge("Scannable", variant="primary")'} language="python" />
       <CodeBlock code={'bpm.nfcbadge("Lu", variant="success")'} language="python" />

@@ -1,0 +1,303 @@
+{
+  "generatedFrom": "git first-parent (merges de PR)",
+  "repoUrl": "https://github.com/Blueprint-Master/blueprint-modular",
+  "grouping": "version",
+  "totalEntries": 32,
+  "groups": [
+    {
+      "key": "v0.1.52",
+      "label": "v0.1.52",
+      "date": "2026-06-12",
+      "entries": [
+        {
+          "pr": 44,
+          "date": "2026-06-12",
+          "type": "other",
+          "scope": null,
+          "breaking": false,
+          "title": "Homogénéise la nav publique, sort la Documentation du shell app et ajoute une page Présentation",
+          "hash": "ad7ec6433"
+        },
+        {
+          "pr": 43,
+          "date": "2026-06-12",
+          "type": "other",
+          "scope": null,
+          "breaking": false,
+          "title": "Aligne la mise en page Composants et Documentation sur MCP/Ressources",
+          "hash": "3a1c0cabb"
+        },
+        {
+          "pr": 42,
+          "date": "2026-06-12",
+          "type": "fix",
+          "scope": "table",
+          "breaking": false,
+          "title": "visuel net — supprime le quadrillage, séparateurs horizontaux seuls",
+          "hash": "2ae92e8fe"
+        },
+        {
+          "pr": 41,
+          "date": "2026-06-12",
+          "type": "fix",
+          "scope": "table",
+          "breaking": false,
+          "title": "visuel net — supprime le quadrillage, séparateurs horizontaux seuls",
+          "hash": "172f722c8"
+        },
+        {
+          "pr": 40,
+          "date": "2026-06-12",
+          "type": "other",
+          "scope": null,
+          "breaking": false,
+          "title": "Feat/docs python functions",
+          "hash": "35e4a4c58"
+        },
+        {
+          "pr": 38,
+          "date": "2026-06-12",
+          "type": "feat",
+          "scope": "runtime",
+          "breaking": false,
+          "title": "le renderer bpm run délègue au catalogue @blueprint-modular/core",
+          "hash": "2d48bcc21"
+        },
+        {
+          "pr": 37,
+          "date": "2026-06-12",
+          "type": "other",
+          "scope": null,
+          "breaking": false,
+          "title": "Supprime le logo dans la sidebar de gauche",
+          "hash": "eca1aac4c"
+        },
+        {
+          "pr": 36,
+          "date": "2026-06-12",
+          "type": "fix",
+          "scope": "wiki",
+          "breaking": false,
+          "title": "neutralise le stored XSS de la base de connaissances et de la recherche",
+          "hash": "efb186afd"
+        },
+        {
+          "pr": 35,
+          "date": "2026-06-12",
+          "type": "feat",
+          "scope": "vitrine",
+          "breaking": false,
+          "title": "source Python sous chaque tuile de la galerie live + copier",
+          "hash": "175f85f82"
+        },
+        {
+          "pr": 34,
+          "date": "2026-06-12",
+          "type": "other",
+          "scope": null,
+          "breaking": false,
+          "title": "Replace logo asset with transparent PWA icon",
+          "hash": "a8f84c79f"
+        },
+        {
+          "pr": 33,
+          "date": "2026-06-12",
+          "type": "fix",
+          "scope": "legal",
+          "breaking": false,
+          "title": "formulations de contact pointent vers l'adresse de l'éditeur (plus de renvoi orphelin)",
+          "hash": "f2f723726"
+        },
+        {
+          "pr": 32,
+          "date": "2026-06-12",
+          "type": "fix",
+          "scope": "asset-manager",
+          "breaking": false,
+          "title": "enforce RBAC on mutations (close vertical privesc)",
+          "hash": "02fb3df21"
+        },
+        {
+          "pr": 31,
+          "date": "2026-06-12",
+          "type": "fix",
+          "scope": "legal",
+          "breaking": false,
+          "title": "retirer le bloc Contact (mailto) du shell partagé LegalArticle",
+          "hash": "ea7bdc730"
+        },
+        {
+          "pr": 30,
+          "date": "2026-06-12",
+          "type": "feat",
+          "scope": "legal",
+          "breaking": false,
+          "title": "mentions légales définitives de l'éditeur (BEAM Consulting) FR/EN",
+          "hash": "d61af0638"
+        },
+        {
+          "pr": 29,
+          "date": "2026-06-12",
+          "type": "feat",
+          "scope": "headers",
+          "breaking": false,
+          "title": "logo de marque sur la nav site et le shell de l'app",
+          "hash": "2b2d23787"
+        },
+        {
+          "pr": 28,
+          "date": "2026-06-12",
+          "type": "other",
+          "scope": null,
+          "breaking": false,
+          "title": "Couche sémantique des 101 composants — instance de l'ontologie Ω, proposée par la boucle, curée par l'humain",
+          "hash": "6800d101c"
+        },
+        {
+          "pr": 27,
+          "date": "2026-06-11",
+          "type": "other",
+          "scope": null,
+          "breaking": false,
+          "title": "Mise à niveau : 101/101 composants au standard (8/8), correctif casse API, surfaces React/Python honnêtes",
+          "hash": "d31e107ea"
+        },
+        {
+          "pr": 26,
+          "date": "2026-06-11",
+          "type": "other",
+          "scope": null,
+          "breaking": false,
+          "title": "Convergence vitrine : pages légales bilingues, burger mobile, intention commerciale, responsive /components",
+          "hash": "a26d9c882"
+        },
+        {
+          "pr": 25,
+          "date": "2026-06-11",
+          "type": "style",
+          "scope": "site",
+          "breaking": false,
+          "title": "appliquer la direction visuelle de la maquette à la vitrine",
+          "hash": "cabd1b503"
+        },
+        {
+          "pr": 24,
+          "date": "2026-06-11",
+          "type": "feat",
+          "scope": "mcp",
+          "breaking": false,
+          "title": "exposer l'endpoint public mcp.blueprint-modular.com/api/mcp (décision produit)",
+          "hash": "e49ca09a7"
+        },
+        {
+          "pr": 23,
+          "date": "2026-06-11",
+          "type": "feat",
+          "scope": "site",
+          "breaking": false,
+          "title": "refonte vitrine — pages /mcp et /resources, teasers home, nav/footer enrichis",
+          "hash": "6212c2bb7"
+        },
+        {
+          "pr": 22,
+          "date": "2026-06-11",
+          "type": "feat",
+          "scope": "site",
+          "breaking": false,
+          "title": "push commercial — /mcp dans le shell, /resources, nav/footer, doc resync, module Veille",
+          "hash": "27cb44b74"
+        },
+        {
+          "pr": 21,
+          "date": "2026-06-11",
+          "type": "feat",
+          "scope": "site",
+          "breaking": false,
+          "title": "refonte de la vitrine d'accueil modulaire et responsive",
+          "hash": "3a2a9237b"
+        },
+        {
+          "pr": 19,
+          "date": "2026-06-11",
+          "type": "fix",
+          "scope": "deploy",
+          "breaking": false,
+          "title": "fail-closed deploy-from-git.sh — build app obligatoire + gate de santé",
+          "hash": "07d05e889"
+        },
+        {
+          "pr": 17,
+          "date": "2026-06-11",
+          "type": "feat",
+          "scope": "site",
+          "breaking": false,
+          "title": "réconciliation #15 avec master (#11–#14, #16)",
+          "hash": "ffe2a6865"
+        },
+        {
+          "pr": 14,
+          "date": "2026-06-11",
+          "type": "feat",
+          "scope": "mcp",
+          "breaking": false,
+          "title": "directory-compliant read-only MCP connector (Claude + ChatGPT)",
+          "hash": "f1381e1a2"
+        },
+        {
+          "pr": 13,
+          "date": "2026-06-11",
+          "type": "docs",
+          "scope": null,
+          "breaking": false,
+          "title": "boucle nocturne — couverture JSDoc 100% (151/151 composants bpm.*)",
+          "hash": "d2768323c"
+        },
+        {
+          "pr": 12,
+          "date": "2026-06-11",
+          "type": "other",
+          "scope": null,
+          "breaking": false,
+          "title": "Élévation bpm.* au standard « jugement » — interpret() + 26 composants + showcase /components",
+          "hash": "4f110b6d1"
+        },
+        {
+          "pr": 9,
+          "date": "2026-06-10",
+          "type": "feat",
+          "scope": "gate",
+          "breaking": false,
+          "title": "convergence gate + Badge.size θ-additive pilot",
+          "hash": "1b9a36aa3"
+        },
+        {
+          "pr": 8,
+          "date": "2026-05-19",
+          "type": "other",
+          "scope": null,
+          "breaking": false,
+          "title": "[DIAG] SVG generator v3 (Otl Aicher) — mauvais repo actif",
+          "hash": "e2af2daa3"
+        },
+        {
+          "pr": 7,
+          "date": "2026-05-19",
+          "type": "docs",
+          "scope": "bpm",
+          "breaking": false,
+          "title": "documentation complète de bpm.activityFeed",
+          "hash": "a0f885ebf"
+        },
+        {
+          "pr": 6,
+          "date": "2026-05-19",
+          "type": "docs",
+          "scope": "bpm.gps",
+          "breaking": false,
+          "title": "add full JSDoc and enrich llms.txt entry",
+          "hash": "e0297fe6b"
+        }
+      ]
+    }
+  ]
+}

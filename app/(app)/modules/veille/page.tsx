@@ -16,24 +16,32 @@ import {
   ActivityFeed,
   AnomalyAlert,
 } from "@/components/bpm";
+import { useI18n } from "@/lib/i18n/LocaleProvider";
+import {
+  STR,
+  type Localized,
+  type RelTimeKey,
+  type ActivityActionKey,
+} from "./strings";
 
 type SourceStatus = "active" | "warning" | "paused";
 
 interface Source {
   id: string;
-  nom: string;
+  nom: Localized;
   type: string;
   statut: SourceStatus;
-  derniere: string;
+  derniere: RelTimeKey;
   articles: number;
 }
 
-const TYPE_OPTIONS = [
-  { value: "RSS", label: "Flux RSS" },
-  { value: "API", label: "API REST" },
-  { value: "Page", label: "Page web (scraping)" },
-  { value: "Alerte", label: "Alerte métier" },
-];
+interface ActivityEntry {
+  id: string;
+  action: ActivityActionKey;
+  target: Localized;
+  timestamp: string;
+  color: "success" | "warning" | "info";
+}
 
 const STATUS_VARIANT: Record<SourceStatus, "success" | "warning" | "default"> = {
   active: "success",
@@ -41,47 +49,20 @@ const STATUS_VARIANT: Record<SourceStatus, "success" | "warning" | "default"> = 
   paused: "default",
 };
 
-const STATUS_LABEL: Record<SourceStatus, string> = {
-  active: "Active",
-  warning: "À vérifier",
-  paused: "En pause",
-};
-
 const INITIAL_SOURCES: Source[] = [
-  { id: "s1", nom: "Journal Officiel — marchés publics", type: "RSS", statut: "active", derniere: "il y a 12 min", articles: 8 },
-  { id: "s2", nom: "Concurrent A — blog produit", type: "RSS", statut: "active", derniere: "il y a 1 h", articles: 3 },
-  { id: "s3", nom: "API prix matières premières", type: "API", statut: "warning", derniere: "il y a 6 h", articles: 0 },
-  { id: "s4", nom: "Veille réglementaire RGPD", type: "Page", statut: "paused", derniere: "hier", articles: 0 },
+  { id: "s1", nom: { fr: "Journal Officiel — marchés publics", en: "Official Journal — public procurement" }, type: "RSS", statut: "active", derniere: "min12", articles: 8 },
+  { id: "s2", nom: { fr: "Concurrent A — blog produit", en: "Competitor A — product blog" }, type: "RSS", statut: "active", derniere: "h1", articles: 3 },
+  { id: "s3", nom: { fr: "API prix matières premières", en: "Raw materials price API" }, type: "API", statut: "warning", derniere: "h6", articles: 0 },
+  { id: "s4", nom: { fr: "Veille réglementaire RGPD", en: "GDPR regulatory watch" }, type: "Page", statut: "paused", derniere: "yesterday", articles: 0 },
 ];
 
-const INITIAL_ACTIVITY = [
-  { id: "a1", actor: "Veille", action: "a collecté", target: "8 articles — Journal Officiel", timestamp: new Date(Date.now() - 12 * 60_000).toISOString(), color: "success" as const },
-  { id: "a2", actor: "Veille", action: "a détecté un pic sur", target: "API prix matières premières", timestamp: new Date(Date.now() - 6 * 3_600_000).toISOString(), color: "warning" as const },
-  { id: "a3", actor: "Veille", action: "a publié l'alerte", target: "Nouvel appel d'offres — secteur BTP", timestamp: new Date(Date.now() - 26 * 3_600_000).toISOString(), color: "info" as const },
+const INITIAL_ACTIVITY: ActivityEntry[] = [
+  { id: "a1", action: "collected", target: { fr: "8 articles — Journal Officiel", en: "8 articles — Official Journal" }, timestamp: new Date(Date.now() - 12 * 60_000).toISOString(), color: "success" },
+  { id: "a2", action: "spikeDetected", target: { fr: "API prix matières premières", en: "Raw materials price API" }, timestamp: new Date(Date.now() - 6 * 3_600_000).toISOString(), color: "warning" },
+  { id: "a3", action: "alertPublished", target: { fr: "Nouvel appel d'offres — secteur BTP", en: "New call for tenders — construction sector" }, timestamp: new Date(Date.now() - 26 * 3_600_000).toISOString(), color: "info" },
 ];
 
-const docContent = (
-  <div className="prose-sm">
-    <h2 className="text-lg font-semibold mt-0 mb-2" style={{ color: "var(--bpm-text-primary)" }}>
-      À propos
-    </h2>
-    <p className="mb-4" style={{ color: "var(--bpm-text-secondary)", maxWidth: "62ch" }}>
-      Le module Veille centralise vos sources d&apos;information (flux RSS, API, pages web, alertes
-      métier), suit leur collecte et remonte les écarts comme des alertes. Le simulateur est un
-      assemblage réel de composants <code>bpm.*</code> — métriques, tableau de sources avec statuts,
-      détection d&apos;anomalie et flux d&apos;activité — avec des données câblées que vous pouvez
-      faire évoluer (ajout d&apos;une source).
-    </p>
-    <h3 className="text-base font-semibold mt-6 mb-2" style={{ color: "var(--bpm-text-primary)" }}>
-      Composants utilisés
-    </h3>
-    <p className="mb-4" style={{ color: "var(--bpm-text-secondary)" }}>
-      <code>bpm.metricRow</code>, <code>bpm.table</code> (statut rendu par <code>bpm.badge</code>),{" "}
-      <code>bpm.anomalyAlert</code>, <code>bpm.activityFeed</code>, <code>bpm.selectbox</code>,{" "}
-      <code>bpm.input</code> et <code>bpm.button</code>.
-    </p>
-    <CodeBlock
-      code={`import bpm
+const PYTHON_SNIPPET = `import bpm
 
 bpm.metricRow([
     bpm.metric("Sources suivies", 4),
@@ -92,62 +73,111 @@ bpm.metricRow([
 bpm.table(
     columns=[("nom", "Source"), ("type", "Type"), ("statut", "Statut")],
     data=sources,
-)`}
-      language="python"
-    />
-    <h3 className="text-base font-semibold mt-6 mb-2" style={{ color: "var(--bpm-text-primary)" }}>
-      Paramétrage
-    </h3>
-    <p className="mb-2 text-sm" style={{ color: "var(--bpm-text-secondary)" }}>
-      Le module fait partie de l&apos;application Next.js : <code>npm install</code> puis{" "}
-      <code>npm run dev</code> suffisent. Définir <code>DATABASE_URL</code> dans <code>.env</code>{" "}
-      comme pour le reste de l&apos;app. Voir la{" "}
-      <Link href="/modules/veille/documentation" style={{ color: "var(--bpm-accent-cyan)" }}>
-        documentation
-      </Link>{" "}
-      pour les sources, seuils d&apos;alerte et filtres.
-    </p>
-  </div>
-);
+)`;
+
+function DocTab() {
+  const { locale } = useI18n();
+  const s = STR[locale];
+  return (
+    <div className="prose-sm">
+      <h2 className="text-lg font-semibold mt-0 mb-2" style={{ color: "var(--bpm-text-primary)" }}>
+        {s.aboutHeading}
+      </h2>
+      <p className="mb-4" style={{ color: "var(--bpm-text-secondary)", maxWidth: "62ch" }}>
+        {s.about1}
+        <code>bpm.*</code>
+        {s.about2}
+      </p>
+      <h3 className="text-base font-semibold mt-6 mb-2" style={{ color: "var(--bpm-text-primary)" }}>
+        {s.componentsHeading}
+      </h3>
+      <p className="mb-4" style={{ color: "var(--bpm-text-secondary)" }}>
+        <code>bpm.metricRow</code>, <code>bpm.table</code>{s.componentsStatusNote}<code>bpm.badge</code>{"), "}
+        <code>bpm.anomalyAlert</code>, <code>bpm.activityFeed</code>, <code>bpm.selectbox</code>,{" "}
+        <code>bpm.input</code>{s.componentsAnd}<code>bpm.button</code>.
+      </p>
+      <CodeBlock code={PYTHON_SNIPPET} language="python" />
+      <h3 className="text-base font-semibold mt-6 mb-2" style={{ color: "var(--bpm-text-primary)" }}>
+        {s.configHeading}
+      </h3>
+      <p className="mb-2 text-sm" style={{ color: "var(--bpm-text-secondary)" }}>
+        {s.config1}
+        <code>npm install</code>
+        {s.configThen}
+        <code>npm run dev</code>
+        {s.config2}
+        <code>DATABASE_URL</code>
+        {s.configIn}
+        <code>.env</code>
+        {s.config3}
+        <Link href="/modules/veille/documentation" style={{ color: "var(--bpm-accent-cyan)" }}>
+          {s.configDocLink}
+        </Link>
+        {s.config4}
+      </p>
+    </div>
+  );
+}
 
 function SimuContent() {
+  const { locale } = useI18n();
+  const s = STR[locale];
   const [sources, setSources] = useState<Source[]>(INITIAL_SOURCES);
-  const [activity, setActivity] = useState(INITIAL_ACTIVITY);
+  const [activity, setActivity] = useState<ActivityEntry[]>(INITIAL_ACTIVITY);
   const [nom, setNom] = useState("");
   const [type, setType] = useState<string | null>("RSS");
 
   const stats = useMemo(() => {
     const total = sources.length;
-    const articles = sources.reduce((sum, s) => sum + s.articles, 0);
-    const alerts = sources.filter((s) => s.statut === "warning").length;
+    const articles = sources.reduce((sum, src) => sum + src.articles, 0);
+    const alerts = sources.filter((src) => src.statut === "warning").length;
     return { total, articles, alerts };
   }, [sources]);
 
   const columns = [
-    { key: "nom", label: "Source" },
-    { key: "type", label: "Type" },
+    { key: "nom", label: s.colSource },
+    { key: "type", label: s.colType },
     {
       key: "statut",
-      label: "Statut",
+      label: s.colStatus,
       render: (value: unknown) => {
-        const s = value as SourceStatus;
-        return <Badge variant={STATUS_VARIANT[s]}>{STATUS_LABEL[s]}</Badge>;
+        const status = value as SourceStatus;
+        return <Badge variant={STATUS_VARIANT[status]}>{s.statusLabels[status]}</Badge>;
       },
     },
-    { key: "derniere", label: "Dernière collecte" },
-    { key: "articles", label: "Articles", align: "right" as const },
+    { key: "derniere", label: s.colLast },
+    { key: "articles", label: s.colArticles, align: "right" as const },
   ];
+
+  // Données stockées structurées (clés + libellés bilingues), résolues au render.
+  const rows = sources.map((src) => ({
+    id: src.id,
+    nom: src.nom[locale],
+    type: src.type,
+    statut: src.statut,
+    derniere: s.relTime[src.derniere],
+    articles: src.articles,
+  }));
+
+  const feedItems = activity.map((entry) => ({
+    id: entry.id,
+    actor: s.activityActor,
+    action: s.activityActions[entry.action],
+    target: entry.target[locale],
+    timestamp: entry.timestamp,
+    color: entry.color,
+  }));
 
   const addSource = () => {
     const trimmed = nom.trim();
     if (!trimmed) return;
     const id = `s${Date.now()}`;
     setSources((prev) => [
-      { id, nom: trimmed, type: type ?? "RSS", statut: "active", derniere: "à l'instant", articles: 0 },
+      { id, nom: { fr: trimmed, en: trimmed }, type: type ?? "RSS", statut: "active", derniere: "justNow", articles: 0 },
       ...prev,
     ]);
     setActivity((prev) => [
-      { id, actor: "Veille", action: "a ajouté la source", target: trimmed, timestamp: new Date().toISOString(), color: "success" as const },
+      { id, action: "sourceAdded", target: { fr: trimmed, en: trimmed }, timestamp: new Date().toISOString(), color: "success" as const },
       ...prev,
     ]);
     setNom("");
@@ -156,66 +186,65 @@ function SimuContent() {
   return (
     <div className="space-y-6">
       <MetricRow>
-        <Metric label="Sources suivies" value={String(stats.total)} />
-        <Metric label="Alertes à vérifier" value={String(stats.alerts)} />
-        <Metric label="Articles collectés" value={String(stats.articles)} />
+        <Metric label={s.metricSources} value={String(stats.total)} />
+        <Metric label={s.metricAlerts} value={String(stats.alerts)} />
+        <Metric label={s.metricArticles} value={String(stats.articles)} />
       </MetricRow>
 
       <AnomalyAlert
-        title="Pic de prix détecté — matières premières"
-        expected="+2 % / sem."
-        actual="+11 % / sem."
+        title={s.anomalyTitle}
+        expected={s.anomalyExpected}
+        actual={s.anomalyActual}
         severity="warning"
       />
 
-      <Panel variant="info" title="Sources suivies">
-        <Table columns={columns} data={sources as unknown as Record<string, unknown>[]} striped hover />
+      <Panel variant="info" title={s.panelSourcesTitle}>
+        <Table columns={columns} data={rows as unknown as Record<string, unknown>[]} striped hover />
       </Panel>
 
-      <Panel variant="info" title="Ajouter une source">
+      <Panel variant="info" title={s.panelAddTitle}>
         <div className="flex flex-wrap gap-3 items-end">
           <div style={{ minWidth: 240, flex: 1 }}>
-            <Input label="Nom de la source" placeholder="Ex. Veille concurrentielle — secteur X" value={nom} onChange={setNom} />
+            <Input label={s.sourceNameLabel} placeholder={s.sourceNamePlaceholder} value={nom} onChange={setNom} />
           </div>
           <div style={{ minWidth: 180 }}>
-            <Selectbox label="Type" options={TYPE_OPTIONS} value={type} onChange={setType} placeholder="Type" />
+            <Selectbox label={s.typeLabel} options={s.typeOptions} value={type} onChange={setType} placeholder={s.typePlaceholder} />
           </div>
-          <Button onClick={addSource}>Ajouter</Button>
+          <Button onClick={addSource}>{s.addButton}</Button>
         </div>
       </Panel>
 
-      <Panel variant="info" title="Activité récente">
-        <ActivityFeed activities={activity} maxItems={6} compact />
+      <Panel variant="info" title={s.panelActivityTitle}>
+        <ActivityFeed activities={feedItems} maxItems={6} compact />
       </Panel>
     </div>
   );
 }
 
 export default function VeilleModulePage() {
+  const { locale } = useI18n();
+  const s = STR[locale];
   return (
     <div className="doc-page">
       <div className="doc-page-header">
         <div className="doc-breadcrumb">
-          <Link href="/modules">Modules</Link> → Veille
+          <Link href="/modules">{s.breadcrumbModules}</Link> → {s.moduleName}
         </div>
-        <h1>Veille</h1>
-        <p className="doc-description">
-          Centralisez vos sources (RSS, API, pages, alertes), suivez la collecte et remontez les écarts.
-          Testez l&apos;assemblage dans le Simulateur.
-        </p>
+        <h1>{s.moduleName}</h1>
+        <p className="doc-description">{s.moduleDescription}</p>
         <div className="doc-meta">
-          <span className="doc-badge doc-badge-category">Données &amp; reporting</span>
+          <span className="doc-badge doc-badge-category">{s.categoryBadge}</span>
         </div>
         <p className="mt-3 text-sm" style={{ color: "var(--bpm-text-secondary)" }}>
           <Link href="/modules/veille/documentation" className="font-medium underline" style={{ color: "var(--bpm-accent-cyan)" }}>
-            Ouvrir la documentation
+            {s.openDocumentation}
           </Link>
         </p>
       </div>
       <Tabs
         tabs={[
-          { label: "Documentation", content: docContent },
-          { label: "Simulateur", content: <SimuContent /> },
+          { label: s.tabDocumentation, content: <DocTab /> },
+          { label: s.tabSimulator, content: <SimuContent /> },
         ]}
         defaultTab={0}
       />

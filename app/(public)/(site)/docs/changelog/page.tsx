@@ -1,68 +1,66 @@
 import Link from "next/link";
+import type { Metadata } from "next";
+import { getDict } from "@/lib/i18n/server";
+import changelog from "@/lib/generated/changelog.json";
 
-const ENTRIES = [
-  {
-    version: "0.1.22",
-    date: "2025-02-27",
-    items: [
-      "Gestion de parc : filtres homogènes (Tickets, MAD, Contrats, Connaissances, Changements, Audit), boutons alignés sur le Wiki",
-      "Sidebar gestion de parc fixe, seul le corps scrolle ; tag statut « Nouveau » lisible (contraste)",
-      "Doc installation : prérequis complets et modèles IA (Ollama, qwen3:8b) ; tableaux bordure fine 1px",
-    ],
-  },
-  {
-    version: "0.1.21",
-    date: "2025-02-26",
-    items: [
-      "Module Gestion de parc : refonte UX (cartes métriques, onglets, filtres chips, empty state, tableaux avec badges)",
-      "Cohérence gris : Calendrier, Keep screen on, Commentaires et Tableau blanc alignés sur la sidebar",
-      "Version : source unique package.json, npm run version:sync, footer app dynamique",
-    ],
-  },
-  {
-    version: "0.1.0",
-    date: "2025-02-22",
-    items: ["Première version Next.js 14", "Auth Google, thème dark/light", "Sidebar, design system BPM", "Pages doc composants (metric, button, panel)", "Getting Started wizard", "API Wiki, health"],
-  },
-];
+export const metadata: Metadata = {
+  alternates: { canonical: "https://blueprint-modular.com/docs/changelog" },
+};
 
-export default function ChangelogPage() {
+/** Tons de badge câblés : seuls feat/fix/perf ont une couleur dédiée, le reste est neutre. */
+const TONED = new Set(["feat", "fix", "perf"]);
+
+export default async function ChangelogPage() {
+  const { dict } = await getDict();
+  const t = dict.changelogPage;
+  const types = t.types as Record<string, string>;
+  const typeLabel = (k: string) => types[k] ?? types.other;
+  const badgeClass = (k: string) => `changelog-badge changelog-badge-${TONED.has(k) ? k : "other"}`;
+
   return (
-    <div className="max-w-3xl">
-      <nav className="text-sm mb-4" style={{ color: "var(--bpm-text-secondary)" }}>
-        <Link href="/docs">Docs</Link>
-        <span className="mx-2">/</span>
-        <span>Changelog</span>
-      </nav>
-      <h1 className="text-2xl font-bold mb-6" style={{ color: "var(--bpm-accent)" }}>
-        Changelog
-      </h1>
-      <div className="space-y-6">
-        {ENTRIES.map((e) => (
-          <article
-            key={e.version}
-            className="pb-6 border-b"
-            style={{ borderColor: "var(--bpm-border)" }}
-          >
-            <div className="flex items-center gap-3 mb-2">
-              <span className="font-bold" style={{ color: "var(--bpm-accent)" }}>
-                v{e.version}
-              </span>
-              <span className="text-sm" style={{ color: "var(--bpm-text-secondary)" }}>
-                {e.date}
-              </span>
-            </div>
-            <ul className="list-disc list-inside space-y-1" style={{ color: "var(--bpm-text-primary)" }}>
-              {e.items.map((item, i) => (
-                <li key={i}>{item}</li>
-              ))}
-            </ul>
-          </article>
-        ))}
+    <div className="doc-page">
+      <div className="doc-page-header">
+        <div className="doc-breadcrumb">
+          <Link href="/docs">{dict.nav.docs}</Link> → {t.title}
+        </div>
+        <h1>{t.title}</h1>
+        <p className="doc-description">{t.lead}</p>
       </div>
-      <p className="mt-6 text-sm" style={{ color: "var(--bpm-text-secondary)" }}>
-        <Link href="/docs" className="underline">
-          Retour à la documentation
+
+      {changelog.groups.length === 0 && <p className="doc-description">{t.empty}</p>}
+
+      {changelog.groups.map((group) => (
+        <section className="changelog-group" key={group.key}>
+          <h2>{group.label}</h2>
+          <ul className="changelog-list">
+            {group.entries.map((e) => (
+              <li className="changelog-entry" key={e.pr}>
+                <span className={badgeClass(e.type)}>{typeLabel(e.type)}</span>
+                <span className="changelog-entry-title">
+                  {e.scope && <span className="changelog-entry-scope">{e.scope} · </span>}
+                  {e.title}
+                  {e.breaking && (
+                    <span className="changelog-entry-breaking" title="Breaking change">
+                      {" "}
+                      ⚠︎
+                    </span>
+                  )}
+                </span>
+                <span className="changelog-entry-meta">
+                  <a href={`${changelog.repoUrl}/pull/${e.pr}`} target="_blank" rel="noopener noreferrer">
+                    #{e.pr}
+                  </a>{" "}
+                  · {e.date}
+                </span>
+              </li>
+            ))}
+          </ul>
+        </section>
+      ))}
+
+      <p style={{ marginTop: 32 }}>
+        <Link href="/docs" className="changelog-back">
+          ← {t.backToDocs}
         </Link>
       </p>
     </div>

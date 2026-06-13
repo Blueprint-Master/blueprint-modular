@@ -5,10 +5,15 @@ import Link from "next/link";
 import { useParams, useRouter } from "next/navigation";
 import { Card, Caption, Divider, Button, Input, Selectbox, Spinner } from "@/components/bpm";
 import type { DomainConfig } from "@/lib/asset-manager/get-domain-config";
+import { useI18n } from "@/lib/i18n/LocaleProvider";
+import { STR } from "../../../strings";
 
 export default function NewAssetPage() {
   const params = useParams();
   const router = useRouter();
+  const { locale } = useI18n();
+  const t = STR[locale];
+  const ta = t.assets;
   const domainId = typeof params?.domainId === "string" ? params.domainId : "";
   const [config, setConfig] = useState<DomainConfig | null>(null);
   const [loading, setLoading] = useState(true);
@@ -40,7 +45,7 @@ export default function NewAssetPage() {
     e.preventDefault();
     setError(null);
     if (!label.trim()) {
-      setError("Le libellé est requis.");
+      setError(ta.errRequiredLabel);
       return;
     }
     setSaving(true);
@@ -58,13 +63,13 @@ export default function NewAssetPage() {
       });
       if (!res.ok) {
         const data = await res.json().catch(() => ({}));
-        setError((data.error as string) || "Erreur lors de la création.");
+        setError((data.error as string) || ta.errCreateGeneric);
         return;
       }
       const asset = await res.json();
       router.push(`/modules/asset-manager/${domainId}/assets/${asset.id}`);
     } catch {
-      setError("Erreur réseau.");
+      setError(ta.errNetwork);
     } finally {
       setSaving(false);
     }
@@ -85,44 +90,44 @@ export default function NewAssetPage() {
     <div className="doc-page">
       <div className="doc-page-header mb-6">
         <div className="doc-breadcrumb">
-          <Link href="/modules">Modules</Link> → <Link href="/modules/asset-manager">Gestion de parc</Link> →{" "}
-          <Link href={`/modules/asset-manager/${domainId}`}>{config.domain_label}</Link> → Nouvel actif
+          <Link href="/modules">{t.common.breadcrumbModules}</Link> → <Link href="/modules/asset-manager">{t.common.moduleTitle}</Link> →{" "}
+          <Link href={`/modules/asset-manager/${domainId}`}>{config.domain_label}</Link> → {ta.breadcrumbNew}
         </div>
         <h1 className="text-2xl font-bold" style={{ color: "var(--bpm-text-primary)" }}>
-          Nouvel {config.asset_label_singular.toLowerCase()}
+          {ta.newAssetHeading(config.asset_label_singular.toLowerCase())}
         </h1>
-        <Caption>Remplissez les informations ci-dessous.</Caption>
+        <Caption>{ta.fillBelow}</Caption>
       </div>
 
       <Card variant="outlined">
         <form onSubmit={handleSubmit} className="space-y-0">
-          <section className="space-y-4" aria-label="Identification">
+          <section className="space-y-4" aria-label={ta.sectionIdentification}>
             <div>
               <label className="block text-sm font-medium mb-1" style={{ color: "var(--bpm-text-primary)" }}>
-                Type *
+                {ta.fieldTypeRequired}
               </label>
               <Selectbox
                 options={typeOptions}
                 value={assetTypeId}
                 onChange={(v) => setAssetTypeId(v ?? "")}
-                placeholder="Type"
+                placeholder={ta.placeholderType}
               />
             </div>
             <div>
               <label className="block text-sm font-medium mb-1" style={{ color: "var(--bpm-text-primary)" }}>
-                Libellé *
+                {ta.fieldLabelRequired}
               </label>
-              <Input value={label} onChange={setLabel} placeholder="Libellé" required />
+              <Input value={label} onChange={setLabel} placeholder={ta.placeholderLabel} required />
             </div>
             <div>
               <label className="block text-sm font-medium mb-1" style={{ color: "var(--bpm-text-primary)" }}>
-                Statut
+                {ta.fieldStatus}
               </label>
               <Selectbox
                 options={statusOptions}
                 value={statusId}
                 onChange={(v) => setStatusId(v ?? "")}
-                placeholder="Statut"
+                placeholder={ta.placeholderStatus}
               />
             </div>
           </section>
@@ -134,10 +139,10 @@ export default function NewAssetPage() {
           )}
           <div className="flex gap-2 mt-6">
             <Button type="submit" variant="primary" disabled={saving}>
-              {saving ? "Création…" : "Créer"}
+              {saving ? ta.creating : ta.create}
             </Button>
             <Link href={`/modules/asset-manager/${domainId}`}>
-              <Button type="button" variant="outline">Annuler</Button>
+              <Button type="button" variant="outline">{ta.cancel}</Button>
             </Link>
           </div>
         </form>

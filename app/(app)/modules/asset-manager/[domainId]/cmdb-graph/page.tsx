@@ -4,17 +4,11 @@ import { useState, useEffect, useMemo, useRef, useCallback } from "react";
 import Link from "next/link";
 import { useParams, useRouter } from "next/navigation";
 import { Panel, Spinner, Button } from "@/components/bpm";
+import { useI18n } from "@/lib/i18n/LocaleProvider";
+import { STR } from "../../strings";
 
 type AssetNode = { id: string; reference: string; label: string; x: number; y: number };
 type RelationEdge = { id: string; sourceAssetId: string; targetAssetId: string; relationType: string };
-
-const RELATION_LABELS: Record<string, string> = {
-  depends_on: "Dépend de",
-  connected_to: "Connecté à",
-  hosted_on: "Hébergé sur",
-  fed_by: "Alimenté par",
-  controls: "Contrôle",
-};
 
 function runForceLayout(
   nodes: AssetNode[],
@@ -86,6 +80,10 @@ function runForceLayout(
 export default function AssetManagerCmdbGraphPage() {
   const params = useParams();
   const router = useRouter();
+  const { locale } = useI18n();
+  const t = STR[locale];
+  const tc = t.cmdb;
+  const RELATION_LABELS = tc.relationLabels;
   const domainId = typeof params?.domainId === "string" ? params.domainId : "";
   const [assets, setAssets] = useState<{ id: string; reference: string; label: string }[]>([]);
   const [relations, setRelations] = useState<RelationEdge[]>([]);
@@ -205,7 +203,7 @@ export default function AssetManagerCmdbGraphPage() {
   if (!domainId) {
     return (
       <div className="doc-page">
-        <Panel variant="warning" title="Domaine requis" />
+        <Panel variant="warning" title={tc.domainRequired} />
       </div>
     );
   }
@@ -214,20 +212,20 @@ export default function AssetManagerCmdbGraphPage() {
     <div className="doc-page">
       <div className="doc-page-header mb-4">
         <nav className="doc-breadcrumb">
-          <Link href="/modules" style={{ color: "var(--bpm-accent-cyan)" }}>Modules</Link> →{" "}
-          <Link href="/modules/asset-manager" style={{ color: "var(--bpm-accent-cyan)" }}>Gestion de parc</Link> →{" "}
-          <Link href={`/modules/asset-manager/${domainId}`} style={{ color: "var(--bpm-accent-cyan)" }}>Tableau de bord</Link> → Cartographie CMDB
+          <Link href="/modules" style={{ color: "var(--bpm-accent-cyan)" }}>{t.common.breadcrumbModules}</Link> →{" "}
+          <Link href="/modules/asset-manager" style={{ color: "var(--bpm-accent-cyan)" }}>{t.common.moduleTitle}</Link> →{" "}
+          <Link href={`/modules/asset-manager/${domainId}`} style={{ color: "var(--bpm-accent-cyan)" }}>{t.nav.dashboard}</Link> → {tc.title}
         </nav>
         <div className="flex flex-wrap items-center justify-between gap-4">
           <h1 className="text-2xl font-bold" style={{ color: "var(--bpm-text-primary)" }}>
-            Cartographie CMDB
+            {tc.title}
           </h1>
           <Link href={`/modules/asset-manager/${domainId}/assets`} className="asset-manager-cta-button">
-            <Button size="small" variant="outline">Liste des actifs</Button>
+            <Button size="small" variant="outline">{tc.assetList}</Button>
           </Link>
         </div>
         <p className="doc-description mt-1" style={{ color: "var(--bpm-text-secondary)" }}>
-          Graphe des actifs et de leurs relations. Clic sur un nœud pour ouvrir la fiche actif.
+          {tc.description}
         </p>
       </div>
 
@@ -236,8 +234,8 @@ export default function AssetManagerCmdbGraphPage() {
           <Spinner size="medium" />
         </div>
       ) : nodes.length === 0 ? (
-        <Panel variant="info" title="Aucun actif">
-          Aucun actif dans ce domaine. Créez des actifs et des relations depuis les fiches actifs.
+        <Panel variant="info" title={tc.emptyTitle}>
+          {tc.emptyDescription}
         </Panel>
       ) : (
         <div
@@ -247,10 +245,10 @@ export default function AssetManagerCmdbGraphPage() {
             border: "1px solid var(--bpm-border)",
           }}
           role="region"
-          aria-label="Graphe des dépendances"
+          aria-label={tc.graphAriaLabel}
         >
           <h2 className="text-sm font-semibold m-0 px-4 py-3" style={{ color: "var(--bpm-text-secondary)", letterSpacing: "0.04em" }}>
-            Graphe des dépendances
+            {tc.graphHeading}
           </h2>
           <div className="overflow-auto rounded-lg border mx-4 mb-4" style={{ borderColor: "var(--bpm-border)", background: "var(--bpm-bg-secondary)" }}>
             <svg ref={svgRef} width={size.w} height={size.h} className="block" style={{ cursor: isPanning ? "grabbing" : "grab" }}>
@@ -269,22 +267,22 @@ export default function AssetManagerCmdbGraphPage() {
               <g transform={`translate(${pan.x}, ${pan.y}) scale(${zoom})`} style={{ pointerEvents: "none" }}>
               {relations.map((e) => {
                 const s = nodeById.get(e.sourceAssetId);
-                const t = nodeById.get(e.targetAssetId);
-                if (!s || !t) return null;
+                const tgt = nodeById.get(e.targetAssetId);
+                if (!s || !tgt) return null;
                 return (
                   <g key={e.id}>
                     <line
                       x1={s.x}
                       y1={s.y}
-                      x2={t.x}
-                      y2={t.y}
+                      x2={tgt.x}
+                      y2={tgt.y}
                       stroke="var(--bpm-border)"
                       strokeWidth="1.5"
                       markerEnd="url(#arrow)"
                     />
                     <text
-                      x={(s.x + t.x) / 2}
-                      y={(s.y + t.y) / 2 - 6}
+                      x={(s.x + tgt.x) / 2}
+                      y={(s.y + tgt.y) / 2 - 6}
                       textAnchor="middle"
                       className="text-[10px] fill-[var(--bpm-text-secondary)]"
                     >
@@ -319,14 +317,14 @@ export default function AssetManagerCmdbGraphPage() {
             </svg>
           </div>
           <p className="text-xs mt-2 px-4 pb-4" style={{ color: "var(--bpm-text-secondary)" }}>
-            {nodes.length} actif(s), {relations.length} relation(s)
+            {tc.counts(nodes.length, relations.length)}
           </p>
         </div>
       )}
 
       <nav className="doc-pagination mt-8 flex flex-wrap gap-4">
-        <Link href={`/modules/asset-manager/${domainId}`} style={{ color: "var(--bpm-accent-cyan)" }}>← Tableau de bord</Link>
-        <Link href={`/modules/asset-manager/${domainId}/assets`} style={{ color: "var(--bpm-accent-cyan)" }}>Liste des actifs</Link>
+        <Link href={`/modules/asset-manager/${domainId}`} style={{ color: "var(--bpm-accent-cyan)" }}>{tc.backToDashboard}</Link>
+        <Link href={`/modules/asset-manager/${domainId}/assets`} style={{ color: "var(--bpm-accent-cyan)" }}>{tc.assetList}</Link>
       </nav>
     </div>
   );

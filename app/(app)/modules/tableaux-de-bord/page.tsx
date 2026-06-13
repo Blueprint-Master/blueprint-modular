@@ -1,43 +1,102 @@
 "use client";
 
 import Link from "next/link";
-import { Tabs, CodeBlock, Panel, Metric, Button } from "@/components/bpm";
+import { CodeBlock, Tabs } from "@/components/bpm";
+import { useI18n } from "@/lib/i18n/LocaleProvider";
+import TableauxDeBordSimulateur from "./simulateur-content";
+import { STR, type ModuleStrings } from "./strings";
 
-const docContent = (
-  <>
-    <h2 className="text-lg font-semibold mt-0 mb-2" style={{ color: "var(--bpm-text-primary)" }}>À propos</h2>
-    <p className="mb-6" style={{ color: "var(--bpm-text-secondary)", maxWidth: "60ch" }}>
-      Tableaux de bord personnalisables : disposition de widgets (métriques, graphiques, tableaux) par l&apos;utilisateur.
-    </p>
-    <CodeBlock code={'bpm.title("Mon tableau de bord")\nbpm.metric("CA", 142500, delta=3200)'} language="python" />
-  </>
-);
+// Snippet python inchangé quelle que soit la locale.
+const PYTHON_SNIPPET = `import bpm
 
-function SimuContent() {
+# Chaque widget du catalogue rend un vrai composant bpm
+bpm.metric("CA du mois", "142,5 k€", delta="+12,3 %")
+bpm.line_chart(ventes_12_mois)          # 12 points mensuels
+bpm.bar_chart(ca_par_region)            # 6 régions
+bpm.table(columns=[("ref", "Réf."), ("nom", "Produit"), ("ca", "CA")], data=top_produits)
+bpm.progress_ring(78, max=100)          # objectif trimestre
+bpm.activity_feed(dernieres_commandes)  # 4 dernières commandes
+
+# La disposition (ordre, taille, visibilité) est un simple JSON persisté
+layout = [
+    {"id": "metric-ca", "size": 1},
+    {"id": "line-ventes", "size": 2},
+]`;
+
+function DocContent({ s }: { s: ModuleStrings }) {
   return (
-    <>
-      <Panel variant="info" title="Vue démo">
-        <div className="grid gap-4 mb-4" style={{ gridTemplateColumns: "repeat(auto-fill, minmax(140px, 1fr))" }}>
-          <Metric label="CA (k€)" value={142.5} delta={12.3} />
-          <Metric label="Commandes" value={1248} />
-        </div>
-        <Button size="small" variant="outline">Personnaliser les widgets</Button>
-      </Panel>
-    </>
+    <div className="prose-sm">
+      <h2 className="text-lg font-semibold mt-0 mb-2" style={{ color: "var(--bpm-text-primary)" }}>
+        {s.aboutTitle}
+      </h2>
+      <p className="mb-4" style={{ color: "var(--bpm-text-secondary)", maxWidth: "62ch" }}>
+        {s.aboutBody}
+      </p>
+      <h3 className="text-base font-semibold mt-6 mb-2" style={{ color: "var(--bpm-text-primary)" }}>
+        {s.componentsTitle}
+      </h3>
+      <p className="mb-4" style={{ color: "var(--bpm-text-secondary)" }}>
+        <code>bpm.metric</code>, <code>bpm.lineChart</code>, <code>bpm.barChart</code>,{" "}
+        <code>bpm.table</code>, <code>bpm.progressRing</code>, <code>bpm.activityFeed</code>,{" "}
+        <code>bpm.panel</code> ({s.componentsLibrary}), <code>bpm.button</code> ({s.componentsToolbar}),{" "}
+        <code>bpm.confirmModal</code> ({s.componentsReset}) {s.and} <code>bpm.toast</code>.
+      </p>
+      <CodeBlock code={PYTHON_SNIPPET} language="python" />
+      <h3 className="text-base font-semibold mt-6 mb-2" style={{ color: "var(--bpm-text-primary)" }}>
+        {s.customizationTitle}
+      </h3>
+      <ul className="mb-4 list-disc pl-5 text-sm space-y-1" style={{ color: "var(--bpm-text-secondary)" }}>
+        {s.customizationItems.map((item) => (
+          <li key={item.strong}>
+            <strong>{item.strong}</strong>
+            {item.text}
+          </li>
+        ))}
+      </ul>
+      <p className="mb-2 text-sm" style={{ color: "var(--bpm-text-secondary)" }}>
+        {s.simNoteBeforeCode}
+        <code>localStorage</code>
+        {s.simNoteAfterCode}
+        <Link href="/modules/tableaux-de-bord/documentation" style={{ color: "var(--bpm-accent-cyan)" }}>
+          {s.simNoteLinkLabel}
+        </Link>
+        {s.simNoteEnd}
+      </p>
+    </div>
   );
 }
 
 export default function TableauxDeBordModulePage() {
+  const { locale } = useI18n();
+  const s = STR[locale];
   return (
     <div className="doc-page">
       <div className="doc-page-header">
-        <div className="doc-breadcrumb"><Link href="/modules">Modules</Link> → Tableaux de bord</div>
-        <h1>Tableaux de bord</h1>
-        <p className="doc-description">Disposition de widgets par l&apos;utilisateur. Testez dans le Simulateur.</p>
-        <div className="doc-meta"><span className="doc-badge doc-badge-category">Données & reporting</span></div>
-        <p className="mt-3 text-sm" style={{ color: "var(--bpm-text-secondary)" }}><Link href="/modules/tableaux-de-bord/simulateur" className="font-medium underline" style={{ color: "var(--bpm-accent-cyan)" }}>Ouvrir le simulateur</Link></p>
+        <div className="doc-breadcrumb">
+          <Link href="/modules">{s.breadcrumbModules}</Link> → {s.moduleTitle}
+        </div>
+        <h1>{s.moduleTitle}</h1>
+        <p className="doc-description">{s.pageDescription}</p>
+        <div className="doc-meta">
+          <span className="doc-badge doc-badge-category">{s.categoryBadge}</span>
+        </div>
+        <p className="mt-3 text-sm" style={{ color: "var(--bpm-text-secondary)" }}>
+          <Link
+            href="/modules/tableaux-de-bord/simulateur"
+            className="font-medium underline"
+            style={{ color: "var(--bpm-accent-cyan)" }}
+          >
+            {s.openSimulator}
+          </Link>
+        </p>
       </div>
-      <Tabs tabs={[{ label: "Documentation", content: docContent }, { label: "Simulateur", content: <SimuContent /> }]} defaultTab={0} />
+      <Tabs
+        tabs={[
+          { label: s.tabDocumentation, content: <DocContent s={s} /> },
+          { label: s.tabSimulator, content: <TableauxDeBordSimulateur /> },
+        ]}
+        defaultTab={0}
+      />
     </div>
   );
 }

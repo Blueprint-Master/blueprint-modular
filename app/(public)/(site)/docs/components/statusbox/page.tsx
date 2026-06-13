@@ -4,10 +4,55 @@ import { useState } from "react";
 import Link from "next/link";
 import { StatusBox, CodeBlock } from "@/components/bpm";
 import { getPrevNext } from "@/lib/docPages";
+import { useI18n } from "@/lib/i18n/LocaleProvider";
 
 type State = "running" | "complete" | "error";
 
+const fr = {
+  breadcrumb: "Composants",
+  category: "Affichage de données",
+  description: "Bloc repliable avec état (running, complete, error).",
+  copy: "Copier",
+  examples: "Exemples",
+  parameters: "Paramètres",
+  thParam: "Paramètre",
+  thDefault: "Défaut",
+  thRequired: "Requis",
+  yes: "Oui",
+  no: "Non",
+  childrenLabel: "children (contenu)",
+  contentPlaceholder: "Détails…",
+  defaultExpandedLabel: "Ouvert par défaut",
+  descLabel: "Libellé du statut (ex. “En cours”, “Terminé”).",
+  descState: "État affiché (spinner, checkmark ou erreur).",
+  descChildren: "Détails repliables sous le libellé.",
+  descDefaultExpanded: "Afficher les détails ouverts par défaut.",
+};
+const en: typeof fr = {
+  breadcrumb: "Components",
+  category: "Data display",
+  description: "Collapsible block with a state (running, complete, error).",
+  copy: "Copy",
+  examples: "Examples",
+  parameters: "Parameters",
+  thParam: "Parameter",
+  thDefault: "Default",
+  thRequired: "Required",
+  yes: "Yes",
+  no: "No",
+  childrenLabel: "children (content)",
+  contentPlaceholder: "Details…",
+  defaultExpandedLabel: "Expanded by default",
+  descLabel: "Status label (e.g. “Running”, “Done”).",
+  descState: "Displayed state (spinner, checkmark or error).",
+  descChildren: "Collapsible details below the label.",
+  descDefaultExpanded: "Show the details expanded by default.",
+};
+const L = { fr, en } as const;
+
 export default function DocStatusBoxPage() {
+  const { locale } = useI18n();
+  const t = L[locale];
   const [label, setLabel] = useState("Traitement en cours");
   const [state, setState] = useState<State>("running");
   const [content, setContent] = useState("Détails ou message additionnel.");
@@ -21,11 +66,11 @@ export default function DocStatusBoxPage() {
   return (
     <div className="doc-page">
       <div className="doc-page-header">
-        <div className="doc-breadcrumb"><Link href="/docs/components">Composants</Link> → bpm.statusbox</div>
+        <div className="doc-breadcrumb"><Link href="/docs/components">{t.breadcrumb}</Link> → bpm.statusbox</div>
         <h1>bpm.statusbox</h1>
-        <p className="doc-description">Bloc repliable avec état (running, complete, error).</p>
+        <p className="doc-description">{t.description}</p>
         <div className="doc-meta">
-          <span className="doc-badge doc-badge-category">Affichage de données</span>
+          <span className="doc-badge doc-badge-category">{t.category}</span>
         </div>
       </div>
 
@@ -53,37 +98,37 @@ export default function DocStatusBoxPage() {
             </select>
           </div>
           <div className="sandbox-control-group">
-            <label>children (contenu)</label>
-            <input type="text" value={content} onChange={(e) => setContent(e.target.value)} placeholder="Détails…" />
+            <label>{t.childrenLabel}</label>
+            <input type="text" value={content} onChange={(e) => setContent(e.target.value)} placeholder={t.contentPlaceholder} />
           </div>
           <div className="sandbox-control-group">
             <label>defaultExpanded</label>
             <label className="inline-flex items-center gap-2">
               <input type="checkbox" checked={defaultExpanded} onChange={(e) => setDefaultExpanded(e.target.checked)} />
-              Ouvert par défaut
+              {t.defaultExpandedLabel}
             </label>
           </div>
         </div>
         <div className="sandbox-code">
           <div className="sandbox-code-header">
             <span>Python</span>
-            <button type="button" onClick={() => navigator.clipboard.writeText(pythonCode)}>Copier</button>
+            <button type="button" onClick={() => navigator.clipboard.writeText(pythonCode)}>{t.copy}</button>
           </div>
           <pre><code>{pythonCode}</code></pre>
         </div>
       </div>
 
-      <h2 className="text-lg font-semibold mt-8 mb-2">Paramètres</h2>
+      <h2 className="text-lg font-semibold mt-8 mb-2">{t.parameters}</h2>
       <table className="props-table w-full border-collapse text-sm">
-        <thead><tr><th className="text-left p-2 border-b" style={{ borderColor: "var(--bpm-border)" }}>Paramètre</th><th className="text-left p-2 border-b" style={{ borderColor: "var(--bpm-border)" }}>Type</th><th className="text-left p-2 border-b" style={{ borderColor: "var(--bpm-border)" }}>Défaut</th><th className="text-left p-2 border-b" style={{ borderColor: "var(--bpm-border)" }}>Requis</th><th className="text-left p-2 border-b" style={{ borderColor: "var(--bpm-border)" }}>Description</th></tr></thead>
+        <thead><tr><th className="text-left p-2 border-b" style={{ borderColor: "var(--bpm-border)" }}>{t.thParam}</th><th className="text-left p-2 border-b" style={{ borderColor: "var(--bpm-border)" }}>Type</th><th className="text-left p-2 border-b" style={{ borderColor: "var(--bpm-border)" }}>{t.thDefault}</th><th className="text-left p-2 border-b" style={{ borderColor: "var(--bpm-border)" }}>{t.thRequired}</th><th className="text-left p-2 border-b" style={{ borderColor: "var(--bpm-border)" }}>Description</th></tr></thead>
         <tbody>
-          <tr><td className="p-2 border-b" style={{ borderColor: "var(--bpm-border)" }}><code>label</code></td><td className="p-2 border-b" style={{ borderColor: "var(--bpm-border)" }}>string</td><td className="p-2 border-b" style={{ borderColor: "var(--bpm-border)" }}>—</td><td className="p-2 border-b" style={{ borderColor: "var(--bpm-border)" }}>Oui</td><td className="p-2 border-b" style={{ borderColor: "var(--bpm-border)" }}>Libellé du statut (ex. &quot;En cours&quot;, &quot;Terminé&quot;).</td></tr>
-          <tr><td className="p-2 border-b" style={{ borderColor: "var(--bpm-border)" }}><code>state</code></td><td className="p-2 border-b" style={{ borderColor: "var(--bpm-border)" }}>running | complete | error</td><td className="p-2 border-b" style={{ borderColor: "var(--bpm-border)" }}>running</td><td className="p-2 border-b" style={{ borderColor: "var(--bpm-border)" }}>Non</td><td className="p-2 border-b" style={{ borderColor: "var(--bpm-border)" }}>État affiché (spinner, checkmark ou erreur).</td></tr>
-          <tr><td className="p-2 border-b" style={{ borderColor: "var(--bpm-border)" }}><code>children</code></td><td className="p-2 border-b" style={{ borderColor: "var(--bpm-border)" }}>ReactNode</td><td className="p-2 border-b" style={{ borderColor: "var(--bpm-border)" }}>—</td><td className="p-2 border-b" style={{ borderColor: "var(--bpm-border)" }}>Non</td><td className="p-2 border-b" style={{ borderColor: "var(--bpm-border)" }}>Détails repliables sous le libellé.</td></tr>
-          <tr><td className="p-2 border-b" style={{ borderColor: "var(--bpm-border)" }}><code>defaultExpanded</code></td><td className="p-2 border-b" style={{ borderColor: "var(--bpm-border)" }}>boolean</td><td className="p-2 border-b" style={{ borderColor: "var(--bpm-border)" }}>true</td><td className="p-2 border-b" style={{ borderColor: "var(--bpm-border)" }}>Non</td><td className="p-2 border-b" style={{ borderColor: "var(--bpm-border)" }}>Afficher les détails ouverts par défaut.</td></tr>
+          <tr><td className="p-2 border-b" style={{ borderColor: "var(--bpm-border)" }}><code>label</code></td><td className="p-2 border-b" style={{ borderColor: "var(--bpm-border)" }}>string</td><td className="p-2 border-b" style={{ borderColor: "var(--bpm-border)" }}>—</td><td className="p-2 border-b" style={{ borderColor: "var(--bpm-border)" }}>{t.yes}</td><td className="p-2 border-b" style={{ borderColor: "var(--bpm-border)" }}>{t.descLabel}</td></tr>
+          <tr><td className="p-2 border-b" style={{ borderColor: "var(--bpm-border)" }}><code>state</code></td><td className="p-2 border-b" style={{ borderColor: "var(--bpm-border)" }}>running | complete | error</td><td className="p-2 border-b" style={{ borderColor: "var(--bpm-border)" }}>running</td><td className="p-2 border-b" style={{ borderColor: "var(--bpm-border)" }}>{t.no}</td><td className="p-2 border-b" style={{ borderColor: "var(--bpm-border)" }}>{t.descState}</td></tr>
+          <tr><td className="p-2 border-b" style={{ borderColor: "var(--bpm-border)" }}><code>children</code></td><td className="p-2 border-b" style={{ borderColor: "var(--bpm-border)" }}>ReactNode</td><td className="p-2 border-b" style={{ borderColor: "var(--bpm-border)" }}>—</td><td className="p-2 border-b" style={{ borderColor: "var(--bpm-border)" }}>{t.no}</td><td className="p-2 border-b" style={{ borderColor: "var(--bpm-border)" }}>{t.descChildren}</td></tr>
+          <tr><td className="p-2 border-b" style={{ borderColor: "var(--bpm-border)" }}><code>defaultExpanded</code></td><td className="p-2 border-b" style={{ borderColor: "var(--bpm-border)" }}>boolean</td><td className="p-2 border-b" style={{ borderColor: "var(--bpm-border)" }}>true</td><td className="p-2 border-b" style={{ borderColor: "var(--bpm-border)" }}>{t.no}</td><td className="p-2 border-b" style={{ borderColor: "var(--bpm-border)" }}>{t.descDefaultExpanded}</td></tr>
         </tbody>
       </table>
-      <h2 className="text-lg font-semibold mt-8 mb-2">Exemples</h2>
+      <h2 className="text-lg font-semibold mt-8 mb-2">{t.examples}</h2>
       <CodeBlock code={"bpm.statusbox(label=\"En cours…\", state=\"running\")"} language="python" />
       <CodeBlock code={"bpm.statusbox(label=\"Terminé\", state=\"complete\")"} language="python" />
 

@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useI18n } from "@/lib/i18n/LocaleProvider";
-import { APP_VERSION } from "@/lib/version";
+import { PYTHON_VERSION, CORE_VERSION } from "@/lib/version";
 
 export function SiteFooter() {
   const { dict } = useI18n();
@@ -48,7 +48,7 @@ export function SiteFooter() {
       </div>
       <div className="site-container site-footer-meta">
         <span>
-          {dict.common.brand} · v{APP_VERSION}
+          {dict.common.brand} · {dict.footer.pythonSurface} v{PYTHON_VERSION} · {dict.footer.reactSurface} v{CORE_VERSION}
         </span>
       </div>
     </footer>

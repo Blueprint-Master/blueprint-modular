@@ -25,16 +25,19 @@ REPO_ROOT = Path(__file__).parent.parent
 TRACKED_FILES = [
     "public/llms.txt",
     "lib/generated/bpm-components.json",
+    "lib/generated/mcp-registry.json",
 ]
 
 GENERATORS = [
     [sys.executable, str(REPO_ROOT / "scripts" / "generate-llms-txt.py")],
     [sys.executable, str(REPO_ROOT / "scripts" / "generate-bpm-components-json.py")],
+    ["node", str(REPO_ROOT / "scripts" / "generate-mcp-registry.mjs")],
 ]
 
 LABELS = [
     "generate-llms-txt.py → public/llms.txt",
     "generate-bpm-components-json.py → lib/generated/bpm-components.json",
+    "generate-mcp-registry.mjs → lib/generated/mcp-registry.json",
 ]
 
 
@@ -48,9 +51,12 @@ def git(args: list[str]) -> subprocess.CompletedProcess:
 
 
 def normalize_for_diff(content: str) -> str:
-    """Strip the date header line so date drift doesn't cause false positives."""
+    """Neutralise les en-têtes volatils (date llms.txt, horodatage de génération JSON)
+    pour éviter les faux positifs de drift."""
     import re
-    return re.sub(r"^# Date\s+:.*$", "# Date    : <normalized>", content, flags=re.MULTILINE)
+    content = re.sub(r"^# Date\s+:.*$", "# Date    : <normalized>", content, flags=re.MULTILINE)
+    content = re.sub(r'"generatedAt"\s*:\s*"[^"]*"', '"generatedAt": "<normalized>"', content)
+    return content
 
 
 def restore_files() -> None:
@@ -103,12 +109,8 @@ def main() -> int:
         fresh_text = path.read_text(encoding="utf-8", errors="replace")
         orig_text = original.decode("utf-8", errors="replace")
 
-        if tracked_file.endswith(".txt"):
-            fresh_cmp = normalize_for_diff(fresh_text)
-            orig_cmp = normalize_for_diff(orig_text)
-        else:
-            fresh_cmp = fresh_text
-            orig_cmp = orig_text
+        fresh_cmp = normalize_for_diff(fresh_text)
+        orig_cmp = normalize_for_diff(orig_text)
 
         if fresh_cmp != orig_cmp:
             import difflib
@@ -135,6 +137,7 @@ def main() -> int:
     if not ok:
         print("     python scripts/generate-llms-txt.py")
         print("     python scripts/generate-bpm-components-json.py")
+        print("     node scripts/generate-mcp-registry.mjs")
 
     return 0 if ok else 1
 

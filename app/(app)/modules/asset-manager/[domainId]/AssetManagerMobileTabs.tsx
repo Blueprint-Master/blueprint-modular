@@ -2,17 +2,19 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { useI18n } from "@/lib/i18n/LocaleProvider";
+import { STR } from "../strings";
 
 const ITEMS = [
-  { key: "dashboard", label: "Tableau de bord", path: "" },
-  { key: "assets", label: "Équipements", path: "/assets" },
-  { key: "tickets", label: "Tickets", path: "/tickets" },
-  { key: "assignments", label: "Mise à disposition", path: "/assignments" },
-  { key: "contracts", label: "Contrats", path: "/contracts" },
-  { key: "knowledge", label: "Connaissances", path: "/knowledge" },
-  { key: "changes", label: "Changements", path: "/changes" },
-  { key: "cmdb", label: "Cartographie CMDB", path: "/cmdb-graph" },
-  { key: "audit", label: "Journal d'audit", path: "/audit" },
+  { key: "dashboard", labelKey: "dashboard", path: "" },
+  { key: "assets", labelKey: "assets", path: "/assets" },
+  { key: "tickets", labelKey: "tickets", path: "/tickets" },
+  { key: "assignments", labelKey: "assignments", path: "/assignments" },
+  { key: "contracts", labelKey: "contracts", path: "/contracts" },
+  { key: "knowledge", labelKey: "knowledge", path: "/knowledge" },
+  { key: "changes", labelKey: "changes", path: "/changes" },
+  { key: "cmdb", labelKey: "cmdb", path: "/cmdb-graph" },
+  { key: "audit", labelKey: "audit", path: "/audit" },
 ] as const;
 
 function getSectionFromPath(pathname: string): string {
@@ -28,6 +30,8 @@ function getSectionFromPath(pathname: string): string {
 
 export function AssetManagerMobileTabs({ domainId }: { domainId: string }) {
   const pathname = usePathname();
+  const { locale } = useI18n();
+  const t = STR[locale].nav;
   const current = getSectionFromPath(pathname ?? "");
   const basePath = `/modules/asset-manager/${domainId}`;
 
@@ -35,7 +39,7 @@ export function AssetManagerMobileTabs({ domainId }: { domainId: string }) {
     <div
       className="asset-manager-mobile-tabs md:hidden w-full flex-shrink-0"
       role="tablist"
-      aria-label="Navigation Gestion de parc"
+      aria-label={t.ariaLabel}
     >
       <div
         className="bpm-tabs-header flex items-stretch gap-0 overflow-x-auto overflow-y-hidden border-b"
@@ -61,7 +65,7 @@ export function AssetManagerMobileTabs({ domainId }: { domainId: string }) {
                 textDecoration: "none",
               }}
             >
-              <span className="bpm-tab-button-text">{item.label}</span>
+              <span className="bpm-tab-button-text">{t[item.labelKey]}</span>
             </Link>
           );
         })}

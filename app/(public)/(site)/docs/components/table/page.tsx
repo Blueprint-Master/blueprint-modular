@@ -4,23 +4,109 @@ import { useState } from "react";
 import Link from "next/link";
 import { Table, CodeBlock } from "@/components/bpm";
 import { getPrevNext } from "@/lib/docPages";
+import { useI18n } from "@/lib/i18n/LocaleProvider";
 
-const DEMO_DATA = [
-  { Produit: "Widget A", Prix: 29.99, Stock: 142, Statut: "En stock" },
-  { Produit: "Widget B", Prix: 49.99, Stock: 38, Statut: "Stock bas" },
-  { Produit: "Widget C", Prix: 9.99, Stock: 500, Statut: "En stock" },
-  { Produit: "Widget D", Prix: 79.99, Stock: 0, Statut: "Rupture" },
-  { Produit: "Widget E", Prix: 19.99, Stock: 210, Statut: "En stock" },
-];
-
-const COLUMNS = [
-  { key: "Produit", label: "Produit" },
-  { key: "Prix", label: "Prix", decimals: 2 },
-  { key: "Stock", label: "Stock" },
-  { key: "Statut", label: "Statut" },
-];
+const fr = {
+  breadcrumb: "Composants",
+  category: "Affichage de données",
+  statInStock: "En stock",
+  statLowStock: "Stock bas",
+  statOutOfStock: "Rupture",
+  description: "Tableau de données avec tri, lignes alternées, survol et lignes cliquables pour accéder au détail.",
+  copy: "Copier",
+  examples: "Exemples",
+  thDefault: "Défaut",
+  thRequired: "Requis",
+  yes: "Oui",
+  no: "Non",
+  colProduit: "Produit",
+  colPrix: "Prix",
+  colStock: "Stock",
+  colStatut: "Statut",
+  clickedRow: "Ligne cliquée :",
+  clickHint: "Cliquez sur une ligne pour afficher le détail.",
+  sortLabel: "Tri par défaut",
+  sortNone: "Aucun",
+  descColumns: "optionnel :",
+  descColumnsCustom: "Cellule custom :",
+  descData: "Lignes du tableau. Interdit : JSX dans",
+  descDataEnd: "— utiliser",
+  descDataEnd2: "sur la colonne.",
+  descStriped: "Lignes alternées.",
+  descHover: "Surbrillance au survol.",
+  descOnRowClick: "Callback au clic sur une ligne.",
+  descDefaultSortColumn: "Colonne de tri initiale.",
+  descDefaultSortDirection: "Direction du tri initial.",
+  descValueLocale: "Locale pour formater les nombres (ex. fr-FR → 1 000,50, en-US → 1,000.50).",
+  descValueDecimals: "Décimales par défaut pour les cellules numériques. Surcharge possible par colonne (",
+  descValueDecimalsEnd: ").",
+  descValueGrouping: "Séparateur de milliers (false = 1000,50 sans espace).",
+  emptyDefault: "« Aucune donnée disponible »",
+  descEmptyMessage: "Message si",
+  descEmptyMessageEnd: "vide.",
+  descMisc: "Contexte IA, largeur min., clé de ligne, etc.",
+};
+const en: typeof fr = {
+  breadcrumb: "Components",
+  category: "Data display",
+  statInStock: "In stock",
+  statLowStock: "Low stock",
+  statOutOfStock: "Out of stock",
+  description: "Data table with sorting, striped rows, hover and clickable rows to access details.",
+  copy: "Copy",
+  examples: "Examples",
+  thDefault: "Default",
+  thRequired: "Required",
+  yes: "Yes",
+  no: "No",
+  colProduit: "Product",
+  colPrix: "Price",
+  colStock: "Stock",
+  colStatut: "Status",
+  clickedRow: "Clicked row:",
+  clickHint: "Click a row to display the details.",
+  sortLabel: "Default sort",
+  sortNone: "None",
+  descColumns: "optional:",
+  descColumnsCustom: "Custom cell:",
+  descData: "Table rows. Forbidden: JSX inside",
+  descDataEnd: "— use",
+  descDataEnd2: "on the column.",
+  descStriped: "Striped rows.",
+  descHover: "Highlight on hover.",
+  descOnRowClick: "Callback when a row is clicked.",
+  descDefaultSortColumn: "Initial sort column.",
+  descDefaultSortDirection: "Initial sort direction.",
+  descValueLocale: "Locale used to format numbers (e.g. fr-FR → 1 000,50, en-US → 1,000.50).",
+  descValueDecimals: "Default decimals for numeric cells. Can be overridden per column (",
+  descValueDecimalsEnd: ").",
+  descValueGrouping: "Thousands separator (false = 1000,50 without space).",
+  emptyDefault: "“No data available”",
+  descEmptyMessage: "Message if",
+  descEmptyMessageEnd: "is empty.",
+  descMisc: "AI context, min width, row key, etc.",
+};
+const L = { fr, en } as const;
 
 export default function DocTablePage() {
+  const { locale } = useI18n();
+  const t = L[locale];
+
+  const DEMO_DATA = [
+    { Produit: "Widget A", Prix: 29.99, Stock: 142, Statut: t.statInStock },
+    { Produit: "Widget B", Prix: 49.99, Stock: 38, Statut: t.statLowStock },
+    { Produit: "Widget C", Prix: 9.99, Stock: 500, Statut: t.statInStock },
+    { Produit: "Widget D", Prix: 79.99, Stock: 0, Statut: t.statOutOfStock },
+    { Produit: "Widget E", Prix: 19.99, Stock: 210, Statut: t.statInStock },
+  ];
+
+  const COLUMNS = [
+    { key: "Produit", label: t.colProduit },
+    { key: "Prix", label: t.colPrix, decimals: 2 },
+    { key: "Stock", label: t.colStock },
+    { key: "Statut", label: t.colStatut },
+  ];
+
   const [striped, setStriped] = useState(true);
   const [hover, setHover] = useState(true);
   const [defaultSortColumn, setDefaultSortColumn] = useState<string | null>("Produit");
@@ -44,14 +130,14 @@ export default function DocTablePage() {
   return (
     <div className="doc-page">
       <div className="doc-page-header">
-        <div className="doc-breadcrumb"><Link href="/docs/components">Composants</Link> → bpm.table</div>
+        <div className="doc-breadcrumb"><Link href="/docs/components">{t.breadcrumb}</Link> → bpm.table</div>
         <h1>bpm.table</h1>
         <p className="doc-description">
-          Tableau de données avec tri, lignes alternées, survol et lignes cliquables pour accéder au détail.
+          {t.description}
         </p>
         <div className="doc-meta">
           <span className="doc-badge doc-badge-stable">Stable</span>
-          <span className="doc-badge doc-badge-category">Affichage de données</span>
+          <span className="doc-badge doc-badge-category">{t.category}</span>
           <span className="doc-reading-time">⏱ 3 min</span>
         </div>
       </div>
@@ -75,11 +161,11 @@ export default function DocTablePage() {
             />
             {selectedRow && (
               <div className="mt-3 p-3 rounded-lg text-sm border" style={{ borderColor: "var(--bpm-border)", background: "var(--bpm-bg-secondary)", color: "var(--bpm-text-secondary)" }}>
-                <strong>Ligne cliquée :</strong> {String(selectedRow.Produit ?? "")} — {String(selectedRow.Prix ?? "")} € — Stock {String(selectedRow.Stock ?? "")} — {String(selectedRow.Statut ?? "")}
+                <strong>{t.clickedRow}</strong> {String(selectedRow.Produit ?? "")} — {String(selectedRow.Prix ?? "")} € — {t.colStock} {String(selectedRow.Stock ?? "")} — {String(selectedRow.Statut ?? "")}
               </div>
             )}
             {!selectedRow && (
-              <p className="mt-2 text-xs" style={{ color: "var(--bpm-text-secondary)" }}>Cliquez sur une ligne pour afficher le détail.</p>
+              <p className="mt-2 text-xs" style={{ color: "var(--bpm-text-secondary)" }}>{t.clickHint}</p>
             )}
           </div>
         </div>
@@ -92,7 +178,7 @@ export default function DocTablePage() {
                 checked={striped}
                 onChange={(e) => setStriped(e.target.checked)}
               />
-              {striped ? "Oui" : "Non"}
+              {striped ? t.yes : t.no}
             </label>
           </div>
           <div className="sandbox-control-group">
@@ -103,20 +189,20 @@ export default function DocTablePage() {
                 checked={hover}
                 onChange={(e) => setHover(e.target.checked)}
               />
-              {hover ? "Oui" : "Non"}
+              {hover ? t.yes : t.no}
             </label>
           </div>
           <div className="sandbox-control-group">
-            <label>Tri par défaut</label>
+            <label>{t.sortLabel}</label>
             <select
               value={defaultSortColumn ?? ""}
               onChange={(e) => setDefaultSortColumn(e.target.value || null)}
             >
-              <option value="">Aucun</option>
-              <option value="Produit">Produit</option>
-              <option value="Prix">Prix</option>
-              <option value="Stock">Stock</option>
-              <option value="Statut">Statut</option>
+              <option value="">{t.sortNone}</option>
+              <option value="Produit">{t.colProduit}</option>
+              <option value="Prix">{t.colPrix}</option>
+              <option value="Stock">{t.colStock}</option>
+              <option value="Statut">{t.colStatut}</option>
             </select>
           </div>
           <div className="sandbox-control-group">
@@ -152,7 +238,7 @@ export default function DocTablePage() {
               type="button"
               onClick={() => navigator.clipboard.writeText(pythonCode)}
             >
-              Copier
+              {t.copy}
             </button>
           </div>
           <pre><code>{pythonCode}</code></pre>
@@ -164,8 +250,8 @@ export default function DocTablePage() {
           <tr>
             <th>Prop</th>
             <th>Type</th>
-            <th>Défaut</th>
-            <th>Requis</th>
+            <th>{t.thDefault}</th>
+            <th>{t.thRequired}</th>
             <th>Description</th>
           </tr>
         </thead>
@@ -174,93 +260,93 @@ export default function DocTablePage() {
             <td><code>columns</code></td>
             <td><code>TableColumn[]</code></td>
             <td>—</td>
-            <td>Oui</td>
+            <td>{t.yes}</td>
             <td>
-              <code>key</code>, <code>label</code> ; optionnel : <code>align</code>, <code>render</code> (pas <code>renderCell</code>),
-              <code>decimals</code>, <code>noWrap</code>, <code>className</code>. Cellule custom : <code>render: (value, row) =&gt; …</code>
+              <code>key</code>, <code>label</code> ; {t.descColumns} <code>align</code>, <code>render</code> (pas <code>renderCell</code>),
+              <code>decimals</code>, <code>noWrap</code>, <code>className</code>. {t.descColumnsCustom} <code>render: (value, row) =&gt; …</code>
             </td>
           </tr>
           <tr>
             <td><code>data</code></td>
             <td><code>Record&lt;string, unknown&gt;[]</code></td>
             <td>—</td>
-            <td>Oui</td>
-            <td>Lignes du tableau. Interdit : JSX dans <code>data[]</code> — utiliser <code>render</code> sur la colonne.</td>
+            <td>{t.yes}</td>
+            <td>{t.descData} <code>data[]</code> {t.descDataEnd} <code>render</code> {t.descDataEnd2}</td>
           </tr>
           <tr>
             <td><code>striped</code></td>
             <td><code>boolean</code></td>
             <td><code>true</code></td>
-            <td>Non</td>
-            <td>Lignes alternées.</td>
+            <td>{t.no}</td>
+            <td>{t.descStriped}</td>
           </tr>
           <tr>
             <td><code>hover</code></td>
             <td><code>boolean</code></td>
             <td><code>true</code></td>
-            <td>Non</td>
-            <td>Surbrillance au survol.</td>
+            <td>{t.no}</td>
+            <td>{t.descHover}</td>
           </tr>
           <tr>
             <td><code>onRowClick</code></td>
             <td><code>(row) =&gt; void</code></td>
             <td>—</td>
-            <td>Non</td>
-            <td>Callback au clic sur une ligne.</td>
+            <td>{t.no}</td>
+            <td>{t.descOnRowClick}</td>
           </tr>
           <tr>
             <td><code>defaultSortColumn</code></td>
             <td><code>string | null</code></td>
             <td><code>null</code></td>
-            <td>Non</td>
-            <td>Colonne de tri initiale.</td>
+            <td>{t.no}</td>
+            <td>{t.descDefaultSortColumn}</td>
           </tr>
           <tr>
             <td><code>defaultSortDirection</code></td>
             <td><code>&apos;asc&apos; | &apos;desc&apos;</code></td>
             <td><code>&apos;asc&apos;</code></td>
-            <td>Non</td>
-            <td>Direction du tri initial.</td>
+            <td>{t.no}</td>
+            <td>{t.descDefaultSortDirection}</td>
           </tr>
           <tr>
             <td><code>valueLocale</code></td>
             <td><code>string</code></td>
             <td>fr-FR</td>
-            <td>Non</td>
-            <td>Locale pour formater les nombres (ex. fr-FR → 1 000,50, en-US → 1,000.50).</td>
+            <td>{t.no}</td>
+            <td>{t.descValueLocale}</td>
           </tr>
           <tr>
             <td><code>valueDecimals</code></td>
             <td><code>number</code></td>
             <td>0</td>
-            <td>Non</td>
-            <td>Décimales par défaut pour les cellules numériques. Surcharge possible par colonne (<code>decimals</code>).</td>
+            <td>{t.no}</td>
+            <td>{t.descValueDecimals}<code>decimals</code>{t.descValueDecimalsEnd}</td>
           </tr>
           <tr>
             <td><code>valueGrouping</code></td>
             <td><code>boolean</code></td>
             <td>true</td>
-            <td>Non</td>
-            <td>Séparateur de milliers (false = 1000,50 sans espace).</td>
+            <td>{t.no}</td>
+            <td>{t.descValueGrouping}</td>
           </tr>
           <tr>
             <td><code>emptyMessage</code></td>
             <td><code>string</code></td>
-            <td>« Aucune donnée disponible »</td>
-            <td>Non</td>
-            <td>Message si <code>data</code> vide.</td>
+            <td>{t.emptyDefault}</td>
+            <td>{t.no}</td>
+            <td>{t.descEmptyMessage} <code>data</code> {t.descEmptyMessageEnd}</td>
           </tr>
           <tr>
             <td><code>name</code>, <code>keyColumn</code>, <code>minWidth</code>, <code>trackContext</code>, <code>className</code></td>
             <td>voir <code>Table.tsx</code></td>
             <td>—</td>
-            <td>Non</td>
-            <td>Contexte IA, largeur min., clé de ligne, etc.</td>
+            <td>{t.no}</td>
+            <td>{t.descMisc}</td>
           </tr>
         </tbody>
       </table>
 
-      <h2 className="text-lg font-semibold mt-8 mb-2">Exemples</h2>
+      <h2 className="text-lg font-semibold mt-8 mb-2">{t.examples}</h2>
       <CodeBlock
         code={"bpm.table(df, striped=True, hover=True)\n# Clic sur une ligne pour ouvrir le détail\nbpm.table(df, on_row_click=lambda row: bpm.write(row[\"id\"]))"}
         language="python"

@@ -3,23 +3,23 @@
 import { useState } from "react";
 import Link from "next/link";
 import { Panel, Badge, Button } from "@/components/bpm";
+import { useI18n } from "@/lib/i18n/LocaleProvider";
+import { STR, CURRENT_USER, type Status, type HistoryEntry } from "../strings";
 
-type Status = "brouillon" | "validé" | "archivé";
-type HistoryEntry = { from: Status; to: Status; by: string; date: string };
-
-const formatDate = () => {
-  const now = new Date();
-  return `${String(now.getDate()).padStart(2, "0")}/${String(now.getMonth() + 1).padStart(2, "0")} ${now.getHours()}h${String(now.getMinutes()).padStart(2, "0")}`;
-};
+// Demo seed: structured entry (display resolved per locale at render time).
+const SEED_HISTORY: HistoryEntry[] = [
+  { from: "brouillon", to: "validé", who: "Alice", when: new Date(new Date().getFullYear(), 1, 24, 14, 0) },
+];
 
 export default function WorkflowSimulateurPage() {
+  const { locale } = useI18n();
+  const s = STR[locale];
+
   const [status, setStatus] = useState<Status>("validé");
-  const [history, setHistory] = useState<HistoryEntry[]>([
-    { from: "brouillon", to: "validé", by: "Alice", date: "24/02 14h" },
-  ]);
+  const [history, setHistory] = useState<HistoryEntry[]>(SEED_HISTORY);
 
   const transition = (to: Status) => {
-    setHistory((prev) => [...prev, { from: status, to, by: "Vous", date: formatDate() }]);
+    setHistory((prev) => [...prev, { from: status, to, who: CURRENT_USER, when: new Date() }]);
     setStatus(to);
   };
 
@@ -30,46 +30,48 @@ export default function WorkflowSimulateurPage() {
     <div className="doc-page">
       <div className="doc-page-header">
         <div className="doc-breadcrumb">
-          <Link href="/modules">Modules</Link> → <Link href="/modules/workflow">Workflow</Link> → Simulateur
+          <Link href="/modules">{s.breadcrumbModules}</Link> → <Link href="/modules/workflow">{s.moduleName}</Link> → {s.breadcrumbSimulator}
         </div>
-        <h1>Simulateur — Workflow</h1>
+        <h1>{s.simulatorTitle}</h1>
         <p className="doc-description">
-          Testez les transitions Brouillon → Validé → Archivé et l&apos;historique.
+          {s.simulatorDescription}
         </p>
       </div>
 
-      <Panel variant="info" title="Document #42">
+      <Panel variant="info" title={s.documentTitle(42)}>
         <div className="flex flex-wrap gap-2 items-center mb-4">
-          <span className="text-sm" style={{ color: "var(--bpm-text-secondary)" }}>Statut :</span>
+          <span className="text-sm" style={{ color: "var(--bpm-text-secondary)" }}>{s.statusLabel}</span>
           <Badge variant={status === "archivé" ? "default" : status === "validé" ? "primary" : "default"}>
-            {status === "brouillon" ? "Brouillon" : status === "validé" ? "Validé" : "Archivé"}
+            {s.statusBadge[status]}
           </Badge>
           {canValidate && (
             <Button size="small" variant="primary" onClick={() => transition("validé")}>
-              Valider
+              {s.validateButton}
             </Button>
           )}
           {canArchive && (
             <Button size="small" variant="outline" onClick={() => transition("archivé")}>
-              Archiver
+              {s.archiveButton}
             </Button>
           )}
           {status === "archivé" && (
             <Button size="small" variant="secondary" onClick={() => setStatus("brouillon")}>
-              Réinitialiser (démo)
+              {s.resetButton}
             </Button>
           )}
         </div>
-        <p className="text-sm font-medium mb-1" style={{ color: "var(--bpm-text-primary)" }}>Historique :</p>
+        <p className="text-sm font-medium mb-1" style={{ color: "var(--bpm-text-primary)" }}>{s.historyHeading}</p>
         <ul className="text-sm list-disc pl-5 space-y-0.5" style={{ color: "var(--bpm-text-secondary)" }}>
           {history.map((h, i) => (
-            <li key={i}>{h.from} → {h.to} (par {h.by}, {h.date})</li>
+            <li key={i}>
+              {s.historyLine(h.from, h.to, h.who === CURRENT_USER ? s.you : h.who, s.formatDateTime(h.when))}
+            </li>
           ))}
         </ul>
       </Panel>
 
       <p className="mt-6 text-sm" style={{ color: "var(--bpm-text-secondary)" }}>
-        <Link href="/modules/workflow" className="font-medium underline" style={{ color: "var(--bpm-accent-cyan)" }}>← Retour au module Workflow</Link>
+        <Link href="/modules/workflow" className="font-medium underline" style={{ color: "var(--bpm-accent-cyan)" }}>{s.backToModule}</Link>
       </p>
     </div>
   );

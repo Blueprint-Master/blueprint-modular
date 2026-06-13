@@ -45,6 +45,8 @@ const fr = {
     privacy: "Confidentialité",
     terms: "Conditions d'utilisation",
     note: "Ce site est construit avec ses propres composants.",
+    pythonSurface: "Python",
+    reactSurface: "React",
   },
   home: {
     metaTitle: "Blueprint Modular — composants métier pilotés depuis Python",
@@ -288,6 +290,21 @@ const fr = {
           body: "Guides, changelog, package PyPI et llms.txt — tout pour construire, réunis en un point d'entrée.",
         },
       },
+    },
+  },
+  changelogPage: {
+    title: "Changelog",
+    lead: "Chaque évolution, dérivée de l'historique des pull requests fusionnées. Généré depuis git, jamais saisi à la main.",
+    backToDocs: "Retour à la documentation",
+    empty: "Aucune entrée pour le moment.",
+    types: {
+      feat: "Nouveauté",
+      fix: "Correctif",
+      perf: "Performance",
+      refactor: "Refactorisation",
+      style: "Style",
+      docs: "Documentation",
+      other: "Évolution",
     },
   },
   gallery: {
