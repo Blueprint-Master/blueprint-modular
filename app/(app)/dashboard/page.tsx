@@ -13,7 +13,7 @@ export const metadata: Metadata = {
 
 const quickLinks = [
   {
-    href: "/docs/components",
+    href: "/composants",
     label: "Composants",
     description: "Catalogue et référence des composants BPM (boutons, métriques, tableaux, etc.)",
     icon: Boxes,
