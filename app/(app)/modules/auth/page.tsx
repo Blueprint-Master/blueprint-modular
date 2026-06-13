@@ -3,9 +3,13 @@
 import { useSession, signOut } from "next-auth/react";
 import Link from "next/link";
 import Image from "next/image";
+import { useI18n } from "@/lib/i18n/LocaleProvider";
+import { STR, inlineCode } from "./strings";
 
 export default function AuthModulePage() {
   const { data: session, status } = useSession();
+  const { locale } = useI18n();
+  const s = STR[locale].module;
 
   if (status === "loading") {
     return (
@@ -13,7 +17,7 @@ export default function AuthModulePage() {
         <div className="doc-page-header">
           <div className="doc-breadcrumb"><Link href="/modules">Modules</Link> → bpm.auth</div>
           <h1>bpm.auth</h1>
-          <p className="doc-description">Chargement…</p>
+          <p className="doc-description">{s.loading}</p>
         </div>
       </div>
     );
@@ -25,7 +29,7 @@ export default function AuthModulePage() {
         <div className="doc-breadcrumb"><Link href="/modules">Modules</Link> → bpm.auth</div>
         <h1>bpm.auth</h1>
         <p className="doc-description">
-          Gestion de la session et de la connexion (Google ou e-mail). Whitelist et protection des routes.
+          {s.description}
         </p>
         <div className="doc-meta">
           <span className="doc-badge doc-badge-category">Module</span>
@@ -35,17 +39,17 @@ export default function AuthModulePage() {
 
       <p className="mb-4" style={{ color: "var(--bpm-text-secondary)" }}>
         <Link href="/modules/auth/simulateur" className="font-medium underline" style={{ color: "var(--bpm-accent-cyan)" }}>
-          Simulateur (tester les 3 modèles)
+          {s.simulatorLink}
         </Link>
       </p>
-      <h2 className="text-lg font-semibold mt-6 mb-2" style={{ color: "var(--bpm-text-primary)" }}>À propos</h2>
+      <h2 className="text-lg font-semibold mt-6 mb-2" style={{ color: "var(--bpm-text-primary)" }}>{s.aboutTitle}</h2>
       <p className="mb-6" style={{ color: "var(--bpm-text-secondary)" }}>
-        Le module auth utilise NextAuth (providers Google, credentials). La session est disponible dans toute l&apos;app ; les pages protégées redirigent vers la page de connexion si l&apos;utilisateur n&apos;est pas connecté.
+        {s.aboutText}
       </p>
 
-      <h2 className="text-lg font-semibold mt-8 mb-3" style={{ color: "var(--bpm-text-primary)" }}>Modèles de page de connexion</h2>
+      <h2 className="text-lg font-semibold mt-8 mb-3" style={{ color: "var(--bpm-text-primary)" }}>{s.templatesTitle}</h2>
       <p className="mb-4 text-sm" style={{ color: "var(--bpm-text-secondary)" }}>
-        Par défaut, l&apos;app utilise le <strong>modèle carte centrée</strong>. Trois variantes sont documentées ci-dessous.
+        {s.templatesIntroBefore}<strong>{s.templatesIntroStrong}</strong>{s.templatesIntroAfter}
       </p>
       <div className="grid gap-4 mb-8" style={{ gridTemplateColumns: "repeat(auto-fill, minmax(280px, 1fr))" }}>
         <div
@@ -56,18 +60,18 @@ export default function AuthModulePage() {
           }}
         >
           <h3 className="font-semibold mb-1" style={{ color: "var(--bpm-text-primary)", fontSize: "1rem" }}>
-            1. Modèle carte centrée (par défaut)
+            {s.card1Title}
           </h3>
           <p className="text-sm mb-3" style={{ color: "var(--bpm-text-secondary)" }}>
-            Carte centrée, titre + sous-titre, choix E-mail ou Google, formulaire email avec Retour / Se connecter, footer avec lien accueil et Connexion.
+            {s.card1Desc}
           </p>
           <ul className="text-xs mb-3 pl-4 list-disc" style={{ color: "var(--bpm-text-secondary)" }}>
-            <li>Composants <code className="text-xs">LoginPage</code>, <code className="text-xs">RegisterPage</code> avec <code className="text-xs">useSplitLayout=false</code></li>
-            <li>Styles <code className="text-xs">AuthForm.module.css</code></li>
+            <li>{inlineCode(s.card1Li1, "text-xs")}</li>
+            <li>{inlineCode(s.card1Li2, "text-xs")}</li>
           </ul>
           <div className="flex gap-2 flex-wrap">
-            <Link href="/login" className="text-sm font-medium" style={{ color: "var(--bpm-accent-cyan)" }}>Connexion</Link>
-            <Link href="/register" className="text-sm font-medium" style={{ color: "var(--bpm-accent-cyan)" }}>Inscription</Link>
+            <Link href="/login" className="text-sm font-medium" style={{ color: "var(--bpm-accent-cyan)" }}>{s.loginLink}</Link>
+            <Link href="/register" className="text-sm font-medium" style={{ color: "var(--bpm-accent-cyan)" }}>{s.registerLink}</Link>
           </div>
         </div>
         <div
@@ -78,17 +82,17 @@ export default function AuthModulePage() {
           }}
         >
           <h3 className="font-semibold mb-1" style={{ color: "var(--bpm-text-primary)", fontSize: "1rem" }}>
-            2. Modèle split
+            {s.card2Title}
           </h3>
           <p className="text-sm mb-3" style={{ color: "var(--bpm-text-secondary)" }}>
-            Layout en deux panneaux : à gauche le formulaire, à droite une image de fond (équipe, collaboration) avec overlay type carte de réunion.
+            {s.card2Desc}
           </p>
           <ul className="text-xs mb-3 pl-4 list-disc" style={{ color: "var(--bpm-text-secondary)" }}>
-            <li>Composants <code className="text-xs">LoginPage</code>, <code className="text-xs">RegisterPage</code>, <code className="text-xs">AuthSplitLayout</code></li>
-            <li>Paramètre <code className="text-xs">?layout=split</code></li>
+            <li>{inlineCode(s.card2Li1, "text-xs")}</li>
+            <li>{inlineCode(s.card2Li2, "text-xs")}</li>
           </ul>
           <Link href="/login?layout=split" className="text-sm font-medium" style={{ color: "var(--bpm-accent-cyan)" }}>
-            Aperçu login
+            {s.card2Link}
           </Link>
         </div>
         <div
@@ -99,21 +103,21 @@ export default function AuthModulePage() {
           }}
         >
           <h3 className="font-semibold mb-1" style={{ color: "var(--bpm-text-primary)", fontSize: "1rem" }}>
-            3. Modèle minimal (Google seul)
+            {s.card3Title}
           </h3>
           <p className="text-sm mb-3" style={{ color: "var(--bpm-text-secondary)" }}>
-            Une seule option : bouton « Se connecter avec Google », titre court et lien « Retour à l&apos;accueil ». Idéal pour les apps qui n&apos;utilisent que OAuth.
+            {s.card3Desc}
           </p>
           <ul className="text-xs mb-3 pl-4 list-disc" style={{ color: "var(--bpm-text-secondary)" }}>
-            <li>Pas de formulaire e-mail / mot de passe</li>
-            <li>Même composant <code className="text-xs">LoginPage</code> avec <code className="text-xs">showEmailOption=false</code></li>
+            <li>{inlineCode(s.card3Li1, "text-xs")}</li>
+            <li>{inlineCode(s.card3Li2, "text-xs")}</li>
           </ul>
           <Link
             href="/login?showEmailOption=false"
             className="text-sm font-medium"
             style={{ color: "var(--bpm-accent-cyan)" }}
           >
-            Aperçu
+            {s.card3Link}
           </Link>
         </div>
       </div>
@@ -127,7 +131,7 @@ export default function AuthModulePage() {
           }}
         >
           <h2 className="text-lg font-semibold mb-3" style={{ color: "var(--bpm-text-primary)" }}>
-            Session active
+            {s.sessionTitle}
           </h2>
           <div className="flex items-center gap-4 mb-4">
             {session.user.image ? (
@@ -148,7 +152,7 @@ export default function AuthModulePage() {
             )}
             <div>
               <p className="font-medium" style={{ color: "var(--bpm-text-primary)" }}>
-                {session.user.name ?? "Utilisateur"}
+                {session.user.name ?? s.userFallback}
               </p>
               <p className="text-sm" style={{ color: "var(--bpm-text-secondary)" }}>
                 {session.user.email}
@@ -165,7 +169,7 @@ export default function AuthModulePage() {
               borderColor: "var(--bpm-border)",
             }}
           >
-            Se déconnecter
+            {s.signOut}
           </button>
         </div>
       ) : null}

@@ -4,10 +4,39 @@ import { useState } from "react";
 import Link from "next/link";
 import { SpinnerDot, CodeBlock } from "@/components/bpm";
 import { getPrevNext } from "@/lib/docPages";
+import { useI18n } from "@/lib/i18n/LocaleProvider";
 
 type SizeOption = "small" | "medium" | "large";
 
+const fr = {
+  breadcrumb: "Composants",
+  description: "Indicateur de chargement compact (points / cercle tournant), pour usage inline (ex. bulle assistant).",
+  category: "Feedback",
+  copy: "Copier",
+  thDefault: "Défaut",
+  thRequired: "Requis",
+  no: "Non",
+  examples: "Exemples",
+  descSize: "Taille du spinner (16px, 24px, 32px).",
+  descClassName: "Classes CSS additionnelles.",
+};
+const en: typeof fr = {
+  breadcrumb: "Components",
+  description: "Compact loading indicator (dots / spinning circle), for inline use (e.g. assistant bubble).",
+  category: "Feedback",
+  copy: "Copy",
+  thDefault: "Default",
+  thRequired: "Required",
+  no: "No",
+  examples: "Examples",
+  descSize: "Spinner size (16px, 24px, 32px).",
+  descClassName: "Additional CSS classes.",
+};
+const L = { fr, en } as const;
+
 export default function DocSpinnerDotPage() {
+  const { locale } = useI18n();
+  const t = L[locale];
   const [size, setSize] = useState<SizeOption>("medium");
 
   const pySize = size !== "medium" ? `, size="${size}"` : "";
@@ -17,12 +46,12 @@ export default function DocSpinnerDotPage() {
   return (
     <div className="doc-page">
       <div className="doc-page-header">
-        <div className="doc-breadcrumb"><Link href="/docs/components">Composants</Link> → bpm.spinnerDot</div>
+        <div className="doc-breadcrumb"><Link href="/docs/components">{t.breadcrumb}</Link> → bpm.spinnerDot</div>
         <h1>bpm.spinnerDot</h1>
-        <p className="doc-description">Indicateur de chargement compact (points / cercle tournant), pour usage inline (ex. bulle assistant).</p>
+        <p className="doc-description">{t.description}</p>
         <div className="doc-meta">
           <span className="doc-badge doc-badge-stable">Stable</span>
-          <span className="doc-badge doc-badge-category">Feedback</span>
+          <span className="doc-badge doc-badge-category">{t.category}</span>
           <span className="doc-reading-time">⏱ 2 min</span>
         </div>
       </div>
@@ -46,7 +75,7 @@ export default function DocSpinnerDotPage() {
         <div className="sandbox-code">
           <div className="sandbox-code-header">
             <span>Python</span>
-            <button type="button" onClick={() => navigator.clipboard.writeText(pythonCode)}>Copier</button>
+            <button type="button" onClick={() => navigator.clipboard.writeText(pythonCode)}>{t.copy}</button>
           </div>
           <pre><code>{pythonCode}</code></pre>
         </div>
@@ -54,15 +83,15 @@ export default function DocSpinnerDotPage() {
 
       <table className="props-table">
         <thead>
-          <tr><th>Prop</th><th>Type</th><th>Défaut</th><th>Requis</th><th>Description</th></tr>
+          <tr><th>Prop</th><th>Type</th><th>{t.thDefault}</th><th>{t.thRequired}</th><th>Description</th></tr>
         </thead>
         <tbody>
-          <tr><td><code>size</code></td><td><code>small | medium | large</code></td><td>medium</td><td>Non</td><td>Taille du spinner (16px, 24px, 32px).</td></tr>
-          <tr><td><code>className</code></td><td><code>string</code></td><td>—</td><td>Non</td><td>Classes CSS additionnelles.</td></tr>
+          <tr><td><code>size</code></td><td><code>small | medium | large</code></td><td>medium</td><td>{t.no}</td><td>{t.descSize}</td></tr>
+          <tr><td><code>className</code></td><td><code>string</code></td><td>—</td><td>{t.no}</td><td>{t.descClassName}</td></tr>
         </tbody>
       </table>
 
-      <h2 className="text-lg font-semibold mt-8 mb-2">Exemples</h2>
+      <h2 className="text-lg font-semibold mt-8 mb-2">{t.examples}</h2>
       <CodeBlock code={"bpm.spinnerDot()  # medium par défaut"} language="python" />
       <CodeBlock code={'bpm.spinnerDot(size="small")'} language="python" />
       <CodeBlock code={'bpm.spinnerDot(size="large")'} language="python" />

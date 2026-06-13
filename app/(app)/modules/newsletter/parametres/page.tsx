@@ -3,8 +3,12 @@
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import { Button, Panel, Input } from "@/components/bpm";
+import { useI18n } from "@/lib/i18n/LocaleProvider";
+import { STR } from "../strings";
 
 export default function NewsletterParametresPage() {
+  const { locale } = useI18n();
+  const str = STR[locale];
   const [headerImageUrl, setHeaderImageUrl] = useState("");
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
@@ -44,9 +48,9 @@ export default function NewsletterParametresPage() {
     return (
       <div className="doc-page">
         <div className="doc-breadcrumb">
-          <Link href="/modules">Modules</Link> → <Link href="/modules/newsletter">Newsletter</Link> → Paramètres
+          <Link href="/modules">Modules</Link> → <Link href="/modules/newsletter">{str.moduleName}</Link> → {str.settingsBreadcrumb}
         </div>
-        <p style={{ color: "var(--bpm-text-secondary)" }}>Chargement…</p>
+        <p style={{ color: "var(--bpm-text-secondary)" }}>{str.settingsLoading}</p>
       </div>
     );
   }
@@ -55,34 +59,34 @@ export default function NewsletterParametresPage() {
     <div className="doc-page">
       <div className="doc-page-header mb-6">
         <div className="doc-breadcrumb">
-          <Link href="/modules">Modules</Link> → <Link href="/modules/newsletter">Newsletter</Link> → Paramètres
+          <Link href="/modules">Modules</Link> → <Link href="/modules/newsletter">{str.moduleName}</Link> → {str.settingsBreadcrumb}
         </div>
         <h1 className="text-2xl font-bold" style={{ color: "var(--bpm-text-primary)" }}>
-          Photo de header
+          {str.settingsTitle}
         </h1>
         <p className="doc-description mt-1" style={{ color: "var(--bpm-text-secondary)" }}>
-          URL de l’image affichée en en-tête de la newsletter (lien public ou chemin relatif).
+          {str.settingsDescription}
         </p>
       </div>
 
-      <Panel variant="info" title="Image d'en-tête">
+      <Panel variant="info" title={str.settingsPanelTitle}>
         <form onSubmit={handleSave} className="space-y-4">
           <div>
             <label className="block text-sm font-medium mb-1" style={{ color: "var(--bpm-text-primary)" }}>
-              URL de l’image
+              {str.imageUrlLabel}
             </label>
             <Input
               type="text"
               value={headerImageUrl}
               onChange={setHeaderImageUrl}
-              placeholder="https://exemple.com/image.jpg"
-              aria-label="URL de l'image de header"
+              placeholder={str.imageUrlPlaceholder}
+              aria-label={str.imageUrlAria}
             />
           </div>
           {headerImageUrl.trim() && (
             <div>
               <span className="block text-sm font-medium mb-1" style={{ color: "var(--bpm-text-secondary)" }}>
-                Aperçu
+                {str.previewLabel}
               </span>
               <div
                 className="rounded-lg border overflow-hidden bg-center bg-cover bg-no-repeat"
@@ -92,22 +96,22 @@ export default function NewsletterParametresPage() {
                   backgroundImage: `url(${headerImageUrl.trim()})`,
                 }}
                 role="img"
-                aria-label="Aperçu du header"
+                aria-label={str.previewAria}
               />
             </div>
           )}
           <div className="flex items-center gap-2">
             <Button type="submit" variant="primary" disabled={saving}>
-              {saving ? "Enregistrement…" : "Enregistrer"}
+              {saving ? str.saving : str.save}
             </Button>
             {message === "saved" && (
               <span className="text-sm" style={{ color: "var(--bpm-accent-mint)" }}>
-                Enregistré.
+                {str.savedMessage}
               </span>
             )}
             {message === "error" && (
               <span className="text-sm" style={{ color: "var(--bpm-accent)" }}>
-                Erreur lors de l’enregistrement.
+                {str.saveError}
               </span>
             )}
           </div>
@@ -116,7 +120,7 @@ export default function NewsletterParametresPage() {
 
       <nav className="doc-pagination mt-8">
         <Link href="/modules/newsletter" style={{ color: "var(--bpm-accent-cyan)" }}>
-          ← Retour à la Newsletter
+          {str.backToModule}
         </Link>
       </nav>
     </div>

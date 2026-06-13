@@ -4,11 +4,15 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { Panel, Spinner } from "@/components/bpm";
+import { useI18n } from "@/lib/i18n/LocaleProvider";
+import { STR } from "./strings";
 
 const DEFAULT_DOMAIN_ID = "it";
 
 export default function AssetManagerPage() {
   const router = useRouter();
+  const { locale } = useI18n();
+  const t = STR[locale];
   const [noDomain, setNoDomain] = useState(false);
 
   useEffect(() => {
@@ -31,13 +35,13 @@ export default function AssetManagerPage() {
       <div className="doc-page">
         <div className="doc-page-header mb-6">
           <nav className="doc-breadcrumb">
-            <Link href="/modules">Modules</Link> → Gestion de parc
+            <Link href="/modules">{t.common.breadcrumbModules}</Link> → {t.common.moduleTitle}
           </nav>
           <h1 className="text-2xl font-bold" style={{ color: "var(--bpm-text-primary)" }}>
-            Gestion de parc
+            {t.common.moduleTitle}
           </h1>
           <p className="doc-description mt-1" style={{ color: "var(--bpm-text-secondary)" }}>
-            Chargement…
+            {t.common.loading}
           </p>
         </div>
         <div className="flex justify-center py-12">
@@ -51,20 +55,20 @@ export default function AssetManagerPage() {
     <div className="doc-page">
       <div className="doc-page-header mb-6">
         <nav className="doc-breadcrumb">
-          <Link href="/modules">Modules</Link> → Gestion de parc
+          <Link href="/modules">{t.common.breadcrumbModules}</Link> → {t.common.moduleTitle}
         </nav>
         <h1 className="text-2xl font-bold" style={{ color: "var(--bpm-text-primary)" }}>
-          Gestion de parc
+          {t.common.moduleTitle}
         </h1>
         <p className="doc-description mt-1" style={{ color: "var(--bpm-text-secondary)" }}>
-          Aucune configuration de domaine disponible.
+          {t.hub.noConfigDescription}
         </p>
       </div>
-      <Panel variant="warning" title="Configuration requise">
-        Aucun domaine n&apos;est configuré. Vérifiez les fichiers <code>lib/asset-manager/config/domain.*.json</code>.
+      <Panel variant="warning" title={t.hub.configRequiredTitle}>
+        {t.hub.noDomainConfiguredPrefix}<code>lib/asset-manager/config/domain.*.json</code>.
       </Panel>
       <nav className="doc-pagination mt-6">
-        <Link href="/modules" style={{ color: "var(--bpm-accent-cyan)" }}>← Retour aux modules</Link>
+        <Link href="/modules" style={{ color: "var(--bpm-accent-cyan)" }}>{t.common.backToModules}</Link>
       </nav>
     </div>
   );

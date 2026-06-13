@@ -5,6 +5,8 @@ import Link from "next/link";
 import { useParams } from "next/navigation";
 import { ClipboardList, ChevronDown, ChevronUp } from "lucide-react";
 import { Panel, Spinner, Chip, Table, EmptyState } from "@/components/bpm";
+import { useI18n } from "@/lib/i18n/LocaleProvider";
+import { STR, dateLocale } from "../../strings";
 
 type AuditEntry = {
   id: string;
@@ -19,23 +21,13 @@ type AuditEntry = {
   timestamp: string;
 };
 
-const ACTION_LABELS: Record<string, string> = {
-  create: "Création",
-  update: "Modification",
-  delete: "Suppression",
-  login: "Connexion",
-  export: "Export",
-};
-const RESOURCE_LABELS: Record<string, string> = {
-  asset: "Actif",
-  ticket: "Ticket",
-  change: "Changement",
-  contract: "Contrat",
-  assignment: "MAD",
-};
-
 export default function AssetManagerAuditPage() {
   const params = useParams();
+  const { locale } = useI18n();
+  const t = STR[locale];
+  const ta = t.audit;
+  const ACTION_LABELS = ta.actionLabels;
+  const RESOURCE_LABELS = ta.resourceLabels;
   const domainId = typeof params?.domainId === "string" ? params.domainId : "";
   const [logs, setLogs] = useState<AuditEntry[]>([]);
   const [loading, setLoading] = useState(true);
@@ -56,37 +48,37 @@ export default function AssetManagerAuditPage() {
   }, [domainId, filterType, filterAction]);
 
   const typeOptions = [
-    { value: "", label: "Tous les types" },
+    { value: "", label: ta.allTypes },
     ...Object.entries(RESOURCE_LABELS).map(([id, label]) => ({ value: id, label })),
   ];
   const actionOptions = [
-    { value: "", label: "Toutes actions" },
+    { value: "", label: ta.allActions },
     ...Object.entries(ACTION_LABELS).map(([id, label]) => ({ value: id, label })),
   ];
 
   const columns = [
     {
       key: "timestamp",
-      label: "Date",
-      render: (val: unknown) => (val ? new Date(String(val)).toLocaleString("fr-FR") : "—"),
+      label: ta.colDate,
+      render: (val: unknown) => (val ? new Date(String(val)).toLocaleString(dateLocale(locale)) : t.common.dash),
     },
-    { key: "userId", label: "Utilisateur" },
+    { key: "userId", label: ta.colUser },
     {
       key: "action",
-      label: "Action",
+      label: ta.colAction,
       render: (val: unknown) => ACTION_LABELS[String(val)] ?? String(val),
     },
     {
       key: "resourceType",
-      label: "Ressource",
+      label: ta.colResource,
       render: (val: unknown) => RESOURCE_LABELS[String(val)] ?? String(val),
     },
     {
       key: "resourceId",
-      label: "Détail",
+      label: ta.colDetail,
       render: (val: unknown, row: unknown) => {
         const log = row as AuditEntry;
-        if (!log?.resourceId) return "—";
+        if (!log?.resourceId) return t.common.dash;
         const href =
           log.resourceType === "asset"
             ? `/modules/asset-manager/${domainId}/assets/${log.resourceId}`
@@ -108,7 +100,7 @@ export default function AssetManagerAuditPage() {
   if (!domainId) {
     return (
       <div className="doc-page">
-        <Panel variant="warning" title="Domaine requis" />
+        <Panel variant="warning" title={ta.domainRequired} />
       </div>
     );
   }
@@ -117,15 +109,15 @@ export default function AssetManagerAuditPage() {
     <div className="doc-page">
       <div className="doc-page-header mb-6">
         <nav className="doc-breadcrumb">
-          <Link href="/modules" style={{ color: "var(--bpm-accent-cyan)" }}>Modules</Link> →{" "}
-          <Link href="/modules/asset-manager" style={{ color: "var(--bpm-accent-cyan)" }}>Gestion de parc</Link> →{" "}
-          <Link href={`/modules/asset-manager/${domainId}`} style={{ color: "var(--bpm-accent-cyan)" }}>Tableau de bord</Link> → Journal d&apos;audit
+          <Link href="/modules" style={{ color: "var(--bpm-accent-cyan)" }}>{t.common.breadcrumbModules}</Link> →{" "}
+          <Link href="/modules/asset-manager" style={{ color: "var(--bpm-accent-cyan)" }}>{t.common.moduleTitle}</Link> →{" "}
+          <Link href={`/modules/asset-manager/${domainId}`} style={{ color: "var(--bpm-accent-cyan)" }}>{t.nav.dashboard}</Link> → {ta.title}
         </nav>
         <h1 className="text-2xl font-bold" style={{ color: "var(--bpm-text-primary)" }}>
-          Journal d&apos;audit
+          {ta.title}
         </h1>
         <p className="doc-description mt-1" style={{ color: "var(--bpm-text-secondary)" }}>
-          Historique des actions sur les actifs, tickets, contrats et changements.
+          {ta.description}
         </p>
       </div>
 
@@ -138,12 +130,12 @@ export default function AssetManagerAuditPage() {
           aria-controls="asset-manager-filters-audit"
           id="asset-manager-filters-toggle-audit"
         >
-          <span className="asset-manager-equipment-filters__label">Filtres</span>
+          <span className="asset-manager-equipment-filters__label">{ta.filters}</span>
           {filtersOpen ? <ChevronUp size={18} aria-hidden /> : <ChevronDown size={18} aria-hidden />}
         </button>
         <div id="asset-manager-filters-audit" role="region" aria-labelledby="asset-manager-filters-toggle-audit" hidden={!filtersOpen}>
           <div className="asset-manager-equipment-filters__row">
-            <span className="asset-manager-equipment-filters__label">Type de ressource</span>
+            <span className="asset-manager-equipment-filters__label">{ta.filterResourceType}</span>
             <div className="asset-manager-equipment-filters__chips">
               {typeOptions.map((opt) => {
                 const isActive = filterType === opt.value;
@@ -161,7 +153,7 @@ export default function AssetManagerAuditPage() {
             </div>
           </div>
           <div className="asset-manager-equipment-filters__row">
-            <span className="asset-manager-equipment-filters__label">Action</span>
+            <span className="asset-manager-equipment-filters__label">{ta.filterAction}</span>
             <div className="asset-manager-equipment-filters__chips">
               {actionOptions.map((opt) => {
                 const isActive = filterAction === opt.value;
@@ -188,8 +180,8 @@ export default function AssetManagerAuditPage() {
       ) : logs.length === 0 ? (
         <div className="rounded-xl border bg-[var(--bpm-surface)] p-4" style={{ border: "1px solid #E5E7EB", borderRadius: 12 }}>
           <EmptyState
-            title="Aucune entrée d'audit"
-            description="Les actions sur les actifs, tickets, contrats et changements apparaîtront ici."
+            title={ta.emptyTitle}
+            description={ta.emptyDescription}
             icon={<ClipboardList size={64} style={{ color: "var(--bpm-text-secondary)", opacity: 0.6 }} />}
           />
         </div>
@@ -205,7 +197,7 @@ export default function AssetManagerAuditPage() {
       )}
 
       <nav className="doc-pagination mt-8 flex flex-wrap gap-4">
-        <Link href={`/modules/asset-manager/${domainId}`} style={{ color: "var(--bpm-accent-cyan)" }}>← Tableau de bord</Link>
+        <Link href={`/modules/asset-manager/${domainId}`} style={{ color: "var(--bpm-accent-cyan)" }}>{ta.backToDashboard}</Link>
       </nav>
     </div>
   );

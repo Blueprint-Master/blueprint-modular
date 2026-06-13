@@ -5,15 +5,60 @@ import Link from "next/link";
 import { Accordion, CodeBlock } from "@/components/bpm";
 import type { AccordionSection } from "@/components/bpm";
 import { getPrevNext } from "@/lib/docPages";
+import { useI18n } from "@/lib/i18n/LocaleProvider";
 
-const DEMO_SECTIONS: AccordionSection[] = [
-  { id: "sec1", title: "Section 1", content: "Contenu de la première section. Texte, listes ou composants BPM." },
-  { id: "sec2", title: "Section 2", content: "Contenu de la deuxième section. Vous pouvez ouvrir plusieurs sections si allowMultiple est true." },
-  { id: "sec3", title: "Section 3", content: "Contenu de la troisième section." },
-];
+const fr = {
+  components: "Composants",
+  category: "Mise en page",
+  description: "Accordéon : sections repliables (un ou plusieurs ouverts selon allowMultiple).",
+  sec1Content: "Contenu de la première section. Texte, listes ou composants BPM.",
+  sec2Content: "Contenu de la deuxième section. Vous pouvez ouvrir plusieurs sections si allowMultiple est true.",
+  sec3Content: "Contenu de la troisième section.",
+  multipleOpen: "Plusieurs sections ouvertes",
+  copy: "Copier",
+  thDefault: "Défaut",
+  thRequired: "Requis",
+  thDescription: "Description",
+  no: "Non",
+  descSections: "Liste de sections (title, content, id optionnel).",
+  descAllowMultiple: "Autoriser plusieurs sections ouvertes en même temps.",
+  descDefaultOpenIds: "Ids des sections ouvertes au chargement.",
+  descClassName: "Classes CSS additionnelles.",
+  examples: "Exemples",
+};
+
+const en: typeof fr = {
+  components: "Components",
+  category: "Layout",
+  description: "Accordion: collapsible sections (one or several open depending on allowMultiple).",
+  sec1Content: "Content of the first section. Text, lists or BPM components.",
+  sec2Content: "Content of the second section. You can open several sections if allowMultiple is true.",
+  sec3Content: "Content of the third section.",
+  multipleOpen: "Several sections open",
+  copy: "Copy",
+  thDefault: "Default",
+  thRequired: "Required",
+  thDescription: "Description",
+  no: "No",
+  descSections: "List of sections (title, content, optional id).",
+  descAllowMultiple: "Allow several sections to be open at the same time.",
+  descDefaultOpenIds: "Ids of the sections open on load.",
+  descClassName: "Additional CSS classes.",
+  examples: "Examples",
+};
+
+const L = { fr, en } as const;
 
 export default function DocAccordionPage() {
+  const { locale } = useI18n();
+  const t = L[locale];
   const [allowMultiple, setAllowMultiple] = useState(false);
+
+  const DEMO_SECTIONS: AccordionSection[] = [
+    { id: "sec1", title: "Section 1", content: t.sec1Content },
+    { id: "sec2", title: "Section 2", content: t.sec2Content },
+    { id: "sec3", title: "Section 3", content: t.sec3Content },
+  ];
 
   const pythonCode =
     `sections = [\n` +
@@ -28,15 +73,15 @@ export default function DocAccordionPage() {
     <div className="doc-page">
       <div className="doc-page-header">
         <div className="doc-breadcrumb">
-          <Link href="/docs/components">Composants</Link> → bpm.accordion
+          <Link href="/docs/components">{t.components}</Link> → bpm.accordion
         </div>
         <h1>bpm.accordion</h1>
         <p className="doc-description">
-          Accordéon : sections repliables (un ou plusieurs ouverts selon allowMultiple).
+          {t.description}
         </p>
         <div className="doc-meta">
           <span className="doc-badge doc-badge-stable">Stable</span>
-          <span className="doc-badge doc-badge-category">Mise en page</span>
+          <span className="doc-badge doc-badge-category">{t.category}</span>
           <span className="doc-reading-time">⏱ 2 min</span>
         </div>
       </div>
@@ -56,7 +101,7 @@ export default function DocAccordionPage() {
                 checked={allowMultiple}
                 onChange={(e) => setAllowMultiple(e.target.checked)}
               />
-              Plusieurs sections ouvertes
+              {t.multipleOpen}
             </label>
           </div>
         </div>
@@ -64,7 +109,7 @@ export default function DocAccordionPage() {
           <div className="sandbox-code-header">
             <span>Python</span>
             <button type="button" onClick={() => navigator.clipboard.writeText(pythonCode)}>
-              Copier
+              {t.copy}
             </button>
           </div>
           <pre><code>{pythonCode}</code></pre>
@@ -76,9 +121,9 @@ export default function DocAccordionPage() {
           <tr>
             <th>Prop</th>
             <th>Type</th>
-            <th>Défaut</th>
-            <th>Requis</th>
-            <th>Description</th>
+            <th>{t.thDefault}</th>
+            <th>{t.thRequired}</th>
+            <th>{t.thDescription}</th>
           </tr>
         </thead>
         <tbody>
@@ -86,34 +131,34 @@ export default function DocAccordionPage() {
             <td><code>sections</code></td>
             <td><code>AccordionSection[]</code></td>
             <td>[]</td>
-            <td>Non</td>
-            <td>Liste de sections (title, content, id optionnel).</td>
+            <td>{t.no}</td>
+            <td>{t.descSections}</td>
           </tr>
           <tr>
             <td><code>allowMultiple</code></td>
             <td><code>boolean</code></td>
             <td>false</td>
-            <td>Non</td>
-            <td>Autoriser plusieurs sections ouvertes en même temps.</td>
+            <td>{t.no}</td>
+            <td>{t.descAllowMultiple}</td>
           </tr>
           <tr>
             <td><code>defaultOpenIds</code></td>
             <td><code>string[]</code></td>
             <td>[]</td>
-            <td>Non</td>
-            <td>Ids des sections ouvertes au chargement.</td>
+            <td>{t.no}</td>
+            <td>{t.descDefaultOpenIds}</td>
           </tr>
           <tr>
             <td><code>className</code></td>
             <td><code>string</code></td>
             <td>—</td>
-            <td>Non</td>
-            <td>Classes CSS additionnelles.</td>
+            <td>{t.no}</td>
+            <td>{t.descClassName}</td>
           </tr>
         </tbody>
       </table>
 
-      <h2 className="text-lg font-semibold mt-8 mb-2">Exemples</h2>
+      <h2 className="text-lg font-semibold mt-8 mb-2">{t.examples}</h2>
       <CodeBlock
         code={'bpm.accordion(sections=[\n  {"title": "FAQ 1", "content": "Réponse 1"},\n  {"title": "FAQ 2", "content": "Réponse 2"},\n])'}
         language="python"

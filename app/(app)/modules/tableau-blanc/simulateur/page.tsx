@@ -3,6 +3,10 @@
 import React, { useState, useRef, useCallback } from "react";
 import Link from "next/link";
 import { Button, Textarea } from "@/components/bpm";
+import { useI18n } from "@/lib/i18n/LocaleProvider";
+import { STR, SEED_POSTITS, type ColumnId, type SeedContent } from "../strings";
+
+export type { ColumnId } from "../strings";
 
 /** Icônes conformes à la charte Blueprint (stroke, couleur accent) */
 const IconEdit = () => (
@@ -27,46 +31,41 @@ const IconArrowRight = () => (
   </svg>
 );
 
-export type ColumnId = "bien" | "ameliorer" | "action";
-
-const COLUMNS: { id: ColumnId; label: string; color: string; cardBg: string }[] = [
-  { id: "bien", label: "Bien", color: "#166534", cardBg: "rgba(34,197,94,0.15)" },
-  { id: "ameliorer", label: "À améliorer", color: "#b45309", cardBg: "rgba(251,146,60,0.2)" },
-  { id: "action", label: "Action", color: "#1e40af", cardBg: "rgba(59,130,246,0.15)" },
+const COLUMNS: { id: ColumnId; color: string; cardBg: string }[] = [
+  { id: "bien", color: "#166534", cardBg: "rgba(34,197,94,0.15)" },
+  { id: "ameliorer", color: "#b45309", cardBg: "rgba(251,146,60,0.2)" },
+  { id: "action", color: "#1e40af", cardBg: "rgba(59,130,246,0.15)" },
 ];
 
 type Author = { id: string; displayName: string };
 
 type PostIt = {
   id: string;
-  content: string;
+  /** Chaîne saisie par l'utilisateur, ou contenu seedé bilingue résolu au render. */
+  content: string | SeedContent;
   column: ColumnId;
   author: Author;
   createdAt: string; // ISO
   order: number;
 };
 
-function formatDate(iso: string): string {
-  const d = new Date(iso);
-  return `${d.getDate()}/${String(d.getMonth() + 1).padStart(2, "0")} ${d.getHours()}h${String(d.getMinutes()).padStart(2, "0")}`;
-}
-
 const currentUser: Author = { id: "current", displayName: "Marie Dupont" };
 
 /** Démo : post-it répartis dans les 3 colonnes, avec auteur et date */
 function buildInitialPostIts(): PostIt[] {
-  const base = "2025-02-23T";
-  return [
-    { id: "1", content: "Livraison à l'heure", column: "bien", author: { id: "a", displayName: "Alice" }, createdAt: `${base}09:00:00`, order: 0 },
-    { id: "2", content: "Bonne communication équipe", column: "bien", author: { id: "b", displayName: "Bob" }, createdAt: `${base}09:05:00`, order: 1 },
-    { id: "3", content: "Tests à renforcer", column: "ameliorer", author: { id: "a", displayName: "Alice" }, createdAt: `${base}09:10:00`, order: 0 },
-    { id: "4", content: "Dette technique sur le module X", column: "ameliorer", author: { id: "b", displayName: "Bob" }, createdAt: `${base}09:15:00`, order: 1 },
-    { id: "5", content: "Rédiger la doc API", column: "action", author: { id: "a", displayName: "Alice" }, createdAt: `${base}09:20:00`, order: 0 },
-    { id: "6", content: "Mettre en place les E2E", column: "action", author: currentUser, createdAt: `${base}09:25:00`, order: 1 },
-  ];
+  return SEED_POSTITS.map((s) => ({
+    id: s.id,
+    content: s.content,
+    column: s.column,
+    author: { id: s.authorId, displayName: s.authorName },
+    createdAt: s.createdAt,
+    order: s.order,
+  }));
 }
 
 export default function TableauBlancSimulateurPage() {
+  const { locale } = useI18n();
+  const t = STR[locale];
   const [postIts, setPostIts] = useState<PostIt[]>(buildInitialPostIts);
   const [newContent, setNewContent] = useState("");
   const [newColumn, setNewColumn] = useState<ColumnId>("bien");
@@ -74,6 +73,9 @@ export default function TableauBlancSimulateurPage() {
   const [editContent, setEditContent] = useState("");
   const [highlightId, setHighlightId] = useState<string | null>(null);
   const newCardRef = useRef<HTMLDivElement>(null);
+
+  const resolveContent = (content: string | SeedContent): string =>
+    typeof content === "string" ? content : content[locale];
 
   const trimmed = newContent.trim();
   const canAdd = trimmed.length > 0;
@@ -132,6 +134,7 @@ export default function TableauBlancSimulateurPage() {
 
   const byColumn = COLUMNS.map((col) => ({
     ...col,
+    label: t.columnLabels[col.id],
     items: [...postIts.filter((p) => p.column === col.id)].sort((a, b) => a.order - b.order),
   }));
 
@@ -139,11 +142,11 @@ export default function TableauBlancSimulateurPage() {
     <div className="doc-page">
       <div className="doc-page-header">
         <div className="doc-breadcrumb">
-          <Link href="/modules">Modules</Link> → <Link href="/modules/tableau-blanc">Tableau blanc</Link> → Simulateur
+          <Link href="/modules">Modules</Link> → <Link href="/modules/tableau-blanc">{t.moduleName}</Link> → {t.breadcrumbSimulator}
         </div>
-        <h1>Simulateur — Tableau blanc</h1>
+        <h1>{t.simulatorTitle}</h1>
         <p className="doc-description">
-          Post-it par colonnes (Bien / À améliorer / Action), avec auteur, date et actions (éditer, supprimer, déplacer).
+          {t.simulatorDescription}
         </p>
       </div>
 
@@ -155,17 +158,17 @@ export default function TableauBlancSimulateurPage() {
         {/* En-tête avec compteur — pas d'icône ℹ */}
         <div className="px-4 py-3 border-b flex flex-wrap items-center justify-between gap-2" style={{ borderColor: "var(--bpm-border)", background: "var(--bpm-sidebar-bg)" }}>
           <h2 className="text-base font-semibold m-0" style={{ color: "var(--bpm-text-primary)" }}>
-            Zone idées ({postIts.length} post-it)
+            {t.boardHeading(postIts.length)}
           </h2>
         </div>
 
         {/* Zone de saisie séparée (au-dessus du tableau) */}
         <div className="px-4 py-3 border-b" style={{ borderColor: "var(--bpm-border)" }}>
-          <p className="text-xs font-medium mb-2" style={{ color: "var(--bpm-text-secondary)" }}>Nouveau post-it</p>
+          <p className="text-xs font-medium mb-2" style={{ color: "var(--bpm-text-secondary)" }}>{t.newPostItLabel}</p>
           <div className="flex flex-col sm:flex-row gap-2 items-stretch sm:items-end">
             <div className="flex-1 min-w-0">
               <Textarea
-                placeholder="Saisir une idée… (Ctrl+Entrée pour ajouter)"
+                placeholder={t.inputPlaceholder}
                 value={newContent}
                 onChange={setNewContent}
                 onKeyDown={handleKeyDown}
@@ -176,7 +179,7 @@ export default function TableauBlancSimulateurPage() {
             </div>
             <div className="flex gap-2 flex-wrap items-center">
               <label className="text-xs font-medium shrink-0" style={{ color: "var(--bpm-text-secondary)" }}>
-                Colonne :
+                {t.columnSelectLabel}
               </label>
               <select
                 value={newColumn}
@@ -185,11 +188,11 @@ export default function TableauBlancSimulateurPage() {
                 style={{ borderColor: "var(--bpm-border)", background: "var(--bpm-bg-primary)", color: "var(--bpm-text-primary)" }}
               >
                 {COLUMNS.map((c) => (
-                  <option key={c.id} value={c.id}>{c.label}</option>
+                  <option key={c.id} value={c.id}>{t.columnLabels[c.id]}</option>
                 ))}
               </select>
               <Button size="small" onClick={handleAdd} disabled={!canAdd}>
-                Ajouter
+                {t.addButton}
               </Button>
             </div>
           </div>
@@ -206,6 +209,7 @@ export default function TableauBlancSimulateurPage() {
                 {col.items.map((p) => {
                   const isEditing = editingId === p.id;
                   const isHighlight = highlightId === p.id;
+                  const content = resolveContent(p.content);
                   return (
                     <div
                       key={p.id}
@@ -228,28 +232,28 @@ export default function TableauBlancSimulateurPage() {
                             autoFocus
                           />
                           <div className="flex gap-1 mt-2">
-                            <Button size="small" onClick={handleSaveEdit}>Enregistrer</Button>
-                            <Button size="small" variant="secondary" onClick={() => { setEditingId(null); setEditContent(""); }}>Annuler</Button>
+                            <Button size="small" onClick={handleSaveEdit}>{t.saveButton}</Button>
+                            <Button size="small" variant="secondary" onClick={() => { setEditingId(null); setEditContent(""); }}>{t.cancelButton}</Button>
                           </div>
                         </>
                       ) : (
                         <>
-                          <p className="m-0 flex-1 whitespace-pre-wrap break-words" style={{ color: "var(--bpm-text-primary)" }}>{p.content}</p>
+                          <p className="m-0 flex-1 whitespace-pre-wrap break-words" style={{ color: "var(--bpm-text-primary)" }}>{content}</p>
                           <p className="m-0 mt-2 text-xs" style={{ color: "var(--bpm-text-secondary)" }}>
-                            {p.author.displayName} — {formatDate(p.createdAt)}
+                            {p.author.displayName} — {t.formatDate(p.createdAt)}
                           </p>
                           {/* Actions au survol — icônes charte Blueprint */}
                           <div className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity flex flex-wrap gap-1 items-center">
-                            <button type="button" onClick={() => handleEdit(p.id, p.content)} className="p-1 rounded hover:bg-black/10 flex items-center justify-center" title="Modifier" aria-label="Modifier">
+                            <button type="button" onClick={() => handleEdit(p.id, content)} className="p-1 rounded hover:bg-black/10 flex items-center justify-center" title={t.editAction} aria-label={t.editAction}>
                               <IconEdit />
                             </button>
-                            <button type="button" onClick={() => handleDelete(p.id)} className="p-1 rounded hover:bg-black/10 flex items-center justify-center" title="Supprimer" aria-label="Supprimer">
+                            <button type="button" onClick={() => handleDelete(p.id)} className="p-1 rounded hover:bg-black/10 flex items-center justify-center" title={t.deleteAction} aria-label={t.deleteAction}>
                               <IconTrash />
                             </button>
                             {COLUMNS.filter((c) => c.id !== p.column).map((c) => (
-                              <button key={c.id} type="button" onClick={() => handleMove(p.id, c.id)} className="p-1 rounded hover:bg-black/10 text-xs flex items-center" title={`Déplacer vers ${c.label}`}>
+                              <button key={c.id} type="button" onClick={() => handleMove(p.id, c.id)} className="p-1 rounded hover:bg-black/10 text-xs flex items-center" title={t.moveTo(t.columnLabels[c.id])}>
                                 <IconArrowRight />
-                                {c.label}
+                                {t.columnLabels[c.id]}
                               </button>
                             ))}
                           </div>
@@ -259,7 +263,7 @@ export default function TableauBlancSimulateurPage() {
                   );
                 })}
                 {col.items.length === 0 && (
-                  <p className="text-xs text-center py-4" style={{ color: "var(--bpm-text-secondary)" }}>Aucun post-it</p>
+                  <p className="text-xs text-center py-4" style={{ color: "var(--bpm-text-secondary)" }}>{t.emptyColumn}</p>
                 )}
               </div>
             </div>
@@ -268,7 +272,7 @@ export default function TableauBlancSimulateurPage() {
       </div>
 
       <p className="mt-6 text-sm" style={{ color: "var(--bpm-text-secondary)" }}>
-        <Link href="/modules/tableau-blanc" className="font-medium underline" style={{ color: "var(--bpm-accent-cyan)" }}>← Retour au module Tableau blanc</Link>
+        <Link href="/modules/tableau-blanc" className="font-medium underline" style={{ color: "var(--bpm-accent-cyan)" }}>{t.backToModule}</Link>
       </p>
     </div>
   );

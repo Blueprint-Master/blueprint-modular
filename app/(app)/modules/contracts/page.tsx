@@ -4,7 +4,9 @@ import { useState, useEffect, useCallback, useMemo, useRef } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { Table, Spinner, Selectbox, Panel, Button, ConfirmModal } from "@/components/bpm";
-import { getTypeLabel, getStatusLabel, getRiskLabel, getWorkspaceLabel } from "@/lib/contracts/labels";
+import { getWorkspaceLabel } from "@/lib/contracts/labels";
+import { useI18n } from "@/lib/i18n/LocaleProvider";
+import { STR, fn, typeLabel, riskLabel, statusLabel } from "./strings";
 
 // Fonction helper pour afficher des toasts
 function showToast(message: string, type: "success" | "error" | "info" | "warning" = "info") {
@@ -153,30 +155,31 @@ function flattenContract(c: ContractRow): ContractRow {
   };
 }
 
-const WORKSPACES = [
-  { value: "", label: "Tous les workspaces" },
-  { value: "service1", label: getWorkspaceLabel("service1") },
-  { value: "service2", label: getWorkspaceLabel("service2") },
-];
-const TYPES = [
-  { value: "", label: "Tous les types" },
-  { value: "prestation", label: "Prestation de service" },
-  { value: "licence", label: "Licence / SaaS" },
-  { value: "cgv", label: "CGV / CGU" },
-  { value: "nda", label: "NDA / Confidentialité" },
-  { value: "bail", label: "Bail / Location" },
-  { value: "partenariat", label: "Partenariat" },
-  { value: "emploi", label: "Contrat d'emploi" },
-  { value: "achat", label: "Achat / Fournisseur" },
-  { value: "other", label: "Autre" },
-];
-const STATUSES = [
-  { value: "", label: "Tous les statuts" },
-  { value: "pending", label: getStatusLabel("pending") },
-  { value: "analyzing", label: getStatusLabel("analyzing") },
-  { value: "done", label: getStatusLabel("done") },
-  { value: "error", label: getStatusLabel("error") },
-];
+type Strings = typeof STR["fr"];
+
+function buildTypes(t: Strings) {
+  return [
+    { value: "", label: t.filters.allTypes },
+    { value: "prestation", label: t.types.prestation },
+    { value: "licence", label: t.types.licence },
+    { value: "cgv", label: t.types.cgv },
+    { value: "nda", label: t.types.nda },
+    { value: "bail", label: t.types.bail },
+    { value: "partenariat", label: t.types.partenariat },
+    { value: "emploi", label: t.types.emploi },
+    { value: "achat", label: t.types.achat },
+    { value: "other", label: t.types.other },
+  ];
+}
+function buildStatuses(t: Strings) {
+  return [
+    { value: "", label: t.filters.allStatuses },
+    { value: "pending", label: t.status.pending },
+    { value: "analyzing", label: t.status.analyzing },
+    { value: "done", label: t.status.done },
+    { value: "error", label: t.status.error },
+  ];
+}
 
 function getFileExtension(filename: string): string {
   const parts = filename.split(".");
@@ -185,6 +188,11 @@ function getFileExtension(filename: string): string {
 
 export default function ContractsPage() {
   const router = useRouter();
+  const { locale } = useI18n();
+  const t = STR[locale];
+  const f = fn[locale];
+  const TYPES = useMemo(() => buildTypes(t), [t]);
+  const STATUSES = useMemo(() => buildStatuses(t), [t]);
   const [contracts, setContracts] = useState<ContractRow[]>([]);
   const [loading, setLoading] = useState(true);
   const [uploading, setUploading] = useState(false);
@@ -339,9 +347,9 @@ export default function ContractsPage() {
       const res = await fetch(`/api/contracts/${id}/reanalyze`, { method: "POST", credentials: "include" });
       if (res.ok) {
         fetchContracts();
-        showToast("Réanalyse du contrat lancée", "info");
+        showToast(t.toast.reanalyzeStarted, "info");
       } else {
-        showToast("Erreur lors de la réanalyse", "error");
+        showToast(t.toast.reanalyzeError, "error");
       }
     } finally {
       setReanalyzingId(null);
@@ -365,16 +373,16 @@ export default function ContractsPage() {
           setDetailPanelOpen(false);
           setSelectedContractId(null);
         }
-        showToast(`Contrat « ${filename} » supprimé`, "success");
+        showToast(f.deleteToastSuccess(filename), "success");
       } else {
         const err = await res.json().catch(() => ({}));
-        const errorMsg = (err && typeof err === "object" && "error" in err && typeof (err as { error?: string }).error === "string") ? (err as { error: string }).error : "Erreur lors de la suppression.";
+        const errorMsg = (err && typeof err === "object" && "error" in err && typeof (err as { error?: string }).error === "string") ? (err as { error: string }).error : t.toast.deleteError;
         showToast(errorMsg, "error");
       }
     } finally {
       setDeletingId(null);
     }
-  }, [deleteConfirm, deletingId, selectedContractId]);
+  }, [deleteConfirm, deletingId, selectedContractId, f, t]);
 
   const handleAnalyze = async (files: File[]) => {
     if (files.length === 0) return;
@@ -391,18 +399,18 @@ export default function ContractsPage() {
         if (res.ok) {
           const created = await res.json();
           setContracts((prev) => [flattenContract(created as ContractRow), ...prev]);
-          showToast(`Contrat « ${file.name} » importé et en cours d'analyse`, "success");
+          showToast(f.importToastSuccess(file.name), "success");
         } else {
           if (res.status === 413) {
-            showToast("Fichier trop volumineux pour l'upload (limite du serveur). Réduisez la taille du fichier ou compressez le PDF.", "error");
+            showToast(t.toast.fileTooLarge, "error");
             continue;
           }
           const err = await res.json().catch(() => ({}));
           const msg = (err && typeof err === "object" && "error" in err && typeof (err as { error?: string }).error === "string")
             ? (err as { error: string }).error
             : res.status === 401
-              ? "Non autorisé. Connectez-vous pour importer des contrats."
-              : `Erreur upload (${res.status})`;
+              ? t.toast.unauthorized
+              : f.uploadError(res.status);
           showToast(msg, "error");
         }
       }
@@ -469,15 +477,15 @@ export default function ContractsPage() {
         fetchContracts(); // Rafraîchir la liste
       } else {
         const err = await res.json().catch(() => ({}));
-        alert((err && typeof err === "object" && "error" in err && typeof (err as { error?: string }).error === "string") ? (err as { error: string }).error : "Erreur lors de la sauvegarde.");
+        alert((err && typeof err === "object" && "error" in err && typeof (err as { error?: string }).error === "string") ? (err as { error: string }).error : t.toast.saveError);
       }
     } catch (err) {
       console.error("[contracts] Save error:", err);
-      alert("Erreur lors de la sauvegarde.");
+      alert(t.toast.saveError);
     } finally {
       setSaving(false);
     }
-  }, [selectedContractId, detailContract, editFormData, fetchContracts]);
+  }, [selectedContractId, detailContract, editFormData, fetchContracts, t]);
 
   const handleCancelEdit = useCallback(() => {
     setIsEditMode(false);
@@ -507,7 +515,7 @@ export default function ContractsPage() {
     () => [
       {
         key: "originalFilename",
-        label: "Nom du fichier",
+        label: t.table.filename,
         render: (val: unknown) => {
           const filename = String(val ?? "");
           const ext = getFileExtension(filename);
@@ -525,22 +533,22 @@ export default function ContractsPage() {
       },
       {
         key: "supplier_name",
-        label: "Fournisseur",
+        label: t.table.supplier,
         render: (val: unknown) => {
           const v = String(val ?? "");
           if (v === "-" || !v || v === "null" || v === "undefined") {
-            return <span className="data-empty" aria-label="Non renseigné">—</span>;
+            return <span className="data-empty" aria-label={t.table.notProvided}>—</span>;
           }
           return v;
         },
       },
       {
         key: "executive_summary",
-        label: "Objet du contrat",
+        label: t.table.object,
         render: (val: unknown) => {
           const v = String(val ?? "");
           if (v === "-" || !v || v === "null" || v === "undefined" || v === "Résumé non extrait.") {
-            return <span className="data-empty" aria-label="Non renseigné">—</span>;
+            return <span className="data-empty" aria-label={t.table.notProvided}>—</span>;
           }
           // Tronquer à 100 caractères avec ellipsis
           const truncated = v.length > 100 ? v.substring(0, 100) + "…" : v;
@@ -549,46 +557,46 @@ export default function ContractsPage() {
       },
       {
         key: "contractType",
-        label: "Type",
+        label: t.table.type,
         render: (val: unknown) => {
           const v = String(val ?? "");
-          return v === "-" ? <span className="data-empty">—</span> : getTypeLabel(v);
+          return v === "-" ? <span className="data-empty">—</span> : typeLabel(t, v);
         },
       },
       {
         key: "contract_date",
-        label: "Date contrat",
+        label: t.table.contractDate,
         render: (val: unknown) => {
           const v = String(val ?? "");
           if (v === "-" || !v || v === "null" || v === "undefined") {
-            return <span className="data-empty" aria-label="Non renseigné">—</span>;
+            return <span className="data-empty" aria-label={t.table.notProvided}>—</span>;
           }
-          return v;
+          return f.formatDate(v);
         },
       },
       {
         key: "end_date",
-        label: "Date de fin",
+        label: t.table.endDate,
         render: (val: unknown) => {
           const v = String(val ?? "");
           if (v === "-" || !v || v === "null" || v === "undefined") {
-            return <span className="data-empty" aria-label="Non renseigné">—</span>;
+            return <span className="data-empty" aria-label={t.table.notProvided}>—</span>;
           }
-          return v;
+          return f.formatDate(v);
         },
       },
       {
         key: "overall_risk_level",
-        label: "Risque",
+        label: t.table.risk,
         render: (val: unknown) => {
           const v = String(val ?? "");
           if (v === "-" || !v || v === "null" || v === "undefined") {
-            return <span className="data-empty" aria-label="Non renseigné">—</span>;
+            return <span className="data-empty" aria-label={t.table.notProvided}>—</span>;
           }
-          const label = getRiskLabel(v);
+          const label = riskLabel(t, v);
           const riskClass = v === "low" ? "risk-low" : v === "medium" ? "risk-medium" : v === "high" ? "risk-high" : "risk-unknown";
           return (
-            <span className={`risk-badge ${riskClass}`} aria-label={`Risque : ${label}`}>
+            <span className={`risk-badge ${riskClass}`} aria-label={f.riskAria(label)}>
               <svg className="w-3 h-3" fill="currentColor" viewBox="0 0 8 8" aria-hidden="true">
                 <circle cx="4" cy="4" r="3" />
               </svg>
@@ -599,7 +607,7 @@ export default function ContractsPage() {
       },
       {
         key: "status",
-        label: "Statut",
+        label: t.table.status,
         render: (val: unknown, row: Record<string, unknown>) => {
           const statusKey = (row.statusKey as string) ?? String(val ?? "");
           const s = String(val ?? "");
@@ -607,8 +615,8 @@ export default function ContractsPage() {
           const isError = statusKey === "error";
           const isAnalyzing = statusKey === "analyzing";
           const isReanalyzing = id && reanalyzingId === id;
-          const { label } = statusBadgeStyle(statusKey);
-          const displayLabel = s.startsWith("En cours (") ? s : label;
+          const label = statusLabel(t, statusKey);
+          const displayLabel = isAnalyzing ? s : label;
           const statusClass = statusKey === "done" ? "status-analyzed" : statusKey === "pending" || statusKey === "analyzing" ? "status-pending" : statusKey === "error" ? "status-error" : "status-importing";
           return (
             <span className="flex items-center gap-2 flex-wrap">
@@ -632,9 +640,9 @@ export default function ContractsPage() {
                     variant="secondary"
                     disabled={!!reanalyzingId}
                     onClick={() => handleReanalyze(id)}
-                    aria-label={`Relancer l'analyse du contrat ${row.originalFilename as string}`}
+                    aria-label={f.rerunRowAria(row.originalFilename as string)}
                   >
-                    {isReanalyzing ? "…" : "Relancer"}
+                    {isReanalyzing ? "…" : t.table.rerun}
                   </Button>
                 </span>
               )}
@@ -643,18 +651,8 @@ export default function ContractsPage() {
         },
       },
     ],
-    [reanalyzingId, handleReanalyze]
+    [reanalyzingId, handleReanalyze, t, f]
   );
-
-  function statusBadgeStyle(s: string): { bg: string; label: string } {
-    switch (s) {
-      case "pending": return { bg: "var(--bpm-warning-soft)", label: getStatusLabel("pending") };
-      case "analyzing": return { bg: "var(--bpm-accent-soft)", label: getStatusLabel("analyzing") };
-      case "done": return { bg: "var(--bpm-success-soft)", label: getStatusLabel("done") };
-      case "error": return { bg: "var(--bpm-error-soft)", label: getStatusLabel("error") };
-      default: return { bg: "var(--bpm-text-secondary)", label: getStatusLabel(s) };
-    }
-  }
 
   const filteredContracts = searchText.trim()
     ? contracts.filter((c) =>
@@ -673,7 +671,7 @@ export default function ContractsPage() {
     overall_risk_level: c.overall_risk_level ?? "-",
     statusKey: c.status,
     analysisProgress: c.analysisProgress ?? 0,
-    status: c.status === "analyzing" ? `${getStatusLabel("analyzing")} (${c.analysisProgress ?? 0}%)` : getStatusLabel(c.status),
+    status: c.status === "analyzing" ? f.analyzingProgress(t.status.analyzing, c.analysisProgress ?? 0) : statusLabel(t, c.status),
   }));
 
   const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -703,40 +701,40 @@ export default function ContractsPage() {
         <div className="contracts-header">
           <div className="contracts-header-left">
             <nav className="doc-breadcrumb" aria-label="Fil d'Ariane">
-              <Link href="/modules">Modules</Link> <span aria-hidden>›</span> Base contractuelle
+              <Link href="/modules">{t.page.breadcrumbModules}</Link> <span aria-hidden>›</span> {f.breadcrumbCurrent()}
             </nav>
-            <h1>Base contractuelle</h1>
+            <h1>{t.page.title}</h1>
             <p className="doc-description">
-              Analysez vos contrats fournisseurs avec l&apos;IA pour identifier les risques et dates clés.
+              {t.page.description}
             </p>
           </div>
           <Button
             variant="primary"
             onClick={() => setImportModalOpen(true)}
             className="contracts-import-btn"
-            aria-label="Importer un contrat"
+            aria-label={t.page.importButtonAria}
           >
-            Importer
+            {t.page.importButton}
           </Button>
         </div>
 
         {/* Barre de stats */}
-        <div className="contracts-stats" aria-label="Vue d'ensemble">
+        <div className="contracts-stats" aria-label={t.stats.overviewAria}>
           <div className="stat-card">
             <span className="stat-value" data-stat="total">{stats.total}</span>
-            <span className="stat-label">Contrat(s)</span>
+            <span className="stat-label">{t.stats.total}</span>
           </div>
           <div className="stat-card">
             <span className="stat-value stat-success" data-stat="analyzed">{stats.analyzed}</span>
-            <span className="stat-label">Analysé(s)</span>
+            <span className="stat-label">{t.stats.analyzed}</span>
           </div>
           <div className="stat-card">
             <span className="stat-value stat-warning" data-stat="pending">{stats.pending}</span>
-            <span className="stat-label">En attente</span>
+            <span className="stat-label">{t.stats.pending}</span>
           </div>
           <div className="stat-card">
             <span className="stat-value stat-error" data-stat="alerts">{stats.highRisk}</span>
-            <span className="stat-label">Alertes risque</span>
+            <span className="stat-label">{t.stats.highRisk}</span>
           </div>
         </div>
 
@@ -747,10 +745,10 @@ export default function ContractsPage() {
             <input
               type="search"
               className="contracts-search"
-              placeholder="Rechercher un contrat, fournisseur…"
+              placeholder={t.toolbar.searchPlaceholder}
               value={searchText}
               onChange={(e) => setSearchText(e.target.value)}
-              aria-label="Rechercher dans les contrats"
+              aria-label={t.toolbar.searchAria}
             />
           </div>
           <div className="contracts-filters">
@@ -758,13 +756,13 @@ export default function ContractsPage() {
               options={TYPES}
               value={contractType}
               onChange={(v) => setContractType(v ?? "")}
-              placeholder="Type"
+              placeholder={t.toolbar.typePlaceholder}
             />
             <Selectbox
               options={STATUSES}
               value={status}
               onChange={(v) => setStatus(v ?? "")}
-              placeholder="Statut"
+              placeholder={t.toolbar.statusPlaceholder}
             />
             {hasActiveFilters && (
               <Button
@@ -776,10 +774,10 @@ export default function ContractsPage() {
                   setStatus("");
                   setSearchText("");
                 }}
-                aria-label="Réinitialiser les filtres"
+                aria-label={t.toolbar.resetAria}
               >
                 <ResetIcon className="w-4 h-4 mr-2" />
-                Réinitialiser
+                {t.toolbar.reset}
               </Button>
             )}
           </div>
@@ -794,22 +792,22 @@ export default function ContractsPage() {
           <div className="contracts-table-wrapper">
             <div className="empty-state">
               <div className="empty-icon">📄</div>
-              <p className="empty-title">Aucun contrat importé</p>
+              <p className="empty-title">{t.empty.noContractsTitle}</p>
               <p className="empty-desc">
-                Glissez vos fichiers PDF, DOCX ou TXT directement ici, ou cliquez sur &quot;Importer&quot;.
+                {t.empty.noContractsDesc}
               </p>
               <Button
                 variant="primary"
                 onClick={() => setImportModalOpen(true)}
-                aria-label="Importer un premier contrat"
+                aria-label={t.empty.importFirstAria}
               >
-                Importer un premier contrat
+                {t.empty.importFirst}
               </Button>
             </div>
           </div>
         ) : filteredContracts.length === 0 ? (
-          <Panel variant="info" title="Aucun résultat">
-            Aucun contrat ne correspond à &quot;{searchText}&quot;. Modifiez la recherche ou les filtres.
+          <Panel variant="info" title={t.empty.noResultsTitle}>
+            {f.noResultsBody(searchText)}
           </Panel>
         ) : isMobile ? (
           <div className="contracts-mobile-list">
@@ -834,7 +832,7 @@ export default function ContractsPage() {
                       openContractDetail(id);
                     }
                   }}
-                  aria-label={`Voir le détail de ${filename}`}
+                  aria-label={f.viewDetailAria(filename)}
                 >
                   <div className="contract-card-header">
                     <FileIcon ext={getFileExtension(filename)} className="w-5 h-5" />
@@ -842,19 +840,19 @@ export default function ContractsPage() {
                   </div>
                   <div className="contract-card-meta">
                     {supplier && supplier !== "null" && supplier !== "undefined" && (
-                      <div><strong>Fournisseur:</strong> {supplier}</div>
+                      <div><strong>{t.mobile.supplier}</strong> {supplier}</div>
                     )}
                     {contractDate && contractDate !== "null" && contractDate !== "undefined" && (
-                      <div><strong>Date:</strong> {contractDate}</div>
+                      <div><strong>{t.mobile.date}</strong> {f.formatDate(contractDate)}</div>
                     )}
                     {endDate && endDate !== "null" && endDate !== "undefined" && (
-                      <div><strong>Fin:</strong> {endDate}</div>
+                      <div><strong>{t.mobile.end}</strong> {f.formatDate(endDate)}</div>
                     )}
                     {risk && risk !== "null" && risk !== "undefined" && (
                       <div>
-                        <strong>Risque:</strong>{" "}
-                        <span className={`risk-badge ${risk === "low" ? "risk-low" : risk === "medium" ? "risk-medium" : risk === "high" ? "risk-high" : "risk-unknown"}`} aria-label={`Risque : ${getRiskLabel(risk)}`}>
-                          {getRiskLabel(risk)}
+                        <strong>{t.mobile.risk}</strong>{" "}
+                        <span className={`risk-badge ${risk === "low" ? "risk-low" : risk === "medium" ? "risk-medium" : risk === "high" ? "risk-high" : "risk-unknown"}`} aria-label={f.riskAria(riskLabel(t, risk))}>
+                          {riskLabel(t, risk)}
                         </span>
                       </div>
                     )}
@@ -875,7 +873,7 @@ export default function ContractsPage() {
                   const id = (row as { id?: string }).id;
                   if (id) openContractDetail(id);
                 }}
-                emptyMessage="Aucune donnée disponible"
+                emptyMessage={t.table.empty}
                 className="contracts-table"
               />
             </div>
@@ -884,11 +882,11 @@ export default function ContractsPage() {
       </div>
 
       {/* Overlay drag-and-drop global */}
-      <div className="drop-overlay" ref={dropOverlayRef} aria-hidden="true" role="region" aria-label="Zone de dépôt active">
+      <div className="drop-overlay" ref={dropOverlayRef} aria-hidden="true" role="region" aria-label={t.dropOverlay.aria}>
         <div className="drop-overlay-content">
           <UploadIcon className="drop-overlay-icon" />
-          <p className="drop-overlay-title">Déposez vos fichiers</p>
-          <p className="drop-overlay-sub">PDF, DOCX ou TXT — jusqu&apos;à 10 fichiers</p>
+          <p className="drop-overlay-title">{t.dropOverlay.title}</p>
+          <p className="drop-overlay-sub">{t.dropOverlay.sub}</p>
         </div>
       </div>
 
@@ -909,8 +907,8 @@ export default function ContractsPage() {
           <div className="import-modal-overlay" onClick={() => setImportModalOpen(false)} />
           <div className="import-modal-panel">
             <div className="import-modal-header">
-              <h2 id="import-modal-title">Importer des contrats</h2>
-              <button className="modal-close-btn" onClick={() => setImportModalOpen(false)} aria-label="Fermer">
+              <h2 id="import-modal-title">{t.importModal.title}</h2>
+              <button className="modal-close-btn" onClick={() => setImportModalOpen(false)} aria-label={t.importModal.close}>
                 <XIcon className="w-5 h-5" />
               </button>
             </div>
@@ -924,13 +922,13 @@ export default function ContractsPage() {
                 tabIndex={0}
               >
                 <UploadIcon className="dropzone-icon" />
-                <p className="dropzone-title">Glissez-déposez vos fichiers ici</p>
-                <p className="dropzone-sub">ou</p>
+                <p className="dropzone-title">{t.importModal.dropzoneTitle}</p>
+                <p className="dropzone-sub">{t.importModal.dropzoneSub}</p>
                 <Button variant="secondary" onClick={() => handleDropzoneClick()}>
                   <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="w-4 h-4 mr-2" aria-hidden="true">
                     <path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z" />
                   </svg>
-                  Choisir des fichiers
+                  {t.importModal.chooseFiles}
                 </Button>
                 <input
                   ref={fileInputRef}
@@ -941,15 +939,15 @@ export default function ContractsPage() {
                   onChange={handleFileSelect}
                 />
                 <div className="dropzone-formats">
-                  <span className="format-tag">PDF</span>
-                  <span className="format-tag">DOCX</span>
-                  <span className="format-tag">TXT</span>
-                  <span className="format-limit">Max 10 fichiers</span>
+                  <span className="format-tag">{t.importModal.formatPdf}</span>
+                  <span className="format-tag">{t.importModal.formatDocx}</span>
+                  <span className="format-tag">{t.importModal.formatTxt}</span>
+                  <span className="format-limit">{t.importModal.maxFiles}</span>
                 </div>
               </div>
               {selectedFiles.length > 0 && (
                 <div className="import-file-list">
-                  <p className="import-file-list-title">{selectedFiles.length} fichier{selectedFiles.length > 1 ? "s" : ""} sélectionné{selectedFiles.length > 1 ? "s" : ""}</p>
+                  <p className="import-file-list-title">{f.filesSelected(selectedFiles.length)}</p>
                   <ul className="import-file-list-items">
                     {selectedFiles.map((file, i) => (
                       <li key={i} className="import-file-item">
@@ -962,7 +960,7 @@ export default function ContractsPage() {
                             e.stopPropagation();
                             setSelectedFiles((prev) => prev.filter((_, idx) => idx !== i));
                           }}
-                          aria-label={`Retirer ${file.name}`}
+                          aria-label={f.removeFileAria(file.name)}
                         >
                           <XIcon className="w-4 h-4" />
                         </button>
@@ -974,20 +972,20 @@ export default function ContractsPage() {
             </div>
             <div className="import-modal-footer">
               <Button variant="secondary" onClick={() => { setImportModalOpen(false); setSelectedFiles([]); }}>
-                Annuler
+                {t.importModal.cancel}
               </Button>
               <Button
                 variant="primary"
                 onClick={() => handleAnalyze(selectedFiles)}
                 disabled={uploading || selectedFiles.length === 0}
-                aria-label={selectedFiles.length === 0 ? "Sélectionnez au moins un fichier pour continuer" : "Analyser les documents"}
+                aria-label={selectedFiles.length === 0 ? t.importModal.noFileAria : t.importModal.analyzeAria}
               >
                 {uploading ? (
-                  "Analyse en cours..."
+                  t.importModal.analyzing
                 ) : (
                   <>
-                    Analyser les documents
-                    {selectedFiles.length > 0 && <span className="btn-file-count"> ({selectedFiles.length})</span>}
+                    {t.importModal.analyzeButton}
+                    {selectedFiles.length > 0 && <span className="btn-file-count">{f.fileCount(selectedFiles.length)}</span>}
                   </>
                 )}
               </Button>
@@ -1014,11 +1012,11 @@ export default function ContractsPage() {
           <div className="detail-panel-overlay" onClick={() => { setDetailPanelOpen(false); setSelectedContractId(null); setIsEditMode(false); }} />
           <div className={`detail-panel-drawer ${isEditMode ? "edit-mode" : ""}`}>
             <div className="detail-panel-header">
-              <button className="detail-close-btn" onClick={() => { setDetailPanelOpen(false); setSelectedContractId(null); setIsEditMode(false); }} aria-label="Fermer le détail">
+              <button className="detail-close-btn" onClick={() => { setDetailPanelOpen(false); setSelectedContractId(null); setIsEditMode(false); }} aria-label={t.detail.closeAria}>
                 <ArrowLeftIcon className="w-5 h-5" />
               </button>
               <h2 id="detail-panel-title" className="detail-title">
-                {detailContract?.originalFilename || "Chargement..."}
+                {detailContract?.originalFilename || t.detail.loading}
               </h2>
               <div className="detail-header-actions">
                 {selectedContractId && detailContract && !isEditMode && (
@@ -1035,20 +1033,20 @@ export default function ContractsPage() {
                           }, 1000);
                         }
                       }}
-                      aria-label="Réanalyser ce contrat"
+                      aria-label={t.detail.rerunAria}
                       disabled={reanalyzingId === selectedContractId}
                     >
                       <RefreshIcon className="w-4 h-4 mr-2" />
-                      Réanalyser
+                      {t.detail.rerun}
                     </Button>
                     <Button
                       variant="secondary"
                       size="small"
                       onClick={() => setIsEditMode(true)}
-                      aria-label="Modifier ce contrat"
+                      aria-label={t.detail.editAria}
                     >
                       <EditIcon className="w-4 h-4 mr-2" />
-                      Modifier
+                      {t.detail.edit}
                     </Button>
                     <Button
                       variant="secondary"
@@ -1058,7 +1056,7 @@ export default function ContractsPage() {
                           handleDeleteClick(selectedContractId, detailContract.originalFilename);
                         }
                       }}
-                      aria-label="Supprimer ce contrat"
+                      aria-label={t.detail.deleteAria}
                     >
                       <DeleteIcon className="w-4 h-4" />
                     </Button>
@@ -1080,12 +1078,12 @@ export default function ContractsPage() {
                     </span>
                     <span className="detail-meta-separator" style={{ color: "var(--bpm-text-muted)", fontSize: "13px" }}>·</span>
                     <span className="detail-meta-type" style={{ fontSize: "13px", color: "var(--bpm-text-muted)" }}>
-                      {getTypeLabel(detailContract.contractType)}
+                      {typeLabel(t, detailContract.contractType)}
                     </span>
                     <span className="detail-meta-separator" style={{ color: "var(--bpm-text-muted)", fontSize: "13px" }}>·</span>
                     <span className={`status-badge ${detailContract.status === "done" ? "status-analyzed" : detailContract.status === "analyzing" ? "status-analyzing" : detailContract.status === "error" ? "status-error" : "status-pending"}`} style={{ display: "inline-flex", alignItems: "center", gap: "4px", fontSize: "12px", padding: "4px 8px", borderRadius: "var(--bpm-radius-sm)" }}>
                       {detailContract.status === "done" && <CheckIcon className="w-3 h-3" />}
-                      {getStatusLabel(detailContract.status)}
+                      {statusLabel(t, detailContract.status)}
                     </span>
                     {detailContract.extractedData?.overall_risk_level && (
                       <span className={`risk-badge ${detailContract.extractedData.overall_risk_level === "low" ? "risk-low" : detailContract.extractedData.overall_risk_level === "high" ? "risk-high" : "risk-medium"}`} style={{ 
@@ -1099,7 +1097,7 @@ export default function ContractsPage() {
                         color: detailContract.extractedData.overall_risk_level === "low" ? "var(--bpm-success-text)" : detailContract.extractedData.overall_risk_level === "high" ? "var(--bpm-error-text)" : "var(--bpm-warning-text)"
                       }}>
                         <span style={{ width: "6px", height: "6px", borderRadius: "50%", backgroundColor: "currentColor" }} />
-                        Risque {getRiskLabel(detailContract.extractedData.overall_risk_level)}
+                        {f.riskBadge(riskLabel(t, detailContract.extractedData.overall_risk_level))}
                       </span>
                     )}
                   </div>
@@ -1107,7 +1105,7 @@ export default function ContractsPage() {
                     <div className="detail-sections space-y-6">
                       {(detailContract.extractedData.executive_summary || (detailContract.extractedData.signatories && detailContract.extractedData.signatories.length > 0)) && (
                         <section>
-                          <h3 className="text-sm font-semibold mb-2" style={{ color: "var(--bpm-text-primary)" }}>Synthèse</h3>
+                          <h3 className="text-sm font-semibold mb-2" style={{ color: "var(--bpm-text-primary)" }}>{t.detail.summary}</h3>
                           {detailContract.extractedData.executive_summary && (
                             <p className="text-sm whitespace-pre-wrap mb-3" style={{ color: "var(--bpm-text-secondary)" }}>
                               {detailContract.extractedData.executive_summary}
@@ -1116,7 +1114,7 @@ export default function ContractsPage() {
                           {detailContract.extractedData.signatories && detailContract.extractedData.signatories.length > 0 && (
                             <div className="mt-3">
                               <label className="block mb-2 text-sm font-medium" style={{ color: "var(--bpm-text-primary)" }}>
-                                Signataire(s) :
+                                {t.detail.signatoriesLabel}
                               </label>
                               <div className="space-y-2">
                                 {detailContract.extractedData.signatories.map((sig: { name?: string; role?: string; date?: string }, idx: number) => (
@@ -1138,11 +1136,11 @@ export default function ContractsPage() {
                         </section>
                       )}
                       <section>
-                        <h3 className="text-sm font-semibold mb-2" style={{ color: "var(--bpm-text-primary)" }}>Parties</h3>
+                        <h3 className="text-sm font-semibold mb-2" style={{ color: "var(--bpm-text-primary)" }}>{t.detail.parties}</h3>
                         <div className="space-y-3 text-sm">
                           <div>
                             <label className="block mb-1" style={{ color: "var(--bpm-text-primary)", fontWeight: 500 }}>
-                              Fournisseur :
+                              {t.detail.supplierLabel}
                             </label>
                             {isEditMode ? (
                               <input
@@ -1150,7 +1148,7 @@ export default function ContractsPage() {
                                 className="detail-field-input"
                                 value={editFormData.supplier_name || ""}
                                 onChange={(e) => setEditFormData({ ...editFormData, supplier_name: e.target.value })}
-                                placeholder="Nom du fournisseur"
+                                placeholder={t.detail.supplierPlaceholder}
                               />
                             ) : (
                               <div style={{ color: "var(--bpm-text-secondary)" }}>
@@ -1165,7 +1163,7 @@ export default function ContractsPage() {
                           </div>
                           <div>
                             <label className="block mb-1" style={{ color: "var(--bpm-text-primary)", fontWeight: 500 }}>
-                              Acheteur :
+                              {t.detail.buyerLabel}
                             </label>
                             {isEditMode ? (
                               <input
@@ -1173,7 +1171,7 @@ export default function ContractsPage() {
                                 className="detail-field-input"
                                 value={editFormData.buyer_name || ""}
                                 onChange={(e) => setEditFormData({ ...editFormData, buyer_name: e.target.value })}
-                                placeholder="Nom de l'acheteur"
+                                placeholder={t.detail.buyerPlaceholder}
                               />
                             ) : (
                               <div style={{ color: "var(--bpm-text-secondary)" }}>
@@ -1189,11 +1187,11 @@ export default function ContractsPage() {
                         </div>
                       </section>
                       <section>
-                        <h3 className="text-sm font-semibold mb-2" style={{ color: "var(--bpm-text-primary)" }}>Dates</h3>
+                        <h3 className="text-sm font-semibold mb-2" style={{ color: "var(--bpm-text-primary)" }}>{t.detail.dates}</h3>
                         <div className="space-y-3 text-sm">
                           <div>
                             <label className="block mb-1" style={{ color: "var(--bpm-text-primary)", fontWeight: 500 }}>
-                              Date contrat :
+                              {t.detail.contractDateLabel}
                             </label>
                             {isEditMode ? (
                               <input
@@ -1204,18 +1202,18 @@ export default function ContractsPage() {
                               />
                             ) : (
                               <div style={{ color: "var(--bpm-text-secondary)" }}>
-                                {detailContract.extractedData?.contract_date && 
-                                 detailContract.extractedData.contract_date !== "null" && 
+                                {detailContract.extractedData?.contract_date &&
+                                 detailContract.extractedData.contract_date !== "null" &&
                                  detailContract.extractedData.contract_date !== "undefined" &&
                                  detailContract.extractedData.contract_date.trim() !== ""
-                                  ? detailContract.extractedData.contract_date
+                                  ? f.formatDate(detailContract.extractedData.contract_date)
                                   : <span className="data-empty">—</span>}
                               </div>
                             )}
                           </div>
                           <div>
                             <label className="block mb-1" style={{ color: "var(--bpm-text-primary)", fontWeight: 500 }}>
-                              Date de fin :
+                              {t.detail.endDateLabel}
                             </label>
                             {isEditMode ? (
                               <input
@@ -1226,18 +1224,18 @@ export default function ContractsPage() {
                               />
                             ) : (
                               <div style={{ color: "var(--bpm-text-secondary)" }}>
-                                {detailContract.extractedData?.end_date && 
-                                 detailContract.extractedData.end_date !== "null" && 
+                                {detailContract.extractedData?.end_date &&
+                                 detailContract.extractedData.end_date !== "null" &&
                                  detailContract.extractedData.end_date !== "undefined" &&
                                  detailContract.extractedData.end_date.trim() !== ""
-                                  ? detailContract.extractedData.end_date
+                                  ? f.formatDate(detailContract.extractedData.end_date)
                                   : <span className="data-empty">—</span>}
                               </div>
                             )}
                           </div>
                           <div>
                             <label className="block mb-1" style={{ color: "var(--bpm-text-primary)", fontWeight: 500 }}>
-                              Date de dénonciation :
+                              {t.detail.terminationDateLabel}
                             </label>
                             {isEditMode ? (
                               <input
@@ -1248,11 +1246,11 @@ export default function ContractsPage() {
                               />
                             ) : (
                               <div style={{ color: "var(--bpm-text-secondary)" }}>
-                                {detailContract.extractedData?.termination_date && 
-                                 detailContract.extractedData.termination_date !== "null" && 
+                                {detailContract.extractedData?.termination_date &&
+                                 detailContract.extractedData.termination_date !== "null" &&
                                  detailContract.extractedData.termination_date !== "undefined" &&
                                  detailContract.extractedData.termination_date.trim() !== ""
-                                  ? detailContract.extractedData.termination_date
+                                  ? f.formatDate(detailContract.extractedData.termination_date)
                                   : <span className="data-empty">—</span>}
                               </div>
                             )}
@@ -1261,28 +1259,28 @@ export default function ContractsPage() {
                       </section>
                       {isEditMode && (
                         <section>
-                          <h3 className="text-sm font-semibold mb-2" style={{ color: "var(--bpm-text-primary)" }}>Type de contrat</h3>
+                          <h3 className="text-sm font-semibold mb-2" style={{ color: "var(--bpm-text-primary)" }}>{t.detail.contractTypeSection}</h3>
                           <select
                             className="detail-field-input"
                             value={editFormData.contractType || ""}
                             onChange={(e) => setEditFormData({ ...editFormData, contractType: e.target.value })}
                           >
-                            <option value="">Sélectionner un type</option>
-                            <option value="prestation">Prestation de service</option>
-                            <option value="licence">Licence / SaaS</option>
-                            <option value="cgv">CGV / CGU</option>
-                            <option value="nda">NDA / Confidentialité</option>
-                            <option value="bail">Bail / Location</option>
-                            <option value="partenariat">Partenariat</option>
-                            <option value="emploi">Contrat d'emploi</option>
-                            <option value="achat">Achat / Fournisseur</option>
-                            <option value="other">Autre</option>
+                            <option value="">{t.detail.selectType}</option>
+                            <option value="prestation">{t.types.prestation}</option>
+                            <option value="licence">{t.types.licence}</option>
+                            <option value="cgv">{t.types.cgv}</option>
+                            <option value="nda">{t.types.nda}</option>
+                            <option value="bail">{t.types.bail}</option>
+                            <option value="partenariat">{t.types.partenariat}</option>
+                            <option value="emploi">{t.types.emploi}</option>
+                            <option value="achat">{t.types.achat}</option>
+                            <option value="other">{t.types.other}</option>
                           </select>
                         </section>
                       )}
                       {detailContract.extractedData.key_risks && detailContract.extractedData.key_risks.length > 0 && (
                         <section>
-                          <h3 className="text-sm font-semibold mb-2" style={{ color: "var(--bpm-text-primary)" }}>Risques</h3>
+                          <h3 className="text-sm font-semibold mb-2" style={{ color: "var(--bpm-text-primary)" }}>{t.detail.risks}</h3>
                           <ul className="list-disc pl-5 text-sm space-y-1" style={{ color: "var(--bpm-text-secondary)" }}>
                             {detailContract.extractedData.key_risks.map((r: string, i: number) => <li key={i}>{r}</li>)}
                           </ul>
@@ -1290,13 +1288,13 @@ export default function ContractsPage() {
                       )}
                       {detailContract.extractedData.action_items && detailContract.extractedData.action_items.length > 0 && (
                         <section>
-                          <h3 className="text-sm font-semibold mb-2" style={{ color: "var(--bpm-text-primary)" }}>Actions recommandées</h3>
+                          <h3 className="text-sm font-semibold mb-2" style={{ color: "var(--bpm-text-primary)" }}>{t.detail.actions}</h3>
                           <ul className="list-disc pl-5 text-sm space-y-1" style={{ color: "var(--bpm-text-secondary)" }}>
                             {detailContract.extractedData.action_items.map((a: { action: string; deadline?: string; owner?: string }, i: number) => (
                               <li key={i}>
                                 {a.action}
-                                {a.deadline && ` (Échéance: ${a.deadline})`}
-                                {a.owner && ` - Responsable: ${a.owner}`}
+                                {a.deadline && f.deadlineSuffix(a.deadline)}
+                                {a.owner && f.ownerSuffix(a.owner)}
                               </li>
                             ))}
                           </ul>
@@ -1306,9 +1304,9 @@ export default function ContractsPage() {
                   ) : (
                     <div className="text-center py-8">
                       <p className="text-sm" style={{ color: "var(--bpm-text-muted)" }}>
-                        {detailContract.status === "analyzing" || detailContract.status === "pending" 
-                          ? "Analyse en cours..." 
-                          : "Aucune donnée extraite. Lancez une ré-analyse si le contrat est déjà analysé."}
+                        {detailContract.status === "analyzing" || detailContract.status === "pending"
+                          ? t.detail.analysisInProgress
+                          : t.detail.noExtractedData}
                       </p>
                       {(detailContract.status === "error" || detailContract.status === "done") && (
                         <Button
@@ -1329,7 +1327,7 @@ export default function ContractsPage() {
                             }
                           }}
                         >
-                          Relancer l&apos;analyse
+                          {t.detail.rerunAnalysis}
                         </Button>
                       )}
                     </div>
@@ -1342,10 +1340,10 @@ export default function ContractsPage() {
                     <line x1="12" y1="9" x2="12" y2="13" />
                     <line x1="12" y1="17" x2="12.01" y2="17" />
                   </svg>
-                  <p className="error-title">Impossible de charger le détail</p>
-                  <p className="error-desc">Une erreur s&apos;est produite lors du chargement de l&apos;analyse.</p>
+                  <p className="error-title">{t.detail.cantLoadTitle}</p>
+                  <p className="error-desc">{t.detail.cantLoadDesc}</p>
                   <Button variant="secondary" onClick={() => selectedContractId && openContractDetail(selectedContractId)}>
-                    Réessayer
+                    {t.detail.retry}
                   </Button>
                 </div>
               )}
@@ -1359,7 +1357,7 @@ export default function ContractsPage() {
                     onClick={handleCancelEdit}
                     disabled={saving}
                   >
-                    Annuler
+                    {t.detail.cancel}
                   </Button>
                   <Button
                     variant="primary"
@@ -1367,7 +1365,7 @@ export default function ContractsPage() {
                     onClick={handleSaveEdit}
                     disabled={saving}
                   >
-                    {saving ? "Enregistrement..." : "Enregistrer"}
+                    {saving ? t.detail.saving : t.detail.save}
                   </Button>
                 </div>
               </div>
@@ -1381,10 +1379,10 @@ export default function ContractsPage() {
         isOpen={!!deleteConfirm}
         onConfirm={handleDeleteConfirm}
         onCancel={() => setDeleteConfirm(null)}
-        title="Supprimer ce contrat ?"
-        message={deleteConfirm ? `"${deleteConfirm.filename}" sera définitivement supprimé. Cette action est irréversible.` : ""}
-        confirmLabel="Supprimer"
-        cancelLabel="Annuler"
+        title={t.confirm.title}
+        message={deleteConfirm ? f.deleteConfirmMessage(deleteConfirm.filename) : ""}
+        confirmLabel={t.confirm.confirmLabel}
+        cancelLabel={t.confirm.cancelLabel}
         variant="danger"
         isLoading={!!deletingId}
       />

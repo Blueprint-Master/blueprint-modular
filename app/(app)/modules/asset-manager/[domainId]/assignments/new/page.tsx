@@ -4,11 +4,16 @@ import { useState, useEffect } from "react";
 import Link from "next/link";
 import { useParams, useRouter } from "next/navigation";
 import { Card, Caption, Divider, Button, Spinner, Selectbox } from "@/components/bpm";
+import { useI18n } from "@/lib/i18n/LocaleProvider";
+import { STR } from "../../../strings";
 
 type Asset = { id: string; reference: string; label: string };
 type User = { id: string; name: string | null; email: string | null };
 
 export default function AssetManagerAssignmentNewPage() {
+  const { locale } = useI18n();
+  const t = STR[locale];
+  const ta = t.assignments;
   const params = useParams();
   const router = useRouter();
   const domainId = typeof params?.domainId === "string" ? params.domainId : "";
@@ -76,41 +81,41 @@ export default function AssetManagerAssignmentNewPage() {
     <div className="doc-page">
       <div className="doc-page-header mb-6">
         <nav className="doc-breadcrumb">
-          <Link href="/modules">Modules</Link> → <Link href="/modules/asset-manager">Gestion de parc</Link> →{" "}
-          <Link href={`/modules/asset-manager/${domainId}`}>Tableau de bord</Link> →{" "}
-          <Link href={`/modules/asset-manager/${domainId}/assignments`}>MAD</Link> → Nouvelle
+          <Link href="/modules">{t.common.breadcrumbModules}</Link> → <Link href="/modules/asset-manager">{t.common.moduleTitle}</Link> →{" "}
+          <Link href={`/modules/asset-manager/${domainId}`}>{ta.breadcrumbDashboard}</Link> →{" "}
+          <Link href={`/modules/asset-manager/${domainId}/assignments`}>{ta.breadcrumbShort}</Link> → {ta.breadcrumbNew}
         </nav>
-        <h1 className="text-2xl font-bold" style={{ color: "var(--bpm-text-primary)" }}>Nouvelle mise à disposition</h1>
-        <Caption>Remplissez les informations ci-dessous.</Caption>
+        <h1 className="text-2xl font-bold" style={{ color: "var(--bpm-text-primary)" }}>{ta.newTitle}</h1>
+        <Caption>{ta.newCaption}</Caption>
       </div>
 
       <Card variant="outlined">
         <form onSubmit={handleSubmit} className="space-y-0">
-          <section className="space-y-4" aria-label="Attribution">
+          <section className="space-y-4" aria-label={ta.sectionAssignment}>
             <Selectbox
-              label="Actif *"
+              label={ta.fieldAssetRequired}
               value={assetId}
               onChange={(v) => setAssetId(v)}
-              options={[{ value: "", label: "Sélectionner un actif" }, ...assetOptions]}
+              options={[{ value: "", label: ta.selectAssetPlaceholder }, ...assetOptions]}
               required
             />
             <div>
-              <label className="block text-sm font-medium mb-1" style={{ color: "var(--bpm-text-secondary)" }}>Bénéficiaire</label>
-              <p className="text-sm m-0" style={{ color: "var(--bpm-text-primary)" }}>{currentUser?.name ?? currentUser?.email ?? "Vous (session)"}</p>
+              <label className="block text-sm font-medium mb-1" style={{ color: "var(--bpm-text-secondary)" }}>{ta.fieldAssignee}</label>
+              <p className="text-sm m-0" style={{ color: "var(--bpm-text-primary)" }}>{currentUser?.name ?? currentUser?.email ?? ta.assigneeSelfFallback}</p>
               <input type="hidden" name="assigneeId" value={assigneeId} />
             </div>
             <Selectbox
-              label="Type"
+              label={t.common.type}
               value={assignmentType}
               onChange={(v) => setAssignmentType(v)}
-              options={[{ value: "temporary", label: "Temporaire" }, { value: "permanent", label: "Permanent" }]}
+              options={[{ value: "temporary", label: ta.typeTemporary }, { value: "permanent", label: ta.typePermanent }]}
             />
           </section>
 
-          <Divider thickness={1} color="var(--bpm-border)" className="my-4" label="Période" />
-          <section className="space-y-4" aria-label="Période">
+          <Divider thickness={1} color="var(--bpm-border)" className="my-4" label={ta.sectionPeriod} />
+          <section className="space-y-4" aria-label={ta.sectionPeriod}>
             <div>
-              <label className="block text-sm font-medium mb-1" style={{ color: "var(--bpm-text-secondary)" }}>Date de début *</label>
+              <label className="block text-sm font-medium mb-1" style={{ color: "var(--bpm-text-secondary)" }}>{ta.fieldStartDateRequired}</label>
               <input
                 type="date"
                 value={startDate}
@@ -121,7 +126,7 @@ export default function AssetManagerAssignmentNewPage() {
               />
             </div>
             <div>
-              <label className="block text-sm font-medium mb-1" style={{ color: "var(--bpm-text-secondary)" }}>Date de fin prévue</label>
+              <label className="block text-sm font-medium mb-1" style={{ color: "var(--bpm-text-secondary)" }}>{ta.fieldExpectedEndDate}</label>
               <input
                 type="date"
                 value={expectedEndDate}
@@ -132,10 +137,10 @@ export default function AssetManagerAssignmentNewPage() {
             </div>
           </section>
 
-          <Divider thickness={1} color="var(--bpm-border)" className="my-4" label="Motif" />
-          <section className="space-y-4" aria-label="Motif">
+          <Divider thickness={1} color="var(--bpm-border)" className="my-4" label={ta.sectionReason} />
+          <section className="space-y-4" aria-label={ta.sectionReason}>
             <div>
-              <label className="block text-sm font-medium mb-1" style={{ color: "var(--bpm-text-secondary)" }}>Motif (optionnel)</label>
+              <label className="block text-sm font-medium mb-1" style={{ color: "var(--bpm-text-secondary)" }}>{ta.fieldReasonOptional}</label>
               <textarea
                 value={reason}
                 onChange={(e) => setReason(e.target.value)}
@@ -149,17 +154,17 @@ export default function AssetManagerAssignmentNewPage() {
           <Divider thickness={1} color="var(--bpm-border)" className="my-4" />
           <div className="flex gap-2 mt-6">
             <Button type="submit" size="small" disabled={saving || !assetId || !startDate}>
-              {saving ? "Création…" : "Créer la MAD"}
+              {saving ? ta.creating : ta.createCta}
             </Button>
             <Link href={`/modules/asset-manager/${domainId}/assignments`}>
-              <Button type="button" variant="outline" size="small">Annuler</Button>
+              <Button type="button" variant="outline" size="small">{t.common.cancel}</Button>
             </Link>
           </div>
         </form>
       </Card>
 
       <nav className="doc-pagination mt-8">
-        <Link href={`/modules/asset-manager/${domainId}/assignments`} style={{ color: "var(--bpm-accent-cyan)" }}>← Liste des MAD</Link>
+        <Link href={`/modules/asset-manager/${domainId}/assignments`} style={{ color: "var(--bpm-accent-cyan)" }}>{ta.backToList}</Link>
       </nav>
     </div>
   );

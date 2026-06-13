@@ -4,6 +4,14 @@ import { useState, useEffect } from "react";
 import Link from "next/link";
 import { Table, Message, Spinner } from "@/components/bpm";
 import { DocumentAnalysisImport } from "@/components/DocumentAnalysisImport";
+import { useI18n } from "@/lib/i18n/LocaleProvider";
+import {
+  strings,
+  fmtDate,
+  dueSuffix,
+  alertBanner,
+  uploadError,
+} from "./strings";
 
 interface Document {
   id: string;
@@ -23,6 +31,8 @@ function daysUntil(dateStr: string): number {
 }
 
 export default function DocumentsPage() {
+  const { locale } = useI18n();
+  const t = strings(locale).list;
   const [documents, setDocuments] = useState<Document[]>([]);
   const [loading, setLoading] = useState(true);
   const [uploading, setUploading] = useState(false);
@@ -57,7 +67,7 @@ export default function DocumentsPage() {
   const handleAnalyze = async (files: File[]) => {
     const pdfs = files.filter((f) => f.type === "application/pdf");
     if (pdfs.length === 0) {
-      alert("Seuls les fichiers PDF sont acceptés.");
+      alert(t.onlyPdf);
       return;
     }
     setUploading(true);
@@ -74,8 +84,8 @@ export default function DocumentsPage() {
           const msg = (err && typeof err === "object" && "error" in err && typeof err.error === "string")
             ? err.error
             : res.status === 413
-              ? "Fichier trop volumineux (limite 1 Mo par défaut). Vérifiez la config serveur."
-              : `Erreur upload (${res.status})`;
+              ? t.fileTooLarge
+              : uploadError(res.status, locale);
           alert(msg);
         }
       }
@@ -101,12 +111,12 @@ export default function DocumentsPage() {
   );
 
   const columns = [
-    { key: "filename", label: "Fichier" },
-    { key: "supplier", label: "Fournisseur" },
-    { key: "client", label: "Client" },
-    { key: "contractDate", label: "Date contrat" },
-    { key: "terminationDate", label: "Dénonciation" },
-    { key: "analysisStatus", label: "Statut" },
+    { key: "filename", label: t.columns.filename },
+    { key: "supplier", label: t.columns.supplier },
+    { key: "client", label: t.columns.client },
+    { key: "contractDate", label: t.columns.contractDate },
+    { key: "terminationDate", label: t.columns.terminationDate },
+    { key: "analysisStatus", label: t.columns.analysisStatus },
   ];
 
   const tableData = filtered.map((d) => ({
@@ -114,69 +124,70 @@ export default function DocumentsPage() {
     filename: d.filename,
     supplier: d.supplier ?? "—",
     client: d.client ?? "—",
-    contractDate: d.contractDate
-      ? new Date(d.contractDate).toLocaleDateString("fr-FR")
-      : "—",
+    contractDate: fmtDate(d.contractDate, locale),
     terminationDate: d.terminationDate
-      ? `${new Date(d.terminationDate).toLocaleDateString("fr-FR")} (J-${daysUntil(d.terminationDate)})`
+      ? `${fmtDate(d.terminationDate, locale)} ${dueSuffix(daysUntil(d.terminationDate), locale)}`
       : "—",
     analysisStatus:
       d.analysisStatus === "done"
-        ? "✓"
+        ? t.statusDone
         : d.analysisStatus === "error"
-          ? "✗ Erreur"
+          ? t.statusError
           : d.analysisStatus === "processing"
-            ? "⏳ Analyse..."
-            : "⏳ En attente",
+            ? t.statusProcessing
+            : t.statusPending,
   }));
 
   return (
     <div className="documents-page doc-page">
       <div id="documentation">
       <DocumentAnalysisImport
-        title="Analyse de documents"
-        description="Importez des documents PDF (analyses, études, rapports) pour générer automatiquement une synthèse actionnable grâce à Claude. Les analyses sont stockées en base de données et peuvent être réexploitées dans d'autres onglets."
+        title={t.importTitle}
+        description={t.importDescription}
         accept=".pdf"
         maxFiles={10}
-        dropLabel="Glissez-déposez ou cliquez pour sélectionner des fichiers PDF (jusqu'à 10 fichiers)"
-        buttonLabel="Analyser les documents"
+        dropLabel={t.dropLabel}
+        buttonLabel={t.analyzeButton}
         disabled={uploading}
         onAnalyze={handleAnalyze}
       />
       {uploading && (
         <div className="flex items-center justify-center gap-2 py-4" style={{ color: "var(--bpm-text-secondary)" }}>
-          <Spinner size="small" text="Analyse en cours..." />
+          <Spinner size="small" text={t.analyzing} />
         </div>
       )}
       </div>
 
       <div className="documents-header mt-8">
-        <h2 className="text-lg font-semibold mb-2" style={{ color: "var(--bpm-text-primary)" }}>Documents</h2>
+        <h2 className="text-lg font-semibold mb-2" style={{ color: "var(--bpm-text-primary)" }}>{t.documentsHeading}</h2>
       </div>
 
       {alerts.length > 0 && (
         <Message type="warning">
-          ⚠ {alerts.length} contrat{alerts.length > 1 ? "s" : ""} à dénoncer dans les 30 prochains jours :{" "}
-          {alerts.map((a) => `${a.supplier || a.filename} (J-${daysUntil(a.terminationDate!)})`).join(", ")}
+          ⚠ {alertBanner(
+            alerts.length,
+            alerts.map((a) => `${a.supplier || a.filename} ${dueSuffix(daysUntil(a.terminationDate!), locale)}`).join(", "),
+            locale
+          )}
         </Message>
       )}
 
       <div className="documents-filters">
         <input
           type="search"
-          placeholder="Rechercher..."
+          placeholder={t.searchPlaceholder}
           value={search}
           onChange={(e) => setSearch(e.target.value)}
         />
       </div>
 
       {loading ? (
-        <Spinner text="Chargement des documents..." />
+        <Spinner text={t.loading} />
       ) : documents.length === 0 ? (
         <div className="documents-empty py-6">
-          <p style={{ color: "var(--bpm-text-secondary)" }}>Aucun document analysé pour l&apos;instant.</p>
+          <p style={{ color: "var(--bpm-text-secondary)" }}>{t.emptyText}</p>
           <Link href="/modules/documents#documentation" className="text-sm mt-2 inline-block" style={{ color: "var(--bpm-accent-cyan)" }}>
-            Analyser un document →
+            {t.emptyCta}
           </Link>
         </div>
       ) : (
@@ -196,9 +207,9 @@ export default function DocumentsPage() {
       )}
 
       <nav className="doc-pagination mt-8">
-        <Link href="/modules" style={{ color: "var(--bpm-accent-cyan)" }}>← Retour aux modules</Link>
-        <Link href="/modules/documents#documentation" style={{ color: "var(--bpm-accent-cyan)" }}>Analyser un document</Link>
-        <Link href="/modules/documents/documentation" style={{ color: "var(--bpm-accent-cyan)" }}>Documentation</Link>
+        <Link href="/modules" style={{ color: "var(--bpm-accent-cyan)" }}>{t.backToModules}</Link>
+        <Link href="/modules/documents#documentation" style={{ color: "var(--bpm-accent-cyan)" }}>{t.analyzeNav}</Link>
+        <Link href="/modules/documents/documentation" style={{ color: "var(--bpm-accent-cyan)" }}>{t.documentationNav}</Link>
       </nav>
     </div>
   );

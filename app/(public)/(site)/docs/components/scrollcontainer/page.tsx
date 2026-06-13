@@ -4,10 +4,51 @@ import { useState } from "react";
 import Link from "next/link";
 import { ScrollContainer, CodeBlock, Text } from "@/components/bpm";
 import { getPrevNext } from "@/lib/docPages";
+import { useI18n } from "@/lib/i18n/LocaleProvider";
 
 type DirectionOption = "vertical" | "horizontal" | "both";
 
 export default function DocScrollContainerPage() {
+  const { locale } = useI18n();
+  const fr = {
+    breadcrumb: "Composants",
+    description: "Conteneur avec défilement interne (hauteur max, scrollbar optionnelle).",
+    category: "Mise en page",
+    copy: "Copier",
+    head: { prop: "Prop", type: "Type", def: "Défaut", req: "Requis", desc: "Description" },
+    yes: "Oui",
+    no: "Non",
+    rows: {
+      children: "Contenu scrollable.",
+      height: "Hauteur du conteneur.",
+      maxHeight: "Hauteur max pour activer le scroll.",
+      direction: "Direction du défilement.",
+      hideScrollbar: "Masquer la scrollbar visuelle.",
+    },
+    examples: "Exemples",
+    line: "Ligne de contenu",
+  };
+  const en: typeof fr = {
+    breadcrumb: "Components",
+    description: "Container with internal scrolling (max height, optional scrollbar).",
+    category: "Layout",
+    copy: "Copy",
+    head: { prop: "Prop", type: "Type", def: "Default", req: "Required", desc: "Description" },
+    yes: "Yes",
+    no: "No",
+    rows: {
+      children: "Scrollable content.",
+      height: "Container height.",
+      maxHeight: "Max height to enable scrolling.",
+      direction: "Scroll direction.",
+      hideScrollbar: "Hide the visual scrollbar.",
+    },
+    examples: "Examples",
+    line: "Content line",
+  };
+  const L = { fr, en } as const;
+  const t = L[locale];
+
   const [maxHeight, setMaxHeight] = useState(180);
   const [direction, setDirection] = useState<DirectionOption>("vertical");
   const [hideScrollbar, setHideScrollbar] = useState(false);
@@ -22,7 +63,7 @@ export default function DocScrollContainerPage() {
     <div style={{ padding: 8 }}>
       {[1, 2, 3, 4, 5, 6, 7, 8].map((i) => (
         <div key={i} style={{ padding: "8px 0", borderBottom: "1px solid var(--bpm-border)" }}>
-          <Text>Ligne de contenu {i}</Text>
+          <Text>{t.line} {i}</Text>
         </div>
       ))}
     </div>
@@ -31,12 +72,12 @@ export default function DocScrollContainerPage() {
   return (
     <div className="doc-page">
       <div className="doc-page-header">
-        <div className="doc-breadcrumb"><Link href="/docs/components">Composants</Link> → bpm.scrollContainer</div>
+        <div className="doc-breadcrumb"><Link href="/docs/components">{t.breadcrumb}</Link> → bpm.scrollContainer</div>
         <h1>bpm.scrollContainer</h1>
-        <p className="doc-description">Conteneur avec défilement interne (hauteur max, scrollbar optionnelle).</p>
+        <p className="doc-description">{t.description}</p>
         <div className="doc-meta">
           <span className="doc-badge doc-badge-stable">Stable</span>
-          <span className="doc-badge doc-badge-category">Mise en page</span>
+          <span className="doc-badge doc-badge-category">{t.category}</span>
           <span className="doc-reading-time">⏱ 2 min</span>
         </div>
       </div>
@@ -71,7 +112,7 @@ export default function DocScrollContainerPage() {
         <div className="sandbox-code">
           <div className="sandbox-code-header">
             <span>Python</span>
-            <button type="button" onClick={() => navigator.clipboard.writeText(pythonCode)}>Copier</button>
+            <button type="button" onClick={() => navigator.clipboard.writeText(pythonCode)}>{t.copy}</button>
           </div>
           <pre><code>{pythonCode}</code></pre>
         </div>
@@ -79,18 +120,18 @@ export default function DocScrollContainerPage() {
 
       <table className="props-table">
         <thead>
-          <tr><th>Prop</th><th>Type</th><th>Défaut</th><th>Requis</th><th>Description</th></tr>
+          <tr><th>{t.head.prop}</th><th>{t.head.type}</th><th>{t.head.def}</th><th>{t.head.req}</th><th>{t.head.desc}</th></tr>
         </thead>
         <tbody>
-          <tr><td><code>children</code></td><td><code>ReactNode</code></td><td>—</td><td>Oui</td><td>Contenu scrollable.</td></tr>
-          <tr><td><code>height</code></td><td><code>string | number</code></td><td>100%</td><td>Non</td><td>Hauteur du conteneur.</td></tr>
-          <tr><td><code>maxHeight</code></td><td><code>string | number</code></td><td>—</td><td>Non</td><td>Hauteur max pour activer le scroll.</td></tr>
-          <tr><td><code>direction</code></td><td><code>vertical | horizontal | both</code></td><td>vertical</td><td>Non</td><td>Direction du défilement.</td></tr>
-          <tr><td><code>hideScrollbar</code></td><td><code>boolean</code></td><td>false</td><td>Non</td><td>Masquer la scrollbar visuelle.</td></tr>
+          <tr><td><code>children</code></td><td><code>ReactNode</code></td><td>—</td><td>{t.yes}</td><td>{t.rows.children}</td></tr>
+          <tr><td><code>height</code></td><td><code>string | number</code></td><td>100%</td><td>{t.no}</td><td>{t.rows.height}</td></tr>
+          <tr><td><code>maxHeight</code></td><td><code>string | number</code></td><td>—</td><td>{t.no}</td><td>{t.rows.maxHeight}</td></tr>
+          <tr><td><code>direction</code></td><td><code>vertical | horizontal | both</code></td><td>vertical</td><td>{t.no}</td><td>{t.rows.direction}</td></tr>
+          <tr><td><code>hideScrollbar</code></td><td><code>boolean</code></td><td>false</td><td>{t.no}</td><td>{t.rows.hideScrollbar}</td></tr>
         </tbody>
       </table>
 
-      <h2 className="text-lg font-semibold mt-8 mb-2">Exemples</h2>
+      <h2 className="text-lg font-semibold mt-8 mb-2">{t.examples}</h2>
       <CodeBlock code={"bpm.scrollContainer(max_height=200)  # contenu avec scroll vertical"} language="python" />
       <CodeBlock code={'bpm.scrollContainer(max_height=150, hide_scrollbar=True)'} language="python" />
 

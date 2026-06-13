@@ -5,6 +5,8 @@ import Link from "next/link";
 import { useParams } from "next/navigation";
 import { Panel, Button, Spinner, Selectbox, Badge, Card, Divider, Progress } from "@/components/bpm";
 import { FicheHeader, FicheSectionCard, FicheFieldGrid, FicheNav, FicheSkeleton } from "@/components/fiche";
+import { useI18n } from "@/lib/i18n/LocaleProvider";
+import { STR, dateLocale } from "../../../strings";
 
 type Ticket = {
   id: string;
@@ -30,13 +32,7 @@ type DomainConfig = {
   ticket_categories: { id: string; label: string; subcategories: string[] }[];
 };
 
-const STATUS_OPTIONS = [
-  { value: "new", label: "Nouveau" },
-  { value: "in_progress", label: "En cours" },
-  { value: "on_hold", label: "En attente" },
-  { value: "resolved", label: "Résolu" },
-  { value: "closed", label: "Clos" },
-];
+const STATUS_VALUES = ["new", "in_progress", "on_hold", "resolved", "closed"];
 
 function statusBadgeVariant(s: string): "primary" | "success" | "warning" | "error" | "default" {
   if (s === "resolved" || s === "closed") return "success";
@@ -47,6 +43,10 @@ function statusBadgeVariant(s: string): "primary" | "success" | "warning" | "err
 
 export default function AssetManagerTicketDetailPage() {
   const params = useParams();
+  const { locale } = useI18n();
+  const t = STR[locale];
+  const tt = t.tickets;
+  const STATUS_OPTIONS = STATUS_VALUES.map((value) => ({ value, label: tt.statusLabels[value] ?? value }));
   const domainId = typeof params?.domainId === "string" ? params.domainId : "";
   const id = typeof params?.id === "string" ? params.id : "";
   const [config, setConfig] = useState<DomainConfig | null>(null);
@@ -62,12 +62,12 @@ export default function AssetManagerTicketDetailPage() {
       fetch(`/api/asset-manager/config/${domainId}`, { credentials: "include" }).then((r) => (r.ok ? r.json() : null)),
       fetch(`/api/asset-manager/tickets/${id}`, { credentials: "include" }).then((r) => (r.ok ? r.json() : null)),
     ])
-      .then(([cfg, t]) => {
+      .then(([cfg, tk]) => {
         setConfig(cfg);
-        setTicket(t);
-        if (t) {
-          setEditStatus(t.status);
-          setEditSolution(t.solution ?? "");
+        setTicket(tk);
+        if (tk) {
+          setEditStatus(tk.status);
+          setEditSolution(tk.solution ?? "");
         }
       })
       .finally(() => setLoading(false));
@@ -98,8 +98,8 @@ export default function AssetManagerTicketDetailPage() {
   if (!ticket) {
     return (
       <div className="doc-page">
-        <Panel variant="warning" title="Ticket introuvable">Ce ticket n&apos;existe pas ou vous n&apos;y avez pas accès.</Panel>
-        <FicheNav backLink={`/modules/asset-manager/${domainId}/tickets`} backLabel="← Liste des tickets" />
+        <Panel variant="warning" title={tt.notFoundTitle}>{tt.notFoundDescription}</Panel>
+        <FicheNav backLink={`/modules/asset-manager/${domainId}/tickets`} backLabel={tt.backToList} />
       </div>
     );
   }
@@ -121,16 +121,16 @@ export default function AssetManagerTicketDetailPage() {
       <FicheHeader
         breadcrumb={
           <>
-            <Link href="/modules" style={{ color: "var(--bpm-accent-cyan)" }}>Modules</Link> → <Link href="/modules/asset-manager" style={{ color: "var(--bpm-accent-cyan)" }}>Gestion de parc</Link> →{" "}
-            <Link href={`/modules/asset-manager/${domainId}`} style={{ color: "var(--bpm-accent-cyan)" }}>Tableau de bord</Link> →{" "}
-            <Link href={`/modules/asset-manager/${domainId}/tickets`} style={{ color: "var(--bpm-accent-cyan)" }}>Tickets</Link> → {ticket.reference}
+            <Link href="/modules" style={{ color: "var(--bpm-accent-cyan)" }}>{t.common.breadcrumbModules}</Link> → <Link href="/modules/asset-manager" style={{ color: "var(--bpm-accent-cyan)" }}>{t.common.moduleTitle}</Link> →{" "}
+            <Link href={`/modules/asset-manager/${domainId}`} style={{ color: "var(--bpm-accent-cyan)" }}>{tt.breadcrumbDashboard}</Link> →{" "}
+            <Link href={`/modules/asset-manager/${domainId}/tickets`} style={{ color: "var(--bpm-accent-cyan)" }}>{tt.breadcrumbTickets}</Link> → {ticket.reference}
           </>
         }
         title={ticket.title}
         subtitle={
           <>
             <Badge variant="default">{ticket.reference}</Badge>
-            <span className="text-sm" style={{ color: "var(--bpm-text-secondary)" }}>Ouvert le {new Date(ticket.openedAt).toLocaleDateString("fr-FR")}</span>
+            <span className="text-sm" style={{ color: "var(--bpm-text-secondary)" }}>{tt.openedOn(new Date(ticket.openedAt).toLocaleDateString(dateLocale(locale)))}</span>
             <Badge variant="default">{getPriorityLabel(ticket.priorityId)}</Badge>
             <Badge variant="default">{getCategoryLabel(ticket.categoryId)}</Badge>
             <Badge variant={statusBadgeVariant(ticket.status)}>{statusLabel}</Badge>
@@ -140,18 +140,18 @@ export default function AssetManagerTicketDetailPage() {
 
       {isOpen && (
         <>
-          <FicheSectionCard title="SLA" className="mt-4">
+          <FicheSectionCard title={tt.slaTitle} className="mt-4">
             <Progress
               value={Math.min(100, slaPercent)}
               max={100}
-              label={`Temps consommé (objectif : ${slaHours} h)`}
+              label={tt.slaConsumed(slaHours)}
               showValue
             />
             <div className="mt-2">
               {slaExceeded ? (
-                <Badge variant="error">SLA dépassé</Badge>
+                <Badge variant="error">{tt.slaExceeded}</Badge>
               ) : (
-                <Badge variant="success">SLA OK</Badge>
+                <Badge variant="success">{tt.slaOk}</Badge>
               )}
             </div>
           </FicheSectionCard>
@@ -159,17 +159,17 @@ export default function AssetManagerTicketDetailPage() {
         </>
       )}
 
-      <FicheSectionCard title="Informations" className="mt-4">
+      <FicheSectionCard title={tt.sectionInformation} className="mt-4">
         <FicheFieldGrid
           withDividers
           items={[
-            { label: "Demandeur", value: ticket.requester?.name ?? ticket.requester?.email ?? "" },
-            { label: "Assigné à", value: ticket.assignee?.name ?? "" },
-            { label: "Actif lié", value: ticket.asset ? `${ticket.asset.reference} — ${ticket.asset.label}` : "" },
+            { label: tt.fieldRequester, value: ticket.requester?.name ?? ticket.requester?.email ?? "" },
+            { label: tt.fieldAssignee, value: ticket.assignee?.name ?? "" },
+            { label: tt.fieldLinkedAsset, value: ticket.asset ? `${ticket.asset.reference} — ${ticket.asset.label}` : "" },
           ]}
         />
         <div className="mt-4">
-          <p className="text-xs font-semibold uppercase mb-1" style={{ color: "var(--bpm-text-secondary)" }}>Description</p>
+          <p className="text-xs font-semibold uppercase mb-1" style={{ color: "var(--bpm-text-secondary)" }}>{t.common.description}</p>
           <div className="whitespace-pre-wrap rounded-lg p-3 text-sm" style={{ background: "var(--bpm-bg-secondary)", color: "var(--bpm-text-primary)" }}>
             {ticket.description}
           </div>
@@ -178,12 +178,12 @@ export default function AssetManagerTicketDetailPage() {
 
       <Divider thickness={1} color="var(--bpm-border)" className="my-4" />
       {(ticket.status === "resolved" || ticket.status === "closed") && (
-        <FicheSectionCard title="Connaissances" className="mt-4">
+        <FicheSectionCard title={tt.sectionKnowledge} className="mt-4">
           <p className="text-sm mb-3" style={{ color: "var(--bpm-text-secondary)" }}>
-            Créez un article à partir de ce ticket pour enrichir les connaissances.
+            {tt.knowledgeHint}
           </p>
           <Link href={`/modules/asset-manager/${domainId}/knowledge/new?fromTicket=${ticket.id}`}>
-            <Button variant="outline" size="small">Publier en connaissances</Button>
+            <Button variant="outline" size="small">{tt.publishKnowledge}</Button>
           </Link>
         </FicheSectionCard>
       )}
@@ -191,35 +191,35 @@ export default function AssetManagerTicketDetailPage() {
       <Divider thickness={1} color="var(--bpm-border)" className="my-4" />
       <Card variant="outlined" className="mt-4">
         <div className="bpm-card-body p-4">
-          <h3 className="text-base font-semibold mb-3" style={{ color: "var(--bpm-text-primary)" }}>Modifier le ticket</h3>
+          <h3 className="text-base font-semibold mb-3" style={{ color: "var(--bpm-text-primary)" }}>{tt.editTicket}</h3>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <Selectbox
-              label="Statut"
+              label={t.common.status}
               value={editStatus}
               onChange={(v) => setEditStatus(String(v))}
               options={STATUS_OPTIONS}
             />
             <div>
-              <label className="block text-sm font-medium mb-1" style={{ color: "var(--bpm-text-secondary)" }}>Solution (si résolu)</label>
+              <label className="block text-sm font-medium mb-1" style={{ color: "var(--bpm-text-secondary)" }}>{tt.fieldSolution}</label>
               <textarea
                 value={editSolution}
                 onChange={(e) => setEditSolution(e.target.value)}
                 rows={4}
                 className="bpm-textarea w-full rounded-lg border px-3 py-2 text-sm resize-y"
                 style={{ borderColor: "var(--bpm-border)", background: "var(--bpm-surface)", color: "var(--bpm-text-primary)" }}
-                placeholder="Décrire la solution..."
+                placeholder={tt.placeholderSolution}
               />
             </div>
           </div>
           <div className="mt-6">
             <Button variant="primary" size="medium" onClick={handleSave} disabled={saving}>
-              {saving ? "Enregistrement…" : "Enregistrer"}
+              {saving ? t.common.saving : t.common.save}
             </Button>
           </div>
         </div>
       </Card>
 
-      <FicheNav backLink={`/modules/asset-manager/${domainId}/tickets`} backLabel="← Liste des tickets" />
+      <FicheNav backLink={`/modules/asset-manager/${domainId}/tickets`} backLabel={tt.backToList} />
     </div>
   );
 }

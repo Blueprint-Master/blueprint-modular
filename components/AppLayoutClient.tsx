@@ -11,6 +11,39 @@ import { AssistantProvider } from "@/lib/ai/assistant-context";
 import { APP_VERSION } from "@/lib/version";
 import { AIHeaderProvider, useAIHeader } from "@/contexts/AIHeaderContext";
 import { SidebarProvider, useSidebar } from "@/contexts/SidebarContext";
+import { useI18n } from "@/lib/i18n/LocaleProvider";
+import type { Locale } from "@/lib/i18n";
+
+/** Bascule FR/EN du shell applicatif (même cookie bpm-locale que la vitrine). */
+function AppLocaleSwitch() {
+  const { locale, setLocale } = useI18n();
+  const locales: Locale[] = ["fr", "en"];
+  return (
+    <div
+      className="flex items-center rounded-md border overflow-hidden mr-1"
+      style={{ borderColor: "var(--bpm-border)" }}
+      role="group"
+      aria-label={locale === "fr" ? "Choix de la langue" : "Language selection"}
+    >
+      {locales.map((l) => (
+        <button
+          key={l}
+          type="button"
+          onClick={() => setLocale(l)}
+          aria-pressed={locale === l}
+          className="px-2 py-1 text-xs font-semibold uppercase transition"
+          style={
+            locale === l
+              ? { background: "var(--bpm-accent-cyan)", color: "#04303a" }
+              : { background: "transparent", color: "var(--bpm-text-secondary)" }
+          }
+        >
+          {l}
+        </button>
+      ))}
+    </div>
+  );
+}
 import { AssetManagerSidebar } from "@/app/(app)/modules/asset-manager/[domainId]/AssetManagerSidebar";
 
 const ASSISTANT_NAME = "Assistant";
@@ -135,6 +168,7 @@ function AppLayoutInner({ children }: { children: React.ReactNode }) {
               </span>
             </Link>
             <div className="flex items-center gap-1 flex-shrink-0" style={{ color: "var(--bpm-text-primary)" }}>
+              <AppLocaleSwitch />
               <AIHeaderIconButtons />
               <NotificationBell />
             </div>

@@ -1,41 +1,112 @@
 "use client";
 
 import Link from "next/link";
-import { Tabs, CodeBlock, Panel, Table, Button, Badge } from "@/components/bpm";
+import { CodeBlock, Tabs } from "@/components/bpm";
+import { useI18n } from "@/lib/i18n/LocaleProvider";
+import DevisFacturationSimulateur from "./simulateur-content";
+import { STR, type Rich } from "./strings";
 
-const lignes = [{ designation: "Prestation A", qté: "1", pu: "1000", total: "1000" }];
+// Snippet python : identique dans les deux langues (non traduit).
+const PYTHON_SNIPPET = `import bpm
 
-const docContent = (
-  <>
-    <h2 className="text-lg font-semibold mt-0 mb-2" style={{ color: "var(--bpm-text-primary)" }}>À propos</h2>
-    <p className="mb-6" style={{ color: "var(--bpm-text-secondary)", maxWidth: "60ch" }}>
-      Lignes, totaux, PDF, statuts (brouillon, envoyé, payé).
-    </p>
-    <CodeBlock code={'bpm.title("Devis / Facturation")'} language="python" />
-  </>
-);
+bpm.metricRow([
+    bpm.metric("Devis en cours", 2),
+    bpm.metric("Montant TTC en attente", "5 944,80 €"),
+    bpm.metric("Encaissé", "5 520,00 €"),
+])
 
-function SimuContent() {
+bpm.table(
+    columns=[("numero", "Numéro"), ("client", "Client"), ("ttc", "Total TTC"), ("statut", "Statut")],
+    data=devis,
+    on_row_click=ouvrir_editeur,
+)
+
+bpm.button("Envoyer au client", on_click=envoyer)   # brouillon -> envoyé
+bpm.button("Marquer payé", on_click=encaisser)      # envoyé -> payé (lecture seule)`;
+
+/** Rend un paragraphe riche (texte / code inline / gras / lien interne). */
+function RichText({ segs, linkHref }: { segs: Rich; linkHref?: string }) {
   return (
-    <Panel variant="info" title="Devis #2025-001 (démo)">
-      <div className="flex gap-2 mb-4"><Badge variant="warning">Brouillon</Badge><Button size="small">Envoyer</Button><Button size="small" variant="outline">PDF</Button></div>
-      <Table columns={[{ key: "designation", label: "Désignation" }, { key: "qté", label: "Qté" }, { key: "pu", label: "P.U." }, { key: "total", label: "Total" }]} data={lignes} striped hover />
-      <p className="text-sm mt-4" style={{ color: "var(--bpm-text-primary)" }}>Total TTC : 1000</p>
-    </Panel>
+    <>
+      {segs.map((seg, i) =>
+        "c" in seg ? (
+          <code key={i}>{seg.c}</code>
+        ) : "b" in seg ? (
+          <strong key={i}>{seg.b}</strong>
+        ) : "l" in seg ? (
+          <Link key={i} href={linkHref ?? "#"} style={{ color: "var(--bpm-accent-cyan)" }}>
+            {seg.l}
+          </Link>
+        ) : (
+          <span key={i}>{seg.t}</span>
+        )
+      )}
+    </>
   );
 }
 
 export default function DevisFacturationModulePage() {
+  const { locale } = useI18n();
+  const M = STR[locale].module;
+
+  const docContent = (
+    <div className="prose-sm">
+      <h2 className="text-lg font-semibold mt-0 mb-2" style={{ color: "var(--bpm-text-primary)" }}>
+        {M.aboutTitle}
+      </h2>
+      <p className="mb-4" style={{ color: "var(--bpm-text-secondary)", maxWidth: "62ch" }}>
+        {M.aboutBody}
+      </p>
+      <h3 className="text-base font-semibold mt-6 mb-2" style={{ color: "var(--bpm-text-primary)" }}>
+        {M.componentsTitle}
+      </h3>
+      <p className="mb-4" style={{ color: "var(--bpm-text-secondary)" }}>
+        <RichText segs={M.componentsBody} />
+      </p>
+      <CodeBlock code={PYTHON_SNIPPET} language="python" />
+      <h3 className="text-base font-semibold mt-6 mb-2" style={{ color: "var(--bpm-text-primary)" }}>
+        {M.calcTitle}
+      </h3>
+      <p className="mb-4 text-sm" style={{ color: "var(--bpm-text-secondary)", maxWidth: "62ch" }}>
+        <RichText segs={M.calcBody} />
+      </p>
+      <h3 className="text-base font-semibold mt-6 mb-2" style={{ color: "var(--bpm-text-primary)" }}>
+        {M.setupTitle}
+      </h3>
+      <p className="mb-2 text-sm" style={{ color: "var(--bpm-text-secondary)" }}>
+        <RichText segs={M.setupBody} linkHref="/modules/devis-facturation/documentation" />
+      </p>
+    </div>
+  );
+
   return (
     <div className="doc-page">
       <div className="doc-page-header">
-        <div className="doc-breadcrumb"><Link href="/modules">Modules</Link> → Devis / Facturation</div>
-        <h1>Devis / Facturation</h1>
-        <p className="doc-description">Lignes, totaux, PDF, statuts. Testez dans le Simulateur.</p>
-        <div className="doc-meta"><span className="doc-badge doc-badge-category">Métier</span></div>
-        <p className="mt-3 text-sm" style={{ color: "var(--bpm-text-secondary)" }}><Link href="/modules/devis-facturation/simulateur" className="font-medium underline" style={{ color: "var(--bpm-accent-cyan)" }}>Ouvrir le simulateur</Link></p>
+        <div className="doc-breadcrumb">
+          <Link href="/modules">Modules</Link> → {M.title}
+        </div>
+        <h1>{M.title}</h1>
+        <p className="doc-description">{M.description}</p>
+        <div className="doc-meta">
+          <span className="doc-badge doc-badge-category">{M.badgeCategory}</span>
+        </div>
+        <p className="mt-3 text-sm" style={{ color: "var(--bpm-text-secondary)" }}>
+          <Link
+            href="/modules/devis-facturation/simulateur"
+            className="font-medium underline"
+            style={{ color: "var(--bpm-accent-cyan)" }}
+          >
+            {M.openSimulator}
+          </Link>
+        </p>
       </div>
-      <Tabs tabs={[{ label: "Documentation", content: docContent }, { label: "Simulateur", content: <SimuContent /> }]} defaultTab={0} />
+      <Tabs
+        tabs={[
+          { label: M.tabDocumentation, content: docContent },
+          { label: M.tabSimulator, content: <DevisFacturationSimulateur /> },
+        ]}
+        defaultTab={0}
+      />
     </div>
   );
 }

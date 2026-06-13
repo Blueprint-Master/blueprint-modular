@@ -3,16 +3,33 @@
 import Link from "next/link";
 import { AltairChart } from "@/components/bpm";
 import { getPrevNext } from "@/lib/docPages";
+import { useI18n } from "@/lib/i18n/LocaleProvider";
+
+const fr = {
+  components: "Composants",
+  category: "Graphiques",
+  description: "Graphique Altair / Vega-Lite (spec ou iframe).",
+};
+
+const en: typeof fr = {
+  components: "Components",
+  category: "Charts",
+  description: "Altair / Vega-Lite chart (spec or iframe).",
+};
+
+const L = { fr, en } as const;
 
 export default function DocAltairPage() {
+  const { locale } = useI18n();
+  const t = L[locale];
   const { prev, next } = getPrevNext("altair");
   return (
     <div className="doc-page">
       <div className="doc-page-header">
-        <div className="doc-breadcrumb"><Link href="/docs/components">Composants</Link> → bpm.altair</div>
+        <div className="doc-breadcrumb"><Link href="/docs/components">{t.components}</Link> → bpm.altair</div>
         <h1>bpm.altair</h1>
-        <p className="doc-description">Graphique Altair / Vega-Lite (spec ou iframe).</p>
-        <div className="doc-meta"><span className="doc-badge doc-badge-category">Graphiques</span></div>
+        <p className="doc-description">{t.description}</p>
+        <div className="doc-meta"><span className="doc-badge doc-badge-category">{t.category}</span></div>
       </div>
       <div className="sandbox-container">
         <div className="sandbox-preview">

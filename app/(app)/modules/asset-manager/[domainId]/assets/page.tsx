@@ -5,6 +5,8 @@ import Link from "next/link";
 import { useParams, useRouter, useSearchParams } from "next/navigation";
 import { Download, Package, ChevronRight, ChevronDown, ChevronUp } from "lucide-react";
 import { Table, Spinner, Panel, Button, Chip, EmptyState } from "@/components/bpm";
+import { useI18n } from "@/lib/i18n/LocaleProvider";
+import { STR } from "../../strings";
 
 interface Asset {
   id: string;
@@ -28,6 +30,9 @@ export default function AssetManagerAssetsPage() {
   const params = useParams();
   const router = useRouter();
   const searchParams = useSearchParams();
+  const { locale } = useI18n();
+  const t = STR[locale];
+  const ta = t.assets;
   const domainId = typeof params?.domainId === "string" ? params.domainId : "";
   const [config, setConfig] = useState<DomainConfig | null>(null);
   const [assets, setAssets] = useState<Asset[]>([]);
@@ -100,16 +105,16 @@ export default function AssetManagerAssetsPage() {
     id ? (config?.lifecycle_stages?.find((s) => s.id === id)?.label ?? id) : "—";
 
   const columns = [
-    { key: "reference", label: "Référence" },
-    { key: "label", label: "Libellé" },
+    { key: "reference", label: ta.colReference },
+    { key: "label", label: ta.colLabel },
     {
       key: "assetTypeId",
-      label: "Type",
+      label: ta.colType,
       render: (val: unknown) => getTypeLabel(String(val)),
     },
     {
       key: "statusId",
-      label: "Statut",
+      label: ta.colStatus,
       render: (val: unknown) => {
         const id = String(val);
         const bg = getStatusColor(id);
@@ -128,7 +133,7 @@ export default function AssetManagerAssetsPage() {
     },
     {
       key: "lifecycleStage",
-      label: "Cycle de vie",
+      label: ta.colLifecycle,
       render: (val: unknown) => (
         <span className="text-sm" style={{ color: "var(--bpm-text-secondary)" }}>
           {getLifecycleLabel(val as string | null)}
@@ -145,15 +150,15 @@ export default function AssetManagerAssetsPage() {
   ];
 
   const typeOptions = [
-    { value: "", label: "Tous les types" },
-    ...(config?.asset_types.map((t) => ({ value: t.id, label: t.label })) ?? []),
+    { value: "", label: ta.allTypes },
+    ...(config?.asset_types.map((at) => ({ value: at.id, label: at.label })) ?? []),
   ];
   const statusOptions = [
-    { value: "", label: "Tous les statuts" },
+    { value: "", label: ta.allStatuses },
     ...(config?.statuses.map((s) => ({ value: s.id, label: s.label })) ?? []),
   ];
   const lifecycleOptions = [
-    { value: "", label: "Toutes les étapes" },
+    { value: "", label: ta.allStages },
     ...(config?.lifecycle_stages?.map((s) => ({ value: s.id, label: s.label })) ?? []),
   ];
 
@@ -162,20 +167,20 @@ export default function AssetManagerAssetsPage() {
       <div className="doc-page">
         <div className="doc-page-header mb-6">
           <nav className="doc-breadcrumb">
-            <Link href="/modules">Modules</Link> → Gestion de parc
+            <Link href="/modules">{t.common.breadcrumbModules}</Link> → {t.common.moduleTitle}
           </nav>
-          <h1 className="text-2xl font-bold" style={{ color: "var(--bpm-text-primary)" }}>Gestion de parc</h1>
+          <h1 className="text-2xl font-bold" style={{ color: "var(--bpm-text-primary)" }}>{t.common.moduleTitle}</h1>
         </div>
-        <Panel variant="warning" title="Configuration introuvable" />
+        <Panel variant="warning" title={t.hub.configNotFoundTitle} />
         <nav className="doc-pagination mt-6">
-          <Link href="/modules" style={{ color: "var(--bpm-accent-cyan)" }}>← Retour aux modules</Link>
+          <Link href="/modules" style={{ color: "var(--bpm-accent-cyan)" }}>{t.common.backToModules}</Link>
         </nav>
       </div>
     );
   }
 
   const exportCsv = () => {
-    const headers = ["Référence", "Libellé", "Type", "Statut", "Cycle de vie"];
+    const headers = [ta.colReference, ta.colLabel, ta.colType, ta.colStatus, ta.colLifecycle];
     const rows = assets.map((a) => [
       a.reference,
       a.label,
@@ -188,7 +193,7 @@ export default function AssetManagerAssetsPage() {
     const url = URL.createObjectURL(blob);
     const a = document.createElement("a");
     a.href = url;
-    a.download = `actifs-${domainId}-${new Date().toISOString().slice(0, 10)}.csv`;
+    a.download = `${ta.csvFilePrefix}-${domainId}-${new Date().toISOString().slice(0, 10)}.csv`;
     a.click();
     URL.revokeObjectURL(url);
   };
@@ -199,14 +204,14 @@ export default function AssetManagerAssetsPage() {
         <div className="flex flex-wrap items-center justify-between gap-3">
           <div>
             <h1 className="doc-page-title text-2xl font-semibold" style={{ color: "var(--bpm-text-primary)" }}>
-              {config?.asset_label_plural ?? "Équipements"}
+              {config?.asset_label_plural ?? ta.defaultTitle}
             </h1>
             <p className="doc-description mt-0.5" style={{ color: "var(--bpm-text-secondary)" }}>
-              Liste des actifs avec filtres par type et statut.
+              {ta.listSubtitle}
             </p>
           </div>
           <Link href={`/modules/asset-manager/${domainId}/assets/nouveau`} className="asset-manager-cta-button">
-            <Button variant="primary" size="small">+ Nouvel actif</Button>
+            <Button variant="primary" size="small">{ta.newAsset}</Button>
           </Link>
         </div>
       </div>
@@ -220,12 +225,12 @@ export default function AssetManagerAssetsPage() {
           aria-controls="asset-manager-filters-content"
           id="asset-manager-filters-toggle"
         >
-          <span className="asset-manager-equipment-filters__label">Filtres</span>
+          <span className="asset-manager-equipment-filters__label">{ta.filters}</span>
           {filtersOpen ? <ChevronUp size={18} aria-hidden /> : <ChevronDown size={18} aria-hidden />}
         </button>
         <div id="asset-manager-filters-content" role="region" aria-labelledby="asset-manager-filters-toggle" hidden={!filtersOpen}>
           <div className="asset-manager-equipment-filters__row">
-            <span className="asset-manager-equipment-filters__label">Type</span>
+            <span className="asset-manager-equipment-filters__label">{ta.filterType}</span>
             <div className="asset-manager-equipment-filters__chips">
               {typeOptions.map((opt) => {
                 const isActive = filterType === opt.value;
@@ -243,7 +248,7 @@ export default function AssetManagerAssetsPage() {
             </div>
           </div>
           <div className="asset-manager-equipment-filters__row">
-            <span className="asset-manager-equipment-filters__label">Statut</span>
+            <span className="asset-manager-equipment-filters__label">{ta.filterStatus}</span>
             <div className="asset-manager-equipment-filters__chips">
               {statusOptions.map((opt) => {
                 const isActive = filterStatus === opt.value;
@@ -261,7 +266,7 @@ export default function AssetManagerAssetsPage() {
             </div>
           </div>
           <div className="asset-manager-equipment-filters__row">
-            <span className="asset-manager-equipment-filters__label">Cycle de vie</span>
+            <span className="asset-manager-equipment-filters__label">{ta.filterLifecycle}</span>
             <div className="asset-manager-equipment-filters__chips">
               {lifecycleOptions.map((opt) => {
                 const isActive = filterLifecycle === opt.value;
@@ -288,12 +293,12 @@ export default function AssetManagerAssetsPage() {
       ) : assets.length === 0 ? (
         <div className="rounded-xl border bg-[var(--bpm-surface)] p-4" style={{ border: "1px solid #E5E7EB", borderRadius: 12 }}>
           <EmptyState
-            title="Aucun équipement enregistré"
-            description="Créez un premier actif pour commencer à gérer votre parc."
+            title={ta.emptyTitle}
+            description={ta.emptyDescription}
             icon={<Package size={64} style={{ color: "var(--bpm-text-secondary)", opacity: 0.6 }} />}
             action={
               <Link href={`/modules/asset-manager/${domainId}/assets/nouveau`}>
-                <Button variant="primary" size="small">+ Nouvel actif</Button>
+                <Button variant="primary" size="small">{ta.newAsset}</Button>
               </Link>
             }
           />
@@ -306,7 +311,7 @@ export default function AssetManagerAssetsPage() {
             disabled={assets.length === 0}
             className="asset-manager-export-btn asset-manager-export-btn-float flex items-center justify-center w-8 h-8 rounded-lg border"
             style={{ borderColor: "var(--bpm-border)", background: "var(--bpm-surface)", color: "var(--bpm-text-secondary)" }}
-            title="Exporter CSV"
+            title={ta.exportCsv}
           >
             <Download size={18} />
           </button>

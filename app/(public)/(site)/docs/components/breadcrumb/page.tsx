@@ -4,9 +4,52 @@ import { useState } from "react";
 import Link from "next/link";
 import { Breadcrumb, CodeBlock } from "@/components/bpm";
 import { getPrevNext } from "@/lib/docPages";
+import { useI18n } from "@/lib/i18n/LocaleProvider";
+
+const fr = {
+  components: "Composants",
+  description: "Fil d’Ariane : liste d’étapes avec liens (sauf la dernière).",
+  category: "Navigation",
+  demoItems: "Accueil, Produits, Détail produit",
+  fallbackHome: "Accueil",
+  fallbackCurrent: "Page actuelle",
+  itemsLabel: "items (labels séparés par des virgules)",
+  itemsPlaceholder: "Accueil, Section, Page actuelle",
+  copy: "Copier",
+  default: "Défaut",
+  required: "Requis",
+  descriptionCol: "Description",
+  no: "Non",
+  examples: "Exemples",
+  descItems: "Éléments du fil (dernier = page courante, sans",
+  descSeparator: "Caractère entre les éléments.",
+  descClassName: "Classes CSS additionnelles.",
+};
+const en: typeof fr = {
+  components: "Components",
+  description: "Breadcrumb: a list of steps with links (except the last one).",
+  category: "Navigation",
+  demoItems: "Home, Products, Product detail",
+  fallbackHome: "Home",
+  fallbackCurrent: "Current page",
+  itemsLabel: "items (labels separated by commas)",
+  itemsPlaceholder: "Home, Section, Current page",
+  copy: "Copy",
+  default: "Default",
+  required: "Required",
+  descriptionCol: "Description",
+  no: "No",
+  examples: "Examples",
+  descItems: "Trail items (last = current page, without",
+  descSeparator: "Character between items.",
+  descClassName: "Additional CSS classes.",
+};
+const L = { fr, en } as const;
 
 export default function DocBreadcrumbPage() {
-  const [itemsStr, setItemsStr] = useState("Accueil, Produits, Détail produit");
+  const { locale } = useI18n();
+  const t = L[locale];
+  const [itemsStr, setItemsStr] = useState(t.demoItems);
   const [separator, setSeparator] = useState("›");
 
   const labels = itemsStr.split(",").map((s) => s.trim()).filter(Boolean);
@@ -33,15 +76,15 @@ export default function DocBreadcrumbPage() {
     <div className="doc-page">
       <div className="doc-page-header">
         <div className="doc-breadcrumb">
-          <Link href="/docs/components">Composants</Link> → bpm.breadcrumb
+          <Link href="/docs/components">{t.components}</Link> → bpm.breadcrumb
         </div>
         <h1>bpm.breadcrumb</h1>
         <p className="doc-description">
-          Fil d&apos;Ariane : liste d&apos;étapes avec liens (sauf la dernière).
+          {t.description}
         </p>
         <div className="doc-meta">
           <span className="doc-badge doc-badge-stable">Stable</span>
-          <span className="doc-badge doc-badge-category">Navigation</span>
+          <span className="doc-badge doc-badge-category">{t.category}</span>
           <span className="doc-reading-time">⏱ 2 min</span>
         </div>
       </div>
@@ -50,19 +93,19 @@ export default function DocBreadcrumbPage() {
         <div className="sandbox-preview">
           <div className="w-full">
             <Breadcrumb
-              items={items.length ? items : [{ label: "Accueil", href: "#" }, { label: "Page actuelle" }]}
+              items={items.length ? items : [{ label: t.fallbackHome, href: "#" }, { label: t.fallbackCurrent }]}
               separator={separator}
             />
           </div>
         </div>
         <div className="sandbox-controls">
           <div className="sandbox-control-group">
-            <label>items (labels séparés par des virgules)</label>
+            <label>{t.itemsLabel}</label>
             <input
               type="text"
               value={itemsStr}
               onChange={(e) => setItemsStr(e.target.value)}
-              placeholder="Accueil, Section, Page actuelle"
+              placeholder={t.itemsPlaceholder}
             />
           </div>
           <div className="sandbox-control-group">
@@ -78,7 +121,7 @@ export default function DocBreadcrumbPage() {
         <div className="sandbox-code">
           <div className="sandbox-code-header">
             <span>Python</span>
-            <button type="button" onClick={() => navigator.clipboard.writeText(pythonCode)}>Copier</button>
+            <button type="button" onClick={() => navigator.clipboard.writeText(pythonCode)}>{t.copy}</button>
           </div>
           <pre><code>{pythonCode}</code></pre>
         </div>
@@ -86,16 +129,16 @@ export default function DocBreadcrumbPage() {
 
       <table className="props-table">
         <thead>
-          <tr><th>Prop</th><th>Type</th><th>Défaut</th><th>Requis</th><th>Description</th></tr>
+          <tr><th>Prop</th><th>Type</th><th>{t.default}</th><th>{t.required}</th><th>{t.descriptionCol}</th></tr>
         </thead>
         <tbody>
-          <tr><td><code>items</code></td><td><code>&#123; label: string, href?: string &#125;[]</code></td><td>[]</td><td>Non</td><td>Éléments du fil (dernier = page courante, sans <code>href</code>).</td></tr>
-          <tr><td><code>separator</code></td><td><code>string</code></td><td>›</td><td>Non</td><td>Caractère entre les éléments.</td></tr>
-          <tr><td><code>className</code></td><td><code>string</code></td><td>—</td><td>Non</td><td>Classes CSS additionnelles.</td></tr>
+          <tr><td><code>items</code></td><td><code>&#123; label: string, href?: string &#125;[]</code></td><td>[]</td><td>{t.no}</td><td>{t.descItems} <code>href</code>).</td></tr>
+          <tr><td><code>separator</code></td><td><code>string</code></td><td>›</td><td>{t.no}</td><td>{t.descSeparator}</td></tr>
+          <tr><td><code>className</code></td><td><code>string</code></td><td>—</td><td>{t.no}</td><td>{t.descClassName}</td></tr>
         </tbody>
       </table>
 
-      <h2 className="text-lg font-semibold mt-8 mb-2">Exemples</h2>
+      <h2 className="text-lg font-semibold mt-8 mb-2">{t.examples}</h2>
       <CodeBlock code={'bpm.breadcrumb(items=[{"label": "Accueil", "href": "/"}, {"label": "Docs"}])'} language="python" />
       <CodeBlock code={'bpm.breadcrumb(items=[{"label": "A"}, {"label": "B", "href": "#b"}, {"label": "C"}], separator="/")'} language="python" />
 

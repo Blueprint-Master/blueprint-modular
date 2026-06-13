@@ -2,79 +2,115 @@
 
 import Link from "next/link";
 import { CodeBlock } from "@/components/bpm";
+import { useI18n } from "@/lib/i18n/LocaleProvider";
+import { STR } from "../strings";
 
 export default function VeilleDocumentationPage() {
+  const { locale } = useI18n();
+  const s = STR[locale];
   return (
     <div className="doc-page">
       <div className="doc-page-header">
         <nav className="doc-breadcrumb">
-          <Link href="/modules">Modules</Link> → <Link href="/modules/veille">Veille</Link> → Documentation
+          <Link href="/modules">{s.breadcrumbModules}</Link> →{" "}
+          <Link href="/modules/veille">{s.moduleName}</Link> → {s.docBreadcrumb}
         </nav>
-        <h1>Documentation — Veille</h1>
-        <p className="doc-description">
-          Monitoring et veille : suivi des sources, alertes et flux d&apos;information.
-        </p>
+        <h1>{s.docTitle}</h1>
+        <p className="doc-description">{s.docDescription}</p>
       </div>
 
       <p className="mb-6" style={{ color: "var(--bpm-text-secondary)" }}>
-        Les modules Blueprint Modular font partie de l&apos;<strong>application Next.js</strong>. Il n&apos;y a pas de package séparé par module (pas de <code>pip install blueprint-modular-veille</code> ni <code>npm install blueprint-modular-veille</code>) : on installe l&apos;application une fois. Cette documentation décrit <strong>comment installer</strong> l&apos;app pour accéder au module Veille, <strong>comment il fonctionne</strong> (état actuel et évolutions prévues), <strong>comment le paramétrer</strong> (aucune variable spécifique pour l&apos;instant) et comment l&apos;utiliser (page <code>/modules/veille</code>).
+        {s.intro1}
+        <strong>{s.introStrongApp}</strong>
+        {s.intro2}
+        <code>pip install blueprint-modular-veille</code>
+        {s.introNor}
+        <code>npm install blueprint-modular-veille</code>
+        {s.intro3}
+        <strong>{s.introStrongInstall}</strong>
+        {s.intro4}
+        <strong>{s.introStrongWorks}</strong>
+        {s.intro5}
+        <strong>{s.introStrongConfigure}</strong>
+        {s.intro6}
+        <code>/modules/veille</code>
+        {s.intro7}
       </p>
 
       <h2 className="text-lg font-semibold mt-8 mb-2" style={{ color: "var(--bpm-text-primary)" }}>
-        Comment fonctionne le module Veille
+        {s.howHeading}
       </h2>
       <p className="mb-4" style={{ color: "var(--bpm-text-secondary)" }}>
-        Le module Veille centralise la veille stratégique et opérationnelle : agrégation de flux (RSS, API, pages web, alertes métier), suivi de la collecte et remontée des écarts. La page <code>/modules/veille</code> propose un onglet Documentation et un onglet Simulateur : ce dernier est un assemblage réel de composants <code>bpm.*</code> — <code>bpm.metricRow</code> (sources suivies, alertes, articles), <code>bpm.table</code> avec statut rendu par <code>bpm.badge</code>, <code>bpm.anomalyAlert</code> (pic détecté), <code>bpm.activityFeed</code> (collectes récentes) et un formulaire <code>bpm.input</code> + <code>bpm.selectbox</code> + <code>bpm.button</code> pour ajouter une source. Les données du simulateur sont câblées côté client (état React) afin de démontrer l&apos;interaction sans dépendance externe.
+        {s.how1}
+        <code>/modules/veille</code>
+        {s.how2}
+        <code>bpm.*</code>
+        {s.how3}
+        <code>bpm.metricRow</code>
+        {s.how4}
+        <code>bpm.table</code>
+        {s.how5}
+        <code>bpm.badge</code>
+        {s.how6}
+        <code>bpm.anomalyAlert</code>
+        {s.how7}
+        <code>bpm.activityFeed</code>
+        {s.how8}
+        <code>bpm.input</code> + <code>bpm.selectbox</code> + <code>bpm.button</code>
+        {s.how9}
       </p>
 
       <h2 className="text-lg font-semibold mt-8 mb-2" style={{ color: "var(--bpm-text-primary)" }}>
-        Installation et dépendances
+        {s.installHeading}
       </h2>
       <p className="mb-4" style={{ color: "var(--bpm-text-secondary)" }}>
-        Le module Veille fait partie de l&apos;application Next.js. Installer l&apos;application suffit pour accéder à la page du module. Aucune dépendance externe spécifique (API, base dédiée) n&apos;est requise pour l&apos;instant.
+        {s.installBody}
       </p>
       <h3 className="text-base font-semibold mt-6 mb-2" style={{ color: "var(--bpm-text-primary)" }}>
-        Résumé des commandes (installer l&apos;app et accéder au module Veille)
+        {s.commandsHeading}
       </h3>
-      <CodeBlock
-        code={`# Depuis la racine du projet (application Next.js)
-npm install
-npx prisma generate --schema=prisma/schema.prisma
-npx prisma migrate deploy
-npm run dev
-
-# Ouvrir le module Veille
-# http://localhost:3000/modules/veille`}
-        language="bash"
-      />
+      <CodeBlock code={s.bashSnippet} language="bash" />
       <p className="mt-2 mb-4 text-sm" style={{ color: "var(--bpm-text-secondary)" }}>
-        Définir <code>DATABASE_URL</code> dans <code>.env</code> (comme pour le reste de l&apos;app). Aucune variable d&apos;environnement spécifique au module Veille n&apos;est requise pour l&apos;instant.
+        {s.envNote1}
+        <code>DATABASE_URL</code>
+        {s.envNoteIn}
+        <code>.env</code>
+        {s.envNote2}
       </p>
 
       <h2 className="text-lg font-semibold mt-8 mb-2" style={{ color: "var(--bpm-text-primary)" }}>
-        Comment charger et utiliser le module
+        {s.loadHeading}
       </h2>
       <p className="mb-4 text-sm" style={{ color: "var(--bpm-text-secondary)" }}>
-        <strong>Charger</strong> : le module est intégré à l&apos;app ; après <code>npm install</code> et <code>prisma migrate deploy</code>, il est disponible. <strong>Utiliser</strong> : ouvrez la page <code>/modules/veille</code> pour accéder à la description du module et aux évolutions prévues (sources RSS, alertes, filtres). Aucune API dédiée ni paramètre spécifique pour l&apos;instant.
+        <strong>{s.loadStrongLoad}</strong>
+        {s.load1}
+        <code>npm install</code>
+        {s.loadAnd}
+        <code>prisma migrate deploy</code>
+        {s.load2}
+        <strong>{s.loadStrongUse}</strong>
+        {s.load3}
+        <code>/modules/veille</code>
+        {s.load4}
       </p>
 
       <h2 className="text-lg font-semibold mt-8 mb-2" style={{ color: "var(--bpm-text-primary)" }}>
-        Variables d&apos;environnement et paramétrage
+        {s.envHeading}
       </h2>
       <p className="mb-4 text-sm" style={{ color: "var(--bpm-text-secondary)" }}>
-        Aucune variable d&apos;environnement spécifique au module Veille. Les évolutions à venir (sources, seuils d&apos;alertes, filtres) pourront introduire des paramètres ou variables ; la documentation sera mise à jour en conséquence.
+        {s.envBody}
       </p>
 
       <h2 className="text-lg font-semibold mt-8 mb-2" style={{ color: "var(--bpm-text-primary)" }}>
-        Paramétrage et évolution
+        {s.evolHeading}
       </h2>
       <p className="mb-4" style={{ color: "var(--bpm-text-secondary)" }}>
-        Les fonctionnalités à venir peuvent inclure : configuration des sources (URLs RSS, APIs), seuils d&apos;alertes, filtres par thème ou workspace, et intégration avec le module Notification pour les alertes. Lorsque ces fonctionnalités seront implémentées, la documentation sera mise à jour avec les paramètres, API et lignes de commande associés.
+        {s.evolBody}
       </p>
 
       <nav className="doc-pagination mt-10">
         <Link href="/modules/veille" className="text-sm font-medium" style={{ color: "var(--bpm-accent-cyan)" }}>
-          ← Retour au module Veille
+          {s.backToModule}
         </Link>
       </nav>
     </div>
