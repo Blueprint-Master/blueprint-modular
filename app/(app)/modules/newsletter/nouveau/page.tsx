@@ -4,9 +4,13 @@ import { useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { Button, Panel, Input, Textarea } from "@/components/bpm";
+import { useI18n } from "@/lib/i18n/LocaleProvider";
+import { STR } from "../strings";
 
 export default function NewsletterNouveauPage() {
   const router = useRouter();
+  const { locale } = useI18n();
+  const str = STR[locale];
   const [title, setTitle] = useState("");
   const [content, setContent] = useState("");
   const [excerpt, setExcerpt] = useState("");
@@ -19,7 +23,7 @@ export default function NewsletterNouveauPage() {
     setError(null);
     const t = title.trim();
     if (!t) {
-      setError("Le titre est requis.");
+      setError(str.titleRequired);
       return;
     }
     setSaving(true);
@@ -37,13 +41,13 @@ export default function NewsletterNouveauPage() {
       });
       if (!res.ok) {
         const data = await res.json().catch(() => ({}));
-        setError((data && typeof data.error === "string") ? data.error : "Erreur lors de la création.");
+        setError((data && typeof data.error === "string") ? data.error : str.createError);
         return;
       }
       const article = await res.json();
       router.push(`/modules/newsletter/${article.id}`);
     } catch {
-      setError("Erreur réseau.");
+      setError(str.networkError);
     } finally {
       setSaving(false);
     }
@@ -53,57 +57,57 @@ export default function NewsletterNouveauPage() {
     <div className="doc-page">
       <div className="doc-page-header mb-6">
         <div className="doc-breadcrumb">
-          <Link href="/modules">Modules</Link> → <Link href="/modules/newsletter">Newsletter</Link> → Nouvel article
+          <Link href="/modules">Modules</Link> → <Link href="/modules/newsletter">{str.moduleName}</Link> → {str.newBreadcrumb}
         </div>
         <h1 className="text-2xl font-bold" style={{ color: "var(--bpm-text-primary)" }}>
-          Nouvel article
+          {str.newTitle}
         </h1>
         <p className="doc-description mt-1" style={{ color: "var(--bpm-text-secondary)" }}>
-          Remplissez le titre et le contenu. L&apos;extrait et la date de publication sont optionnels.
+          {str.newDescription}
         </p>
       </div>
 
-      <Panel variant="info" title="Créer un article">
+      <Panel variant="info" title={str.newPanelTitle}>
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
             <label className="block text-sm font-medium mb-1" style={{ color: "var(--bpm-text-primary)" }}>
-              Titre *
+              {str.titleLabel}
             </label>
             <Input
               value={title}
               onChange={setTitle}
-              placeholder="Titre de l'article"
-              aria-label="Titre"
+              placeholder={str.titlePlaceholder}
+              aria-label={str.titleAria}
               required
             />
           </div>
           <div>
             <label className="block text-sm font-medium mb-1" style={{ color: "var(--bpm-text-primary)" }}>
-              Contenu
+              {str.contentLabel}
             </label>
             <Textarea
               value={content}
               onChange={setContent}
-              placeholder="Contenu de l'article…"
-              aria-label="Contenu"
+              placeholder={str.newContentPlaceholder}
+              aria-label={str.contentAria}
               rows={10}
             />
           </div>
           <div>
             <label className="block text-sm font-medium mb-1" style={{ color: "var(--bpm-text-primary)" }}>
-              Extrait (optionnel)
+              {str.excerptLabel}
             </label>
             <Textarea
               value={excerpt}
               onChange={setExcerpt}
-              placeholder="Court résumé pour les listes"
-              aria-label="Extrait"
+              placeholder={str.newExcerptPlaceholder}
+              aria-label={str.excerptAria}
               rows={2}
             />
           </div>
           <div>
             <label className="block text-sm font-medium mb-1" style={{ color: "var(--bpm-text-primary)" }}>
-              Date de publication (optionnel)
+              {str.publishedAtLabel}
             </label>
             <input
               type="datetime-local"
@@ -115,7 +119,7 @@ export default function NewsletterNouveauPage() {
                 background: "var(--bpm-bg-primary)",
                 color: "var(--bpm-text-primary)",
               }}
-              aria-label="Date de publication"
+              aria-label={str.publishedAtAria}
             />
           </div>
           {error && (
@@ -125,11 +129,11 @@ export default function NewsletterNouveauPage() {
           )}
           <div className="flex items-center gap-2">
             <Button type="submit" variant="primary" disabled={saving}>
-              {saving ? "Création…" : "Créer l'article"}
+              {saving ? str.creating : str.createSubmit}
             </Button>
             <Link href="/modules/newsletter">
               <Button type="button" variant="secondary">
-                Annuler
+                {str.cancel}
               </Button>
             </Link>
           </div>
@@ -138,7 +142,7 @@ export default function NewsletterNouveauPage() {
 
       <nav className="doc-pagination mt-8">
         <Link href="/modules/newsletter" style={{ color: "var(--bpm-accent-cyan)" }}>
-          ← Retour à la Newsletter
+          {str.backToModule}
         </Link>
       </nav>
     </div>

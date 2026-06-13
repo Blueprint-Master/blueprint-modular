@@ -4,6 +4,8 @@ import { useState, useEffect, useCallback } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { Table, Spinner, Panel, Button, Selectbox } from "@/components/bpm";
+import { useI18n } from "@/lib/i18n/LocaleProvider";
+import { STR } from "./strings";
 
 interface NewsletterArticle {
   id: string;
@@ -17,14 +19,10 @@ interface NewsletterArticle {
   author?: { name: string | null; email: string | null };
 }
 
-const FILTER_OPTIONS = [
-  { value: "false", label: "Actifs (non archivés)" },
-  { value: "true", label: "Archivés" },
-  { value: "", label: "Tous" },
-];
-
 export default function NewsletterPage() {
   const router = useRouter();
+  const { locale } = useI18n();
+  const str = STR[locale];
   const [articles, setArticles] = useState<NewsletterArticle[]>([]);
   const [loading, setLoading] = useState(true);
   const [archivedFilter, setArchivedFilter] = useState("");
@@ -69,7 +67,7 @@ export default function NewsletterPage() {
 
   const handleDelete = async (id: string, title: string) => {
     if (deletingId) return;
-    if (!confirm(`Supprimer l'article « ${title} » ? Cette action est irréversible.`)) return;
+    if (!confirm(str.deleteConfirm(title))) return;
     setDeletingId(id);
     try {
       const res = await fetch(`/api/newsletter/articles/${id}`, { method: "DELETE", credentials: "include" });
@@ -80,15 +78,15 @@ export default function NewsletterPage() {
   };
 
   const columns = [
-    { key: "title", label: "Titre" },
+    { key: "title", label: str.colTitle },
     {
       key: "publishedAt",
-      label: "Date de publication",
+      label: str.colPublishedAt,
       render: (val: unknown, row: Record<string, unknown>) => {
         const d = row.publishedAt ?? row.createdAt;
         if (!d) return "—";
         try {
-          return new Date(String(d)).toLocaleDateString("fr-FR", { dateStyle: "short" });
+          return new Date(String(d)).toLocaleDateString(str.dateLocale, { dateStyle: "short" });
         } catch {
           return String(d);
         }
@@ -96,7 +94,7 @@ export default function NewsletterPage() {
     },
     {
       key: "archived",
-      label: "Statut",
+      label: str.colStatus,
       render: (val: unknown) => {
         const archived = val === true;
         return (
@@ -107,14 +105,14 @@ export default function NewsletterPage() {
               color: "var(--bpm-bg)",
             }}
           >
-            {archived ? "Archivé" : "Actif"}
+            {archived ? str.statusArchived : str.statusActive}
           </span>
         );
       },
     },
     {
       key: "actions",
-      label: "Actions",
+      label: str.colActions,
       render: (_: unknown, row: Record<string, unknown>) => {
         const id = row.id as string;
         const title = row.title as string;
@@ -124,10 +122,10 @@ export default function NewsletterPage() {
         return (
           <span className="flex items-center gap-2 flex-wrap" onClick={(e) => e.stopPropagation()}>
             <Button size="small" variant="secondary" onClick={() => router.push(`/modules/newsletter/${id}`)}>
-              Voir
+              {str.actionView}
             </Button>
             <Button size="small" variant="secondary" onClick={() => router.push(`/modules/newsletter/${id}/edit`)}>
-              Modifier
+              {str.actionEdit}
             </Button>
             <Button
               size="small"
@@ -135,7 +133,7 @@ export default function NewsletterPage() {
               disabled={!!archivingId}
               onClick={() => handleArchive(id, archived)}
             >
-              {isArchiving ? "…" : archived ? "Désarchiver" : "Archiver"}
+              {isArchiving ? str.ellipsis : archived ? str.actionUnarchive : str.actionArchive}
             </Button>
             <Button
               size="small"
@@ -143,7 +141,7 @@ export default function NewsletterPage() {
               disabled={!!deletingId}
               onClick={() => handleDelete(id, title)}
             >
-              {isDeleting ? "…" : "Supprimer"}
+              {isDeleting ? str.ellipsis : str.actionDelete}
             </Button>
           </span>
         );
@@ -163,28 +161,28 @@ export default function NewsletterPage() {
     <div className="doc-page newsletter-page">
       <div className="doc-page-header mb-6">
         <div className="doc-breadcrumb">
-          <Link href="/modules">Modules</Link> → Newsletter
+          <Link href="/modules">Modules</Link> → {str.moduleName}
         </div>
         <h1 className="text-2xl font-bold" style={{ color: "var(--bpm-text-primary)" }}>
-          Newsletter
+          {str.moduleName}
         </h1>
         <p className="doc-description mt-1" style={{ color: "var(--bpm-text-secondary)" }}>
-          Gérez la photo de header, créez des articles et archivez les numéros. Consultez la liste et cliquez sur une ligne pour ouvrir l&apos;article.
+          {str.listDescription}
         </p>
       </div>
 
       <div className="flex flex-wrap items-center gap-4 mb-6">
         <Link href="/modules/newsletter/parametres">
-          <Button variant="secondary">Photo de header</Button>
+          <Button variant="secondary">{str.headerPhotoButton}</Button>
         </Link>
         <Link href="/modules/newsletter/nouveau">
-          <Button variant="primary">Nouvel article</Button>
+          <Button variant="primary">{str.newArticleButton}</Button>
         </Link>
         <Selectbox
-          options={FILTER_OPTIONS}
+          options={str.filterOptions}
           value={archivedFilter}
           onChange={(v) => setArchivedFilter(v ?? "")}
-          placeholder="Filtrer par statut"
+          placeholder={str.filterPlaceholder}
         />
       </div>
 
@@ -193,8 +191,8 @@ export default function NewsletterPage() {
           <Spinner size="medium" />
         </div>
       ) : articles.length === 0 ? (
-        <Panel variant="info" title="Aucun article">
-          Créez un article avec le bouton <strong>Nouvel article</strong> ou configurez la photo de header dans <strong>Photo de header</strong>.
+        <Panel variant="info" title={str.emptyTitle}>
+          {str.emptyBefore}<strong>{str.emptyStrongNew}</strong>{str.emptyMiddle}<strong>{str.emptyStrongHeader}</strong>{str.emptyAfter}
         </Panel>
       ) : (
         <div className="rounded-lg border overflow-hidden" style={{ borderColor: "var(--bpm-border)" }}>
@@ -211,10 +209,10 @@ export default function NewsletterPage() {
 
       <nav className="doc-pagination mt-8 flex flex-wrap gap-4">
         <Link href="/modules" style={{ color: "var(--bpm-accent-cyan)" }}>
-          ← Retour aux modules
+          {str.backToModules}
         </Link>
         <Link href="/modules/newsletter/documentation" style={{ color: "var(--bpm-accent-cyan)" }}>
-          Documentation
+          {str.documentationLink}
         </Link>
       </nav>
     </div>
