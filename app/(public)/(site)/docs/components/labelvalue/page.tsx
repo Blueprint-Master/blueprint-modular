@@ -4,12 +4,53 @@ import { useState } from "react";
 import Link from "next/link";
 import { LabelValue, CodeBlock } from "@/components/bpm";
 import { getPrevNext } from "@/lib/docPages";
+import { useI18n } from "@/lib/i18n/LocaleProvider";
 
 type OrientationOption = "horizontal" | "vertical";
 type SizeOption = "sm" | "md" | "lg";
 type ValueStyleOption = "default" | "bold" | "accent" | "muted";
 
+const fr = {
+  components: "Composants",
+  description: "Paire label / valeur pour vues détail (orientation, taille, copyable).",
+  category: "Affichage de données",
+  copy: "Copier",
+  thDefault: "Défaut",
+  thRequired: "Requis",
+  yes: "Oui",
+  no: "Non",
+  examples: "Exemples",
+  d_label: "Libellé.",
+  d_value: "Valeur affichée.",
+  d_orientation: "Disposition.",
+  d_size: "Taille du texte.",
+  d_valueStyle: "Style de la valeur.",
+  d_copyable: "Bouton copier la valeur.",
+};
+
+const en: typeof fr = {
+  components: "Components",
+  description: "Label / value pair for detail views (orientation, size, copyable).",
+  category: "Data display",
+  copy: "Copy",
+  thDefault: "Default",
+  thRequired: "Required",
+  yes: "Yes",
+  no: "No",
+  examples: "Examples",
+  d_label: "Label.",
+  d_value: "Displayed value.",
+  d_orientation: "Layout.",
+  d_size: "Text size.",
+  d_valueStyle: "Value style.",
+  d_copyable: "Copy-value button.",
+};
+
+const L = { fr, en } as const;
+
 export default function DocLabelValuePage() {
+  const { locale } = useI18n();
+  const t = L[locale];
   const [label, setLabel] = useState("Email");
   const [value, setValue] = useState("contact@example.com");
   const [orientation, setOrientation] = useState<OrientationOption>("horizontal");
@@ -29,12 +70,12 @@ export default function DocLabelValuePage() {
   return (
     <div className="doc-page">
       <div className="doc-page-header">
-        <div className="doc-breadcrumb"><Link href="/docs/components">Composants</Link> → bpm.labelValue</div>
+        <div className="doc-breadcrumb"><Link href="/docs/components">{t.components}</Link> → bpm.labelValue</div>
         <h1>bpm.labelValue</h1>
-        <p className="doc-description">Paire label / valeur pour vues détail (orientation, taille, copyable).</p>
+        <p className="doc-description">{t.description}</p>
         <div className="doc-meta">
           <span className="doc-badge doc-badge-stable">Stable</span>
-          <span className="doc-badge doc-badge-category">Affichage de données</span>
+          <span className="doc-badge doc-badge-category">{t.category}</span>
           <span className="doc-reading-time">⏱ 2 min</span>
         </div>
       </div>
@@ -94,7 +135,7 @@ export default function DocLabelValuePage() {
         <div className="sandbox-code">
           <div className="sandbox-code-header">
             <span>Python</span>
-            <button type="button" onClick={() => navigator.clipboard.writeText(pythonCode)}>Copier</button>
+            <button type="button" onClick={() => navigator.clipboard.writeText(pythonCode)}>{t.copy}</button>
           </div>
           <pre><code>{pythonCode}</code></pre>
         </div>
@@ -102,19 +143,19 @@ export default function DocLabelValuePage() {
 
       <table className="props-table">
         <thead>
-          <tr><th>Prop</th><th>Type</th><th>Défaut</th><th>Requis</th><th>Description</th></tr>
+          <tr><th>Prop</th><th>Type</th><th>{t.thDefault}</th><th>{t.thRequired}</th><th>Description</th></tr>
         </thead>
         <tbody>
-          <tr><td><code>label</code></td><td><code>string</code></td><td>—</td><td>Oui</td><td>Libellé.</td></tr>
-          <tr><td><code>value</code></td><td><code>string | number | ReactNode</code></td><td>—</td><td>Oui</td><td>Valeur affichée.</td></tr>
-          <tr><td><code>orientation</code></td><td><code>horizontal | vertical</code></td><td>horizontal</td><td>Non</td><td>Disposition.</td></tr>
-          <tr><td><code>size</code></td><td><code>sm | md | lg</code></td><td>md</td><td>Non</td><td>Taille du texte.</td></tr>
-          <tr><td><code>valueStyle</code></td><td><code>default | bold | accent | muted</code></td><td>default</td><td>Non</td><td>Style de la valeur.</td></tr>
-          <tr><td><code>copyable</code></td><td><code>boolean</code></td><td>false</td><td>Non</td><td>Bouton copier la valeur.</td></tr>
+          <tr><td><code>label</code></td><td><code>string</code></td><td>—</td><td>{t.yes}</td><td>{t.d_label}</td></tr>
+          <tr><td><code>value</code></td><td><code>string | number | ReactNode</code></td><td>—</td><td>{t.yes}</td><td>{t.d_value}</td></tr>
+          <tr><td><code>orientation</code></td><td><code>horizontal | vertical</code></td><td>horizontal</td><td>{t.no}</td><td>{t.d_orientation}</td></tr>
+          <tr><td><code>size</code></td><td><code>sm | md | lg</code></td><td>md</td><td>{t.no}</td><td>{t.d_size}</td></tr>
+          <tr><td><code>valueStyle</code></td><td><code>default | bold | accent | muted</code></td><td>default</td><td>{t.no}</td><td>{t.d_valueStyle}</td></tr>
+          <tr><td><code>copyable</code></td><td><code>boolean</code></td><td>false</td><td>{t.no}</td><td>{t.d_copyable}</td></tr>
         </tbody>
       </table>
 
-      <h2 className="text-lg font-semibold mt-8 mb-2">Exemples</h2>
+      <h2 className="text-lg font-semibold mt-8 mb-2">{t.examples}</h2>
       <CodeBlock code={'bpm.labelValue(label="Email", value="user@example.com", copyable=True)'} language="python" />
       <CodeBlock code={'bpm.labelValue(label="Statut", value="Actif", value_style="accent")'} language="python" />
 

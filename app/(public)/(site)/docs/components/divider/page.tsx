@@ -4,8 +4,51 @@ import { useState } from "react";
 import Link from "next/link";
 import { Divider, CodeBlock } from "@/components/bpm";
 import { getPrevNext } from "@/lib/docPages";
+import { useI18n } from "@/lib/i18n/LocaleProvider";
+
+const fr = {
+  components: "Composants",
+  description: "Séparateur horizontal ou vertical, optionnellement avec un libellé au centre.",
+  category: "Mise en page",
+  above: "Au-dessus",
+  below: "En dessous",
+  labelPlaceholder: "ex. ou",
+  copy: "Copier",
+  thDefault: "Défaut",
+  thRequired: "Requis",
+  no: "Non",
+  examples: "Exemples",
+  d_label: "Texte affiché au centre du séparateur (horizontal uniquement).",
+  d_orientation: "Orientation de la ligne.",
+  d_thickness: "Épaisseur de la ligne en pixels.",
+  d_color: "Couleur de la ligne (CSS : variable, hex, rgb, etc.).",
+  d_className: "Classes CSS additionnelles.",
+};
+
+const en: typeof fr = {
+  components: "Components",
+  description: "Horizontal or vertical separator, optionally with a label in the center.",
+  category: "Layout",
+  above: "Above",
+  below: "Below",
+  labelPlaceholder: "e.g. or",
+  copy: "Copy",
+  thDefault: "Default",
+  thRequired: "Required",
+  no: "No",
+  examples: "Examples",
+  d_label: "Text displayed in the center of the separator (horizontal only).",
+  d_orientation: "Orientation of the line.",
+  d_thickness: "Line thickness in pixels.",
+  d_color: "Line color (CSS: variable, hex, rgb, etc.).",
+  d_className: "Additional CSS classes.",
+};
+
+const L = { fr, en } as const;
 
 export default function DocDividerPage() {
+  const { locale } = useI18n();
+  const t = L[locale];
   const [label, setLabel] = useState("");
   const [orientation, setOrientation] = useState<"horizontal" | "vertical">("horizontal");
   const [thickness, setThickness] = useState(1);
@@ -23,15 +66,15 @@ export default function DocDividerPage() {
     <div className="doc-page">
       <div className="doc-page-header">
         <div className="doc-breadcrumb">
-          <Link href="/docs/components">Composants</Link> → bpm.divider
+          <Link href="/docs/components">{t.components}</Link> → bpm.divider
         </div>
         <h1>bpm.divider</h1>
         <p className="doc-description">
-          Séparateur horizontal ou vertical, optionnellement avec un libellé au centre.
+          {t.description}
         </p>
         <div className="doc-meta">
           <span className="doc-badge doc-badge-stable">Stable</span>
-          <span className="doc-badge doc-badge-category">Mise en page</span>
+          <span className="doc-badge doc-badge-category">{t.category}</span>
           <span className="doc-reading-time">⏱ 2 min</span>
         </div>
       </div>
@@ -39,9 +82,9 @@ export default function DocDividerPage() {
       <div className="sandbox-container">
         <div className="sandbox-preview">
           <div className="w-full" style={orientation === "vertical" ? { display: "flex", gap: "1rem", alignItems: "stretch", minHeight: 80 } : undefined}>
-            <span className="text-sm" style={{ color: "var(--bpm-text-secondary)" }}>Au-dessus</span>
+            <span className="text-sm" style={{ color: "var(--bpm-text-secondary)" }}>{t.above}</span>
             <Divider label={label.trim() || undefined} orientation={orientation} thickness={thickness} color={color} />
-            <span className="text-sm" style={{ color: "var(--bpm-text-secondary)" }}>En dessous</span>
+            <span className="text-sm" style={{ color: "var(--bpm-text-secondary)" }}>{t.below}</span>
           </div>
         </div>
         <div className="sandbox-controls">
@@ -61,7 +104,7 @@ export default function DocDividerPage() {
               type="text"
               value={label}
               onChange={(e) => setLabel(e.target.value)}
-              placeholder="ex. ou"
+              placeholder={t.labelPlaceholder}
             />
           </div>
           <div className="sandbox-control-group">
@@ -88,7 +131,7 @@ export default function DocDividerPage() {
           <div className="sandbox-code-header">
             <span>Python</span>
             <button type="button" onClick={() => navigator.clipboard.writeText(pythonCode)}>
-              Copier
+              {t.copy}
             </button>
           </div>
           <pre><code>{pythonCode}</code></pre>
@@ -100,8 +143,8 @@ export default function DocDividerPage() {
           <tr>
             <th>Prop</th>
             <th>Type</th>
-            <th>Défaut</th>
-            <th>Requis</th>
+            <th>{t.thDefault}</th>
+            <th>{t.thRequired}</th>
             <th>Description</th>
           </tr>
         </thead>
@@ -110,41 +153,41 @@ export default function DocDividerPage() {
             <td><code>label</code></td>
             <td><code>string</code></td>
             <td>—</td>
-            <td>Non</td>
-            <td>Texte affiché au centre du séparateur (horizontal uniquement).</td>
+            <td>{t.no}</td>
+            <td>{t.d_label}</td>
           </tr>
           <tr>
             <td><code>orientation</code></td>
             <td><code>&quot;horizontal&quot; | &quot;vertical&quot;</code></td>
             <td>horizontal</td>
-            <td>Non</td>
-            <td>Orientation de la ligne.</td>
+            <td>{t.no}</td>
+            <td>{t.d_orientation}</td>
           </tr>
           <tr>
             <td><code>thickness</code></td>
             <td><code>number</code></td>
             <td>1</td>
-            <td>Non</td>
-            <td>Épaisseur de la ligne en pixels.</td>
+            <td>{t.no}</td>
+            <td>{t.d_thickness}</td>
           </tr>
           <tr>
             <td><code>color</code></td>
             <td><code>string</code></td>
             <td>var(--bpm-border)</td>
-            <td>Non</td>
-            <td>Couleur de la ligne (CSS : variable, hex, rgb, etc.).</td>
+            <td>{t.no}</td>
+            <td>{t.d_color}</td>
           </tr>
           <tr>
             <td><code>className</code></td>
             <td><code>string</code></td>
             <td>—</td>
-            <td>Non</td>
-            <td>Classes CSS additionnelles.</td>
+            <td>{t.no}</td>
+            <td>{t.d_className}</td>
           </tr>
         </tbody>
       </table>
 
-      <h2 className="text-lg font-semibold mt-8 mb-2">Exemples</h2>
+      <h2 className="text-lg font-semibold mt-8 mb-2">{t.examples}</h2>
       <CodeBlock code="bpm.divider()" language="python" />
       <CodeBlock code='bpm.divider(label="ou")' language="python" />
       <CodeBlock code={'bpm.divider(thickness=3, color="var(--bpm-accent)")'} language="python" />
