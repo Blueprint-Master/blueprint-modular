@@ -12,6 +12,8 @@ import { rehypeWikiHashtags } from "@/lib/rehype-wiki-hashtags";
 import { Panel, Button, Badge } from "@/components/bpm";
 import { useAssistant } from "@/lib/ai/assistant-context";
 import { getGuestArticleBySlug, getGuestWikiArticles, deleteGuestArticle } from "@/lib/wiki-guest";
+import { useI18n } from "@/lib/i18n/LocaleProvider";
+import { STR } from "../strings";
 
 type Article = {
   id: string;
@@ -81,6 +83,8 @@ function buildToc(content: string): { level: 2 | 3; text: string; id: string }[]
 
 export default function WikiArticlePage() {
   const params = useParams();
+  const { locale } = useI18n();
+  const t = STR[locale];
   const router = useRouter();
   const searchParams = useSearchParams();
   const slug = params.slug as string;
@@ -108,7 +112,7 @@ export default function WikiArticlePage() {
   }, []);
 
   const openAiAssistant = () => {
-    const context = `Tu es en train de consulter l'article "${article?.title}" du wiki. Voici son contenu complet :\n\n${article?.content ?? ""}\n\nRéponds aux questions de l'utilisateur sur cet article ou sur les sujets qu'il aborde.`;
+    const context = t.article.aiContext(article?.title ?? "", article?.content ?? "");
     assistant?.openAssistant(context);
     setMenuOpen(false);
   };
@@ -154,7 +158,7 @@ export default function WikiArticlePage() {
           return r.json();
         })
         .then(setArticle)
-        .catch(() => setError("Article introuvable"))
+        .catch(() => setError(t.common.articleNotFound))
         .finally(() => setLoading(false));
       return;
     }
@@ -220,28 +224,28 @@ export default function WikiArticlePage() {
   };
 
   const handleDelete = async () => {
-    if (!confirm("Supprimer cet article ?")) return;
+    if (!confirm(t.common.confirmDeleteArticle)) return;
     setDeleting(true);
     try {
       if (!session) {
         if (deleteGuestArticle(slug)) router.push("/modules/wiki");
-        else setError("Impossible de supprimer");
+        else setError(t.common.cannotDelete);
         return;
       }
       const res = await fetch(`/api/wiki/${encodeURIComponent(slug)}`, { method: "DELETE", credentials: "include" });
       if (res.ok) router.push("/modules/wiki");
-      else setError("Impossible de supprimer");
+      else setError(t.common.cannotDelete);
     } finally {
       setDeleting(false);
     }
   };
 
-  if (loading) return <p style={{ color: "var(--bpm-text-secondary)" }}>Chargement...</p>;
+  if (loading) return <p style={{ color: "var(--bpm-text-secondary)" }}>{t.common.loading}</p>;
   if (error || !article) {
     return (
-      <Panel variant="error" title="Erreur">
-        {error ?? "Article introuvable."}
-        <Link href="/modules/wiki" className="block mt-2 underline" style={{ color: "var(--bpm-accent-cyan)" }}>Retour au Wiki</Link>
+      <Panel variant="error" title={t.common.error}>
+        {error ?? t.common.articleNotFoundDot}
+        <Link href="/modules/wiki" className="block mt-2 underline" style={{ color: "var(--bpm-accent-cyan)" }}>{t.common.backToWikiPlain}</Link>
       </Panel>
     );
   }
@@ -255,12 +259,12 @@ export default function WikiArticlePage() {
       <div className="wiki-print-only p-8 max-w-[720px] mx-auto" style={{ color: "var(--bpm-text-primary)" }}>
         <h1 className="text-3xl font-bold mb-2">{article.title}</h1>
         <p className="text-sm mb-4" style={{ color: "var(--bpm-text-secondary)" }}>
-          {article.author?.name ?? article.lastRevisedBy ?? "—"} · {new Date(article.updatedAt).toLocaleDateString("fr-FR")}
-          {article.readingTimeMinutes != null && ` · ${article.readingTimeMinutes} min`}
+          {article.author?.name ?? article.lastRevisedBy ?? "—"} · {new Date(article.updatedAt).toLocaleDateString(t.common.locale)}
+          {article.readingTimeMinutes != null && ` · ${t.common.minutesShort(article.readingTimeMinutes)}`}
         </p>
         <div className="prose prose-sm max-w-none wiki-article-content" style={{ lineHeight: 1.7 }}>
           <ReactMarkdown remarkPlugins={[remarkGfm]} rehypePlugins={[rehypeRaw, rehypeHighlight, rehypeWikiHashtags(knownTags ?? [])]}>
-            {(contentForRender ?? "") || "*Aucun contenu.*"}
+            {(contentForRender ?? "") || t.article.noContent}
           </ReactMarkdown>
         </div>
       </div>
@@ -279,26 +283,26 @@ export default function WikiArticlePage() {
           <h1 className="text-xl font-bold" style={{ color: "var(--bpm-text-primary)" }}>
             {article.title}
             {article.pinned && (
-              <span className="ml-2 text-xs px-2 py-0.5 rounded font-normal" style={{ background: "var(--bpm-accent)", color: "#fff" }}>Épinglé</span>
+              <span className="ml-2 text-xs px-2 py-0.5 rounded font-normal" style={{ background: "var(--bpm-accent)", color: "#fff" }}>{t.common.pinned}</span>
             )}
-            {!article.isPublished && <span className="wiki-draft ml-2">Brouillon</span>}
+            {!article.isPublished && <span className="wiki-draft ml-2">{t.common.draft}</span>}
           </h1>
           <div className="flex items-center gap-2 flex-wrap" ref={menuRef}>
             {session && (
               <Button variant="outline" size="small" onClick={openAiAssistant}>
-                Demander à l&apos;IA
+                {t.article.askAi}
               </Button>
             )}
             {(session || article.canEdit) && (
               <>
                 <Link
                   href={`/modules/wiki/${article.slug}/edit`}
-                  title={!session && article.canEdit ? "Modifications enregistrées localement (connectez-vous pour sauvegarder en base)" : undefined}
+                  title={!session && article.canEdit ? t.article.editLockedTitle : undefined}
                 >
-                  <Button variant="outline" size="small">Modifier</Button>
+                  <Button variant="outline" size="small">{t.common.edit}</Button>
                 </Link>
                 <Link href={`/modules/wiki/${article.slug}/history`}>
-                  <Button variant="outline" size="small">Historique</Button>
+                  <Button variant="outline" size="small">{t.article.history}</Button>
                 </Link>
                 <div className="relative inline-block">
                   <Button variant="outline" size="small" onClick={() => setMenuOpen((o) => !o)} aria-haspopup="true" aria-expanded={menuOpen}>
@@ -311,19 +315,19 @@ export default function WikiArticlePage() {
                       role="menu"
                     >
                       <button type="button" className="block w-full text-left px-3 py-2 text-sm hover:bg-[var(--bpm-bg-secondary)]" style={{ color: "var(--bpm-text-primary)" }} role="menuitem" onClick={copyLink}>
-                        Copier le lien
+                        {t.article.copyLink}
                       </button>
                       <Link href={`/modules/wiki/${article.slug}/history`} className="block px-3 py-2 text-sm hover:bg-[var(--bpm-bg-secondary)]" style={{ color: "var(--bpm-text-primary)" }} onClick={() => setMenuOpen(false)}>
-                        Voir l&apos;historique
+                        {t.article.viewHistory}
                       </Link>
                       <button type="button" className="block w-full text-left px-3 py-2 text-sm hover:bg-[var(--bpm-bg-secondary)]" style={{ color: "var(--bpm-text-primary)" }} role="menuitem" onClick={exportMarkdown}>
-                        Exporter en Markdown (.md)
+                        {t.article.exportMarkdown}
                       </button>
                       <button type="button" className="block w-full text-left px-3 py-2 text-sm hover:bg-[var(--bpm-bg-secondary)]" style={{ color: "var(--bpm-text-primary)" }} role="menuitem" onClick={openPrint}>
-                        Exporter en PDF (impression)
+                        {t.article.exportPdf}
                       </button>
                       <button type="button" className="block w-full text-left px-3 py-2 text-sm hover:bg-[var(--bpm-bg-secondary)]" style={{ color: "var(--bpm-text-primary)" }} role="menuitem" onClick={handleDelete} disabled={deleting}>
-                        Supprimer
+                        {t.common.delete}
                       </button>
                     </div>
                   )}
@@ -334,13 +338,13 @@ export default function WikiArticlePage() {
         </div>
 
         <div className="flex flex-wrap gap-2 text-sm mb-1" style={{ color: "var(--bpm-text-secondary)" }}>
-          <span>Mis à jour le {new Date(article.updatedAt).toLocaleDateString("fr-FR")}</span>
+          <span>{t.article.updatedOn(new Date(article.updatedAt).toLocaleDateString(t.common.locale))}</span>
           {(article.lastRevisedBy ?? article.author?.name) && <span> · {article.lastRevisedBy ?? article.author?.name}</span>}
-          {article.readingTimeMinutes != null && <span> · {article.readingTimeMinutes} min</span>}
-          {article.wordCount != null && <span> · {article.wordCount} mots</span>}
-          {article.viewCount != null && article.viewCount > 0 && <span> · {article.viewCount} vue{article.viewCount > 1 ? "s" : ""}</span>}
+          {article.readingTimeMinutes != null && <span> · {t.common.minutesShort(article.readingTimeMinutes)}</span>}
+          {article.wordCount != null && <span> · {t.article.wordCount(article.wordCount)}</span>}
+          {article.viewCount != null && article.viewCount > 0 && <span> · {t.article.viewCount(article.viewCount)}</span>}
           {!session && article.canEdit === false && (
-            <span className="text-xs px-2 py-0.5 rounded border" style={{ borderColor: "var(--bpm-border)", background: "var(--bpm-bg-secondary)" }}>Lecture seule</span>
+            <span className="text-xs px-2 py-0.5 rounded border" style={{ borderColor: "var(--bpm-border)", background: "var(--bpm-bg-secondary)" }}>{t.article.readOnly}</span>
           )}
         </div>
 
@@ -386,13 +390,13 @@ export default function WikiArticlePage() {
               },
             }}
           >
-            {contentForRender || "*Aucun contenu.*"}
+            {contentForRender || t.article.noContent}
           </ReactMarkdown>
         </div>
 
         {Array.isArray(article.children) && article.children.length > 0 && (
           <div className="mt-8">
-            <h2 className="text-lg font-semibold mb-2" style={{ color: "var(--bpm-text-primary)" }}>Dans cette section</h2>
+            <h2 className="text-lg font-semibold mb-2" style={{ color: "var(--bpm-text-primary)" }}>{t.article.inThisSection}</h2>
             <div className="grid gap-2 sm:grid-cols-2">
               {article.children.map((c) => (
                 <Link
@@ -407,7 +411,7 @@ export default function WikiArticlePage() {
                   )}
                   <span className="inline-block mt-1">
                     <Badge variant={c.isPublished !== false ? "success" : "warning"} className="text-xs">
-                      {c.isPublished !== false ? "Publié" : "Brouillon"}
+                      {c.isPublished !== false ? t.common.published : t.common.draft}
                     </Badge>
                   </span>
                 </Link>
@@ -418,8 +422,8 @@ export default function WikiArticlePage() {
 
         {backlinks.length > 0 && (
           <div className="mt-8">
-            <h2 className="text-lg font-semibold mb-2" style={{ color: "var(--bpm-text-primary)" }}>Articles liés</h2>
-            <p className="text-sm mb-2" style={{ color: "var(--bpm-text-secondary)" }}>Articles qui citent celui-ci.</p>
+            <h2 className="text-lg font-semibold mb-2" style={{ color: "var(--bpm-text-primary)" }}>{t.article.relatedArticles}</h2>
+            <p className="text-sm mb-2" style={{ color: "var(--bpm-text-secondary)" }}>{t.article.relatedArticlesDesc}</p>
             <ul className="space-y-2">
               {backlinks.map((b) => (
                 <li key={b.id} className="p-2 rounded border" style={{ borderColor: "var(--bpm-border)", background: "var(--bpm-bg-secondary)" }}>
@@ -436,15 +440,15 @@ export default function WikiArticlePage() {
         )}
 
         {((article.prevSlug ?? article.nextSlug) && (
-          <nav className="mt-8 flex justify-between gap-4 border-t pt-6" style={{ borderColor: "var(--bpm-border)" }} aria-label="Navigation précédent / suivant">
+          <nav className="mt-8 flex justify-between gap-4 border-t pt-6" style={{ borderColor: "var(--bpm-border)" }} aria-label={t.article.prevNextNavLabel}>
             {article.prevSlug ? (
               <Link href={`/modules/wiki/${article.prevSlug}`} className="text-sm font-medium underline" style={{ color: "var(--bpm-accent-cyan)" }}>
-                ← Article précédent
+                {t.article.prevArticle}
               </Link>
             ) : <span />}
             {article.nextSlug ? (
               <Link href={`/modules/wiki/${article.nextSlug}`} className="text-sm font-medium underline" style={{ color: "var(--bpm-accent-cyan)" }}>
-                Article suivant →
+                {t.article.nextArticle}
               </Link>
             ) : <span />}
           </nav>
@@ -452,12 +456,12 @@ export default function WikiArticlePage() {
 
         {session && (
           <div className="mt-8">
-            <h2 className="text-lg font-semibold mb-2" style={{ color: "var(--bpm-text-primary)" }}>Commentaires</h2>
+            <h2 className="text-lg font-semibold mb-2" style={{ color: "var(--bpm-text-primary)" }}>{t.article.comments}</h2>
             <ul className="space-y-3 mb-4">
               {comments.map((c) => (
                 <li key={c.id} className="text-sm p-3 rounded border" style={{ borderColor: "var(--bpm-border)", background: "var(--bpm-bg-secondary)" }}>
                   <p className="m-0 whitespace-pre-wrap">{c.content}</p>
-                  <span className="text-xs opacity-70">{c.authorName ?? "Anonyme"} · {new Date(c.createdAt).toLocaleString("fr-FR")}</span>
+                  <span className="text-xs opacity-70">{c.authorName ?? t.article.anonymous} · {new Date(c.createdAt).toLocaleString(t.common.locale)}</span>
                 </li>
               ))}
             </ul>
@@ -465,30 +469,30 @@ export default function WikiArticlePage() {
               <textarea
                 value={commentText}
                 onChange={(e) => setCommentText(e.target.value)}
-                placeholder="Ajouter un commentaire..."
+                placeholder={t.article.addCommentPlaceholder}
                 rows={2}
                 className="w-full px-3 py-2 rounded border text-sm"
                 style={{ borderColor: "var(--bpm-border)", background: "var(--bpm-surface)", color: "var(--bpm-text-primary)" }}
               />
               <Button type="submit" size="small" disabled={commentSending || !commentText.trim()}>
-                {commentSending ? "Envoi…" : "Publier"}
+                {commentSending ? t.article.sending : t.article.publish}
               </Button>
             </form>
           </div>
         )}
 
         <nav className="doc-pagination mt-8">
-          <Link href="/modules/wiki" style={{ color: "var(--bpm-accent-cyan)" }}>← Retour au Wiki</Link>
-          <Link href="/modules/wiki/new" style={{ color: "var(--bpm-accent-cyan)" }}>Créer un article</Link>
-          <Link href="/modules/wiki/tags" style={{ color: "var(--bpm-accent-cyan)" }}>Tags</Link>
-          <Link href="/modules/wiki/documentation" style={{ color: "var(--bpm-accent-cyan)" }}>Documentation</Link>
+          <Link href="/modules/wiki" style={{ color: "var(--bpm-accent-cyan)" }}>{t.common.backToWiki}</Link>
+          <Link href="/modules/wiki/new" style={{ color: "var(--bpm-accent-cyan)" }}>{t.common.createArticle}</Link>
+          <Link href="/modules/wiki/tags" style={{ color: "var(--bpm-accent-cyan)" }}>{t.common.tags}</Link>
+          <Link href="/modules/wiki/documentation" style={{ color: "var(--bpm-accent-cyan)" }}>{t.common.documentation}</Link>
         </nav>
       </main>
 
       {toc.length > 0 && (
         <aside className="lg:w-48 flex-shrink-0 order-first lg:order-last">
           <nav className="sticky top-4 text-sm border rounded-lg p-3" style={{ borderColor: "var(--bpm-border)", background: "var(--bpm-bg-secondary)" }}>
-            <p className="font-semibold mb-2" style={{ color: "var(--bpm-text-primary)" }}>Sommaire</p>
+            <p className="font-semibold mb-2" style={{ color: "var(--bpm-text-primary)" }}>{t.article.toc}</p>
             <ul className="space-y-1">
               {toc.map((item) => (
                 <li key={item.id} style={{ paddingLeft: item.level === 3 ? 12 : 0 }}>
