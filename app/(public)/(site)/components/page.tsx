@@ -168,13 +168,17 @@ function DemoCard({
   );
 }
 
-/** Ligne tableau référence : label à gauche (fixe), contenu à droite, séparateur hr */
+/** Ligne tableau référence : label à gauche (fixe), contenu à droite, séparateur hr.
+ *  `note` affiche un badge discret (ex. « aperçu statique ») pour les compositions
+ *  illustratives non interactives — honnêteté de la promesse « rendu réel ». */
 function DemoRow({
   label,
   children,
+  note,
 }: {
   label: string;
   children: React.ReactNode;
+  note?: string;
 }) {
   return (
     <>
@@ -190,6 +194,7 @@ function DemoRow({
       >
         <div style={{ minWidth: 200, flexShrink: 0, fontSize: 14, color: "var(--bpm-text-muted)" }}>
           {label}
+          {note && <span className="demo-static-tag">{note}</span>}
         </div>
         <div style={{ flex: 1, minWidth: 0 }}>{children}</div>
       </div>
@@ -259,6 +264,14 @@ export default function ComponentsPage() {
     { id: "2", role: "assistant", content: "Bonjour, comment puis-je vous aider ?", timestamp: new Date() },
   ]);
   const [modelSelectorId, setModelSelectorId] = useState("gpt-4o");
+  // États des démos rendues réellement interactives (item vitrine 4).
+  const [segPeriod, setSegPeriod] = useState("Semaine");
+  const [colorVal, setColorVal] = useState(BPM_ACCENT_HEX);
+  const [pageNav, setPageNav] = useState("dashboard");
+  const [toastVisible, setToastVisible] = useState(true);
+  const [avatarLoggedOut, setAvatarLoggedOut] = useState(false);
+  const [uploadedFiles, setUploadedFiles] = useState<string[]>([]);
+  const [wizardDone, setWizardDone] = useState(false);
 
   return (
     <div style={{ background: "var(--bpm-bg-primary)", minHeight: "100vh", paddingBottom: 80, paddingTop: 0 }}>
@@ -371,7 +384,7 @@ export default function ComponentsPage() {
                 <Button variant="outline" icon="filter_list" aria-label="Filtrer" />
               </div>
             </DemoRow>
-            <DemoRow label="Toolbar (ghost raised)">
+            <DemoRow label="Toolbar (ghost raised)" note={dict.gallery.demo.staticPreview}>
               <div style={{ display: "flex", gap: 8, padding: 8, background: "var(--bpm-bg-secondary)", borderRadius: "var(--bpm-radius)" }}>
                 <Button variant="ghost" raised icon="format_bold" aria-label="Gras" />
                 <Button variant="ghost" raised icon="format_italic" aria-label="Italique" />
@@ -408,12 +421,21 @@ export default function ComponentsPage() {
             </DemoRow>
             <DemoRow label="COMPOSITIONS — segmented (Jour / Semaine / Mois)">
               <div style={{ display: "inline-flex", borderRadius: 6, overflow: "hidden", border: "1px solid #c8cdd6", boxShadow: "0 1px 2px rgba(0,0,0,0.08)" }}>
-                <Button variant="secondary" type="button" onClick={() => {}} style={{ borderRadius: 0, borderRight: "1px solid #c8cdd6" }}>Jour</Button>
-                <Button variant="primary" type="button" onClick={() => {}} style={{ borderRadius: 0, borderRight: "1px solid #c8cdd6" }}>Semaine</Button>
-                <Button variant="secondary" type="button" onClick={() => {}} style={{ borderRadius: 0 }}>Mois</Button>
+                {["Jour", "Semaine", "Mois"].map((p, i) => (
+                  <Button
+                    key={p}
+                    variant={segPeriod === p ? "primary" : "secondary"}
+                    type="button"
+                    aria-pressed={segPeriod === p}
+                    onClick={() => setSegPeriod(p)}
+                    style={{ borderRadius: 0, borderRight: i < 2 ? "1px solid #c8cdd6" : undefined }}
+                  >
+                    {p}
+                  </Button>
+                ))}
               </div>
             </DemoRow>
-            <DemoRow label="COMPOSITIONS — toolbar text">
+            <DemoRow label="COMPOSITIONS — toolbar text" note={dict.gallery.demo.staticPreview}>
               <div style={{ display: "flex", flexWrap: "wrap", alignItems: "center", gap: 0, border: "1px solid var(--bpm-border)", borderRadius: "var(--bpm-radius)", overflow: "hidden" }}>
                 <Button variant="ghost" raised icon="format_bold" aria-label="Gras" style={{ borderRadius: 0 }}/>
                 <Button variant="ghost" raised icon="format_italic" aria-label="Italique" style={{ borderRadius: 0 }}/>
@@ -430,7 +452,7 @@ export default function ComponentsPage() {
                 <Button variant="destructive" icon="delete" aria-label="Supprimer" style={{ borderRadius: 0 }}/>
               </div>
             </DemoRow>
-            <DemoRow label="COMPOSITIONS — toolbar data">
+            <DemoRow label="COMPOSITIONS — toolbar data" note={dict.gallery.demo.staticPreview}>
               <div style={{ display: "flex", flexWrap: "wrap", alignItems: "center", gap: 0, border: "1px solid var(--bpm-border)", borderRadius: "var(--bpm-radius)", overflow: "hidden" }}>
                 <Button variant="ghost" raised icon="filter_list" aria-label="Filtrer" style={{ borderRadius: 0 }}/>
                 <Button variant="ghost" raised icon="sort" aria-label="Trier" style={{ borderRadius: 0 }}/>
@@ -441,7 +463,7 @@ export default function ComponentsPage() {
                 <Button variant="ghost" raised icon="density_medium" aria-label="Densité" style={{ borderRadius: 0 }}/>
               </div>
             </DemoRow>
-            <DemoRow label="COMPOSITIONS — strip nav">
+            <DemoRow label="COMPOSITIONS — strip nav" note={dict.gallery.demo.staticPreview}>
               <div style={{ display: "flex", gap: 4, alignItems: "center" }}>
                 <Button variant="secondary" size="small" icon="chevron_left" aria-label="Précédent" />
                 <Button variant="secondary" size="small" icon="chevron_right" aria-label="Suivant" />
@@ -449,7 +471,7 @@ export default function ComponentsPage() {
                 <Button variant="secondary" size="small" icon="more_horiz" aria-label="Plus" />
               </div>
             </DemoRow>
-            <DemoRow label="COMPOSITIONS — strip social">
+            <DemoRow label="COMPOSITIONS — strip social" note={dict.gallery.demo.staticPreview}>
               <div style={{ display: "flex", gap: 4, alignItems: "center" }}>
                 <Button variant="ghost" size="small" icon="thumb_up" aria-label="J'aime" />
                 <Button variant="ghost" size="small" icon="share" aria-label="Partager" />
@@ -606,8 +628,8 @@ export default function ComponentsPage() {
             <DemoCard label="bpm.colorPicker">
               <ColorPicker
                 label="Couleur"
-                value={BPM_ACCENT_HEX}
-                onChange={() => {}}
+                value={colorVal}
+                onChange={setColorVal}
               />
             </DemoCard>
             <DemoCard label="bpm.autocomplete">
@@ -728,8 +750,8 @@ export default function ComponentsPage() {
                     { key: "dashboard", label: "Dashboard", icon: "dashboard" },
                     { key: "settings", label: "Paramètres", icon: "settings" },
                   ]}
-                  currentItem="dashboard"
-                  onNavigate={() => {}}
+                  currentItem={pageNav}
+                  onNavigate={setPageNav}
                 >
                   <div style={{ padding: 16 }}>
                     <Text>Contenu principal.</Text>
@@ -1065,15 +1087,21 @@ export default function ComponentsPage() {
               />
             </DemoCard>
             <DemoCard label="bpm.toast">
-              <Toast
-                id={1}
-                type="success"
-                pageName="Composants"
-                pageIcon='<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" width="16" height="16"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg>'
-                title="Opération réussie"
-                message="Exemple de notification toast avec header (icône, intitulé), titre et descriptif."
-                onClose={() => {}}
-              />
+              {toastVisible ? (
+                <Toast
+                  id={1}
+                  type="success"
+                  pageName="Composants"
+                  pageIcon='<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" width="16" height="16"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg>'
+                  title="Opération réussie"
+                  message="Exemple de notification toast avec header (icône, intitulé), titre et descriptif."
+                  onClose={() => setToastVisible(false)}
+                />
+              ) : (
+                <Button variant="secondary" icon="refresh" onClick={() => setToastVisible(true)}>
+                  {dict.gallery.demo.toastReplay}
+                </Button>
+              )}
             </DemoCard>
             <DemoCard label="bpm.notificationCenter" wide>
               <div style={{ display: "flex", justifyContent: "center", alignItems: "center" }}>
@@ -1118,8 +1146,13 @@ export default function ComponentsPage() {
                 name="Jean Dupont"
                 subtitle="jean@example.com"
                 variant="sidebar"
-                onLogout={() => {}}
+                onLogout={() => setAvatarLoggedOut(true)}
               />
+              {avatarLoggedOut && (
+                <Caption style={{ display: "block", marginTop: 8, color: "var(--bpm-accent)" }}>
+                  {dict.gallery.demo.loggedOut}
+                </Caption>
+              )}
             </DemoCard>
             <DemoCard label="bpm.video">
               <Video
@@ -1147,7 +1180,15 @@ export default function ComponentsPage() {
               <Rating value={ratingVal} max={5} onChange={setRatingVal} />
             </DemoCard>
             <DemoCard label="bpm.fileUploader" wide>
-              <FileUploader label="Importer un fichier" onFiles={() => {}} />
+              <FileUploader
+                label="Importer un fichier"
+                onFiles={(files) => setUploadedFiles(files.map((f) => f.name))}
+              />
+              {uploadedFiles.length > 0 && (
+                <Caption style={{ display: "block", marginTop: 8 }}>
+                  {fmt(dict.gallery.demo.uploaded, { files: uploadedFiles.join(", ") })}
+                </Caption>
+              )}
             </DemoCard>
             <DemoCard label="bpm.map" wide>
               <Map lat={45.75} lng={4.85} width="100%" height={220} />
@@ -1290,7 +1331,7 @@ export default function ComponentsPage() {
             <DemoCard label="bpm.wizardForm" wide>
               <WizardForm
                 showSummary
-                onComplete={() => {}}
+                onComplete={() => setWizardDone(true)}
                 steps={[
                   { title: "Identité", content: <Input label="Nom" value={wizardField} onChange={setWizardField} /> },
                   { title: "Coordonnées", content: <Text>Étape 2 (démo)</Text> },
@@ -1298,6 +1339,9 @@ export default function ComponentsPage() {
                   { title: "Confirmation", content: <Text>Dernière étape</Text> },
                 ]}
               />
+              {wizardDone && (
+                <Message type="success">{dict.gallery.demo.wizardDone}</Message>
+              )}
             </DemoCard>
             <DemoCard label="bpm.commandPalette" wide>
               <Button type="button" onClick={() => setCmdOpen(true)}>

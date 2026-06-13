@@ -325,6 +325,13 @@ const en: Dictionary = {
       business: "Business systems",
       specialized: "Specialized",
     },
+    demo: {
+      staticPreview: "static preview",
+      uploaded: "Selected: {files}",
+      wizardDone: "Flow complete — onComplete fired.",
+      loggedOut: "Signed out (demo) — onLogout fired.",
+      toastReplay: "Replay the toast",
+    },
   },
   docsHub: {
     eyebrow: "Documentation",
