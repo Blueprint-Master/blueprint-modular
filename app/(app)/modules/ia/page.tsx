@@ -4,6 +4,8 @@ import { useState, useEffect } from "react";
 import Link from "next/link";
 import { AIChat } from "@/components/AIChat/AIChat";
 import { useAIHeader } from "@/contexts/AIHeaderContext";
+import { useI18n } from "@/lib/i18n/LocaleProvider";
+import { str } from "./strings";
 
 const BPM_ASSISTANT_NAME_STORAGE = "bpm-assistant-name";
 
@@ -28,6 +30,8 @@ function useStoredAssistantName(): string {
 export default function IAPage() {
   const ctx = useAIHeader();
   const assistantName = useStoredAssistantName();
+  const { locale } = useI18n();
+  const t = str(locale).page;
 
   return (
     <div
@@ -43,15 +47,15 @@ export default function IAPage() {
       <div id="documentation" className="doc-page-header" style={{ flexShrink: 0 }}>
         <div>
           <div className="doc-breadcrumb">
-            <Link href="/modules">Modules</Link> → IA
+            <Link href="/modules">Modules</Link> → {t.breadcrumbIa}
           </div>
           <h1 style={{ margin: 0 }}>{assistantName}</h1>
           <p className="doc-description" style={{ margin: "0.25rem 0 0" }}>
-            Assistant conversationnel. Contexte Wiki et Documents.
+            {t.description}
           </p>
           <div className="doc-meta" style={{ marginTop: 4 }}>
-            <span className="doc-badge doc-badge-category">IA</span>
-            <span className="doc-reading-time">⏱ 1 min</span>
+            <span className="doc-badge doc-badge-category">{t.badge}</span>
+            <span className="doc-reading-time">{t.readingTime}</span>
           </div>
         </div>
       </div>
