@@ -1,13 +1,13 @@
 {
   "generatedFrom": "git first-parent (merges de PR)",
   "repoUrl": "https://github.com/Blueprint-Master/blueprint-modular",
-  "grouping": "month",
+  "grouping": "version",
   "totalEntries": 32,
   "groups": [
     {
-      "key": "2026-06",
-      "label": "2026-06",
-      "date": "2026-06",
+      "key": "v0.1.52",
+      "label": "v0.1.52",
+      "date": "2026-06-12",
       "entries": [
         {
           "pr": 44,
@@ -269,14 +269,7 @@
           "breaking": false,
           "title": "convergence gate + Badge.size θ-additive pilot",
           "hash": "1b9a36aa3"
-        }
-      ]
-    },
-    {
-      "key": "2026-05",
-      "label": "2026-05",
-      "date": "2026-05",
-      "entries": [
+        },
         {
           "pr": 8,
           "date": "2026-05-19",

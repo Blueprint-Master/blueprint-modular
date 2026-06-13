@@ -1,39 +1,97 @@
 "use client";
 
 import Link from "next/link";
-import { Tabs, CodeBlock, Panel, ColorPicker, Input, Button } from "@/components/bpm";
+import { CodeBlock, Tabs } from "@/components/bpm";
+import { useI18n } from "@/lib/i18n/LocaleProvider";
+import { STR } from "./strings";
+import ThemesSimulateur from "./simulateur-content";
 
-const docContent = (
-  <>
-    <h2 className="text-lg font-semibold mt-0 mb-2" style={{ color: "var(--bpm-text-primary)" }}>À propos</h2>
-    <p className="mb-6" style={{ color: "var(--bpm-text-secondary)", maxWidth: "60ch" }}>
-      Choix de thème, logo et couleurs par instance ou client (white-label).
-    </p>
-    <CodeBlock code={'bpm.title("Themes")\n# Couleur accent, logo, nom'} language="python" />
-  </>
-);
-
-function SimuContent() {
+function DocContent() {
+  const { locale } = useI18n();
+  const s = STR[locale];
   return (
-    <Panel variant="info" title="Personnalisation (démo)">
-      <ColorPicker value="#00a3e0" onChange={() => {}} label="Couleur d'accent" />
-      <Input label="Nom de l'app" placeholder="Mon app" value="" onChange={() => {}} className="mt-4" />
-      <Button className="mt-4">Enregistrer</Button>
-    </Panel>
+    <div className="prose-sm">
+      <h2 className="text-lg font-semibold mt-0 mb-2" style={{ color: "var(--bpm-text-primary)" }}>
+        {s.aboutTitle}
+      </h2>
+      <p className="mb-4" style={{ color: "var(--bpm-text-secondary)", maxWidth: "62ch" }}>
+        {s.aboutText}
+      </p>
+      <h3 className="text-base font-semibold mt-6 mb-2" style={{ color: "var(--bpm-text-primary)" }}>
+        {s.coverageTitle}
+      </h3>
+      <ul className="mb-4 list-disc pl-5 text-sm space-y-1" style={{ color: "var(--bpm-text-secondary)" }}>
+        {s.coverageItems.map((item) => (
+          <li key={item}>{item}</li>
+        ))}
+      </ul>
+      <h3 className="text-base font-semibold mt-6 mb-2" style={{ color: "var(--bpm-text-primary)" }}>
+        {s.componentsTitle}
+      </h3>
+      <p className="mb-4" style={{ color: "var(--bpm-text-secondary)" }}>
+        <code>bpm.metricRow</code>, <code>bpm.panel</code>, <code>bpm.colorPicker</code>,{" "}
+        <code>bpm.slider</code>, <code>bpm.input</code>, <code>bpm.badge</code>,{" "}
+        <code>bpm.confirmModal</code> {s.componentsJoin} <code>bpm.toast</code>.
+      </p>
+      <CodeBlock
+        code={`import bpm
+
+theme = bpm.theme.get("acme-corp")
+
+bpm.input("Nom de l'app", value=theme.couleurApp, on_change=set_nom)
+bpm.colorPicker("Couleur d'accent", value=theme.accent, on_change=set_accent)
+bpm.colorPicker("Couleur de fond", value=theme.fond, on_change=set_fond)
+bpm.slider("Rayon de bordure (px)", value=theme.rayon, min=0, max=16, on_change=set_rayon)
+
+bpm.button("Enregistrer comme nouveau thème", on_click=enregistrer)
+bpm.button("Définir par défaut", on_click=definir_defaut)`}
+        language="python"
+      />
+      <h3 className="text-base font-semibold mt-6 mb-2" style={{ color: "var(--bpm-text-primary)" }}>
+        {s.configTitle}
+      </h3>
+      <p className="mb-2 text-sm" style={{ color: "var(--bpm-text-secondary)" }}>
+        {s.configTextBeforeLink}{" "}
+        <Link href="/modules/themes/documentation" style={{ color: "var(--bpm-accent-cyan)" }}>
+          {s.configLinkLabel}
+        </Link>{" "}
+        {s.configTextAfterLink}
+      </p>
+    </div>
   );
 }
 
 export default function ThemesModulePage() {
+  const { locale } = useI18n();
+  const s = STR[locale];
   return (
     <div className="doc-page">
       <div className="doc-page-header">
-        <div className="doc-breadcrumb"><Link href="/modules">Modules</Link> → Thèmes</div>
-        <h1>Thèmes / White-label</h1>
-        <p className="doc-description">Choix de thème, logo et couleurs par instance ou client. Testez dans le Simulateur.</p>
-        <div className="doc-meta"><span className="doc-badge doc-badge-category">Intégrations & technique</span></div>
-        <p className="mt-3 text-sm" style={{ color: "var(--bpm-text-secondary)" }}><Link href="/modules/themes/simulateur" className="font-medium underline" style={{ color: "var(--bpm-accent-cyan)" }}>Ouvrir le simulateur</Link></p>
+        <div className="doc-breadcrumb">
+          <Link href="/modules">Modules</Link> → {s.breadcrumbThemes}
+        </div>
+        <h1>{s.moduleTitle}</h1>
+        <p className="doc-description">{s.moduleDescription}</p>
+        <div className="doc-meta">
+          <span className="doc-badge doc-badge-category">{s.categoryBadge}</span>
+        </div>
+        <p className="mt-3 text-sm" style={{ color: "var(--bpm-text-secondary)" }}>
+          <Link
+            href="/modules/themes/simulateur"
+            className="font-medium underline"
+            style={{ color: "var(--bpm-accent-cyan)" }}
+          >
+            {s.openSimulator}
+          </Link>
+        </p>
       </div>
-      <Tabs tabs={[{ label: "Documentation", content: docContent }, { label: "Simulateur", content: <SimuContent /> }]} defaultTab={0} />
+      <Tabs
+        tabs={[
+          { label: s.tabDocumentation, content: <DocContent /> },
+          { label: s.tabSimulator, content: <ThemesSimulateur /> },
+        ]}
+        defaultTab={0}
+      />
     </div>
   );
 }

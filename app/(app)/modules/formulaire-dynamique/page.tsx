@@ -1,39 +1,90 @@
 "use client";
 
 import Link from "next/link";
-import { Tabs, CodeBlock, Panel, Selectbox, Input, Button } from "@/components/bpm";
+import { CodeBlock, Tabs } from "@/components/bpm";
+import { useI18n } from "@/lib/i18n/LocaleProvider";
+import FormulaireDynamiqueSimulateur from "./simulateur-content";
+import { getStrings, rich, type ModuleStrings } from "./strings";
 
-const docContent = (
-  <>
-    <h2 className="text-lg font-semibold mt-0 mb-2" style={{ color: "var(--bpm-text-primary)" }}>À propos</h2>
-    <p className="mb-6" style={{ color: "var(--bpm-text-secondary)", maxWidth: "60ch" }}>
-      Formulaires dont les champs dépendent d&apos;un type ou d&apos;un référentiel.
-    </p>
-    <CodeBlock code={'bpm.title("Formulaire dynamique")'} language="python" />
-  </>
-);
-
-function SimuContent() {
+function DocContent({ t }: { t: ModuleStrings }) {
   return (
-    <Panel variant="info" title="Type de demande (démo)">
-      <Selectbox options={[{ value: "type_a", label: "Type A" }, { value: "type_b", label: "Type B" }]} value={null} onChange={() => {}} placeholder="Type" label="Type" />
-      <Input label="Champ dynamique" placeholder="Selon le type" value="" onChange={() => {}} className="mt-4" />
-      <Button className="mt-4">Envoyer</Button>
-    </Panel>
+    <div className="prose-sm">
+      <h2 className="text-lg font-semibold mt-0 mb-2" style={{ color: "var(--bpm-text-primary)" }}>
+        {t.module.aboutHeading}
+      </h2>
+      <p className="mb-4" style={{ color: "var(--bpm-text-secondary)", maxWidth: "62ch" }}>
+        {rich(t.module.aboutBody)}
+      </p>
+      <h3 className="text-base font-semibold mt-6 mb-2" style={{ color: "var(--bpm-text-primary)" }}>
+        {t.module.componentsHeading}
+      </h3>
+      <p className="mb-4" style={{ color: "var(--bpm-text-secondary)" }}>
+        {rich(t.module.componentsBody)}
+      </p>
+      <CodeBlock
+        code={`import bpm
+
+schema = load_form_schema("achat-materiel")  # le schéma JSON pilote tout
+
+for field in schema["fields"]:
+    if not visible(field, values):          # règle visibleIf évaluée en direct
+        continue
+    if field["type"] == "select":
+        bpm.selectbox(field["label"], options=field["options"])
+    elif field["type"] == "textarea":
+        bpm.textarea(field["label"])
+    elif field["type"] == "date":
+        bpm.dateInput(field["label"])
+
+bpm.button("Soumettre la demande", on_click=valider_et_soumettre)`}
+        language="python"
+      />
+      <h3 className="text-base font-semibold mt-6 mb-2" style={{ color: "var(--bpm-text-primary)" }}>
+        {t.module.settingsHeading}
+      </h3>
+      <p className="mb-2 text-sm" style={{ color: "var(--bpm-text-secondary)" }}>
+        {t.module.settingsBodyBefore}
+        <Link href="/modules/formulaire-dynamique/documentation" style={{ color: "var(--bpm-accent-cyan)" }}>
+          {t.module.settingsDocLink}
+        </Link>
+        {t.module.settingsBodyAfter}
+      </p>
+    </div>
   );
 }
 
 export default function FormulaireDynamiqueModulePage() {
+  const { locale } = useI18n();
+  const t = getStrings(locale);
+
   return (
     <div className="doc-page">
       <div className="doc-page-header">
-        <div className="doc-breadcrumb"><Link href="/modules">Modules</Link> → Formulaire dynamique</div>
-        <h1>Formulaire dynamique</h1>
-        <p className="doc-description">Formulaires dont les champs dépendent d&apos;un type ou référentiel. Testez dans le Simulateur.</p>
-        <div className="doc-meta"><span className="doc-badge doc-badge-category">Métier</span></div>
-        <p className="mt-3 text-sm" style={{ color: "var(--bpm-text-secondary)" }}><Link href="/modules/formulaire-dynamique/simulateur" className="font-medium underline" style={{ color: "var(--bpm-accent-cyan)" }}>Ouvrir le simulateur</Link></p>
+        <div className="doc-breadcrumb">
+          <Link href="/modules">Modules</Link> → {t.moduleName}
+        </div>
+        <h1>{t.module.title}</h1>
+        <p className="doc-description">{t.module.description}</p>
+        <div className="doc-meta">
+          <span className="doc-badge doc-badge-category">{t.module.badgeCategory}</span>
+        </div>
+        <p className="mt-3 text-sm" style={{ color: "var(--bpm-text-secondary)" }}>
+          <Link
+            href="/modules/formulaire-dynamique/simulateur"
+            className="font-medium underline"
+            style={{ color: "var(--bpm-accent-cyan)" }}
+          >
+            {t.openSimulator}
+          </Link>
+        </p>
       </div>
-      <Tabs tabs={[{ label: "Documentation", content: docContent }, { label: "Simulateur", content: <SimuContent /> }]} defaultTab={0} />
+      <Tabs
+        tabs={[
+          { label: t.module.tabDocumentation, content: <DocContent t={t} /> },
+          { label: t.module.tabSimulator, content: <FormulaireDynamiqueSimulateur /> },
+        ]}
+        defaultTab={0}
+      />
     </div>
   );
 }

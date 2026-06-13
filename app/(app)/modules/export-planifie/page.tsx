@@ -1,39 +1,91 @@
 "use client";
 
 import Link from "next/link";
-import { Tabs, CodeBlock, Panel, Selectbox, Input, Button } from "@/components/bpm";
+import { CodeBlock, Tabs } from "@/components/bpm";
+import { useI18n } from "@/lib/i18n/LocaleProvider";
+import ExportPlanifieSimulateur from "./simulateur-content";
+import { STR, type ModuleStrings } from "./strings";
 
-const docContent = (
-  <>
-    <h2 className="text-lg font-semibold mt-0 mb-2" style={{ color: "var(--bpm-text-primary)" }}>À propos</h2>
-    <p className="mb-6" style={{ color: "var(--bpm-text-secondary)", maxWidth: "60ch" }}>
-      Envoi périodique par email de rapports ou exports (PDF/CSV). Planification (quotidien, hebdo, mensuel) et liste de destinataires.
-    </p>
-    <CodeBlock code={'bpm.title("Export planifié")\n# Fréquence + rapport + destinataires'} language="python" />
-  </>
-);
-
-function SimuContent() {
+function DocContent({ t }: { t: ModuleStrings }) {
   return (
-    <Panel variant="info" title="Configurer un export planifié">
-      <Selectbox options={[{ value: "daily", label: "Quotidien" }, { value: "weekly", label: "Hebdomadaire" }]} value={null} onChange={() => {}} placeholder="Fréquence" label="Fréquence" />
-      <Input label="Email(s) destinataires" placeholder="a@b.com, c@d.com" value="" onChange={() => {}} className="mt-4" />
-      <Button className="mt-4">Enregistrer</Button>
-    </Panel>
+    <div className="prose-sm">
+      <h2 className="text-lg font-semibold mt-0 mb-2" style={{ color: "var(--bpm-text-primary)" }}>
+        {t.aboutHeading}
+      </h2>
+      <p className="mb-4" style={{ color: "var(--bpm-text-secondary)", maxWidth: "62ch" }}>
+        {t.aboutBody}
+      </p>
+      <h3 className="text-base font-semibold mt-6 mb-2" style={{ color: "var(--bpm-text-primary)" }}>
+        {t.componentsHeading}
+      </h3>
+      <p className="mb-4" style={{ color: "var(--bpm-text-secondary)" }}>
+        <code>bpm.metricRow</code>, <code>bpm.table</code> ({t.compsTableParen1}{" "}
+        <code>bpm.badge</code>, {t.compsTableParen2} <code>bpm.button</code>),{" "}
+        <code>bpm.selectbox</code>, <code>bpm.input</code> ({t.compsInputParen}),{" "}
+        <code>bpm.confirmModal</code>, <code>bpm.activityFeed</code> {t.andWord}{" "}
+        <code>bpm.toast</code>.
+      </p>
+      <CodeBlock
+        code={`import bpm
+
+bpm.metricRow([
+    bpm.metric("Exports actifs", 3),
+    bpm.metric("Envois — 30 derniers jours", 49),
+])
+
+bpm.table(
+    columns=[("rapport", "Rapport"), ("frequence", "Fréquence"), ("prochainEnvoi", "Prochain envoi")],
+    data=exports_planifies,
+)
+
+bpm.button("Planifier l'export", on_click=planifier)`}
+        language="python"
+      />
+      <h3 className="text-base font-semibold mt-6 mb-2" style={{ color: "var(--bpm-text-primary)" }}>
+        {t.configHeading}
+      </h3>
+      <p className="mb-2 text-sm" style={{ color: "var(--bpm-text-secondary)" }}>
+        {t.configBody1}{" "}
+        <Link href="/modules/export-planifie/documentation" style={{ color: "var(--bpm-accent-cyan)" }}>
+          {t.configLinkLabel}
+        </Link>{" "}
+        {t.configBody2}
+      </p>
+    </div>
   );
 }
 
 export default function ExportPlanifieModulePage() {
+  const { locale } = useI18n();
+  const t = STR[locale];
   return (
     <div className="doc-page">
       <div className="doc-page-header">
-        <div className="doc-breadcrumb"><Link href="/modules">Modules</Link> → Export planifié</div>
-        <h1>Export planifié</h1>
-        <p className="doc-description">Envoi périodique par email de rapports ou exports (PDF/CSV).</p>
-        <div className="doc-meta"><span className="doc-badge doc-badge-category">Données & reporting</span></div>
-        <p className="mt-3 text-sm" style={{ color: "var(--bpm-text-secondary)" }}><Link href="/modules/export-planifie/simulateur" className="font-medium underline" style={{ color: "var(--bpm-accent-cyan)" }}>Ouvrir le simulateur</Link></p>
+        <div className="doc-breadcrumb">
+          <Link href="/modules">Modules</Link> → {t.moduleTitle}
+        </div>
+        <h1>{t.moduleTitle}</h1>
+        <p className="doc-description">{t.moduleDescription}</p>
+        <div className="doc-meta">
+          <span className="doc-badge doc-badge-category">{t.categoryBadge}</span>
+        </div>
+        <p className="mt-3 text-sm" style={{ color: "var(--bpm-text-secondary)" }}>
+          <Link
+            href="/modules/export-planifie/simulateur"
+            className="font-medium underline"
+            style={{ color: "var(--bpm-accent-cyan)" }}
+          >
+            {t.openSimulator}
+          </Link>
+        </p>
       </div>
-      <Tabs tabs={[{ label: "Documentation", content: docContent }, { label: "Simulateur", content: <SimuContent /> }]} defaultTab={0} />
+      <Tabs
+        tabs={[
+          { label: t.docLabel, content: <DocContent t={t} /> },
+          { label: t.simLabel, content: <ExportPlanifieSimulateur /> },
+        ]}
+        defaultTab={0}
+      />
     </div>
   );
 }

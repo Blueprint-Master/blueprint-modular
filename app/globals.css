@@ -1028,6 +1028,25 @@ textarea.bpm-textarea:focus {
 [data-theme="dark"] .changelog-badge-feat { background: rgba(69, 208, 158, 0.22); color: var(--bpm-accent-mint); }
 [data-theme="dark"] .changelog-badge-fix { background: rgba(230, 160, 30, 0.22); color: #f0c060; }
 [data-theme="dark"] .changelog-badge-perf { background: rgba(4, 141, 195, 0.28); color: #6fc4e6; }
+/* Galerie : exemple de code copiable replié sous chaque carte (dérivé du registre) */
+.demo-code { margin-top: 8px; }
+.demo-code-summary {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  cursor: pointer;
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+  color: var(--bpm-accent);
+  list-style: none;
+  user-select: none;
+}
+.demo-code-summary::-webkit-details-marker { display: none; }
+.demo-code-summary::before { content: "›"; display: inline-block; transition: transform 0.15s ease; font-size: 14px; }
+.demo-code[open] .demo-code-summary::before { transform: rotate(90deg); }
+.demo-code > :not(summary) { margin-top: 8px; }
 
 /* Buttons */
 .btn-primary { background: var(--bpm-accent); color: white; border: none; padding: 8px 16px; border-radius: 8px; font-size: 14px; font-weight: 500; cursor: pointer; text-decoration: none; display: inline-block; }

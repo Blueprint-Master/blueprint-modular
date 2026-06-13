@@ -1,40 +1,112 @@
 "use client";
 
 import Link from "next/link";
-import { Tabs, CodeBlock, Panel, Table, Button } from "@/components/bpm";
-
-const prodData = [{ ref: "P001", nom: "Produit A", prix: "12.50", stock: "42" }];
-
-const docContent = (
-  <>
-    <h2 className="text-lg font-semibold mt-0 mb-2" style={{ color: "var(--bpm-text-primary)" }}>À propos</h2>
-    <p className="mb-6" style={{ color: "var(--bpm-text-secondary)", maxWidth: "60ch" }}>
-      Fiche produit, variantes, prix, stock. Codes-barres et QR optionnels.
-    </p>
-    <CodeBlock code={'bpm.title("Catalogue")'} language="python" />
-  </>
-);
-
-function SimuContent() {
-  return (
-    <Panel variant="info" title="Catalogue (démo)">
-      <Table columns={[{ key: "ref", label: "Réf" }, { key: "nom", label: "Nom" }, { key: "prix", label: "Prix" }, { key: "stock", label: "Stock" }]} data={prodData} striped hover />
-      <Button size="small" className="mt-4">Ajouter</Button>
-    </Panel>
-  );
-}
+import { CodeBlock, Tabs } from "@/components/bpm";
+import { useI18n } from "@/lib/i18n/LocaleProvider";
+import CatalogueProduitsSimulateur from "./simulateur-content";
+import { STR } from "./strings";
 
 export default function CatalogueProduitsModulePage() {
+  const { locale } = useI18n();
+  const T = STR[locale];
+
+  const docContent = (
+    <div className="prose-sm">
+      <h2 className="text-lg font-semibold mt-0 mb-2" style={{ color: "var(--bpm-text-primary)" }}>
+        {T.aboutTitle}
+      </h2>
+      <p className="mb-4" style={{ color: "var(--bpm-text-secondary)", maxWidth: "62ch" }}>
+        {T.aboutBody}
+      </p>
+      <h3 className="text-base font-semibold mt-6 mb-2" style={{ color: "var(--bpm-text-primary)" }}>
+        {T.componentsTitle}
+      </h3>
+      {locale === "fr" ? (
+        <p className="mb-4" style={{ color: "var(--bpm-text-secondary)" }}>
+          <code>bpm.metricRow</code>, <code>bpm.table</code> (statut rendu par <code>bpm.badge</code>,
+          actions par <code>bpm.button</code>), <code>bpm.input</code> (recherche),{" "}
+          <code>bpm.selectbox</code> (catégorie, tri), <code>bpm.drawer</code> (fiche produit),{" "}
+          <code>bpm.barcode</code> + <code>bpm.qrCode</code>, <code>bpm.modal</code> +{" "}
+          <code>bpm.numberInput</code> (création), <code>bpm.confirmModal</code> et{" "}
+          <code>bpm.toast</code>.
+        </p>
+      ) : (
+        <p className="mb-4" style={{ color: "var(--bpm-text-secondary)" }}>
+          <code>bpm.metricRow</code>, <code>bpm.table</code> (status rendered with{" "}
+          <code>bpm.badge</code>, actions with <code>bpm.button</code>), <code>bpm.input</code>{" "}
+          (search), <code>bpm.selectbox</code> (category, sort), <code>bpm.drawer</code> (product
+          sheet), <code>bpm.barcode</code> + <code>bpm.qrCode</code>, <code>bpm.modal</code> +{" "}
+          <code>bpm.numberInput</code> (creation), <code>bpm.confirmModal</code> and{" "}
+          <code>bpm.toast</code>.
+        </p>
+      )}
+      <CodeBlock
+        code={`import bpm
+
+bpm.metricRow([
+    bpm.metric("Produits", 10),
+    bpm.metric("Valeur du stock", "18 432,10 €"),
+    bpm.metric("Ruptures / stock faible", 5),
+])
+
+bpm.table(
+    columns=[("ref", "Réf."), ("nom", "Produit"), ("prix", "Prix"), ("stock", "Stock")],
+    data=produits,
+    on_row_click=ouvrir_fiche,
+)
+
+bpm.drawer(
+    title="Fiche produit — P-1001",
+    children=[bpm.barcode(value="3761234010018", format="EAN13"), bpm.qrCode(value="P-1001")],
+)
+
+bpm.button("Nouveau produit", on_click=creer_produit)`}
+        language="python"
+      />
+      <h3 className="text-base font-semibold mt-6 mb-2" style={{ color: "var(--bpm-text-primary)" }}>
+        {T.settingsTitle}
+      </h3>
+      <p className="mb-2 text-sm" style={{ color: "var(--bpm-text-secondary)" }}>
+        {T.settingsBody1}
+        <Link
+          href="/modules/catalogue-produits/documentation"
+          style={{ color: "var(--bpm-accent-cyan)" }}
+        >
+          {T.docLinkLabel}
+        </Link>
+        {T.settingsBody2}
+      </p>
+    </div>
+  );
+
   return (
     <div className="doc-page">
       <div className="doc-page-header">
-        <div className="doc-breadcrumb"><Link href="/modules">Modules</Link> → Catalogue produits</div>
-        <h1>Catalogue produits</h1>
-        <p className="doc-description">Fiche produit, variantes, prix, stock. Testez dans le Simulateur.</p>
-        <div className="doc-meta"><span className="doc-badge doc-badge-category">Métier</span></div>
-        <p className="mt-3 text-sm" style={{ color: "var(--bpm-text-secondary)" }}><Link href="/modules/catalogue-produits/simulateur" className="font-medium underline" style={{ color: "var(--bpm-accent-cyan)" }}>Ouvrir le simulateur</Link></p>
+        <div className="doc-breadcrumb">
+          <Link href="/modules">Modules</Link> → {T.moduleName}
+        </div>
+        <h1>{T.moduleName}</h1>
+        <p className="doc-description">{T.pageDescription}</p>
+        <div className="doc-meta">
+          <span className="doc-badge doc-badge-category">{T.badgeCategory}</span>
+        </div>
+        <p className="mt-3 text-sm" style={{ color: "var(--bpm-text-secondary)" }}>
+          <Link
+            href="/modules/catalogue-produits/simulateur"
+            className="font-medium underline"
+            style={{ color: "var(--bpm-accent-cyan)" }}
+          >
+            {T.openSimulator}
+          </Link>
+        </p>
       </div>
-      <Tabs tabs={[{ label: "Documentation", content: docContent }, { label: "Simulateur", content: <SimuContent /> }]} defaultTab={0} />
+      <Tabs
+        tabs={[
+          { label: T.tabDocumentation, content: docContent },
+          { label: T.tabSimulator, content: <CatalogueProduitsSimulateur /> },
+        ]}
+        defaultTab={0}
+      />
     </div>
   );
 }
