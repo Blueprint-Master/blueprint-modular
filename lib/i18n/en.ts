@@ -45,6 +45,8 @@ const en: Dictionary = {
     privacy: "Privacy",
     terms: "Terms of use",
     note: "This site is built with its own components.",
+    pythonSurface: "Python",
+    reactSurface: "React",
   },
   home: {
     metaTitle: "Blueprint Modular — business components driven from Python",

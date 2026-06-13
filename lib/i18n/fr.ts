@@ -45,6 +45,8 @@ const fr = {
     privacy: "Confidentialité",
     terms: "Conditions d'utilisation",
     note: "Ce site est construit avec ses propres composants.",
+    pythonSurface: "Python",
+    reactSurface: "React",
   },
   home: {
     metaTitle: "Blueprint Modular — composants métier pilotés depuis Python",

@@ -6,6 +6,8 @@ import { useSession } from "next-auth/react";
 import { useSearchParams } from "next/navigation";
 import { Badge, Button, Panel } from "@/components/bpm";
 import { HighlightedText } from "@/components/wiki/HighlightedText";
+import { useI18n } from "@/lib/i18n/LocaleProvider";
+import { STR } from "../strings";
 
 type Hit = {
   id: string;
@@ -19,6 +21,8 @@ type Hit = {
 };
 
 export default function WikiSearchPage() {
+  const { locale } = useI18n();
+  const t = STR[locale];
   const searchParams = useSearchParams();
   const q = searchParams.get("q") ?? "";
   const { data: session, status } = useSession();
@@ -74,10 +78,10 @@ export default function WikiSearchPage() {
     <div className="doc-page">
       <div className="doc-page-header mb-6">
         <div className="doc-breadcrumb">
-          <Link href="/modules">Modules</Link> → <Link href="/modules/wiki">Wiki</Link> → Recherche
+          <Link href="/modules">{t.common.modules}</Link> → <Link href="/modules/wiki">Wiki</Link> → {t.search.breadcrumb}
         </div>
         <h1 className="text-2xl font-bold" style={{ color: "var(--bpm-text-primary)" }}>
-          Recherche dans le Wiki
+          {t.search.title}
         </h1>
         <form
           onSubmit={(e) => { e.preventDefault(); runSearch(); }}
@@ -87,12 +91,12 @@ export default function WikiSearchPage() {
             type="search"
             value={query}
             onChange={(e) => setQuery(e.target.value)}
-            placeholder="Rechercher (titre, contenu, tags)..."
+            placeholder={t.search.placeholder}
             className="flex-1 min-w-[200px] px-3 py-2 rounded border text-sm"
             style={{ borderColor: "var(--bpm-border)", background: "var(--bpm-surface)", color: "var(--bpm-text-primary)" }}
           />
           <Button type="submit" size="small" disabled={loading}>
-            {loading ? "Recherche…" : "Rechercher"}
+            {loading ? t.search.searching : t.search.searchButton}
           </Button>
         </form>
       </div>
@@ -109,12 +113,12 @@ export default function WikiSearchPage() {
         <>
           <section className="mb-8">
             <h2 className="text-lg font-semibold mb-2" style={{ color: "var(--bpm-text-primary)" }}>
-              Résultats ({textResults.length})
+              {t.search.results(textResults.length)}
             </h2>
             {textResults.length === 0 ? (
-              <Panel variant="info" title="Aucun résultat">
+              <Panel variant="info" title={t.search.noResultsTitle}>
                 <p className="text-sm" style={{ color: "var(--bpm-text-secondary)" }}>
-                  Aucun article ne correspond à votre recherche. Essayez d&apos;autres termes ou consultez les suggestions ci-dessous.
+                  {t.search.noResultsBody}
                 </p>
               </Panel>
             ) : (
@@ -135,7 +139,7 @@ export default function WikiSearchPage() {
                           <Badge key={t} variant="default">{t}</Badge>
                         ))}
                         <span className="text-xs" style={{ color: "var(--bpm-text-secondary)" }}>
-                          {(a.authorName ?? a.author?.name) ?? "—"} · {new Date(a.updatedAt).toLocaleDateString("fr-FR")}
+                          {(a.authorName ?? a.author?.name) ?? "—"} · {new Date(a.updatedAt).toLocaleDateString(t.common.locale)}
                         </span>
                       </div>
                     </Link>
@@ -148,7 +152,7 @@ export default function WikiSearchPage() {
           {semanticResults.length > 0 && (
             <section>
               <h2 className="text-lg font-semibold mb-2" style={{ color: "var(--bpm-text-primary)" }}>
-                Résultats sémantiquement proches
+                {t.search.semanticResults}
               </h2>
               <ul className="space-y-4">
                 {semanticResults.map((a) => (
@@ -161,7 +165,7 @@ export default function WikiSearchPage() {
                           <Badge key={t} variant="default">{t}</Badge>
                         ))}
                         <span className="text-xs" style={{ color: "var(--bpm-text-secondary)" }}>
-                          {(a.authorName ?? a.author?.name) ?? "—"} · {new Date(a.updatedAt).toLocaleDateString("fr-FR")}
+                          {(a.authorName ?? a.author?.name) ?? "—"} · {new Date(a.updatedAt).toLocaleDateString(t.common.locale)}
                         </span>
                       </div>
                     </Link>
@@ -174,8 +178,8 @@ export default function WikiSearchPage() {
       )}
 
       <nav className="doc-pagination mt-8">
-        <Link href="/modules/wiki" style={{ color: "var(--bpm-accent-cyan)" }}>← Retour au Wiki</Link>
-        <Link href="/modules/wiki/tags" style={{ color: "var(--bpm-accent-cyan)" }}>Tags</Link>
+        <Link href="/modules/wiki" style={{ color: "var(--bpm-accent-cyan)" }}>{t.common.backToWiki}</Link>
+        <Link href="/modules/wiki/tags" style={{ color: "var(--bpm-accent-cyan)" }}>{t.common.tags}</Link>
       </nav>
     </div>
   );

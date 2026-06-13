@@ -6,6 +6,8 @@ import { useParams } from "next/navigation";
 import { Panel, Button, Spinner, Selectbox, Input, Badge, Card, Divider, EmptyState, Metric } from "@/components/bpm";
 import { FicheHeader, FicheSectionCard, FicheFieldGrid, FicheNav, FicheSkeleton } from "@/components/fiche";
 import type { DomainConfig } from "@/lib/asset-manager/get-domain-config";
+import { useI18n } from "@/lib/i18n/LocaleProvider";
+import { STR, dateLocale } from "../../../strings";
 
 type Asset = {
   id: string;
@@ -33,23 +35,7 @@ type Movement = {
   createdAt: string;
 };
 
-const MOVEMENT_TYPE_LABELS: Record<string, string> = {
-  reception: "Réception",
-  deployment: "Déploiement",
-  transfer: "Transfert",
-  return: "Retour",
-  repair_out: "Sortie réparation",
-  repair_in: "Retour réparation",
-  disposal: "Réforme",
-};
-
-const RELATION_TYPE_LABELS: Record<string, string> = {
-  depends_on: "Dépend de",
-  connected_to: "Connecté à",
-  hosted_on: "Hébergé sur",
-  fed_by: "Alimenté par",
-  controls: "Contrôle",
-};
+const DEFAULT_LIFECYCLE_KEYS = ["achat", "reception", "deploiement", "en_service", "maintenance", "renouvellement", "reforme"] as const;
 
 type CIRelation = {
   id: string;
@@ -64,18 +50,14 @@ type CIRelation = {
 type TicketSummary = { id: string; reference: string; title: string; status: string; openedAt: string };
 type ContractSummary = { id: string; reference: string; label: string; type: string; endDate: string | null; assetIds: string | null };
 
-const DEFAULT_LIFECYCLE_STAGES = [
-  { id: "achat", label: "Achat" },
-  { id: "reception", label: "Réception" },
-  { id: "deploiement", label: "Déploiement" },
-  { id: "en_service", label: "En service" },
-  { id: "maintenance", label: "Maintenance" },
-  { id: "renouvellement", label: "Renouvellement" },
-  { id: "reforme", label: "Réforme" },
-];
-
 export default function AssetDetailPage() {
   const params = useParams();
+  const { locale } = useI18n();
+  const t = STR[locale];
+  const ta = t.assets;
+  const MOVEMENT_TYPE_LABELS = ta.movementTypes;
+  const RELATION_TYPE_LABELS = ta.relationTypes;
+  const DEFAULT_LIFECYCLE_STAGES = DEFAULT_LIFECYCLE_KEYS.map((k) => ({ id: k, label: ta.lifecycleStages[k] ?? k }));
   const domainId = typeof params?.domainId === "string" ? params.domainId : "";
   const id = typeof params?.id === "string" ? params.id : "";
   const [config, setConfig] = useState<DomainConfig | null>(null);
@@ -200,7 +182,7 @@ export default function AssetDetailPage() {
   };
 
   const handleDeleteRelation = async (relId: string) => {
-    if (!confirm("Supprimer cette relation ?")) return;
+    if (!confirm(ta.confirmDeleteRelation)) return;
     const res = await fetch(`/api/asset-manager/ci-relations/${relId}`, { method: "DELETE", credentials: "include" });
     if (res.ok) fetchRelations();
   };
@@ -274,10 +256,10 @@ export default function AssetDetailPage() {
   if (!asset) {
     return (
       <div className="doc-page">
-        <Panel variant="warning" title="Actif introuvable">
-          L&apos;actif demandé n&apos;existe pas ou vous n&apos;y avez pas accès.
+        <Panel variant="warning" title={ta.notFoundTitle}>
+          {ta.notFoundDescription}
         </Panel>
-        <FicheNav backLink={`/modules/asset-manager/${domainId}/assets`} backLabel="← Liste des actifs" />
+        <FicheNav backLink={`/modules/asset-manager/${domainId}/assets`} backLabel={ta.backList} />
       </div>
     );
   }
@@ -292,8 +274,8 @@ export default function AssetDetailPage() {
       <FicheHeader
         breadcrumb={
           <>
-            <Link href="/modules" style={{ color: "var(--bpm-accent-cyan)" }}>Modules</Link> → <Link href="/modules/asset-manager" style={{ color: "var(--bpm-accent-cyan)" }}>Gestion de parc</Link> →{" "}
-            <Link href={`/modules/asset-manager/${domainId}/assets`} style={{ color: "var(--bpm-accent-cyan)" }}>{config?.asset_label_plural ?? "Actifs"}</Link> → {asset.reference}
+            <Link href="/modules" style={{ color: "var(--bpm-accent-cyan)" }}>{t.common.breadcrumbModules}</Link> → <Link href="/modules/asset-manager" style={{ color: "var(--bpm-accent-cyan)" }}>{t.common.moduleTitle}</Link> →{" "}
+            <Link href={`/modules/asset-manager/${domainId}/assets`} style={{ color: "var(--bpm-accent-cyan)" }}>{config?.asset_label_plural ?? ta.defaultPlural}</Link> → {asset.reference}
           </>
         }
         title={asset.label}
@@ -306,50 +288,50 @@ export default function AssetDetailPage() {
         }
       />
 
-      <FicheSectionCard title="Informations générales" className="mt-4">
+      <FicheSectionCard title={ta.sectionGeneral} className="mt-4">
         <FicheFieldGrid
           withDividers
           items={[
-            { label: "Référence", value: asset.reference },
-            { label: "Type", value: getTypeLabel(asset.assetTypeId), asBadge: true, badgeVariant: "default" },
-            { label: "Statut", value: getStatusLabel(asset.statusId), asBadge: true, badgeVariant: statusBadgeVariant(asset.statusId) },
+            { label: ta.fieldReference, value: asset.reference },
+            { label: ta.fieldType, value: getTypeLabel(asset.assetTypeId), asBadge: true, badgeVariant: "default" },
+            { label: ta.fieldStatusLabel, value: getStatusLabel(asset.statusId), asBadge: true, badgeVariant: statusBadgeVariant(asset.statusId) },
             {
-              label: "Étape de cycle de vie",
+              label: ta.fieldLifecycleStage,
               value: (
                 <span className="flex items-center gap-2">
                   <Selectbox
                     label=""
                     value={asset.lifecycleStage ?? ""}
                     onChange={(v) => handleLifecycleChange(String(v))}
-                    options={[{ value: "", label: "— Non défini" }, ...lifecycleStages.map((s) => ({ value: s.id, label: s.label }))]}
-                    placeholder="Choisir"
+                    options={[{ value: "", label: ta.lifecycleUndefined }, ...lifecycleStages.map((s) => ({ value: s.id, label: s.label }))]}
+                    placeholder={ta.choose}
                   />
-                  {savingLifecycle && <span className="text-xs" style={{ color: "var(--bpm-text-secondary)" }}>Enregistrement…</span>}
+                  {savingLifecycle && <span className="text-xs" style={{ color: "var(--bpm-text-secondary)" }}>{ta.saving}</span>}
                 </span>
               ),
             },
-            ...(asset.brand ? [{ label: "Marque", value: asset.brand }] : []),
-            ...(asset.model ? [{ label: "Modèle", value: asset.model }] : []),
-            ...(asset.serialNumber ? [{ label: "N° série", value: asset.serialNumber }] : []),
+            ...(asset.brand ? [{ label: ta.fieldBrand, value: asset.brand }] : []),
+            ...(asset.model ? [{ label: ta.fieldModel, value: asset.model }] : []),
+            ...(asset.serialNumber ? [{ label: ta.fieldSerial, value: asset.serialNumber }] : []),
           ]}
         />
       </FicheSectionCard>
 
       <Divider thickness={1} color="var(--bpm-border)" className="my-4" />
       {config?.asset_types && asset.attributes.length > 0 && (
-        <FicheSectionCard title="Caractéristiques" className="mt-4">
+        <FicheSectionCard title={ta.sectionCharacteristics} className="mt-4">
           <FicheFieldGrid
             withDividers
             items={config.asset_types
-              .find((t) => t.id === asset.assetTypeId)
+              .find((at) => at.id === asset.assetTypeId)
               ?.fields.filter((f) => attrsByKey[f.key])
               .map((f) => {
                 const a = attrsByKey[f.key];
                 let val = "";
                 if (a?.valueText != null) val = a.valueText;
                 else if (a?.valueNumber != null) val = String(a.valueNumber);
-                else if (a?.valueDate) val = new Date(a.valueDate).toLocaleDateString("fr-FR");
-                else if (a?.valueBool != null) val = a.valueBool ? "Oui" : "Non";
+                else if (a?.valueDate) val = new Date(a.valueDate).toLocaleDateString(dateLocale(locale));
+                else if (a?.valueBool != null) val = a.valueBool ? ta.yes : ta.no;
                 return { label: f.label, value: val };
               }) ?? []}
           />
@@ -357,56 +339,56 @@ export default function AssetDetailPage() {
       )}
 
       <Divider thickness={1} color="var(--bpm-border)" className="my-4" />
-      <FicheSectionCard title="Historique des mouvements" className="mt-4">
+      <FicheSectionCard title={ta.sectionMovements} className="mt-4">
         <div className="flex flex-wrap items-center justify-between gap-2 mb-4">
-          <Metric label="Mouvements" value={movements.length} border={false} />
+          <Metric label={ta.metricMovements} value={movements.length} border={false} />
           <Button
             size="small"
             variant="outline"
             onClick={() => setShowMovementForm((v) => !v)}
           >
-            {showMovementForm ? "Annuler" : "+ Ajouter un mouvement"}
+            {showMovementForm ? ta.cancel : ta.addMovement}
           </Button>
         </div>
         {showMovementForm && (
           <Card variant="outlined" className="mb-4">
             <div className="bpm-card-body p-4">
-              <h4 className="text-sm font-semibold mb-3" style={{ color: "var(--bpm-text-primary)" }}>Nouveau mouvement</h4>
+              <h4 className="text-sm font-semibold mb-3" style={{ color: "var(--bpm-text-primary)" }}>{ta.newMovement}</h4>
               <form onSubmit={handleAddMovement}>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-3 mb-3">
               <Selectbox
-                label="Type"
+                label={ta.fieldType}
                 value={newMovementType}
                 onChange={(v) => setNewMovementType(String(v))}
                 options={Object.entries(MOVEMENT_TYPE_LABELS).map(([value, label]) => ({ value, label }))}
               />
               <Input
-                label="Date"
+                label={ta.fieldDate}
                 type="date"
                 value={newMovementDate}
                 onChange={(v) => setNewMovementDate(v)}
               />
             </div>
             <Input
-              label="Raison (optionnel)"
+              label={ta.fieldReasonOptional}
               value={newMovementReason}
               onChange={setNewMovementReason}
-              placeholder="Ex. Affectation bureau 101"
+              placeholder={ta.placeholderReason}
             />
             <div className="mt-3">
-              <label className="block text-sm font-medium mb-1" style={{ color: "var(--bpm-text-secondary)" }}>Notes (optionnel)</label>
+              <label className="block text-sm font-medium mb-1" style={{ color: "var(--bpm-text-secondary)" }}>{ta.fieldNotesOptional}</label>
               <textarea
                 value={newMovementNotes}
                 onChange={(e) => setNewMovementNotes(e.target.value)}
                 rows={2}
                 className="bpm-textarea w-full rounded-lg border px-3 py-2 text-sm resize-y"
                 style={{ borderColor: "var(--bpm-border)", background: "var(--bpm-surface)", color: "var(--bpm-text-primary)" }}
-                placeholder="Commentaire"
+                placeholder={ta.placeholderComment}
               />
             </div>
             <div className="mt-6">
             <Button type="submit" size="medium" variant="primary" disabled={savingMovement}>
-              {savingMovement ? "Enregistrement…" : "Enregistrer le mouvement"}
+              {savingMovement ? ta.saving : ta.saveMovement}
             </Button>
             </div>
               </form>
@@ -419,9 +401,9 @@ export default function AssetDetailPage() {
           </div>
         ) : movements.length === 0 ? (
           <EmptyState
-            title="Aucun mouvement"
-            description="Aucun mouvement enregistré."
-            action={<Button size="small" variant="outline" onClick={() => setShowMovementForm(true)}>+ Ajouter un mouvement</Button>}
+            title={ta.emptyMovementsTitle}
+            description={ta.emptyMovementsDescription}
+            action={<Button size="small" variant="outline" onClick={() => setShowMovementForm(true)}>{ta.addMovement}</Button>}
           />
         ) : (
           <ul className="space-y-2">
@@ -431,7 +413,7 @@ export default function AssetDetailPage() {
                 className="flex flex-wrap items-baseline gap-2 py-2 border-b border-[var(--bpm-border)] last:border-0 text-sm"
               >
                 <span className="font-medium" style={{ color: "var(--bpm-text-primary)", minWidth: "10rem" }}>
-                  {new Date(m.date).toLocaleDateString("fr-FR")}
+                  {new Date(m.date).toLocaleDateString(dateLocale(locale))}
                 </span>
                 <Badge variant="primary">{MOVEMENT_TYPE_LABELS[m.movementType] ?? m.movementType}</Badge>
                 {m.reason && <span style={{ color: "var(--bpm-text-secondary)" }}>{m.reason}</span>}
@@ -443,27 +425,27 @@ export default function AssetDetailPage() {
       </FicheSectionCard>
 
       <Divider thickness={1} color="var(--bpm-border)" className="my-4" />
-      <FicheSectionCard title="Tickets" className="mt-4">
+      <FicheSectionCard title={ta.sectionTickets} className="mt-4">
         {loadingTickets ? (
           <div className="flex justify-center py-4">
             <Spinner size="small" />
           </div>
         ) : tickets.length === 0 ? (
           <EmptyState
-            title="Aucun ticket"
-            description="Aucun ticket lié à cet actif."
-            action={<Link href={`/modules/asset-manager/${domainId}/tickets/new`}><Button size="small" variant="outline">+ Nouveau ticket</Button></Link>}
+            title={ta.emptyTicketsTitle}
+            description={ta.emptyTicketsDescription}
+            action={<Link href={`/modules/asset-manager/${domainId}/tickets/new`}><Button size="small" variant="outline">{ta.newTicket}</Button></Link>}
           />
         ) : (
           <ul className="space-y-2">
-            {tickets.map((t) => (
-              <li key={t.id} className="flex flex-wrap items-baseline gap-2 py-2 border-b border-[var(--bpm-border)] last:border-0 text-sm">
-                <Link href={`/modules/asset-manager/${domainId}/tickets/${t.id}`} className="font-medium hover:underline" style={{ color: "var(--bpm-accent-cyan)" }}>
-                  {t.reference}
+            {tickets.map((tk) => (
+              <li key={tk.id} className="flex flex-wrap items-baseline gap-2 py-2 border-b border-[var(--bpm-border)] last:border-0 text-sm">
+                <Link href={`/modules/asset-manager/${domainId}/tickets/${tk.id}`} className="font-medium hover:underline" style={{ color: "var(--bpm-accent-cyan)" }}>
+                  {tk.reference}
                 </Link>
-                <span style={{ color: "var(--bpm-text-primary)" }}>{t.title}</span>
-                <Badge variant="default">{t.status}</Badge>
-                <span className="text-xs" style={{ color: "var(--bpm-text-secondary)" }}>{new Date(t.openedAt).toLocaleDateString("fr-FR")}</span>
+                <span style={{ color: "var(--bpm-text-primary)" }}>{tk.title}</span>
+                <Badge variant="default">{tk.status}</Badge>
+                <span className="text-xs" style={{ color: "var(--bpm-text-secondary)" }}>{new Date(tk.openedAt).toLocaleDateString(dateLocale(locale))}</span>
               </li>
             ))}
           </ul>
@@ -471,13 +453,13 @@ export default function AssetDetailPage() {
       </FicheSectionCard>
 
       <Divider thickness={1} color="var(--bpm-border)" className="my-4" />
-      <FicheSectionCard title="Contrats" className="mt-4">
+      <FicheSectionCard title={ta.sectionContracts} className="mt-4">
         {loadingContracts ? (
           <div className="flex justify-center py-4">
             <Spinner size="small" />
           </div>
         ) : contracts.length === 0 ? (
-          <EmptyState title="Aucun contrat" description="Aucun contrat couvrant cet actif." />
+          <EmptyState title={ta.emptyContractsTitle} description={ta.emptyContractsDescription} />
         ) : (
           <ul className="space-y-2">
             {contracts.map((c) => {
@@ -491,7 +473,7 @@ export default function AssetDetailPage() {
                   <span style={{ color: "var(--bpm-text-primary)" }}>{c.label}</span>
                   <Badge variant="default">{c.type}</Badge>
                   {endDate && (
-                    <Badge variant={isExpired ? "error" : "default"}>Fin : {endDate.toLocaleDateString("fr-FR")}</Badge>
+                    <Badge variant={isExpired ? "error" : "default"}>{ta.contractEnd(endDate.toLocaleDateString(dateLocale(locale)))}</Badge>
                   )}
                 </li>
               );
@@ -501,11 +483,11 @@ export default function AssetDetailPage() {
       </FicheSectionCard>
 
       <Divider thickness={1} color="var(--bpm-border)" className="my-4" />
-      <FicheSectionCard title="Dépendances / Cartographie" className="mt-4">
+      <FicheSectionCard title={ta.sectionDependencies} className="mt-4">
         <div className="flex flex-wrap items-center justify-between gap-2 mb-4">
-          <Metric label="Relations" value={relations.length} border={false} />
+          <Metric label={ta.metricRelations} value={relations.length} border={false} />
           <Button size="small" variant="outline" onClick={() => { setShowRelationForm((v) => !v); loadDomainAssetsForRelation(); }}>
-            {showRelationForm ? "Annuler" : "+ Ajouter une relation"}
+            {showRelationForm ? ta.cancel : ta.addRelation}
           </Button>
         </div>
         {showRelationForm && (
@@ -514,14 +496,14 @@ export default function AssetDetailPage() {
               <form onSubmit={handleAddRelation}>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-3 mb-3">
                   <Selectbox
-                    label="Actif cible"
+                    label={ta.fieldTargetAsset}
                     value={newRelationTargetId}
                     onChange={(v) => setNewRelationTargetId(String(v))}
                     options={domainAssets.map((a) => ({ value: a.id, label: `${a.reference} — ${a.label}` }))}
-                    placeholder="Choisir un actif"
+                    placeholder={ta.chooseAsset}
                   />
                   <Selectbox
-                    label="Type de relation"
+                    label={ta.fieldRelationType}
                     value={newRelationType}
                     onChange={(v) => setNewRelationType(String(v))}
                     options={Object.entries(RELATION_TYPE_LABELS).map(([value, label]) => ({ value, label }))}
@@ -529,7 +511,7 @@ export default function AssetDetailPage() {
                 </div>
                 <div className="mt-6">
                 <Button type="submit" size="medium" variant="primary" disabled={savingRelation || !newRelationTargetId}>
-                  {savingRelation ? "Enregistrement…" : "Ajouter"}
+                  {savingRelation ? ta.saving : ta.add}
                 </Button>
                 </div>
               </form>
@@ -542,9 +524,9 @@ export default function AssetDetailPage() {
           </div>
         ) : relations.length === 0 ? (
           <EmptyState
-            title="Aucune relation"
-            description="Ajoutez une dépendance ou un lien."
-            action={<Button size="small" variant="outline" onClick={() => { setShowRelationForm(true); loadDomainAssetsForRelation(); }}>+ Ajouter une relation</Button>}
+            title={ta.emptyRelationsTitle}
+            description={ta.emptyRelationsDescription}
+            action={<Button size="small" variant="outline" onClick={() => { setShowRelationForm(true); loadDomainAssetsForRelation(); }}>{ta.addRelation}</Button>}
           />
         ) : (
           <ul className="space-y-2">
@@ -560,7 +542,7 @@ export default function AssetDetailPage() {
                     {other.reference} — {other.label}
                   </Link>
                   <Button size="small" variant="outline" onClick={() => handleDeleteRelation(rel.id)} className="ml-auto asset-manager-btn-compact">
-                    Supprimer
+                    {ta.delete}
                   </Button>
                 </li>
               );
@@ -572,13 +554,13 @@ export default function AssetDetailPage() {
       {asset.notes && (
         <>
           <Divider thickness={1} color="var(--bpm-border)" className="my-4" />
-            <FicheSectionCard title="Notes" className="mt-4">
+            <FicheSectionCard title={ta.sectionNotes} className="mt-4">
             <p className="text-sm whitespace-pre-wrap" style={{ color: "var(--bpm-text-primary)" }}>{asset.notes}</p>
           </FicheSectionCard>
         </>
       )}
 
-      <FicheNav backLink={`/modules/asset-manager/${domainId}/assets`} backLabel="← Liste des actifs" />
+      <FicheNav backLink={`/modules/asset-manager/${domainId}/assets`} backLabel={ta.backList} />
     </div>
   );
 }

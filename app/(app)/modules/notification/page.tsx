@@ -4,16 +4,20 @@ import Link from "next/link";
 import { useNotificationHistory } from "@/contexts/NotificationHistoryContext";
 import { getNotificationLevel } from "@/lib/notificationLevels";
 import { CodeBlock, Tabs } from "@/components/bpm";
+import { useI18n } from "@/lib/i18n/LocaleProvider";
+import { STR, type NotificationTestType } from "./strings";
 
 export default function NotificationModulePage() {
   const { addNotification } = useNotificationHistory();
+  const { locale } = useI18n();
+  const s = STR[locale];
 
-  const addTestNotification = (type: "info" | "success" | "warning" | "error") => {
+  const addTestNotification = (type: NotificationTestType) => {
     const payload = {
-      message: `Notification de test (${type}) depuis le module bpm.notification.`,
+      message: s.moduleTestMessage(s.typeLabels[type]),
       type,
-      title: "Test",
-      pageName: "Module Notification",
+      title: s.testTitle,
+      pageName: s.modulePageName,
     };
     const level = getNotificationLevel(payload);
     addNotification({ ...payload, level });
@@ -21,22 +25,22 @@ export default function NotificationModulePage() {
 
   const documentationContent = (
     <>
-      <h2 className="text-lg font-semibold mt-0 mb-2" style={{ color: "var(--bpm-text-primary)" }}>À propos</h2>
+      <h2 className="text-lg font-semibold mt-0 mb-2" style={{ color: "var(--bpm-text-primary)" }}>{s.aboutHeading}</h2>
       <p className="mb-6" style={{ color: "var(--bpm-text-secondary)", maxWidth: "60ch" }}>
-        La cloche affiche les notifications récentes (stockées dans le navigateur). Chaque notification a un niveau 1, 2 ou 3 ; le filtre dans <Link href="/settings" className="underline" style={{ color: "var(--bpm-accent-cyan)" }}>Paramètres → Général</Link> permet de n&apos;afficher que les niveaux suffisamment prioritaires.
+        {s.aboutBefore}<Link href="/settings" className="underline" style={{ color: "var(--bpm-accent-cyan)" }}>{s.settingsPath}</Link>{s.aboutAfter}
       </p>
 
-      <h2 className="text-lg font-semibold mt-8 mb-2" style={{ color: "var(--bpm-text-primary)" }}>Comment implanter le module</h2>
+      <h2 className="text-lg font-semibold mt-8 mb-2" style={{ color: "var(--bpm-text-primary)" }}>{s.implementHeading}</h2>
       <p className="mb-3" style={{ color: "var(--bpm-text-secondary)", maxWidth: "60ch" }}>
-        Le module repose sur un <strong style={{ color: "var(--bpm-text-primary)" }}>contexte React</strong> et une <strong style={{ color: "var(--bpm-text-primary)" }}>cloche dans le header</strong> déjà intégrée au layout. À faire dans votre app :
+        {s.implementIntro1}<strong style={{ color: "var(--bpm-text-primary)" }}>{s.implementStrongContext}</strong>{s.implementIntro2}<strong style={{ color: "var(--bpm-text-primary)" }}>{s.implementStrongBell}</strong>{s.implementIntro3}
       </p>
       <ul className="list-disc pl-5 mb-4 space-y-1" style={{ color: "var(--bpm-text-secondary)", maxWidth: "60ch" }}>
-        <li>Envelopper l&apos;arbre de l&apos;app avec <code className="px-1.5 py-0.5 rounded text-sm" style={{ background: "var(--bpm-bg-secondary)", color: "var(--bpm-text-primary)" }}>NotificationHistoryProvider</code> (ou utiliser <code className="px-1.5 py-0.5 rounded text-sm" style={{ background: "var(--bpm-bg-secondary)", color: "var(--bpm-text-primary)" }}>NotificationProviders</code> qui inclut aussi le toast).</li>
-        <li>Dans tout composant enfant, utiliser <code className="px-1.5 py-0.5 rounded text-sm" style={{ background: "var(--bpm-bg-secondary)", color: "var(--bpm-text-primary)" }}>useNotificationHistory()</code> pour obtenir <code className="px-1.5 py-0.5 rounded text-sm" style={{ background: "var(--bpm-bg-secondary)", color: "var(--bpm-text-primary)" }}>addNotification</code>.</li>
-        <li>Appeler <code className="px-1.5 py-0.5 rounded text-sm" style={{ background: "var(--bpm-bg-secondary)", color: "var(--bpm-text-primary)" }}>addNotification(&#123; message, type?, title?, pageName? &#125;)</code>. Le niveau (1–3) est déduit automatiquement via <code className="px-1.5 py-0.5 rounded text-sm" style={{ background: "var(--bpm-bg-secondary)", color: "var(--bpm-text-primary)" }}>getNotificationLevel</code> si vous ne le fournissez pas.</li>
+        <li>{s.implementLi1a}<code className="px-1.5 py-0.5 rounded text-sm" style={{ background: "var(--bpm-bg-secondary)", color: "var(--bpm-text-primary)" }}>NotificationHistoryProvider</code>{s.implementLi1b}<code className="px-1.5 py-0.5 rounded text-sm" style={{ background: "var(--bpm-bg-secondary)", color: "var(--bpm-text-primary)" }}>NotificationProviders</code>{s.implementLi1c}</li>
+        <li>{s.implementLi2a}<code className="px-1.5 py-0.5 rounded text-sm" style={{ background: "var(--bpm-bg-secondary)", color: "var(--bpm-text-primary)" }}>useNotificationHistory()</code>{s.implementLi2b}<code className="px-1.5 py-0.5 rounded text-sm" style={{ background: "var(--bpm-bg-secondary)", color: "var(--bpm-text-primary)" }}>addNotification</code>{s.implementLi2c}</li>
+        <li>{s.implementLi3a}<code className="px-1.5 py-0.5 rounded text-sm" style={{ background: "var(--bpm-bg-secondary)", color: "var(--bpm-text-primary)" }}>addNotification(&#123; message, type?, title?, pageName? &#125;)</code>{s.implementLi3b}<code className="px-1.5 py-0.5 rounded text-sm" style={{ background: "var(--bpm-bg-secondary)", color: "var(--bpm-text-primary)" }}>getNotificationLevel</code>{s.implementLi3c}</li>
       </ul>
       <p className="mb-2" style={{ color: "var(--bpm-text-secondary)", maxWidth: "60ch" }}>
-        Fichiers principaux : <code className="px-1.5 py-0.5 rounded text-sm" style={{ background: "var(--bpm-bg-secondary)", color: "var(--bpm-text-primary)" }}>contexts/NotificationHistoryContext.tsx</code>, <code className="px-1.5 py-0.5 rounded text-sm" style={{ background: "var(--bpm-bg-secondary)", color: "var(--bpm-text-primary)" }}>lib/notificationLevels.ts</code>, <code className="px-1.5 py-0.5 rounded text-sm" style={{ background: "var(--bpm-bg-secondary)", color: "var(--bpm-text-primary)" }}>components/NotificationBell.tsx</code>.
+        {s.mainFilesLabel}<code className="px-1.5 py-0.5 rounded text-sm" style={{ background: "var(--bpm-bg-secondary)", color: "var(--bpm-text-primary)" }}>contexts/NotificationHistoryContext.tsx</code>, <code className="px-1.5 py-0.5 rounded text-sm" style={{ background: "var(--bpm-bg-secondary)", color: "var(--bpm-text-primary)" }}>lib/notificationLevels.ts</code>, <code className="px-1.5 py-0.5 rounded text-sm" style={{ background: "var(--bpm-bg-secondary)", color: "var(--bpm-text-primary)" }}>components/NotificationBell.tsx</code>.
       </p>
       <div className="mb-6">
         <CodeBlock
@@ -67,20 +71,20 @@ function MyComponent() {
         />
       </div>
 
-      <h2 className="text-lg font-semibold mt-8 mb-2" style={{ color: "var(--bpm-text-primary)" }}>Niveaux</h2>
+      <h2 className="text-lg font-semibold mt-8 mb-2" style={{ color: "var(--bpm-text-primary)" }}>{s.levelsHeading}</h2>
       <ul className="list-disc pl-5 mb-0 space-y-1" style={{ color: "var(--bpm-text-secondary)", maxWidth: "60ch" }}>
-        <li><strong style={{ color: "var(--bpm-text-primary)" }}>Niveau 1</strong> — Haute priorité (ex. erreurs)</li>
-        <li><strong style={{ color: "var(--bpm-text-primary)" }}>Niveau 2</strong> — Moyenne (ex. succès, avertissements)</li>
-        <li><strong style={{ color: "var(--bpm-text-primary)" }}>Niveau 3</strong> — Basse (ex. info, paramètres sauvegardés)</li>
+        <li><strong style={{ color: "var(--bpm-text-primary)" }}>{s.level1Name}</strong>{s.level1Desc}</li>
+        <li><strong style={{ color: "var(--bpm-text-primary)" }}>{s.level2Name}</strong>{s.level2Desc}</li>
+        <li><strong style={{ color: "var(--bpm-text-primary)" }}>{s.level3Name}</strong>{s.level3Desc}</li>
       </ul>
     </>
   );
 
   const simulateurContent = (
     <>
-      <h2 className="text-lg font-semibold mt-0 mb-2" style={{ color: "var(--bpm-text-primary)" }}>Tester la cloche</h2>
+      <h2 className="text-lg font-semibold mt-0 mb-2" style={{ color: "var(--bpm-text-primary)" }}>{s.testBellHeading}</h2>
       <p className="text-sm mb-4" style={{ color: "var(--bpm-text-secondary)", maxWidth: "60ch" }}>
-        Ajoutez une notification de test puis ouvrez la cloche dans le header.
+        {s.testBellIntroShort}
       </p>
       <div
         className="p-6 rounded-xl border mb-6"
@@ -100,7 +104,7 @@ function MyComponent() {
               borderColor: "var(--bpm-border)",
             }}
           >
-            Info
+            {s.btnInfo}
           </button>
           <button
             type="button"
@@ -112,7 +116,7 @@ function MyComponent() {
               borderColor: "var(--bpm-border)",
             }}
           >
-            Succès
+            {s.btnSuccess}
           </button>
           <button
             type="button"
@@ -124,7 +128,7 @@ function MyComponent() {
               borderColor: "var(--bpm-border)",
             }}
           >
-            Avertissement
+            {s.btnWarning}
           </button>
           <button
             type="button"
@@ -136,16 +140,16 @@ function MyComponent() {
               borderColor: "var(--bpm-border)",
             }}
           >
-            Erreur
+            {s.btnError}
           </button>
         </div>
       </div>
 
-      <h2 className="text-lg font-semibold mt-6 mb-2" style={{ color: "var(--bpm-text-primary)" }}>Niveaux</h2>
+      <h2 className="text-lg font-semibold mt-6 mb-2" style={{ color: "var(--bpm-text-primary)" }}>{s.levelsHeading}</h2>
       <ul className="list-disc pl-5 mb-0 space-y-1" style={{ color: "var(--bpm-text-secondary)", maxWidth: "60ch" }}>
-        <li><strong style={{ color: "var(--bpm-text-primary)" }}>Niveau 1</strong> — Haute priorité (ex. erreurs)</li>
-        <li><strong style={{ color: "var(--bpm-text-primary)" }}>Niveau 2</strong> — Moyenne (ex. succès, avertissements)</li>
-        <li><strong style={{ color: "var(--bpm-text-primary)" }}>Niveau 3</strong> — Basse (ex. info, paramètres sauvegardés)</li>
+        <li><strong style={{ color: "var(--bpm-text-primary)" }}>{s.level1Name}</strong>{s.level1Desc}</li>
+        <li><strong style={{ color: "var(--bpm-text-primary)" }}>{s.level2Name}</strong>{s.level2Desc}</li>
+        <li><strong style={{ color: "var(--bpm-text-primary)" }}>{s.level3Name}</strong>{s.level3Desc}</li>
       </ul>
     </>
   );
@@ -156,23 +160,23 @@ function MyComponent() {
         <div className="doc-breadcrumb"><Link href="/modules">Modules</Link> → bpm.notification</div>
         <h1>bpm.notification</h1>
         <p className="doc-description">
-          Historique des notifications, cloche dans le header, niveaux 1 (haute) à 3 (basse). Le niveau minimal affiché est configurable dans Paramètres → Général.
+          {s.moduleDescription}
         </p>
         <div className="doc-meta">
-          <span className="doc-badge doc-badge-category">Module</span>
-          <span className="doc-reading-time">⏱ 1 min</span>
+          <span className="doc-badge doc-badge-category">{s.badgeModule}</span>
+          <span className="doc-reading-time">{s.readingTime}</span>
         </div>
         <p className="mt-3 text-sm" style={{ color: "var(--bpm-text-secondary)" }}>
           <Link href="/modules/notification/simulateur" className="font-medium underline" style={{ color: "var(--bpm-accent-cyan)" }}>
-            Simulateur (tester les notifications)
+            {s.simulatorLinkLabel}
           </Link>
         </p>
       </div>
 
       <Tabs
         tabs={[
-          { label: "Documentation", content: documentationContent },
-          { label: "Simulateur", content: simulateurContent },
+          { label: s.tabDocumentation, content: documentationContent },
+          { label: s.tabSimulator, content: simulateurContent },
         ]}
         defaultTab={0}
       />

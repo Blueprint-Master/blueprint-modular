@@ -4,10 +4,53 @@ import { useState } from "react";
 import Link from "next/link";
 import { Tooltip, Button, CodeBlock } from "@/components/bpm";
 import { getPrevNext } from "@/lib/docPages";
+import { useI18n } from "@/lib/i18n/LocaleProvider";
 
 type Placement = "top" | "bottom" | "left" | "right";
 
+const fr = {
+  breadcrumb: "Composants",
+  description: "Info-bulle au survol.",
+  category: "Feedback",
+  triggerLabel: "Survoler pour le tooltip",
+  bgLabel: "backgroundColor (optionnel)",
+  textLabel: "textColor (optionnel)",
+  copy: "Copier",
+  thDefault: "Défaut",
+  thRequired: "Requis",
+  yes: "Oui",
+  no: "Non",
+  examples: "Exemples",
+  descContent: "Texte du tooltip.",
+  descChildren: "Élément déclencheur.",
+  descPlacement: "Position.",
+  descBg: "Couleur de fond du tooltip (hex, rgb ou nom CSS).",
+  descText: "Couleur du texte du tooltip.",
+};
+const en: typeof fr = {
+  breadcrumb: "Components",
+  description: "Tooltip shown on hover.",
+  category: "Feedback",
+  triggerLabel: "Hover for the tooltip",
+  bgLabel: "backgroundColor (optional)",
+  textLabel: "textColor (optional)",
+  copy: "Copy",
+  thDefault: "Default",
+  thRequired: "Required",
+  yes: "Yes",
+  no: "No",
+  examples: "Examples",
+  descContent: "Tooltip text.",
+  descChildren: "Trigger element.",
+  descPlacement: "Position.",
+  descBg: "Tooltip background color (hex, rgb or CSS name).",
+  descText: "Tooltip text color.",
+};
+const L = { fr, en } as const;
+
 export default function DocTooltipPage() {
+  const { locale } = useI18n();
+  const t = L[locale];
   const [content, setContent] = useState("Aide au survol");
   const [placement, setPlacement] = useState<Placement>("top");
   const [backgroundColor, setBackgroundColor] = useState("");
@@ -21,12 +64,12 @@ export default function DocTooltipPage() {
   return (
     <div className="doc-page">
       <div className="doc-page-header">
-        <div className="doc-breadcrumb"><Link href="/docs/components">Composants</Link> → bpm.tooltip</div>
+        <div className="doc-breadcrumb"><Link href="/docs/components">{t.breadcrumb}</Link> → bpm.tooltip</div>
         <h1>bpm.tooltip</h1>
-        <p className="doc-description">Info-bulle au survol.</p>
+        <p className="doc-description">{t.description}</p>
         <div className="doc-meta">
           <span className="doc-badge doc-badge-stable">Stable</span>
-          <span className="doc-badge doc-badge-category">Feedback</span>
+          <span className="doc-badge doc-badge-category">{t.category}</span>
           <span className="doc-reading-time">⏱ 2 min</span>
         </div>
       </div>
@@ -38,7 +81,7 @@ export default function DocTooltipPage() {
             backgroundColor={backgroundColor.trim() || undefined}
             textColor={textColor.trim() || undefined}
           >
-            <Button>Survoler pour le tooltip</Button>
+            <Button>{t.triggerLabel}</Button>
           </Tooltip>
         </div>
         <div className="sandbox-controls">
@@ -56,7 +99,7 @@ export default function DocTooltipPage() {
             </select>
           </div>
           <div className="sandbox-control-group">
-            <label>backgroundColor (optionnel)</label>
+            <label>{t.bgLabel}</label>
             <input
               type="text"
               value={backgroundColor}
@@ -65,7 +108,7 @@ export default function DocTooltipPage() {
             />
           </div>
           <div className="sandbox-control-group">
-            <label>textColor (optionnel)</label>
+            <label>{t.textLabel}</label>
             <input
               type="text"
               value={textColor}
@@ -75,21 +118,21 @@ export default function DocTooltipPage() {
           </div>
         </div>
         <div className="sandbox-code">
-          <div className="sandbox-code-header"><span>Python</span><button type="button" onClick={() => navigator.clipboard.writeText(pythonCode)}>Copier</button></div>
+          <div className="sandbox-code-header"><span>Python</span><button type="button" onClick={() => navigator.clipboard.writeText(pythonCode)}>{t.copy}</button></div>
           <pre><code>{pythonCode}</code></pre>
         </div>
       </div>
       <table className="props-table">
-        <thead><tr><th>Prop</th><th>Type</th><th>Defaut</th><th>Requis</th><th>Description</th></tr></thead>
+        <thead><tr><th>Prop</th><th>Type</th><th>{t.thDefault}</th><th>{t.thRequired}</th><th>Description</th></tr></thead>
         <tbody>
-          <tr><td><code>content</code></td><td><code>string</code></td><td>—</td><td>Oui</td><td>Texte du tooltip.</td></tr>
-          <tr><td><code>children</code></td><td><code>ReactNode</code></td><td>—</td><td>Oui</td><td>Element declencheur.</td></tr>
-          <tr><td><code>placement</code></td><td><code>top|bottom|left|right</code></td><td>top</td><td>Non</td><td>Position.</td></tr>
-          <tr><td><code>backgroundColor</code></td><td><code>string</code></td><td>var(--bpm-text-primary)</td><td>Non</td><td>Couleur de fond du tooltip (hex, rgb ou nom CSS).</td></tr>
-          <tr><td><code>textColor</code></td><td><code>string</code></td><td>var(--bpm-bg-primary)</td><td>Non</td><td>Couleur du texte du tooltip.</td></tr>
+          <tr><td><code>content</code></td><td><code>string</code></td><td>—</td><td>{t.yes}</td><td>{t.descContent}</td></tr>
+          <tr><td><code>children</code></td><td><code>ReactNode</code></td><td>—</td><td>{t.yes}</td><td>{t.descChildren}</td></tr>
+          <tr><td><code>placement</code></td><td><code>top|bottom|left|right</code></td><td>top</td><td>{t.no}</td><td>{t.descPlacement}</td></tr>
+          <tr><td><code>backgroundColor</code></td><td><code>string</code></td><td>var(--bpm-text-primary)</td><td>{t.no}</td><td>{t.descBg}</td></tr>
+          <tr><td><code>textColor</code></td><td><code>string</code></td><td>var(--bpm-bg-primary)</td><td>{t.no}</td><td>{t.descText}</td></tr>
         </tbody>
       </table>
-      <h2 className="text-lg font-semibold mt-8 mb-2">Exemples</h2>
+      <h2 className="text-lg font-semibold mt-8 mb-2">{t.examples}</h2>
       <CodeBlock code={'bpm.tooltip(content="Aide", placement="top", trigger=bpm.button("?"))'} language="python" />
       <CodeBlock code={'bpm.tooltip(content="Aide", background_color="#048dc3", text_color="#fff")'} language="python" />
       <nav className="doc-pagination">

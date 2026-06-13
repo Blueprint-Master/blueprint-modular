@@ -6,7 +6,9 @@ import { useParams } from "next/navigation";
 import { Button, Panel, Spinner, Table } from "@/components/bpm";
 import type { TableColumn } from "@/components/bpm";
 import { useAssistant } from "@/lib/ai/assistant-context";
-import { getTypeLabel, getStatusLabel, getRiskLabel, getWorkspaceLabel } from "@/lib/contracts/labels";
+import { getWorkspaceLabel } from "@/lib/contracts/labels";
+import { useI18n } from "@/lib/i18n/LocaleProvider";
+import { STR, fn, typeLabel, riskLabel, statusLabel } from "../strings";
 
 type ExtractedData = {
   supplier_name?: string;
@@ -52,18 +54,20 @@ interface Contract {
   analyzedAt: string | null;
 }
 
-function buildContractContextForAssistant(data: ExtractedData | null, title: string): string {
-  if (!data) return `Contrat : ${title}. Analyse non disponible.`;
-  const parts: string[] = [`Contrat : ${title}.`];
-  if (data.executive_summary) parts.push(`Résumé : ${data.executive_summary}`);
-  if (data.supplier_name) parts.push(`Fournisseur : ${data.supplier_name}`);
-  if (data.buyer_name) parts.push(`Acheteur : ${data.buyer_name}`);
-  if (data.contract_date) parts.push(`Date contrat : ${data.contract_date}`);
-  if (data.end_date) parts.push(`Date fin : ${data.end_date}`);
-  if (data.overall_risk_level) parts.push(`Niveau de risque : ${data.overall_risk_level}`);
-  if (data.key_risks?.length) parts.push(`Risques : ${data.key_risks.join(" ; ")}`);
-  if (data.key_opportunities?.length) parts.push(`Opportunités : ${data.key_opportunities.join(" ; ")}`);
-  if (data.payment_terms) parts.push(`Paiement : ${data.payment_terms}`);
+type DetailStrings = typeof STR["fr"]["detailPage"];
+
+function buildContractContextForAssistant(data: ExtractedData | null, title: string, t: DetailStrings): string {
+  if (!data) return `${t.contextTitle} : ${title}. ${t.contextAnalysisUnavailable}`;
+  const parts: string[] = [`${t.contextTitle} : ${title}.`];
+  if (data.executive_summary) parts.push(`${t.contextSummary} : ${data.executive_summary}`);
+  if (data.supplier_name) parts.push(`${t.contextSupplier} : ${data.supplier_name}`);
+  if (data.buyer_name) parts.push(`${t.contextBuyer} : ${data.buyer_name}`);
+  if (data.contract_date) parts.push(`${t.contextContractDate} : ${data.contract_date}`);
+  if (data.end_date) parts.push(`${t.contextEndDate} : ${data.end_date}`);
+  if (data.overall_risk_level) parts.push(`${t.contextRiskLevel} : ${data.overall_risk_level}`);
+  if (data.key_risks?.length) parts.push(`${t.contextRisks} : ${data.key_risks.join(" ; ")}`);
+  if (data.key_opportunities?.length) parts.push(`${t.contextOpportunities} : ${data.key_opportunities.join(" ; ")}`);
+  if (data.payment_terms) parts.push(`${t.contextPayment} : ${data.payment_terms}`);
   return parts.join("\n");
 }
 
@@ -74,6 +78,10 @@ interface ContractListItem {
 
 export default function ContractDetailPage() {
   const params = useParams();
+  const { locale } = useI18n();
+  const t = STR[locale].detailPage;
+  const f = fn[locale];
+  const tp = STR[locale];
   const id = params?.id as string;
   const [contract, setContract] = useState<Contract | null>(null);
   const [loading, setLoading] = useState(true);
@@ -140,14 +148,14 @@ export default function ContractDetailPage() {
   };
 
   const askAssistant = () => {
-    const ctx = buildContractContextForAssistant(contract?.extractedData ?? null, contract?.originalFilename ?? "Contrat");
+    const ctx = buildContractContextForAssistant(contract?.extractedData ?? null, contract?.originalFilename ?? t.fallbackTitle, t);
     assistant?.openAssistant(ctx);
   };
 
   if (loading || !contract) {
     return (
       <div className="doc-page flex justify-center items-center min-h-[200px]">
-        {loading ? <Spinner size="medium" /> : <Panel variant="warning" title="Contrat introuvable">Ce contrat n’existe pas ou vous n’y avez pas accès.</Panel>}
+        {loading ? <Spinner size="medium" /> : <Panel variant="warning" title={t.notFoundTitle}>{t.notFoundDesc}</Panel>}
       </div>
     );
   }
@@ -159,11 +167,11 @@ export default function ContractDetailPage() {
   // Colonnes pour le tableau des signataires
   const signatoriesColumns: TableColumn[] = useMemo(
     () => [
-      { key: "name", label: "Nom" },
-      { key: "role", label: "Rôle" },
-      { key: "date", label: "Date" },
+      { key: "name", label: t.colName },
+      { key: "role", label: t.colRole },
+      { key: "date", label: t.colDate },
     ],
-    []
+    [t]
   );
 
   const signatoriesData = useMemo(
@@ -180,13 +188,13 @@ export default function ContractDetailPage() {
   // Colonnes pour le tableau des engagements
   const commitmentsColumns: TableColumn[] = useMemo(
     () => [
-      { key: "type", label: "Type" },
-      { key: "description", label: "Description" },
-      { key: "amount", label: "Montant", align: "right" },
-      { key: "deadline", label: "Échéance" },
-      { key: "party_responsible", label: "Responsable" },
+      { key: "type", label: t.colType },
+      { key: "description", label: t.colDescription },
+      { key: "amount", label: t.colAmount, align: "right" },
+      { key: "deadline", label: t.colDeadline },
+      { key: "party_responsible", label: t.colResponsible },
     ],
-    []
+    [t]
   );
 
   const commitmentsData = useMemo(
@@ -194,22 +202,22 @@ export default function ContractDetailPage() {
       ex?.commitments?.map((c, i) => ({
         type: c.type,
         description: c.description,
-        amount: c.amount != null ? `${c.amount} ${c.currency ?? ""}`.trim() : "—",
+        amount: c.amount != null ? f.amountWithCurrency(c.amount, c.currency ?? "") : "—",
         deadline: c.deadline ?? "—",
         party_responsible: c.party_responsible ?? "—",
         id: i,
       })) ?? [],
-    [ex?.commitments]
+    [ex?.commitments, f]
   );
 
   // Colonnes pour le tableau des actions recommandées
   const actionItemsColumns: TableColumn[] = useMemo(
     () => [
-      { key: "action", label: "Action" },
-      { key: "deadline", label: "Échéance" },
-      { key: "owner", label: "Responsable" },
+      { key: "action", label: t.colAction },
+      { key: "deadline", label: t.colDeadline },
+      { key: "owner", label: t.colOwner },
     ],
-    []
+    [t]
   );
 
   const actionItemsData = useMemo(
@@ -229,10 +237,10 @@ export default function ContractDetailPage() {
         <div>
           <h1 id="contract-title">{contract.originalFilename}</h1>
           <p className="doc-description">
-            {getWorkspaceLabel(contract.workspace)} · {getTypeLabel(contract.contractType)} · Statut : {getStatusLabel(contract.status)}
+            {getWorkspaceLabel(contract.workspace)} · {typeLabel(tp, contract.contractType)} · {t.statusLabel} {statusLabel(tp, contract.status)}
             {ex?.overall_risk_level && (
               <span className="ml-2 rounded px-2 py-0.5 text-xs font-medium" style={{ backgroundColor: riskColor, color: "var(--bpm-bg)" }}>
-                Risque {getRiskLabel(ex.overall_risk_level)}
+                {f.riskBadge(riskLabel(tp, ex.overall_risk_level))}
               </span>
             )}
           </p>
@@ -243,12 +251,12 @@ export default function ContractDetailPage() {
             onClick={reanalyze}
             disabled={isAnalyzing}
             aria-busy={isAnalyzing}
-            aria-label={isAnalyzing ? "Analyse en cours, veuillez patienter" : "Relancer l'analyse du contrat"}
+            aria-label={isAnalyzing ? t.rerunBusyAria : t.rerunAria}
           >
-            {isAnalyzing ? "Analyse en cours…" : "Relancer l'analyse"}
+            {isAnalyzing ? t.rerunBusy : t.rerunAnalysis}
           </Button>
-          <Button onClick={askAssistant} aria-label="Poser une question sur ce contrat à l'assistant IA">
-            Poser une question
+          <Button onClick={askAssistant} aria-label={t.askQuestionAria}>
+            {t.askQuestion}
           </Button>
         </div>
       </div>
@@ -256,17 +264,17 @@ export default function ContractDetailPage() {
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mt-6">
         <div className="space-y-6">
           <section aria-labelledby="section-parties">
-            <h2 id="section-parties" style={{ position: "absolute", width: "1px", height: "1px", padding: 0, margin: "-1px", overflow: "hidden", clip: "rect(0, 0, 0, 0)", whiteSpace: "nowrap", borderWidth: 0 }}>Parties & signataires</h2>
-            <Panel variant="info" title="Parties & signataires">
+            <h2 id="section-parties" style={{ position: "absolute", width: "1px", height: "1px", padding: 0, margin: "-1px", overflow: "hidden", clip: "rect(0, 0, 0, 0)", whiteSpace: "nowrap", borderWidth: 0 }}>{t.partiesAndSignatories}</h2>
+            <Panel variant="info" title={t.partiesAndSignatories}>
             <div className="space-y-3">
               {ex?.supplier_name && (
                 <div>
-                  <strong>Fournisseur :</strong> <span>{ex.supplier_name}</span>
+                  <strong>{t.supplierLabel}</strong> <span>{ex.supplier_name}</span>
                 </div>
               )}
               {ex?.buyer_name && (
                 <div>
-                  <strong>Acheteur :</strong> <span>{ex.buyer_name}</span>
+                  <strong>{t.buyerLabel}</strong> <span>{ex.buyer_name}</span>
                 </div>
               )}
               {signatoriesData.length > 0 ? (
@@ -275,107 +283,107 @@ export default function ContractDetailPage() {
                     columns={signatoriesColumns}
                     data={signatoriesData}
                     keyColumn="id"
-                    emptyMessage="Aucun signataire extrait"
+                    emptyMessage={t.noSignatory}
                     minWidth={400}
                   />
                 </div>
               ) : !ex?.supplier_name && !ex?.buyer_name ? (
-                <p className="text-sm" style={{ color: "var(--bpm-text-secondary)" }}>Non extrait</p>
+                <p className="text-sm" style={{ color: "var(--bpm-text-secondary)" }}>{t.notExtracted}</p>
               ) : null}
             </div>
             </Panel>
           </section>
 
           <section aria-labelledby="section-dates">
-            <h2 id="section-dates" style={{ position: "absolute", width: "1px", height: "1px", padding: 0, margin: "-1px", overflow: "hidden", clip: "rect(0, 0, 0, 0)", whiteSpace: "nowrap", borderWidth: 0 }}>Dates</h2>
-            <Panel variant="info" title="Dates">
+            <h2 id="section-dates" style={{ position: "absolute", width: "1px", height: "1px", padding: 0, margin: "-1px", overflow: "hidden", clip: "rect(0, 0, 0, 0)", whiteSpace: "nowrap", borderWidth: 0 }}>{t.datesTitle}</h2>
+            <Panel variant="info" title={t.datesTitle}>
             <div className="space-y-2 text-sm">
               {ex?.contract_date && (
                 <div>
-                  <strong>Contrat :</strong> <span>{ex.contract_date}</span>
+                  <strong>{t.dateContract}</strong> <span>{f.formatDate(ex.contract_date)}</span>
                 </div>
               )}
               {ex?.start_date && (
                 <div>
-                  <strong>Début :</strong> <span>{ex.start_date}</span>
+                  <strong>{t.dateStart}</strong> <span>{f.formatDate(ex.start_date)}</span>
                 </div>
               )}
               {ex?.end_date && (
                 <div>
-                  <strong>Fin :</strong> <span>{ex.end_date}</span>
+                  <strong>{t.dateEnd}</strong> <span>{f.formatDate(ex.end_date)}</span>
                 </div>
               )}
               {ex?.renewal_date && (
                 <div>
-                  <strong>Renouvellement :</strong> <span>{ex.renewal_date}</span>
+                  <strong>{t.dateRenewal}</strong> <span>{f.formatDate(ex.renewal_date)}</span>
                 </div>
               )}
               {ex?.waiver_deadline && (
                 <div>
-                  <strong>Délai renonciation :</strong> <span>{ex.waiver_deadline}</span>
+                  <strong>{t.dateWaiver}</strong> <span>{f.formatDate(ex.waiver_deadline)}</span>
                 </div>
               )}
               {ex?.termination_notice_days != null && (
                 <div>
-                  <strong>Préavis résiliation :</strong> <span>{ex.termination_notice_days} jours</span>
+                  <strong>{t.terminationNotice}</strong> <span>{f.terminationNoticeDays(ex.termination_notice_days)}</span>
                 </div>
               )}
               {!ex?.contract_date && !ex?.end_date && !ex?.start_date && (
-                <p className="text-sm" style={{ color: "var(--bpm-text-secondary)" }}>Aucune date extraite</p>
+                <p className="text-sm" style={{ color: "var(--bpm-text-secondary)" }}>{t.noDateExtracted}</p>
               )}
             </div>
             </Panel>
           </section>
 
           <section aria-labelledby="section-commitments">
-            <h2 id="section-commitments" style={{ position: "absolute", width: "1px", height: "1px", padding: 0, margin: "-1px", overflow: "hidden", clip: "rect(0, 0, 0, 0)", whiteSpace: "nowrap", borderWidth: 0 }}>Engagements</h2>
-            <Panel variant="info" title="Engagements">
+            <h2 id="section-commitments" style={{ position: "absolute", width: "1px", height: "1px", padding: 0, margin: "-1px", overflow: "hidden", clip: "rect(0, 0, 0, 0)", whiteSpace: "nowrap", borderWidth: 0 }}>{t.commitments}</h2>
+            <Panel variant="info" title={t.commitments}>
             {commitmentsData.length > 0 ? (
               <Table
                 columns={commitmentsColumns}
                 data={commitmentsData}
                 keyColumn="id"
-                emptyMessage="Aucun engagement extrait"
+                emptyMessage={t.noCommitmentExtracted}
                 minWidth={600}
               />
             ) : (
-              <p className="text-sm" style={{ color: "var(--bpm-text-secondary)" }}>Aucun engagement extrait</p>
+              <p className="text-sm" style={{ color: "var(--bpm-text-secondary)" }}>{t.noCommitmentExtracted}</p>
             )}
             </Panel>
           </section>
 
           <section aria-labelledby="section-clauses">
-            <h2 id="section-clauses" style={{ position: "absolute", width: "1px", height: "1px", padding: 0, margin: "-1px", overflow: "hidden", clip: "rect(0, 0, 0, 0)", whiteSpace: "nowrap", borderWidth: 0 }}>Clauses</h2>
-            <Panel variant="info" title="Clauses">
+            <h2 id="section-clauses" style={{ position: "absolute", width: "1px", height: "1px", padding: 0, margin: "-1px", overflow: "hidden", clip: "rect(0, 0, 0, 0)", whiteSpace: "nowrap", borderWidth: 0 }}>{t.clauses}</h2>
+            <Panel variant="info" title={t.clauses}>
             <div className="space-y-2 text-sm">
               {ex?.payment_terms && (
                 <div>
-                  <strong>Paiement :</strong> <span>{ex.payment_terms}</span>
+                  <strong>{t.payment}</strong> <span>{ex.payment_terms}</span>
                 </div>
               )}
               {ex?.confidentiality != null && (
                 <div>
-                  <strong>Confidentialité :</strong> <span>{ex.confidentiality ? "Oui" : "Non"}</span>
+                  <strong>{t.confidentiality}</strong> <span>{ex.confidentiality ? t.yes : t.no}</span>
                 </div>
               )}
               {ex?.exclusivity != null && (
                 <div>
-                  <strong>Exclusivité :</strong> <span>{ex.exclusivity ? "Oui" : "Non"}</span>
+                  <strong>{t.exclusivity}</strong> <span>{ex.exclusivity ? t.yes : t.no}</span>
                 </div>
               )}
               {ex?.governing_law && (
                 <div>
-                  <strong>Droit applicable :</strong> <span>{ex.governing_law}</span>
+                  <strong>{t.governingLaw}</strong> <span>{ex.governing_law}</span>
                 </div>
               )}
               {ex?.dispute_resolution && (
                 <div>
-                  <strong>Résolution litiges :</strong> <span>{ex.dispute_resolution}</span>
+                  <strong>{t.disputeResolution}</strong> <span>{ex.dispute_resolution}</span>
                 </div>
               )}
               {ex?.penalty_clauses?.length ? (
                 <div>
-                  <strong>Pénalités :</strong>
+                  <strong>{t.penalties}</strong>
                   <ul className="list-disc pl-5 mt-1 space-y-1">
                     {ex.penalty_clauses.map((p, i) => (
                       <li key={i}>{p}</li>
@@ -384,25 +392,25 @@ export default function ContractDetailPage() {
                 </div>
               ) : null}
               {!ex?.payment_terms && ex?.confidentiality == null && !ex?.governing_law && !ex?.dispute_resolution && (
-                <p className="text-sm" style={{ color: "var(--bpm-text-secondary)" }}>Aucune clause extraite</p>
+                <p className="text-sm" style={{ color: "var(--bpm-text-secondary)" }}>{t.noClauseExtracted}</p>
               )}
             </div>
             </Panel>
           </section>
 
           <section aria-labelledby="section-actions">
-            <h2 id="section-actions" style={{ position: "absolute", width: "1px", height: "1px", padding: 0, margin: "-1px", overflow: "hidden", clip: "rect(0, 0, 0, 0)", whiteSpace: "nowrap", borderWidth: 0 }}>Actions recommandées</h2>
-            <Panel variant="info" title="Actions recommandées">
+            <h2 id="section-actions" style={{ position: "absolute", width: "1px", height: "1px", padding: 0, margin: "-1px", overflow: "hidden", clip: "rect(0, 0, 0, 0)", whiteSpace: "nowrap", borderWidth: 0 }}>{t.recommendedActions}</h2>
+            <Panel variant="info" title={t.recommendedActions}>
             {actionItemsData.length > 0 ? (
               <Table
                 columns={actionItemsColumns}
                 data={actionItemsData}
                 keyColumn="id"
-                emptyMessage="Aucune action extraite"
+                emptyMessage={t.noActionExtracted}
                 minWidth={500}
               />
             ) : (
-              <p className="text-sm" style={{ color: "var(--bpm-text-secondary)" }}>Aucune action extraite</p>
+              <p className="text-sm" style={{ color: "var(--bpm-text-secondary)" }}>{t.noActionExtracted}</p>
             )}
             </Panel>
           </section>
@@ -410,38 +418,38 @@ export default function ContractDetailPage() {
 
         <div className="space-y-6">
           <section aria-labelledby="section-summary">
-            <h2 id="section-summary" style={{ position: "absolute", width: "1px", height: "1px", padding: 0, margin: "-1px", overflow: "hidden", clip: "rect(0, 0, 0, 0)", whiteSpace: "nowrap", borderWidth: 0 }}>Synthèse</h2>
-            <Panel variant="info" title="Synthèse">
+            <h2 id="section-summary" style={{ position: "absolute", width: "1px", height: "1px", padding: 0, margin: "-1px", overflow: "hidden", clip: "rect(0, 0, 0, 0)", whiteSpace: "nowrap", borderWidth: 0 }}>{t.summary}</h2>
+            <Panel variant="info" title={t.summary}>
             {ex?.executive_summary ? (
               <p className="text-sm whitespace-pre-wrap">{ex.executive_summary}</p>
             ) : (
-              <p className="text-sm" style={{ color: "var(--bpm-text-secondary)" }}>Aucune synthèse disponible. Lancez une ré-analyse si le contrat est déjà analysé.</p>
+              <p className="text-sm" style={{ color: "var(--bpm-text-secondary)" }}>{t.noSummary}</p>
             )}
             </Panel>
           </section>
 
           <section aria-labelledby="section-risks">
-            <h2 id="section-risks" style={{ position: "absolute", width: "1px", height: "1px", padding: 0, margin: "-1px", overflow: "hidden", clip: "rect(0, 0, 0, 0)", whiteSpace: "nowrap", borderWidth: 0 }}>Risques</h2>
-            <Panel variant="info" title="Risques">
+            <h2 id="section-risks" style={{ position: "absolute", width: "1px", height: "1px", padding: 0, margin: "-1px", overflow: "hidden", clip: "rect(0, 0, 0, 0)", whiteSpace: "nowrap", borderWidth: 0 }}>{t.risks}</h2>
+            <Panel variant="info" title={t.risks}>
             {ex?.key_risks?.length ? (
               <ul className="list-disc pl-5 text-sm space-y-1">
                 {ex.key_risks.map((r, i) => <li key={i}>{r}</li>)}
               </ul>
             ) : (
-              <p className="text-sm" style={{ color: "var(--bpm-text-secondary)" }}>Aucun risque identifié</p>
+              <p className="text-sm" style={{ color: "var(--bpm-text-secondary)" }}>{t.noRisk}</p>
             )}
             </Panel>
           </section>
 
           <section aria-labelledby="section-opportunities">
-            <h2 id="section-opportunities" style={{ position: "absolute", width: "1px", height: "1px", padding: 0, margin: "-1px", overflow: "hidden", clip: "rect(0, 0, 0, 0)", whiteSpace: "nowrap", borderWidth: 0 }}>Opportunités</h2>
-            <Panel variant="info" title="Opportunités">
+            <h2 id="section-opportunities" style={{ position: "absolute", width: "1px", height: "1px", padding: 0, margin: "-1px", overflow: "hidden", clip: "rect(0, 0, 0, 0)", whiteSpace: "nowrap", borderWidth: 0 }}>{t.opportunities}</h2>
+            <Panel variant="info" title={t.opportunities}>
             {ex?.key_opportunities?.length ? (
               <ul className="list-disc pl-5 text-sm space-y-1">
                 {ex.key_opportunities.map((o, i) => <li key={i}>{o}</li>)}
               </ul>
             ) : (
-              <p className="text-sm" style={{ color: "var(--bpm-text-secondary)" }}>Aucune opportunité identifiée</p>
+              <p className="text-sm" style={{ color: "var(--bpm-text-secondary)" }}>{t.noOpportunity}</p>
             )}
             </Panel>
           </section>
@@ -455,7 +463,7 @@ export default function ContractDetailPage() {
               href={`/modules/contracts/${prevContract.id}`}
               className="text-sm hover:underline"
               style={{ color: "var(--bpm-accent-cyan)" }}
-              aria-label={`Contrat précédent : ${prevContract.originalFilename}`}
+              aria-label={f.prevContractAria(prevContract.originalFilename)}
             >
               ← {prevContract.originalFilename}
             </Link>
@@ -467,7 +475,7 @@ export default function ContractDetailPage() {
               href={`/modules/contracts/${nextContract.id}`}
               className="text-sm ml-auto hover:underline"
               style={{ color: "var(--bpm-accent-cyan)" }}
-              aria-label={`Contrat suivant : ${nextContract.originalFilename}`}
+              aria-label={f.nextContractAria(nextContract.originalFilename)}
             >
               {nextContract.originalFilename} →
             </Link>

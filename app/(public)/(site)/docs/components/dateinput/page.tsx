@@ -4,6 +4,47 @@ import { useState } from "react";
 import Link from "next/link";
 import { DateInput, CodeBlock } from "@/components/bpm";
 import { getPrevNext } from "@/lib/docPages";
+import { useI18n } from "@/lib/i18n/LocaleProvider";
+
+const fr = {
+  components: "Composants",
+  description: "Sélecteur de date (input type=“date”) avec label et bornes min/max optionnelles.",
+  category: "Interaction",
+  disabledLabel: "Désactivé",
+  copy: "Copier",
+  thDefault: "Défaut",
+  thRequired: "Requis",
+  no: "Non",
+  examples: "Exemples",
+  d_label: "Label au-dessus du champ.",
+  d_value: "Date affichée (ISO YYYY-MM-DD en Python).",
+  d_onChange: "Callback au changement.",
+  d_min: "Date minimale.",
+  d_max: "Date maximale.",
+  d_disabled: "Désactive le champ.",
+  d_help: "Texte d’aide (infobulle).",
+};
+
+const en: typeof fr = {
+  components: "Components",
+  description: "Date picker (input type=“date”) with a label and optional min/max bounds.",
+  category: "Interaction",
+  disabledLabel: "Disabled",
+  copy: "Copy",
+  thDefault: "Default",
+  thRequired: "Required",
+  no: "No",
+  examples: "Examples",
+  d_label: "Label above the field.",
+  d_value: "Displayed date (ISO YYYY-MM-DD in Python).",
+  d_onChange: "Callback on change.",
+  d_min: "Minimum date.",
+  d_max: "Maximum date.",
+  d_disabled: "Disables the field.",
+  d_help: "Help text (tooltip).",
+};
+
+const L = { fr, en } as const;
 
 function formatDate(d: Date | null): string {
   if (!d) return "";
@@ -11,6 +52,8 @@ function formatDate(d: Date | null): string {
 }
 
 export default function DocDateInputPage() {
+  const { locale } = useI18n();
+  const t = L[locale];
   const [label, setLabel] = useState("Date");
   const [value, setValue] = useState<Date | null>(new Date());
   const [minStr, setMinStr] = useState("");
@@ -33,15 +76,15 @@ export default function DocDateInputPage() {
     <div className="doc-page">
       <div className="doc-page-header">
         <div className="doc-breadcrumb">
-          <Link href="/docs/components">Composants</Link> → bpm.dateinput
+          <Link href="/docs/components">{t.components}</Link> → bpm.dateinput
         </div>
         <h1>bpm.dateinput</h1>
         <p className="doc-description">
-          Sélecteur de date (input type=&quot;date&quot;) avec label et bornes min/max optionnelles.
+          {t.description}
         </p>
         <div className="doc-meta">
           <span className="doc-badge doc-badge-stable">Stable</span>
-          <span className="doc-badge doc-badge-category">Interaction</span>
+          <span className="doc-badge doc-badge-category">{t.category}</span>
           <span className="doc-reading-time">⏱ 2 min</span>
         </div>
       </div>
@@ -84,14 +127,14 @@ export default function DocDateInputPage() {
             <label>disabled</label>
             <label className="inline-flex items-center gap-2">
               <input type="checkbox" checked={disabled} onChange={(e) => setDisabled(e.target.checked)} />
-              Désactivé
+              {t.disabledLabel}
             </label>
           </div>
         </div>
         <div className="sandbox-code">
           <div className="sandbox-code-header">
             <span>Python</span>
-            <button type="button" onClick={() => navigator.clipboard.writeText(pythonCode)}>Copier</button>
+            <button type="button" onClick={() => navigator.clipboard.writeText(pythonCode)}>{t.copy}</button>
           </div>
           <pre><code>{pythonCode}</code></pre>
         </div>
@@ -99,20 +142,20 @@ export default function DocDateInputPage() {
 
       <table className="props-table">
         <thead>
-          <tr><th>Prop</th><th>Type</th><th>Défaut</th><th>Requis</th><th>Description</th></tr>
+          <tr><th>Prop</th><th>Type</th><th>{t.thDefault}</th><th>{t.thRequired}</th><th>Description</th></tr>
         </thead>
         <tbody>
-          <tr><td><code>label</code></td><td><code>string</code></td><td>—</td><td>Non</td><td>Label au-dessus du champ.</td></tr>
-          <tr><td><code>value</code></td><td><code>Date | string | null</code></td><td>—</td><td>Non</td><td>Date affichée (ISO YYYY-MM-DD en Python).</td></tr>
-          <tr><td><code>onChange</code></td><td><code>(value: Date | null) =&gt; void</code></td><td>—</td><td>Non</td><td>Callback au changement.</td></tr>
-          <tr><td><code>min</code></td><td><code>Date | string | null</code></td><td>—</td><td>Non</td><td>Date minimale.</td></tr>
-          <tr><td><code>max</code></td><td><code>Date | string | null</code></td><td>—</td><td>Non</td><td>Date maximale.</td></tr>
-          <tr><td><code>disabled</code></td><td><code>boolean</code></td><td>false</td><td>Non</td><td>Désactive le champ.</td></tr>
-          <tr><td><code>help</code></td><td><code>string | null</code></td><td>—</td><td>Non</td><td>Texte d’aide (infobulle).</td></tr>
+          <tr><td><code>label</code></td><td><code>string</code></td><td>—</td><td>{t.no}</td><td>{t.d_label}</td></tr>
+          <tr><td><code>value</code></td><td><code>Date | string | null</code></td><td>—</td><td>{t.no}</td><td>{t.d_value}</td></tr>
+          <tr><td><code>onChange</code></td><td><code>(value: Date | null) =&gt; void</code></td><td>—</td><td>{t.no}</td><td>{t.d_onChange}</td></tr>
+          <tr><td><code>min</code></td><td><code>Date | string | null</code></td><td>—</td><td>{t.no}</td><td>{t.d_min}</td></tr>
+          <tr><td><code>max</code></td><td><code>Date | string | null</code></td><td>—</td><td>{t.no}</td><td>{t.d_max}</td></tr>
+          <tr><td><code>disabled</code></td><td><code>boolean</code></td><td>false</td><td>{t.no}</td><td>{t.d_disabled}</td></tr>
+          <tr><td><code>help</code></td><td><code>string | null</code></td><td>—</td><td>{t.no}</td><td>{t.d_help}</td></tr>
         </tbody>
       </table>
 
-      <h2 className="text-lg font-semibold mt-8 mb-2">Exemples</h2>
+      <h2 className="text-lg font-semibold mt-8 mb-2">{t.examples}</h2>
       <CodeBlock code="bpm.dateinput()" language="python" />
       <CodeBlock code={'bpm.dateinput(label="Date de naissance", value="1990-01-15")'} language="python" />
       <CodeBlock code={'bpm.dateinput(label="Échéance", min="2025-01-01", max="2025-12-31")'} language="python" />

@@ -2,20 +2,12 @@
 
 import Link from "next/link";
 import { CodeBlock } from "@/components/bpm";
+import { useI18n } from "@/lib/i18n/LocaleProvider";
+import { STR } from "../strings";
 
-export default function WikiDocumentationPage() {
+function DocFr() {
   return (
-    <div className="doc-page">
-      <div className="doc-page-header">
-        <nav className="doc-breadcrumb">
-          <Link href="/modules">Modules</Link> → <Link href="/modules/wiki">Wiki</Link> → Documentation
-        </nav>
-        <h1>Documentation — Wiki</h1>
-        <p className="doc-description">
-          Wiki interne, arborescence d&apos;articles, édition et Aide IA (mise en forme, génération depuis des notes). Le module IA peut s&apos;appuyer sur le contenu des articles.
-        </p>
-      </div>
-
+    <>
       <p className="mb-6" style={{ color: "var(--bpm-text-secondary)" }}>
         Les modules Blueprint Modular font partie de l&apos;<strong>application Next.js</strong>. Il n&apos;y a pas de package séparé par module (pas de <code>pip install blueprint-modular-wiki</code> ni <code>npm install blueprint-modular-wiki</code>) : on installe l&apos;application une fois, puis on configure la base PostgreSQL et le serveur IA (Ollama) selon les besoins. Cette documentation décrit <strong>comment le Wiki fonctionne</strong>, <strong>comment l&apos;installer</strong> (application, base de données, serveur IA et dépendances), <strong>où et comment sont sauvegardés les articles</strong> (aucun fichier sur disque — tout est en base PostgreSQL), les <strong>lignes de commande</strong> pour installer le Wiki et toutes ses dépendances (Node, Prisma, Ollama, modèle Qwen), et la <strong>gestion des $</strong> dans l&apos;assistant IA pour appeler ou référencer le Wiki dans vos questions.
       </p>
@@ -39,7 +31,7 @@ export default function WikiDocumentationPage() {
         <strong>Base de données et prérequis production</strong> : tables <code>WikiArticle</code>, <code>WikiRevision</code>, <code>WikiComment</code>, <code>WikiBacklink</code> ; détail dans <code>docs/DATABASE.md</code> du dépôt.
       </p>
 
-            <h2 className="text-lg font-semibold mt-8 mb-2" style={{ color: "var(--bpm-text-primary)" }}>
+      <h2 className="text-lg font-semibold mt-8 mb-2" style={{ color: "var(--bpm-text-primary)" }}>
         Où sont sauvegardés les articles
       </h2>
       <p className="mb-4" style={{ color: "var(--bpm-text-secondary)" }}>
@@ -90,7 +82,7 @@ npx prisma migrate deploy
 ollama serve
 ollama pull qwen3:8b
 
-# L’app est configurée par défaut pour http://localhost:11434 (Ollama).
+# L'app est configurée par défaut pour http://localhost:11434 (Ollama).
 # Sur un VPS, définir AI_SERVER_URL dans .env (ex. http://votre-vps:11434).`}
         language="bash"
       />
@@ -125,7 +117,7 @@ npx prisma migrate deploy
 ollama serve
 ollama pull qwen3:8b
 
-# 4. Lancer l&apos;app Next.js
+# 4. Lancer l'app Next.js
 npm run dev
 
 # 5. Ouvrir le Wiki
@@ -140,7 +132,7 @@ npm run dev
         Variables d&apos;environnement
       </h2>
       <p className="mb-2 text-sm" style={{ color: "var(--bpm-text-secondary)" }}>
-        Pour que le Wiki et l’ensemble des modules (dont l’IA) fonctionnent correctement :
+        Pour que le Wiki et l&apos;ensemble des modules (dont l&apos;IA) fonctionnent correctement :
       </p>
       <ul className="list-disc pl-6 mb-4 text-sm" style={{ color: "var(--bpm-text-secondary)" }}>
         <li><code>DATABASE_URL</code> — URL de connexion PostgreSQL (obligatoire pour le Wiki).</li>
@@ -151,10 +143,10 @@ npm run dev
       </ul>
 
       <h2 className="text-lg font-semibold mt-8 mb-2" style={{ color: "var(--bpm-text-primary)" }}>
-        Gestion des $ dans l’assistant IA (références aux modules)
+        Gestion des $ dans l&apos;assistant IA (références aux modules)
       </h2>
       <p className="mb-4" style={{ color: "var(--bpm-text-secondary)" }}>
-        Dans le champ de saisie de l&apos;<strong>assistant IA</strong> (module IA), taper un <strong>$</strong> affiche une liste de suggestions de « tokens » permettant d&apos;inclure des références aux modules dans votre question. Par exemple : <code>$wiki</code> (Wiki), <code>$doc</code> (Documents), <code>$metric</code> (Métriques), etc. Ces tokens servent à l&apos;<strong>autocomplétion</strong> : en sélectionnant <code>$wiki</code>, vous insérez le libellé du module dans le message. Le contenu effectif des articles du Wiki n&apos;est pas inséré à la place du $ ; il est injecté dans le <strong>contexte</strong> envoyé au modèle lorsque le module « Wiki » est sélectionné dans le panneau de contexte de l&apos;assistant. Ainsi, l’IA reçoit les titres et le contenu des articles récents (jusqu’à une limite configurée, ex. 15 articles) et peut s&apos;y appuyer pour répondre. En résumé : le <strong>$</strong> sert à compléter rapidement un nom de module dans la zone de texte ; le choix des modules (Wiki, Documents, etc.) dans le panneau de contexte détermine quelles données sont envoyées au modèle.
+        Dans le champ de saisie de l&apos;<strong>assistant IA</strong> (module IA), taper un <strong>$</strong> affiche une liste de suggestions de « tokens » permettant d&apos;inclure des références aux modules dans votre question. Par exemple : <code>$wiki</code> (Wiki), <code>$doc</code> (Documents), <code>$metric</code> (Métriques), etc. Ces tokens servent à l&apos;<strong>autocomplétion</strong> : en sélectionnant <code>$wiki</code>, vous insérez le libellé du module dans le message. Le contenu effectif des articles du Wiki n&apos;est pas inséré à la place du $ ; il est injecté dans le <strong>contexte</strong> envoyé au modèle lorsque le module « Wiki » est sélectionné dans le panneau de contexte de l&apos;assistant. Ainsi, l&apos;IA reçoit les titres et le contenu des articles récents (jusqu&apos;à une limite configurée, ex. 15 articles) et peut s&apos;y appuyer pour répondre. En résumé : le <strong>$</strong> sert à compléter rapidement un nom de module dans la zone de texte ; le choix des modules (Wiki, Documents, etc.) dans le panneau de contexte détermine quelles données sont envoyées au modèle.
       </p>
       <p className="mb-2 text-sm font-medium" style={{ color: "var(--bpm-text-primary)" }}>Comment utiliser le $ pour appeler le Wiki dans l&apos;assistant :</p>
       <ol className="list-decimal pl-6 mb-4 text-sm space-y-1" style={{ color: "var(--bpm-text-secondary)" }}>
@@ -182,13 +174,207 @@ npm run dev
         <li><code>DELETE /api/wiki/[slug]</code> — Supprimer un article (auteur ou admin).</li>
         <li><code>POST /api/wiki/generate</code> — Génération IA : body <code>action: &quot;format&quot;</code> + <code>content</code> (et optionnel <code>title</code>) pour mise en forme ; sinon <code>notes</code>, <code>articleType</code> (guide, procedure, best-practice, reference), <code>workspace</code> (service1, service2, shared) pour génération depuis des notes (streaming).</li>
       </ul>
+    </>
+  );
+}
+
+function DocEn() {
+  return (
+    <>
+      <p className="mb-6" style={{ color: "var(--bpm-text-secondary)" }}>
+        Blueprint Modular modules are part of the <strong>Next.js application</strong>. There is no separate package per module (no <code>pip install blueprint-modular-wiki</code> or <code>npm install blueprint-modular-wiki</code>): you install the application once, then configure the PostgreSQL database and the AI server (Ollama) as needed. This documentation describes <strong>how the Wiki works</strong>, <strong>how to install it</strong> (application, database, AI server and dependencies), <strong>where and how articles are saved</strong> (no files on disk — everything lives in the PostgreSQL database), the <strong>command lines</strong> to install the Wiki and all its dependencies (Node, Prisma, Ollama, Qwen model), and the <strong>handling of $</strong> in the AI assistant to call or reference the Wiki in your questions.
+      </p>
+
+      <h2 className="text-lg font-semibold mt-8 mb-2" style={{ color: "var(--bpm-text-primary)" }}>
+        How the Wiki works
+      </h2>
+      <p className="mb-4" style={{ color: "var(--bpm-text-secondary)" }}>
+        The Wiki module lets you create and organize articles in a tree (parent / children). Each article has a <strong>title</strong>, a unique <strong>slug</strong> (URL), <strong>content</strong> in Markdown, an optional <strong>parent</strong> for the hierarchy, and a <strong>published / draft</strong> status. Only the author (or an admin) can edit or delete an article; visitors only see published articles.
+      </p>
+      <p className="mb-4" style={{ color: "var(--bpm-text-secondary)" }}>
+        <strong>Typical workflow</strong>: you sign in, go to <code>/modules/wiki</code>, click “New article” and fill in the title and slug (or let the slug be derived from the title). You may optionally choose a parent article to place the page in the tree. You write the content in Markdown in the editor; you can use “Format” or “Generate from notes” (AI Help). Once satisfied, you publish the article; it becomes visible to others. Articles remain editable; you can change the parent later by editing the article.
+      </p>
+      <ul className="list-disc pl-6 mb-4 text-sm" style={{ color: "var(--bpm-text-secondary)" }}>
+        <li><strong>Tree structure</strong>: articles can have a <code>parentId</code> to form a tree (sections, sub-pages). The article list is shown as a tree on the <code>/modules/wiki</code> page.</li>
+        <li><strong>Editing</strong>: the editor offers a toolbar (bold, lists, headings, etc.) and Markdown. Articles are saved via the <code>PUT /api/wiki/[slug]</code> API.</li>
+        <li><strong>AI Help</strong>: from the editor, you can “Generate from notes” (the AI structures your notes into a Markdown article) or “Format” (improve the existing text). These actions call <code>POST /api/wiki/generate</code> and use the configured AI server (Ollama / Qwen).</li>
+        <li><strong>Integration with the AI assistant</strong>: the Wiki module is registered in the module registry. When you chat with the assistant and the Wiki module is selected, the content of recent articles (titles + body) is injected into the context so the AI can refer to it.</li>
+      </ul>
+      <p className="mb-4 text-sm" style={{ color: "var(--bpm-text-secondary)" }}>
+        <strong>Database and production prerequisites</strong>: tables <code>WikiArticle</code>, <code>WikiRevision</code>, <code>WikiComment</code>, <code>WikiBacklink</code>; details in <code>docs/DATABASE.md</code> of the repository.
+      </p>
+
+      <h2 className="text-lg font-semibold mt-8 mb-2" style={{ color: "var(--bpm-text-primary)" }}>
+        Where articles are saved
+      </h2>
+      <p className="mb-4" style={{ color: "var(--bpm-text-secondary)" }}>
+        Articles are stored <strong>only in the database</strong> (PostgreSQL), in the <code>WikiArticle</code> table of the Prisma schema. There are <strong>no files on disk</strong> for article content: everything is persisted in the database via Prisma. So you do not choose a “folder” or a file path; you choose a <strong>parent article</strong> in the interface (or none, for a root article). The main database fields are: <code>id</code>, <code>title</code>, <code>slug</code> (unique), <code>content</code> (Markdown text), <code>parentId</code> (optional, for the tree), <code>authorId</code>, <code>isPublished</code>, <code>createdAt</code>, <code>updatedAt</code>. The slug is normalized (lowercase, spaces → hyphens, accents removed) via <code>lib/slug.ts</code> to guarantee stable URLs.
+      </p>
+      <p className="mb-2 text-sm font-medium" style={{ color: "var(--bpm-text-primary)" }}>Choosing where to “place” an article (parent):</p>
+      <p className="mb-4 text-sm" style={{ color: "var(--bpm-text-secondary)" }}>
+        When creating an article (the “New article” form), you can optionally choose a <strong>parent article</strong>. Only existing articles are offered in a drop-down list; if you do not choose a parent, the article will be at the root of the tree. The position in the tree is therefore determined solely by the <code>parentId</code> field in the database (not by a path such as <code>/folders/subfolder</code>). You can change the parent later by editing the article (parent field in the edit form) or by calling the <code>PUT /api/wiki/[slug]</code> API with a new <code>parentId</code>.
+      </p>
+
+      <h2 className="text-lg font-semibold mt-8 mb-2" style={{ color: "var(--bpm-text-primary)" }}>
+        Installing the Wiki and its dependencies
+      </h2>
+      <p className="mb-4" style={{ color: "var(--bpm-text-secondary)" }}>
+        The Wiki is part of the Next.js application. There is no separate package to install for the Wiki itself. However, you need to install the application, the database, and optionally the AI server for the “Generate from notes” and “Format” features, as well as for the conversational assistant that draws on the Wiki content.
+      </p>
+
+      <h3 className="text-base font-semibold mt-6 mb-2" style={{ color: "var(--bpm-text-primary)" }}>
+        1. Install the application (Node dependencies and database)
+      </h3>
+      <CodeBlock
+        code={`# Clone or open the project, then:
+npm install
+npx prisma generate --schema=prisma/schema.prisma
+
+# Create the PostgreSQL database (local or remote) and apply the migrations:
+npx prisma migrate deploy
+
+# (Optional) Seed the database with test data:
+# npx prisma db seed`}
+        language="bash"
+      />
+      <p className="mt-2 mb-4 text-sm" style={{ color: "var(--bpm-text-secondary)" }}>
+        The <code>DATABASE_URL</code> variable must be set in <code>.env</code> (see the Environment variables section). The Prisma schema includes the <code>WikiArticle</code> model; the migration creates the corresponding table.
+      </p>
+
+      <h3 className="text-base font-semibold mt-6 mb-2" style={{ color: "var(--bpm-text-primary)" }}>
+        2. Install and start the AI server (Ollama + Qwen model)
+      </h3>
+      <p className="mb-2 text-sm" style={{ color: "var(--bpm-text-secondary)" }}>
+        The “Generate from notes” and “Format” features in the Wiki editor, and the conversational assistant (AI module), use an OpenAI-compatible server (Ollama locally or on a VPS). Without an AI server, you can set <code>AI_MOCK=true</code> in <code>.env</code> so the app returns mocked responses (development only).
+      </p>
+      <CodeBlock
+        code={`# Install Ollama (e.g. on Linux / WSL / macOS):
+# https://ollama.com/download
+
+# Start Ollama and download the Qwen3 (8B) model:
+ollama serve
+ollama pull qwen3:8b
+
+# The app is configured by default for http://localhost:11434 (Ollama).
+# On a VPS, set AI_SERVER_URL in .env (e.g. http://your-vps:11434).`}
+        language="bash"
+      />
+      <p className="mt-2 mb-4 text-sm" style={{ color: "var(--bpm-text-secondary)" }}>
+        Useful environment variables: <code>AI_SERVER_URL</code> (Ollama server URL), <code>AI_MODEL</code> (e.g. <code>qwen3:8b</code>), <code>AI_MOCK=true</code> to disable real calls in dev.
+      </p>
+
+      <h3 className="text-base font-semibold mt-6 mb-2" style={{ color: "var(--bpm-text-primary)" }}>
+        3. Start the application
+      </h3>
+      <CodeBlock
+        code={`npm run dev    # Development (Next.js + Prisma)
+# Then open http://localhost:3000/modules/wiki`}
+        language="bash"
+      />
+
+      <h3 className="text-base font-semibold mt-6 mb-2" style={{ color: "var(--bpm-text-primary)" }}>
+        Command summary (install the Wiki and all dependencies)
+      </h3>
+      <p className="mb-2 text-sm" style={{ color: "var(--bpm-text-secondary)" }}>
+        Here is the complete sequence to install the application (including the Wiki), the database, and the AI server (Ollama + Qwen model) used by the Wiki AI Help and the conversational assistant:
+      </p>
+      <CodeBlock
+        code={`# 1. Node dependencies and Prisma schema
+npm install
+npx prisma generate --schema=prisma/schema.prisma
+
+# 2. PostgreSQL database (create the DB if needed, then):
+npx prisma migrate deploy
+
+# 3. AI server (Ollama) — in a dedicated terminal or in the background
+ollama serve
+ollama pull qwen3:8b
+
+# 4. Start the Next.js app
+npm run dev
+
+# 5. Open the Wiki
+# http://localhost:3000/modules/wiki`}
+        language="bash"
+      />
+      <p className="mt-2 mb-4 text-sm" style={{ color: "var(--bpm-text-secondary)" }}>
+        Make sure you have set <code>DATABASE_URL</code>, <code>NEXTAUTH_SECRET</code>, <code>NEXTAUTH_URL</code> and, for the AI, <code>AI_SERVER_URL</code> (e.g. <code>http://localhost:11434</code>) and <code>AI_MODEL</code> (e.g. <code>qwen3:8b</code>) in <code>.env</code>. Without an AI server, you can set <code>AI_MOCK=true</code> to use simulated responses.
+      </p>
+
+      <h2 className="text-lg font-semibold mt-8 mb-2" style={{ color: "var(--bpm-text-primary)" }}>
+        Environment variables
+      </h2>
+      <p className="mb-2 text-sm" style={{ color: "var(--bpm-text-secondary)" }}>
+        For the Wiki and all modules (including the AI) to work correctly:
+      </p>
+      <ul className="list-disc pl-6 mb-4 text-sm" style={{ color: "var(--bpm-text-secondary)" }}>
+        <li><code>DATABASE_URL</code> — PostgreSQL connection URL (required for the Wiki).</li>
+        <li><code>NEXTAUTH_SECRET</code>, <code>NEXTAUTH_URL</code> — Authentication (required to create / edit articles).</li>
+        <li><code>AI_SERVER_URL</code> — Ollama server URL (e.g. <code>http://localhost:11434</code>).</li>
+        <li><code>AI_MODEL</code> — Model used (e.g. <code>qwen3:8b</code>).</li>
+        <li><code>AI_MOCK</code> — <code>true</code> to use mocked responses without an AI server (dev).</li>
+      </ul>
+
+      <h2 className="text-lg font-semibold mt-8 mb-2" style={{ color: "var(--bpm-text-primary)" }}>
+        Handling $ in the AI assistant (module references)
+      </h2>
+      <p className="mb-4" style={{ color: "var(--bpm-text-secondary)" }}>
+        In the input field of the <strong>AI assistant</strong> (AI module), typing a <strong>$</strong> shows a list of “token” suggestions that let you include module references in your question. For example: <code>$wiki</code> (Wiki), <code>$doc</code> (Documents), <code>$metric</code> (Metrics), etc. These tokens are used for <strong>autocompletion</strong>: by selecting <code>$wiki</code>, you insert the module label into the message. The actual Wiki article content is not inserted in place of the $; it is injected into the <strong>context</strong> sent to the model when the “Wiki” module is selected in the assistant&apos;s context panel. The AI then receives the titles and content of recent articles (up to a configured limit, e.g. 15 articles) and can rely on them to answer. In short: the <strong>$</strong> is used to quickly complete a module name in the text area; the choice of modules (Wiki, Documents, etc.) in the context panel determines which data is sent to the model.
+      </p>
+      <p className="mb-2 text-sm font-medium" style={{ color: "var(--bpm-text-primary)" }}>How to use $ to call the Wiki in the assistant:</p>
+      <ol className="list-decimal pl-6 mb-4 text-sm space-y-1" style={{ color: "var(--bpm-text-secondary)" }}>
+        <li>Open the AI assistant (AI module, page <code>/modules/ia</code>).</li>
+        <li>In the context panel (available modules), check or select <strong>Wiki</strong> so that the article content is included in the context sent to the model.</li>
+        <li>In the message input area, type <strong>$</strong>: a list of suggestions appears (<code>$wiki</code>, <code>$doc</code>, etc.). Select <code>$wiki</code> to insert a reference to the Wiki module in your text (e.g. “Summarize the key points $wiki”).</li>
+        <li>The <code>$wiki</code> in the message is a label / reminder for you; the actual data (article titles and content) is added automatically to the request context thanks to selecting the Wiki module in the panel. The AI can therefore answer by relying on your articles.</li>
+      </ol>
+      <p className="mb-2 text-sm font-medium" style={{ color: "var(--bpm-text-primary)" }}>Available tokens (excerpt):</p>
+      <ul className="list-disc pl-6 mb-4 text-sm" style={{ color: "var(--bpm-text-secondary)" }}>
+        <li><code>$wiki</code> — Wiki (articles).</li>
+        <li><code>$doc</code> — Documents (analyses, contracts).</li>
+        <li><code>$metric</code> — Metrics (dashboard).</li>
+        <li><code>$table</code>, <code>$chart</code>, <code>$data</code> — Other data references.</li>
+      </ul>
+
+      <h2 className="text-lg font-semibold mt-8 mb-2" style={{ color: "var(--bpm-text-primary)" }}>
+        Wiki API (summary)
+      </h2>
+      <ul className="list-disc pl-6 mb-4 text-sm" style={{ color: "var(--bpm-text-secondary)" }}>
+        <li><code>GET /api/wiki</code> — List articles (query: <code>published=true</code>, <code>search=</code>, <code>withContent=true</code>, <code>limit=</code>).</li>
+        <li><code>POST /api/wiki</code> — Create an article (body: <code>title</code>, <code>slug</code>, <code>content</code>, <code>parentId</code>, <code>isPublished</code>).</li>
+        <li><code>GET /api/wiki/[slug]</code> — Get an article by slug.</li>
+        <li><code>PUT /api/wiki/[slug]</code> — Update an article (title, content, published status).</li>
+        <li><code>DELETE /api/wiki/[slug]</code> — Delete an article (author or admin).</li>
+        <li><code>POST /api/wiki/generate</code> — AI generation: body <code>action: &quot;format&quot;</code> + <code>content</code> (and optional <code>title</code>) for formatting; otherwise <code>notes</code>, <code>articleType</code> (guide, procedure, best-practice, reference), <code>workspace</code> (service1, service2, shared) for generation from notes (streaming).</li>
+      </ul>
+    </>
+  );
+}
+
+export default function WikiDocumentationPage() {
+  const { locale } = useI18n();
+  const t = STR[locale];
+
+  return (
+    <div className="doc-page">
+      <div className="doc-page-header">
+        <nav className="doc-breadcrumb">
+          <Link href="/modules">{t.common.modules}</Link> → <Link href="/modules/wiki">Wiki</Link> → {t.doc.breadcrumb}
+        </nav>
+        <h1>{t.doc.title}</h1>
+        <p className="doc-description">
+          {t.doc.description}
+        </p>
+      </div>
+
+      {locale === "en" ? <DocEn /> : <DocFr />}
 
       <nav className="doc-pagination mt-10">
         <Link href="/modules/wiki" className="text-sm font-medium" style={{ color: "var(--bpm-accent-cyan)" }}>
-          ← Retour au module Wiki
+          {t.doc.backToModule}
         </Link>
         <span className="text-sm" style={{ color: "var(--bpm-text-secondary)" }}>
-          Documentation complète (externe) :{" "}
+          {t.doc.externalDocLabel}{" "}
           <a
             href="https://docs.blueprint-modular.com/modules/wiki.html"
             target="_blank"

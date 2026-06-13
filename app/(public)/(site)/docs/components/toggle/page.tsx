@@ -4,8 +4,47 @@ import { useState } from "react";
 import Link from "next/link";
 import { Toggle, CodeBlock } from "@/components/bpm";
 import { getPrevNext } from "@/lib/docPages";
+import { useI18n } from "@/lib/i18n/LocaleProvider";
+
+const fr = {
+  breadcrumb: "Composants",
+  description: "Interrupteur on/off pour une option booléenne.",
+  category: "Interaction",
+  checkedLabel: "Coché",
+  disabledLabel: "Désactivé",
+  copy: "Copier",
+  thDefault: "Défaut",
+  thRequired: "Requis",
+  yes: "Oui",
+  no: "Non",
+  examples: "Exemples",
+  descLabel: "Texte à côté du switch.",
+  descValue: "État activé/désactivé.",
+  descOnChange: "Callback au changement.",
+  descDisabled: "Désactive le toggle.",
+};
+const en: typeof fr = {
+  breadcrumb: "Components",
+  description: "On/off switch for a boolean option.",
+  category: "Interaction",
+  checkedLabel: "Checked",
+  disabledLabel: "Disabled",
+  copy: "Copy",
+  thDefault: "Default",
+  thRequired: "Required",
+  yes: "Yes",
+  no: "No",
+  examples: "Examples",
+  descLabel: "Text next to the switch.",
+  descValue: "On/off state.",
+  descOnChange: "Callback on change.",
+  descDisabled: "Disables the toggle.",
+};
+const L = { fr, en } as const;
 
 export default function DocTogglePage() {
+  const { locale } = useI18n();
+  const t = L[locale];
   const [label, setLabel] = useState("Activer les notifications");
   const [value, setValue] = useState(false);
   const [disabled, setDisabled] = useState(false);
@@ -18,12 +57,12 @@ export default function DocTogglePage() {
   return (
     <div className="doc-page">
       <div className="doc-page-header">
-        <div className="doc-breadcrumb"><Link href="/docs/components">Composants</Link> → bpm.toggle</div>
+        <div className="doc-breadcrumb"><Link href="/docs/components">{t.breadcrumb}</Link> → bpm.toggle</div>
         <h1>bpm.toggle</h1>
-        <p className="doc-description">Interrupteur on/off pour une option booléenne.</p>
+        <p className="doc-description">{t.description}</p>
         <div className="doc-meta">
           <span className="doc-badge doc-badge-stable">Stable</span>
-          <span className="doc-badge doc-badge-category">Interaction</span>
+          <span className="doc-badge doc-badge-category">{t.category}</span>
           <span className="doc-reading-time">⏱ 2 min</span>
         </div>
       </div>
@@ -45,21 +84,21 @@ export default function DocTogglePage() {
                 checked={value}
                 onChange={(e) => setValue(e.target.checked)}
               />
-              Coché
+              {t.checkedLabel}
             </label>
           </div>
           <div className="sandbox-control-group">
             <label>disabled</label>
             <label className="inline-flex items-center gap-2">
               <input type="checkbox" checked={disabled} onChange={(e) => setDisabled(e.target.checked)} />
-              Désactivé
+              {t.disabledLabel}
             </label>
           </div>
         </div>
         <div className="sandbox-code">
           <div className="sandbox-code-header">
             <span>Python</span>
-            <button type="button" onClick={() => navigator.clipboard.writeText(pythonCode)}>Copier</button>
+            <button type="button" onClick={() => navigator.clipboard.writeText(pythonCode)}>{t.copy}</button>
           </div>
           <pre><code>{pythonCode}</code></pre>
         </div>
@@ -70,8 +109,8 @@ export default function DocTogglePage() {
           <tr>
             <th>Prop</th>
             <th>Type</th>
-            <th>Défaut</th>
-            <th>Requis</th>
+            <th>{t.thDefault}</th>
+            <th>{t.thRequired}</th>
             <th>Description</th>
           </tr>
         </thead>
@@ -80,34 +119,34 @@ export default function DocTogglePage() {
             <td><code>label</code></td>
             <td><code>string</code></td>
             <td>—</td>
-            <td>Non</td>
-            <td>Texte à côté du switch.</td>
+            <td>{t.no}</td>
+            <td>{t.descLabel}</td>
           </tr>
           <tr>
             <td><code>value</code></td>
             <td><code>boolean</code></td>
             <td>—</td>
-            <td>Oui</td>
-            <td>État activé/désactivé.</td>
+            <td>{t.yes}</td>
+            <td>{t.descValue}</td>
           </tr>
           <tr>
             <td><code>onChange</code></td>
             <td><code>function</code></td>
             <td>—</td>
-            <td>Oui</td>
-            <td>Callback au changement.</td>
+            <td>{t.yes}</td>
+            <td>{t.descOnChange}</td>
           </tr>
           <tr>
             <td><code>disabled</code></td>
             <td><code>boolean</code></td>
             <td><code>false</code></td>
-            <td>Non</td>
-            <td>Désactive le toggle.</td>
+            <td>{t.no}</td>
+            <td>{t.descDisabled}</td>
           </tr>
         </tbody>
       </table>
 
-      <h2 className="text-lg font-semibold mt-8 mb-2">Exemples</h2>
+      <h2 className="text-lg font-semibold mt-8 mb-2">{t.examples}</h2>
       <CodeBlock code={'bpm.toggle(label="Activer", checked=state, onChange=set_state)'} language="python" />
       <CodeBlock code={'bpm.toggle(label="Option", checked=False, disabled=True)'} language="python" />
 

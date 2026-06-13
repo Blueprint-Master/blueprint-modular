@@ -3,17 +3,11 @@
 import React, { useState } from "react";
 import Link from "next/link";
 import { Skeleton, Slider, Selectbox } from "@/components/bpm";
-
-const ASSEMBLY_OPTIONS = [
-  { value: "dashboard", label: "bpm.skeleton_dashboard" },
-  { value: "list", label: "bpm.skeleton_list" },
-  { value: "article", label: "bpm.skeleton_article" },
-  { value: "form", label: "bpm.skeleton_form" },
-  { value: "detail", label: "bpm.skeleton_detail" },
-  { value: "chart", label: "bpm.skeleton_chart" },
-];
+import { useI18n } from "@/lib/i18n/LocaleProvider";
+import { STR } from "../strings";
 
 function SkeletonDashboard({ metrics = 3, rows = 5 }: { metrics?: number; rows?: number }) {
+  const { locale } = useI18n();
   return (
     <div
       className="bpm-skeleton-container rounded-xl border p-6"
@@ -21,7 +15,7 @@ function SkeletonDashboard({ metrics = 3, rows = 5 }: { metrics?: number; rows?:
       role="status"
       aria-busy="true"
       aria-live="polite"
-      aria-label="Chargement"
+      aria-label={STR[locale].loadingAria}
     >
       <div className="flex items-center justify-between gap-4 mb-6 pb-4" style={{ borderBottom: "1px solid var(--bpm-border)" }}>
         <Skeleton variant="text" width="40%" height={14} />
@@ -61,6 +55,7 @@ function SkeletonDashboard({ metrics = 3, rows = 5 }: { metrics?: number; rows?:
 }
 
 function SkeletonList({ rows = 8, columns = 4 }: { rows?: number; columns?: number }) {
+  const { locale } = useI18n();
   const cols = Math.min(Math.max(columns, 1), 6);
   return (
     <div
@@ -69,7 +64,7 @@ function SkeletonList({ rows = 8, columns = 4 }: { rows?: number; columns?: numb
       role="status"
       aria-busy="true"
       aria-live="polite"
-      aria-label="Chargement"
+      aria-label={STR[locale].loadingAria}
     >
       <div className="flex items-center justify-between gap-4 mb-4 pb-3" style={{ borderBottom: "1px solid var(--bpm-border)" }}>
         <Skeleton variant="rectangular" width="30%" height={20} />
@@ -93,6 +88,7 @@ function SkeletonList({ rows = 8, columns = 4 }: { rows?: number; columns?: numb
 }
 
 function SkeletonArticle() {
+  const { locale } = useI18n();
   return (
     <div
       className="bpm-skeleton-container rounded-xl border p-6"
@@ -100,7 +96,7 @@ function SkeletonArticle() {
       role="status"
       aria-busy="true"
       aria-live="polite"
-      aria-label="Chargement"
+      aria-label={STR[locale].loadingAria}
     >
       <Skeleton variant="rectangular" width="80%" height={32} className="mb-4" rounded="md" />
       <Skeleton variant="text" width="100%" height={14} className="mb-2" />
@@ -116,6 +112,7 @@ function SkeletonArticle() {
 }
 
 function SkeletonForm({ fields = 5 }: { fields?: number }) {
+  const { locale } = useI18n();
   const n = Math.min(Math.max(fields, 1), 10);
   return (
     <div
@@ -124,7 +121,7 @@ function SkeletonForm({ fields = 5 }: { fields?: number }) {
       role="status"
       aria-busy="true"
       aria-live="polite"
-      aria-label="Chargement"
+      aria-label={STR[locale].loadingAria}
     >
       <Skeleton variant="rectangular" width="50%" height={24} className="mb-6" rounded="md" />
       {Array.from({ length: n }, (_, i) => (
@@ -142,6 +139,7 @@ function SkeletonForm({ fields = 5 }: { fields?: number }) {
 }
 
 function SkeletonDetail() {
+  const { locale } = useI18n();
   return (
     <div
       className="bpm-skeleton-container rounded-xl border p-6"
@@ -149,7 +147,7 @@ function SkeletonDetail() {
       role="status"
       aria-busy="true"
       aria-live="polite"
-      aria-label="Chargement"
+      aria-label={STR[locale].loadingAria}
     >
       <div className="flex items-center justify-between gap-4 mb-6 pb-4" style={{ borderBottom: "1px solid var(--bpm-border)" }}>
         <Skeleton variant="text" width="40%" height={14} />
@@ -175,6 +173,7 @@ function SkeletonDetail() {
 }
 
 function SkeletonChart({ type = "bar" }: { type?: string }) {
+  const { locale } = useI18n();
   return (
     <div
       className="bpm-skeleton-container rounded-xl border p-6"
@@ -182,7 +181,7 @@ function SkeletonChart({ type = "bar" }: { type?: string }) {
       role="status"
       aria-busy="true"
       aria-live="polite"
-      aria-label="Chargement"
+      aria-label={STR[locale].loadingAria}
     >
       <Skeleton variant="rectangular" width="40%" height={20} className="mb-4" rounded="md" />
       <div className="flex gap-4 items-end" style={{ height: 200 }}>
@@ -207,6 +206,8 @@ function SkeletonChart({ type = "bar" }: { type?: string }) {
 }
 
 export default function SkeletonSimulateurPage() {
+  const { locale } = useI18n();
+  const str = STR[locale];
   const [assembly, setAssembly] = useState("dashboard");
   const [metrics, setMetrics] = useState(3);
   const [rows, setRows] = useState(5);
@@ -234,11 +235,11 @@ export default function SkeletonSimulateurPage() {
     <div className="doc-page">
       <div className="doc-page-header">
         <div className="doc-breadcrumb">
-          <Link href="/modules">Modules</Link> → <Link href="/modules/skeleton">Skeleton</Link> → Simulateur
+          <Link href="/modules">Modules</Link> → <Link href="/modules/skeleton">{str.moduleName}</Link> → {str.simulatorBreadcrumb}
         </div>
-        <h1>Simulateur — Skeleton</h1>
+        <h1>{str.simulatorTitle}</h1>
         <p className="doc-description">
-          Assemblages bpm.skeleton_* pour chargement de page. Choisissez l&apos;assemblage et les paramètres pour l’aperçu.
+          {str.simulatorDescription}
         </p>
       </div>
 
@@ -252,23 +253,23 @@ export default function SkeletonSimulateurPage() {
           className="px-4 py-3 border-b"
           style={{ borderColor: "var(--bpm-border)", background: "var(--bpm-bg-secondary)" }}
         >
-          <label className="block text-sm font-medium mb-2" style={{ color: "var(--bpm-text-primary)" }}>Assemblage</label>
+          <label className="block text-sm font-medium mb-2" style={{ color: "var(--bpm-text-primary)" }}>{str.assemblyLabel}</label>
           <Selectbox
-            options={ASSEMBLY_OPTIONS}
+            options={str.assemblyOptions}
             value={assembly}
             onChange={(v) => setAssembly(v ?? "dashboard")}
-            placeholder="Choisir"
+            placeholder={str.assemblyPlaceholder}
           />
           {(assembly === "dashboard" || assembly === "list") && (
             <div className="mt-4 grid grid-cols-1 sm:grid-cols-2 gap-4">
               {assembly === "dashboard" && (
                 <>
                   <div>
-                    <label className="block text-xs font-medium mb-1" style={{ color: "var(--bpm-text-secondary)" }}>Métriques</label>
+                    <label className="block text-xs font-medium mb-1" style={{ color: "var(--bpm-text-secondary)" }}>{str.metricsLabel}</label>
                     <Slider value={metrics} min={1} max={6} onChange={setMetrics} />
                   </div>
                   <div>
-                    <label className="block text-xs font-medium mb-1" style={{ color: "var(--bpm-text-secondary)" }}>Lignes tableau</label>
+                    <label className="block text-xs font-medium mb-1" style={{ color: "var(--bpm-text-secondary)" }}>{str.tableRowsLabel}</label>
                     <Slider value={rows} min={1} max={15} onChange={setRows} />
                   </div>
                 </>
@@ -276,11 +277,11 @@ export default function SkeletonSimulateurPage() {
               {assembly === "list" && (
                 <>
                   <div>
-                    <label className="block text-xs font-medium mb-1" style={{ color: "var(--bpm-text-secondary)" }}>Lignes</label>
+                    <label className="block text-xs font-medium mb-1" style={{ color: "var(--bpm-text-secondary)" }}>{str.rowsLabel}</label>
                     <Slider value={rows} min={1} max={20} onChange={setRows} />
                   </div>
                   <div>
-                    <label className="block text-xs font-medium mb-1" style={{ color: "var(--bpm-text-secondary)" }}>Colonnes</label>
+                    <label className="block text-xs font-medium mb-1" style={{ color: "var(--bpm-text-secondary)" }}>{str.columnsLabel}</label>
                     <Slider value={columns} min={1} max={6} onChange={setColumns} />
                   </div>
                 </>
@@ -289,7 +290,7 @@ export default function SkeletonSimulateurPage() {
           )}
           {assembly === "form" && (
             <div className="mt-4">
-              <label className="block text-xs font-medium mb-1" style={{ color: "var(--bpm-text-secondary)" }}>Champs</label>
+              <label className="block text-xs font-medium mb-1" style={{ color: "var(--bpm-text-secondary)" }}>{str.fieldsLabel}</label>
               <Slider value={formFields} min={1} max={10} onChange={setFormFields} />
             </div>
           )}
@@ -302,8 +303,8 @@ export default function SkeletonSimulateurPage() {
       </div>
 
       <nav className="doc-pagination mt-8">
-        <Link href="/modules/skeleton" style={{ color: "var(--bpm-accent-cyan)" }}>← Retour au module Skeleton</Link>
-        <Link href="/modules/skeleton/documentation" style={{ color: "var(--bpm-accent-cyan)" }}>Documentation</Link>
+        <Link href="/modules/skeleton" style={{ color: "var(--bpm-accent-cyan)" }}>{str.backToModule}</Link>
+        <Link href="/modules/skeleton/documentation" style={{ color: "var(--bpm-accent-cyan)" }}>{str.documentationLink}</Link>
       </nav>
     </div>
   );

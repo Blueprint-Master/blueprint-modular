@@ -4,6 +4,8 @@ import { useState, useEffect } from "react";
 import Link from "next/link";
 import { useParams } from "next/navigation";
 import { Panel, Spinner, Button } from "@/components/bpm";
+import { useI18n } from "@/lib/i18n/LocaleProvider";
+import { STR, dateLocale } from "../../../strings";
 
 type ChangeRequest = {
   id: string;
@@ -17,6 +19,9 @@ type ChangeRequest = {
 };
 
 export default function AssetManagerChangesCalendarPage() {
+  const { locale } = useI18n();
+  const t = STR[locale];
+  const tch = t.changes;
   const params = useParams();
   const domainId = typeof params?.domainId === "string" ? params.domainId : "";
   const [changes, setChanges] = useState<ChangeRequest[]>([]);
@@ -56,12 +61,18 @@ export default function AssetManagerChangesCalendarPage() {
   const nextMonth = () => {
     setViewDate((v) => (v.month === 11 ? { year: v.year + 1, month: 0 } : { year: v.year, month: v.month + 1 }));
   };
-  const monthLabel = new Date(viewDate.year, viewDate.month).toLocaleDateString("fr-FR", { month: "long", year: "numeric" });
+  const monthLabel = new Date(viewDate.year, viewDate.month).toLocaleDateString(dateLocale(locale), { month: "long", year: "numeric" });
+
+  // Noms de jours (lun..dim) générés via Intl pour la locale active.
+  // 2023-01-02 est un lundi ; on génère 7 jours consécutifs.
+  const weekdayNames = Array.from({ length: 7 }, (_, i) =>
+    new Date(2023, 0, 2 + i).toLocaleDateString(dateLocale(locale), { weekday: "short" })
+  );
 
   if (!domainId) {
     return (
       <div className="doc-page">
-        <Panel variant="warning" title="Domaine requis" />
+        <Panel variant="warning" title={tch.domainRequired} />
       </div>
     );
   }
@@ -70,14 +81,14 @@ export default function AssetManagerChangesCalendarPage() {
     <div className="doc-page">
       <div className="doc-page-header mb-6">
         <nav className="doc-breadcrumb">
-          <Link href="/modules" style={{ color: "var(--bpm-accent-cyan)" }}>Modules</Link> →{" "}
-          <Link href="/modules/asset-manager" style={{ color: "var(--bpm-accent-cyan)" }}>Gestion de parc</Link> →{" "}
-          <Link href={`/modules/asset-manager/${domainId}`} style={{ color: "var(--bpm-accent-cyan)" }}>Tableau de bord</Link> →{" "}
-          <Link href={`/modules/asset-manager/${domainId}/changes`} style={{ color: "var(--bpm-accent-cyan)" }}>Changements</Link> → Calendrier
+          <Link href="/modules" style={{ color: "var(--bpm-accent-cyan)" }}>{t.common.breadcrumbModules}</Link> →{" "}
+          <Link href="/modules/asset-manager" style={{ color: "var(--bpm-accent-cyan)" }}>{t.common.moduleTitle}</Link> →{" "}
+          <Link href={`/modules/asset-manager/${domainId}`} style={{ color: "var(--bpm-accent-cyan)" }}>{tch.breadcrumbDashboard}</Link> →{" "}
+          <Link href={`/modules/asset-manager/${domainId}/changes`} style={{ color: "var(--bpm-accent-cyan)" }}>{tch.breadcrumbChanges}</Link> → {tch.breadcrumbCalendar}
         </nav>
         <div className="flex flex-wrap items-center justify-between gap-4">
           <h1 className="text-2xl font-bold" style={{ color: "var(--bpm-text-primary)" }}>
-            Calendrier des changements
+            {tch.calendarTitle}
           </h1>
           <div className="flex items-center gap-2">
             <Button size="small" variant="outline" onClick={prevMonth}>
@@ -92,7 +103,7 @@ export default function AssetManagerChangesCalendarPage() {
           </div>
         </div>
         <p className="doc-description mt-1" style={{ color: "var(--bpm-text-secondary)" }}>
-          Changements avec date de début prévue.
+          {tch.calendarSubtitle}
         </p>
       </div>
 
@@ -101,9 +112,9 @@ export default function AssetManagerChangesCalendarPage() {
           <Spinner size="medium" />
         </div>
       ) : (
-        <Panel variant="info" title="Vue mensuelle">
+        <Panel variant="info" title={tch.monthlyView}>
           <div className="grid grid-cols-7 gap-px rounded-lg overflow-hidden calendar-month-grid" style={{ background: "var(--bpm-border)" }}>
-            {["Lun", "Mar", "Mer", "Jeu", "Ven", "Sam", "Dim"].map((day) => (
+            {weekdayNames.map((day) => (
               <div
                 key={day}
                 className="p-2 text-center text-xs font-medium"
@@ -154,10 +165,10 @@ export default function AssetManagerChangesCalendarPage() {
 
       <nav className="doc-pagination mt-8 flex flex-wrap gap-4">
         <Link href={`/modules/asset-manager/${domainId}/changes`} style={{ color: "var(--bpm-accent-cyan)" }}>
-          ← Liste des changements
+          {tch.backToChangesList}
         </Link>
         <Link href={`/modules/asset-manager/${domainId}`} style={{ color: "var(--bpm-accent-cyan)" }}>
-          Tableau de bord
+          {tch.breadcrumbDashboard}
         </Link>
       </nav>
     </div>

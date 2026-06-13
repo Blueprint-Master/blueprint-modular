@@ -4,6 +4,8 @@ import { useState, useEffect } from "react";
 import Link from "next/link";
 import { useParams, useRouter } from "next/navigation";
 import { Button, Panel, Input, Textarea, Spinner } from "@/components/bpm";
+import { useI18n } from "@/lib/i18n/LocaleProvider";
+import { STR } from "../../strings";
 
 interface Article {
   id: string;
@@ -17,6 +19,8 @@ interface Article {
 export default function NewsletterEditPage() {
   const params = useParams();
   const router = useRouter();
+  const { locale } = useI18n();
+  const str = STR[locale];
   const id = typeof params?.id === "string" ? params.id : "";
   const [title, setTitle] = useState("");
   const [content, setContent] = useState("");
@@ -52,7 +56,7 @@ export default function NewsletterEditPage() {
     setError(null);
     const t = title.trim();
     if (!t) {
-      setError("Le titre est requis.");
+      setError(str.titleRequired);
       return;
     }
     setSaving(true);
@@ -71,12 +75,12 @@ export default function NewsletterEditPage() {
       });
       if (!res.ok) {
         const data = await res.json().catch(() => ({}));
-        setError((data && typeof data.error === "string") ? data.error : "Erreur lors de l’enregistrement.");
+        setError((data && typeof data.error === "string") ? data.error : str.saveError);
         return;
       }
       router.push(`/modules/newsletter/${id}`);
     } catch {
-      setError("Erreur réseau.");
+      setError(str.networkError);
     } finally {
       setSaving(false);
     }
@@ -94,49 +98,49 @@ export default function NewsletterEditPage() {
     <div className="doc-page">
       <div className="doc-page-header mb-6">
         <div className="doc-breadcrumb">
-          <Link href="/modules">Modules</Link> → <Link href="/modules/newsletter">Newsletter</Link> →{" "}
-          <Link href={`/modules/newsletter/${id}`}>{title || "Article"}</Link> → Modifier
+          <Link href="/modules">Modules</Link> → <Link href="/modules/newsletter">{str.moduleName}</Link> →{" "}
+          <Link href={`/modules/newsletter/${id}`}>{title || str.editBreadcrumbFallback}</Link> → {str.editBreadcrumb}
         </div>
         <h1 className="text-2xl font-bold" style={{ color: "var(--bpm-text-primary)" }}>
-          Modifier l’article
+          {str.editTitle}
         </h1>
       </div>
 
-      <Panel variant="info" title="Édition">
+      <Panel variant="info" title={str.editPanelTitle}>
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
             <label className="block text-sm font-medium mb-1" style={{ color: "var(--bpm-text-primary)" }}>
-              Titre *
+              {str.titleLabel}
             </label>
-            <Input value={title} onChange={setTitle} placeholder="Titre" aria-label="Titre" required />
+            <Input value={title} onChange={setTitle} placeholder={str.editTitlePlaceholder} aria-label={str.titleAria} required />
           </div>
           <div>
             <label className="block text-sm font-medium mb-1" style={{ color: "var(--bpm-text-primary)" }}>
-              Contenu
+              {str.contentLabel}
             </label>
             <Textarea
               value={content}
               onChange={setContent}
-              placeholder="Contenu…"
-              aria-label="Contenu"
+              placeholder={str.editContentPlaceholder}
+              aria-label={str.contentAria}
               rows={10}
             />
           </div>
           <div>
             <label className="block text-sm font-medium mb-1" style={{ color: "var(--bpm-text-primary)" }}>
-              Extrait (optionnel)
+              {str.excerptLabel}
             </label>
             <Textarea
               value={excerpt}
               onChange={setExcerpt}
-              placeholder="Court résumé"
-              aria-label="Extrait"
+              placeholder={str.editExcerptPlaceholder}
+              aria-label={str.excerptAria}
               rows={2}
             />
           </div>
           <div>
             <label className="block text-sm font-medium mb-1" style={{ color: "var(--bpm-text-primary)" }}>
-              Date de publication (optionnel)
+              {str.publishedAtLabel}
             </label>
             <input
               type="datetime-local"
@@ -148,7 +152,7 @@ export default function NewsletterEditPage() {
                 background: "var(--bpm-bg-primary)",
                 color: "var(--bpm-text-primary)",
               }}
-              aria-label="Date de publication"
+              aria-label={str.publishedAtAria}
             />
           </div>
           <div className="flex items-center gap-2">
@@ -160,7 +164,7 @@ export default function NewsletterEditPage() {
               style={{ accentColor: "var(--bpm-accent-cyan)" }}
             />
             <label htmlFor="archived" style={{ color: "var(--bpm-text-primary)" }}>
-              Archivé
+              {str.archivedCheckboxLabel}
             </label>
           </div>
           {error && (
@@ -170,11 +174,11 @@ export default function NewsletterEditPage() {
           )}
           <div className="flex items-center gap-2">
             <Button type="submit" variant="primary" disabled={saving}>
-              {saving ? "Enregistrement…" : "Enregistrer"}
+              {saving ? str.saving : str.save}
             </Button>
             <Link href={`/modules/newsletter/${id}`}>
               <Button type="button" variant="secondary">
-                Annuler
+                {str.cancel}
               </Button>
             </Link>
           </div>
@@ -183,7 +187,7 @@ export default function NewsletterEditPage() {
 
       <nav className="doc-pagination mt-8">
         <Link href="/modules/newsletter" style={{ color: "var(--bpm-accent-cyan)" }}>
-          ← Retour à la Newsletter
+          {str.backToModule}
         </Link>
       </nav>
     </div>

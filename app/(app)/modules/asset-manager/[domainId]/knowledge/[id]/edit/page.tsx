@@ -4,18 +4,16 @@ import { useState, useEffect } from "react";
 import Link from "next/link";
 import { useParams, useRouter } from "next/navigation";
 import { Panel, Button, Spinner, Input, Selectbox } from "@/components/bpm";
-
-const CATEGORY_OPTIONS = [
-  { value: "procedure", label: "Procédure" },
-  { value: "faq", label: "FAQ" },
-  { value: "guide", label: "Guide" },
-  { value: "reference", label: "Référence" },
-  { value: "troubleshooting", label: "Dépannage" },
-];
+import { useI18n } from "@/lib/i18n/LocaleProvider";
+import { STR } from "../../../../strings";
 
 export default function AssetManagerKnowledgeEditPage() {
   const params = useParams();
   const router = useRouter();
+  const { locale } = useI18n();
+  const t = STR[locale];
+  const tk = t.knowledge;
+  const CATEGORY_OPTIONS = Object.entries(tk.categoryLabels).map(([value, label]) => ({ value, label }));
   const domainId = typeof params?.domainId === "string" ? params.domainId : "";
   const id = typeof params?.id === "string" ? params.id : "";
   const [config, setConfig] = useState<{ asset_types?: { id: string; label: string }[] } | null>(null);
@@ -54,7 +52,7 @@ export default function AssetManagerKnowledgeEditPage() {
     e.preventDefault();
     if (!article || saving) return;
     setSaving(true);
-    const tags = tagsStr.trim() ? tagsStr.split(/[\s,]+/).map((t) => t.trim()).filter(Boolean) : [];
+    const tags = tagsStr.trim() ? tagsStr.split(/[\s,]+/).map((tag) => tag.trim()).filter(Boolean) : [];
     fetch(`/api/asset-manager/knowledge/${id}`, {
       method: "PUT",
       headers: { "Content-Type": "application/json" },
@@ -87,16 +85,16 @@ export default function AssetManagerKnowledgeEditPage() {
     <div className="doc-page">
       <div className="doc-page-header mb-6">
         <nav className="doc-breadcrumb">
-          <Link href={`/modules/asset-manager/${domainId}/knowledge`} style={{ color: "var(--bpm-accent-cyan)" }}>Connaissances</Link> → {article.title} → Modifier
+          <Link href={`/modules/asset-manager/${domainId}/knowledge`} style={{ color: "var(--bpm-accent-cyan)" }}>{tk.title}</Link> → {article.title} → {t.common.edit}
         </nav>
-        <h1 className="text-2xl font-bold" style={{ color: "var(--bpm-text-primary)" }}>Modifier l&apos;article</h1>
+        <h1 className="text-2xl font-bold" style={{ color: "var(--bpm-text-primary)" }}>{tk.editArticleHeading}</h1>
       </div>
 
-      <Panel variant="info" title="Édition">
+      <Panel variant="info" title={tk.editPanelTitle}>
         <form onSubmit={handleSubmit} className="space-y-4">
-          <Input label="Titre *" value={title} onChange={setTitle} required />
+          <Input label={tk.fieldTitleRequired} value={title} onChange={setTitle} required />
           <div>
-            <label className="block text-sm font-medium mb-1" style={{ color: "var(--bpm-text-secondary)" }}>Contenu *</label>
+            <label className="block text-sm font-medium mb-1" style={{ color: "var(--bpm-text-secondary)" }}>{tk.fieldContentRequired}</label>
             <textarea
               value={content}
               onChange={(e) => setContent(e.target.value)}
@@ -106,36 +104,36 @@ export default function AssetManagerKnowledgeEditPage() {
               style={{ borderColor: "var(--bpm-border)", background: "var(--bpm-surface)", color: "var(--bpm-text-primary)" }}
             />
           </div>
-          <Selectbox label="Catégorie" value={categoryId} onChange={(v) => setCategoryId(String(v))} options={CATEGORY_OPTIONS} />
+          <Selectbox label={tk.fieldCategory} value={categoryId} onChange={(v) => setCategoryId(String(v))} options={CATEGORY_OPTIONS} />
           {config?.asset_types && config.asset_types.length > 0 && (
             <Selectbox
-              label="Type d'actif (optionnel)"
+              label={tk.fieldAssetTypeOptional}
               value={assetTypeId}
               onChange={(v) => setAssetTypeId(String(v))}
-              options={[{ value: "", label: "—" }, ...config.asset_types.map((t) => ({ value: t.id, label: t.label }))]}
+              options={[{ value: "", label: t.common.dash }, ...config.asset_types.map((at) => ({ value: at.id, label: at.label }))]}
             />
           )}
-          <Input label="Tags (séparés par des virgules)" value={tagsStr} onChange={setTagsStr} />
+          <Input label={tk.fieldTags} value={tagsStr} onChange={setTagsStr} />
           <Selectbox
-            label="Visibilité"
+            label={tk.fieldVisibility}
             value={visibility}
             onChange={(v) => setVisibility(v as "technicians_only" | "public")}
             options={[
-              { value: "technicians_only", label: "Techniciens uniquement" },
-              { value: "public", label: "Public" },
+              { value: "technicians_only", label: tk.visibilityTechniciansOnly },
+              { value: "public", label: tk.visibilityPublic },
             ]}
           />
           <div className="flex gap-2 mt-6">
-            <Button type="submit" size="small" disabled={saving}>Enregistrer</Button>
+            <Button type="submit" size="small" disabled={saving}>{t.common.save}</Button>
             <Link href={`/modules/asset-manager/${domainId}/knowledge/${id}`}>
-              <Button type="button" size="small" variant="outline">Annuler</Button>
+              <Button type="button" size="small" variant="outline">{t.common.cancel}</Button>
             </Link>
           </div>
         </form>
       </Panel>
 
       <nav className="doc-pagination mt-8 flex flex-wrap gap-4">
-        <Link href={`/modules/asset-manager/${domainId}/knowledge/${id}`} style={{ color: "var(--bpm-accent-cyan)" }}>← Retour à l&apos;article</Link>
+        <Link href={`/modules/asset-manager/${domainId}/knowledge/${id}`} style={{ color: "var(--bpm-accent-cyan)" }}>← {tk.backToArticle}</Link>
       </nav>
     </div>
   );

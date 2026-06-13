@@ -5,6 +5,8 @@ import Link from "next/link";
 import { useParams, useRouter } from "next/navigation";
 import { Download, UserCheck, ChevronDown, ChevronUp } from "lucide-react";
 import { Table, Spinner, Button, Chip, EmptyState } from "@/components/bpm";
+import { useI18n } from "@/lib/i18n/LocaleProvider";
+import { STR, dateLocale } from "../../strings";
 
 type Assignment = {
   id: string;
@@ -18,14 +20,16 @@ type Assignment = {
   assignee: { id: string; name: string | null } | null;
 };
 
-const STATUS_LABELS: Record<string, string> = {
-  active: "En cours",
-  returned: "Retourné",
-  overdue: "En retard",
-  cancelled: "Annulé",
-};
-
 export default function AssetManagerAssignmentsPage() {
+  const { locale } = useI18n();
+  const t = STR[locale];
+  const ta = t.assignments;
+  const STATUS_LABELS: Record<string, string> = {
+    active: ta.statusActive,
+    returned: ta.statusReturned,
+    overdue: ta.statusOverdue,
+    cancelled: ta.statusCancelled,
+  };
   const params = useParams();
   const router = useRouter();
   const domainId = typeof params?.domainId === "string" ? params.domainId : "";
@@ -57,23 +61,23 @@ export default function AssetManagerAssignmentsPage() {
   const filtered = assignments.filter((a) => !filterStatus || a.status === filterStatus);
 
   const columns = [
-    { key: "reference", label: "Référence" },
+    { key: "reference", label: t.common.reference },
     {
       key: "asset",
-      label: "Actif",
+      label: ta.columnAsset,
       render: (_: unknown, row: Record<string, unknown>) => {
         const r = row as Assignment;
-        return r.asset ? `${r.asset.reference} — ${r.asset.label}` : "—";
+        return r.asset ? `${r.asset.reference} — ${r.asset.label}` : t.common.dash;
       },
     },
     {
       key: "assignee",
-      label: "Bénéficiaire",
-      render: (_: unknown, row: Record<string, unknown>) => (row as Assignment).assignee?.name ?? "—",
+      label: ta.columnAssignee,
+      render: (_: unknown, row: Record<string, unknown>) => (row as Assignment).assignee?.name ?? t.common.dash,
     },
     {
       key: "status",
-      label: "Statut",
+      label: t.common.status,
       render: (val: unknown) => (
         <span className="rounded px-2 py-0.5 text-xs font-medium" style={{ backgroundColor: "var(--bpm-bg-secondary)", color: "var(--bpm-text-primary)" }}>
           {STATUS_LABELS[String(val)] ?? String(val)}
@@ -82,18 +86,18 @@ export default function AssetManagerAssignmentsPage() {
     },
     {
       key: "startDate",
-      label: "Début",
-      render: (val: unknown) => (val ? new Date(String(val)).toLocaleDateString("fr-FR") : ""),
+      label: ta.columnStart,
+      render: (val: unknown) => (val ? new Date(String(val)).toLocaleDateString(dateLocale(locale)) : ""),
     },
     {
       key: "expectedEndDate",
-      label: "Fin prévue",
-      render: (val: unknown) => (val ? new Date(String(val)).toLocaleDateString("fr-FR") : "—"),
+      label: ta.columnExpectedEnd,
+      render: (val: unknown) => (val ? new Date(String(val)).toLocaleDateString(dateLocale(locale)) : t.common.dash),
     },
   ];
 
   const statusOptions = [
-    { value: "", label: "Tous les statuts" },
+    { value: "", label: ta.filterAllStatuses },
     ...Object.entries(STATUS_LABELS).map(([id, label]) => ({ value: id, label })),
   ];
 
@@ -106,14 +110,14 @@ export default function AssetManagerAssignmentsPage() {
   };
 
   const exportCsv = () => {
-    const headers = ["Référence", "Actif", "Bénéficiaire", "Statut", "Début", "Fin prévue"];
+    const headers = [t.common.reference, ta.columnAsset, ta.columnAssignee, t.common.status, ta.columnStart, ta.columnExpectedEnd];
     const rows = filtered.map((a) => [
       a.reference,
-      a.asset ? `${a.asset.reference} — ${a.asset.label}` : "—",
-      a.assignee?.name ?? "—",
+      a.asset ? `${a.asset.reference} — ${a.asset.label}` : t.common.dash,
+      a.assignee?.name ?? t.common.dash,
       STATUS_LABELS[a.status] ?? a.status,
-      a.startDate ? new Date(a.startDate).toLocaleDateString("fr-FR") : "",
-      a.expectedEndDate ? new Date(a.expectedEndDate).toLocaleDateString("fr-FR") : "—",
+      a.startDate ? new Date(a.startDate).toLocaleDateString(dateLocale(locale)) : "",
+      a.expectedEndDate ? new Date(a.expectedEndDate).toLocaleDateString(dateLocale(locale)) : t.common.dash,
     ]);
     const csv = [headers.join(";"), ...rows.map((r) => r.map((c) => `"${String(c).replace(/"/g, '""')}"`).join(";"))].join("\r\n");
     const blob = new Blob(["\ufeff" + csv], { type: "text/csv;charset=utf-8" });
@@ -149,13 +153,13 @@ export default function AssetManagerAssignmentsPage() {
       <div className="doc-page-header">
         <div className="flex flex-wrap items-center justify-between gap-3">
           <div>
-            <h1 className="doc-page-title text-2xl font-semibold" style={{ color: "var(--bpm-text-primary)" }}>Mise à Disposition</h1>
+            <h1 className="doc-page-title text-2xl font-semibold" style={{ color: "var(--bpm-text-primary)" }}>{ta.listTitle}</h1>
             <p className="doc-description mt-0.5" style={{ color: "var(--bpm-text-secondary)" }}>
-              Suivi des mises à Disposition d&apos;actifs.
+              {ta.listDescription}
             </p>
           </div>
           <Link href={`/modules/asset-manager/${domainId}/assignments/new`} className="asset-manager-cta-button">
-            <Button variant="primary" size="small">+ Nouvelle MAD</Button>
+            <Button variant="primary" size="small">{ta.newCta}</Button>
           </Link>
         </div>
       </div>
@@ -169,12 +173,12 @@ export default function AssetManagerAssignmentsPage() {
           aria-controls="asset-manager-filters-assignments"
           id="asset-manager-filters-toggle-assignments"
         >
-          <span className="asset-manager-equipment-filters__label">Filtres</span>
+          <span className="asset-manager-equipment-filters__label">{ta.filters}</span>
           {filtersOpen ? <ChevronUp size={18} aria-hidden /> : <ChevronDown size={18} aria-hidden />}
         </button>
         <div id="asset-manager-filters-assignments" role="region" aria-labelledby="asset-manager-filters-toggle-assignments" hidden={!filtersOpen}>
           <div className="asset-manager-equipment-filters__row">
-            <span className="asset-manager-equipment-filters__label">Statut</span>
+            <span className="asset-manager-equipment-filters__label">{t.common.status}</span>
             <div className="asset-manager-equipment-filters__chips">
               {statusOptions.map((opt) => {
                 const isActive = filterStatus === opt.value;
@@ -201,12 +205,12 @@ export default function AssetManagerAssignmentsPage() {
       ) : filtered.length === 0 ? (
         <div className="rounded-xl border bg-[var(--bpm-surface)] p-4" style={{ border: "1px solid #E5E7EB", borderRadius: 12 }}>
           <EmptyState
-            title="Aucune mise à disposition"
-            description="Créez une MAD pour attribuer un actif à un bénéficiaire."
+            title={ta.emptyTitle}
+            description={ta.emptyDescription}
             icon={<UserCheck size={64} style={{ color: "var(--bpm-text-secondary)", opacity: 0.6 }} />}
             action={
               <Link href={`/modules/asset-manager/${domainId}/assignments/new`}>
-                <Button variant="primary" size="small">+ Nouvelle MAD</Button>
+                <Button variant="primary" size="small">{ta.newCta}</Button>
               </Link>
             }
           />
@@ -219,7 +223,7 @@ export default function AssetManagerAssignmentsPage() {
             disabled={filtered.length === 0}
             className="asset-manager-export-btn asset-manager-export-btn-float flex items-center justify-center w-8 h-8 rounded-lg border"
             style={{ borderColor: "var(--bpm-border)", background: "var(--bpm-surface)", color: "var(--bpm-text-secondary)" }}
-            title="Exporter CSV"
+            title={t.common.exportCsv}
           >
             <Download size={18} />
           </button>

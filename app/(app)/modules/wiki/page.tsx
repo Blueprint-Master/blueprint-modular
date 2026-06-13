@@ -6,6 +6,8 @@ import { useRouter } from "next/navigation";
 import { useSession } from "next-auth/react";
 import { Badge, Button } from "@/components/bpm";
 import { getGuestWikiArticles, deleteGuestArticle, type GuestWikiArticle } from "@/lib/wiki-guest";
+import { useI18n } from "@/lib/i18n/LocaleProvider";
+import { STR, type WikiStrings } from "./strings";
 
 type WikiArticle = GuestWikiArticle;
 
@@ -28,6 +30,7 @@ function TreeNode({
   onSelect,
   onOpenArticle,
   onAddChild,
+  t,
 }: {
   node: WikiArticle;
   depth?: number;
@@ -37,6 +40,7 @@ function TreeNode({
   onSelect: (id: string | null) => void;
   onOpenArticle: (slug: string) => void;
   onAddChild: (parentId: string) => void;
+  t: WikiStrings;
 }) {
   const hasChildren = node.children && node.children.length > 0;
   const open = expandedIds.has(node.id);
@@ -57,7 +61,7 @@ function TreeNode({
           className={`wiki-tree-node flex-1 min-w-0 ${selectedParent === node.id ? "active" : ""}`}
           onClick={handleClick}
           role={hasChildren ? "button" : "link"}
-          aria-label={hasChildren ? `Section ${node.title}, ${node.children!.length} article(s)` : `Ouvrir l'article ${node.title}`}
+          aria-label={hasChildren ? t.list.sectionLabel(node.title, node.children!.length) : t.list.openArticleLabel(node.title)}
         >
           {hasChildren ? (
             <span className="wiki-tree-arrow" aria-hidden>
@@ -82,8 +86,8 @@ function TreeNode({
           onClick={(e) => e.stopPropagation()}
           className="opacity-0 group-hover:opacity-100 text-sm px-1.5 py-0.5 rounded hover:bg-[var(--bpm-border)] flex-shrink-0"
           style={{ color: "var(--bpm-accent-cyan)" }}
-          title="Créer un sous-article"
-          aria-label="Créer un sous-article"
+          title={t.list.createSubArticle}
+          aria-label={t.list.createSubArticle}
         >
           +
         </Link>
@@ -99,6 +103,7 @@ function TreeNode({
           onSelect={onSelect}
           onOpenArticle={onOpenArticle}
           onAddChild={onAddChild}
+          t={t}
         />
       ))}
     </div>
@@ -107,6 +112,8 @@ function TreeNode({
 
 export default function WikiPage() {
   const router = useRouter();
+  const { locale } = useI18n();
+  const t = STR[locale];
   const { data: session } = useSession();
   const [articles, setArticles] = useState<WikiArticle[]>([]);
   const [search, setSearch] = useState("");
@@ -213,7 +220,7 @@ export default function WikiPage() {
   const handleDelete = async (e: React.MouseEvent, slug: string) => {
     e.preventDefault();
     e.stopPropagation();
-    if (!confirm("Supprimer cet article ?")) return;
+    if (!confirm(t.common.confirmDeleteArticle)) return;
     if (!session) {
       if (deleteGuestArticle(slug)) setArticles((prev) => prev.filter((a) => a.slug !== slug));
       return;
@@ -267,53 +274,53 @@ export default function WikiPage() {
     <div className="wiki-page doc-page">
       <div className="wiki-sticky-header">
         <div id="documentation" className="doc-page-header">
-          <div className="doc-breadcrumb"><Link href="/modules">Modules</Link> → Wiki</div>
+          <div className="doc-breadcrumb"><Link href="/modules">{t.common.modules}</Link> → Wiki</div>
           <h1>Wiki</h1>
           <p className="doc-description">
-            Wiki interne : articles en Markdown, arborescence, brouillons et publication. Idéal pour la doc d&apos;équipe.
+            {t.list.description}
           </p>
           <div className="doc-meta">
-            <span className="doc-badge doc-badge-category">Module</span>
+            <span className="doc-badge doc-badge-category">{t.list.moduleBadge}</span>
           </div>
         </div>
         <div className="wiki-header">
-        <h2 className="text-base font-semibold mb-0" style={{ color: "var(--bpm-text-primary)" }}>Articles</h2>
+        <h2 className="text-base font-semibold mb-0" style={{ color: "var(--bpm-text-primary)" }}>{t.list.articles}</h2>
         <Link href="/modules/wiki/new" className="btn-primary">
-          + Nouvel article
+          {t.list.newArticle}
         </Link>
       </div>
       <div className="wiki-search flex flex-wrap items-center gap-2">
         <input
           type="search"
-          placeholder="Rechercher (titre, contenu, tags)..."
+          placeholder={t.list.searchPlaceholder}
           value={search}
           onChange={(e) => { setSearch(e.target.value); setPage(1); }}
           className="flex-1 min-w-[200px]"
         />
         {session && (
           <>
-            <span className="text-xs" style={{ color: "var(--bpm-text-secondary)" }}>Statut :</span>
+            <span className="text-xs" style={{ color: "var(--bpm-text-secondary)" }}>{t.list.statusLabel}</span>
             <select
               value={statusFilter}
               onChange={(e) => { setStatusFilter(e.target.value as "" | "published" | "draft"); setPage(1); }}
               className="text-sm px-2 py-1 rounded border"
               style={{ borderColor: "var(--bpm-border)", background: "var(--bpm-surface)", color: "var(--bpm-text-primary)" }}
             >
-              <option value="">Tous</option>
-              <option value="published">Publié</option>
-              <option value="draft">Brouillon</option>
+              <option value="">{t.list.statusAll}</option>
+              <option value="published">{t.list.statusPublished}</option>
+              <option value="draft">{t.list.statusDraft}</option>
             </select>
-            <span className="text-xs" style={{ color: "var(--bpm-text-secondary)" }}>Tri :</span>
+            <span className="text-xs" style={{ color: "var(--bpm-text-secondary)" }}>{t.list.sortLabel}</span>
             <select
               value={sortBy}
               onChange={(e) => setSortBy(e.target.value as typeof sortBy)}
               className="text-sm px-2 py-1 rounded border"
               style={{ borderColor: "var(--bpm-border)", background: "var(--bpm-surface)", color: "var(--bpm-text-primary)" }}
             >
-              <option value="updatedAt">Date MàJ</option>
-              <option value="createdAt">Date création</option>
-              <option value="title">Titre A-Z</option>
-              <option value="viewCount">Vues</option>
+              <option value="updatedAt">{t.list.sortUpdatedAt}</option>
+              <option value="createdAt">{t.list.sortCreatedAt}</option>
+              <option value="title">{t.list.sortTitle}</option>
+              <option value="viewCount">{t.list.sortViewCount}</option>
             </select>
             <select
               value={sortOrder}
@@ -321,21 +328,21 @@ export default function WikiPage() {
               className="text-sm px-2 py-1 rounded border"
               style={{ borderColor: "var(--bpm-border)", background: "var(--bpm-surface)", color: "var(--bpm-text-primary)" }}
             >
-              <option value="desc">Desc</option>
-              <option value="asc">Asc</option>
+              <option value="desc">{t.list.sortDesc}</option>
+              <option value="asc">{t.list.sortAsc}</option>
             </select>
           </>
         )}
         {allTags.length > 0 && (
           <div className="flex flex-wrap gap-1 items-center">
-            <span className="text-xs" style={{ color: "var(--bpm-text-secondary)" }}>Tag :</span>
+            <span className="text-xs" style={{ color: "var(--bpm-text-secondary)" }}>{t.list.tagLabel}</span>
             <button
               type="button"
               onClick={() => setTagFilter(null)}
               className={`text-xs px-2 py-1 rounded ${tagFilter === null ? "opacity-100 font-medium" : "opacity-70"}`}
               style={{ background: "var(--bpm-bg-secondary)", color: "var(--bpm-text-primary)" }}
             >
-              Tous
+              {t.list.tagAll}
             </button>
             {allTags.slice(0, 12).map(({ tag }) => (
               <button
@@ -368,16 +375,16 @@ export default function WikiPage() {
         </div>
       ) : articles.length === 0 && !hasActiveFilters ? (
         <div className="wiki-empty text-center py-12">
-          <p className="text-lg" style={{ color: "var(--bpm-text-primary)" }}>Votre wiki est vide.</p>
+          <p className="text-lg" style={{ color: "var(--bpm-text-primary)" }}>{t.list.emptyWiki}</p>
           <Link href="/modules/wiki/new" className="inline-block mt-4">
-            <Button size="small">Créer le premier article</Button>
+            <Button size="small">{t.list.createFirstArticle}</Button>
           </Link>
         </div>
       ) : noResultsForFilters ? (
         <div className="wiki-empty text-center py-12">
-          <p className="text-lg" style={{ color: "var(--bpm-text-primary)" }}>Aucun article pour ces filtres.</p>
+          <p className="text-lg" style={{ color: "var(--bpm-text-primary)" }}>{t.list.noResultsForFilters}</p>
           <Button type="button" variant="outline" size="small" onClick={clearFilters} className="mt-4">
-            Effacer les filtres
+            {t.list.clearFilters}
           </Button>
         </div>
       ) : (
@@ -387,7 +394,7 @@ export default function WikiPage() {
               className={`wiki-tree-node ${selectedParent === null ? "active" : ""}`}
               onClick={() => setSelectedParent(null)}
             >
-              📁 Tous les articles
+              {t.list.allArticles}
             </div>
             {tree.map((node) => (
               <TreeNode
@@ -399,21 +406,22 @@ export default function WikiPage() {
                 onSelect={setSelectedParent}
                 onOpenArticle={openArticle}
                 onAddChild={onAddChild}
+                t={t}
               />
             ))}
           </aside>
           <main className="wiki-content">
             {displayed.length === 0 ? (
-              <p>Aucun article dans cette section.</p>
+              <p>{t.list.noArticleInSection}</p>
             ) : (
               <>
                 {selectedSlugs.size > 0 && (
                   <div className="flex flex-wrap items-center gap-2 mb-3 p-2 rounded border" style={{ borderColor: "var(--bpm-border)", background: "var(--bpm-bg-secondary)" }}>
                     <span className="text-sm" style={{ color: "var(--bpm-text-primary)" }}>
-                      {selectedSlugs.size} article{selectedSlugs.size > 1 ? "s" : ""} sélectionné{selectedSlugs.size > 1 ? "s" : ""}
+                      {t.list.selectedCount(selectedSlugs.size)}
                     </span>
                     <Button type="button" size="small" onClick={exportSelectionZip}>
-                      Exporter en ZIP
+                      {t.list.exportZip}
                     </Button>
                     <button
                       type="button"
@@ -421,7 +429,7 @@ export default function WikiPage() {
                       style={{ color: "var(--bpm-text-secondary)" }}
                       onClick={() => setSelectedSlugs(new Set())}
                     >
-                      Tout désélectionner
+                      {t.list.deselectAll}
                     </button>
                   </div>
                 )}
@@ -437,29 +445,29 @@ export default function WikiPage() {
                           checked={selectedSlugs.has(article.slug)}
                           onChange={() => toggleSelect(article.slug)}
                           onClick={(e) => e.stopPropagation()}
-                          aria-label={`Sélectionner ${article.title}`}
+                          aria-label={t.list.selectArticleLabel(article.title)}
                           className="mt-1 flex-shrink-0"
                         />
                       <Link href={`/modules/wiki/${article.slug}`} className="min-w-0 flex-1 no-underline block" style={{ color: "inherit" }}>
                         <h3 className="flex items-center gap-2 flex-wrap">
                           {article.title}
                           {a.pinned && (
-                            <span className="text-xs px-2 py-0.5 rounded" style={{ background: "var(--bpm-accent)", color: "#fff" }}>Épinglé</span>
+                            <span className="text-xs px-2 py-0.5 rounded" style={{ background: "var(--bpm-accent)", color: "#fff" }}>{t.common.pinned}</span>
                           )}
                           {!article.isPublished ? (
-                            <Badge variant="warning" className="text-xs">Brouillon</Badge>
+                            <Badge variant="warning" className="text-xs">{t.common.draft}</Badge>
                           ) : (
-                            <Badge variant="success" className="text-xs">Publié</Badge>
+                            <Badge variant="success" className="text-xs">{t.common.published}</Badge>
                           )}
                         </h3>
                         {a.excerpt && (
                           <p className="text-sm mt-1 line-clamp-2" style={{ color: "var(--bpm-text-secondary)" }}>{a.excerpt}</p>
                         )}
                         <div className="wiki-card-meta flex flex-wrap items-center gap-2 mt-1">
-                          <span>Mis à jour le {new Date(article.updatedAt).toLocaleDateString("fr-FR")}</span>
+                          <span>{t.list.updatedOn(new Date(article.updatedAt).toLocaleDateString(t.common.locale))}</span>
                           {article.author && <span> · {article.author.name ?? ""}</span>}
-                          {a.readingTimeMinutes != null && <span> · {a.readingTimeMinutes} min</span>}
-                          {a.viewCount != null && a.viewCount > 0 && <span> · {a.viewCount} vue{a.viewCount > 1 ? "s" : ""}</span>}
+                          {a.readingTimeMinutes != null && <span> · {t.common.minutesShort(a.readingTimeMinutes)}</span>}
+                          {a.viewCount != null && a.viewCount > 0 && <span> · {t.list.viewCount(a.viewCount)}</span>}
                           {Array.isArray(a.tags) && a.tags.length > 0 && (
                             <span className="flex gap-1 flex-wrap">
                               {a.tags.slice(0, 5).map((t) => (
@@ -478,7 +486,7 @@ export default function WikiPage() {
                             className="underline"
                             style={{ color: "var(--bpm-accent-cyan)" }}
                           >
-                            Modifier
+                            {t.common.edit}
                           </Link>
                           <button
                             type="button"
@@ -486,7 +494,7 @@ export default function WikiPage() {
                             className="underline"
                             style={{ color: "var(--bpm-text-secondary)" }}
                           >
-                            Supprimer
+                            {t.common.delete}
                           </button>
                         </div>
                       )}
@@ -501,7 +509,7 @@ export default function WikiPage() {
                   style={{ color: "var(--bpm-text-secondary)" }}
                   onClick={toggleSelectAllDisplayed}
                 >
-                  {displayed.every((a) => selectedSlugs.has(a.slug)) ? "Tout désélectionner" : "Tout sélectionner"} (cette page)
+                  {displayed.every((a) => selectedSlugs.has(a.slug)) ? t.list.deselectAll : t.list.selectAll} {t.list.perPageSuffix}
                 </button>
               </div>
               </>
@@ -511,10 +519,10 @@ export default function WikiPage() {
       )}
       </div>
       <nav className="doc-pagination mt-8">
-        <Link href="/modules/wiki/new" style={{ color: "var(--bpm-accent-cyan)" }}>Créer un article</Link>
-        <Link href="/modules/wiki/search" style={{ color: "var(--bpm-accent-cyan)" }}>Recherche</Link>
-        <Link href="/modules/wiki/tags" style={{ color: "var(--bpm-accent-cyan)" }}>Tags</Link>
-        <Link href="/modules/wiki/documentation" style={{ color: "var(--bpm-accent-cyan)" }}>Documentation</Link>
+        <Link href="/modules/wiki/new" style={{ color: "var(--bpm-accent-cyan)" }}>{t.common.createArticle}</Link>
+        <Link href="/modules/wiki/search" style={{ color: "var(--bpm-accent-cyan)" }}>{t.common.search}</Link>
+        <Link href="/modules/wiki/tags" style={{ color: "var(--bpm-accent-cyan)" }}>{t.common.tags}</Link>
+        <Link href="/modules/wiki/documentation" style={{ color: "var(--bpm-accent-cyan)" }}>{t.common.documentation}</Link>
       </nav>
     </div>
   );

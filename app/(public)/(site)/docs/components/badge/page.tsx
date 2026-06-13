@@ -4,10 +4,49 @@ import { useState } from "react";
 import Link from "next/link";
 import { Badge, CodeBlock } from "@/components/bpm";
 import { getPrevNext } from "@/lib/docPages";
+import { useI18n } from "@/lib/i18n/LocaleProvider";
 
 type BadgeVariant = "default" | "primary" | "success" | "warning" | "error";
 
+const fr = {
+  components: "Composants",
+  category: "Affichage de données",
+  description: "Badge / étiquette avec variantes (default, primary, success, warning, error).",
+  labelPlaceholder: "Texte du badge",
+  copy: "Copier",
+  thDefault: "Défaut",
+  thRequired: "Requis",
+  thDescription: "Description",
+  yes: "Oui",
+  no: "Non",
+  descChildren: "Texte ou contenu du badge.",
+  descVariant: "Style et couleur du badge.",
+  descClassName: "Classes CSS additionnelles.",
+  examples: "Exemples",
+};
+
+const en: typeof fr = {
+  components: "Components",
+  category: "Data display",
+  description: "Badge / label with variants (default, primary, success, warning, error).",
+  labelPlaceholder: "Badge text",
+  copy: "Copy",
+  thDefault: "Default",
+  thRequired: "Required",
+  thDescription: "Description",
+  yes: "Yes",
+  no: "No",
+  descChildren: "Text or content of the badge.",
+  descVariant: "Style and color of the badge.",
+  descClassName: "Additional CSS classes.",
+  examples: "Examples",
+};
+
+const L = { fr, en } as const;
+
 export default function DocBadgePage() {
+  const { locale } = useI18n();
+  const t = L[locale];
   const [label, setLabel] = useState("Affichage de données");
   const [variant, setVariant] = useState<BadgeVariant>("default");
 
@@ -20,15 +59,15 @@ export default function DocBadgePage() {
     <div className="doc-page">
       <div className="doc-page-header">
         <div className="doc-breadcrumb">
-          <Link href="/docs/components">Composants</Link> → bpm.badge
+          <Link href="/docs/components">{t.components}</Link> → bpm.badge
         </div>
         <h1>bpm.badge</h1>
         <p className="doc-description">
-          Badge / étiquette avec variantes (default, primary, success, warning, error).
+          {t.description}
         </p>
         <div className="doc-meta">
           <span className="doc-badge doc-badge-stable">Stable</span>
-          <span className="doc-badge doc-badge-category">Affichage de données</span>
+          <span className="doc-badge doc-badge-category">{t.category}</span>
           <span className="doc-reading-time">⏱ 2 min</span>
         </div>
       </div>
@@ -46,7 +85,7 @@ export default function DocBadgePage() {
               type="text"
               value={label}
               onChange={(e) => setLabel(e.target.value)}
-              placeholder="Texte du badge"
+              placeholder={t.labelPlaceholder}
             />
           </div>
           <div className="sandbox-control-group">
@@ -64,7 +103,7 @@ export default function DocBadgePage() {
           <div className="sandbox-code-header">
             <span>Python</span>
             <button type="button" onClick={() => navigator.clipboard.writeText(pythonCode)}>
-              Copier
+              {t.copy}
             </button>
           </div>
           <pre><code>{pythonCode}</code></pre>
@@ -76,9 +115,9 @@ export default function DocBadgePage() {
           <tr>
             <th>Prop</th>
             <th>Type</th>
-            <th>Défaut</th>
-            <th>Requis</th>
-            <th>Description</th>
+            <th>{t.thDefault}</th>
+            <th>{t.thRequired}</th>
+            <th>{t.thDescription}</th>
           </tr>
         </thead>
         <tbody>
@@ -86,27 +125,27 @@ export default function DocBadgePage() {
             <td><code>children</code> / <code>label</code></td>
             <td><code>string | ReactNode</code></td>
             <td>—</td>
-            <td>Oui</td>
-            <td>Texte ou contenu du badge.</td>
+            <td>{t.yes}</td>
+            <td>{t.descChildren}</td>
           </tr>
           <tr>
             <td><code>variant</code></td>
             <td><code>default | primary | success | warning | error</code></td>
             <td>default</td>
-            <td>Non</td>
-            <td>Style et couleur du badge.</td>
+            <td>{t.no}</td>
+            <td>{t.descVariant}</td>
           </tr>
           <tr>
             <td><code>className</code></td>
             <td><code>string</code></td>
             <td>—</td>
-            <td>Non</td>
-            <td>Classes CSS additionnelles.</td>
+            <td>{t.no}</td>
+            <td>{t.descClassName}</td>
           </tr>
         </tbody>
       </table>
 
-      <h2 className="text-lg font-semibold mt-8 mb-2">Exemples</h2>
+      <h2 className="text-lg font-semibold mt-8 mb-2">{t.examples}</h2>
       <CodeBlock code={'bpm.badge("Nouveau")\nbpm.badge("Validé", variant="success")\nbpm.badge("Attention", variant="warning")'} language="python" />
       <CodeBlock code={'bpm.badge("Erreur", variant="error")\nbpm.badge("Info", variant="primary")'} language="python" />
 

@@ -2,126 +2,109 @@
 
 import Link from "next/link";
 import { CodeBlock } from "@/components/bpm";
+import { useI18n } from "@/lib/i18n/LocaleProvider";
+import { strings } from "../strings";
 
 export default function DocumentsDocumentationPage() {
+  const { locale } = useI18n();
+  const t = strings(locale).doc;
   return (
     <div className="doc-page">
       <div className="doc-page-header">
         <nav className="doc-breadcrumb">
-          <Link href="/modules">Modules</Link> → <Link href="/modules/documents">Analyse de documents</Link> → Documentation
+          <Link href="/modules">{t.bcModules}</Link> → <Link href="/modules/documents">{t.bcAnalysis}</Link> → {t.bcDocumentation}
         </nav>
-        <h1>Documentation — Analyse de documents</h1>
+        <h1>{t.title}</h1>
         <p className="doc-description">
-          Upload, analyse et gestion de documents PDF. Métadonnées et statut d&apos;analyse. Intégration avec le module IA (contexte assistant).
+          {t.description}
         </p>
       </div>
 
       <p className="mb-6" style={{ color: "var(--bpm-text-secondary)" }}>
-        Les modules Blueprint Modular (Auth, Wiki, IA, Documents, etc.) font partie de l&apos;<strong>application Next.js</strong>. Il n&apos;y a pas de package séparé par module (pas de <code>pip install blueprint-modular-documents</code> ni <code>npm install blueprint-modular-documents</code>) : on installe l&apos;application une fois, puis on configure les variables d&apos;environnement et les services (base PostgreSQL, Ollama ou Anthropic pour l&apos;IA) selon les modules utilisés. Cette documentation décrit <strong>comment installer</strong> le module Analyse de documents et toutes ses dépendances (Node, Prisma, extraction PDF, serveur IA), <strong>comment il fonctionne</strong>, <strong>comment le paramétrer</strong> (variables d&apos;environnement, formats, taille max) et comment l&apos;utiliser (interface ou API).
+        {t.introHtml.lead1}<strong>{t.introHtml.leadStrong1}</strong>{t.introHtml.lead2}<code>{t.introHtml.leadCode1}</code>{t.introHtml.lead3}<code>{t.introHtml.leadCode2}</code>{t.introHtml.lead4}<strong>{t.introHtml.leadStrong2}</strong>{t.introHtml.lead5}<strong>{t.introHtml.leadStrong3}</strong>{t.introHtml.lead6}<strong>{t.introHtml.leadStrong4}</strong>{t.introHtml.lead7}
       </p>
 
       <h2 className="text-lg font-semibold mt-8 mb-2" style={{ color: "var(--bpm-text-primary)" }}>
-        Comment fonctionne le module Analyse de documents
+        {t.howTitle}
       </h2>
       <p className="mb-4" style={{ color: "var(--bpm-text-secondary)" }}>
-        Le module permet d&apos;<strong>uploader</strong> des documents <strong>PDF</strong>, de les <strong>analyser automatiquement</strong> via l&apos;IA pour extraire fournisseur, client, dates (contrat, signature, échéance), résumé, points clés et engagements. Le résultat est stocké en base (table <code>Document</code>) ; le fichier est enregistré sur disque dans <code>uploads/[userId]/[docId].pdf</code>. L&apos;analyse est lancée juste après l&apos;upload (synchrone) : extraction du texte (pdf-parse), puis appel au modèle (Claude si <code>ANTHROPIC_API_KEY</code> est défini, sinon Ollama / Qwen). Le module Documents est enregistré dans le registry de l&apos;assistant IA : les métadonnées des documents peuvent être injectées dans le contexte des conversations.
+        {t.howHtml.p1}<strong>{t.howHtml.p1Strong1}</strong>{t.howHtml.p2}<strong>{t.howHtml.p2Strong}</strong>{t.howHtml.p3}<strong>{t.howHtml.p3Strong}</strong>{t.howHtml.p4}<code>{t.howHtml.pCode1}</code>{t.howHtml.p5}<code>{t.howHtml.pCode2}</code>{t.howHtml.p6}<code>{t.howHtml.pCode3}</code>{t.howHtml.p7}
       </p>
       <ul className="list-disc pl-6 mb-4 text-sm" style={{ color: "var(--bpm-text-secondary)" }}>
-        <li><strong>Statut</strong> : pending → processing → done (ou error). La liste se rafraîchit tant qu&apos;un document est en cours.</li>
-        <li><strong>Alertes échéance</strong> : l&apos;UI affiche les documents dont la date de résiliation est dans les 30 prochains jours.</li>
+        <li><strong>{t.statusLiStrong}</strong>{t.statusLi}</li>
+        <li><strong>{t.alertLiStrong}</strong>{t.alertLi}</li>
       </ul>
 
       <h2 className="text-lg font-semibold mt-8 mb-2" style={{ color: "var(--bpm-text-primary)" }}>
-        Installation et dépendances
+        {t.installTitle}
       </h2>
       <p className="mb-4" style={{ color: "var(--bpm-text-secondary)" }}>
-        Le module fait partie de l&apos;application Next.js. Dépendances Node incluses dans le projet : <code>pdf-parse</code> pour l&apos;extraction de texte PDF. Pour l&apos;analyse IA (extraction fournisseur, client, dates, résumé, points clés) : soit <code>ANTHROPIC_API_KEY</code> (Claude), soit un serveur Ollama (Qwen) configuré via <code>AI_SERVER_URL</code> et <code>AI_MODEL</code>.
+        {t.installHtml.p1}<code>{t.installHtml.pCode1}</code>{t.installHtml.p2}<code>{t.installHtml.pCode2}</code>{t.installHtml.p3}<code>{t.installHtml.pCode3}</code>{t.installHtml.p4}<code>{t.installHtml.pCode4}</code>{t.installHtml.p5}
       </p>
 
       <h3 className="text-base font-semibold mt-6 mb-2" style={{ color: "var(--bpm-text-primary)" }}>
-        Résumé des commandes (installer le module et toutes les dépendances)
+        {t.cmdSummaryTitle}
       </h3>
       <CodeBlock
-        code={`# 1. Dépendances Node et base PostgreSQL
-npm install
-npx prisma generate --schema=prisma/schema.prisma
-npx prisma migrate deploy
-
-# 2. Analyse IA — au choix :
-# Option A : Claude (définir ANTHROPIC_API_KEY dans .env)
-# Option B : Ollama (local ou VPS)
-ollama serve
-ollama pull qwen3:8b
-
-# 3. Lancer l&apos;app
-npm run dev
-
-# 4. Ouvrir le module Documents
-# http://localhost:3000/modules/documents`}
+        code={t.cmdSummaryCode}
         language="bash"
       />
       <p className="mt-2 mb-4 text-sm" style={{ color: "var(--bpm-text-secondary)" }}>
-        Définir <code>DATABASE_URL</code> dans <code>.env</code>. Pour l&apos;analyse IA : <code>ANTHROPIC_API_KEY</code> (Claude) ou <code>AI_SERVER_URL</code> + <code>AI_MODEL</code> (Ollama). Sans IA, l&apos;upload fonctionne mais l&apos;analyse restera en attente ou erreur.
+        {t.cmdSummaryAfterHtml.p1}<code>{t.cmdSummaryAfterHtml.pCode1}</code>{t.cmdSummaryAfterHtml.p2}<code>{t.cmdSummaryAfterHtml.pCode2}</code>{t.cmdSummaryAfterHtml.p3}<code>{t.cmdSummaryAfterHtml.pCode3}</code>{t.cmdSummaryAfterHtml.p4}<code>{t.cmdSummaryAfterHtml.pCode4}</code>{t.cmdSummaryAfterHtml.p5}<code>{t.cmdSummaryAfterHtml.pCode5}</code>{t.cmdSummaryAfterHtml.p6}
       </p>
 
       <h3 className="text-base font-semibold mt-6 mb-2" style={{ color: "var(--bpm-text-primary)" }}>
-        Analyse IA : Claude ou Ollama
+        {t.aiTitle}
       </h3>
       <p className="mb-2 text-sm" style={{ color: "var(--bpm-text-secondary)" }}>
-        Par défaut, l&apos;analyse utilise <strong>Claude</strong> (Anthropic) si <code>ANTHROPIC_API_KEY</code> est défini. Sinon, fallback sur <strong>Ollama</strong> (Qwen). Pour utiliser uniquement Ollama, ne pas définir <code>ANTHROPIC_API_KEY</code> et lancer Ollama :
+        {t.aiHtml.p1}<strong>{t.aiHtml.pStrong1}</strong>{t.aiHtml.p2}<code>{t.aiHtml.pCode1}</code>{t.aiHtml.p3}<strong>{t.aiHtml.pStrong2}</strong>{t.aiHtml.p4}<code>{t.aiHtml.pCode2}</code>{t.aiHtml.p5}
       </p>
       <CodeBlock
-        code={`# Option A — Claude (Anthropic)
-# Dans .env : ANTHROPIC_API_KEY=sk-...
-
-# Option B — Ollama (local / VPS)
-ollama serve
-ollama pull qwen3:8b
-# .env : AI_SERVER_URL=http://localhost:11434, AI_MODEL=qwen3:8b`}
+        code={t.aiCode}
         language="bash"
       />
 
       <h2 className="text-lg font-semibold mt-8 mb-2" style={{ color: "var(--bpm-text-primary)" }}>
-        Où sont sauvegardés les documents
+        {t.storageTitle}
       </h2>
       <p className="mb-4" style={{ color: "var(--bpm-text-secondary)" }}>
-        <strong>Base de données</strong> : table <code>Document</code> (id, filename, mimeType, filePath, uploadedById, analysisStatus, supplier, client, contractDate, terminationDate, summary, keyPoints, commitments, rawText, createdAt). <strong>Fichiers</strong> : <code>uploads/[userId]/[docId].pdf</code>. S&apos;assurer que le répertoire <code>uploads/</code> est accessible en écriture.
+        <strong>{t.storageHtml.pStrong1}</strong>{t.storageHtml.p1}<code>{t.storageHtml.pCode1}</code>{t.storageHtml.p2}<strong>{t.storageHtml.pStrong2}</strong>{t.storageHtml.p3}<code>{t.storageHtml.pCode2}</code>{t.storageHtml.p4}<code>{t.storageHtml.pCode3}</code>{t.storageHtml.p5}
       </p>
 
       <h2 className="text-lg font-semibold mt-8 mb-2" style={{ color: "var(--bpm-text-primary)" }}>
-        Comment charger et utiliser le module
+        {t.loadTitle}
       </h2>
       <p className="mb-4 text-sm" style={{ color: "var(--bpm-text-secondary)" }}>
-        <strong>Charger</strong> : le module est intégré à l&apos;app ; après <code>npm install</code> et <code>prisma migrate deploy</code>, il est disponible. Aucun import ou script supplémentaire. <strong>Utiliser</strong> : depuis l&apos;interface, ouvrez <code>/modules/documents</code> pour uploader des PDF et consulter la liste ; depuis du code, appelez <code>POST /api/documents</code> (FormData avec <code>file</code>) pour uploader, <code>GET /api/documents</code> pour lister. Le module Documents est enregistré dans le registry de l&apos;assistant IA : en cochant « Documents » dans le panneau de contexte, les métadonnées des documents sont injectées dans le contexte des conversations.
+        <strong>{t.loadHtml.pStrong1}</strong>{t.loadHtml.p1}<code>{t.loadHtml.pCode1}</code>{t.loadHtml.p2}<code>{t.loadHtml.pCode2}</code>{t.loadHtml.p3}<strong>{t.loadHtml.pStrong2}</strong>{t.loadHtml.p4}<code>{t.loadHtml.pCode3}</code>{t.loadHtml.p5}<code>{t.loadHtml.pCode4}</code>{t.loadHtml.p6}<code>{t.loadHtml.pCode5}</code>{t.loadHtml.p7}<code>{t.loadHtml.pCode6}</code>{t.loadHtml.p8}
       </p>
 
       <h2 className="text-lg font-semibold mt-8 mb-2" style={{ color: "var(--bpm-text-primary)" }}>
-        Variables d&apos;environnement et paramétrage
+        {t.envTitle}
       </h2>
       <ul className="list-disc pl-6 mb-4 text-sm" style={{ color: "var(--bpm-text-secondary)" }}>
-        <li><code>DATABASE_URL</code> — Connexion PostgreSQL (obligatoire).</li>
-        <li><code>ANTHROPIC_API_KEY</code> — Clé API Anthropic pour l&apos;analyse via Claude (optionnel ; si absent, fallback Ollama).</li>
-        <li><code>AI_SERVER_URL</code>, <code>AI_MODEL</code> — Serveur Ollama pour l&apos;analyse (ex. <code>http://localhost:11434</code>, <code>qwen3:8b</code>).</li>
-        <li><strong>Formats acceptés</strong> : PDF uniquement (côté API actuel).</li>
-        <li><strong>Taille max</strong> : dépend du serveur (proxy). En cas d&apos;erreur 413, augmenter <code>client_max_body_size</code> (nginx) ou la limite côté Next.js si configurée.</li>
+        <li><code>{t.envLi.databaseUrlStrong}</code>{t.envLi.databaseUrl}</li>
+        <li><code>{t.envLi.anthropicStrong}</code>{t.envLi.anthropic}</li>
+        <li><code>{t.envLi.aiServerStrong}</code>, <code>{t.envLi.aiServerStrong2}</code>{t.envLi.aiServer}<code>{t.envLi.aiServerCode1}</code>{t.envLi.aiServer2}<code>{t.envLi.aiServerCode2}</code>{t.envLi.aiServer3}</li>
+        <li><strong>{t.envLi.formatsStrong}</strong>{t.envLi.formats}</li>
+        <li><strong>{t.envLi.maxSizeStrong}</strong>{t.envLi.maxSize}<code>{t.envLi.maxSizeCode1}</code>{t.envLi.maxSize2}</li>
       </ul>
       <p className="mb-4 text-sm" style={{ color: "var(--bpm-text-secondary)" }}>
-        <strong>Base de données et prérequis production</strong> : table <code>Document</code>, variables d&apos;environnement et déploiement détaillés dans <code>docs/DATABASE.md</code> du dépôt.
+        <strong>{t.dbProdHtml.pStrong}</strong>{t.dbProdHtml.p1}<code>{t.dbProdHtml.pCode1}</code>{t.dbProdHtml.p2}<code>{t.dbProdHtml.pCode2}</code>{t.dbProdHtml.p3}
       </p>
 
       <h2 className="text-lg font-semibold mt-8 mb-2" style={{ color: "var(--bpm-text-primary)" }}>
-        API (résumé)
+        {t.apiTitle}
       </h2>
       <ul className="list-disc pl-6 mb-4 text-sm" style={{ color: "var(--bpm-text-secondary)" }}>
-        <li><code>GET /api/documents</code> — Liste des documents de l&apos;utilisateur.</li>
-        <li><code>POST /api/documents</code> — Upload d&apos;un PDF. FormData : <code>file</code>. Réponse : document créé (analyse lancée en synchrone).</li>
-        <li><code>GET /api/documents/[id]</code> — Détail d&apos;un document.</li>
-        <li><code>DELETE /api/documents/[id]</code> — Supprimer un document (et le fichier si implémenté).</li>
+        <li><code>GET /api/documents</code>{t.apiLi.list}</li>
+        <li><code>POST /api/documents</code>{t.apiLi.upload}<code>{t.apiLi.uploadCode}</code>{t.apiLi.upload2}</li>
+        <li><code>GET /api/documents/[id]</code>{t.apiLi.detail}</li>
+        <li><code>DELETE /api/documents/[id]</code>{t.apiLi.delete}</li>
       </ul>
 
       <nav className="doc-pagination mt-10">
         <Link href="/modules/documents" className="text-sm font-medium" style={{ color: "var(--bpm-accent-cyan)" }}>
-          ← Retour à l&apos;Analyse de documents
+          {t.backToAnalysis}
         </Link>
         <a href="https://docs.blueprint-modular.com/modules/analyse-document.html" target="_blank" rel="noopener noreferrer" className="text-sm underline" style={{ color: "var(--bpm-accent-cyan)" }}>
           docs.blueprint-modular.com

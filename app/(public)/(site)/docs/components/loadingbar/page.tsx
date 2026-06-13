@@ -4,6 +4,7 @@ import { useState } from "react";
 import Link from "next/link";
 import { LoadingBar, Selectbox, CodeBlock } from "@/components/bpm";
 import { getPrevNext } from "@/lib/docPages";
+import { useI18n } from "@/lib/i18n/LocaleProvider";
 
 type LoadingBarVariant = "sweep" | "blocks" | "iso" | "stacked" | "arc" | "dots";
 type LoadingBarSize = "thin" | "default" | "thick";
@@ -24,6 +25,70 @@ const SIZE_OPTIONS: { value: LoadingBarSize; label: string }[] = [
 ];
 
 export default function DocLoadingBarPage() {
+  const { locale } = useI18n();
+  const fr = {
+    breadcrumb: "Composants",
+    description: (
+      <>
+        Barre de chargement : sweep, blocks, iso, stacked, arc, dots. Variant <code>iso</code> peut être déterminé (value 0–100) ou indéterminé.
+      </>
+    ),
+    valueLabel: "Value (0–100, vide = indéterminé)",
+    valuePlaceholder: "vide",
+    choose: "Choisir",
+    copy: "Copier",
+    head: { prop: "Prop", type: "Type", def: "Défaut", req: "Requis", desc: "Description" },
+    no: "Non",
+    rows: {
+      variant: "Style de la barre (sweep = balayage, blocks = segments, iso = barre linéaire, etc.).",
+      value: (
+        <>
+          Pour <code>iso</code> : 0–100 = barre déterminée ; absent = indéterminé.
+        </>
+      ),
+      size: "Hauteur : thin (6px), default (8px), thick (12px).",
+      animated: (
+        <>
+          Désactive l&apos;animation si false (screenshots, prefers-reduced-motion).
+        </>
+      ),
+      className: "Classes CSS additionnelles.",
+    },
+    examples: "Exemples",
+  };
+  const en: typeof fr = {
+    breadcrumb: "Components",
+    description: (
+      <>
+        Loading bar: sweep, blocks, iso, stacked, arc, dots. The <code>iso</code> variant can be determinate (value 0–100) or indeterminate.
+      </>
+    ),
+    valueLabel: "Value (0–100, empty = indeterminate)",
+    valuePlaceholder: "empty",
+    choose: "Choose",
+    copy: "Copy",
+    head: { prop: "Prop", type: "Type", def: "Default", req: "Required", desc: "Description" },
+    no: "No",
+    rows: {
+      variant: "Bar style (sweep = sweep, blocks = segments, iso = linear bar, etc.).",
+      value: (
+        <>
+          For <code>iso</code>: 0–100 = determinate bar; absent = indeterminate.
+        </>
+      ),
+      size: "Height: thin (6px), default (8px), thick (12px).",
+      animated: (
+        <>
+          Disables the animation when false (screenshots, prefers-reduced-motion).
+        </>
+      ),
+      className: "Additional CSS classes.",
+    },
+    examples: "Examples",
+  };
+  const L = { fr, en } as const;
+  const t = L[locale];
+
   const [variant, setVariant] = useState<LoadingBarVariant>("sweep");
   const [size, setSize] = useState<LoadingBarSize>("default");
   const [value, setValue] = useState<string>("");
@@ -48,12 +113,10 @@ export default function DocLoadingBarPage() {
     <div className="doc-page">
       <div className="doc-page-header">
         <div className="doc-breadcrumb">
-          <Link href="/docs/components">Composants</Link> → bpm.loadingbar
+          <Link href="/docs/components">{t.breadcrumb}</Link> → bpm.loadingbar
         </div>
         <h1>bpm.loadingbar</h1>
-        <p className="doc-description">
-          Barre de chargement : sweep, blocks, iso, stacked, arc, dots. Variant <code>iso</code> peut être déterminé (value 0–100) ou indéterminé.
-        </p>
+        <p className="doc-description">{t.description}</p>
         <div className="doc-meta">
           <span className="doc-badge doc-badge-category">Feedback</span>
           <span className="doc-reading-time">⏱ 2 min</span>
@@ -78,7 +141,7 @@ export default function DocLoadingBarPage() {
               options={VARIANT_OPTIONS}
               value={variant}
               onChange={(v) => setVariant(v as LoadingBarVariant)}
-              placeholder="Choisir"
+              placeholder={t.choose}
             />
           </div>
           <div className="sandbox-control-group">
@@ -87,17 +150,17 @@ export default function DocLoadingBarPage() {
               options={SIZE_OPTIONS}
               value={size}
               onChange={(v) => setSize(v as LoadingBarSize)}
-              placeholder="Choisir"
+              placeholder={t.choose}
             />
           </div>
           {showValueControl && (
             <div className="sandbox-control-group">
-              <label>Value (0–100, vide = indéterminé)</label>
+              <label>{t.valueLabel}</label>
               <input
                 type="text"
                 value={value}
                 onChange={(e) => setValue(e.target.value)}
-                placeholder="vide"
+                placeholder={t.valuePlaceholder}
                 className="w-full px-3 py-2 rounded border text-sm"
                 style={{
                   borderColor: "var(--bpm-border)",
@@ -122,7 +185,7 @@ export default function DocLoadingBarPage() {
           <div className="sandbox-code-header">
             <span>Python</span>
             <button type="button" onClick={() => navigator.clipboard.writeText(pythonCode)}>
-              Copier
+              {t.copy}
             </button>
           </div>
           <pre><code>{pythonCode}</code></pre>
@@ -132,11 +195,11 @@ export default function DocLoadingBarPage() {
       <table className="props-table">
         <thead>
           <tr>
-            <th>Prop</th>
-            <th>Type</th>
-            <th>Défaut</th>
-            <th>Requis</th>
-            <th>Description</th>
+            <th>{t.head.prop}</th>
+            <th>{t.head.type}</th>
+            <th>{t.head.def}</th>
+            <th>{t.head.req}</th>
+            <th>{t.head.desc}</th>
           </tr>
         </thead>
         <tbody>
@@ -144,41 +207,41 @@ export default function DocLoadingBarPage() {
             <td><code>variant</code></td>
             <td><code>&#39;sweep&#39; | &#39;blocks&#39; | &#39;iso&#39; | &#39;stacked&#39; | &#39;arc&#39; | &#39;dots&#39;</code></td>
             <td><code>&#39;sweep&#39;</code></td>
-            <td>Non</td>
-            <td>Style de la barre (sweep = balayage, blocks = segments, iso = barre linéaire, etc.).</td>
+            <td>{t.no}</td>
+            <td>{t.rows.variant}</td>
           </tr>
           <tr>
             <td><code>value</code></td>
             <td><code>number</code></td>
             <td>—</td>
-            <td>Non</td>
-            <td>Pour <code>iso</code> : 0–100 = barre déterminée ; absent = indéterminé.</td>
+            <td>{t.no}</td>
+            <td>{t.rows.value}</td>
           </tr>
           <tr>
             <td><code>size</code></td>
             <td><code>&#39;thin&#39; | &#39;default&#39; | &#39;thick&#39;</code></td>
             <td><code>&#39;default&#39;</code></td>
-            <td>Non</td>
-            <td>Hauteur : thin (6px), default (8px), thick (12px).</td>
+            <td>{t.no}</td>
+            <td>{t.rows.size}</td>
           </tr>
           <tr>
             <td><code>animated</code></td>
             <td><code>boolean</code></td>
             <td><code>true</code></td>
-            <td>Non</td>
-            <td>Désactive l&apos;animation si false (screenshots, prefers-reduced-motion).</td>
+            <td>{t.no}</td>
+            <td>{t.rows.animated}</td>
           </tr>
           <tr>
             <td><code>className</code></td>
             <td><code>string</code></td>
             <td>—</td>
-            <td>Non</td>
-            <td>Classes CSS additionnelles.</td>
+            <td>{t.no}</td>
+            <td>{t.rows.className}</td>
           </tr>
         </tbody>
       </table>
 
-      <h2 className="text-lg font-semibold mt-8 mb-2">Exemples</h2>
+      <h2 className="text-lg font-semibold mt-8 mb-2">{t.examples}</h2>
       <CodeBlock code={'bpm.loadingbar(variant="sweep")'} language="python" />
       <CodeBlock code={'bpm.loadingbar(variant="iso", value=45)'} language="python" />
       <CodeBlock code={'bpm.loadingbar(variant="dots", size="thick")'} language="python" />

@@ -2,6 +2,8 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { useI18n } from "@/lib/i18n/LocaleProvider";
+import { STR } from "../strings";
 
 function IconSvg({ size = 20, className, d }: { size?: number; className?: string; d: string }) {
   return (
@@ -22,10 +24,10 @@ function IconDashboard({ className, size = 20 }: { className?: string; size?: nu
 const ICON_SIZE = 20;
 
 const ITEMS = [
-  { key: "dashboard", label: "Tableau de bord", path: "", icon: <IconDashboard size={ICON_SIZE} /> },
+  { key: "dashboard", labelKey: "dashboard" as const, path: "", icon: <IconDashboard size={ICON_SIZE} /> },
   {
     key: "assets",
-    label: "Équipements",
+    labelKey: "assets" as const,
     path: "/assets",
     icon: (
       <IconSvg
@@ -36,7 +38,7 @@ const ITEMS = [
   },
   {
     key: "tickets",
-    label: "Tickets",
+    labelKey: "tickets" as const,
     path: "/tickets",
     icon: (
       <IconSvg
@@ -47,7 +49,7 @@ const ITEMS = [
   },
   {
     key: "assignments",
-    label: "Mise à disposition",
+    labelKey: "assignments" as const,
     path: "/assignments",
     icon: (
       <IconSvg
@@ -58,7 +60,7 @@ const ITEMS = [
   },
   {
     key: "contracts",
-    label: "Contrats",
+    labelKey: "contracts" as const,
     path: "/contracts",
     icon: (
       <IconSvg
@@ -69,7 +71,7 @@ const ITEMS = [
   },
   {
     key: "knowledge",
-    label: "Connaissances",
+    labelKey: "knowledge" as const,
     path: "/knowledge",
     icon: (
       <IconSvg
@@ -80,7 +82,7 @@ const ITEMS = [
   },
   {
     key: "changes",
-    label: "Changements",
+    labelKey: "changes" as const,
     path: "/changes",
     icon: (
       <IconSvg
@@ -91,7 +93,7 @@ const ITEMS = [
   },
   {
     key: "cmdb",
-    label: "Cartographie CMDB",
+    labelKey: "cmdb" as const,
     path: "/cmdb-graph",
     icon: (
       <IconSvg
@@ -102,7 +104,7 @@ const ITEMS = [
   },
   {
     key: "audit",
-    label: "Journal d'audit",
+    labelKey: "audit" as const,
     path: "/audit",
     icon: (
       <IconSvg
@@ -126,11 +128,13 @@ function getSectionFromPath(pathname: string): string {
 
 export function AssetManagerSidebar({ domainId }: { domainId: string }) {
   const pathname = usePathname();
+  const { locale } = useI18n();
+  const t = STR[locale].nav;
   const current = getSectionFromPath(pathname ?? "");
   const basePath = `/modules/asset-manager/${domainId}`;
 
   return (
-    <aside className="asset-manager-sidebar" aria-label="Navigation Gestion de parc">
+    <aside className="asset-manager-sidebar" aria-label={t.ariaLabel}>
       <nav className="asset-manager-sidebar-nav">
         {ITEMS.map((item) => {
           const href = item.path ? `${basePath}${item.path}` : basePath;
@@ -144,7 +148,7 @@ export function AssetManagerSidebar({ domainId }: { domainId: string }) {
               <span className="asset-manager-sidebar-link-icon flex-shrink-0" aria-hidden>
                 {item.icon}
               </span>
-              <span className="asset-manager-sidebar-link-text">{item.label}</span>
+              <span className="asset-manager-sidebar-link-text">{t[item.labelKey]}</span>
             </Link>
           );
         })}

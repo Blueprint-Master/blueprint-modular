@@ -4,9 +4,54 @@ import { useState } from "react";
 import Link from "next/link";
 import { NumberInput, CodeBlock } from "@/components/bpm";
 import { getPrevNext } from "@/lib/docPages";
+import { useI18n } from "@/lib/i18n/LocaleProvider";
 
 export default function DocNumberInputPage() {
-  const [label, setLabel] = useState("Quantité");
+  const { locale } = useI18n();
+  const fr = {
+    breadcrumb: "Composants",
+    description: "Champ numérique avec min, max et step.",
+    disabledLabel: "Désactivé",
+    copy: "Copier",
+    head: { prop: "Prop", type: "Type", def: "Défaut", req: "Requis", desc: "Description" },
+    yes: "Oui",
+    no: "Non",
+    rows: {
+      label: "Label au-dessus du champ.",
+      value: "Valeur affichée.",
+      onChange: "Callback au changement.",
+      min: "Valeur minimale.",
+      max: "Valeur maximale.",
+      step: "Pas d’incrément.",
+      disabled: "Désactive le champ.",
+    },
+    examples: "Exemples",
+    demoLabel: "Quantité",
+  };
+  const en: typeof fr = {
+    breadcrumb: "Components",
+    description: "Numeric field with min, max and step.",
+    disabledLabel: "Disabled",
+    copy: "Copy",
+    head: { prop: "Prop", type: "Type", def: "Default", req: "Required", desc: "Description" },
+    yes: "Yes",
+    no: "No",
+    rows: {
+      label: "Label above the field.",
+      value: "Displayed value.",
+      onChange: "Callback on change.",
+      min: "Minimum value.",
+      max: "Maximum value.",
+      step: "Increment step.",
+      disabled: "Disables the field.",
+    },
+    examples: "Examples",
+    demoLabel: "Quantity",
+  };
+  const L = { fr, en } as const;
+  const t = L[locale];
+
+  const [label, setLabel] = useState(t.demoLabel);
   const [value, setValue] = useState<number | null>(42);
   const [min, setMin] = useState<number>(0);
   const [max, setMax] = useState<number>(100);
@@ -20,9 +65,9 @@ export default function DocNumberInputPage() {
   return (
     <div className="doc-page">
       <div className="doc-page-header">
-        <div className="doc-breadcrumb"><Link href="/docs/components">Composants</Link> → bpm.numberinput</div>
+        <div className="doc-breadcrumb"><Link href="/docs/components">{t.breadcrumb}</Link> → bpm.numberinput</div>
         <h1>bpm.numberinput</h1>
-        <p className="doc-description">Champ numérique avec min, max et step.</p>
+        <p className="doc-description">{t.description}</p>
         <div className="doc-meta">
           <span className="doc-badge doc-badge-stable">Stable</span>
           <span className="doc-badge doc-badge-category">Interaction</span>
@@ -63,14 +108,14 @@ export default function DocNumberInputPage() {
             <label>disabled</label>
             <label className="inline-flex items-center gap-2">
               <input type="checkbox" checked={disabled} onChange={(e) => setDisabled(e.target.checked)} />
-              Désactivé
+              {t.disabledLabel}
             </label>
           </div>
         </div>
         <div className="sandbox-code">
           <div className="sandbox-code-header">
             <span>Python</span>
-            <button type="button" onClick={() => navigator.clipboard.writeText(pythonCode)}>Copier</button>
+            <button type="button" onClick={() => navigator.clipboard.writeText(pythonCode)}>{t.copy}</button>
           </div>
           <pre><code>{pythonCode}</code></pre>
         </div>
@@ -79,11 +124,11 @@ export default function DocNumberInputPage() {
       <table className="props-table">
         <thead>
           <tr>
-            <th>Prop</th>
-            <th>Type</th>
-            <th>Défaut</th>
-            <th>Requis</th>
-            <th>Description</th>
+            <th>{t.head.prop}</th>
+            <th>{t.head.type}</th>
+            <th>{t.head.def}</th>
+            <th>{t.head.req}</th>
+            <th>{t.head.desc}</th>
           </tr>
         </thead>
         <tbody>
@@ -91,55 +136,55 @@ export default function DocNumberInputPage() {
             <td><code>label</code></td>
             <td><code>string</code></td>
             <td>—</td>
-            <td>Non</td>
-            <td>Label au-dessus du champ.</td>
+            <td>{t.no}</td>
+            <td>{t.rows.label}</td>
           </tr>
           <tr>
             <td><code>value</code></td>
             <td><code>number | null</code></td>
             <td>—</td>
-            <td>Oui</td>
-            <td>Valeur affichée.</td>
+            <td>{t.yes}</td>
+            <td>{t.rows.value}</td>
           </tr>
           <tr>
             <td><code>onChange</code></td>
             <td><code>(value: number | null) =&gt; void</code></td>
             <td>—</td>
-            <td>Oui</td>
-            <td>Callback au changement.</td>
+            <td>{t.yes}</td>
+            <td>{t.rows.onChange}</td>
           </tr>
           <tr>
             <td><code>min</code></td>
             <td><code>number</code></td>
             <td>—</td>
-            <td>Non</td>
-            <td>Valeur minimale.</td>
+            <td>{t.no}</td>
+            <td>{t.rows.min}</td>
           </tr>
           <tr>
             <td><code>max</code></td>
             <td><code>number</code></td>
             <td>—</td>
-            <td>Non</td>
-            <td>Valeur maximale.</td>
+            <td>{t.no}</td>
+            <td>{t.rows.max}</td>
           </tr>
           <tr>
             <td><code>step</code></td>
             <td><code>number</code></td>
             <td><code>1</code></td>
-            <td>Non</td>
-            <td>Pas d’incrément.</td>
+            <td>{t.no}</td>
+            <td>{t.rows.step}</td>
           </tr>
           <tr>
             <td><code>disabled</code></td>
             <td><code>boolean</code></td>
             <td><code>false</code></td>
-            <td>Non</td>
-            <td>Désactive le champ.</td>
+            <td>{t.no}</td>
+            <td>{t.rows.disabled}</td>
           </tr>
         </tbody>
       </table>
 
-      <h2 className="text-lg font-semibold mt-8 mb-2">Exemples</h2>
+      <h2 className="text-lg font-semibold mt-8 mb-2">{t.examples}</h2>
       <CodeBlock code={'bpm.number_input(label="Age", value=25, min=0, max=120)'} language="python" />
       <CodeBlock code={'bpm.number_input(label="Prix", value=9.99, step=0.01, min=0)'} language="python" />
 
