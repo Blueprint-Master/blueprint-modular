@@ -12,6 +12,8 @@ import rehypeRaw from "rehype-raw";
 import rehypeHighlight from "rehype-highlight";
 import { getGuestArticleBySlug, updateGuestArticle } from "@/lib/wiki-guest";
 import { WIKI_TEMPLATE_IDS, WIKI_TEMPLATE_LABELS, getWikiTemplateContent, type WikiTemplateId } from "@/lib/wiki-templates";
+import { useI18n } from "@/lib/i18n/LocaleProvider";
+import { STR } from "../../strings";
 
 /** Transforme [[slug]] et [[slug|label]] en liens Markdown. */
 function contentWithWikiLinks(content: string): string {
@@ -25,6 +27,8 @@ function contentWithWikiLinks(content: string): string {
 
 export default function WikiEditPage() {
   const params = useParams();
+  const { locale } = useI18n();
+  const t = STR[locale];
   const router = useRouter();
   const { data: session, status } = useSession();
   const slug = params.slug as string;
@@ -84,7 +88,7 @@ export default function WikiEditPage() {
       if (updated) {
         setLastSavedAt(new Date());
         setDirty(false);
-        if (!session) setLocalSaveMessage("Article sauvegardé localement.");
+        if (!session) setLocalSaveMessage(t.edit.localSaved);
       }
       return;
     }
@@ -111,14 +115,14 @@ export default function WikiEditPage() {
         setLastSavedAt(new Date());
         setDirty(false);
       } else {
-        setError("Erreur lors de la sauvegarde");
+        setError(t.edit.errorSaving);
       }
     } catch {
-      setError("Impossible de sauvegarder");
+      setError(t.edit.errorCannotSave);
     } finally {
       setSaving(false);
     }
-  }, [slug, title, content, isPublished, excerpt, tags, pinned, template, coverImage, changeNote, isGuestArticle, session]);
+  }, [slug, title, content, isPublished, excerpt, tags, pinned, template, coverImage, changeNote, isGuestArticle, session, t]);
 
   useEffect(() => {
     if (!dirty || isGuestArticle) return;
@@ -142,10 +146,10 @@ export default function WikiEditPage() {
       });
       if (!res.ok) {
         const err = await res.json().catch(() => ({}));
-        throw new Error((err as { error?: string }).error ?? "Erreur API");
+        throw new Error((err as { error?: string }).error ?? t.edit.apiError);
       }
       const reader = res.body?.getReader();
-      if (!reader) throw new Error("Pas de flux");
+      if (!reader) throw new Error(t.edit.noStream);
       const decoder = new TextDecoder();
       let buffer = "";
       for (;;) {
@@ -159,7 +163,7 @@ export default function WikiEditPage() {
             try {
               const data = JSON.parse(line.slice(6)) as { type: string; t?: string; message?: string };
               if (data.type === "chunk" && typeof data.t === "string") updateContent(data.t);
-              if (data.type === "error") throw new Error(data.message ?? "Erreur IA");
+              if (data.type === "error") throw new Error(data.message ?? t.edit.aiError);
             } catch (e) {
               if (e instanceof SyntaxError) continue;
               throw e;
@@ -168,7 +172,7 @@ export default function WikiEditPage() {
         }
       }
     } catch (e) {
-      setError(e instanceof Error ? e.message : "Erreur lors de la génération");
+      setError(e instanceof Error ? e.message : t.edit.genError);
     } finally {
       setAiLoading(false);
     }
@@ -203,7 +207,7 @@ export default function WikiEditPage() {
         setIsGuestArticle(true);
         return true;
       }
-      setError("Article en lecture seule en mode invité (article de base).");
+      setError(t.edit.readOnlyGuest);
       return true;
     };
 
@@ -215,7 +219,7 @@ export default function WikiEditPage() {
         setLoading(false);
         return;
       }
-      setError("Article introuvable.");
+      setError(t.common.articleNotFoundDot);
       setLoading(false);
       return;
     }
@@ -230,7 +234,7 @@ export default function WikiEditPage() {
             return;
           }
           if (guest && !guest.canEdit) {
-            setError("Article en lecture seule en mode invité (article de base).");
+            setError(t.edit.readOnlyGuest);
             return;
           }
         }
@@ -247,9 +251,9 @@ export default function WikiEditPage() {
         setTemplate((a.template as WikiTemplateId) ?? "");
         setCoverImage(a.coverImage ?? "");
       })
-      .catch(() => setError("Article introuvable"))
+      .catch(() => setError(t.common.articleNotFound))
       .finally(() => setLoading(false));
-  }, [slug, session, status]);
+  }, [slug, session, status, t]);
 
   const handleSaveToDb = async () => {
     if (!session || !isGuestArticle) return;
@@ -274,12 +278,12 @@ export default function WikiEditPage() {
       });
       if (!res.ok) {
         const data = await res.json().catch(() => ({}));
-        throw new Error((data as { error?: string }).error ?? "Erreur");
+        throw new Error((data as { error?: string }).error ?? t.edit.genericError);
       }
       const created = await res.json() as { slug: string };
       router.push(`/modules/wiki/${created.slug}`);
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Impossible de sauvegarder en base");
+      setError(err instanceof Error ? err.message : t.edit.errorCannotSaveDb);
     } finally {
       setSaveToDbLoading(false);
     }
@@ -294,9 +298,9 @@ export default function WikiEditPage() {
       if (isGuestArticle) {
         const updated = updateGuestArticle(slug, { title, content, isPublished });
         if (updated) {
-          if (!session) setLocalSaveMessage("Article sauvegardé localement.");
+          if (!session) setLocalSaveMessage(t.edit.localSaved);
           router.push(`/modules/wiki/${slug}`);
-        } else setError("Impossible de sauvegarder (article invité)");
+        } else setError(t.edit.errorCannotSaveGuest);
         return;
       }
       const res = await fetch(`/api/wiki/${encodeURIComponent(slug)}`, {
@@ -315,23 +319,23 @@ export default function WikiEditPage() {
         }),
         credentials: "include",
       });
-      if (!res.ok) throw new Error("Erreur");
+      if (!res.ok) throw new Error(t.edit.genericError);
       setLastSavedAt(new Date());
       setDirty(false);
       router.push(`/modules/wiki/${slug}`);
     } catch {
-      setError("Impossible de sauvegarder");
+      setError(t.edit.errorCannotSave);
     } finally {
       setSaving(false);
     }
   };
 
-  if (loading) return <p style={{ color: "var(--bpm-text-secondary)" }}>Chargement...</p>;
+  if (loading) return <p style={{ color: "var(--bpm-text-secondary)" }}>{t.common.loading}</p>;
   if (error) {
     return (
-      <Panel variant="error" title="Erreur">
+      <Panel variant="error" title={t.common.error}>
         {error}
-        <Link href="/modules/wiki" className="block mt-2 underline" style={{ color: "var(--bpm-accent-cyan)" }}>Retour au Wiki</Link>
+        <Link href="/modules/wiki" className="block mt-2 underline" style={{ color: "var(--bpm-accent-cyan)" }}>{t.common.backToWikiPlain}</Link>
       </Panel>
     );
   }
@@ -354,7 +358,7 @@ export default function WikiEditPage() {
     <div className="flex flex-col min-h-0">
       <div className="flex flex-wrap items-center justify-between gap-4 mb-4">
         <h1 className="text-2xl font-bold" style={{ color: "var(--bpm-accent)" }}>
-          Modifier l&apos;article
+          {t.edit.title}
         </h1>
         <div className="flex items-center gap-2 flex-wrap">
           <span
@@ -364,18 +368,18 @@ export default function WikiEditPage() {
               background: dirty ? "rgba(245,158,11,0.15)" : "var(--bpm-bg-secondary)",
               border: "1px solid var(--bpm-border)",
             }}
-            title={dirty ? "Modification non sauvegardée" : lastSavedAt ? `Brouillon sauvegardé à ${lastSavedAt.toLocaleTimeString("fr-FR", { hour: "2-digit", minute: "2-digit" })}` : ""}
+            title={dirty ? t.edit.unsavedChange : lastSavedAt ? t.edit.draftSavedAt(lastSavedAt.toLocaleTimeString(t.common.locale, { hour: "2-digit", minute: "2-digit" })) : ""}
           >
-            {dirty ? "Modification non sauvegardée" : lastSavedAt ? `Sauvegardé à ${lastSavedAt.toLocaleTimeString("fr-FR", { hour: "2-digit", minute: "2-digit" })}` : "—"}
+            {dirty ? t.edit.unsavedChange : lastSavedAt ? t.edit.savedAt(lastSavedAt.toLocaleTimeString(t.common.locale, { hour: "2-digit", minute: "2-digit" })) : "—"}
           </span>
-          <div className="flex gap-1" role="group" aria-label="Mode d’affichage">
+          <div className="flex gap-1" role="group" aria-label={t.edit.viewModeLabel}>
             <Button
               type="button"
               variant={viewMode === "editor" ? "primary" : "outline"}
               size="small"
               onClick={() => { setViewMode("editor"); setPreview(false); }}
             >
-              Éditeur
+              {t.edit.editor}
             </Button>
             <Button
               type="button"
@@ -383,7 +387,7 @@ export default function WikiEditPage() {
               size="small"
               onClick={() => { setViewMode("split"); setPreview(true); }}
             >
-              Split
+              {t.edit.split}
             </Button>
             <Button
               type="button"
@@ -391,7 +395,7 @@ export default function WikiEditPage() {
               size="small"
               onClick={() => { setViewMode("preview"); setPreview(true); }}
             >
-              Aperçu
+              {t.edit.preview}
             </Button>
           </div>
         </div>
@@ -404,7 +408,7 @@ export default function WikiEditPage() {
             style={{ background: "var(--bpm-bg-secondary)", borderColor: "var(--bpm-border)", color: "var(--bpm-text-secondary)" }}
             role="status"
           >
-            <span className="text-sm">Vous modifiez un article local (non synchronisé).</span>
+            <span className="text-sm">{t.edit.localArticleNotice}</span>
             {session && (
               <Button
                 type="button"
@@ -412,9 +416,9 @@ export default function WikiEditPage() {
                 size="small"
                 onClick={handleSaveToDb}
                 disabled={saveToDbLoading}
-                aria-label="Sauvegarder cet article en base de données"
+                aria-label={t.edit.saveToDbLabel}
               >
-                {saveToDbLoading ? "Enregistrement…" : "Sauvegarder en base"}
+                {saveToDbLoading ? t.edit.savingToDb : t.edit.saveToDb}
               </Button>
             )}
           </div>
@@ -423,7 +427,7 @@ export default function WikiEditPage() {
           <p className="text-sm" style={{ color: "var(--bpm-accent-cyan)" }}>{localSaveMessage}</p>
         )}
         <label className="block">
-          <span className="block text-sm mb-1" style={{ color: "var(--bpm-text-secondary)" }}>Titre</span>
+          <span className="block text-sm mb-1" style={{ color: "var(--bpm-text-secondary)" }}>{t.edit.labelTitle}</span>
           <input
             type="text"
             value={title}
@@ -434,14 +438,14 @@ export default function WikiEditPage() {
           />
         </label>
         <div>
-          <Toggle label="Publié" value={isPublished} onChange={(v) => { setIsPublished(v); setDirty(true); }} />
+          <Toggle label={t.edit.labelPublished} value={isPublished} onChange={(v) => { setIsPublished(v); setDirty(true); }} />
         </div>
         <div>
-          <Toggle label="Épingler cet article" value={pinned} onChange={(v) => { setPinned(v); setDirty(true); }} />
+          <Toggle label={t.edit.labelPin} value={pinned} onChange={(v) => { setPinned(v); setDirty(true); }} />
         </div>
         <div className="flex flex-wrap items-end gap-2">
           <label className="block min-w-[180px]">
-            <span className="block text-sm mb-1" style={{ color: "var(--bpm-text-secondary)" }}>Template</span>
+            <span className="block text-sm mb-1" style={{ color: "var(--bpm-text-secondary)" }}>{t.edit.labelTemplate}</span>
             <select
               value={template}
               onChange={(e) => { setTemplate(e.target.value as WikiTemplateId); setDirty(true); }}
@@ -463,12 +467,12 @@ export default function WikiEditPage() {
                 if (t) { setContent(t); setDirty(true); }
               }}
             >
-              Appliquer le template
+              {t.edit.applyTemplate}
             </Button>
           )}
         </div>
         <label className="block">
-          <span className="block text-sm mb-1" style={{ color: "var(--bpm-text-secondary)" }}>Image de couverture (URL)</span>
+          <span className="block text-sm mb-1" style={{ color: "var(--bpm-text-secondary)" }}>{t.edit.labelCover}</span>
           <input
             type="url"
             value={coverImage}
@@ -479,23 +483,23 @@ export default function WikiEditPage() {
           />
         </label>
         <label className="block">
-          <span className="block text-sm mb-1" style={{ color: "var(--bpm-text-secondary)" }}>Résumé (excerpt)</span>
+          <span className="block text-sm mb-1" style={{ color: "var(--bpm-text-secondary)" }}>{t.edit.labelExcerpt}</span>
           <input
             type="text"
             value={excerpt}
             onChange={(e) => { setExcerpt(e.target.value); setDirty(true); }}
-            placeholder="2-3 lignes optionnel"
+            placeholder={t.edit.excerptPlaceholder}
             className="bpm-input w-full px-3 py-2 rounded border"
             style={{ borderColor: "var(--bpm-border)", background: "var(--bpm-surface)", color: "var(--bpm-text-primary)" }}
           />
         </label>
         <label className="block">
-          <span className="block text-sm mb-1" style={{ color: "var(--bpm-text-secondary)" }}>Tags (séparés par Entrée)</span>
+          <span className="block text-sm mb-1" style={{ color: "var(--bpm-text-secondary)" }}>{t.edit.labelTags}</span>
           <div className="flex flex-wrap gap-1 mb-1">
             {tags.map((t) => (
               <span key={t} className="inline-flex items-center gap-1 px-2 py-0.5 rounded text-sm" style={{ background: "var(--bpm-border)", color: "var(--bpm-text-primary)" }}>
                 {t}
-                <button type="button" onClick={() => { setTags((prev) => prev.filter((x) => x !== t)); setDirty(true); }} className="opacity-70 hover:opacity-100" aria-label="Retirer">×</button>
+                <button type="button" onClick={() => { setTags((prev) => prev.filter((x) => x !== t)); setDirty(true); }} className="opacity-70 hover:opacity-100" aria-label={STR[locale].edit.removeTag}>×</button>
               </span>
             ))}
             <input
@@ -510,19 +514,19 @@ export default function WikiEditPage() {
                   setTagInput("");
                 }
               }}
-              placeholder="Ajouter un tag..."
+              placeholder={t.edit.tagPlaceholder}
               className="flex-1 min-w-[120px] px-2 py-1 rounded border text-sm"
               style={{ borderColor: "var(--bpm-border)", background: "var(--bpm-surface)", color: "var(--bpm-text-primary)" }}
             />
           </div>
         </label>
         <label className="block">
-          <span className="block text-sm mb-1" style={{ color: "var(--bpm-text-secondary)" }}>Note de changement (historique)</span>
+          <span className="block text-sm mb-1" style={{ color: "var(--bpm-text-secondary)" }}>{t.edit.labelChangeNote}</span>
           <input
             type="text"
             value={changeNote}
             onChange={(e) => setChangeNote(e.target.value)}
-            placeholder="Optionnel : décrire les modifications"
+            placeholder={t.edit.changeNotePlaceholder}
             className="bpm-input w-full px-3 py-2 rounded border"
             style={{ borderColor: "var(--bpm-border)", background: "var(--bpm-surface)", color: "var(--bpm-text-primary)" }}
           />
@@ -540,7 +544,7 @@ export default function WikiEditPage() {
                 color: aiPanelOpen ? "var(--bpm-surface)" : "var(--bpm-text-secondary)",
               }}
             >
-              Aide IA
+              {t.edit.aiHelp}
             </button>
           )}
         </div>
@@ -548,7 +552,7 @@ export default function WikiEditPage() {
         {aiPanelOpen && !isGuestArticle && (
           <div className="p-4 rounded border space-y-4" style={{ borderColor: "var(--bpm-border)", background: "var(--bpm-surface)" }}>
             <p className="text-sm" style={{ color: "var(--bpm-text-secondary)" }}>
-              Utiliser l&apos;IA pour rédiger ou mettre en forme le contenu de l&apos;article.
+              {t.edit.aiHelpIntro}
             </p>
             <div className="flex flex-wrap gap-3">
               <Button
@@ -558,42 +562,42 @@ export default function WikiEditPage() {
                 disabled={aiLoading || !content.trim()}
                 onClick={handleFormatWithAi}
               >
-                {aiLoading ? "Génération…" : "Mettre en forme le contenu actuel"}
+                {aiLoading ? t.edit.aiGenerating : t.edit.aiFormatCurrent}
               </Button>
             </div>
             <div className="pt-2 border-t" style={{ borderColor: "var(--bpm-border)" }}>
-              <span className="block text-sm mb-2" style={{ color: "var(--bpm-text-secondary)" }}>Générer un article depuis des notes</span>
+              <span className="block text-sm mb-2" style={{ color: "var(--bpm-text-secondary)" }}>{t.edit.aiGenerateFromNotes}</span>
               <textarea
                 value={aiNotes}
                 onChange={(e) => setAiNotes(e.target.value)}
-                placeholder="Collez ici vos notes brutes…"
+                placeholder={t.edit.aiNotesPlaceholder}
                 rows={3}
                 className="bpm-textarea w-full px-3 py-2 rounded border font-mono text-sm mb-2"
                 style={{ borderColor: "var(--bpm-border)", background: "var(--bpm-bg)", color: "var(--bpm-text-primary)" }}
               />
               <div className="flex flex-wrap gap-2 items-center mb-2">
                 <Selectbox
-                  label="Type"
+                  label={t.edit.typeLabel}
                   options={[
-                    { value: "guide", label: "Guide" },
-                    { value: "procedure", label: "Procédure" },
-                    { value: "best-practice", label: "Bonnes pratiques" },
-                    { value: "reference", label: "Référence" },
+                    { value: "guide", label: t.edit.typeGuide },
+                    { value: "procedure", label: t.edit.typeProcedure },
+                    { value: "best-practice", label: t.edit.typeBestPractice },
+                    { value: "reference", label: t.edit.typeReference },
                   ]}
                   value={aiArticleType}
                   onChange={(v) => setAiArticleType(v as typeof aiArticleType)}
-                  placeholder="Type"
+                  placeholder={t.edit.typeLabel}
                 />
                 <Selectbox
-                  label="Workspace"
+                  label={t.edit.workspaceLabel}
                   options={[
-                    { value: "service1", label: "Service 1" },
-                    { value: "service2", label: "Service 2" },
-                    { value: "shared", label: "Partagé" },
+                    { value: "service1", label: t.edit.workspaceService1 },
+                    { value: "service2", label: t.edit.workspaceService2 },
+                    { value: "shared", label: t.edit.workspaceShared },
                   ]}
                   value={aiWorkspace}
                   onChange={(v) => setAiWorkspace(v as typeof aiWorkspace)}
-                  placeholder="Workspace"
+                  placeholder={t.edit.workspaceLabel}
                 />
                 <Button
                   type="button"
@@ -601,7 +605,7 @@ export default function WikiEditPage() {
                   disabled={aiLoading || !aiNotes.trim()}
                   onClick={handleGenerateFromNotes}
                 >
-                  Générer l&apos;article
+                  {t.edit.aiGenerateArticle}
                 </Button>
               </div>
             </div>
@@ -659,7 +663,7 @@ export default function WikiEditPage() {
                   remarkPlugins={[remarkGfm]}
                   rehypePlugins={[rehypeRaw, rehypeHighlight]}
                 >
-                  {contentWithWikiLinks(content) || "*Aucun contenu.*"}
+                  {contentWithWikiLinks(content) || t.article.noContent}
                 </ReactMarkdown>
               </div>
             )}
@@ -668,10 +672,10 @@ export default function WikiEditPage() {
 
         <div className="flex gap-3">
           <Button type="submit" disabled={saving}>
-            {saving ? "Enregistrement..." : "Sauvegarder"}
+            {saving ? t.common.saving : t.common.save}
           </Button>
           <Link href={`/modules/wiki/${slug}`}>
-            <Button type="button" variant="outline">Annuler</Button>
+            <Button type="button" variant="outline">{t.common.cancel}</Button>
           </Link>
         </div>
       </form>
