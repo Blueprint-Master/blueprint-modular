@@ -29,7 +29,7 @@ describe("Google Sheets (oauth2) — mapping positionnel des lignes", () => {
     // le refreshToken est une clé secrète, jamais une valeur
     const rt = c.auth.fields.find((f) => f.key === "refreshToken")!;
     expect(rt.type).toBe("secret");
-    expect("value" in (rt as Record<string, unknown>)).toBe(false);
+    expect(Object.keys(rt).includes("value")).toBe(false);
   });
 
   it("projette chaque ligne vers {site,status,count}", () => {
