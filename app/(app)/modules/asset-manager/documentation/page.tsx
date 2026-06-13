@@ -2,70 +2,75 @@
 
 import Link from "next/link";
 import { CodeBlock } from "@/components/bpm";
+import { useI18n } from "@/lib/i18n/LocaleProvider";
+import { STR } from "../strings";
 
 export default function AssetManagerDocumentationPage() {
+  const { locale } = useI18n();
+  const t = STR[locale];
+  const td = t.documentation;
   return (
     <div className="doc-page">
       <div className="doc-page-header">
         <nav className="doc-breadcrumb">
-          <Link href="/modules">Modules</Link> → <Link href="/modules/asset-manager">Gestion de parc</Link> → Documentation
+          <Link href="/modules">{t.common.breadcrumbModules}</Link> → <Link href="/modules/asset-manager">{t.common.moduleTitle}</Link> → {td.breadcrumbDocumentation}
         </nav>
-        <h1 className="text-2xl font-bold" style={{ color: "var(--bpm-text-primary)" }}>Documentation — Gestion de parc</h1>
+        <h1 className="text-2xl font-bold" style={{ color: "var(--bpm-text-primary)" }}>{td.title}</h1>
         <p className="doc-description mt-1" style={{ color: "var(--bpm-text-secondary)" }}>
-          Module de gestion de parc : actifs, tickets et mise à disposition. Tableau de bord, équipements, tickets, mise à Disposition, contrats, connaissances et changements.
+          {td.intro}
         </p>
       </div>
 
       <h2 className="text-lg font-semibold mt-6 mb-2" style={{ color: "var(--bpm-text-primary)" }}>
-        Interface et UX
+        {td.uxHeading}
       </h2>
       <p className="mb-4" style={{ color: "var(--bpm-text-secondary)" }}>
-        L&apos;interface s&apos;appuie sur le design system BPM avec une hiérarchie visuelle inspirée de Linear : fond de page <code>#F5F5F7</code>, cartes à bordure légère (12px, pas d&apos;ombre marquée). En haut de chaque page : <strong>breadcrumb</strong> (Modules › Gestion de parc › …), <strong>onglets horizontaux</strong> (bpm.tabs) pour naviguer entre Tableau de bord, Équipements, Tickets, Mise à disposition, Contrats, Connaissances, Changements. Le bouton d&apos;action principal (« Nouvel actif », « Nouveau ticket », etc.) est aligné à droite du titre (hauteur 40px). Les <strong>filtres</strong> sont des chips sélectionnables (32px, border-radius 6px, état actif bleu clair) avec défilement horizontal sur mobile ; l&apos;export CSV est en bouton icône à droite. Les tableaux ont des en-têtes en semi-bold (font-weight 500, pas de majuscules), un hover sur les lignes (#F8F9FA) et des badges colorés pour Statut et Priorité. L&apos;<strong>état vide</strong> est centré avec icône, titre, description et CTA (sans bpm.panel info). Le <strong>tableau de bord</strong> affiche des cartes métriques compactes (bpm.metric) avec icône et couleur d&apos;accent par domaine (bleu équipements, orange tickets, violet MAD, vert contrats, cyan base de connaissances, rose changements) et une micro-info sous chaque métrique.
+        {td.uxPara1}<code>#F5F5F7</code>{td.uxPara2}<strong>{td.uxStrongBreadcrumb}</strong>{td.uxPara3}<strong>{td.uxStrongTabs}</strong>{td.uxPara4}<strong>{td.uxStrongFilters}</strong>{td.uxPara5}<strong>{td.uxStrongEmpty}</strong>{td.uxPara6}<strong>{td.uxStrongDashboard}</strong>{td.uxPara7}
       </p>
 
       <p className="mb-6" style={{ color: "var(--bpm-text-secondary)" }}>
-        Le module ne code pas en dur les types d&apos;actifs. Il s&apos;appuie sur un <strong>fichier de configuration JSON</strong> (<code>lib/asset-manager/config/</code>) qui décrit les types d&apos;actifs, leurs champs, les statuts, les catégories de tickets, les priorités et les règles de numérotation.
+        {td.configPara1}<strong>{td.configStrongFile}</strong> (<code>lib/asset-manager/config/</code>){td.configPara2}
       </p>
 
       <h2 className="text-lg font-semibold mt-8 mb-2" style={{ color: "var(--bpm-text-primary)" }}>
-        Configuration de domaine
+        {td.domainConfigHeading}
       </h2>
       <p className="mb-4" style={{ color: "var(--bpm-text-secondary)" }}>
-        Les configs sont dans <code>lib/asset-manager/config/</code> : <code>domain.it.json</code>, <code>domain.maintenance.json</code>. Le schéma décrit <code>domain_id</code>, <code>asset_types</code> (id, label, icon, fields avec key, type, options…), <code>statuses</code>, <code>ticket_categories</code>, <code>priorities</code>, <code>numbering</code>.
+        {td.domainConfigPara1}<code>lib/asset-manager/config/</code>{td.domainConfigPara2}<code>domain.it.json</code>, <code>domain.maintenance.json</code>{td.domainConfigPara3}<code>domain_id</code>, <code>asset_types</code> {td.domainConfigPara4}<code>statuses</code>, <code>ticket_categories</code>, <code>priorities</code>, <code>numbering</code>{td.domainConfigPara5}
       </p>
 
       <h2 className="text-lg font-semibold mt-8 mb-2" style={{ color: "var(--bpm-text-primary)" }}>
-        API
+        {td.apiHeading}
       </h2>
       <ul className="list-disc pl-6 mb-4 text-sm" style={{ color: "var(--bpm-text-secondary)" }}>
-        <li><code>GET /api/asset-manager/config</code> — Liste des domaines disponibles.</li>
-        <li><code>GET /api/asset-manager/config/[domainId]</code> — Configuration d&apos;un domaine.</li>
-        <li><code>GET /api/asset-manager/assets?domainId=it</code> — Liste des actifs (filtres optionnels : assetTypeId, statusId, search).</li>
-        <li><code>POST /api/asset-manager/assets</code> — Création d&apos;un actif (body : domainId, assetTypeId, label, statusId, attributs…).</li>
-        <li><code>GET /api/asset-manager/assets/[id]</code> — Détail d&apos;un actif.</li>
-        <li><code>PUT /api/asset-manager/assets/[id]</code> — Mise à jour.</li>
-        <li><code>DELETE /api/asset-manager/assets/[id]</code> — Suppression.</li>
+        <li><code>GET /api/asset-manager/config</code> — {td.apiConfigList}</li>
+        <li><code>GET /api/asset-manager/config/[domainId]</code> — {td.apiConfigDomain}</li>
+        <li><code>GET /api/asset-manager/assets?domainId=it</code> — {td.apiAssetsList}</li>
+        <li><code>POST /api/asset-manager/assets</code> — {td.apiAssetsCreate}</li>
+        <li><code>GET /api/asset-manager/assets/[id]</code> — {td.apiAssetsDetail}</li>
+        <li><code>PUT /api/asset-manager/assets/[id]</code> — {td.apiAssetsUpdate}</li>
+        <li><code>DELETE /api/asset-manager/assets/[id]</code> — {td.apiAssetsDelete}</li>
       </ul>
 
       <h2 className="text-lg font-semibold mt-8 mb-2" style={{ color: "var(--bpm-text-primary)" }}>
-        Compléments ITSM (Phase 2 et 3)
+        {td.itsmHeading}
       </h2>
       <p className="mb-4" style={{ color: "var(--bpm-text-secondary)" }}>
-        Cycle de vie des actifs, contrats et garanties, mouvements physiques, escalade SLA, connaissances, gestion des changements (CAB), CMDB (graphe de dépendances), RBAC et audit trail sont décrits dans <strong>docs/ASSET_MANAGER_ITSM_COMPLEMENTS.md</strong>. Les modèles Prisma correspondants (AssetContract, AssetMovement, KnowledgeArticle, ChangeRequest, CIRelation, AuditLog, Permission) sont définis dans le schéma et une migration est fournie (<code>20260227100000_asset_manager_phase2_phase3</code>).
+        {td.itsmPara1}<strong>docs/ASSET_MANAGER_ITSM_COMPLEMENTS.md</strong>{td.itsmPara2}(<code>20260227100000_asset_manager_phase2_phase3</code>){td.itsmPara3}
       </p>
 
       <h2 className="text-lg font-semibold mt-8 mb-2" style={{ color: "var(--bpm-text-primary)" }}>
-        Base de données et prérequis production
+        {td.databaseHeading}
       </h2>
       <p className="mb-4 text-sm" style={{ color: "var(--bpm-text-secondary)" }}>
-        Le module utilise les tables <code>Asset</code>, <code>AssetAttribute</code>, <code>AssetMovement</code>, <code>Ticket</code>, <code>Assignment</code>, <code>AssetContract</code>, <code>KnowledgeArticle</code>, <code>ChangeRequest</code>, <code>CIRelation</code>, <code>AuditLog</code>, <code>Permission</code>, plus la config <code>lib/asset-manager/config/domain.*.json</code>. Pour le détail des structures et variables d&apos;environnement, voir <code>docs/DATABASE.md</code> dans le dépôt.
+        {td.databasePara1}<code>Asset</code>, <code>AssetAttribute</code>, <code>AssetMovement</code>, <code>Ticket</code>, <code>Assignment</code>, <code>AssetContract</code>, <code>KnowledgeArticle</code>, <code>ChangeRequest</code>, <code>CIRelation</code>, <code>AuditLog</code>, <code>Permission</code>{td.databasePara2}<code>lib/asset-manager/config/domain.*.json</code>{td.databasePara3}<code>docs/DATABASE.md</code>{td.databasePara4}
       </p>
 
       <h2 className="text-lg font-semibold mt-8 mb-2" style={{ color: "var(--bpm-text-primary)" }}>
-        Créer un nouveau domaine
+        {td.newDomainHeading}
       </h2>
       <p className="mb-4" style={{ color: "var(--bpm-text-secondary)" }}>
-        Dupliquez <code>domain.it.json</code> en <code>domain.[votre_domaine].json</code>, adaptez <code>domain_id</code>, labels, <code>asset_types</code>, <code>statuses</code>, <code>ticket_categories</code>, <code>priorities</code> et <code>numbering</code>. Enregistrez le nouvel id dans <code>lib/asset-manager/get-domain-config.ts</code> (<code>KNOWN_DOMAINS</code>).
+        {td.newDomainPara1}<code>domain.it.json</code>{td.newDomainPara2}<code>domain.[votre_domaine].json</code>{td.newDomainPara3}<code>domain_id</code>{td.newDomainPara4}<code>asset_types</code>, <code>statuses</code>, <code>ticket_categories</code>, <code>priorities</code> {td.newDomainPara5}<code>numbering</code>{td.newDomainPara6}<code>lib/asset-manager/get-domain-config.ts</code> (<code>KNOWN_DOMAINS</code>){td.newDomainPara7}
       </p>
       <CodeBlock
         code={`// get-domain-config.ts
@@ -75,7 +80,7 @@ const KNOWN_DOMAINS = ["it", "maintenance", "votre_domaine"] as const;`}
 
       <nav className="doc-pagination mt-8 flex flex-wrap gap-4">
         <Link href="/modules/asset-manager" style={{ color: "var(--bpm-accent-cyan)" }}>
-          ← Retour au module
+          {td.backToModule}
         </Link>
       </nav>
     </div>

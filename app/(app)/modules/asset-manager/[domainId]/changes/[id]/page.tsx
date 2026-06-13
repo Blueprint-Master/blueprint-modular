@@ -5,6 +5,8 @@ import Link from "next/link";
 import { useParams } from "next/navigation";
 import { Panel, Button, Spinner, Selectbox, Badge, Divider } from "@/components/bpm";
 import { FicheHeader, FicheSectionCard, FicheFieldGrid, FicheNav, FicheSkeleton } from "@/components/fiche";
+import { useI18n } from "@/lib/i18n/LocaleProvider";
+import { STR, dateLocale } from "../../../strings";
 
 type ChangeRequest = {
   id: string;
@@ -21,13 +23,6 @@ type ChangeRequest = {
   createdAt: string;
   updatedAt: string;
 };
-
-const TYPE_LABELS: Record<string, string> = { standard: "Standard", normal: "Normal", emergency: "Urgent" };
-const STATUS_LABELS: Record<string, string> = {
-  draft: "Brouillon", submitted: "Soumis", cab_review: "Revue CAB", approved: "Approuvé", rejected: "Rejeté",
-  scheduled: "Planifié", in_progress: "En cours", completed: "Terminé", failed: "Échoué", cancelled: "Annulé",
-};
-const RISK_LABELS: Record<string, string> = { low: "Faible", medium: "Moyen", high: "Élevé", critical: "Critique" };
 
 function getRiskBandColor(riskLevel: string): string {
   switch (riskLevel) {
@@ -69,15 +64,21 @@ function getStatusBadgeVariant(status: string): "success" | "warning" | "error" 
   }
 }
 
-function formatRollbackDisplay(value: string): React.ReactNode {
+function formatRollbackDisplay(value: string, notSetLabel: string): React.ReactNode {
   const trimmed = (value ?? "").trim();
   if (!trimmed || trimmed.toUpperCase() === "NC") {
-    return <span className="italic" style={{ color: "var(--bpm-text-secondary)" }}>— Non renseigné</span>;
+    return <span className="italic" style={{ color: "var(--bpm-text-secondary)" }}>{notSetLabel}</span>;
   }
   return trimmed;
 }
 
 export default function AssetManagerChangeDetailPage() {
+  const { locale } = useI18n();
+  const t = STR[locale];
+  const tch = t.changes;
+  const TYPE_LABELS = tch.typeLabels;
+  const STATUS_LABELS = tch.statusLabels;
+  const RISK_LABELS = tch.riskLabels;
   const params = useParams();
   const domainId = typeof params?.domainId === "string" ? params.domainId : "";
   const id = typeof params?.id === "string" ? params.id : "";
@@ -147,10 +148,10 @@ export default function AssetManagerChangeDetailPage() {
   if (!change) {
     return (
       <div className="doc-page">
-        <Panel variant="warning" title="Demande introuvable">Cette demande n&apos;existe pas ou vous n&apos;y avez pas accès.</Panel>
+        <Panel variant="warning" title={tch.notFoundTitle}>{tch.notFoundDescription}</Panel>
         <nav className="doc-pagination mt-6 flex flex-wrap gap-2">
           <Link href={`/modules/asset-manager/${domainId}/changes`}>
-            <Button variant="outline" size="small" className="border-transparent bg-transparent">← Changements</Button>
+            <Button variant="outline" size="small" className="border-transparent bg-transparent">{tch.backToChanges}</Button>
           </Link>
         </nav>
       </div>
@@ -162,7 +163,7 @@ export default function AssetManagerChangeDetailPage() {
       <FicheHeader
         breadcrumb={
           <>
-            <Link href={`/modules/asset-manager/${domainId}/changes`} style={{ color: "var(--bpm-accent-cyan)" }}>Changements</Link>
+            <Link href={`/modules/asset-manager/${domainId}/changes`} style={{ color: "var(--bpm-accent-cyan)" }}>{tch.breadcrumbChanges}</Link>
             <span style={{ color: "var(--bpm-text-secondary)" }}> → </span>
             <span>{change.reference}</span>
           </>
@@ -186,12 +187,12 @@ export default function AssetManagerChangeDetailPage() {
 
       {(change.status === "draft" || change.status === "submitted") && (
         <>
-          <FicheSectionCard title="Soumettre au CAB" className="mb-4">
+          <FicheSectionCard title={tch.submitToCabTitle} className="mb-4">
             <p className="text-sm mb-3" style={{ color: "var(--bpm-text-secondary)" }}>
-              Envoyer cette demande en revue CAB pour approbation.
+              {tch.submitToCabDescription}
             </p>
             <Button variant="primary" size="small" onClick={() => handleStatusChange("cab_review")} disabled={saving}>
-              Soumettre au CAB
+              {tch.submitToCab}
             </Button>
           </FicheSectionCard>
           <Divider thickness={1} color="var(--bpm-border)" className="my-4" />
@@ -201,27 +202,27 @@ export default function AssetManagerChangeDetailPage() {
       {change.status === "cab_review" && (
         <>
           <Divider thickness={1} color="var(--bpm-border)" className="my-4" />
-          <FicheSectionCard title="Revue CAB" className="mb-4">
+          <FicheSectionCard title={tch.cabReviewTitle} className="mb-4">
           <p className="text-sm mb-3" style={{ color: "var(--bpm-text-secondary)" }}>
-            Approuvez ou rejetez cette demande de changement.
+            {tch.cabReviewDescription}
           </p>
           <div className="flex flex-wrap items-end gap-4">
             <Button variant="primary" size="small" onClick={handleApprove} disabled={saving}>
-              {saving ? "En cours…" : "Approuver"}
+              {saving ? tch.inProgress : tch.approve}
             </Button>
             <div className="flex-1 min-w-[200px]">
-              <label className="block text-xs font-medium mb-1" style={{ color: "var(--bpm-text-secondary)" }}>Commentaire de rejet (optionnel)</label>
+              <label className="block text-xs font-medium mb-1" style={{ color: "var(--bpm-text-secondary)" }}>{tch.rejectCommentLabel}</label>
               <input
                 type="text"
                 value={rejectComment}
                 onChange={(e) => setRejectComment(e.target.value)}
-                placeholder="Motif du rejet..."
+                placeholder={tch.rejectCommentPlaceholder}
                 className="w-full rounded border p-2 text-sm"
                 style={{ borderColor: "var(--bpm-border)", background: "var(--bpm-surface)", color: "var(--bpm-text-primary)" }}
               />
             </div>
             <Button variant="outline" size="small" onClick={handleReject} disabled={saving}>
-              Rejeter
+              {tch.reject}
             </Button>
           </div>
         </FicheSectionCard>
@@ -229,12 +230,12 @@ export default function AssetManagerChangeDetailPage() {
       )}
 
       <Divider thickness={1} color="var(--bpm-border)" className="my-4" />
-      <FicheSectionCard title="Détail de la demande" className="mb-6">
+      <FicheSectionCard title={tch.requestDetailTitle} className="mb-6">
         <FicheFieldGrid
           withDividers
           items={[
             {
-              label: "Statut",
+              label: t.common.status,
               value: (
                 <span className="flex items-center gap-2">
                   <Selectbox
@@ -243,44 +244,44 @@ export default function AssetManagerChangeDetailPage() {
                     onChange={(v) => handleStatusChange(String(v))}
                     options={Object.entries(STATUS_LABELS).map(([value, label]) => ({ value, label }))}
                   />
-                  {saving && <span className="text-sm" style={{ color: "var(--bpm-text-secondary)" }}>Enregistrement…</span>}
+                  {saving && <span className="text-sm" style={{ color: "var(--bpm-text-secondary)" }}>{t.common.saving}</span>}
                 </span>
               ),
             },
-            { label: "Type", value: TYPE_LABELS[change.type] ?? change.type, asBadge: true, badgeVariant: change.type === "emergency" ? "error" : change.type === "standard" ? "success" : "primary" },
-            { label: "Priorité", value: RISK_LABELS[change.riskLevel] ?? change.riskLevel, asBadge: true, badgeVariant: getRiskBadgeVariant(change.riskLevel) },
+            { label: t.common.type, value: TYPE_LABELS[change.type] ?? change.type, asBadge: true, badgeVariant: change.type === "emergency" ? "error" : change.type === "standard" ? "success" : "primary" },
+            { label: t.common.priority, value: RISK_LABELS[change.riskLevel] ?? change.riskLevel, asBadge: true, badgeVariant: getRiskBadgeVariant(change.riskLevel) },
             {
-              label: "Dates",
+              label: tch.fieldDates,
               value: change.plannedStart || change.plannedEnd
                 ? [
-                    change.plannedStart ? `Début prévu : ${new Date(change.plannedStart).toLocaleDateString("fr-FR")}` : null,
-                    change.plannedEnd ? `Fin prévue : ${new Date(change.plannedEnd).toLocaleDateString("fr-FR")}` : null,
+                    change.plannedStart ? tch.plannedStartLabel(new Date(change.plannedStart).toLocaleDateString(dateLocale(locale))) : null,
+                    change.plannedEnd ? tch.plannedEndLabel(new Date(change.plannedEnd).toLocaleDateString(dateLocale(locale))) : null,
                   ].filter(Boolean).join(" · ")
                 : "",
             },
           ]}
         />
         <div className="border-t pt-4 mt-4" style={{ borderColor: "var(--bpm-border)" }}>
-          <p className="text-xs font-semibold uppercase mb-1" style={{ color: "var(--bpm-text-secondary)" }}>Description</p>
+          <p className="text-xs font-semibold uppercase mb-1" style={{ color: "var(--bpm-text-secondary)" }}>{t.common.description}</p>
           <p className="text-sm whitespace-pre-wrap m-0" style={{ color: "var(--bpm-text-primary)" }}>{change.description}</p>
         </div>
         <div className="border-t pt-4 mt-4" style={{ borderColor: "var(--bpm-border)" }}>
-          <p className="text-xs font-semibold uppercase mb-1" style={{ color: "var(--bpm-text-secondary)" }}>Impact</p>
+          <p className="text-xs font-semibold uppercase mb-1" style={{ color: "var(--bpm-text-secondary)" }}>{tch.fieldImpact}</p>
           <p className="text-sm whitespace-pre-wrap m-0" style={{ color: "var(--bpm-text-primary)" }}>{change.impact}</p>
         </div>
         <div className="border-t pt-4 mt-4" style={{ borderColor: "var(--bpm-border)" }}>
-          <p className="text-xs font-semibold uppercase mb-1" style={{ color: "var(--bpm-text-secondary)" }}>Plan de rollback</p>
+          <p className="text-xs font-semibold uppercase mb-1" style={{ color: "var(--bpm-text-secondary)" }}>{tch.fieldRollbackPlan}</p>
           <div className="text-sm whitespace-pre-wrap m-0" style={{ color: "var(--bpm-text-primary)" }}>
-            {formatRollbackDisplay(change.rollbackPlan)}
+            {formatRollbackDisplay(change.rollbackPlan, tch.rollbackNotSet)}
           </div>
         </div>
         <div className="border-t pt-4 mt-4 flex flex-wrap gap-x-4 gap-y-1 text-xs" style={{ borderColor: "var(--bpm-border)", color: "var(--bpm-text-secondary)" }}>
-          <span>Créé le {new Date(change.createdAt).toLocaleString("fr-FR")}</span>
-          <span>Modifié le {new Date(change.updatedAt).toLocaleString("fr-FR")}</span>
+          <span>{tch.createdAt(new Date(change.createdAt).toLocaleString(dateLocale(locale)))}</span>
+          <span>{tch.updatedAt(new Date(change.updatedAt).toLocaleString(dateLocale(locale)))}</span>
         </div>
       </FicheSectionCard>
 
-      <FicheNav backLink={`/modules/asset-manager/${domainId}/changes`} backLabel="← Changements" />
+      <FicheNav backLink={`/modules/asset-manager/${domainId}/changes`} backLabel={tch.backToChanges} />
     </div>
   );
 }
