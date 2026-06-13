@@ -4,11 +4,70 @@ import { useState } from "react";
 import Link from "next/link";
 import { Avatar, CodeBlock } from "@/components/bpm";
 import { getPrevNext } from "@/lib/docPages";
+import { useI18n } from "@/lib/i18n/LocaleProvider";
 
 type AvatarSize = "small" | "medium" | "large";
 type AvatarVariant = "default" | "sidebar";
 
+const fr = {
+  components: "Composants",
+  category: "Affichage de données",
+  descriptionPre: "Avatar utilisateur (initiales ou image). Option ",
+  descriptionPost: " pour afficher nom, sous-titre et bouton de déconnexion dans une sidebar.",
+  copy: "Copier",
+  thDefault: "Défaut",
+  thDescription: "Description",
+  showLogoutCheckbox: "Afficher bouton déconnexion",
+  initialsPlaceholder: "ex. JD",
+  namePlaceholder: "Nom",
+  subtitlePlaceholder: "ex. email",
+  descSrcPre: "URL de l’image (si absent, affiche ",
+  descSrcPost: ").",
+  descAlt: "Texte alternatif de l’image.",
+  descInitials: "Initiales affichées quand pas d’image.",
+  descSize: "Taille de l’avatar.",
+  descVariantPre: " : bloc avec nom, sous-titre et option déconnexion.",
+  descName: "Nom à côté de l’avatar (variant sidebar).",
+  descSubtitle: "Sous-titre sous le nom, ex. email (variant sidebar).",
+  descOnLogout: "Callback déconnexion ; si fourni, affiche le bouton (variant sidebar).",
+  descLogoutLabel: "Libellé du bouton de déconnexion.",
+  examples: "Exemples",
+  sandboxHint: "Tester en direct dans le sandbox :",
+  openSandbox: "Ouvrir dans le sandbox",
+};
+
+const en: typeof fr = {
+  components: "Components",
+  category: "Data display",
+  descriptionPre: "User avatar (initials or image). Option ",
+  descriptionPost: " to display name, subtitle and a logout button in a sidebar.",
+  copy: "Copy",
+  thDefault: "Default",
+  thDescription: "Description",
+  showLogoutCheckbox: "Show logout button",
+  initialsPlaceholder: "e.g. JD",
+  namePlaceholder: "Name",
+  subtitlePlaceholder: "e.g. email",
+  descSrcPre: "Image URL (if absent, displays ",
+  descSrcPost: ").",
+  descAlt: "Alternative text for the image.",
+  descInitials: "Initials displayed when there is no image.",
+  descSize: "Size of the avatar.",
+  descVariantPre: " : block with name, subtitle and optional logout.",
+  descName: "Name next to the avatar (sidebar variant).",
+  descSubtitle: "Subtitle below the name, e.g. email (sidebar variant).",
+  descOnLogout: "Logout callback; if provided, displays the button (sidebar variant).",
+  descLogoutLabel: "Label of the logout button.",
+  examples: "Examples",
+  sandboxHint: "Test it live in the sandbox:",
+  openSandbox: "Open in the sandbox",
+};
+
+const L = { fr, en } as const;
+
 export default function DocAvatarPage() {
+  const { locale } = useI18n();
+  const t = L[locale];
   const [variant, setVariant] = useState<AvatarVariant>("default");
   const [size, setSize] = useState<AvatarSize>("medium");
   const [initials, setInitials] = useState("JD");
@@ -35,14 +94,14 @@ export default function DocAvatarPage() {
     <div className="doc-page">
       <div className="doc-page-header">
         <div className="doc-breadcrumb">
-          <Link href="/docs/components">Composants</Link> → bpm.avatar
+          <Link href="/docs/components">{t.components}</Link> → bpm.avatar
         </div>
         <h1>bpm.avatar</h1>
         <p className="doc-description">
-          Avatar utilisateur (initiales ou image). Option <code>variant=&quot;sidebar&quot;</code> pour afficher nom, sous-titre et bouton de déconnexion dans une sidebar.
+          {t.descriptionPre}<code>variant=&quot;sidebar&quot;</code>{t.descriptionPost}
         </p>
         <div className="doc-meta">
-          <span className="doc-badge doc-badge-category">Affichage de données</span>
+          <span className="doc-badge doc-badge-category">{t.category}</span>
         </div>
       </div>
 
@@ -82,7 +141,7 @@ export default function DocAvatarPage() {
               type="text"
               value={initials}
               onChange={(e) => setInitials(e.target.value)}
-              placeholder="ex. JD"
+              placeholder={t.initialsPlaceholder}
             />
           </div>
           {variant === "sidebar" && (
@@ -93,7 +152,7 @@ export default function DocAvatarPage() {
                   type="text"
                   value={name}
                   onChange={(e) => setName(e.target.value)}
-                  placeholder="Nom"
+                  placeholder={t.namePlaceholder}
                 />
               </div>
               <div className="sandbox-control-group">
@@ -102,7 +161,7 @@ export default function DocAvatarPage() {
                   type="text"
                   value={subtitle}
                   onChange={(e) => setSubtitle(e.target.value)}
-                  placeholder="ex. email"
+                  placeholder={t.subtitlePlaceholder}
                 />
               </div>
               <div className="sandbox-control-group">
@@ -112,7 +171,7 @@ export default function DocAvatarPage() {
                     checked={showLogout}
                     onChange={(e) => setShowLogout(e.target.checked)}
                   />{" "}
-                  Afficher bouton déconnexion
+                  {t.showLogoutCheckbox}
                 </label>
               </div>
               {showLogout && (
@@ -145,8 +204,8 @@ export default function DocAvatarPage() {
           <tr>
             <th>Prop</th>
             <th>Type</th>
-            <th>Défaut</th>
-            <th>Description</th>
+            <th>{t.thDefault}</th>
+            <th>{t.thDescription}</th>
           </tr>
         </thead>
         <tbody>
@@ -154,69 +213,69 @@ export default function DocAvatarPage() {
             <td><code>src</code></td>
             <td><code>string | null</code></td>
             <td>—</td>
-            <td>URL de l’image (si absent, affiche <code>initials</code>).</td>
+            <td>{t.descSrcPre}<code>initials</code>{t.descSrcPost}</td>
           </tr>
           <tr>
             <td><code>alt</code></td>
             <td><code>string</code></td>
             <td>—</td>
-            <td>Texte alternatif de l’image.</td>
+            <td>{t.descAlt}</td>
           </tr>
           <tr>
             <td><code>initials</code></td>
             <td><code>string</code></td>
             <td>—</td>
-            <td>Initiales affichées quand pas d’image.</td>
+            <td>{t.descInitials}</td>
           </tr>
           <tr>
             <td><code>size</code></td>
             <td><code>small | medium | large</code></td>
             <td>medium</td>
-            <td>Taille de l’avatar.</td>
+            <td>{t.descSize}</td>
           </tr>
           <tr>
             <td><code>variant</code></td>
             <td><code>default | sidebar</code></td>
             <td>default</td>
-            <td><code>sidebar</code> : bloc avec nom, sous-titre et option déconnexion.</td>
+            <td><code>sidebar</code>{t.descVariantPre}</td>
           </tr>
           <tr>
             <td><code>name</code></td>
             <td><code>string</code></td>
             <td>—</td>
-            <td>Nom à côté de l’avatar (variant sidebar).</td>
+            <td>{t.descName}</td>
           </tr>
           <tr>
             <td><code>subtitle</code></td>
             <td><code>string</code></td>
             <td>—</td>
-            <td>Sous-titre sous le nom, ex. email (variant sidebar).</td>
+            <td>{t.descSubtitle}</td>
           </tr>
           <tr>
             <td><code>onLogout</code></td>
             <td><code>() =&gt; void</code></td>
             <td>—</td>
-            <td>Callback déconnexion ; si fourni, affiche le bouton (variant sidebar).</td>
+            <td>{t.descOnLogout}</td>
           </tr>
           <tr>
             <td><code>logoutLabel</code></td>
             <td><code>string</code></td>
             <td>Se déconnecter</td>
-            <td>Libellé du bouton de déconnexion.</td>
+            <td>{t.descLogoutLabel}</td>
           </tr>
         </tbody>
       </table>
 
-      <h2 className="text-lg font-semibold mt-8 mb-2">Exemples</h2>
+      <h2 className="text-lg font-semibold mt-8 mb-2">{t.examples}</h2>
       <CodeBlock code={'bpm.avatar(initials="JD", size="medium")\nbpm.avatar(initials="RC", size="large")'} language="python" />
       <CodeBlock code={'# Dans une sidebar\nbpm.avatar(\n    variant="sidebar",\n    initials="JD",\n    name="Jean Dupont",\n    subtitle="jean.dupont@example.com",\n    on_logout=lambda: ...\n)'} language="python" />
 
       <div className="mt-6 p-4 rounded-xl border" style={{ borderColor: "var(--bpm-border)", background: "var(--bpm-bg-secondary)" }}>
         <p className="text-sm mb-3" style={{ color: "var(--bpm-text-secondary)" }}>
-          Tester en direct dans le sandbox :
+          {t.sandboxHint}
         </p>
         <Link href="/sandbox?component=avatar" className="doc-cta inline-block">
-          Ouvrir dans le sandbox
+          {t.openSandbox}
         </Link>
       </div>
 
