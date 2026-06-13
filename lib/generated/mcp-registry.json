@@ -1,7 +1,7 @@
 {
-  "generatedAt": "2026-06-11T21:57:23.352Z",
+  "generatedAt": "2026-06-12T15:35:43.199Z",
   "source": "lib/generated/bpm-components.json + public/llms.txt + lib/semantics/bpm-semantics.json",
-  "total": 101,
+  "total": 104,
   "categories": [
     "Affichage de données",
     "Feedback",
@@ -1421,6 +1421,15 @@
       "_haystack": "bpm.statusbox statusbox boîte de statut (success, warning, error, info). feedback boîte de statut (success, warning, error, info).   label*: string\n  state?: \"running\" | \"complete\" | \"error\"\n  children?: react.reactnode\n  defaultexpanded?: boolean\n  compact?: boolean  — réduit le padding pour contextes denses.\n  classname?: string\n  value?: number | trajectorypoint[]  — valeur mesurée associée au statut (scalaire ou trajectoire v(t) [{t,v}]) — jugée si context est fourni.\n  context?: interpretcontext  — contexte de jugement { reference, direction, comparisonframe? } : un verdict écart/tendance/anomalie est révélé à droite du libellé et la bordure gauche prend la couleur du jugement. additif : sans context, rendu inchangé. indicateur workflow statut neutre instantane statut détaillé d'un objet ou d'un système : l'état (success/warning/error/info) accompagné de son explication. bpm.card bpm.labelvalue bpm.timeline statut compact en liste (bpm.badge) ou réaction à une action (bpm.message). état courant + cause/conséquence ; la couleur suit workflowstate.color. contraste-avec bpm.badge bloc expliqué vs étiquette compacte du même workflowstate"
     },
     {
+      "slug": "anomalyalert",
+      "name": "bpm.anomalyAlert",
+      "description": "Alerte d'anomalie : valeur attendue vs réelle (severity info/warning/critical).",
+      "category": "Feedback",
+      "fullDescription": "Alerte d'anomalie avec valeur attendue vs réelle.",
+      "props": "  title?: string\n  expected*: string | number\n  actual*: string | number\n  severity?: AnomalySeverity  — Niveau de gravité. Si omis et context fourni, dérivé automatiquement de interpret().severity.\n  className?: string\n  onDismiss?: () => void\n  history?: TrajectoryPoint[]  — Historique v(t) [{t, v}] de la mesure — révèle la tendance dans le verdict si context est fourni.\n  context?: InterpretContext  — Contexte de jugement { reference, direction, comparisonFrame? } : gravité auto-dérivée de la sévérité combinée (≥0.5 critical, >0.15 warning, sinon info) et verdict écart/tendance révélé. Additif : sans context, rendu inchangé.",
+      "_haystack": "bpm.anomalyalert anomalyalert alerte d'anomalie : valeur attendue vs réelle (severity info/warning/critical). feedback alerte d'anomalie avec valeur attendue vs réelle.   title?: string\n  expected*: string | number\n  actual*: string | number\n  severity?: anomalyseverity  — niveau de gravité. si omis et context fourni, dérivé automatiquement de interpret().severity.\n  classname?: string\n  ondismiss?: () => void\n  history?: trajectorypoint[]  — historique v(t) [{t, v}] de la mesure — révèle la tendance dans le verdict si context est fourni.\n  context?: interpretcontext  — contexte de jugement { reference, direction, comparisonframe? } : gravité auto-dérivée de la sévérité combinée (≥0.5 critical, >0.15 warning, sinon info) et verdict écart/tendance révélé. additif : sans context, rendu inchangé."
+    },
+    {
       "slug": "breadcrumb",
       "name": "bpm.breadcrumb",
       "description": "Fil d'Ariane.",
@@ -2033,6 +2042,30 @@
         "curationQuestion": "activityFeed (et timeline) : simple affichage d'événements ou indicateur d'activité (fréquence/volume par période) ? Trancher si un bloc indicateur doit être porté."
       },
       "_haystack": "bpm.activityfeed activityfeed fil d'activité avec avatars et dates relatives. affichage de données flux chronologique d'activités métier avec avatars initiaux, horodatages relatifs en français et état vide.   activities*: activityitem[]  — liste des activités à afficher (ordre = ordre d'affichage).\n  maxitems?: number  — limite d'affichage ; au-delà, le bouton « charger plus » apparaît si onloadmore est défini.\n  onloadmore?: () => void  — déclenché au clic sur « charger plus » lorsque activities.length > maxitems.\n  emptymessage?: string  — texte centré affiché quand `activities` est vide. défaut : « aucune activité récente. »\n  compact?: boolean  — mode compact : lignes plus serrées et avatars plus petits. défaut : `false`.\n  classname?: string  — classes css additionnelles sur le conteneur `.bpm-activity-feed`. défaut : `\"\"`. bpm.activityfeed({ activities: [ { id: \"1\", actor: \"alice\", action: \"a validé\", target: \"le devis dv-001\", timestamp: new date().toisostring(), color: \"success\" }, ], maxitems: 10, onloadmore: () => fetchmore(), compact: true, }) affichage event flux d'activité récent avec acteurs (avatars) et dates relatives : qui a fait quoi, quand. bpm.avatar bpm.card bpm.notificationcenter historique d'audit d'une instance précise (bpm.timeline) ou notifications actionnables (bpm.notificationcenter). événements multi-acteurs triés du plus récent au plus ancien ; les dates relatives supposent un flux vivant."
+    },
+    {
+      "slug": "livegauge",
+      "name": "bpm.liveGauge",
+      "description": "Jauge demi-cercle à seuils (warning/critical) avec aiguille.",
+      "category": "Affichage de données",
+      "fullDescription": "Jauge demi-cercle avec aiguille et zones colorées (normal/avertissement/critique).",
+      "props": "  value*: number | TrajectoryPoint[]  — Valeur actuelle, ou trajectoire v(t) [{t, v}] (l'aiguille pointe le dernier point ; tendance jugée si context fourni).\n  min?: number\n  max?: number\n  warningAbove?: number\n  criticalAbove?: number\n  size?: LiveGaugeSize\n  label?: string\n  className?: string\n  context?: InterpretContext  — Contexte de jugement { reference, direction, comparisonFrame? } : interpret() colore la valeur et révèle écart au repère + tendance + anomalie sous la jauge. Additif : sans context, rendu inchangé.",
+      "example": "bpm.liveGauge({ value: 75, min: 0, max: 100, warningAbove: 70, criticalAbove: 90, label: \"CPU\" })",
+      "associated": [
+        "bpm.liveChart",
+        "bpm.metric",
+        "bpm.progress"
+      ],
+      "_haystack": "bpm.livegauge livegauge jauge demi-cercle à seuils (warning/critical) avec aiguille. affichage de données jauge demi-cercle avec aiguille et zones colorées (normal/avertissement/critique).   value*: number | trajectorypoint[]  — valeur actuelle, ou trajectoire v(t) [{t, v}] (l'aiguille pointe le dernier point ; tendance jugée si context fourni).\n  min?: number\n  max?: number\n  warningabove?: number\n  criticalabove?: number\n  size?: livegaugesize\n  label?: string\n  classname?: string\n  context?: interpretcontext  — contexte de jugement { reference, direction, comparisonframe? } : interpret() colore la valeur et révèle écart au repère + tendance + anomalie sous la jauge. additif : sans context, rendu inchangé. bpm.livegauge({ value: 75, min: 0, max: 100, warningabove: 70, criticalabove: 90, label: \"cpu\" }) bpm.livechart bpm.metric bpm.progress"
+    },
+    {
+      "slug": "approvalflow",
+      "name": "bpm.approvalFlow",
+      "description": "Flux de validation multi-étapes (approuvé / en attente / rejeté).",
+      "category": "Affichage de données",
+      "fullDescription": "Flux de validation multi-étapes (approve/reject par étape).",
+      "props": "  steps*: ApprovalStep[]\n  onApprove?: (stepId: string, comment?: string) => void\n  onReject?: (stepId: string, comment?: string) => void\n  direction?: \"horizontal\" | \"vertical\"\n  showCommentInput?: boolean\n  className?: string",
+      "_haystack": "bpm.approvalflow approvalflow flux de validation multi-étapes (approuvé / en attente / rejeté). affichage de données flux de validation multi-étapes (approve/reject par étape).   steps*: approvalstep[]\n  onapprove?: (stepid: string, comment?: string) => void\n  onreject?: (stepid: string, comment?: string) => void\n  direction?: \"horizontal\" | \"vertical\"\n  showcommentinput?: boolean\n  classname?: string"
     },
     {
       "slug": "orgchart",

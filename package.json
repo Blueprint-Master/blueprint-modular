@@ -5,8 +5,8 @@
   "scripts": {
     "clean": "node scripts/clear-cache.cjs",
     "dev": "next dev",
-    "build": "node scripts/generate-versions.mjs && next build",
-    "build:standalone": "node scripts/generate-versions.mjs && next build && bash deploy/copy-standalone-assets.sh",
+    "build": "node scripts/generate-versions.mjs && node scripts/generate-component-examples.mjs && next build",
+    "build:standalone": "node scripts/generate-versions.mjs && node scripts/generate-component-examples.mjs && next build && bash deploy/copy-standalone-assets.sh",
     "start": "next start",
     "lint": "next lint",
     "test": "vitest run",
@@ -15,6 +15,7 @@
     "generate:components": "python scripts/generate-bpm-components-json.py",
     "generate:llms": "python scripts/generate-llms-txt.py",
     "generate:mcp-registry": "node scripts/generate-mcp-registry.mjs",
+    "generate:component-examples": "node scripts/generate-component-examples.mjs",
     "deploy": "echo 'Deploy: run .\\\\scripts\\\\deploy-vps-remote.ps1 (PowerShell) — une commande SSH qui lance deploy/deploy.sh sur le VPS'",
     "publish:core": "cd packages/core && npm install && npm run build && npm publish --access public",
     "version:sync": "node scripts/sync-version.js",
