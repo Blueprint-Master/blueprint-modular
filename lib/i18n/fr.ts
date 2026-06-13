@@ -292,6 +292,21 @@ const fr = {
       },
     },
   },
+  changelogPage: {
+    title: "Changelog",
+    lead: "Chaque évolution, dérivée de l'historique des pull requests fusionnées. Généré depuis git, jamais saisi à la main.",
+    backToDocs: "Retour à la documentation",
+    empty: "Aucune entrée pour le moment.",
+    types: {
+      feat: "Nouveauté",
+      fix: "Correctif",
+      perf: "Performance",
+      refactor: "Refactorisation",
+      style: "Style",
+      docs: "Documentation",
+      other: "Évolution",
+    },
+  },
   gallery: {
     eyebrow: "Composants",
     title: "Galerie de composants",
