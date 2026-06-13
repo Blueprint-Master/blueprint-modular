@@ -3,19 +3,44 @@
 import React, { useState, useMemo, useCallback } from "react";
 import Link from "next/link";
 import { Button, Modal, Input, Textarea, Chip, Selectbox } from "@/components/bpm";
+import { useI18n } from "@/lib/i18n/LocaleProvider";
+import type { Locale } from "@/lib/i18n";
+import {
+  str,
+  resolveBi,
+  statusLabel,
+  months,
+  weekdaysShort,
+  weekdaysLabels,
+  weekdaysFull,
+  weekTitle,
+  DEMO_TITLES,
+  DEMO_TITLE_SHORT,
+  DEMO_LIEUX,
+  DEMO_LIEU_VISIO,
+  DEMO_CATEGORIES,
+  DEMO_CATEGORY_CLIENT,
+  DEMO_CATEGORY_INTERNE,
+  DEMO_DESCRIPTION,
+  type BiText,
+} from "../strings";
 
 type View = "jour" | "semaine" | "mois";
 
+/**
+ * Les seeds de démo portent des textes bilingues ({ fr, en }) résolus au render.
+ * Les événements créés par l'utilisateur portent des chaînes simples (langue de saisie).
+ */
 export type CalEvent = {
   id: string;
   date: string;
-  titre: string;
+  titre: string | BiText;
   heure: string;
   duree?: number;
   couleur?: string;
-  description?: string;
-  lieu?: string;
-  categorie?: string;
+  description?: string | BiText;
+  lieu?: string | BiText;
+  categorie?: string | BiText;
   statut?: "confirmé" | "annulé" | "tentative";
   participants?: string[];
   /** Récurrence (affichage détail) */
@@ -24,12 +49,14 @@ export type CalEvent = {
   _user?: boolean;
 };
 
-const COULEURS = [
-  { id: "cyan", label: "Cyan", value: "var(--bpm-accent-cyan)" },
-  { id: "orange", label: "Orange", value: "#e67e22" },
-  { id: "vert", label: "Vert", value: "#27ae60" },
-  { id: "violet", label: "Violet", value: "#9b59b6" },
-  { id: "rouge", label: "Rouge", value: "#e74c3c" },
+type ColorDef = { id: string; labelKey: "colorCyan" | "colorOrange" | "colorGreen" | "colorPurple" | "colorRed"; value: string };
+
+const COULEURS: ColorDef[] = [
+  { id: "cyan", labelKey: "colorCyan", value: "var(--bpm-accent-cyan)" },
+  { id: "orange", labelKey: "colorOrange", value: "#e67e22" },
+  { id: "vert", labelKey: "colorGreen", value: "#27ae60" },
+  { id: "violet", labelKey: "colorPurple", value: "#9b59b6" },
+  { id: "rouge", labelKey: "colorRed", value: "#e74c3c" },
 ];
 
 /** Parse "09h" ou "09h30" en minutes depuis minuit */
@@ -54,20 +81,9 @@ function buildDemoEvents(anchorMonth: Date): CalEvent[] {
   const m = anchorMonth.getMonth();
   const last = new Date(y, m + 1, 0);
   const events: CalEvent[] = [];
-  const titles = [
-    "Réunion équipe",
-    "Revue livrables",
-    "Point client",
-    "Rétro sprint",
-    "Formation",
-    "Stand-up",
-    "Prépa démo",
-    "Audit technique",
-    "Planification",
-    "Validation budget",
-  ];
-  const lieux = ["Salle A", "Visio", "Open space", "Salle de conférence", ""];
-  const categories = ["Réunion", "Formation", "Client", "Interne", "Planification"];
+  const titles = DEMO_TITLES;
+  const lieux = DEMO_LIEUX;
+  const categories = DEMO_CATEGORIES;
   let id = 0;
   for (let d = 1; d <= last.getDate(); d++) {
     const dateStr = `${y}-${String(m + 1).padStart(2, "0")}-${String(d).padStart(2, "0")}`;
@@ -84,7 +100,7 @@ function buildDemoEvents(anchorMonth: Date): CalEvent[] {
         categorie: categories[d % categories.length],
         statut: "confirmé",
         lieu: lieux[d % lieux.length] || undefined,
-        description: d % 4 === 0 ? "Points à l'ordre du jour : suivi des actions, prochaines étapes." : undefined,
+        description: d % 4 === 0 ? DEMO_DESCRIPTION : undefined,
         participants: d % 3 === 0 ? ["Alice", "Bob", "Charlie"] : undefined,
       });
       if (d % 3 === 0) {
@@ -96,9 +112,9 @@ function buildDemoEvents(anchorMonth: Date): CalEvent[] {
           heure: "14h",
           duree: 30,
           couleur: c2.value,
-          categorie: "Client",
+          categorie: DEMO_CATEGORY_CLIENT,
           statut: "tentative",
-          lieu: "Visio",
+          lieu: DEMO_LIEU_VISIO,
           _user: false,
         });
       }
@@ -106,10 +122,10 @@ function buildDemoEvents(anchorMonth: Date): CalEvent[] {
         events.push({
           id: `demo-${++id}`,
           date: dateStr,
-          titre: "Réunion courte",
+          titre: DEMO_TITLE_SHORT,
           heure: "16h",
           couleur: COULEURS[(d + 2) % COULEURS.length].value,
-          categorie: "Interne",
+          categorie: DEMO_CATEGORY_INTERNE,
           _user: false,
         });
       }
@@ -153,6 +169,19 @@ function formatDateKey(d: Date): string {
   return d.toISOString().slice(0, 10);
 }
 
+/** Affiche une date "YYYY-MM-DD" dans la locale active (fr-FR / en-GB). */
+function formatDateLong(dateStr: string, locale: Locale): string {
+  const [y, m, d] = dateStr.split("-").map(Number);
+  if (!y || !m || !d) return dateStr;
+  const date = new Date(y, m - 1, d);
+  return new Intl.DateTimeFormat(locale === "en" ? "en-GB" : "fr-FR", {
+    weekday: "long",
+    day: "numeric",
+    month: "long",
+    year: "numeric",
+  }).format(date);
+}
+
 function getWeekRange(d: Date): { start: Date; end: Date } {
   const day = d.getDay();
   const diff = day === 0 ? -6 : 1 - day;
@@ -165,11 +194,6 @@ function getWeekRange(d: Date): { start: Date; end: Date } {
   return { start, end };
 }
 
-const MONTHS = "janvier,février,mars,avril,mai,juin,juillet,août,septembre,octobre,novembre,décembre".split(",");
-const WEEKDAYS_SHORT = "dim.,lun.,mar.,mer.,jeu.,ven.,sam.".split(",");
-const WEEKDAYS_LABELS = ["Lun", "Mar", "Mer", "Jeu", "Ven", "Sam", "Dim"];
-const WEEKDAYS_FULL = ["Lundi", "Mardi", "Mercredi", "Jeudi", "Vendredi", "Samedi", "Dimanche"];
-
 /** Numéro de semaine ISO (1–53) */
 function getISOWeekNumber(d: Date): number {
   const { start } = getWeekRange(d);
@@ -179,7 +203,9 @@ function getISOWeekNumber(d: Date): number {
   return Math.floor(diffDays / 7) + 1;
 }
 
-function formatTitle(view: View, focusDate: Date): string {
+function formatTitle(view: View, focusDate: Date, locale: Locale): string {
+  const MONTHS = months(locale);
+  const WEEKDAYS_SHORT = weekdaysShort(locale);
   if (view === "jour") {
     const weekday = WEEKDAYS_SHORT[focusDate.getDay()];
     return `${weekday} ${focusDate.getDate()} ${MONTHS[focusDate.getMonth()]} ${focusDate.getFullYear()}`;
@@ -188,7 +214,7 @@ function formatTitle(view: View, focusDate: Date): string {
     const { start, end } = getWeekRange(focusDate);
     const weekNum = getISOWeekNumber(focusDate);
     const fmt = (x: Date) => `${x.getDate()} ${MONTHS[x.getMonth()].slice(0, 3)}. ${x.getFullYear()}`;
-    return `Semaine ${weekNum} - du ${fmt(start)} au ${fmt(end)}`;
+    return weekTitle(locale, weekNum, fmt(start), fmt(end));
   }
   return `${MONTHS[focusDate.getMonth()]} ${focusDate.getFullYear()}`;
 }
@@ -237,6 +263,17 @@ const DAY_END_MIN = 20 * 60;
 const TOTAL_MIN = DAY_END_MIN - DAY_START_MIN;
 
 export default function CalendrierSimulateurPage() {
+  const { locale } = useI18n();
+  const s = str(locale);
+  const MONTHS = months(locale);
+  const WEEKDAYS_LABELS = weekdaysLabels(locale);
+  const WEEKDAYS_FULL = weekdaysFull(locale);
+  const tx = useCallback(
+    (value: string | BiText | undefined): string | undefined =>
+      value == null ? undefined : resolveBi(value, locale),
+    [locale]
+  );
+
   const today = useMemo(() => new Date(), []);
   const todayKey = formatDateKey(today);
 
@@ -305,12 +342,10 @@ export default function CalendrierSimulateurPage() {
     <div className="doc-page">
       <div className="doc-page-header">
         <div className="doc-breadcrumb">
-          <Link href="/modules">Modules</Link> → Calendrier
+          <Link href="/modules">{s.breadcrumbModules}</Link> → {s.moduleName}
         </div>
-        <h1>Simulateur — Calendrier</h1>
-        <p className="doc-description">
-          Vues Jour (timeline), Semaine (grille), Mois. Navigation, filtres, détail et création d&apos;événements.
-        </p>
+        <h1>{s.simuTitle}</h1>
+        <p className="doc-description">{s.simuDescription}</p>
       </div>
 
       <div
@@ -323,24 +358,24 @@ export default function CalendrierSimulateurPage() {
           style={{ borderColor: "var(--bpm-border)", background: "var(--bpm-sidebar-bg)" }}
         >
           <div className="flex items-center gap-1 flex-shrink-0">
-            <Button size="small" variant="secondary" onClick={goPrev} aria-label="Période précédente">←</Button>
-            <Button size="small" variant="secondary" onClick={goNext} aria-label="Période suivante">→</Button>
-            <Button size="small" variant="secondary" onClick={goToday}>Aujourd&apos;hui</Button>
+            <Button size="small" variant="secondary" onClick={goPrev} aria-label={s.prevAria}>←</Button>
+            <Button size="small" variant="secondary" onClick={goNext} aria-label={s.nextAria}>→</Button>
+            <Button size="small" variant="secondary" onClick={goToday}>{s.today}</Button>
             <Button size="small" variant="primary" onClick={() => setFormOpen(true)} className="ml-2">
-              + Nouvel événement
+              {s.newEvent}
             </Button>
           </div>
-          <p className="text-sm font-medium m-0 flex-1 min-w-0 truncate text-center px-2" style={{ color: "var(--bpm-text-primary)" }} title={formatTitle(view, focusDate)}>
-            {view === "semaine" || view === "jour" || view === "mois" ? null : formatTitle(view, focusDate)}
+          <p className="text-sm font-medium m-0 flex-1 min-w-0 truncate text-center px-2" style={{ color: "var(--bpm-text-primary)" }} title={formatTitle(view, focusDate, locale)}>
+            {view === "semaine" || view === "jour" || view === "mois" ? null : formatTitle(view, focusDate, locale)}
           </p>
           <div className="w-4 flex-shrink-0 sm:w-10" />
         </div>
 
         {/* Filtres par couleur (P13) */}
         <div className="flex flex-wrap items-center gap-2 px-3 py-2 border-b" style={{ borderColor: "var(--bpm-border)", background: "var(--bpm-sidebar-bg)" }}>
-          <span className="text-xs font-medium" style={{ color: "var(--bpm-text-secondary)" }}>Filtrer :</span>
+          <span className="text-xs font-medium" style={{ color: "var(--bpm-text-secondary)" }}>{s.filterLabel}</span>
           <Chip
-            label="Tous"
+            label={s.filterAll}
             variant={filterCouleur === null ? "primary" : "default"}
             onClick={() => setFilterCouleur(null)}
           />
@@ -357,16 +392,19 @@ export default function CalendrierSimulateurPage() {
               }}
             >
               <span className="w-2 h-2 rounded-full shrink-0" style={{ background: filterCouleur === c ? "#fff" : c }} />
-              {COULEURS.find((x) => x.value === c)?.label ?? "Couleur"}
+              {(() => {
+                const def = COULEURS.find((x) => x.value === c);
+                return def ? s[def.labelKey] : s.colorFallback;
+              })()}
             </button>
           ))}
         </div>
 
         {/* Onglets vues */}
         <div className="flex gap-1 p-2 border-b" style={{ borderColor: "var(--bpm-border)", background: "var(--bpm-sidebar-bg)" }}>
-          <Button size="small" variant={view === "jour" ? "primary" : "secondary"} onClick={() => setView("jour")}>Jour</Button>
-          <Button size="small" variant={view === "semaine" ? "primary" : "secondary"} onClick={() => setView("semaine")}>Semaine</Button>
-          <Button size="small" variant={view === "mois" ? "primary" : "secondary"} onClick={() => setView("mois")}>Mois</Button>
+          <Button size="small" variant={view === "jour" ? "primary" : "secondary"} onClick={() => setView("jour")}>{s.viewDay}</Button>
+          <Button size="small" variant={view === "semaine" ? "primary" : "secondary"} onClick={() => setView("semaine")}>{s.viewWeek}</Button>
+          <Button size="small" variant={view === "mois" ? "primary" : "secondary"} onClick={() => setView("mois")}>{s.viewMonth}</Button>
         </div>
 
         <div className="p-4 min-h-[320px] min-w-0 overflow-hidden">
@@ -381,9 +419,9 @@ export default function CalendrierSimulateurPage() {
                     : { color: "var(--bpm-text-secondary)" }
                 }
               >
-                {formatTitle("jour", focusDate)}
+                {formatTitle("jour", focusDate, locale)}
                 {focusKey === todayKey && (
-                  <span className="ml-2 opacity-90">Aujourd&apos;hui</span>
+                  <span className="ml-2 opacity-90">{s.today}</span>
                 )}
               </p>
               <div className="flex gap-0 min-w-0">
@@ -396,7 +434,7 @@ export default function CalendrierSimulateurPage() {
               </div>
               <div className="flex-1 min-w-0 relative" style={{ minHeight: (TOTAL_MIN / 30) * 32 }}>
                 {dayEvents.length === 0 && (
-                  <p className="absolute top-4 left-0 text-sm" style={{ color: "var(--bpm-text-secondary)" }}>Aucun événement ce jour.</p>
+                  <p className="absolute top-4 left-0 text-sm" style={{ color: "var(--bpm-text-secondary)" }}>{s.emptyDay}</p>
                 )}
                 {dayEvents.map((ev, i) => {
                   const startMin = hourStringToMinutes(ev.heure);
@@ -425,7 +463,7 @@ export default function CalendrierSimulateurPage() {
                       onClick={(e) => { e.stopPropagation(); setSelectedEvent(ev); }}
                     >
                       <span className="block w-1 h-full rounded absolute left-0 top-0" style={{ background: ev.couleur ?? "var(--bpm-accent-cyan)" }} />
-                      <span className="font-medium truncate block">{ev.titre}</span>
+                      <span className="font-medium truncate block">{tx(ev.titre)}</span>
                       <span className="text-xs opacity-80">{formatHeureDisplay(ev.heure)}{ev.duree ? ` — ${ev.duree} min` : ""}</span>
                     </button>
                   );
@@ -450,9 +488,9 @@ export default function CalendrierSimulateurPage() {
                 <div
                   className="py-1 pr-1 text-xs font-medium border-b border-r flex items-center justify-center"
                   style={{ gridColumn: 1, gridRow: 1, borderColor: "var(--bpm-border)", color: "var(--bpm-text-secondary)", background: "var(--bpm-sidebar-bg)" }}
-                  title={formatTitle("semaine", focusDate)}
+                  title={formatTitle("semaine", focusDate, locale)}
                 >
-                  S{getISOWeekNumber(focusDate)}
+                  {locale === "en" ? "W" : "S"}{getISOWeekNumber(focusDate)}
                 </div>
                 {[0, 1, 2, 3, 4, 5, 6].map((dayOffset) => {
                   const { start } = getWeekRange(focusDate);
@@ -508,7 +546,7 @@ export default function CalendrierSimulateurPage() {
                               }}
                               onClick={(e) => { e.stopPropagation(); setSelectedEvent(ev); }}
                             >
-                              {formatHeureDisplay(ev.heure)} {ev.titre}
+                              {formatHeureDisplay(ev.heure)} {tx(ev.titre)}
                             </button>
                           ))}
                         </div>
@@ -518,7 +556,7 @@ export default function CalendrierSimulateurPage() {
                 ))}
               </div>
               {weekEvents.length === 0 && (
-                <p className="py-4 text-center text-sm col-span-full" style={{ color: "var(--bpm-text-secondary)" }}>Aucun événement cette semaine.</p>
+                <p className="py-4 text-center text-sm col-span-full" style={{ color: "var(--bpm-text-secondary)" }}>{s.emptyWeek}</p>
               )}
             </div>
           )}
@@ -570,7 +608,7 @@ export default function CalendrierSimulateurPage() {
                 })}
               </div>
               <p className="mt-3 text-xs" style={{ color: "var(--bpm-text-secondary)" }}>
-                Cliquez sur un jour pour afficher la vue Jour. Le jour en surbrillance est aujourd&apos;hui.
+                {s.monthHint}
               </p>
             </div>
           )}
@@ -581,51 +619,54 @@ export default function CalendrierSimulateurPage() {
       <Modal
         isOpen={!!selectedEvent}
         onClose={() => setSelectedEvent(null)}
-        title={selectedEvent?.titre}
+        title={tx(selectedEvent?.titre)}
         size="small"
       >
         {selectedEvent && (
           <div className="space-y-3 text-sm">
-            <p className="m-0"><strong>Date :</strong> {selectedEvent.date}</p>
-            <p className="m-0"><strong>Heure :</strong> {formatHeureDisplay(selectedEvent.heure)}{selectedEvent.duree ? ` (${selectedEvent.duree} min)` : ""}</p>
+            <p className="m-0"><strong>{s.detailDate} :</strong> {formatDateLong(selectedEvent.date, locale)}</p>
+            <p className="m-0"><strong>{s.detailTime} :</strong> {formatHeureDisplay(selectedEvent.heure)}{selectedEvent.duree ? ` (${selectedEvent.duree} min)` : ""}</p>
             {selectedEvent.recurrence && (
-              <p className="m-0"><strong>Récurrence :</strong> {selectedEvent.recurrence === "daily" ? "Tous les jours" : selectedEvent.recurrence === "weekly" ? "Toutes les semaines" : "Tous les mois"}</p>
+              <p className="m-0"><strong>{s.detailRecurrence} :</strong> {selectedEvent.recurrence === "daily" ? s.recurDaily : selectedEvent.recurrence === "weekly" ? s.recurWeekly : s.recurMonthly}</p>
             )}
-            {selectedEvent.lieu && <p className="m-0"><strong>Lieu :</strong> {selectedEvent.lieu}</p>}
-            {selectedEvent.categorie && <p className="m-0"><strong>Catégorie :</strong> {selectedEvent.categorie}</p>}
-            {selectedEvent.statut && <p className="m-0"><strong>Statut :</strong> {selectedEvent.statut}</p>}
-            {selectedEvent.description && <p className="m-0"><strong>Description :</strong> {selectedEvent.description}</p>}
+            {selectedEvent.lieu && <p className="m-0"><strong>{s.detailLocation} :</strong> {tx(selectedEvent.lieu)}</p>}
+            {selectedEvent.categorie && <p className="m-0"><strong>{s.detailCategory} :</strong> {tx(selectedEvent.categorie)}</p>}
+            {selectedEvent.statut && <p className="m-0"><strong>{s.detailStatus} :</strong> {statusLabel(selectedEvent.statut, locale)}</p>}
+            {selectedEvent.description && <p className="m-0"><strong>{s.detailDescription} :</strong> {tx(selectedEvent.description)}</p>}
             {selectedEvent.participants && selectedEvent.participants.length > 0 && (
-              <p className="m-0"><strong>Participants :</strong> {selectedEvent.participants.join(", ")}</p>
+              <p className="m-0"><strong>{s.detailParticipants} :</strong> {selectedEvent.participants.join(", ")}</p>
             )}
             <div className="flex gap-2 pt-2">
               {selectedEvent._user && (
                 <Button variant="secondary" size="small" onClick={() => handleDeleteEvent(selectedEvent)}>
-                  Supprimer
+                  {s.delete}
                 </Button>
               )}
-              <Button variant="secondary" size="small" onClick={() => setSelectedEvent(null)}>Fermer</Button>
+              <Button variant="secondary" size="small" onClick={() => setSelectedEvent(null)}>{s.close}</Button>
             </div>
           </div>
         )}
       </Modal>
 
       {/* Modale formulaire Nouvel événement (P11) */}
-      <EventFormModal open={formOpen} onClose={() => setFormOpen(false)} onSubmit={handleAddEvent} defaultDate={focusKey} />
+      <EventFormModal open={formOpen} onClose={() => setFormOpen(false)} onSubmit={handleAddEvent} defaultDate={focusKey} locale={locale} />
 
       <p className="mt-6 text-sm" style={{ color: "var(--bpm-text-secondary)" }}>
-        <Link href="/modules" className="font-medium underline" style={{ color: "var(--bpm-accent-cyan)" }}>← Retour aux modules</Link>
+        <Link href="/modules" className="font-medium underline" style={{ color: "var(--bpm-accent-cyan)" }}>{s.backToModules}</Link>
       </p>
     </div>
   );
 }
 
-const RECURRENCE_OPTIONS = [
-  { value: "", label: "Aucune" },
-  { value: "daily", label: "Tous les jours" },
-  { value: "weekly", label: "Toutes les semaines" },
-  { value: "monthly", label: "Tous les mois" },
-];
+function recurrenceOptions(locale: Locale) {
+  const s = str(locale);
+  return [
+    { value: "", label: s.recurNone },
+    { value: "daily", label: s.recurDaily },
+    { value: "weekly", label: s.recurWeekly },
+    { value: "monthly", label: s.recurMonthly },
+  ];
+}
 
 /** Génère les dates pour une récurrence à partir de la date de début. */
 function generateRecurrenceDates(
@@ -670,12 +711,16 @@ function EventFormModal({
   onClose,
   onSubmit,
   defaultDate,
+  locale,
 }: {
   open: boolean;
   onClose: () => void;
   onSubmit: (ev: Omit<CalEvent, "id" | "_user"> | Omit<CalEvent, "id" | "_user">[]) => void;
   defaultDate: string;
+  locale: Locale;
 }) {
+  const s = str(locale);
+  const RECURRENCE_OPTIONS = recurrenceOptions(locale);
   const [date, setDate] = useState(defaultDate);
   const [dateFin, setDateFin] = useState("");
   const [heure, setHeure] = useState("09h00");
@@ -721,11 +766,11 @@ function EventFormModal({
   };
 
   return (
-    <Modal isOpen={open} onClose={onClose} title="Nouvel événement" size="small">
+    <Modal isOpen={open} onClose={onClose} title={s.formTitle} size="small">
       <form onSubmit={handleSubmit} className="space-y-3">
-        <Input label="Titre" value={titre} onChange={setTitre} placeholder="Titre de l'événement" required />
+        <Input label={s.fieldTitle} value={titre} onChange={setTitre} placeholder={s.fieldTitlePlaceholder} required />
         <div>
-          <label className="block text-sm font-medium mb-1" style={{ color: "var(--bpm-text-primary)" }}>Du</label>
+          <label className="block text-sm font-medium mb-1" style={{ color: "var(--bpm-text-primary)" }}>{s.fieldFrom}</label>
           <input
             type="date"
             value={date}
@@ -735,7 +780,7 @@ function EventFormModal({
           />
         </div>
         <div>
-          <label className="block text-sm font-medium mb-1" style={{ color: "var(--bpm-text-primary)" }}>Au (optionnel)</label>
+          <label className="block text-sm font-medium mb-1" style={{ color: "var(--bpm-text-primary)" }}>{s.fieldTo}</label>
           <input
             type="date"
             value={dateFin}
@@ -743,12 +788,12 @@ function EventFormModal({
             min={date}
             className="w-full px-3 py-2 rounded-lg border text-sm"
             style={{ borderColor: "var(--bpm-border)", background: "var(--bpm-bg-primary)", color: "var(--bpm-text-primary)" }}
-            title="Laisser vide pour un événement sur un seul jour"
+            title={s.fieldToTitle}
           />
         </div>
         <div className="grid grid-cols-2 gap-2">
           <div>
-            <label className="block text-sm font-medium mb-1" style={{ color: "var(--bpm-text-primary)" }}>Heure</label>
+            <label className="block text-sm font-medium mb-1" style={{ color: "var(--bpm-text-primary)" }}>{s.fieldTime}</label>
             <input
               type="time"
               value={(() => {
@@ -765,22 +810,22 @@ function EventFormModal({
             />
           </div>
           <div>
-            <Input label="Durée (min)" value={duree} onChange={setDuree} type="number" placeholder="60" />
+            <Input label={s.fieldDuration} value={duree} onChange={setDuree} type="number" placeholder={s.fieldDurationPlaceholder} />
           </div>
         </div>
         <div>
-          <label className="block text-sm font-medium mb-1" style={{ color: "var(--bpm-text-primary)" }}>Récurrence</label>
+          <label className="block text-sm font-medium mb-1" style={{ color: "var(--bpm-text-primary)" }}>{s.fieldRecurrence}</label>
           <Selectbox
             options={RECURRENCE_OPTIONS}
             value={recurrence}
             onChange={(v) => setRecurrence(v ?? "")}
-            placeholder="Aucune"
+            placeholder={s.recurNone}
           />
         </div>
-        <Input label="Lieu" value={lieu} onChange={setLieu} placeholder="Salle, Visio..." />
-        <Textarea label="Description" value={description} onChange={setDescription} placeholder="Optionnel" rows={2} />
+        <Input label={s.fieldLocation} value={lieu} onChange={setLieu} placeholder={s.fieldLocationPlaceholder} />
+        <Textarea label={s.fieldDescription} value={description} onChange={setDescription} placeholder={s.fieldDescriptionPlaceholder} rows={2} />
         <div>
-          <label className="block text-sm font-medium mb-1" style={{ color: "var(--bpm-text-primary)" }}>Couleur</label>
+          <label className="block text-sm font-medium mb-1" style={{ color: "var(--bpm-text-primary)" }}>{s.fieldColor}</label>
           <div className="flex flex-wrap gap-2">
             {COULEURS.map((c) => (
               <button
@@ -792,14 +837,14 @@ function EventFormModal({
                   background: c.value,
                   borderColor: couleur === c.value ? "var(--bpm-text-primary)" : "transparent",
                 }}
-                title={c.label}
+                title={s[c.labelKey]}
               />
             ))}
           </div>
         </div>
         <div className="flex gap-2 pt-2">
-          <Button type="submit" size="small">Créer</Button>
-          <Button type="button" variant="secondary" size="small" onClick={onClose}>Annuler</Button>
+          <Button type="submit" size="small">{s.create}</Button>
+          <Button type="button" variant="secondary" size="small" onClick={onClose}>{s.cancel}</Button>
         </div>
       </form>
     </Modal>
