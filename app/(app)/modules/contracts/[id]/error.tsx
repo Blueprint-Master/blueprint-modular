@@ -2,6 +2,8 @@
 
 import Link from "next/link";
 import { Button } from "@/components/bpm";
+import { useI18n } from "@/lib/i18n/LocaleProvider";
+import { STR } from "../strings";
 
 export default function ContractDetailError({
   error,
@@ -10,6 +12,8 @@ export default function ContractDetailError({
   error: Error & { digest?: string };
   reset: () => void;
 }) {
+  const { locale } = useI18n();
+  const t = STR[locale].errorBoundary;
   return (
     <div className="doc-page error-boundary" style={{ minHeight: "60vh", display: "flex", alignItems: "center", justifyContent: "center" }}>
       <div
@@ -36,17 +40,17 @@ export default function ContractDetailError({
           <line x1="12" y1="8" x2="12" y2="12" />
           <line x1="12" y1="16" x2="12.01" y2="16" />
         </svg>
-        <h2 className="text-lg font-semibold mb-2">Erreur lors du chargement</h2>
+        <h2 className="text-lg font-semibold mb-2">{t.title}</h2>
         <p className="text-sm mb-6" style={{ color: "var(--bpm-text-secondary)" }}>
-          Impossible de charger les détails du contrat. Vérifiez votre connexion ou réessayez plus tard.
+          {t.desc}
         </p>
         <div className="flex flex-wrap gap-3 justify-center">
-          <Button variant="primary" onClick={reset} aria-label="Réessayer de charger le contrat">
-            Réessayer
+          <Button variant="primary" onClick={reset} aria-label={t.retryAria}>
+            {t.retry}
           </Button>
           <Link href="/modules/contracts">
-            <Button variant="secondary" aria-label="Retour à la liste des contrats">
-              Retour à la liste
+            <Button variant="secondary" aria-label={t.backToListAria}>
+              {t.backToList}
             </Button>
           </Link>
         </div>
