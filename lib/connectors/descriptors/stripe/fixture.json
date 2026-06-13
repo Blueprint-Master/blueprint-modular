@@ -1,0 +1,8 @@
+{
+  "object": "list",
+  "has_more": false,
+  "data": [
+    { "id": "ch_demo_001", "object": "charge", "amount": 4200, "currency": "eur", "created": 1700000000, "status": "succeeded" },
+    { "id": "ch_demo_002", "object": "charge", "amount": 15900, "currency": "eur", "created": 1700086400, "status": "succeeded" }
+  ]
+}

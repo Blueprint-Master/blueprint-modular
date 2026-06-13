@@ -1,0 +1,8 @@
+{
+  "range": "Sites!A2:C3",
+  "majorDimension": "ROWS",
+  "values": [
+    ["Atelier 4", "actif", "12"],
+    ["Atelier 7", "maintenance", "3"]
+  ]
+}
