@@ -14,14 +14,17 @@ import { SidebarProvider, useSidebar } from "@/contexts/SidebarContext";
 import { useI18n } from "@/lib/i18n/LocaleProvider";
 import type { Locale } from "@/lib/i18n";
 
-/** Bascule FR/EN du shell applicatif (même cookie bpm-locale que la vitrine). */
+/**
+ * Bascule FR/EN du shell applicatif (même cookie bpm-locale que la vitrine).
+ * Réutilise le style gris du site (.site-locale-switch / .site-locale-btn) pour
+ * une apparence identique entre l'app et les pages de présentation.
+ */
 function AppLocaleSwitch() {
   const { locale, setLocale } = useI18n();
   const locales: Locale[] = ["fr", "en"];
   return (
     <div
-      className="flex items-center rounded-md border overflow-hidden mr-1"
-      style={{ borderColor: "var(--bpm-border)" }}
+      className="site-locale-switch mr-1"
       role="group"
       aria-label={locale === "fr" ? "Choix de la langue" : "Language selection"}
     >
@@ -29,16 +32,11 @@ function AppLocaleSwitch() {
         <button
           key={l}
           type="button"
-          onClick={() => setLocale(l)}
+          className="site-locale-btn"
           aria-pressed={locale === l}
-          className="px-2 py-1 text-xs font-semibold uppercase transition"
-          style={
-            locale === l
-              ? { background: "var(--bpm-accent-cyan)", color: "#04303a" }
-              : { background: "transparent", color: "var(--bpm-text-secondary)" }
-          }
+          onClick={() => setLocale(l)}
         >
-          {l}
+          {l.toUpperCase()}
         </button>
       ))}
     </div>
