@@ -111,8 +111,18 @@ import { APP_VERSION } from "@/lib/version";
 import type { NotificationItem } from "@/components/bpm";
 import { ElevationShowcase } from "@/components/showcase/ElevationShowcase";
 import registry from "@/lib/generated/bpm-components.json";
+import componentExamples from "@/lib/generated/component-examples.json";
 import { useI18n } from "@/lib/i18n/LocaleProvider";
 import { fmt } from "@/lib/i18n";
+
+/** Exemples canoniques { slug → code }, dérivés du registre (champ `example`). */
+const EXAMPLES: Record<string, string> = componentExamples;
+
+/** Déduit le slug du composant depuis un libellé de carte (« bpm.colorPicker … » → « colorpicker »). */
+function slugFromLabel(label: string): string | null {
+  const m = label.match(/bpm\.([A-Za-z0-9]+)/);
+  return m ? m[1].toLowerCase() : null;
+}
 
 /** Valeur hex pour props qui n'acceptent pas var() (ex. ColorPicker, Plotly), alignée avec --bpm-accent. */
 const BPM_ACCENT_HEX = "#048dc3";
@@ -137,12 +147,23 @@ function DemoCard({
   children: React.ReactNode;
   wide?: boolean;
 }) {
+  // Exemple canonique copiable, dérivé du registre (champ `example`) — affiché
+  // sous le rendu, replié par défaut (la page est longue). Reuse de bpm.codeBlock
+  // (bouton Copier intégré). Absent → rien (jamais de bloc vide).
+  const slug = slugFromLabel(label);
+  const code = slug ? EXAMPLES[slug] : undefined;
   return (
     <div style={{ gridColumn: wide ? "1 / -1" : undefined }}>
       <Caption className="mb-1" style={{ display: "block", marginBottom: 4, color: "var(--bpm-text-muted)" }}>
         {label}
       </Caption>
       <div style={DEMO_CARD_STYLE}>{children}</div>
+      {code && (
+        <details className="demo-code">
+          <summary className="demo-code-summary">Code</summary>
+          <CodeBlock code={code} language="tsx" />
+        </details>
+      )}
     </div>
   );
 }

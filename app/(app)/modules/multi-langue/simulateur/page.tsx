@@ -1,20 +1,25 @@
 "use client";
 
 import Link from "next/link";
-import { Panel, Selectbox, Button } from "@/components/bpm";
+import { useI18n } from "@/lib/i18n/LocaleProvider";
+import MultiLangueSimulateur from "../simulateur-content";
+import { STR } from "../strings";
 
 export default function MultiLangueSimulateurPage() {
+  const { locale } = useI18n();
+  const s = STR[locale];
+
   return (
     <div className="doc-page">
       <div className="doc-page-header">
-        <div className="doc-breadcrumb"><Link href="/modules">Modules</Link> → <Link href="/modules/multi-langue">Multi-langue</Link> → Simulateur</div>
-        <h1>Simulateur — Multi-langue</h1>
-        <p className="doc-description">Choisir la langue (démo).</p>
+        <div className="doc-breadcrumb">
+          <Link href="/modules">{s.breadcrumbModules}</Link> →{" "}
+          <Link href="/modules/multi-langue">{s.moduleTitle}</Link> → {s.breadcrumbSimulator}
+        </div>
+        <h1>{s.simPageTitle}</h1>
+        <p className="doc-description">{s.simPageDescription}</p>
       </div>
-      <Panel variant="info" title="Langue">
-        <Selectbox options={[{ value: "fr", label: "Français" }, { value: "en", label: "English" }]} value={null} onChange={() => {}} placeholder="Langue" label="Langue" />
-        <Button className="mt-4">Appliquer</Button>
-      </Panel>
+      <MultiLangueSimulateur />
     </div>
   );
 }

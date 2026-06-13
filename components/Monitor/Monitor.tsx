@@ -5,6 +5,114 @@
  */
 import React, { useState, useEffect, useRef, useCallback } from "react";
 import { usePrompterAPI } from "@/hooks/usePrompterAPI";
+import { useI18n } from "@/lib/i18n/LocaleProvider";
+
+// ─── CHAÎNES FR/EN DU CHROME (le contenu de présentation reste du contenu utilisateur) ──
+const MSTR_FR = {
+  generating: "Génération en cours…",
+  teamsBg: "← Fenêtre Teams visible ici →",
+  tabs: { script: "Script", ai: "Questions IA", translate: "Trad.", summary: "Résumé" },
+  importing: "Import…",
+  importError: "Erreur import :",
+  demo: "Démo",
+  dragTitle: "Glisser pour déplacer le panneau",
+  dragAria: "Déplacer le panneau",
+  opacityTooltip: "Transparence du fond",
+  opacityPanelTitle: "Transparence du fond",
+  opacitySliderTitle: "Opacité du panneau (50–95 %)",
+  opacityHint: "Réglage en direct · 50–95 % (CDC)",
+  apiKeyTooltip: "Clé API Claude",
+  apiKeyPanelTitle: "Clé API Claude (Anthropic)",
+  apiKeyInputTitle: "Saisie stockée localement (localStorage). Utilisée pour Q&R IA, traduction et résumé.",
+  apiKeyHint: "Stockée localement · utilisée pour l’IA",
+  shortcutsTooltip: "Raccourcis clavier",
+  minimizeTooltip: "Réduire le panneau",
+  serviceDown: "Service prompteur indisponible.",
+  serviceDownDetail: "L'import PPTX et les réponses IA peuvent ne pas fonctionner. Vérifiez que le service tourne sur le serveur (PM2 : prompteur-api).",
+  shortcuts: [
+    ["→ / Espace", "Slide suivante"],
+    ["←", "Slide précédente"],
+    ["Q", "Focus Questions IA"],
+    ["T", "Focus Traduction"],
+    ["S", "Générer résumé"],
+    ["H / Échap", "Masquer l'overlay"],
+  ],
+  editHint: "Double-cliquez pour éditer",
+  editBtn: "✎ Éditer",
+  editDone: "✓ Valider",
+  presenterNote: "Note présentateur",
+  prevBtn: "← Précédente",
+  nextBtn: "Suivante →",
+  contextLabel: "Contexte :",
+  qPlaceholder: "Question reçue en visio… (Entrée pour envoyer)",
+  suggestBtn: "Suggérer une réponse ↵",
+  suggestedAnswer: "Réponse suggérée",
+  loggedQuestions: "Questions loggées",
+  trPlaceholderFrEn: "Texte en français…",
+  trPlaceholderEnFr: "Text in English…",
+  translateBtn: "Traduire ↵",
+  summaryBtn: "Générer le résumé post-séance [S]",
+  copied: "✓ Copié !",
+  copyBtn: "Copier le résumé",
+  emptyTitle: "Résumé post-séance",
+  emptyBefore: "Appuyez sur",
+  emptyAfter: "pour générer le compte-rendu avec actions de suivi.",
+  loggedBadge: (n: number) => `${n} question${n > 1 ? "s" : ""} loggée${n > 1 ? "s" : ""} ✓`,
+};
+
+const MSTR_EN: typeof MSTR_FR = {
+  generating: "Generating…",
+  teamsBg: "← Teams window visible here →",
+  tabs: { script: "Script", ai: "AI Q&A", translate: "Translation", summary: "Summary" },
+  importing: "Importing…",
+  importError: "Import error:",
+  demo: "Demo",
+  dragTitle: "Drag to move the panel",
+  dragAria: "Move the panel",
+  opacityTooltip: "Background opacity",
+  opacityPanelTitle: "Background opacity",
+  opacitySliderTitle: "Panel opacity (50–95%)",
+  opacityHint: "Live adjustment · 50–95% (spec)",
+  apiKeyTooltip: "Claude API key",
+  apiKeyPanelTitle: "Claude API key (Anthropic)",
+  apiKeyInputTitle: "Stored locally (localStorage). Used for AI Q&A, translation and summary.",
+  apiKeyHint: "Stored locally · used for AI",
+  shortcutsTooltip: "Keyboard shortcuts",
+  minimizeTooltip: "Minimize the panel",
+  serviceDown: "Prompter service unavailable.",
+  serviceDownDetail: "PPTX import and AI answers may not work. Check that the service is running on the server (PM2: prompteur-api).",
+  shortcuts: [
+    ["→ / Space", "Next slide"],
+    ["←", "Previous slide"],
+    ["Q", "Focus AI Q&A"],
+    ["T", "Focus Translation"],
+    ["S", "Generate summary"],
+    ["H / Esc", "Hide the overlay"],
+  ],
+  editHint: "Double-click to edit",
+  editBtn: "✎ Edit",
+  editDone: "✓ Done",
+  presenterNote: "Presenter note",
+  prevBtn: "← Previous",
+  nextBtn: "Next →",
+  contextLabel: "Context:",
+  qPlaceholder: "Question received during the call… (Enter to send)",
+  suggestBtn: "Suggest an answer ↵",
+  suggestedAnswer: "Suggested answer",
+  loggedQuestions: "Logged questions",
+  trPlaceholderFrEn: "Text in French…",
+  trPlaceholderEnFr: "Text in English…",
+  translateBtn: "Translate ↵",
+  summaryBtn: "Generate the post-session summary [S]",
+  copied: "✓ Copied!",
+  copyBtn: "Copy the summary",
+  emptyTitle: "Post-session summary",
+  emptyBefore: "Press",
+  emptyAfter: "to generate the recap with follow-up actions.",
+  loggedBadge: (n: number) => `${n} question${n > 1 ? "s" : ""} logged ✓`,
+};
+
+const MSTR = { fr: MSTR_FR, en: MSTR_EN } as const;
 
 // ─── TOKENS CSS Blueprint Modular (miroir exact de la charte) ─────────────────
 const T = {
@@ -153,11 +261,11 @@ function Textarea({ value, onChange, onKeyDown, placeholder, rows = 3, ref: fRef
 }
 
 /** Streaming text output */
-function StreamOutput({ text, loading, error }: { text: string; loading?: boolean; error?: string }) {
+function StreamOutput({ text, loading, error, loadingLabel = MSTR_FR.generating }: { text: string; loading?: boolean; error?: string; loadingLabel?: string }) {
   if (error) return <Message variant="error" text={error}/>;
   if (loading && !text) return (
     <div style={{ display:"flex", gap:"5px", alignItems:"center", padding:"10px 0" }}>
-      <Spinner/> <span style={{ color:T.muted, fontSize:"13px" }}>Génération en cours…</span>
+      <Spinner/> <span style={{ color:T.muted, fontSize:"13px" }}>{loadingLabel}</span>
     </div>
   );
   if (!text) return null;
@@ -182,27 +290,112 @@ function BpmLogo({ size = 22 }) {
 type PresSlide = { id: number; title: string; script: string; notes: string; kpis: string[] };
 type PresState = { title: string; slides: PresSlide[] };
 
-const DEFAULT_PRES: PresState = {
-  title: "Nouvelle présentation",
-  slides: [{
-    id: 1, title: "Démarrer",
-    script: "Cliquez sur Importer PPTX pour charger votre présentation.\n\nVos slides, scripts et notes du présentateur seront extraits automatiquement.\n\nDouble-cliquez sur le texte pour l'éditer manuellement.",
-    notes: "Importez un fichier .pptx ou saisissez votre contenu directement.", kpis: [],
-  }],
+/**
+ * Présentation de démonstration : le prompteur est utilisable dès l'ouverture,
+ * sans importer de PPTX. Le bouton « Démo » de la barre permet d'y revenir.
+ * Fournie en FR et en EN ; la version chargée suit la locale active au premier
+ * chargement (et au clic sur « Démo »). Une présentation déjà persistée en
+ * localStorage est du contenu utilisateur : elle n'est jamais retraduite.
+ */
+const DEFAULT_PRES_FR: PresState = {
+  title: "Revue trimestrielle T2 2026 — Direction commerciale",
+  slides: [
+    {
+      id: 1, title: "Ouverture & ordre du jour",
+      script: "## Bienvenue\n\nMerci à tous d'être là. Cette revue couvre le deuxième trimestre 2026 : résultats, pipeline, et les deux décisions à prendre aujourd'hui.\n\n- Résultats T2 et écarts vs objectif\n- Pipeline T3 et risques\n- Décision : ouverture du marché belge\n- Décision : renfort de l'équipe grands comptes",
+      notes: "Tenir l'ouverture en 2 minutes maximum. Annoncer que les questions sont prises au fil de l'eau.",
+      kpis: ["Durée cible : 45 min", "2 décisions attendues"],
+    },
+    {
+      id: 2, title: "Résultats T2 — chiffre d'affaires",
+      script: "## CA T2 : 2,41 M€, +9 % vs T1\n\nNous terminons le trimestre à **2,41 M€**, soit 104 % de l'objectif.\n\n- Moteur principal : les renouvellements grands comptes (+18 %)\n- Le mid-market est en retrait de 6 % — concurrence agressive sur les prix\n- Panier moyen en hausse : 11 400 € (+700 €)\n\nInsister : la croissance vient de la base installée, pas de l'acquisition.",
+      notes: "Si question sur le mid-market : le plan de riposte pricing est au slide 4.",
+      kpis: ["CA : 2,41 M€", "Objectif : 104 %", "Panier moyen : 11 400 €"],
+    },
+    {
+      id: 3, title: "Pipeline T3",
+      script: "## Pipeline pondéré : 3,2 M€\n\nLe pipeline entrant en T3 est solide mais concentré.\n\n- 3,2 M€ pondérés, dont **40 % sur 3 comptes** (Nordis, ACME, Globex)\n- Cycle de vente moyen : 74 jours (stable)\n- Risque : la signature Nordis (620 k€) peut glisser en T4\n\n- [ ] Valider le plan de couverture des 3 comptes clés avec chaque responsable",
+      notes: "Ne pas donner le détail des remises en séance — renvoyer au comité pricing.",
+      kpis: ["Pipeline : 3,2 M€", "Top 3 : 40 %", "Cycle : 74 j"],
+    },
+    {
+      id: 4, title: "Décision 1 — Marché belge",
+      script: "## Ouverture Belgique : go / no-go\n\nProposition : ouvrir la Belgique au T4 avec un binôme ventes + avant-vente.\n\n- Investissement année 1 : **180 k€**\n- Point mort estimé : 14 mois\n- 9 prospects entrants belges non adressés ce trimestre\n\nDemander un vote à main levée après les deux questions prévues.",
+      notes: "Le DAF a validé le budget sous réserve d'un point mort < 18 mois. L'avoir en tête si objection.",
+      kpis: ["Budget : 180 k€", "Point mort : 14 mois", "9 prospects en attente"],
+    },
+    {
+      id: 5, title: "Décision 2 — Renfort grands comptes",
+      script: "## Recruter un 4ᵉ responsable grands comptes\n\nLa charge actuelle dépasse le seuil cible.\n\n- 31 comptes actifs pour 3 responsables (cible : 8 par personne)\n- 2 renouvellements majeurs ont glissé faute de disponibilité\n- Coût chargé : 95 k€/an, financé par l'enveloppe vacante\n\n- [ ] Lancer le recrutement la semaine prochaine si accord",
+      notes: "Si la question du télétravail revient, la politique ne change pas ce trimestre.",
+      kpis: ["31 comptes / 3 RGC", "Coût : 95 k€/an"],
+    },
+    {
+      id: 6, title: "Conclusion & prochaines étapes",
+      script: "## En synthèse\n\nUn T2 au-dessus de l'objectif, un T3 qui dépend de 3 signatures, deux décisions actées aujourd'hui.\n\n- Envoi du compte rendu et des décisions sous 48 h\n- Revue pipeline hebdomadaire à partir de lundi\n- Prochaine revue trimestrielle : 18 septembre\n\nRemercier l'équipe — le trimestre a été dense.",
+      notes: "Conclure en moins de 3 minutes. Vérifier que les deux décisions sont bien actées au compte rendu.",
+      kpis: ["CR sous 48 h", "Prochaine revue : 18/09"],
+    },
+  ],
 };
+
+const DEFAULT_PRES_EN: PresState = {
+  title: "Q2 2026 Quarterly Review — Sales Leadership",
+  slides: [
+    {
+      id: 1, title: "Opening & agenda",
+      script: "## Welcome\n\nThank you all for being here. This review covers the second quarter of 2026: results, pipeline, and the two decisions to be made today.\n\n- Q2 results and variance vs target\n- Q3 pipeline and risks\n- Decision: opening the Belgian market\n- Decision: strengthening the key accounts team",
+      notes: "Keep the opening under 2 minutes. Announce that questions are taken as they come.",
+      kpis: ["Target duration: 45 min", "2 decisions expected"],
+    },
+    {
+      id: 2, title: "Q2 results — revenue",
+      script: "## Q2 revenue: €2.41M, +9% vs Q1\n\nWe close the quarter at **€2.41M**, i.e. 104% of target.\n\n- Main driver: key account renewals (+18%)\n- Mid-market down 6% — aggressive price competition\n- Average deal size up: €11,400 (+€700)\n\nEmphasize: growth comes from the installed base, not from new acquisition.",
+      notes: "If asked about the mid-market: the pricing response plan is on slide 4.",
+      kpis: ["Revenue: €2.41M", "Target: 104%", "Avg deal: €11,400"],
+    },
+    {
+      id: 3, title: "Q3 pipeline",
+      script: "## Weighted pipeline: €3.2M\n\nThe pipeline entering Q3 is solid but concentrated.\n\n- €3.2M weighted, including **40% on 3 accounts** (Nordis, ACME, Globex)\n- Average sales cycle: 74 days (stable)\n- Risk: the Nordis signature (€620k) may slip to Q4\n\n- [ ] Validate the coverage plan for the 3 key accounts with each owner",
+      notes: "Do not share discount details in the meeting — refer to the pricing committee.",
+      kpis: ["Pipeline: €3.2M", "Top 3: 40%", "Cycle: 74 days"],
+    },
+    {
+      id: 4, title: "Decision 1 — Belgian market",
+      script: "## Belgium launch: go / no-go\n\nProposal: open Belgium in Q4 with a sales + pre-sales duo.\n\n- Year-1 investment: **€180k**\n- Estimated break-even: 14 months\n- 9 inbound Belgian prospects left unaddressed this quarter\n\nAsk for a show of hands after the two planned questions.",
+      notes: "The CFO approved the budget provided break-even stays under 18 months. Keep that in mind if challenged.",
+      kpis: ["Budget: €180k", "Break-even: 14 months", "9 prospects waiting"],
+    },
+    {
+      id: 5, title: "Decision 2 — Key accounts reinforcement",
+      script: "## Hire a 4th key account manager\n\nThe current workload exceeds the target threshold.\n\n- 31 active accounts for 3 managers (target: 8 per person)\n- 2 major renewals slipped for lack of availability\n- Fully loaded cost: €95k/year, funded by the vacant headcount budget\n\n- [ ] Launch the recruitment next week if approved",
+      notes: "If the remote-work question comes up again, the policy does not change this quarter.",
+      kpis: ["31 accounts / 3 KAMs", "Cost: €95k/yr"],
+    },
+    {
+      id: 6, title: "Conclusion & next steps",
+      script: "## In summary\n\nA Q2 above target, a Q3 that hinges on 3 signatures, two decisions made today.\n\n- Minutes and decisions sent within 48 hours\n- Weekly pipeline review starting Monday\n- Next quarterly review: September 18\n\nThank the team — it has been an intense quarter.",
+      notes: "Wrap up in under 3 minutes. Make sure both decisions are recorded in the minutes.",
+      kpis: ["Minutes within 48h", "Next review: Sep 18"],
+    },
+  ],
+};
+
+const defaultPresFor = (locale: "fr" | "en"): PresState => (locale === "en" ? DEFAULT_PRES_EN : DEFAULT_PRES_FR);
 
 const STORAGE_KEYS = { pres: "bpm-monitor-pres", cur: "bpm-monitor-cur", logged: "bpm-monitor-logged" };
 
-function loadPres(): PresState {
-  if (typeof window === "undefined") return DEFAULT_PRES;
+function loadPres(locale: "fr" | "en"): PresState {
+  const fallback = defaultPresFor(locale);
+  if (typeof window === "undefined") return fallback;
   try {
     const raw = localStorage.getItem(STORAGE_KEYS.pres);
-    if (!raw) return DEFAULT_PRES;
+    if (!raw) return fallback;
     const parsed = JSON.parse(raw) as PresState;
-    if (!parsed?.title || !Array.isArray(parsed?.slides) || parsed.slides.length === 0) return DEFAULT_PRES;
+    if (!parsed?.title || !Array.isArray(parsed?.slides) || parsed.slides.length === 0) return fallback;
     return parsed;
   } catch {
-    return DEFAULT_PRES;
+    return fallback;
   }
 }
 
@@ -231,7 +424,14 @@ function loadLogged(): { question: string; answer: string; slide_title: string }
 
 // ─── MAIN COMPONENT ───────────────────────────────────────────────────────────
 export default function Monitor() {
-  const [pres, setPres] = useState<PresState>(loadPres);
+  // Locale active (chrome de l'outil + présentation de démo au premier chargement).
+  // Composant rendu en ssr:false : la locale est connue dès le premier rendu, donc
+  // l'initialisation lazy du state peut directement choisir la bonne version de la
+  // démo quand rien n'est persisté en localStorage. Une présentation persistée est
+  // du contenu utilisateur : elle n'est jamais retraduite au changement de langue.
+  const { locale } = useI18n();
+  const S = MSTR[locale] ?? MSTR.fr;
+  const [pres, setPres] = useState<PresState>(() => loadPres(locale));
   const [cur, setCur] = useState(loadCur);
   const [tab, setTab] = useState("script");
 
@@ -392,7 +592,7 @@ export default function Monitor() {
       });
       setCur(0); setLogged([]);
       setAiResp(""); setTResp(""); setSumResp("");
-    } catch (e) { alert(`Erreur import : ${e instanceof Error ? e.message : String(e)}`); }
+    } catch (e) { alert(`${S.importError} ${e instanceof Error ? e.message : String(e)}`); }
     finally { setImporting(false); }
   };
 
@@ -455,10 +655,10 @@ export default function Monitor() {
   }, [next, prev, qInput, logged, slides]);
 
   const TABS = [
-    { id:"script",    label:"Script",   icon:"📋" },
-    { id:"ai",        label:"Questions IA", icon:"🧠", badge: logged.length },
-    { id:"translate", label:"Trad.",    icon:"🌐" },
-    { id:"summary",   label:"Résumé",   icon:"📊" },
+    { id:"script",    label:S.tabs.script,    icon:"📋" },
+    { id:"ai",        label:S.tabs.ai,        icon:"🧠", badge: logged.length },
+    { id:"translate", label:S.tabs.translate, icon:"🌐" },
+    { id:"summary",   label:S.tabs.summary,   icon:"📊" },
   ];
 
   // ── MINIMIZED PILL ──
@@ -495,7 +695,7 @@ export default function Monitor() {
 
       {/* Simulated Teams bg */}
       <div style={{ position:"fixed", inset:0, background:"linear-gradient(135deg,#e8eef5,#d6e4f0)", display:"flex", alignItems:"center", justifyContent:"center", color:"#b0bec5", fontSize:"13px", fontFamily:T.font, letterSpacing:".05em", userSelect:"none" }}>
-        ← Fenêtre Teams visible ici →
+        {S.teamsBg}
       </div>
 
       {/* ── OVERLAY PANEL (déplaçable par la barre de titre) ── */}
@@ -531,8 +731,8 @@ export default function Monitor() {
             onTouchStart={onHeaderTouchStart}
             onKeyDown={(e) => { if (e.key === "Enter" || e.key === " ") e.preventDefault(); }}
             style={{ display:"flex", alignItems:"center", gap:"8px", cursor:"move", userSelect:"none", touchAction:"none", flexShrink:0, whiteSpace:"nowrap" }}
-            title="Glisser pour déplacer le panneau"
-            aria-label="Déplacer le panneau"
+            title={S.dragTitle}
+            aria-label={S.dragAria}
           >
             <BpmLogo size={20}/>
             <span style={{ fontWeight:700, fontSize:"14px", letterSpacing:"-0.01em", whiteSpace:"nowrap" }}>
@@ -544,21 +744,25 @@ export default function Monitor() {
             {/* Import PPTX */}
             <input ref={fileRef} type="file" accept=".pptx" style={{ display:"none" }} onChange={async e => { const f=e.target.files?.[0]; if(f){await handleImport(f); e.target.value="";} }}/>
             <Btn onClick={() => fileRef.current?.click()} disabled={importing} variant="outline" size="sm">
-              {importing ? <><Spinner size={12}/> Import…</> : "↑ PPTX"}
+              {importing ? <><Spinner size={12}/> {S.importing}</> : "↑ PPTX"}
+            </Btn>
+            {/* Présentation de démonstration embarquée (version de la locale active) */}
+            <Btn onClick={() => { setPres(defaultPresFor(locale)); setCur(0); }} disabled={importing} variant="ghost" size="sm">
+              {S.demo}
             </Btn>
             {/* Slide counter */}
             <Badge label={`${cur+1} / ${slides.length}`} variant="neutral"/>
             {/* Transparence du fond (réglable en live) */}
-            <button onClick={() => setShowOpacityPanel(s => !s)} className="bpm-hover-gray" title="Transparence du fond"
+            <button onClick={() => setShowOpacityPanel(s => !s)} className="bpm-hover-gray" title={S.opacityTooltip}
               style={{ background: showOpacityPanel ? "rgba(0,163,224,0.1)" : "none", border:`1px solid ${showOpacityPanel ? T.cyan : T.border}`, color: showOpacityPanel ? T.cyan : T.muted, borderRadius:T.radius, width:"26px", height:"26px", cursor:"pointer", fontSize:"12px", fontFamily:T.font, display:"flex", alignItems:"center", justifyContent:"center" }}>◐</button>
             {/* Clé API Claude */}
-            <button onClick={() => setShowApiKeyPanel(s => !s)} className="bpm-hover-gray" title="Clé API Claude"
+            <button onClick={() => setShowApiKeyPanel(s => !s)} className="bpm-hover-gray" title={S.apiKeyTooltip}
               style={{ background: showApiKeyPanel ? "rgba(0,163,224,0.1)" : "none", border:`1px solid ${showApiKeyPanel ? T.cyan : T.border}`, color: showApiKeyPanel ? T.cyan : T.muted, borderRadius:T.radius, width:"26px", height:"26px", cursor:"pointer", fontSize:"12px", fontFamily:T.font, display:"flex", alignItems:"center", justifyContent:"center" }}>🔑</button>
             {/* Shortcuts */}
-            <button onClick={() => setShowKeys(s => !s)} className="bpm-hover-gray"
+            <button onClick={() => setShowKeys(s => !s)} className="bpm-hover-gray" title={S.shortcutsTooltip}
               style={{ background:"none", border:`1px solid ${T.border}`, color:T.muted, borderRadius:T.radius, width:"26px", height:"26px", cursor:"pointer", fontSize:"12px", fontFamily:T.font, display:"flex", alignItems:"center", justifyContent:"center" }}>?</button>
             {/* Minimize */}
-            <button onClick={() => setMini(true)} className="bpm-hover-gray"
+            <button onClick={() => setMini(true)} className="bpm-hover-gray" title={S.minimizeTooltip}
               style={{ background:"none", border:`1px solid ${T.border}`, color:T.muted, borderRadius:T.radius, width:"26px", height:"26px", cursor:"pointer", display:"flex", alignItems:"center", justifyContent:"center", fontSize:"15px" }}>_</button>
           </div>
         </div>
@@ -566,34 +770,34 @@ export default function Monitor() {
         {/* Transparence du fond (réglable en live depuis la fenêtre principale) */}
         {showOpacityPanel && (
           <div style={{ background:T.bgCard, borderBottom:`1px solid ${T.border}`, padding:"10px 14px", animation:"bpm-in .15s ease" }}>
-            <div style={{ fontSize:"11px", fontWeight:600, color:T.muted, textTransform:"uppercase", letterSpacing:".06em", marginBottom:"6px" }}>Transparence du fond</div>
+            <div style={{ fontSize:"11px", fontWeight:600, color:T.muted, textTransform:"uppercase", letterSpacing:".06em", marginBottom:"6px" }}>{S.opacityPanelTitle}</div>
             <div style={{ display:"flex", alignItems:"center", gap:"10px" }}>
               <input type="range" min="50" max="95" step="5" value={Math.round(panelOpacity * 100)}
                 onChange={e => setPanelOpacity(Math.round(Number(e.target.value)) / 100)}
                 style={{ flex:1, accentColor:T.cyan, cursor:"pointer" }}
-                title="Opacité du panneau (50–95 %)"
+                title={S.opacitySliderTitle}
               />
               <span style={{ fontSize:"12px", fontFamily:T.mono, color:T.fg, minWidth:"36px" }}>{Math.round(panelOpacity * 100)} %</span>
             </div>
-            <div style={{ fontSize:"10px", color:T.muted, marginTop:"4px" }}>Réglage en direct · 50–95 % (CDC)</div>
+            <div style={{ fontSize:"10px", color:T.muted, marginTop:"4px" }}>{S.opacityHint}</div>
           </div>
         )}
 
         {/* Clé API Claude (paramétrable) */}
         {showApiKeyPanel && (
           <div style={{ background:T.bgCard, borderBottom:`1px solid ${T.border}`, padding:"10px 14px", animation:"bpm-in .15s ease" }}>
-            <div style={{ fontSize:"11px", fontWeight:600, color:T.muted, textTransform:"uppercase", letterSpacing:".06em", marginBottom:"6px" }}>Clé API Claude (Anthropic)</div>
+            <div style={{ fontSize:"11px", fontWeight:600, color:T.muted, textTransform:"uppercase", letterSpacing:".06em", marginBottom:"6px" }}>{S.apiKeyPanelTitle}</div>
             <input type="password" value={apiKey} onChange={e => setApiKey(e.target.value)} placeholder="sk-ant-..."
               style={{ width:"100%", padding:"8px 10px", border:`1px solid ${T.border}`, borderRadius:T.radius, fontSize:"12px", fontFamily:T.mono, color:T.fg, background:T.bg }}
-              title="Saisie stockée localement (localStorage). Utilisée pour Q&R IA, traduction et résumé." />
-            <div style={{ fontSize:"10px", color:T.muted, marginTop:"4px" }}>Stockée localement · utilisée pour l’IA</div>
+              title={S.apiKeyInputTitle} />
+            <div style={{ fontSize:"10px", color:T.muted, marginTop:"4px" }}>{S.apiKeyHint}</div>
           </div>
         )}
 
         {/* Alerte service prompteur indisponible */}
         {prompteurStatus === "error" && (
           <div style={{ background: "rgba(220,38,38,0.08)", borderBottom: "1px solid rgba(220,38,38,0.25)", padding: "8px 14px", fontSize: "12px", color: "var(--bpm-text-primary)" }}>
-            <strong style={{ color: "var(--bpm-danger, #dc2626)" }}>Service prompteur indisponible.</strong> L&apos;import PPTX et les réponses IA peuvent ne pas fonctionner. Vérifiez que le service tourne sur le serveur (PM2 : prompteur-api).
+            <strong style={{ color: "var(--bpm-danger, #dc2626)" }}>{S.serviceDown}</strong> {S.serviceDownDetail}
           </div>
         )}
 
@@ -601,7 +805,7 @@ export default function Monitor() {
         {showKeys && (
           <div style={{ background:T.bgCard, borderBottom:`1px solid ${T.border}`, padding:"10px 14px", animation:"bpm-in .15s ease" }}>
             <div style={{ display:"grid", gridTemplateColumns:"auto 1fr", gap:"4px 16px", fontSize:"12px" }}>
-              {[["→ / Espace","Slide suivante"],["←","Slide précédente"],["Q","Focus Questions IA"],["T","Focus Traduction"],["S","Générer résumé"],["H / Échap","Masquer l'overlay"]].map(([k,v]) => (
+              {S.shortcuts.map(([k,v]) => (
                 <>
                   <kbd key={k+"k"} style={{ fontFamily:T.mono, background:T.bleu, color:"#fff", padding:"1px 7px", borderRadius:"4px", fontSize:"11px", fontWeight:500, display:"inline-block", textAlign:"center" }}>{k}</kbd>
                   <span key={k+"v"} style={{ color:T.fg, display:"flex", alignItems:"center" }}>{v}</span>
@@ -651,7 +855,7 @@ export default function Monitor() {
                 />
               ) : (
                 <div onDoubleClick={() => setEditing(true)}
-                  title="Double-cliquez pour éditer"
+                  title={S.editHint}
                   style={{ color:T.fg, fontSize:"13.5px", lineHeight:"1.75", fontFamily:T.font, marginBottom:"10px", whiteSpace:"pre-line", padding:"12px 14px", background:T.bgCard, borderRadius:T.radius, border:`1px solid ${T.border}`, cursor:"text" }}>
                   {slide.script}
                 </div>
@@ -659,21 +863,21 @@ export default function Monitor() {
 
               <div style={{ display:"flex", gap:"8px", marginBottom:"14px" }}>
                 <Btn onClick={() => setEditing(e => !e)} variant="ghost" size="sm">
-                  {editing ? "✓ Valider" : "✎ Éditer"}
+                  {editing ? S.editDone : S.editBtn}
                 </Btn>
               </div>
 
               {/* Note — bpm.panel info */}
               {slide.notes && (
-                <Panel variant="info" title="Note présentateur">
+                <Panel variant="info" title={S.presenterNote}>
                   {slide.notes}
                 </Panel>
               )}
 
               {/* Navigation */}
               <div style={{ display:"flex", gap:"8px", marginTop:"4px" }}>
-                <Btn onClick={prev} disabled={cur===0} variant="secondary" size="md" fullWidth>← Précédente</Btn>
-                <Btn onClick={next} disabled={cur===slides.length-1} variant="primary" size="md" fullWidth>Suivante →</Btn>
+                <Btn onClick={prev} disabled={cur===0} variant="secondary" size="md" fullWidth>{S.prevBtn}</Btn>
+                <Btn onClick={next} disabled={cur===slides.length-1} variant="primary" size="md" fullWidth>{S.nextBtn}</Btn>
               </div>
             </div>
           )}
@@ -682,7 +886,7 @@ export default function Monitor() {
           {tab === "ai" && (
             <div style={{ animation:"bpm-in .2s ease" }}>
               <div style={{ fontSize:"12px", color:T.muted, marginBottom:"10px" }}>
-                Contexte : <span style={{ color:T.bleu, fontWeight:600 }}>{slide.title}</span>
+                {S.contextLabel} <span style={{ color:T.bleu, fontWeight:600 }}>{slide.title}</span>
               </div>
 
               <div style={{ display:"flex", gap:"8px", marginBottom:"10px" }}>
@@ -696,23 +900,23 @@ export default function Monitor() {
 
               <Textarea ref={qRef} value={qInput} onChange={e => setQInput(e.target.value)}
                 onKeyDown={e => { if(e.key==="Enter"&&!e.shiftKey){e.preventDefault();suggest();} }}
-                placeholder="Question reçue en visio… (Entrée pour envoyer)" rows={3}
+                placeholder={S.qPlaceholder} rows={3}
               />
               <Btn onClick={suggest} disabled={!qInput.trim()} loading={loadAI} variant="primary" fullWidth>
-                Suggérer une réponse ↵
+                {S.suggestBtn}
               </Btn>
 
               {(aiResp || aiErr) && (
                 <div style={{ background:T.bgCard, border:`1px solid ${T.border}`, borderRadius:T.radius, padding:"12px", marginBottom:"14px", marginTop:"4px" }}>
-                  <div style={{ fontSize:"10px", fontWeight:600, color:T.muted, textTransform:"uppercase", letterSpacing:".06em", marginBottom:"8px" }}>Réponse suggérée</div>
-                  <StreamOutput text={aiResp} loading={loadAI} error={aiErr}/>
+                  <div style={{ fontSize:"10px", fontWeight:600, color:T.muted, textTransform:"uppercase", letterSpacing:".06em", marginBottom:"8px" }}>{S.suggestedAnswer}</div>
+                  <StreamOutput text={aiResp} loading={loadAI} error={aiErr} loadingLabel={S.generating}/>
                 </div>
               )}
 
               {logged.length > 0 && (
                 <div>
                   <div style={{ fontSize:"10px", fontWeight:600, color:T.muted, textTransform:"uppercase", letterSpacing:".06em", marginBottom:"8px", marginTop:"4px" }}>
-                    Questions loggées ({logged.length})
+                    {S.loggedQuestions} ({logged.length})
                   </div>
                   {logged.map((l, i) => (
                     <div key={i} className="bpm-hover-row"
@@ -744,15 +948,15 @@ export default function Monitor() {
 
               <Textarea ref={tRef} value={tInput} onChange={e => setTInput(e.target.value)}
                 onKeyDown={e => { if(e.key==="Enter"&&!e.shiftKey){e.preventDefault();doTranslate();} }}
-                placeholder={tDir==="fr_to_en" ? "Texte en français…" : "Text in English…"} rows={4}
+                placeholder={tDir==="fr_to_en" ? S.trPlaceholderFrEn : S.trPlaceholderEnFr} rows={4}
               />
               <Btn onClick={doTranslate} disabled={!tInput.trim()} loading={loadT} variant="primary" fullWidth>
-                Traduire ↵
+                {S.translateBtn}
               </Btn>
 
               {(tResp || tErr) && (
                 <div style={{ background:T.bgCard, border:`1px solid ${T.border}`, borderRadius:T.radius, padding:"12px", marginTop:"4px" }}>
-                  <StreamOutput text={tResp} loading={loadT} error={tErr}/>
+                  <StreamOutput text={tResp} loading={loadT} error={tErr} loadingLabel={S.generating}/>
                 </div>
               )}
             </div>
@@ -762,19 +966,19 @@ export default function Monitor() {
           {tab === "summary" && (
             <div style={{ animation:"bpm-in .2s ease" }}>
               <Btn onClick={summarize} loading={loadSum} variant="primary" fullWidth>
-                Générer le résumé post-séance [S]
+                {S.summaryBtn}
               </Btn>
 
               {(sumResp || sumErr) && (
                 <div style={{ background:T.bgCard, border:`1px solid ${T.border}`, borderRadius:T.radius, padding:"12px", marginBottom:"10px", marginTop:"4px" }}>
-                  <StreamOutput text={sumResp} loading={loadSum} error={sumErr}/>
+                  <StreamOutput text={sumResp} loading={loadSum} error={sumErr} loadingLabel={S.generating}/>
                 </div>
               )}
 
               {sumResp && (
                 <Btn onClick={() => { navigator.clipboard.writeText(sumResp.replace(/<[^>]+>/g,"")); setCopied(true); setTimeout(()=>setCopied(false),2000); }}
                   variant={copied ? "outline" : "secondary"} fullWidth>
-                  {copied ? "✓ Copié !" : "Copier le résumé"}
+                  {copied ? S.copied : S.copyBtn}
                 </Btn>
               )}
 
@@ -782,13 +986,13 @@ export default function Monitor() {
                 /* bpm.emptystate */
                 <div style={{ textAlign:"center", padding:"28px 16px", background:T.bgCard, borderRadius:T.radius, border:`1px solid ${T.border}`, marginTop:"4px" }}>
                   <div style={{ fontSize:"28px", marginBottom:"10px" }}>📊</div>
-                  <div style={{ fontWeight:600, color:T.fg, marginBottom:"6px", fontSize:"14px" }}>Résumé post-séance</div>
+                  <div style={{ fontWeight:600, color:T.fg, marginBottom:"6px", fontSize:"14px" }}>{S.emptyTitle}</div>
                   <div style={{ color:T.muted, fontSize:"13px", lineHeight:"1.7" }}>
-                    Appuyez sur <kbd style={{ background:T.bleu, color:"#fff", padding:"1px 7px", borderRadius:"4px", fontSize:"12px", fontFamily:T.mono }}>S</kbd> pour générer le compte-rendu avec actions de suivi.
+                    {S.emptyBefore} <kbd style={{ background:T.bleu, color:"#fff", padding:"1px 7px", borderRadius:"4px", fontSize:"12px", fontFamily:T.mono }}>S</kbd> {S.emptyAfter}
                   </div>
                   {logged.length > 0 && (
                     <div style={{ marginTop:"12px" }}>
-                      <Badge label={`${logged.length} question${logged.length>1?"s":""} loggée${logged.length>1?"s":""} ✓`} variant="success"/>
+                      <Badge label={S.loggedBadge(logged.length)} variant="success"/>
                     </div>
                   )}
                 </div>
