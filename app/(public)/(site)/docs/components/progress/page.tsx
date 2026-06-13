@@ -4,11 +4,54 @@ import { useState } from "react";
 import Link from "next/link";
 import { Progress, CodeBlock } from "@/components/bpm";
 import { getPrevNext } from "@/lib/docPages";
+import { useI18n } from "@/lib/i18n/LocaleProvider";
 
 export default function DocProgressPage() {
+  const { locale } = useI18n();
+  const fr = {
+    breadcrumb: "Composants",
+    description: "Barre de progression avec valeur, maximum optionnel et affichage du pourcentage.",
+    category: "Affichage de données",
+    labelPlaceholder: "ex. Avancement",
+    showValueTrue: "true (afficher %)",
+    copy: "Copier",
+    head: { prop: "Prop", type: "Type", def: "Défaut", req: "Requis", desc: "Description" },
+    no: "Non",
+    rows: {
+      value: "Valeur courante (avancement).",
+      max: "Valeur maximale (pourcentage = value / max × 100).",
+      label: "Libellé affiché au-dessus de la barre.",
+      showValue: "Afficher le pourcentage à droite.",
+      className: "Classes CSS additionnelles.",
+    },
+    examples: "Exemples",
+    demoLabel: "Avancement",
+  };
+  const en: typeof fr = {
+    breadcrumb: "Components",
+    description: "Progress bar with a value, optional maximum and percentage display.",
+    category: "Data display",
+    labelPlaceholder: "e.g. Progress",
+    showValueTrue: "true (show %)",
+    copy: "Copy",
+    head: { prop: "Prop", type: "Type", def: "Default", req: "Required", desc: "Description" },
+    no: "No",
+    rows: {
+      value: "Current value (progress).",
+      max: "Maximum value (percentage = value / max × 100).",
+      label: "Label shown above the bar.",
+      showValue: "Show the percentage on the right.",
+      className: "Additional CSS classes.",
+    },
+    examples: "Examples",
+    demoLabel: "Progress",
+  };
+  const L = { fr, en } as const;
+  const t = L[locale];
+
   const [value, setValue] = useState(65);
   const [max, setMax] = useState(100);
-  const [label, setLabel] = useState("Avancement");
+  const [label, setLabel] = useState(t.demoLabel);
   const [showValue, setShowValue] = useState(true);
 
   const pythonCode =
@@ -22,15 +65,13 @@ export default function DocProgressPage() {
     <div className="doc-page">
       <div className="doc-page-header">
         <div className="doc-breadcrumb">
-          <Link href="/docs/components">Composants</Link> → bpm.progress
+          <Link href="/docs/components">{t.breadcrumb}</Link> → bpm.progress
         </div>
         <h1>bpm.progress</h1>
-        <p className="doc-description">
-          Barre de progression avec valeur, maximum optionnel et affichage du pourcentage.
-        </p>
+        <p className="doc-description">{t.description}</p>
         <div className="doc-meta">
           <span className="doc-badge doc-badge-stable">Stable</span>
-          <span className="doc-badge doc-badge-category">Affichage de données</span>
+          <span className="doc-badge doc-badge-category">{t.category}</span>
           <span className="doc-reading-time">⏱ 2 min</span>
         </div>
       </div>
@@ -72,13 +113,13 @@ export default function DocProgressPage() {
               type="text"
               value={label}
               onChange={(e) => setLabel(e.target.value)}
-              placeholder="ex. Avancement"
+              placeholder={t.labelPlaceholder}
             />
           </div>
           <div className="sandbox-control-group">
             <label>showValue</label>
             <select value={showValue ? "true" : "false"} onChange={(e) => setShowValue(e.target.value === "true")}>
-              <option value="true">true (afficher %)</option>
+              <option value="true">{t.showValueTrue}</option>
               <option value="false">false</option>
             </select>
           </div>
@@ -87,7 +128,7 @@ export default function DocProgressPage() {
           <div className="sandbox-code-header">
             <span>Python</span>
             <button type="button" onClick={() => navigator.clipboard.writeText(pythonCode)}>
-              Copier
+              {t.copy}
             </button>
           </div>
           <pre><code>{pythonCode}</code></pre>
@@ -97,11 +138,11 @@ export default function DocProgressPage() {
       <table className="props-table">
         <thead>
           <tr>
-            <th>Prop</th>
-            <th>Type</th>
-            <th>Défaut</th>
-            <th>Requis</th>
-            <th>Description</th>
+            <th>{t.head.prop}</th>
+            <th>{t.head.type}</th>
+            <th>{t.head.def}</th>
+            <th>{t.head.req}</th>
+            <th>{t.head.desc}</th>
           </tr>
         </thead>
         <tbody>
@@ -109,41 +150,41 @@ export default function DocProgressPage() {
             <td><code>value</code></td>
             <td><code>number</code></td>
             <td>0</td>
-            <td>Non</td>
-            <td>Valeur courante (avancement).</td>
+            <td>{t.no}</td>
+            <td>{t.rows.value}</td>
           </tr>
           <tr>
             <td><code>max</code></td>
             <td><code>number</code></td>
             <td>1</td>
-            <td>Non</td>
-            <td>Valeur maximale (pourcentage = value / max × 100).</td>
+            <td>{t.no}</td>
+            <td>{t.rows.max}</td>
           </tr>
           <tr>
             <td><code>label</code></td>
             <td><code>string | null</code></td>
             <td>null</td>
-            <td>Non</td>
-            <td>Libellé affiché au-dessus de la barre.</td>
+            <td>{t.no}</td>
+            <td>{t.rows.label}</td>
           </tr>
           <tr>
             <td><code>showValue</code></td>
             <td><code>boolean</code></td>
             <td>true</td>
-            <td>Non</td>
-            <td>Afficher le pourcentage à droite.</td>
+            <td>{t.no}</td>
+            <td>{t.rows.showValue}</td>
           </tr>
           <tr>
             <td><code>className</code></td>
             <td><code>string</code></td>
             <td>—</td>
-            <td>Non</td>
-            <td>Classes CSS additionnelles.</td>
+            <td>{t.no}</td>
+            <td>{t.rows.className}</td>
           </tr>
         </tbody>
       </table>
 
-      <h2 className="text-lg font-semibold mt-8 mb-2">Exemples</h2>
+      <h2 className="text-lg font-semibold mt-8 mb-2">{t.examples}</h2>
       <CodeBlock code={'bpm.progress(value=50, max=100)\nbpm.progress(value=0.65, max=1, label="Avancement")'} language="python" />
       <CodeBlock code={'bpm.progress(value=8, max=10, label="Étapes", show_value=True)'} language="python" />
 
