@@ -3,15 +3,12 @@
 import { useState, useEffect, useRef, useCallback } from "react";
 import Link from "next/link";
 import { Button, Spinner } from "@/components/bpm";
+import { useI18n } from "@/lib/i18n/LocaleProvider";
+import { STR } from "./strings";
 
-const DURATIONS = [
-  { value: 0, label: "Éteint" },
-  { value: 5, label: "5 min" },
-  { value: 15, label: "15 min" },
-  { value: 30, label: "30 min" },
-  { value: 60, label: "1 h" },
-  { value: -1, label: "Indéfini" },
-] as const;
+// Sentinel stocké dans l'état d'erreur quand l'exception n'a pas de message :
+// résolu en chaîne localisée au rendu (évite de lier requestWakeLock à la locale).
+const WAKE_LOCK_ERROR_FALLBACK = "__wake_lock_error_fallback__";
 
 function formatRemaining(seconds: number): string {
   const m = Math.floor(seconds / 60);
@@ -20,6 +17,8 @@ function formatRemaining(seconds: number): string {
 }
 
 export default function KeepScreenOnPage() {
+  const { locale } = useI18n();
+  const str = STR[locale];
   const [supported, setSupported] = useState<boolean | null>(null);
   const [durationChoice, setDurationChoice] = useState<number>(0); // 0 = off by default, -1 = indefinite
   const [active, setActive] = useState(false);
@@ -59,7 +58,7 @@ export default function KeepScreenOnPage() {
       setActive(true);
       return true;
     } catch (e) {
-      const msg = e instanceof Error ? e.message : "Impossible d'activer le maintien de l'écran.";
+      const msg = e instanceof Error ? e.message : WAKE_LOCK_ERROR_FALLBACK;
       setError(msg);
       setActive(false);
       return false;
@@ -137,17 +136,17 @@ export default function KeepScreenOnPage() {
     <div className="doc-page">
       <div className="doc-page-header mb-6">
         <nav className="doc-breadcrumb">
-          <Link href="/modules" style={{ color: "var(--bpm-accent-cyan)" }}>Modules</Link> →{" "}
-          <Link href="/modules/keep-screen-on" style={{ color: "var(--bpm-accent-cyan)" }}>Keep screen on</Link>
+          <Link href="/modules" style={{ color: "var(--bpm-accent-cyan)" }}>{str.breadcrumbModules}</Link> →{" "}
+          <Link href="/modules/keep-screen-on" style={{ color: "var(--bpm-accent-cyan)" }}>{str.moduleName}</Link>
         </nav>
         <h1 className="text-2xl font-bold" style={{ color: "var(--bpm-text-primary)" }}>
-          Keep Screen On
+          {str.pageTitle}
         </h1>
         <p className="doc-description mt-1" style={{ color: "var(--bpm-text-secondary)" }}>
-          Gardez l&apos;écran allumé pendant une présentation, une réunion ou une lecture. Choisissez une durée ou indéfini.
+          {str.pageDescription}
         </p>
         <div className="doc-meta mt-2">
-          <span className="doc-badge doc-badge-category">Module</span>
+          <span className="doc-badge doc-badge-category">{str.badgeCategory}</span>
         </div>
       </div>
 
@@ -160,34 +159,34 @@ export default function KeepScreenOnPage() {
           style={{ borderColor: "var(--bpm-border)", background: "var(--bpm-sidebar-bg)" }}
         >
           <span className="text-sm font-medium" style={{ color: "var(--bpm-text-primary)" }}>
-            Durée d&apos;écran allumé
+            {str.panelTitle}
           </span>
           <Link
             href="/modules/keep-screen-on/documentation"
             className="text-sm underline"
             style={{ color: "var(--bpm-accent-cyan)" }}
           >
-            Documentation
+            {str.documentationLink}
           </Link>
         </div>
         <div className="p-6">
           {supported === null && (
             <div className="flex items-center gap-3 py-4" style={{ color: "var(--bpm-text-secondary)" }}>
               <Spinner size="small" />
-              <span className="text-sm">Vérification du support…</span>
+              <span className="text-sm">{str.checkingSupport}</span>
             </div>
           )}
 
           {supported === false && (
             <p className="text-sm" style={{ color: "var(--bpm-text-secondary)", maxWidth: "52ch" }}>
-              Votre navigateur ou la page (HTTP au lieu de HTTPS) ne supporte pas le maintien de l&apos;écran. Utilisez un navigateur récent (Chrome, Edge, Safari) sur une page en <strong>HTTPS</strong>.
+              {str.unsupportedBefore}<strong>{str.unsupportedStrong}</strong>{str.unsupportedAfter}
             </p>
           )}
 
           {supported === true && (
             <>
               <div className="flex flex-wrap gap-2 mb-6">
-                {DURATIONS.map((d) => (
+                {str.durations.map((d) => (
                   <Button
                     key={d.value}
                     size="small"
@@ -201,7 +200,7 @@ export default function KeepScreenOnPage() {
 
               {error && (
                 <p className="text-sm mb-4" style={{ color: "var(--bpm-status-error, #dc2626)" }}>
-                  {error}
+                  {error === WAKE_LOCK_ERROR_FALLBACK ? str.wakeLockErrorFallback : error}
                 </p>
               )}
 
@@ -216,13 +215,13 @@ export default function KeepScreenOnPage() {
                 <span className="text-sm font-medium" style={{ color: "var(--bpm-text-primary)" }}>
                   {active
                     ? remainingSeconds !== null
-                      ? `Écran allumé — reste ${formatRemaining(remainingSeconds)}`
-                      : "Écran allumé (indéfini)"
-                    : "Écran non maintenu"}
+                      ? str.statusOnRemaining(formatRemaining(remainingSeconds))
+                      : str.statusOnIndefinite
+                    : str.statusOff}
                 </span>
               </div>
               <p className="text-xs mt-3" style={{ color: "var(--bpm-text-secondary)" }}>
-                L&apos;écran reste allumé tant que l&apos;onglet est visible. En mode durée, le maintien s&apos;arrête à la fin du compte à rebours.
+                {str.visibilityNote}
               </p>
             </>
           )}
@@ -230,8 +229,8 @@ export default function KeepScreenOnPage() {
       </div>
 
       <nav className="doc-pagination mt-8 flex flex-wrap gap-4">
-        <Link href="/modules" style={{ color: "var(--bpm-accent-cyan)" }}>← Modules</Link>
-        <Link href="/modules/keep-screen-on/documentation" style={{ color: "var(--bpm-accent-cyan)" }}>Documentation</Link>
+        <Link href="/modules" style={{ color: "var(--bpm-accent-cyan)" }}>{str.backToModules}</Link>
+        <Link href="/modules/keep-screen-on/documentation" style={{ color: "var(--bpm-accent-cyan)" }}>{str.documentationLink}</Link>
       </nav>
     </div>
   );
