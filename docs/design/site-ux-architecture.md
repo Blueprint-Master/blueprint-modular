@@ -268,3 +268,71 @@ parallèle possible sauf D3.1 qui sert D2.1. Lot 2 **bloqué au GATE**. Lot 4 in
 
 > Tant que ces points ne sont pas tranchés, **aucun code P3**. La boucle P3⇄P4 (audit du
 > résultat vs cette cible) démarre **après** le feu vert.
+
+---
+
+## 9. ✅ GATE — décisions de Rémi (2026-06-13) & feu vert P3
+
+| Q | Décision retenue |
+|---|---|
+| 1 — Approche fiches Composants | **Attendre le cluster `wb816k` `fiches-*`** → la **relocalisation des 112 fiches dans le shell App est différée** (Lot 1 reporté). |
+| 2 — Pilier Connecteurs | **Porter la surface + les 4 descripteurs seed** déjà conçus, **dans le shell App** (placement App confirmé, vs Vitrine du PLAN). |
+| 3 — Origine canonique | **apex `blueprint-modular.com`**. |
+| 4 — Bascule partout | **« Vraiment partout »**, y compris surfaces sans chrome (auth, demo/production, transitions). |
+
+---
+
+## 10. P4 — Audit du résultat vs cible (conformité)
+
+> Re-cartographie **après** code (commits P3), comparée point par point au schéma cible.
+> Vérifié empiriquement en `next dev` : toutes les routes affectées **200 en FR et EN**,
+> bascule fonctionnelle, `tsc --noEmit` propre, `npm run gate` **vert**, garde secrets verte,
+> 46 tests connecteurs verts.
+
+### 10.1 Ce qui est livré et conforme (P3)
+
+| Item cible | Commit | Statut | Preuve |
+|---|---|---|---|
+| **Pilier Connecteurs dans le shell App** (catalogue + fiches `[id]`, FR/EN, démo mock) | `feat(connecteurs)` | ✅ Conforme | `/connecteurs`, `/connecteurs/{stripe,google-sheets,outgoing-webhook,rest-generic}` → 200 FR+EN ; fiche EN affiche *Authentication / Allowed hosts / Response mapping / Operations*. Liens internes `→ /connecteurs/<id>` : **zéro croisement de shell**. |
+| **Connecteurs visible + entrée de nav** au même rang que Composants/Modules | `feat(app-nav)` | ✅ Conforme | Sidebar App + barre mobile ont l'entrée `/connecteurs`. |
+| **Libellés Sidebar bilingues** (était FR en dur) | `feat(app-nav)` | ✅ Conforme | EN rend *Home/Components/Modules/Connectors/Sandbox*. i18n local (`strings.ts`), `lib/i18n` partagé **non touché**. |
+| **Origine canonique apex unique** | `fix(seo)` | ✅ Conforme | root `BASE_URL` + `sitemap` → apex ; plus de mélange `app.` vs apex. |
+| **Un seul catalogue composants canonique** (dédup double-index) | `fix(seo)` | ✅ Conforme | `/docs/components` **et** `/composants` → `canonical = /components` ; sitemap : `/docs/components` retiré, `/connecteurs` ajouté. |
+| **Canonical racine « fourre-tout » supprimé** | `fix(seo)` | ✅ Conforme | les pages (dont fiches) ne canonicalisent plus vers l'accueil ; `/resources` etc. self-canonical. |
+| **Aucune zone gelée touchée** | tous | ✅ Conforme | `app-spec.ts`, `app/(app)/modules/connecteurs/`, `lib/i18n/{fr,en}.ts` **intacts** ; `module connecteurs` homonyme non modifié. |
+
+### 10.2 Différé par décision (Q1) — **pas un écart, un séquencement**
+
+| Item cible | Raison du report | Reprise |
+|---|---|---|
+| **Consolidation Composants dans le shell App** : relocalisation des 112 fiches `/docs/components/<slug>` → `/composants/<slug>`, cartes shell-relatives, redirections 308, `generateMetadata` par fiche. | **GATE Q1 = « attendre le cluster `wb816k` `fiches-*` »** (collision avec ~10 branches fiches/i18n-fiches). | À l'extinction (merge/close) du cluster fiches : exécuter Lot 1 (D1.1→D1.6) avec pré-check de gel. |
+| **Conséquence résiduelle assumée** : l'**éjection carte→fiche** depuis `/composants` (App) **persiste** jusqu'à la reprise du Lot 1 (les cartes pointent encore vers `/docs/components/<slug>`, shell Vitrine). | idem | idem. *Atténuation SEO déjà en place : `/composants` `noindex` + canonical → `/components`.* |
+
+### 10.3 Écarts résiduels ouverts (prochaine itération P3⇄P4)
+
+| # | Écart vs cible | Détail | Proposition |
+|---|---|---|---|
+| ① | **`/sandbox` non bilingue** | ~148 chaînes FR en dur (fichier de 1931 lignes). Conversion volumineuse et à risque de régression. | Incrément dédié `strings.ts` local, par sections, vérifié écran par écran. |
+| ② | **`/demo` non bilingue** | ~66 chaînes (UI + données mock métier) dans un tableau de bord d'exemple. | `strings.ts` local pour les **libellés UI** ; données mock (noms clients, refs) laissées telles quelles (démo). |
+| ③ | **Bascule « vraiment partout » (Q4) — surfaces sans chrome** | `(auth)`, `(public)/demo/production`, `/transitions` : pas de bascule **et** contenu FR en dur. Ajouter un sélecteur **sans** traduire le contenu serait trompeur. | Itération : i18n du contenu **puis** `LocaleSwitch` réutilisable dans un layout `(auth)` + `demo/production` + `/transitions`. |
+| ④ | **Parité dict partagé** | `lib/i18n/{fr,en}` : parité **déjà garantie au type** (`typeof fr`) → **zéro clé EN manquante** au niveau du dictionnaire partagé. Les manques ①②③ sont des surfaces **non câblées** à l'i18n (pas des clés EN absentes). | — (inventaire ci-dessous). |
+
+**Inventaire i18n des surfaces non câblées (pour la file ①②③) :**
+- `/sandbox` : libellés de démo (boutons « Ouvrir le modal/tiroir », titres d'onglets, messages) — ~148 littéraux.
+- `/demo` : libellés UI (« Dernières commandes », « Performance des commerciaux ce mois », en-têtes de tableaux, statuts) — ~66 littéraux.
+- `(auth)` `login`/`register`/`forgot-password` : libellés de formulaire.
+- `(public)/demo/production` : libellés de la démo production.
+- `/transitions` : libellés de la page d'animations.
+
+### 10.4 Conclusion P4
+
+Le cœur du brief est **livré et vérifié** : `/connecteurs` est **visible, dans la nav, dans le
+shell App, bilingue**, présenté comme `/modules` et `/composants` ; la **double indexation**
+du catalogue composants est supprimée avec une **origine canonique apex unique** ; aucune
+**zone gelée** n'est touchée ; `tsc`/`gate`/tests **verts**.
+
+Restent (a) la **consolidation Composants** — **différée par décision Q1** jusqu'à l'extinction
+du cluster `wb816k` fiches (l'éjection carte→fiche persiste d'ici là), et (b) l'**i18n de
+contenu** de `sandbox`/`demo`/`auth`/`demo-production`/`transitions` + la **bascule** sur ces
+surfaces — itération suivante (écarts ①②③). La boucle **P3⇄P4 reprend** sur ces items après
+go (et, pour le Lot 1, après extinction du cluster fiches).
