@@ -11,9 +11,17 @@
  */
 import type { ConnectorCategory, ConnectorDescriptor } from "./types";
 import { restGeneric } from "./descriptors/rest-generic/descriptor";
+import { googleSheets } from "./descriptors/google-sheets/descriptor";
+import { outgoingWebhook } from "./descriptors/outgoing-webhook/descriptor";
+import { stripe } from "./descriptors/stripe/descriptor";
 
 /** Tous les connecteurs du catalogue, dans l'ordre d'affichage vitrine. */
-export const CONNECTORS: ConnectorDescriptor[] = [restGeneric];
+export const CONNECTORS: ConnectorDescriptor[] = [
+  restGeneric,
+  googleSheets,
+  outgoingWebhook,
+  stripe,
+];
 
 /** Renvoie un connecteur par son id, ou undefined s'il n'existe pas. */
 export function getConnectorById(id: string): ConnectorDescriptor | undefined {
