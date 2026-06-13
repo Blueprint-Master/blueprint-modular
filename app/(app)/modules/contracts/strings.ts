@@ -256,6 +256,156 @@ const fr = {
     backToRepository: "← Retour à la Base contractuelle",
     documentation: "Documentation",
   },
+  doc: {
+    breadcrumbCurrent: "Documentation",
+    title: "Documentation — Base contractuelle",
+    description:
+      "Contrats fournisseurs et CGV : upload PDF/DOCX/TXT, analyse IA (métadonnées, engagements, risques), consultation et filtres par workspace (Service 1 / Service 2).",
+    introP1a: "Les modules Blueprint Modular font partie de l'",
+    introAppLink: "application Next.js",
+    introP1b:
+      ". Il n'y a pas de package séparé par module (pas de ",
+    introP1c: " ni ",
+    introP1d:
+      ") : on installe l'application une fois, puis on configure les variables d'environnement et les services (base PostgreSQL, Ollama pour l'analyse IA). Cette documentation décrit ",
+    introHowInstall: "comment installer",
+    introP1e:
+      " le module Base contractuelle et toutes ses dépendances (Node, Prisma, extraction PDF/DOCX/TXT, serveur Ollama), ",
+    introHowWorks: "comment il fonctionne",
+    introP1f: ", ",
+    introHowConfigure: "comment le paramétrer",
+    introP1g:
+      " (workspace, type de contrat, taille max, variables d'environnement) et comment l'utiliser (interface ou API).",
+    howTitle: "Comment fonctionne le module Base contractuelle",
+    howP1a: "Le module permet d'",
+    howUpload: "uploader",
+    howP1b: " des contrats (PDF, DOCX, TXT), de les ",
+    howAnalyze: "analyser automatiquement",
+    howP1c:
+      " via l'IA (Ollama / Qwen par défaut) pour extraire métadonnées, engagements, risques et niveau de risque, puis de les ",
+    howConsult: "consulter",
+    howP1d:
+      " et filtrer par workspace (Service 1, Service 2) et par type (fournisseur, CGV, autre). Chaque contrat est stocké en base (PostgreSQL) et le fichier sur disque ; l'analyse est lancée à l'upload et le résultat est sauvegardé dans ",
+    howP1e:
+      ". Un doublon (même hash de fichier) est refusé. Optionnellement, un embedding est généré en arrière-plan pour la recherche sémantique.",
+    howLiWorkspaceLabel: "Workspace",
+    howLiWorkspaceA: " : à l'upload, vous choisissez ",
+    howLiWorkspaceB: " ou ",
+    howLiWorkspaceC:
+      ". Les filtres de la liste permettent d'afficher un seul workspace ou tous.",
+    howLiTypeLabel: "Type de contrat",
+    howLiTypeA: " : ",
+    howLiTypeSupplier: " (fournisseur), ",
+    howLiTypeCgv: " (CGV), ",
+    howLiTypeOther: ". Utilisé pour adapter le prompt d'analyse IA.",
+    howLiStatusLabel: "Statut",
+    howLiStatusA:
+      " : pending → analyzing → done (ou error). La liste se rafraîchit tant qu'un contrat est en cours d'analyse.",
+    installTitle: "Installation et dépendances",
+    installP1a:
+      "Le module fait partie de l'application Next.js. Dépendances Node incluses : ",
+    installP1b: " (DOCX), ",
+    installP1c: " (PDF), extraction de texte et client Ollama (",
+    installP1d: ", ",
+    installP1e:
+      "). Pour l'analyse IA (métadonnées, engagements, risques), un serveur Ollama est requis.",
+    cmdSummaryTitle:
+      "Résumé des commandes (installer le module et toutes les dépendances)",
+    envP1a: "Définir dans ",
+    envP1b: " : ",
+    envP1c: ", ",
+    envP1d: " (ex. ",
+    envP1e: "), ",
+    envP1f: " (ex. ",
+    envP1g:
+      "). Sans Ollama : ",
+    envP1h:
+      " (l'upload fonctionne mais l'analyse restera en erreur ou analyzing).",
+    aiServerTitle: "Serveur IA pour l'analyse des contrats",
+    aiServerP1a:
+      "L'analyse (métadonnées, risques, engagements) est effectuée par le client Ollama (",
+    aiServerP1b:
+      "). Sans serveur, l'upload fonctionne mais le statut restera en erreur ou analyzing. Pour activer l'analyse :",
+    aiServerP2a: "Dans ",
+    aiServerP2b: " : ",
+    aiServerP2c: ", ",
+    aiServerP2d:
+      ". En dev sans serveur : ",
+    aiServerP2e:
+      " (les analyses échoueront ou seront mockées selon le code).",
+    storageTitle: "Où sont sauvegardés les contrats",
+    storageDbLabel: "Base de données",
+    storageP1a: " : table ",
+    storageP1b:
+      " (id, title, contractType, workspace, filePath, fileHash, originalFilename, status, analysisProgress, extractedData, analyzedAt, embeddingVector, uploadedById, etc.). ",
+    storageFilesLabel: "Fichiers",
+    storageP1c: " : stockés sur le disque dans ",
+    storageP1d:
+      ". Le répertoire doit être accessible en écriture par le serveur Next.js. Ne pas exposer ",
+    storageP1e:
+      " directement en production ; les fichiers sont servis ou téléchargés via l'API si besoin.",
+    useTitle: "Comment charger et utiliser le module",
+    useLoadLabel: "Charger",
+    useP1a: " : le module est intégré à l'app ; après ",
+    useP1b: " et ",
+    useP1c: ", il est disponible. ",
+    useUseLabel: "Utiliser",
+    useP1d: " : depuis l'interface, ouvrez ",
+    useP1e:
+      " pour uploader des contrats (PDF, DOCX, TXT), choisir workspace (Service 1 / Service 2) et type (fournisseur, CGV, autre), et consulter la liste avec filtres ; depuis du code, ",
+    useP1f: " (FormData : ",
+    useP1g: ", ",
+    useP1h: ", ",
+    useP1i: "), ",
+    useP1j: " (query : ",
+    useP1k: ", ",
+    useP1l: ", ",
+    useP1m: ").",
+    envVarsTitle: "Variables d'environnement et paramétrage",
+    envLiDatabase: " — Connexion PostgreSQL (obligatoire).",
+    envLiAiServerA: ", ",
+    envLiAiServerB: " — Serveur Ollama pour l'analyse (ex. ",
+    envLiAiServerC: ", ",
+    envLiAiServerD: ").",
+    envLiMockA: " — ",
+    envLiMockB:
+      " pour désactiver les appels réels (dév ; l'analyse échouera ou sera mockée).",
+    envLiWorkspaceLabel: "Workspace",
+    envLiWorkspaceA: " : à l'upload, champ ",
+    envLiWorkspaceB: " (service1 | service2). Défaut : ",
+    envLiWorkspaceC: ".",
+    envLiTypeLabel: "Type de contrat",
+    envLiTypeA: " : ",
+    envLiTypeB: " (supplier | cgv | other). Défaut : ",
+    envLiTypeC: ".",
+    envLiSizeLabel: "Taille max fichier",
+    envLiSizeA: " : 50 Mo par défaut (constante dans ",
+    envLiSizeB:
+      "). En cas d'erreur 413, augmenter la limite côté proxy (ex. nginx ",
+    envLiSizeC: ").",
+    envLiFormatsLabel: "Formats acceptés",
+    envLiFormatsA: " : PDF, DOCX, TXT (MIME vérifié côté API).",
+    envDbProdLabel: "Base de données et prérequis production",
+    envDbProdA: " : table ",
+    envDbProdB:
+      ", variables d'environnement et déploiement détaillés dans ",
+    envDbProdC: " du dépôt.",
+    apiTitle: "API (résumé)",
+    apiLiListA:
+      " — Liste des contrats de l'utilisateur. Query : ",
+    apiLiListB: ", ",
+    apiLiListC: ", ",
+    apiLiListD: ".",
+    apiLiPostA: " — Upload d'un contrat. FormData : ",
+    apiLiPostB: ", ",
+    apiLiPostC: ", ",
+    apiLiPostD: ". Réponse : contrat créé (analyse lancée en synchrone).",
+    apiLiDetailA:
+      " — Détail d'un contrat (métadonnées, extracted_data).",
+    apiLiReanalyzeA: " — Relancer l'analyse IA.",
+    apiLiSearchA: " — Recherche (ex. par embedding) si implémentée.",
+    backToRepository: "← Retour à la Base contractuelle",
+  },
 };
 
 export type ContractsStrings = typeof fr;
@@ -497,6 +647,156 @@ const en: ContractsStrings = {
     goToRepository: "Go to the contract repository",
     backToRepository: "← Back to the contract repository",
     documentation: "Documentation",
+  },
+  doc: {
+    breadcrumbCurrent: "Documentation",
+    title: "Documentation — Contract repository",
+    description:
+      "Supplier contracts and terms & conditions: PDF/DOCX/TXT upload, AI analysis (metadata, commitments, risks), review and filtering by workspace (Service 1 / Service 2).",
+    introP1a: "Blueprint Modular modules are part of the ",
+    introAppLink: "Next.js application",
+    introP1b:
+      ". There is no separate package per module (no ",
+    introP1c: " or ",
+    introP1d:
+      "): you install the application once, then configure the environment variables and services (PostgreSQL database, Ollama for AI analysis). This documentation describes ",
+    introHowInstall: "how to install",
+    introP1e:
+      " the contract repository module and all its dependencies (Node, Prisma, PDF/DOCX/TXT extraction, Ollama server), ",
+    introHowWorks: "how it works",
+    introP1f: ", ",
+    introHowConfigure: "how to configure it",
+    introP1g:
+      " (workspace, contract type, max size, environment variables) and how to use it (UI or API).",
+    howTitle: "How the contract repository module works",
+    howP1a: "The module lets you ",
+    howUpload: "upload",
+    howP1b: " contracts (PDF, DOCX, TXT), ",
+    howAnalyze: "analyze them automatically",
+    howP1c:
+      " via AI (Ollama / Qwen by default) to extract metadata, commitments, risks and risk level, then ",
+    howConsult: "review them",
+    howP1d:
+      " and filter by workspace (Service 1, Service 2) and by type (supplier, terms & conditions, other). Each contract is stored in the database (PostgreSQL) and the file on disk; the analysis is started on upload and the result is saved in ",
+    howP1e:
+      ". A duplicate (same file hash) is rejected. Optionally, an embedding is generated in the background for semantic search.",
+    howLiWorkspaceLabel: "Workspace",
+    howLiWorkspaceA: ": on upload, you choose ",
+    howLiWorkspaceB: " or ",
+    howLiWorkspaceC:
+      ". The list filters let you show a single workspace or all of them.",
+    howLiTypeLabel: "Contract type",
+    howLiTypeA: ": ",
+    howLiTypeSupplier: " (supplier), ",
+    howLiTypeCgv: " (terms & conditions), ",
+    howLiTypeOther: ". Used to adapt the AI analysis prompt.",
+    howLiStatusLabel: "Status",
+    howLiStatusA:
+      ": pending → analyzing → done (or error). The list refreshes as long as a contract is being analyzed.",
+    installTitle: "Installation and dependencies",
+    installP1a:
+      "The module is part of the Next.js application. Included Node dependencies: ",
+    installP1b: " (DOCX), ",
+    installP1c: " (PDF), text extraction and the Ollama client (",
+    installP1d: ", ",
+    installP1e:
+      "). For AI analysis (metadata, commitments, risks), an Ollama server is required.",
+    cmdSummaryTitle:
+      "Command summary (install the module and all dependencies)",
+    envP1a: "Set in ",
+    envP1b: ": ",
+    envP1c: ", ",
+    envP1d: " (e.g. ",
+    envP1e: "), ",
+    envP1f: " (e.g. ",
+    envP1g:
+      "). Without Ollama: ",
+    envP1h:
+      " (the upload works but the analysis will stay in error or analyzing).",
+    aiServerTitle: "AI server for contract analysis",
+    aiServerP1a:
+      "The analysis (metadata, risks, commitments) is performed by the Ollama client (",
+    aiServerP1b:
+      "). Without a server, the upload works but the status will stay in error or analyzing. To enable the analysis:",
+    aiServerP2a: "In ",
+    aiServerP2b: ": ",
+    aiServerP2c: ", ",
+    aiServerP2d:
+      ". In dev without a server: ",
+    aiServerP2e:
+      " (analyses will fail or be mocked depending on the code).",
+    storageTitle: "Where contracts are saved",
+    storageDbLabel: "Database",
+    storageP1a: ": table ",
+    storageP1b:
+      " (id, title, contractType, workspace, filePath, fileHash, originalFilename, status, analysisProgress, extractedData, analyzedAt, embeddingVector, uploadedById, etc.). ",
+    storageFilesLabel: "Files",
+    storageP1c: ": stored on disk in ",
+    storageP1d:
+      ". The directory must be writable by the Next.js server. Do not expose ",
+    storageP1e:
+      " directly in production; files are served or downloaded via the API if needed.",
+    useTitle: "How to load and use the module",
+    useLoadLabel: "Load",
+    useP1a: ": the module is integrated into the app; after ",
+    useP1b: " and ",
+    useP1c: ", it is available. ",
+    useUseLabel: "Use",
+    useP1d: ": from the UI, open ",
+    useP1e:
+      " to upload contracts (PDF, DOCX, TXT), choose workspace (Service 1 / Service 2) and type (supplier, terms & conditions, other), and browse the list with filters; from code, ",
+    useP1f: " (FormData: ",
+    useP1g: ", ",
+    useP1h: ", ",
+    useP1i: "), ",
+    useP1j: " (query: ",
+    useP1k: ", ",
+    useP1l: ", ",
+    useP1m: ").",
+    envVarsTitle: "Environment variables and configuration",
+    envLiDatabase: " — PostgreSQL connection (required).",
+    envLiAiServerA: ", ",
+    envLiAiServerB: " — Ollama server for analysis (e.g. ",
+    envLiAiServerC: ", ",
+    envLiAiServerD: ").",
+    envLiMockA: " — ",
+    envLiMockB:
+      " to disable real calls (dev; the analysis will fail or be mocked).",
+    envLiWorkspaceLabel: "Workspace",
+    envLiWorkspaceA: ": on upload, field ",
+    envLiWorkspaceB: " (service1 | service2). Default: ",
+    envLiWorkspaceC: ".",
+    envLiTypeLabel: "Contract type",
+    envLiTypeA: ": ",
+    envLiTypeB: " (supplier | cgv | other). Default: ",
+    envLiTypeC: ".",
+    envLiSizeLabel: "Max file size",
+    envLiSizeA: ": 50 MB by default (constant in ",
+    envLiSizeB:
+      "). On a 413 error, raise the limit on the proxy side (e.g. nginx ",
+    envLiSizeC: ").",
+    envLiFormatsLabel: "Accepted formats",
+    envLiFormatsA: ": PDF, DOCX, TXT (MIME checked on the API side).",
+    envDbProdLabel: "Database and production prerequisites",
+    envDbProdA: ": table ",
+    envDbProdB:
+      ", environment variables and deployment detailed in ",
+    envDbProdC: " in the repository.",
+    apiTitle: "API (summary)",
+    apiLiListA:
+      " — List of the user's contracts. Query: ",
+    apiLiListB: ", ",
+    apiLiListC: ", ",
+    apiLiListD: ".",
+    apiLiPostA: " — Upload a contract. FormData: ",
+    apiLiPostB: ", ",
+    apiLiPostC: ", ",
+    apiLiPostD: ". Response: created contract (analysis run synchronously).",
+    apiLiDetailA:
+      " — Detail of a contract (metadata, extracted_data).",
+    apiLiReanalyzeA: " — Re-run the AI analysis.",
+    apiLiSearchA: " — Search (e.g. by embedding) if implemented.",
+    backToRepository: "← Back to the contract repository",
   },
 };
 
