@@ -70,7 +70,7 @@ function IconSidebarChevronRight() {
 
 const navItems = [
   { href: "/dashboard", label: "Accueil", icon: IconAccueil },
-  { href: "/docs/components", label: "Composants", icon: IconComposants },
+  { href: "/composants", label: "Composants", icon: IconComposants },
   { href: "/modules", label: "Modules", icon: IconModules },
   { href: "/sandbox", label: "Sandbox", icon: SandboxIcon },
   { href: "/demo", label: "Demo", icon: IconDemo },
