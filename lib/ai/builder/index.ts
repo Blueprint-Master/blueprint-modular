@@ -73,6 +73,34 @@ export class BuilderAI {
     return extractBuilderOutput(raw);
   }
 
+  /** Construit le prompt de génération de code à partir d'une Spec (plan). */
+  private codePromptFromSpec(spec: BuilderSpec): string {
+    return `Génère le code BPM pour cette application :
+${JSON.stringify(spec, null, 2)}
+Utilise uniquement les composants bpm.* listés dans la spec.`;
+  }
+
+  /**
+   * Flux plan-first EN MÉMOIRE : génère d'abord la Spec (le plan) puis le code
+   * bpm.*, et RETOURNE les deux sans aucune persistance ni déploiement.
+   *
+   * C'est le point de coupure « no-persist » du flux de génération (équivalent
+   * d'un buildApp qui renvoie code+plan avant toute écriture DB / deploy) :
+   * aucune écriture Prisma, aucun GeneratedApp.create/update, aucun export.
+   * Le plan (spec) est renvoyé à l'appelant qui décide de l'exposer ou non.
+   */
+  async buildFromPrompt(
+    userPrompt: string
+  ): Promise<{ output: BuilderOutput; spec: BuilderSpec }> {
+    const spec = await this.expandToSpec(userPrompt);
+    const provider = getProvider(this.providerConfig);
+    const raw = await provider.chat(
+      [{ role: "user", content: this.codePromptFromSpec(spec) }],
+      BUILDER_SYSTEM_PROMPT
+    );
+    return { output: extractBuilderOutput(raw), spec };
+  }
+
   async stream(
     userPrompt: string,
     onChunk: (chunk: string) => void,
@@ -81,11 +109,8 @@ export class BuilderAI {
     const spec = await this.expandToSpec(userPrompt);
     options?.onSpec?.(spec);
     const provider = getProvider(this.providerConfig);
-    const codePrompt = `Génère le code BPM pour cette application :
-${JSON.stringify(spec, null, 2)}
-Utilise uniquement les composants bpm.* listés dans la spec.`;
     return provider.chatStream(
-      [{ role: "user", content: codePrompt }],
+      [{ role: "user", content: this.codePromptFromSpec(spec) }],
       onChunk,
       BUILDER_SYSTEM_PROMPT
     );
