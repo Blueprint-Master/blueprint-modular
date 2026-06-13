@@ -4,8 +4,33 @@ import { useState } from "react";
 import Link from "next/link";
 import { FAB } from "@/components/bpm";
 import { getPrevNext } from "@/lib/docPages";
+import { useI18n } from "@/lib/i18n/LocaleProvider";
+
+const fr = {
+  components: "Composants",
+  description: "Bouton d’action flottant (FAB).",
+  category: "Interaction",
+  copy: "Copier",
+  d_icon: "Icône (défaut : +).",
+  d_label: "Accessibilité / title.",
+  d_onClick: "Callback clic.",
+};
+
+const en: typeof fr = {
+  components: "Components",
+  description: "Floating action button (FAB).",
+  category: "Interaction",
+  copy: "Copy",
+  d_icon: "Icon (default: +).",
+  d_label: "Accessibility / title.",
+  d_onClick: "Click callback.",
+};
+
+const L = { fr, en } as const;
 
 export default function DocFABPage() {
+  const { locale } = useI18n();
+  const t = L[locale];
   const [position, setPosition] = useState<"bottom-right" | "bottom-left" | "top-right" | "top-left">("bottom-right");
   const pythonCode = "bpm.fab(position=\"" + position + "\", label=\"Action\")";
   const { prev, next } = getPrevNext("fab");
@@ -13,10 +38,10 @@ export default function DocFABPage() {
   return (
     <div className="doc-page">
       <div className="doc-page-header">
-        <div className="doc-breadcrumb"><Link href="/docs/components">Composants</Link> → bpm.fab</div>
+        <div className="doc-breadcrumb"><Link href="/docs/components">{t.components}</Link> → bpm.fab</div>
         <h1>bpm.fab</h1>
-        <p className="doc-description">Bouton d&apos;action flottant (FAB).</p>
-        <div className="doc-meta"><span className="doc-badge doc-badge-category">Interaction</span></div>
+        <p className="doc-description">{t.description}</p>
+        <div className="doc-meta"><span className="doc-badge doc-badge-category">{t.category}</span></div>
       </div>
       <div className="sandbox-container">
         <div className="sandbox-preview" style={{ minHeight: 120 }}>
@@ -34,16 +59,16 @@ export default function DocFABPage() {
           </div>
         </div>
         <div className="sandbox-code">
-          <div className="sandbox-code-header"><span>Python</span><button type="button" onClick={() => navigator.clipboard.writeText(pythonCode)}>Copier</button></div>
+          <div className="sandbox-code-header"><span>Python</span><button type="button" onClick={() => navigator.clipboard.writeText(pythonCode)}>{t.copy}</button></div>
           <pre><code>{pythonCode}</code></pre>
         </div>
       </div>
       <table className="props-table">
         <thead><tr><th>Prop</th><th>Type</th><th>Description</th></tr></thead>
         <tbody>
-          <tr><td><code>icon</code></td><td>ReactNode</td><td>Icône (défaut: +).</td></tr>
-          <tr><td><code>label</code></td><td>string</td><td>Accessibilité / title.</td></tr>
-          <tr><td><code>onClick</code></td><td>function</td><td>Callback clic.</td></tr>
+          <tr><td><code>icon</code></td><td>ReactNode</td><td>{t.d_icon}</td></tr>
+          <tr><td><code>label</code></td><td>string</td><td>{t.d_label}</td></tr>
+          <tr><td><code>onClick</code></td><td>function</td><td>{t.d_onClick}</td></tr>
           <tr><td><code>position</code></td><td>string</td><td>bottom-right | bottom-left | top-right | top-left.</td></tr>
         </tbody>
       </table>

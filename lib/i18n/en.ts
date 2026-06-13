@@ -45,6 +45,8 @@ const en: Dictionary = {
     privacy: "Privacy",
     terms: "Terms of use",
     note: "This site is built with its own components.",
+    pythonSurface: "Python",
+    reactSurface: "React",
   },
   home: {
     metaTitle: "Blueprint Modular — business components driven from Python",
@@ -288,6 +290,21 @@ const en: Dictionary = {
           body: "Guides, changelog, PyPI package and llms.txt — everything to build, in one entry point.",
         },
       },
+    },
+  },
+  changelogPage: {
+    title: "Changelog",
+    lead: "Every change, derived from the merged pull request history. Generated from git, never hand-written.",
+    backToDocs: "Back to documentation",
+    empty: "No entries yet.",
+    types: {
+      feat: "Feature",
+      fix: "Fix",
+      perf: "Performance",
+      refactor: "Refactor",
+      style: "Style",
+      docs: "Docs",
+      other: "Change",
     },
   },
   gallery: {

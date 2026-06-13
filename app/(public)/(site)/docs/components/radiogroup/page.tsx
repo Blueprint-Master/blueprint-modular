@@ -4,11 +4,60 @@ import { useState } from "react";
 import Link from "next/link";
 import { RadioGroup, CodeBlock } from "@/components/bpm";
 import { getPrevNext } from "@/lib/docPages";
+import { useI18n } from "@/lib/i18n/LocaleProvider";
 
 const LAYOUTS = ["vertical", "horizontal"] as const;
 
 export default function DocRadioGroupPage() {
-  const [label, setLabel] = useState("Choix");
+  const { locale } = useI18n();
+  const fr = {
+    breadcrumb: "Composants",
+    description: "Groupe de boutons radio : une seule option sélectionnable parmi une liste.",
+    category: "Interaction",
+    optionsLabel: "options (séparés par des virgules)",
+    disabledLabel: "Désactivé",
+    copy: "Copier",
+    head: { prop: "Prop", type: "Type", def: "Défaut", req: "Requis", desc: "Description" },
+    no: "Non",
+    rows: {
+      name: "Attribut name des inputs radio.",
+      label: "Label au-dessus du groupe.",
+      options: "Liste d’options (chaînes ou objets value/label).",
+      value: "Valeur sélectionnée.",
+      onChange: "Callback au changement.",
+      layout: "Disposition des options.",
+      disabled: "Désactive tout le groupe.",
+      className: "Classes CSS additionnelles.",
+    },
+    examples: "Exemples",
+    demoLabel: "Choix",
+  };
+  const en: typeof fr = {
+    breadcrumb: "Components",
+    description: "Radio button group: a single option selectable from a list.",
+    category: "Interaction",
+    optionsLabel: "options (comma-separated)",
+    disabledLabel: "Disabled",
+    copy: "Copy",
+    head: { prop: "Prop", type: "Type", def: "Default", req: "Required", desc: "Description" },
+    no: "No",
+    rows: {
+      name: "name attribute of the radio inputs.",
+      label: "Label above the group.",
+      options: "List of options (strings or value/label objects).",
+      value: "Selected value.",
+      onChange: "Callback on change.",
+      layout: "Option layout.",
+      disabled: "Disables the whole group.",
+      className: "Additional CSS classes.",
+    },
+    examples: "Examples",
+    demoLabel: "Choice",
+  };
+  const L = { fr, en } as const;
+  const t = L[locale];
+
+  const [label, setLabel] = useState(t.demoLabel);
   const [optionsStr, setOptionsStr] = useState("Option A, Option B, Option C");
   const [value, setValue] = useState("Option B");
   const [layout, setLayout] = useState<(typeof LAYOUTS)[number]>("vertical");
@@ -29,15 +78,13 @@ export default function DocRadioGroupPage() {
     <div className="doc-page">
       <div className="doc-page-header">
         <div className="doc-breadcrumb">
-          <Link href="/docs/components">Composants</Link> → bpm.radiogroup
+          <Link href="/docs/components">{t.breadcrumb}</Link> → bpm.radiogroup
         </div>
         <h1>bpm.radiogroup</h1>
-        <p className="doc-description">
-          Groupe de boutons radio : une seule option sélectionnable parmi une liste.
-        </p>
+        <p className="doc-description">{t.description}</p>
         <div className="doc-meta">
           <span className="doc-badge doc-badge-stable">Stable</span>
-          <span className="doc-badge doc-badge-category">Interaction</span>
+          <span className="doc-badge doc-badge-category">{t.category}</span>
           <span className="doc-reading-time">⏱ 2 min</span>
         </div>
       </div>
@@ -58,10 +105,10 @@ export default function DocRadioGroupPage() {
         <div className="sandbox-controls">
           <div className="sandbox-control-group">
             <label>label</label>
-            <input type="text" value={label} onChange={(e) => setLabel(e.target.value)} placeholder="Choix" />
+            <input type="text" value={label} onChange={(e) => setLabel(e.target.value)} placeholder={t.demoLabel} />
           </div>
           <div className="sandbox-control-group">
-            <label>options (séparés par des virgules)</label>
+            <label>{t.optionsLabel}</label>
             <input type="text" value={optionsStr} onChange={(e) => setOptionsStr(e.target.value)} placeholder="A, B, C" />
           </div>
           <div className="sandbox-control-group">
@@ -78,14 +125,14 @@ export default function DocRadioGroupPage() {
             <label>disabled</label>
             <label className="inline-flex items-center gap-2">
               <input type="checkbox" checked={disabled} onChange={(e) => setDisabled(e.target.checked)} />
-              Désactivé
+              {t.disabledLabel}
             </label>
           </div>
         </div>
         <div className="sandbox-code">
           <div className="sandbox-code-header">
             <span>Python</span>
-            <button type="button" onClick={() => navigator.clipboard.writeText(pythonCode)}>Copier</button>
+            <button type="button" onClick={() => navigator.clipboard.writeText(pythonCode)}>{t.copy}</button>
           </div>
           <pre><code>{pythonCode}</code></pre>
         </div>
@@ -93,21 +140,21 @@ export default function DocRadioGroupPage() {
 
       <table className="props-table">
         <thead>
-          <tr><th>Prop</th><th>Type</th><th>Défaut</th><th>Requis</th><th>Description</th></tr>
+          <tr><th>{t.head.prop}</th><th>{t.head.type}</th><th>{t.head.def}</th><th>{t.head.req}</th><th>{t.head.desc}</th></tr>
         </thead>
         <tbody>
-          <tr><td><code>name</code></td><td><code>string</code></td><td>—</td><td>Non</td><td>Attribut name des inputs radio.</td></tr>
-          <tr><td><code>label</code></td><td><code>string</code></td><td>—</td><td>Non</td><td>Label au-dessus du groupe.</td></tr>
-          <tr><td><code>options</code></td><td><code>string[] | &#123; value, label? &#125;[]</code></td><td>[]</td><td>Non</td><td>Liste d’options (chaînes ou objets value/label).</td></tr>
-          <tr><td><code>value</code></td><td><code>string</code></td><td>—</td><td>Non</td><td>Valeur sélectionnée.</td></tr>
-          <tr><td><code>onChange</code></td><td><code>(value: string) =&gt; void</code></td><td>—</td><td>Non</td><td>Callback au changement.</td></tr>
-          <tr><td><code>layout</code></td><td><code>&quot;vertical&quot; | &quot;horizontal&quot;</code></td><td>vertical</td><td>Non</td><td>Disposition des options.</td></tr>
-          <tr><td><code>disabled</code></td><td><code>boolean</code></td><td>false</td><td>Non</td><td>Désactive tout le groupe.</td></tr>
-          <tr><td><code>className</code></td><td><code>string</code></td><td>—</td><td>Non</td><td>Classes CSS additionnelles.</td></tr>
+          <tr><td><code>name</code></td><td><code>string</code></td><td>—</td><td>{t.no}</td><td>{t.rows.name}</td></tr>
+          <tr><td><code>label</code></td><td><code>string</code></td><td>—</td><td>{t.no}</td><td>{t.rows.label}</td></tr>
+          <tr><td><code>options</code></td><td><code>string[] | &#123; value, label? &#125;[]</code></td><td>[]</td><td>{t.no}</td><td>{t.rows.options}</td></tr>
+          <tr><td><code>value</code></td><td><code>string</code></td><td>—</td><td>{t.no}</td><td>{t.rows.value}</td></tr>
+          <tr><td><code>onChange</code></td><td><code>(value: string) =&gt; void</code></td><td>—</td><td>{t.no}</td><td>{t.rows.onChange}</td></tr>
+          <tr><td><code>layout</code></td><td><code>&quot;vertical&quot; | &quot;horizontal&quot;</code></td><td>vertical</td><td>{t.no}</td><td>{t.rows.layout}</td></tr>
+          <tr><td><code>disabled</code></td><td><code>boolean</code></td><td>false</td><td>{t.no}</td><td>{t.rows.disabled}</td></tr>
+          <tr><td><code>className</code></td><td><code>string</code></td><td>—</td><td>{t.no}</td><td>{t.rows.className}</td></tr>
         </tbody>
       </table>
 
-      <h2 className="text-lg font-semibold mt-8 mb-2">Exemples</h2>
+      <h2 className="text-lg font-semibold mt-8 mb-2">{t.examples}</h2>
       <CodeBlock code={'bpm.radiogroup(label="Taille", options=["S", "M", "L"], value="M")'} language="python" />
       <CodeBlock code={'bpm.radiogroup(options=["Oui", "Non"], layout="horizontal")'} language="python" />
 

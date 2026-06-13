@@ -7,6 +7,7 @@
   "jsoneditor": "bpm.jsonEditor({ value: '{\"key\": \"value\"}', onChange: (v, valid) => console.log(v, valid) })",
   "labelvalue": "bpm.labelValue({ label: \"Référence\", value: \"REF-001\", copyable: true, valueStyle: \"bold\" })",
   "linechart": "bpm.lineChart({ data: [{ x: 0, y: 10 }, { x: 1, y: 25 }], color: \"#3b82f6\" })",
+  "livegauge": "bpm.liveGauge({ value: 75, min: 0, max: 100, warningAbove: 70, criticalAbove: 90, label: \"CPU\" })",
   "map": "bpm.map({ lat: 48.8566, lng: 2.3522, height: 300 })",
   "metric": "bpm.metric({ label: \"Chiffre d'affaires\", value: 125000, delta: \"+12%\", currency: \"EUR\" })",
   "modal": "bpm.modal({ isOpen: true, onClose: () => setOpen(false), title: \"Confirmation\", children: <p>Contenu</p> })",

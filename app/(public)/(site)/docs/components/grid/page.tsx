@@ -4,8 +4,47 @@ import { useState } from "react";
 import Link from "next/link";
 import { Grid, CodeBlock } from "@/components/bpm";
 import { getPrevNext } from "@/lib/docPages";
+import { useI18n } from "@/lib/i18n/LocaleProvider";
+
+const fr = {
+  components: "Composants",
+  description: "Grille responsive : disposition en colonnes avec espacement configurable.",
+  category: "Mise en page",
+  cell: "Cellule",
+  copy: "Copier",
+  thDefault: "Défaut",
+  thRequired: "Requis",
+  no: "Non",
+  examples: "Exemples",
+  gapPlaceholder: "ex. 1rem ou 16",
+  d_cols: "Nombre de colonnes (ou objet responsive xs, sm, md, lg).",
+  d_gap: "Espacement entre les cellules (px si number, sinon valeur CSS).",
+  d_children: "Contenu des cellules de la grille.",
+  d_className: "Classes CSS additionnelles.",
+};
+
+const en: typeof fr = {
+  components: "Components",
+  description: "Responsive grid: column layout with configurable spacing.",
+  category: "Layout",
+  cell: "Cell",
+  copy: "Copy",
+  thDefault: "Default",
+  thRequired: "Required",
+  no: "No",
+  examples: "Examples",
+  gapPlaceholder: "e.g. 1rem or 16",
+  d_cols: "Number of columns (or responsive object xs, sm, md, lg).",
+  d_gap: "Spacing between cells (px if number, otherwise CSS value).",
+  d_children: "Grid cell content.",
+  d_className: "Additional CSS classes.",
+};
+
+const L = { fr, en } as const;
 
 export default function DocGridPage() {
+  const { locale } = useI18n();
+  const t = L[locale];
   const [cols, setCols] = useState(3);
   const [gap, setGap] = useState("1rem");
 
@@ -24,15 +63,15 @@ export default function DocGridPage() {
     <div className="doc-page">
       <div className="doc-page-header">
         <div className="doc-breadcrumb">
-          <Link href="/docs/components">Composants</Link> → bpm.grid
+          <Link href="/docs/components">{t.components}</Link> → bpm.grid
         </div>
         <h1>bpm.grid</h1>
         <p className="doc-description">
-          Grille responsive : disposition en colonnes avec espacement configurable.
+          {t.description}
         </p>
         <div className="doc-meta">
           <span className="doc-badge doc-badge-stable">Stable</span>
-          <span className="doc-badge doc-badge-category">Mise en page</span>
+          <span className="doc-badge doc-badge-category">{t.category}</span>
           <span className="doc-reading-time">⏱ 2 min</span>
         </div>
       </div>
@@ -51,7 +90,7 @@ export default function DocGridPage() {
                     color: "var(--bpm-text-secondary)",
                   }}
                 >
-                  Cellule {label}
+                  {t.cell} {label}
                 </div>
               ))}
             </Grid>
@@ -73,7 +112,7 @@ export default function DocGridPage() {
               type="text"
               value={gap}
               onChange={(e) => setGap(e.target.value)}
-              placeholder="ex. 1rem ou 16"
+              placeholder={t.gapPlaceholder}
             />
           </div>
         </div>
@@ -81,7 +120,7 @@ export default function DocGridPage() {
           <div className="sandbox-code-header">
             <span>Python</span>
             <button type="button" onClick={() => navigator.clipboard.writeText(pythonCode)}>
-              Copier
+              {t.copy}
             </button>
           </div>
           <pre><code>{pythonCode}</code></pre>
@@ -93,8 +132,8 @@ export default function DocGridPage() {
           <tr>
             <th>Prop</th>
             <th>Type</th>
-            <th>Défaut</th>
-            <th>Requis</th>
+            <th>{t.thDefault}</th>
+            <th>{t.thRequired}</th>
             <th>Description</th>
           </tr>
         </thead>
@@ -103,34 +142,34 @@ export default function DocGridPage() {
             <td><code>cols</code></td>
             <td><code>number | object</code></td>
             <td>1</td>
-            <td>Non</td>
-            <td>Nombre de colonnes (ou objet responsive xs, sm, md, lg).</td>
+            <td>{t.no}</td>
+            <td>{t.d_cols}</td>
           </tr>
           <tr>
             <td><code>gap</code></td>
             <td><code>number | string</code></td>
             <td>1rem</td>
-            <td>Non</td>
-            <td>Espacement entre les cellules (px si number, sinon valeur CSS).</td>
+            <td>{t.no}</td>
+            <td>{t.d_gap}</td>
           </tr>
           <tr>
             <td><code>children</code></td>
             <td><code>ReactNode</code></td>
             <td>—</td>
-            <td>Non</td>
-            <td>Contenu des cellules de la grille.</td>
+            <td>{t.no}</td>
+            <td>{t.d_children}</td>
           </tr>
           <tr>
             <td><code>className</code></td>
             <td><code>string</code></td>
             <td>—</td>
-            <td>Non</td>
-            <td>Classes CSS additionnelles.</td>
+            <td>{t.no}</td>
+            <td>{t.d_className}</td>
           </tr>
         </tbody>
       </table>
 
-      <h2 className="text-lg font-semibold mt-8 mb-2">Exemples</h2>
+      <h2 className="text-lg font-semibold mt-8 mb-2">{t.examples}</h2>
       <CodeBlock code={'bpm.grid(cols=2)\nbpm.grid(cols=3, gap=24)'} language="python" />
       <CodeBlock code={'bpm.grid(cols=4, gap="1.5rem")'} language="python" />
 

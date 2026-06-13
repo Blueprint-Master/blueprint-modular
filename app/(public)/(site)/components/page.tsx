@@ -107,7 +107,7 @@ import {
   StreamingText,
   Toast,
 } from "@/components/bpm";
-import { APP_VERSION } from "@/lib/version";
+import { CORE_VERSION } from "@/lib/version";
 import type { NotificationItem } from "@/components/bpm";
 import { ElevationShowcase } from "@/components/showcase/ElevationShowcase";
 import registry from "@/lib/generated/bpm-components.json";
@@ -860,7 +860,7 @@ export default function ComponentsPage() {
                 data={{
                   id: 1,
                   name: "Blueprint",
-                  version: APP_VERSION,
+                  version: CORE_VERSION,
                   active: true,
                 }}
               />

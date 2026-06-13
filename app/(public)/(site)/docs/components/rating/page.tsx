@@ -4,10 +4,51 @@ import { useState } from "react";
 import Link from "next/link";
 import { Rating, CodeBlock } from "@/components/bpm";
 import { getPrevNext } from "@/lib/docPages";
+import { useI18n } from "@/lib/i18n/LocaleProvider";
 
 type Size = "small" | "medium" | "large";
 
 export default function DocRatingPage() {
+  const { locale } = useI18n();
+  const fr = {
+    breadcrumb: "Composants",
+    description: "Notation par étoiles.",
+    category: "Interaction",
+    disabledLabel: "Désactivé",
+    copy: "Copier",
+    paramsTitle: "Paramètres",
+    head: { param: "Paramètre", type: "Type", def: "Défaut", req: "Requis", desc: "Description" },
+    no: "Non",
+    rows: {
+      value: (<>Nombre d&apos;étoiles affichées.</>),
+      max: (<>Nombre maximum d&apos;étoiles.</>),
+      size: "Taille des étoiles.",
+      disabled: "Lecture seule (pas de clic).",
+      onChange: "Callback (value: number).",
+    },
+    exampleTitle: "Exemple",
+  };
+  const en: typeof fr = {
+    breadcrumb: "Components",
+    description: "Star rating.",
+    category: "Interaction",
+    disabledLabel: "Disabled",
+    copy: "Copy",
+    paramsTitle: "Parameters",
+    head: { param: "Parameter", type: "Type", def: "Default", req: "Required", desc: "Description" },
+    no: "No",
+    rows: {
+      value: (<>Number of stars shown.</>),
+      max: (<>Maximum number of stars.</>),
+      size: "Star size.",
+      disabled: "Read-only (no click).",
+      onChange: "Callback (value: number).",
+    },
+    exampleTitle: "Example",
+  };
+  const L = { fr, en } as const;
+  const t = L[locale];
+
   const [value, setValue] = useState(3);
   const [max, setMax] = useState(5);
   const [disabled, setDisabled] = useState(false);
@@ -19,11 +60,11 @@ export default function DocRatingPage() {
   return (
     <div className="doc-page">
       <div className="doc-page-header">
-        <div className="doc-breadcrumb"><Link href="/docs/components">Composants</Link> → bpm.rating</div>
+        <div className="doc-breadcrumb"><Link href="/docs/components">{t.breadcrumb}</Link> → bpm.rating</div>
         <h1>bpm.rating</h1>
-        <p className="doc-description">Notation par étoiles.</p>
+        <p className="doc-description">{t.description}</p>
         <div className="doc-meta">
-          <span className="doc-badge doc-badge-category">Interaction</span>
+          <span className="doc-badge doc-badge-category">{t.category}</span>
         </div>
       </div>
 
@@ -70,31 +111,31 @@ export default function DocRatingPage() {
             <label>disabled</label>
             <label className="inline-flex items-center gap-2">
               <input type="checkbox" checked={disabled} onChange={(e) => setDisabled(e.target.checked)} />
-              Désactivé
+              {t.disabledLabel}
             </label>
           </div>
         </div>
         <div className="sandbox-code">
           <div className="sandbox-code-header">
             <span>Python</span>
-            <button type="button" onClick={() => navigator.clipboard.writeText(pythonCode)}>Copier</button>
+            <button type="button" onClick={() => navigator.clipboard.writeText(pythonCode)}>{t.copy}</button>
           </div>
           <pre><code>{pythonCode}</code></pre>
         </div>
       </div>
 
-      <h2 className="text-lg font-semibold mt-8 mb-2">Paramètres</h2>
+      <h2 className="text-lg font-semibold mt-8 mb-2">{t.paramsTitle}</h2>
       <table className="props-table w-full border-collapse text-sm">
-        <thead><tr><th className="text-left p-2 border-b" style={{ borderColor: "var(--bpm-border)" }}>Paramètre</th><th className="text-left p-2 border-b" style={{ borderColor: "var(--bpm-border)" }}>Type</th><th className="text-left p-2 border-b" style={{ borderColor: "var(--bpm-border)" }}>Défaut</th><th className="text-left p-2 border-b" style={{ borderColor: "var(--bpm-border)" }}>Requis</th><th className="text-left p-2 border-b" style={{ borderColor: "var(--bpm-border)" }}>Description</th></tr></thead>
+        <thead><tr><th className="text-left p-2 border-b" style={{ borderColor: "var(--bpm-border)" }}>{t.head.param}</th><th className="text-left p-2 border-b" style={{ borderColor: "var(--bpm-border)" }}>{t.head.type}</th><th className="text-left p-2 border-b" style={{ borderColor: "var(--bpm-border)" }}>{t.head.def}</th><th className="text-left p-2 border-b" style={{ borderColor: "var(--bpm-border)" }}>{t.head.req}</th><th className="text-left p-2 border-b" style={{ borderColor: "var(--bpm-border)" }}>{t.head.desc}</th></tr></thead>
         <tbody>
-          <tr><td className="p-2 border-b" style={{ borderColor: "var(--bpm-border)" }}><code>value</code></td><td className="p-2 border-b" style={{ borderColor: "var(--bpm-border)" }}>number</td><td className="p-2 border-b" style={{ borderColor: "var(--bpm-border)" }}>0</td><td className="p-2 border-b" style={{ borderColor: "var(--bpm-border)" }}>Non</td><td className="p-2 border-b" style={{ borderColor: "var(--bpm-border)" }}>Nombre d&apos;étoiles affichées.</td></tr>
-          <tr><td className="p-2 border-b" style={{ borderColor: "var(--bpm-border)" }}><code>max</code></td><td className="p-2 border-b" style={{ borderColor: "var(--bpm-border)" }}>number</td><td className="p-2 border-b" style={{ borderColor: "var(--bpm-border)" }}>5</td><td className="p-2 border-b" style={{ borderColor: "var(--bpm-border)" }}>Non</td><td className="p-2 border-b" style={{ borderColor: "var(--bpm-border)" }}>Nombre maximum d&apos;étoiles.</td></tr>
-          <tr><td className="p-2 border-b" style={{ borderColor: "var(--bpm-border)" }}><code>size</code></td><td className="p-2 border-b" style={{ borderColor: "var(--bpm-border)" }}>small | medium | large</td><td className="p-2 border-b" style={{ borderColor: "var(--bpm-border)" }}>medium</td><td className="p-2 border-b" style={{ borderColor: "var(--bpm-border)" }}>Non</td><td className="p-2 border-b" style={{ borderColor: "var(--bpm-border)" }}>Taille des étoiles.</td></tr>
-          <tr><td className="p-2 border-b" style={{ borderColor: "var(--bpm-border)" }}><code>disabled</code></td><td className="p-2 border-b" style={{ borderColor: "var(--bpm-border)" }}>boolean</td><td className="p-2 border-b" style={{ borderColor: "var(--bpm-border)" }}>false</td><td className="p-2 border-b" style={{ borderColor: "var(--bpm-border)" }}>Non</td><td className="p-2 border-b" style={{ borderColor: "var(--bpm-border)" }}>Lecture seule (pas de clic).</td></tr>
-          <tr><td className="p-2 border-b" style={{ borderColor: "var(--bpm-border)" }}><code>onChange</code></td><td className="p-2 border-b" style={{ borderColor: "var(--bpm-border)" }}>function</td><td className="p-2 border-b" style={{ borderColor: "var(--bpm-border)" }}>—</td><td className="p-2 border-b" style={{ borderColor: "var(--bpm-border)" }}>Non</td><td className="p-2 border-b" style={{ borderColor: "var(--bpm-border)" }}>Callback (value: number).</td></tr>
+          <tr><td className="p-2 border-b" style={{ borderColor: "var(--bpm-border)" }}><code>value</code></td><td className="p-2 border-b" style={{ borderColor: "var(--bpm-border)" }}>number</td><td className="p-2 border-b" style={{ borderColor: "var(--bpm-border)" }}>0</td><td className="p-2 border-b" style={{ borderColor: "var(--bpm-border)" }}>{t.no}</td><td className="p-2 border-b" style={{ borderColor: "var(--bpm-border)" }}>{t.rows.value}</td></tr>
+          <tr><td className="p-2 border-b" style={{ borderColor: "var(--bpm-border)" }}><code>max</code></td><td className="p-2 border-b" style={{ borderColor: "var(--bpm-border)" }}>number</td><td className="p-2 border-b" style={{ borderColor: "var(--bpm-border)" }}>5</td><td className="p-2 border-b" style={{ borderColor: "var(--bpm-border)" }}>{t.no}</td><td className="p-2 border-b" style={{ borderColor: "var(--bpm-border)" }}>{t.rows.max}</td></tr>
+          <tr><td className="p-2 border-b" style={{ borderColor: "var(--bpm-border)" }}><code>size</code></td><td className="p-2 border-b" style={{ borderColor: "var(--bpm-border)" }}>small | medium | large</td><td className="p-2 border-b" style={{ borderColor: "var(--bpm-border)" }}>medium</td><td className="p-2 border-b" style={{ borderColor: "var(--bpm-border)" }}>{t.no}</td><td className="p-2 border-b" style={{ borderColor: "var(--bpm-border)" }}>{t.rows.size}</td></tr>
+          <tr><td className="p-2 border-b" style={{ borderColor: "var(--bpm-border)" }}><code>disabled</code></td><td className="p-2 border-b" style={{ borderColor: "var(--bpm-border)" }}>boolean</td><td className="p-2 border-b" style={{ borderColor: "var(--bpm-border)" }}>false</td><td className="p-2 border-b" style={{ borderColor: "var(--bpm-border)" }}>{t.no}</td><td className="p-2 border-b" style={{ borderColor: "var(--bpm-border)" }}>{t.rows.disabled}</td></tr>
+          <tr><td className="p-2 border-b" style={{ borderColor: "var(--bpm-border)" }}><code>onChange</code></td><td className="p-2 border-b" style={{ borderColor: "var(--bpm-border)" }}>function</td><td className="p-2 border-b" style={{ borderColor: "var(--bpm-border)" }}>—</td><td className="p-2 border-b" style={{ borderColor: "var(--bpm-border)" }}>{t.no}</td><td className="p-2 border-b" style={{ borderColor: "var(--bpm-border)" }}>{t.rows.onChange}</td></tr>
         </tbody>
       </table>
-      <h2 className="text-lg font-semibold mt-8 mb-2">Exemple</h2>
+      <h2 className="text-lg font-semibold mt-8 mb-2">{t.exampleTitle}</h2>
       <CodeBlock code={"bpm.rating(value=3, max=5)"} language="python" />
 
       <nav className="doc-pagination">

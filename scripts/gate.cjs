@@ -84,6 +84,14 @@ const buildOk = run("npm run build", { cwd: CORE_DIR, label: "vite build" });
 step("Step c — Doc sync check");
 runPython("gate-docs-sync.py");
 
+// ── Step c bis: Version consistency ──────────────────────────────────────────
+// lib/generated/versions.json doit refléter pyproject.toml / core package.json / package.json.
+step("Step c bis — Version consistency (versions.json à jour)");
+run("node scripts/generate-versions.mjs --check", {
+  cwd: REPO_ROOT,
+  label: "versions.json vs sources",
+});
+
 // ── Steps d + e: Vitest (smoke + prop snapshot) ───────────────────────────────
 step("Steps d+e — Smoke render + prop-surface snapshot (vitest)");
 run("npx vitest run gate/", { cwd: CORE_DIR, label: "vitest gate/" });

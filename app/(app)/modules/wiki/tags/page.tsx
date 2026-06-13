@@ -3,6 +3,8 @@
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import { Panel, Button } from "@/components/bpm";
+import { useI18n } from "@/lib/i18n/LocaleProvider";
+import { STR } from "../strings";
 
 const TAG_CLOUD_COLORS = [
   "var(--bpm-accent-cyan)",
@@ -12,6 +14,8 @@ const TAG_CLOUD_COLORS = [
 ];
 
 export default function WikiTagsPage() {
+  const { locale } = useI18n();
+  const t = STR[locale];
   const [tags, setTags] = useState<{ tag: string; count: number }[]>([]);
   const [loading, setLoading] = useState(true);
   const [view, setView] = useState<"cloud" | "list">("cloud");
@@ -25,20 +29,20 @@ export default function WikiTagsPage() {
   }, []);
 
   const maxCount = tags.length ? Math.max(...tags.map((t) => t.count)) : 1;
-  const sortedByAlpha = [...tags].sort((a, b) => a.tag.localeCompare(b.tag, "fr"));
+  const sortedByAlpha = [...tags].sort((a, b) => a.tag.localeCompare(b.tag, t.common.localeSort));
 
   return (
     <div className="doc-page">
       <div className="doc-page-header">
         <div className="doc-breadcrumb">
-          <Link href="/modules">Modules</Link> → <Link href="/modules/wiki">Wiki</Link> → Tags
+          <Link href="/modules">{t.common.modules}</Link> → <Link href="/modules/wiki">Wiki</Link> → {t.tags.breadcrumb}
         </div>
-        <h1>Tags du Wiki</h1>
+        <h1>{t.tags.title}</h1>
         <p className="doc-description">
-          Nuage de tags ou liste alphabétique avec nombre d&apos;articles. Cliquez sur un tag pour filtrer la liste.
+          {t.tags.description}
         </p>
         {tags.length > 0 && (
-          <div className="flex gap-2 mt-2" role="group" aria-label="Vue d’affichage">
+          <div className="flex gap-2 mt-2" role="group" aria-label={t.tags.viewLabel}>
             <Button
               type="button"
               variant={view === "cloud" ? "primary" : "outline"}
@@ -46,7 +50,7 @@ export default function WikiTagsPage() {
               onClick={() => setView("cloud")}
               aria-pressed={view === "cloud"}
             >
-              Nuage
+              {t.tags.cloud}
             </Button>
             <Button
               type="button"
@@ -55,26 +59,26 @@ export default function WikiTagsPage() {
               onClick={() => setView("list")}
               aria-pressed={view === "list"}
             >
-              Liste A–Z
+              {t.tags.listAZ}
             </Button>
           </div>
         )}
       </div>
 
       {loading ? (
-        <p style={{ color: "var(--bpm-text-secondary)" }}>Chargement…</p>
+        <p style={{ color: "var(--bpm-text-secondary)" }}>{t.common.loadingEllipsis}</p>
       ) : tags.length === 0 ? (
-        <Panel variant="info" title="Aucun tag">
+        <Panel variant="info" title={t.tags.noTagTitle}>
           <p className="text-sm" style={{ color: "var(--bpm-text-secondary)" }}>
-            Aucun article n&apos;a encore de tag. Ajoutez des tags lors de l&apos;édition des articles.
+            {t.tags.noTagBody}
           </p>
           <Link href="/modules/wiki" className="inline-block mt-2 underline" style={{ color: "var(--bpm-accent-cyan)" }}>
-            Retour au Wiki
+            {t.common.backToWikiPlain}
           </Link>
         </Panel>
       ) : view === "cloud" ? (
         <div className="mt-4 p-4 rounded-lg border" style={{ borderColor: "var(--bpm-border)", background: "var(--bpm-bg-secondary)" }}>
-          <h2 className="text-sm font-semibold mb-3" style={{ color: "var(--bpm-text-primary)" }}>Nuage de tags</h2>
+          <h2 className="text-sm font-semibold mb-3" style={{ color: "var(--bpm-text-primary)" }}>{t.tags.cloudHeading}</h2>
           <div className="flex flex-wrap gap-3 items-baseline">
             {tags.map(({ tag, count }, i) => {
               const scale = maxCount > 0 ? 0.875 + (count / maxCount) * 0.75 : 1;
@@ -97,12 +101,12 @@ export default function WikiTagsPage() {
             })}
           </div>
           <p className="text-xs mt-4" style={{ color: "var(--bpm-text-secondary)" }}>
-            Cliquez sur un tag pour afficher les articles associés.
+            {t.tags.cloudHint}
           </p>
         </div>
       ) : (
         <div className="mt-4 p-4 rounded-lg border" style={{ borderColor: "var(--bpm-border)", background: "var(--bpm-bg-secondary)" }}>
-          <h2 className="text-sm font-semibold mb-3" style={{ color: "var(--bpm-text-primary)" }}>Liste alphabétique</h2>
+          <h2 className="text-sm font-semibold mb-3" style={{ color: "var(--bpm-text-primary)" }}>{t.tags.alphaHeading}</h2>
           <ul className="space-y-1">
             {sortedByAlpha.map(({ tag, count }) => (
               <li key={tag}>
@@ -112,7 +116,7 @@ export default function WikiTagsPage() {
                   style={{ color: "var(--bpm-accent-cyan)", background: "var(--bpm-bg-primary)", border: "1px solid var(--bpm-border)" }}
                 >
                   <span>{tag}</span>
-                  <span className="text-sm opacity-70" style={{ color: "var(--bpm-text-secondary)" }}>{count} article{count > 1 ? "s" : ""}</span>
+                  <span className="text-sm opacity-70" style={{ color: "var(--bpm-text-secondary)" }}>{t.tags.articleCount(count)}</span>
                 </Link>
               </li>
             ))}
@@ -121,8 +125,8 @@ export default function WikiTagsPage() {
       )}
 
       <nav className="doc-pagination mt-8">
-        <Link href="/modules/wiki" style={{ color: "var(--bpm-accent-cyan)" }}>← Retour au Wiki</Link>
-        <Link href="/modules/wiki/search" style={{ color: "var(--bpm-accent-cyan)" }}>Recherche</Link>
+        <Link href="/modules/wiki" style={{ color: "var(--bpm-accent-cyan)" }}>{t.common.backToWiki}</Link>
+        <Link href="/modules/wiki/search" style={{ color: "var(--bpm-accent-cyan)" }}>{t.common.search}</Link>
       </nav>
     </div>
   );

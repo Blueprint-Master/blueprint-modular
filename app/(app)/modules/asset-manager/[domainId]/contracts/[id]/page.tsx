@@ -5,6 +5,8 @@ import Link from "next/link";
 import { useParams } from "next/navigation";
 import { Panel, Button, Spinner, Selectbox, Input, Badge, Card, Divider } from "@/components/bpm";
 import { FicheHeader, FicheSectionCard, FicheFieldGrid, FicheNav, FicheSkeleton } from "@/components/fiche";
+import { useI18n } from "@/lib/i18n/LocaleProvider";
+import { STR } from "../../../strings";
 
 type AssetContract = {
   id: string;
@@ -26,16 +28,12 @@ type AssetContract = {
   updatedAt: string;
 };
 
-const TYPE_OPTIONS = [
-  { value: "garantie", label: "Garantie" },
-  { value: "maintenance", label: "Maintenance" },
-  { value: "leasing", label: "Leasing" },
-  { value: "credit_bail", label: "Crédit-bail" },
-  { value: "licence", label: "Licence" },
-];
-
 export default function AssetManagerContractDetailPage() {
   const params = useParams();
+  const { locale } = useI18n();
+  const t = STR[locale];
+  const tc = t.contracts;
+  const TYPE_LABELS: Record<string, string> = tc.typeLabels;
   const domainId = typeof params?.domainId === "string" ? params.domainId : "";
   const id = typeof params?.id === "string" ? params.id : "";
   const [contract, setContract] = useState<AssetContract | null>(null);
@@ -102,22 +100,22 @@ export default function AssetManagerContractDetailPage() {
   if (!contract) {
     return (
       <div className="doc-page">
-        <Panel variant="warning" title="Contrat introuvable">Ce contrat n&apos;existe pas ou vous n&apos;y avez pas accès.</Panel>
-        <FicheNav backLink={`/modules/asset-manager/${domainId}/contracts`} backLabel="← Liste des contrats" />
+        <Panel variant="warning" title={tc.notFoundTitle}>{tc.notFoundDescription}</Panel>
+        <FicheNav backLink={`/modules/asset-manager/${domainId}/contracts`} backLabel={tc.backList} />
       </div>
     );
   }
 
-  const typeLabel = TYPE_OPTIONS.find((o) => o.value === contract.type)?.label ?? contract.type;
+  const typeLabel = TYPE_LABELS[contract.type] ?? contract.type;
 
   return (
     <div className="doc-page">
       <FicheHeader
         breadcrumb={
           <>
-            <Link href="/modules" style={{ color: "var(--bpm-accent-cyan)" }}>Modules</Link> → <Link href="/modules/asset-manager" style={{ color: "var(--bpm-accent-cyan)" }}>Gestion de parc</Link> →{" "}
-            <Link href={`/modules/asset-manager/${domainId}`} style={{ color: "var(--bpm-accent-cyan)" }}>Tableau de bord</Link> →{" "}
-            <Link href={`/modules/asset-manager/${domainId}/contracts`} style={{ color: "var(--bpm-accent-cyan)" }}>Contrats</Link> → {contract.reference}
+            <Link href="/modules" style={{ color: "var(--bpm-accent-cyan)" }}>{t.common.breadcrumbModules}</Link> → <Link href="/modules/asset-manager" style={{ color: "var(--bpm-accent-cyan)" }}>{t.common.moduleTitle}</Link> →{" "}
+            <Link href={`/modules/asset-manager/${domainId}`} style={{ color: "var(--bpm-accent-cyan)" }}>{t.nav.dashboard}</Link> →{" "}
+            <Link href={`/modules/asset-manager/${domainId}/contracts`} style={{ color: "var(--bpm-accent-cyan)" }}>{t.nav.contracts}</Link> → {contract.reference}
           </>
         }
         title={contract.label}
@@ -132,22 +130,22 @@ export default function AssetManagerContractDetailPage() {
       <Divider thickness={1} color="var(--bpm-border)" className="my-4" />
       <Card variant="outlined" className="mt-4">
         <div className="bpm-card-body p-4">
-          <h3 className="text-base font-semibold mb-3" style={{ color: "var(--bpm-text-primary)" }}>Détail du contrat</h3>
+          <h3 className="text-base font-semibold mb-3" style={{ color: "var(--bpm-text-primary)" }}>{tc.detailTitle}</h3>
           <FicheFieldGrid
             withDividers
             items={[
-              { label: "Référence", value: contract.reference },
-              { label: "Type", value: typeLabel, asBadge: true },
+              { label: tc.fieldReference, value: contract.reference },
+              { label: tc.fieldType, value: typeLabel, asBadge: true },
               {
-                label: "Libellé",
-                value: <Input value={editLabel} onChange={(v) => setEditLabel(v)} placeholder="Libellé" />,
+                label: tc.fieldLabel,
+                value: <Input value={editLabel} onChange={(v) => setEditLabel(v)} placeholder={tc.fieldLabel} />,
               },
               {
-                label: "Fournisseur",
-                value: <Input value={editSupplier} onChange={(v) => setEditSupplier(v)} placeholder="Fournisseur" />,
+                label: tc.fieldSupplier,
+                value: <Input value={editSupplier} onChange={(v) => setEditSupplier(v)} placeholder={tc.fieldSupplier} />,
               },
               {
-                label: "Début",
+                label: tc.fieldStart,
                 value: (
                   <input
                     type="date"
@@ -159,7 +157,7 @@ export default function AssetManagerContractDetailPage() {
                 ),
               },
               {
-                label: "Fin",
+                label: tc.fieldEnd,
                 value: (
                   <input
                     type="date"
@@ -171,45 +169,45 @@ export default function AssetManagerContractDetailPage() {
                 ),
               },
               {
-                label: "Montant (€)",
-                value: <Input value={editAmount} onChange={(v) => setEditAmount(v)} placeholder="Montant" />,
+                label: tc.fieldAmount,
+                value: <Input value={editAmount} onChange={(v) => setEditAmount(v)} placeholder={tc.placeholderAmount} />,
               },
               {
-                label: "Préavis (jours)",
+                label: tc.fieldNoticeDays,
                 value: <Input value={editNoticeDays} onChange={(v) => setEditNoticeDays(v)} placeholder="30" />,
               },
               {
-                label: "Renouvellement auto",
+                label: tc.fieldAutoRenewalShort,
                 value: (
                   <Selectbox
                     value={editAutoRenewal ? "yes" : "no"}
                     onChange={(v) => setEditAutoRenewal(v === "yes")}
-                    options={[{ value: "no", label: "Non" }, { value: "yes", label: "Oui" }]}
+                    options={[{ value: "no", label: t.common.no }, { value: "yes", label: t.common.yes }]}
                   />
                 ),
               },
             ]}
           />
           <div className="mt-4">
-            <label className="block text-sm font-medium mb-1" style={{ color: "var(--bpm-text-secondary)" }}>Notes</label>
+            <label className="block text-sm font-medium mb-1" style={{ color: "var(--bpm-text-secondary)" }}>{tc.sectionNotes}</label>
             <textarea
               value={editNotes}
               onChange={(e) => setEditNotes(e.target.value)}
               rows={3}
               className="bpm-textarea w-full rounded-lg border px-3 py-2 text-sm resize-y"
               style={{ borderColor: "var(--bpm-border)", background: "var(--bpm-surface)", color: "var(--bpm-text-primary)" }}
-              placeholder="Notes"
+              placeholder={tc.sectionNotes}
             />
           </div>
           <div className="mt-6">
             <Button variant="primary" size="medium" onClick={handleSave} disabled={saving}>
-              {saving ? "Enregistrement…" : "Enregistrer"}
+              {saving ? t.common.saving : t.common.save}
             </Button>
           </div>
         </div>
       </Card>
 
-      <FicheNav backLink={`/modules/asset-manager/${domainId}/contracts`} backLabel="← Liste des contrats" />
+      <FicheNav backLink={`/modules/asset-manager/${domainId}/contracts`} backLabel={tc.backList} />
     </div>
   );
 }

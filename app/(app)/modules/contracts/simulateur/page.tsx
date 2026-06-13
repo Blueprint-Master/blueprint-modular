@@ -4,11 +4,15 @@ import { useState, useEffect } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { Spinner, Panel, Button } from "@/components/bpm";
+import { useI18n } from "@/lib/i18n/LocaleProvider";
+import { STR } from "../strings";
 
 interface ContractDemo { id: string; originalFilename: string; status: string; }
 
 export default function ContractsSimulateurPage() {
   const router = useRouter();
+  const { locale } = useI18n();
+  const t = STR[locale].simulator;
   const [contracts, setContracts] = useState<ContractDemo[]>([]);
   const [loading, setLoading] = useState(true);
 
@@ -34,48 +38,48 @@ export default function ContractsSimulateurPage() {
   if (loading) {
     return (
       <div className="doc-page flex flex-col items-center justify-center gap-4 min-h-[200px]" style={{ color: "var(--bpm-text-secondary)" }}>
-        <Spinner size="medium" text="Chargement…" />
+        <Spinner size="medium" text={t.loading} />
       </div>
     );
   }
 
   return (
     <div className="doc-page">
-      <h1 className="text-xl font-semibold" style={{ color: "var(--bpm-text-primary)" }}>Simulateur Base contractuelle</h1>
+      <h1 className="text-xl font-semibold" style={{ color: "var(--bpm-text-primary)" }}>{t.title}</h1>
       <p className="mt-2 text-sm" style={{ color: "var(--bpm-text-secondary)" }}>
-        Ouvrez un contrat en mode démo pour tester la page de détail et l&apos;analyse IA.
+        {t.intro}
       </p>
 
       {contracts.length > 0 ? (
-        <Panel variant="info" title="Contrats disponibles (démo)" className="mt-6">
+        <Panel variant="info" title={t.availableTitle} className="mt-6">
           <ul className="space-y-2">
             {contracts.map((c) => (
               <li key={c.id} className="flex items-center justify-between gap-4 flex-wrap">
                 <span className="text-sm truncate" style={{ color: "var(--bpm-text-primary)" }}>{c.originalFilename}</span>
                 <Button size="small" variant="secondary" onClick={() => openDemo(c.id)}>
-                  Voir le contrat
+                  {t.viewContract}
                 </Button>
               </li>
             ))}
           </ul>
           <p className="mt-3 text-xs" style={{ color: "var(--bpm-text-secondary)" }}>
-            Seuls les contrats déjà analysés (statut « Analysé ») sont listés.
+            {t.onlyAnalyzed}
           </p>
         </Panel>
       ) : (
-        <Panel variant="info" title="Mode sandbox" className="mt-6">
+        <Panel variant="info" title={t.sandboxTitle} className="mt-6">
           <p className="text-sm" style={{ color: "var(--bpm-text-secondary)" }}>
-            Aucun contrat analysé pour le moment. Uploadez un fichier depuis la Base contractuelle, lancez l&apos;analyse, puis revenez ici pour ouvrir un contrat en démo.
+            {t.sandboxDesc}
           </p>
           <Link href="/modules/contracts" className="inline-block mt-4">
-            <Button variant="primary">Aller à la Base contractuelle</Button>
+            <Button variant="primary">{t.goToRepository}</Button>
           </Link>
         </Panel>
       )}
 
       <nav className="doc-pagination mt-8">
-        <Link href="/modules/contracts" style={{ color: "var(--bpm-accent-cyan)" }}>← Retour à la Base contractuelle</Link>
-        <Link href="/modules/contracts/documentation" style={{ color: "var(--bpm-accent-cyan)" }}>Documentation</Link>
+        <Link href="/modules/contracts" style={{ color: "var(--bpm-accent-cyan)" }}>{t.backToRepository}</Link>
+        <Link href="/modules/contracts/documentation" style={{ color: "var(--bpm-accent-cyan)" }}>{t.documentation}</Link>
       </nav>
     </div>
   );

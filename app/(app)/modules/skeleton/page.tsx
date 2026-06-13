@@ -2,32 +2,40 @@
 
 import Link from "next/link";
 import { Tabs, CodeBlock } from "@/components/bpm";
+import { useI18n } from "@/lib/i18n/LocaleProvider";
+import { STR } from "./strings";
 
-const docContent = (
-  <>
-    <h2 className="text-lg font-semibold mt-0 mb-2" style={{ color: "var(--bpm-text-primary)" }}>À propos</h2>
-    <p className="mb-6" style={{ color: "var(--bpm-text-secondary)", maxWidth: "60ch" }}>
-      Le module <strong>Skeleton</strong> fournit des assemblages de <code>bpm.skeleton</code> pour afficher un état de chargement réaliste d&apos;une page complète (en-tête, métriques, cartes, tableau). Réutilisables tels quels ou à adapter à votre layout.
-    </p>
-    <CodeBlock code={'# Affichage d\'un chargement de page type dashboard\nbpm.title("Chargement...")\n# Puis assemblage de bpm.skeleton (header, métriques, contenu, tableau)'} language="python" />
-  </>
-);
+function DocContent() {
+  const { locale } = useI18n();
+  const str = STR[locale];
+  return (
+    <>
+      <h2 className="text-lg font-semibold mt-0 mb-2" style={{ color: "var(--bpm-text-primary)" }}>{str.aboutTitle}</h2>
+      <p className="mb-6" style={{ color: "var(--bpm-text-secondary)", maxWidth: "60ch" }}>
+        {str.aboutBeforeStrong}<strong>Skeleton</strong>{str.aboutAfterStrong}<code>bpm.skeleton</code>{str.aboutAfterCode}
+      </p>
+      <CodeBlock code={'# Affichage d\'un chargement de page type dashboard\nbpm.title("Chargement...")\n# Puis assemblage de bpm.skeleton (header, métriques, contenu, tableau)'} language="python" />
+    </>
+  );
+}
 
 function SimuContent() {
+  const { locale } = useI18n();
+  const str = STR[locale];
   return (
     <>
       <p className="text-sm mb-4" style={{ color: "var(--bpm-text-secondary)" }}>
-        Aperçu d&apos;un assemblage type. Pour voir le skeleton plein écran en situation de chargement, ouvrez le simulateur.
+        {str.simuIntro}
       </p>
       <div
         className="rounded-xl border p-4"
         style={{ borderColor: "var(--bpm-border)", background: "var(--bpm-bg-primary)" }}
       >
         <p className="text-sm m-0" style={{ color: "var(--bpm-text-secondary)" }}>
-          Le simulateur affiche une page entière en skeleton (header, titre, 3 métriques, zone contenu, tableau) construite uniquement avec <code>bpm.skeleton</code>.
+          {str.simuBoxBeforeCode}<code>bpm.skeleton</code>{str.simuBoxAfterCode}
         </p>
         <p className="mt-3 text-sm" style={{ color: "var(--bpm-text-secondary)" }}>
-          <Link href="/modules/skeleton/simulateur" className="font-medium underline" style={{ color: "var(--bpm-accent-cyan)" }}>Ouvrir le simulateur</Link>
+          <Link href="/modules/skeleton/simulateur" className="font-medium underline" style={{ color: "var(--bpm-accent-cyan)" }}>{str.openSimulator}</Link>
         </p>
       </div>
     </>
@@ -35,23 +43,25 @@ function SimuContent() {
 }
 
 export default function SkeletonModulePage() {
+  const { locale } = useI18n();
+  const str = STR[locale];
   return (
     <div className="doc-page">
       <div className="doc-page-header">
-        <div className="doc-breadcrumb"><Link href="/modules">Modules</Link> → Skeleton</div>
-        <h1>Skeleton</h1>
-        <p className="doc-description">Assemblages de bpm.skeleton pour un chargement de page complet. Testez dans le Simulateur.</p>
-        <div className="doc-meta"><span className="doc-badge doc-badge-category">Contenu & productivité</span></div>
+        <div className="doc-breadcrumb"><Link href="/modules">Modules</Link> → {str.moduleName}</div>
+        <h1>{str.moduleName}</h1>
+        <p className="doc-description">{str.pageDescription}</p>
+        <div className="doc-meta"><span className="doc-badge doc-badge-category">{str.categoryBadge}</span></div>
         <p className="mt-3 text-sm" style={{ color: "var(--bpm-text-secondary)" }}>
-          <Link href="/modules/skeleton/simulateur" className="font-medium underline" style={{ color: "var(--bpm-accent-cyan)" }}>Ouvrir le simulateur</Link>
+          <Link href="/modules/skeleton/simulateur" className="font-medium underline" style={{ color: "var(--bpm-accent-cyan)" }}>{str.openSimulator}</Link>
         </p>
       </div>
-      <Tabs tabs={[{ label: "Documentation", content: docContent }, { label: "Simulateur", content: <SimuContent /> }]} defaultTab={0} />
+      <Tabs tabs={[{ label: str.tabDocumentation, content: <DocContent /> }, { label: str.tabSimulator, content: <SimuContent /> }]} defaultTab={0} />
 
       <nav className="doc-pagination mt-8">
-        <Link href="/modules" style={{ color: "var(--bpm-accent-cyan)" }}>← Retour aux modules</Link>
-        <Link href="/modules/skeleton/documentation" style={{ color: "var(--bpm-accent-cyan)" }}>Documentation</Link>
-        <Link href="/modules/skeleton/simulateur" style={{ color: "var(--bpm-accent-cyan)" }}>Simulateur</Link>
+        <Link href="/modules" style={{ color: "var(--bpm-accent-cyan)" }}>{str.backToModules}</Link>
+        <Link href="/modules/skeleton/documentation" style={{ color: "var(--bpm-accent-cyan)" }}>{str.documentationLink}</Link>
+        <Link href="/modules/skeleton/simulateur" style={{ color: "var(--bpm-accent-cyan)" }}>{str.simulatorLink}</Link>
       </nav>
     </div>
   );

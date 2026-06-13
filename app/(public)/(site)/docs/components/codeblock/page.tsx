@@ -4,10 +4,45 @@ import { useState } from "react";
 import Link from "next/link";
 import { CodeBlock } from "@/components/bpm";
 import { getPrevNext } from "@/lib/docPages";
+import { useI18n } from "@/lib/i18n/LocaleProvider";
 
 const LANGS = ["python", "bash", "json", "typescript"] as const;
 
+const fr = {
+  components: "Composants",
+  description: "Bloc de code avec surlignage et bouton Copier.",
+  category: "Utilitaires",
+  contentLabel: "Contenu",
+  examples: "Exemples",
+  thDefault: "Defaut",
+  thRequired: "Requis",
+  thDescription: "Description",
+  yes: "Oui",
+  no: "Non",
+  descCode: "Contenu du bloc.",
+  descLanguage: "Langage (python, bash, json, etc.).",
+  descClassName: "Classes CSS.",
+};
+const en: typeof fr = {
+  components: "Components",
+  description: "Code block with syntax highlighting and a Copy button.",
+  category: "Utilities",
+  contentLabel: "Content",
+  examples: "Examples",
+  thDefault: "Default",
+  thRequired: "Required",
+  thDescription: "Description",
+  yes: "Yes",
+  no: "No",
+  descCode: "Block content.",
+  descLanguage: "Language (python, bash, json, etc.).",
+  descClassName: "CSS classes.",
+};
+const L = { fr, en } as const;
+
 export default function DocCodeBlockPage() {
+  const { locale } = useI18n();
+  const t = L[locale];
   const [language, setLanguage] = useState<string>("python");
   const [code, setCode] = useState('def hello():\n    print("Hello, BPM!")');
 
@@ -17,12 +52,12 @@ export default function DocCodeBlockPage() {
   return (
     <div className="doc-page">
       <div className="doc-page-header">
-        <div className="doc-breadcrumb"><Link href="/docs/components">Composants</Link> → bpm.codeblock</div>
+        <div className="doc-breadcrumb"><Link href="/docs/components">{t.components}</Link> → bpm.codeblock</div>
         <h1>bpm.codeblock</h1>
-        <p className="doc-description">Bloc de code avec surlignage et bouton Copier.</p>
+        <p className="doc-description">{t.description}</p>
         <div className="doc-meta">
           <span className="doc-badge doc-badge-stable">Stable</span>
-          <span className="doc-badge doc-badge-category">Utilitaires</span>
+          <span className="doc-badge doc-badge-category">{t.category}</span>
           <span className="doc-reading-time">⏱ 2 min</span>
         </div>
       </div>
@@ -40,7 +75,7 @@ export default function DocCodeBlockPage() {
             </select>
           </div>
           <div className="sandbox-control-group">
-            <label>Contenu</label>
+            <label>{t.contentLabel}</label>
             <textarea
               value={code}
               onChange={(e) => setCode(e.target.value)}
@@ -55,14 +90,14 @@ export default function DocCodeBlockPage() {
         </div>
       </div>
       <table className="props-table">
-        <thead><tr><th>Prop</th><th>Type</th><th>Defaut</th><th>Requis</th><th>Description</th></tr></thead>
+        <thead><tr><th>Prop</th><th>Type</th><th>{t.thDefault}</th><th>{t.thRequired}</th><th>{t.thDescription}</th></tr></thead>
         <tbody>
-          <tr><td><code>code</code></td><td><code>string</code></td><td>—</td><td>Oui</td><td>Contenu du bloc.</td></tr>
-          <tr><td><code>language</code></td><td><code>string</code></td><td>text</td><td>Non</td><td>Langage (python, bash, json, etc.).</td></tr>
-          <tr><td><code>className</code></td><td><code>string</code></td><td>—</td><td>Non</td><td>Classes CSS.</td></tr>
+          <tr><td><code>code</code></td><td><code>string</code></td><td>—</td><td>{t.yes}</td><td>{t.descCode}</td></tr>
+          <tr><td><code>language</code></td><td><code>string</code></td><td>text</td><td>{t.no}</td><td>{t.descLanguage}</td></tr>
+          <tr><td><code>className</code></td><td><code>string</code></td><td>—</td><td>{t.no}</td><td>{t.descClassName}</td></tr>
         </tbody>
       </table>
-      <h2 className="text-lg font-semibold mt-8 mb-2">Exemples</h2>
+      <h2 className="text-lg font-semibold mt-8 mb-2">{t.examples}</h2>
       <CodeBlock code={'bpm.codeblock(code="print(1+1)", language="python")'} language="python" />
       <CodeBlock code={'bpm.codeblock(code="npm run build", language="bash")'} language="python" />
       <nav className="doc-pagination">
