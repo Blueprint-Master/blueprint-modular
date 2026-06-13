@@ -5,6 +5,8 @@ import Link from "next/link";
 import { useParams } from "next/navigation";
 import { Panel, Button, Spinner, Selectbox, Badge, Card, Divider } from "@/components/bpm";
 import { FicheHeader, FicheSectionCard, FicheFieldGrid, FicheNav, FicheSkeleton } from "@/components/fiche";
+import { useI18n } from "@/lib/i18n/LocaleProvider";
+import { STR, dateLocale } from "../../../strings";
 
 type Assignment = {
   id: string;
@@ -25,13 +27,6 @@ type Assignment = {
   ticket: { id: string; reference: string; title: string } | null;
 };
 
-const STATUS_OPTIONS = [
-  { value: "active", label: "En cours" },
-  { value: "returned", label: "Retourné" },
-  { value: "overdue", label: "En retard" },
-  { value: "cancelled", label: "Annulé" },
-];
-
 function statusBadgeVariant(s: string): "primary" | "success" | "warning" | "error" | "default" {
   if (s === "returned") return "success";
   if (s === "active") return "primary";
@@ -41,6 +36,15 @@ function statusBadgeVariant(s: string): "primary" | "success" | "warning" | "err
 }
 
 export default function AssetManagerAssignmentDetailPage() {
+  const { locale } = useI18n();
+  const t = STR[locale];
+  const ta = t.assignments;
+  const STATUS_OPTIONS = [
+    { value: "active", label: ta.statusActive },
+    { value: "returned", label: ta.statusReturned },
+    { value: "overdue", label: ta.statusOverdue },
+    { value: "cancelled", label: ta.statusCancelled },
+  ];
   const params = useParams();
   const domainId = typeof params?.domainId === "string" ? params.domainId : "";
   const id = typeof params?.id === "string" ? params.id : "";
@@ -54,7 +58,7 @@ export default function AssetManagerAssignmentDetailPage() {
 
   const handleReturn = () => {
     if (!assignment || assignment.status !== "active" || returning) return;
-    if (!confirm("Clôturer cette mise à Disposition et remettre l'actif en stock ?")) return;
+    if (!confirm(ta.returnConfirm)) return;
     setReturning(true);
     fetch(`/api/asset-manager/assignments/${id}/return`, { method: "POST", credentials: "include" })
       .then((r) => (r.ok ? r.json() : null))
@@ -111,8 +115,8 @@ export default function AssetManagerAssignmentDetailPage() {
   if (!assignment) {
     return (
       <div className="doc-page">
-        <Panel variant="warning" title="Mise à Disposition introuvable">Cette MAD n&apos;existe pas ou vous n&apos;y avez pas accès.</Panel>
-        <FicheNav backLink={`/modules/asset-manager/${domainId}/assignments`} backLabel="← Liste des MAD" />
+        <Panel variant="warning" title={ta.notFoundTitle}>{ta.notFoundBody}</Panel>
+        <FicheNav backLink={`/modules/asset-manager/${domainId}/assignments`} backLabel={ta.backToList} />
       </div>
     );
   }
@@ -124,17 +128,17 @@ export default function AssetManagerAssignmentDetailPage() {
       <FicheHeader
         breadcrumb={
           <>
-            <Link href="/modules" style={{ color: "var(--bpm-accent-cyan)" }}>Modules</Link> → <Link href="/modules/asset-manager" style={{ color: "var(--bpm-accent-cyan)" }}>Gestion de parc</Link> →{" "}
-            <Link href={`/modules/asset-manager/${domainId}`} style={{ color: "var(--bpm-accent-cyan)" }}>Tableau de bord</Link> →{" "}
-            <Link href={`/modules/asset-manager/${domainId}/assignments`} style={{ color: "var(--bpm-accent-cyan)" }}>MAD</Link> → {assignment.reference}
+            <Link href="/modules" style={{ color: "var(--bpm-accent-cyan)" }}>{t.common.breadcrumbModules}</Link> → <Link href="/modules/asset-manager" style={{ color: "var(--bpm-accent-cyan)" }}>{t.common.moduleTitle}</Link> →{" "}
+            <Link href={`/modules/asset-manager/${domainId}`} style={{ color: "var(--bpm-accent-cyan)" }}>{ta.breadcrumbDashboard}</Link> →{" "}
+            <Link href={`/modules/asset-manager/${domainId}/assignments`} style={{ color: "var(--bpm-accent-cyan)" }}>{ta.breadcrumbShort}</Link> → {assignment.reference}
           </>
         }
         title={assignment.reference}
         subtitle={
           <>
-            <Badge variant="default">{assignment.asset?.label ?? "—"}</Badge>
+            <Badge variant="default">{assignment.asset?.label ?? t.common.dash}</Badge>
             <span className="text-sm" style={{ color: "var(--bpm-text-secondary)" }}>
-              Bénéficiaire : {assignment.assignee?.name ?? assignment.assignee?.email ?? "—"}
+              {ta.beneficiaryLabel} {assignment.assignee?.name ?? assignment.assignee?.email ?? t.common.dash}
             </span>
             <Badge variant={statusBadgeVariant(assignment.status)}>{statusLabel}</Badge>
           </>
@@ -143,29 +147,29 @@ export default function AssetManagerAssignmentDetailPage() {
 
       {assignment.status === "active" && (
         <>
-          <FicheSectionCard title="Restituer l'actif" className="mt-4">
+          <FicheSectionCard title={ta.returnTitle} className="mt-4">
             <p className="text-sm mb-3" style={{ color: "var(--bpm-text-secondary)" }}>
-              Clôture la MAD, enregistre la date de retour et remet l{"'"}actif en stock.
+              {ta.returnDescription}
             </p>
             <Button variant="primary" size="medium" onClick={handleReturn} disabled={returning}>
-              {returning ? "En cours…" : "Restituer l'actif"}
+              {returning ? ta.returning : ta.returnCta}
             </Button>
           </FicheSectionCard>
           <Divider thickness={1} color="var(--bpm-border)" className="my-4" />
         </>
       )}
 
-      <FicheSectionCard title="Informations" className="mt-4">
+      <FicheSectionCard title={ta.sectionInfo} className="mt-4">
         <FicheFieldGrid
           withDividers
           items={[
-            { label: "Actif", value: assignment.asset ? `${assignment.asset.reference} — ${assignment.asset.label}` : "" },
-            { label: "Bénéficiaire", value: assignment.assignee?.name ?? assignment.assignee?.email ?? "" },
-            { label: "Début", value: new Date(assignment.startDate).toLocaleDateString("fr-FR") },
-            { label: "Fin prévue", value: assignment.expectedEndDate ? new Date(assignment.expectedEndDate).toLocaleDateString("fr-FR") : "" },
-            { label: "Fin réelle", value: assignment.actualEndDate ? new Date(assignment.actualEndDate).toLocaleDateString("fr-FR") : "" },
-            { label: "Ticket lié", value: assignment.ticket ? `${assignment.ticket.reference} — ${assignment.ticket.title}` : "" },
-            ...(assignment.reason ? [{ label: "Motif", value: assignment.reason }] : []),
+            { label: ta.fieldAsset, value: assignment.asset ? `${assignment.asset.reference} — ${assignment.asset.label}` : "" },
+            { label: ta.fieldBeneficiary, value: assignment.assignee?.name ?? assignment.assignee?.email ?? "" },
+            { label: ta.fieldStart, value: new Date(assignment.startDate).toLocaleDateString(dateLocale(locale)) },
+            { label: ta.fieldExpectedEnd, value: assignment.expectedEndDate ? new Date(assignment.expectedEndDate).toLocaleDateString(dateLocale(locale)) : "" },
+            { label: ta.fieldActualEnd, value: assignment.actualEndDate ? new Date(assignment.actualEndDate).toLocaleDateString(dateLocale(locale)) : "" },
+            { label: ta.fieldLinkedTicket, value: assignment.ticket ? `${assignment.ticket.reference} — ${assignment.ticket.title}` : "" },
+            ...(assignment.reason ? [{ label: ta.fieldReason, value: assignment.reason }] : []),
           ]}
         />
       </FicheSectionCard>
@@ -173,11 +177,11 @@ export default function AssetManagerAssignmentDetailPage() {
       <Divider thickness={1} color="var(--bpm-border)" className="my-4" />
       <Card variant="outlined" className="mt-4">
         <div className="bpm-card-body p-4">
-          <h3 className="text-base font-semibold mb-3" style={{ color: "var(--bpm-text-primary)" }}>Modifier</h3>
+          <h3 className="text-base font-semibold mb-3" style={{ color: "var(--bpm-text-primary)" }}>{ta.editTitle}</h3>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <Selectbox label="Statut" value={editStatus} onChange={(v) => setEditStatus(String(v))} options={STATUS_OPTIONS} />
+            <Selectbox label={t.common.status} value={editStatus} onChange={(v) => setEditStatus(String(v))} options={STATUS_OPTIONS} />
             <div>
-              <label className="block text-sm font-medium mb-1" style={{ color: "var(--bpm-text-secondary)" }}>État au retour</label>
+              <label className="block text-sm font-medium mb-1" style={{ color: "var(--bpm-text-secondary)" }}>{ta.fieldConditionReturn}</label>
               <textarea
                 value={editConditionReturn}
                 onChange={(e) => setEditConditionReturn(e.target.value)}
@@ -188,18 +192,18 @@ export default function AssetManagerAssignmentDetailPage() {
             </div>
             <label className="flex items-center gap-2 col-span-2">
               <input type="checkbox" checked={editContractSigned} onChange={(e) => setEditContractSigned(e.target.checked)} />
-              <span style={{ color: "var(--bpm-text-primary)" }}>Contrat signé</span>
+              <span style={{ color: "var(--bpm-text-primary)" }}>{ta.fieldContractSigned}</span>
             </label>
           </div>
           <div className="mt-6">
             <Button variant="primary" size="medium" onClick={handleSave} disabled={saving}>
-              {saving ? "Enregistrement…" : "Enregistrer"}
+              {saving ? t.common.saving : t.common.save}
             </Button>
           </div>
         </div>
       </Card>
 
-      <FicheNav backLink={`/modules/asset-manager/${domainId}/assignments`} backLabel="← Liste des MAD" />
+      <FicheNav backLink={`/modules/asset-manager/${domainId}/assignments`} backLabel={ta.backToList} />
     </div>
   );
 }

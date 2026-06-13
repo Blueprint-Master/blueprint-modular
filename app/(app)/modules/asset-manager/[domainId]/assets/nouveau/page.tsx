@@ -4,6 +4,8 @@ import { useState, useEffect } from "react";
 import Link from "next/link";
 import { useParams, useRouter } from "next/navigation";
 import { Card, Caption, Divider, Button, Input, Selectbox } from "@/components/bpm";
+import { useI18n } from "@/lib/i18n/LocaleProvider";
+import { STR } from "../../../strings";
 
 interface DomainConfig {
   domain_id: string;
@@ -20,6 +22,8 @@ interface DomainConfig {
 export default function AssetManagerAssetNewPage() {
   const params = useParams();
   const router = useRouter();
+  const { locale } = useI18n();
+  const ta = STR[locale].assets;
   const domainId = typeof params?.domainId === "string" ? params.domainId : "";
   const [config, setConfig] = useState<DomainConfig | null>(null);
   const [assetTypeId, setAssetTypeId] = useState("");
@@ -48,7 +52,7 @@ export default function AssetManagerAssetNewPage() {
     e.preventDefault();
     setError(null);
     if (!label.trim() || !statusId || !assetTypeId) {
-      setError("Libellé, type et statut sont requis.");
+      setError(ta.errRequiredAll);
       return;
     }
     setSaving(true);
@@ -74,13 +78,13 @@ export default function AssetManagerAssetNewPage() {
       });
       if (!res.ok) {
         const data = await res.json().catch(() => ({}));
-        setError((data.error as string) || "Erreur à la création.");
+        setError((data.error as string) || ta.errCreate);
         return;
       }
       const asset = await res.json();
       router.push(`/modules/asset-manager/${domainId}/assets/${asset.id}`);
     } catch {
-      setError("Erreur réseau.");
+      setError(ta.errNetwork);
     } finally {
       setSaving(false);
     }
@@ -89,9 +93,9 @@ export default function AssetManagerAssetNewPage() {
   if (!config) {
     return (
       <div className="doc-page">
-        <p style={{ color: "var(--bpm-text-secondary)" }}>Chargement…</p>
+        <p style={{ color: "var(--bpm-text-secondary)" }}>{STR[locale].common.loading}</p>
         <Link href={`/modules/asset-manager/${domainId}/assets`} style={{ color: "var(--bpm-accent-cyan)" }}>
-          ← Retour
+          {ta.back}
         </Link>
       </div>
     );
@@ -101,51 +105,51 @@ export default function AssetManagerAssetNewPage() {
     <div className="doc-page">
       <div className="doc-page-header mb-6">
         <div className="doc-breadcrumb">
-          <Link href={`/modules/asset-manager/${domainId}/assets`}>{config.asset_label_singular}s</Link> → Nouveau
+          <Link href={`/modules/asset-manager/${domainId}/assets`}>{config.asset_label_singular}s</Link> → {ta.breadcrumbNew}
         </div>
         <h1 className="text-2xl font-bold" style={{ color: "var(--bpm-text-primary)" }}>
-          Nouvel {config.asset_label_singular.toLowerCase()}
+          {ta.newAssetHeading(config.asset_label_singular.toLowerCase())}
         </h1>
-        <Caption>Remplissez les informations ci-dessous.</Caption>
+        <Caption>{ta.fillBelow}</Caption>
       </div>
 
       <Card variant="outlined">
         <form onSubmit={handleSubmit} className="space-y-0">
-          <section className="space-y-4" aria-label="Identification">
+          <section className="space-y-4" aria-label={ta.sectionIdentification}>
             <div>
               <label className="block text-sm font-medium mb-1" style={{ color: "var(--bpm-text-primary)" }}>
-                Type *
+                {ta.fieldTypeRequired}
               </label>
               <Selectbox
                 options={typeOptions}
                 value={assetTypeId}
                 onChange={(v) => setAssetTypeId(v ?? "")}
-                placeholder="Choisir le type"
+                placeholder={ta.chooseType}
               />
             </div>
             <div>
               <label className="block text-sm font-medium mb-1" style={{ color: "var(--bpm-text-primary)" }}>
-                Libellé *
+                {ta.fieldLabelRequired}
               </label>
-              <Input value={label} onChange={setLabel} placeholder="Nom de l'actif" required />
+              <Input value={label} onChange={setLabel} placeholder={ta.placeholderAssetName} required />
             </div>
             <div>
               <label className="block text-sm font-medium mb-1" style={{ color: "var(--bpm-text-primary)" }}>
-                Statut *
+                {ta.fieldStatusRequired}
               </label>
               <Selectbox
                 options={statusOptions}
                 value={statusId}
                 onChange={(v) => setStatusId(v ?? "")}
-                placeholder="Statut"
+                placeholder={ta.placeholderStatus}
               />
             </div>
           </section>
 
           {fields.length > 0 && (
             <>
-              <Divider thickness={1} color="var(--bpm-border)" className="my-4" label="Caractéristiques" />
-              <section className="space-y-4" aria-label="Caractéristiques">
+              <Divider thickness={1} color="var(--bpm-border)" className="my-4" label={ta.sectionCharacteristics} />
+              <section className="space-y-4" aria-label={ta.sectionCharacteristics}>
                 {fields.map((f) => (
                   <div key={f.key}>
                     <label className="block text-sm font-medium mb-1" style={{ color: "var(--bpm-text-primary)" }}>
@@ -197,10 +201,10 @@ export default function AssetManagerAssetNewPage() {
           )}
           <div className="flex gap-2 mt-6">
             <Button type="submit" variant="primary" disabled={saving}>
-              {saving ? "Création…" : "Créer"}
+              {saving ? ta.creating : ta.create}
             </Button>
             <Link href={`/modules/asset-manager/${domainId}/assets`}>
-              <Button type="button" variant="outline">Annuler</Button>
+              <Button type="button" variant="outline">{ta.cancel}</Button>
             </Link>
           </div>
         </form>
@@ -208,7 +212,7 @@ export default function AssetManagerAssetNewPage() {
 
       <nav className="doc-pagination mt-8">
         <Link href={`/modules/asset-manager/${domainId}/assets`} style={{ color: "var(--bpm-accent-cyan)" }}>
-          ← Liste des actifs
+          {ta.backList}
         </Link>
       </nav>
     </div>

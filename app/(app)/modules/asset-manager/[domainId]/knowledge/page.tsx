@@ -5,6 +5,8 @@ import Link from "next/link";
 import { useParams, useRouter } from "next/navigation";
 import { BookOpen, ChevronDown, ChevronUp } from "lucide-react";
 import { Table, Spinner, Panel, Button, Chip, EmptyState } from "@/components/bpm";
+import { useI18n } from "@/lib/i18n/LocaleProvider";
+import { STR, dateLocale } from "../../strings";
 
 type KnowledgeArticle = {
   id: string;
@@ -22,17 +24,13 @@ type KnowledgeArticle = {
   updatedAt: string;
 };
 
-const CATEGORY_LABELS: Record<string, string> = {
-  procedure: "Procédure",
-  faq: "FAQ",
-  guide: "Guide",
-  reference: "Référence",
-  troubleshooting: "Dépannage",
-};
-
 export default function AssetManagerKnowledgePage() {
   const params = useParams();
   const router = useRouter();
+  const { locale } = useI18n();
+  const t = STR[locale];
+  const tk = t.knowledge;
+  const CATEGORY_LABELS = tk.categoryLabels;
   const domainId = typeof params?.domainId === "string" ? params.domainId : "";
   const [articles, setArticles] = useState<KnowledgeArticle[]>([]);
   const [config, setConfig] = useState<{ domain_label?: string } | null>(null);
@@ -60,44 +58,44 @@ export default function AssetManagerKnowledgePage() {
   }, [domainId, filterCategory]);
 
   const columns = [
-    { key: "title", label: "Titre" },
+    { key: "title", label: tk.colTitle },
     {
       key: "categoryId",
-      label: "Catégorie",
+      label: tk.colCategory,
       render: (val: unknown) => CATEGORY_LABELS[String(val)] ?? String(val),
     },
     {
       key: "tags",
-      label: "Tags",
-      render: (val: unknown) => (Array.isArray(val) ? (val as string[]).join(", ") : "—"),
+      label: tk.colTags,
+      render: (val: unknown) => (Array.isArray(val) ? (val as string[]).join(", ") : t.common.dash),
     },
     {
       key: "visibility",
-      label: "Visibilité",
-      render: (val: unknown) => (String(val) === "public" ? "Public" : "Techniciens"),
+      label: tk.colVisibility,
+      render: (val: unknown) => (String(val) === "public" ? tk.visibilityPublic : tk.visibilityTechniciansShort),
     },
     {
       key: "publishedAt",
-      label: "Publié le",
-      render: (val: unknown) => (val ? new Date(String(val)).toLocaleDateString("fr-FR") : "Brouillon"),
+      label: tk.colPublishedAt,
+      render: (val: unknown) => (val ? new Date(String(val)).toLocaleDateString(dateLocale(locale)) : tk.draft),
     },
     {
       key: "viewsCount",
-      label: "Vues",
+      label: tk.colViews,
       render: (val: unknown) => String(val ?? 0),
     },
   ];
 
   const categoryOptions = [
-    { value: "", label: "Toutes catégories" },
+    { value: "", label: tk.allCategories },
     ...Object.entries(CATEGORY_LABELS).map(([id, label]) => ({ value: id, label })),
   ];
 
   if (!config && !loading) {
     return (
       <div className="doc-page">
-        <Panel variant="warning" title="Domaine inconnu">Vérifiez l&apos;URL.</Panel>
-        <Link href="/modules/asset-manager" style={{ color: "var(--bpm-accent-cyan)" }}>← Gestion de parc</Link>
+        <Panel variant="warning" title={t.hub.configNotFoundTitle}>{tk.checkUrl}</Panel>
+        <Link href="/modules/asset-manager" style={{ color: "var(--bpm-accent-cyan)" }}>← {t.common.moduleTitle}</Link>
       </div>
     );
   }
@@ -106,19 +104,19 @@ export default function AssetManagerKnowledgePage() {
     <div className="doc-page">
       <div className="doc-page-header mb-6">
         <nav className="doc-breadcrumb">
-          <Link href="/modules" style={{ color: "var(--bpm-accent-cyan)" }}>Modules</Link> →{" "}
-          <Link href="/modules/asset-manager" style={{ color: "var(--bpm-accent-cyan)" }}>Gestion de parc</Link> →{" "}
-          <Link href={`/modules/asset-manager/${domainId}`} style={{ color: "var(--bpm-accent-cyan)" }}>Tableau de bord</Link> → Connaissances
+          <Link href="/modules" style={{ color: "var(--bpm-accent-cyan)" }}>{t.common.breadcrumbModules}</Link> →{" "}
+          <Link href="/modules/asset-manager" style={{ color: "var(--bpm-accent-cyan)" }}>{t.common.moduleTitle}</Link> →{" "}
+          <Link href={`/modules/asset-manager/${domainId}`} style={{ color: "var(--bpm-accent-cyan)" }}>{t.nav.dashboard}</Link> → {tk.title}
         </nav>
         <div className="flex flex-wrap items-center justify-between gap-4">
           <div>
-            <h1 className="text-2xl font-bold" style={{ color: "var(--bpm-text-primary)" }}>Connaissances</h1>
+            <h1 className="text-2xl font-bold" style={{ color: "var(--bpm-text-primary)" }}>{tk.title}</h1>
             <p className="doc-description mt-1" style={{ color: "var(--bpm-text-secondary)" }}>
-              Articles et procédures pour le support et la maintenance.
+              {tk.listSubtitle}
             </p>
           </div>
           <Link href={`/modules/asset-manager/${domainId}/knowledge/new`} className="asset-manager-cta-button">
-            <Button variant="primary" size="small">+ Nouvel article</Button>
+            <Button variant="primary" size="small">{tk.newArticle}</Button>
           </Link>
         </div>
       </div>
@@ -132,12 +130,12 @@ export default function AssetManagerKnowledgePage() {
           aria-controls="asset-manager-filters-knowledge"
           id="asset-manager-filters-toggle-knowledge"
         >
-          <span className="asset-manager-equipment-filters__label">Filtres</span>
+          <span className="asset-manager-equipment-filters__label">{tk.filters}</span>
           {filtersOpen ? <ChevronUp size={18} aria-hidden /> : <ChevronDown size={18} aria-hidden />}
         </button>
         <div id="asset-manager-filters-knowledge" role="region" aria-labelledby="asset-manager-filters-toggle-knowledge" hidden={!filtersOpen}>
           <div className="asset-manager-equipment-filters__row">
-            <span className="asset-manager-equipment-filters__label">Catégorie</span>
+            <span className="asset-manager-equipment-filters__label">{tk.filterCategory}</span>
             <div className="asset-manager-equipment-filters__chips">
               {categoryOptions.map((opt) => {
                 const isActive = filterCategory === opt.value;
@@ -164,12 +162,12 @@ export default function AssetManagerKnowledgePage() {
       ) : articles.length === 0 ? (
         <div className="rounded-xl border bg-[var(--bpm-surface)] p-4" style={{ border: "1px solid #E5E7EB", borderRadius: 12 }}>
           <EmptyState
-            title="Aucun article de connaissance"
-            description="Créez un premier article ou une procédure pour commencer."
+            title={tk.emptyTitle}
+            description={tk.emptyDescription}
             icon={<BookOpen size={64} style={{ color: "var(--bpm-text-secondary)", opacity: 0.6 }} />}
             action={
               <Link href={`/modules/asset-manager/${domainId}/knowledge/new`}>
-                <Button variant="primary" size="small">+ Nouvel article</Button>
+                <Button variant="primary" size="small">{tk.newArticle}</Button>
               </Link>
             }
           />
@@ -187,8 +185,8 @@ export default function AssetManagerKnowledgePage() {
       )}
 
       <nav className="doc-pagination mt-8 flex flex-wrap gap-4">
-        <Link href={`/modules/asset-manager/${domainId}`} style={{ color: "var(--bpm-accent-cyan)" }}>← Tableau de bord</Link>
-        <Link href="/modules/asset-manager/documentation" style={{ color: "var(--bpm-accent-cyan)" }}>Documentation</Link>
+        <Link href={`/modules/asset-manager/${domainId}`} style={{ color: "var(--bpm-accent-cyan)" }}>← {t.nav.dashboard}</Link>
+        <Link href="/modules/asset-manager/documentation" style={{ color: "var(--bpm-accent-cyan)" }}>{tk.documentation}</Link>
       </nav>
     </div>
   );

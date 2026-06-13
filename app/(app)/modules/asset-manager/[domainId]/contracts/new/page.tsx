@@ -4,18 +4,16 @@ import { useState, useEffect } from "react";
 import Link from "next/link";
 import { useParams, useRouter } from "next/navigation";
 import { Card, Caption, Divider, Button, Spinner, Selectbox, Input } from "@/components/bpm";
-
-const TYPE_OPTIONS = [
-  { value: "garantie", label: "Garantie" },
-  { value: "maintenance", label: "Maintenance" },
-  { value: "leasing", label: "Leasing" },
-  { value: "credit_bail", label: "Crédit-bail" },
-  { value: "licence", label: "Licence" },
-];
+import { useI18n } from "@/lib/i18n/LocaleProvider";
+import { STR } from "../../../strings";
 
 export default function AssetManagerContractNewPage() {
   const params = useParams();
   const router = useRouter();
+  const { locale } = useI18n();
+  const t = STR[locale];
+  const tc = t.contracts;
+  const TYPE_OPTIONS = Object.entries(tc.typeLabels).map(([value, label]) => ({ value, label }));
   const domainId = typeof params?.domainId === "string" ? params.domainId : "";
   const [config, setConfig] = useState<{ domain_label?: string } | null>(null);
   const [loading, setLoading] = useState(true);
@@ -92,28 +90,28 @@ export default function AssetManagerContractNewPage() {
     <div className="doc-page">
       <div className="doc-page-header mb-6">
         <nav className="doc-breadcrumb">
-          <Link href="/modules">Modules</Link> → <Link href="/modules/asset-manager">Gestion de parc</Link> →{" "}
-          <Link href={`/modules/asset-manager/${domainId}`}>Tableau de bord</Link> →{" "}
-          <Link href={`/modules/asset-manager/${domainId}/contracts`}>Contrats</Link> → Nouveau
+          <Link href="/modules">{t.common.breadcrumbModules}</Link> → <Link href="/modules/asset-manager">{t.common.moduleTitle}</Link> →{" "}
+          <Link href={`/modules/asset-manager/${domainId}`}>{t.nav.dashboard}</Link> →{" "}
+          <Link href={`/modules/asset-manager/${domainId}/contracts`}>{t.nav.contracts}</Link> → {tc.breadcrumbNew}
         </nav>
-        <h1 className="text-2xl font-bold" style={{ color: "var(--bpm-text-primary)" }}>Nouveau contrat</h1>
-        <Caption>Remplissez les informations ci-dessous.</Caption>
+        <h1 className="text-2xl font-bold" style={{ color: "var(--bpm-text-primary)" }}>{tc.newContract}</h1>
+        <Caption>{tc.fillBelow}</Caption>
       </div>
 
       <Card variant="outlined">
         <form onSubmit={handleSubmit} className="space-y-0">
-          <section className="space-y-4" aria-label="Identification">
-            <Input label="Référence *" value={reference} onChange={(v) => setReference(v)} required placeholder="Ex. GAR-2025-001" />
-            <Input label="Libellé *" value={label} onChange={(v) => setLabel(v)} required placeholder="Ex. Garantie constructeur" />
-            <Selectbox label="Type *" value={type} onChange={(v) => setType(String(v))} options={TYPE_OPTIONS} />
-            <Input label="Fournisseur" value={supplier} onChange={(v) => setSupplier(v)} placeholder="Fournisseur" />
+          <section className="space-y-4" aria-label={tc.sectionIdentification}>
+            <Input label={tc.fieldReferenceRequired} value={reference} onChange={(v) => setReference(v)} required placeholder={tc.placeholderReference} />
+            <Input label={tc.fieldLabelRequired} value={label} onChange={(v) => setLabel(v)} required placeholder={tc.placeholderLabel} />
+            <Selectbox label={tc.fieldTypeRequired} value={type} onChange={(v) => setType(String(v))} options={TYPE_OPTIONS} />
+            <Input label={tc.fieldSupplier} value={supplier} onChange={(v) => setSupplier(v)} placeholder={tc.fieldSupplier} />
           </section>
 
-          <Divider thickness={1} color="var(--bpm-border)" className="my-4" label="Période" />
-          <section className="space-y-4" aria-label="Période">
+          <Divider thickness={1} color="var(--bpm-border)" className="my-4" label={tc.sectionPeriod} />
+          <section className="space-y-4" aria-label={tc.sectionPeriod}>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
-                <label className="block text-sm font-medium mb-1" style={{ color: "var(--bpm-text-secondary)" }}>Début *</label>
+                <label className="block text-sm font-medium mb-1" style={{ color: "var(--bpm-text-secondary)" }}>{tc.fieldStartRequired}</label>
                 <input
                   type="date"
                   value={startDate}
@@ -124,7 +122,7 @@ export default function AssetManagerContractNewPage() {
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium mb-1" style={{ color: "var(--bpm-text-secondary)" }}>Fin *</label>
+                <label className="block text-sm font-medium mb-1" style={{ color: "var(--bpm-text-secondary)" }}>{tc.fieldEndRequired}</label>
                 <input
                   type="date"
                   value={endDate}
@@ -135,20 +133,20 @@ export default function AssetManagerContractNewPage() {
                 />
               </div>
             </div>
-            <Input label="Montant (€)" value={amount} onChange={(v) => setAmount(v)} placeholder="Optionnel" />
-            <Input label="Préavis (jours)" value={noticeDays} onChange={(v) => setNoticeDays(v)} placeholder="30" />
+            <Input label={tc.fieldAmount} value={amount} onChange={(v) => setAmount(v)} placeholder={t.common.optional} />
+            <Input label={tc.fieldNoticeDays} value={noticeDays} onChange={(v) => setNoticeDays(v)} placeholder="30" />
             <Selectbox
-              label="Renouvellement automatique"
+              label={tc.fieldAutoRenewal}
               value={autoRenewal ? "yes" : "no"}
               onChange={(v) => setAutoRenewal(v === "yes")}
-              options={[{ value: "no", label: "Non" }, { value: "yes", label: "Oui" }]}
+              options={[{ value: "no", label: t.common.no }, { value: "yes", label: t.common.yes }]}
             />
           </section>
 
           {assets.length > 0 && (
             <>
-              <Divider thickness={1} color="var(--bpm-border)" className="my-4" label="Actifs couverts" />
-              <section className="space-y-2" aria-label="Actifs couverts">
+              <Divider thickness={1} color="var(--bpm-border)" className="my-4" label={tc.sectionCoveredAssets} />
+              <section className="space-y-2" aria-label={tc.sectionCoveredAssets}>
                 <div className="max-h-40 overflow-y-auto rounded border p-2 space-y-1" style={{ borderColor: "var(--bpm-border)", background: "var(--bpm-bg-secondary)" }}>
                   {assets.map((a) => (
                     <label key={a.id} className="flex items-center gap-2 cursor-pointer text-sm">
@@ -164,23 +162,23 @@ export default function AssetManagerContractNewPage() {
                   ))}
                 </div>
                 {assetIds.length > 0 && (
-                  <p className="text-xs" style={{ color: "var(--bpm-text-secondary)" }}>{assetIds.length} actif(s) sélectionné(s)</p>
+                  <p className="text-xs" style={{ color: "var(--bpm-text-secondary)" }}>{tc.assetsSelected(assetIds.length)}</p>
                 )}
               </section>
             </>
           )}
 
-          <Divider thickness={1} color="var(--bpm-border)" className="my-4" label="Notes" />
-          <section className="space-y-4" aria-label="Notes">
+          <Divider thickness={1} color="var(--bpm-border)" className="my-4" label={tc.sectionNotes} />
+          <section className="space-y-4" aria-label={tc.sectionNotes}>
             <div>
-              <label className="block text-sm font-medium mb-1" style={{ color: "var(--bpm-text-secondary)" }}>Notes</label>
+              <label className="block text-sm font-medium mb-1" style={{ color: "var(--bpm-text-secondary)" }}>{tc.sectionNotes}</label>
               <textarea
                 value={notes}
                 onChange={(e) => setNotes(e.target.value)}
                 rows={3}
                 className="bpm-textarea w-full rounded-lg border px-3 py-2 text-sm resize-y"
                 style={{ borderColor: "var(--bpm-border)", background: "var(--bpm-surface)", color: "var(--bpm-text-primary)" }}
-                placeholder="Notes optionnelles"
+                placeholder={tc.placeholderNotesOptional}
               />
             </div>
           </section>
@@ -188,18 +186,18 @@ export default function AssetManagerContractNewPage() {
           <Divider thickness={1} color="var(--bpm-border)" className="my-4" />
           <div className="flex gap-2 mt-6">
             <Button type="submit" size="small" disabled={saving || !reference.trim() || !label.trim() || !startDate || !endDate}>
-              {saving ? "Création…" : "Créer le contrat"}
+              {saving ? t.common.creating : tc.createContract}
             </Button>
             <Link href={`/modules/asset-manager/${domainId}/contracts`}>
-              <Button type="button" variant="outline" size="small">Annuler</Button>
+              <Button type="button" variant="outline" size="small">{t.common.cancel}</Button>
             </Link>
           </div>
         </form>
       </Card>
 
       <nav className="doc-pagination mt-8 flex flex-wrap gap-4">
-        <Link href={`/modules/asset-manager/${domainId}/contracts`} style={{ color: "var(--bpm-accent-cyan)" }}>← Liste des contrats</Link>
-        <Link href={`/modules/asset-manager/${domainId}`} style={{ color: "var(--bpm-accent-cyan)" }}>Tableau de bord</Link>
+        <Link href={`/modules/asset-manager/${domainId}/contracts`} style={{ color: "var(--bpm-accent-cyan)" }}>{tc.backList}</Link>
+        <Link href={`/modules/asset-manager/${domainId}`} style={{ color: "var(--bpm-accent-cyan)" }}>{t.nav.dashboard}</Link>
       </nav>
     </div>
   );
