@@ -4,6 +4,7 @@ import { useState, useMemo } from "react";
 import Link from "next/link";
 import { JsonViewer, CodeBlock } from "@/components/bpm";
 import { getPrevNext } from "@/lib/docPages";
+import { useI18n } from "@/lib/i18n/LocaleProvider";
 
 const DEFAULT_JSON = `{
   "user": {
@@ -16,21 +17,65 @@ const DEFAULT_JSON = `{
   "items": [1, 2, 3]
 }`;
 
+const fr = {
+  components: "Composants",
+  description: "Affichage JSON formaté et repliable.",
+  category: "Affichage de données",
+  enterJson: "Saisissez du JSON",
+  invalidJson: "JSON invalide : ",
+  enterJsonLeft: "Saisissez du JSON à gauche.",
+  levelZero: "0 (tout replié)",
+  copy: "Copier",
+  thDefault: "Défaut",
+  thRequired: "Requis",
+  yes: "Oui",
+  no: "Non",
+  examples: "Exemples",
+  d_data: "Objet JavaScript ou chaîne JSON à afficher.",
+  d_defaultExpandedLevel: "Nombre de niveaux ouverts par défaut (0 = tout replié).",
+  d_maxHeight: "Hauteur max en px (scroll si dépassement).",
+  d_className: "Classes CSS additionnelles.",
+};
+
+const en: typeof fr = {
+  components: "Components",
+  description: "Formatted, collapsible JSON display.",
+  category: "Data display",
+  enterJson: "Enter JSON",
+  invalidJson: "Invalid JSON: ",
+  enterJsonLeft: "Enter JSON on the left.",
+  levelZero: "0 (all collapsed)",
+  copy: "Copy",
+  thDefault: "Default",
+  thRequired: "Required",
+  yes: "Yes",
+  no: "No",
+  examples: "Examples",
+  d_data: "JavaScript object or JSON string to display.",
+  d_defaultExpandedLevel: "Number of levels expanded by default (0 = all collapsed).",
+  d_maxHeight: "Max height in px (scrolls if exceeded).",
+  d_className: "Additional CSS classes.",
+};
+
+const L = { fr, en } as const;
+
 export default function DocJsonViewerPage() {
+  const { locale } = useI18n();
+  const t = L[locale];
   const [jsonInput, setJsonInput] = useState(DEFAULT_JSON);
   const [defaultExpandedLevel, setDefaultExpandedLevel] = useState(1);
   const [maxHeight, setMaxHeight] = useState(400);
 
   const { parsed, error } = useMemo(() => {
-    const t = jsonInput.trim();
-    if (!t) return { parsed: null, error: "Saisissez du JSON" };
+    const txt = jsonInput.trim();
+    if (!txt) return { parsed: null, error: t.enterJson };
     try {
-      const p = JSON.parse(t);
+      const p = JSON.parse(txt);
       return { parsed: p, error: null };
     } catch (e) {
       return { parsed: null, error: (e as Error).message };
     }
-  }, [jsonInput]);
+  }, [jsonInput, t]);
 
   const pythonCode = `bpm.jsonviewer(data=${JSON.stringify(parsed ?? {})}, default_expanded_level=${defaultExpandedLevel}, max_height=${maxHeight})`;
 
@@ -40,14 +85,14 @@ export default function DocJsonViewerPage() {
     <div className="doc-page">
       <div className="doc-page-header">
         <div className="doc-breadcrumb">
-          <Link href="/docs/components">Composants</Link> → bpm.jsonviewer
+          <Link href="/docs/components">{t.components}</Link> → bpm.jsonviewer
         </div>
         <h1>bpm.jsonviewer</h1>
         <p className="doc-description">
-          Affichage JSON formaté et repliable.
+          {t.description}
         </p>
         <div className="doc-meta">
-          <span className="doc-badge doc-badge-category">Affichage de données</span>
+          <span className="doc-badge doc-badge-category">{t.category}</span>
           <span className="doc-reading-time">⏱ 2 min</span>
         </div>
       </div>
@@ -63,7 +108,7 @@ export default function DocJsonViewerPage() {
                 color: "var(--bpm-text-primary)",
               }}
             >
-              JSON invalide : {error}
+              {t.invalidJson}{error}
             </div>
           ) : parsed !== null ? (
             <JsonViewer
@@ -72,7 +117,7 @@ export default function DocJsonViewerPage() {
               maxHeight={maxHeight}
             />
           ) : (
-            <span style={{ color: "var(--bpm-text-secondary)" }}>Saisissez du JSON à gauche.</span>
+            <span style={{ color: "var(--bpm-text-secondary)" }}>{t.enterJsonLeft}</span>
           )}
         </div>
         <div className="sandbox-controls">
@@ -108,7 +153,7 @@ export default function DocJsonViewerPage() {
                 color: "var(--bpm-text-primary)",
               }}
             >
-              <option value={0}>0 (tout replié)</option>
+              <option value={0}>{t.levelZero}</option>
               <option value={1}>1</option>
               <option value={2}>2</option>
               <option value={3}>3</option>
@@ -138,7 +183,7 @@ export default function DocJsonViewerPage() {
           <div className="sandbox-code-header">
             <span>Python</span>
             <button type="button" onClick={() => navigator.clipboard.writeText(pythonCode)}>
-              Copier
+              {t.copy}
             </button>
           </div>
           <pre><code>{pythonCode}</code></pre>
@@ -150,8 +195,8 @@ export default function DocJsonViewerPage() {
           <tr>
             <th>Prop</th>
             <th>Type</th>
-            <th>Défaut</th>
-            <th>Requis</th>
+            <th>{t.thDefault}</th>
+            <th>{t.thRequired}</th>
             <th>Description</th>
           </tr>
         </thead>
@@ -160,34 +205,34 @@ export default function DocJsonViewerPage() {
             <td><code>data</code></td>
             <td><code>object | string</code></td>
             <td>—</td>
-            <td>Oui</td>
-            <td>Objet JavaScript ou chaîne JSON à afficher.</td>
+            <td>{t.yes}</td>
+            <td>{t.d_data}</td>
           </tr>
           <tr>
             <td><code>defaultExpandedLevel</code></td>
             <td><code>number</code></td>
             <td><code>1</code></td>
-            <td>Non</td>
-            <td>Nombre de niveaux ouverts par défaut (0 = tout replié).</td>
+            <td>{t.no}</td>
+            <td>{t.d_defaultExpandedLevel}</td>
           </tr>
           <tr>
             <td><code>maxHeight</code></td>
             <td><code>number</code></td>
             <td><code>400</code></td>
-            <td>Non</td>
-            <td>Hauteur max en px (scroll si dépassement).</td>
+            <td>{t.no}</td>
+            <td>{t.d_maxHeight}</td>
           </tr>
           <tr>
             <td><code>className</code></td>
             <td><code>string</code></td>
             <td>—</td>
-            <td>Non</td>
-            <td>Classes CSS additionnelles.</td>
+            <td>{t.no}</td>
+            <td>{t.d_className}</td>
           </tr>
         </tbody>
       </table>
 
-      <h2 className="text-lg font-semibold mt-8 mb-2">Exemples</h2>
+      <h2 className="text-lg font-semibold mt-8 mb-2">{t.examples}</h2>
       <CodeBlock code={'bpm.jsonviewer(data={"user": {"name": "Alice"}, "count": 42})'} language="python" />
       <CodeBlock code="bpm.jsonviewer(data=my_dict, default_expanded_level=0, max_height=300)" language="python" />
 
