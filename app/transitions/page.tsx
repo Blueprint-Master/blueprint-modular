@@ -1,6 +1,9 @@
 "use client";
 
 import React, { useState, useRef } from "react";
+import { useI18n } from "@/lib/i18n/LocaleProvider";
+import { LocaleSwitch } from "@/components/LocaleSwitch";
+import { fr, en, type TransitionsStrings } from "./strings";
 
 const FONT_IMPORTS = `
 @import url('https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=JetBrains+Mono:wght@300;400;500&display=swap');
@@ -35,33 +38,50 @@ const ANIMATION_CSS = `
 .ui-transitions-page .skeleton { background: linear-gradient(90deg, #1a1a1a 25%, #2a2a2a 50%, #1a1a1a 75%); background-size: 200% 100%; animation: shimmer 1.2s ease-in-out infinite; border-radius: 6px; }
 `;
 
-type TabContentItem = { label: string; value: string; delta: string };
+// `labelKey` pointe vers une clé du dictionnaire ; le libellé affiché est résolu
+// au rendu selon la locale active. Les valeurs (chiffres) restent inchangées.
+type TabContentItem = { labelKey: keyof TransitionsStrings; value: string; delta: string };
 const tabContent: Record<string, TabContentItem[]> = {
   Overview: [
-    { label: "Active users", value: "2,847", delta: "+12%" },
-    { label: "Revenue", value: "€42.1k", delta: "+8%" },
-    { label: "Sessions", value: "18.2k", delta: "-2%" },
+    { labelKey: "statActiveUsers", value: "2,847", delta: "+12%" },
+    { labelKey: "statRevenue", value: "€42.1k", delta: "+8%" },
+    { labelKey: "statSessions", value: "18.2k", delta: "-2%" },
   ],
   Activity: [
-    { label: "Events today", value: "1,204", delta: "+24%" },
-    { label: "Avg. duration", value: "4m 32s", delta: "+5%" },
-    { label: "Bounce rate", value: "42%", delta: "-3%" },
+    { labelKey: "statEventsToday", value: "1,204", delta: "+24%" },
+    { labelKey: "statAvgDuration", value: "4m 32s", delta: "+5%" },
+    { labelKey: "statBounceRate", value: "42%", delta: "-3%" },
   ],
   Settings: [
-    { label: "API calls", value: "12.4k", delta: "+0%" },
-    { label: "Errors", value: "0.02%", delta: "-0.01%" },
-    { label: "Uptime", value: "99.98%", delta: "+0%" },
+    { labelKey: "statApiCalls", value: "12.4k", delta: "+0%" },
+    { labelKey: "statErrors", value: "0.02%", delta: "-0.01%" },
+    { labelKey: "statUptime", value: "99.98%", delta: "+0%" },
   ],
 };
 
-type ListItem = { id: number; name: string; cat: string; stat: string; n: string };
+// `name` (noms propres de projet) reste inchangé ; `catKey`/`statKey` sont
+// résolus selon la locale.
+type ListItem = {
+  id: number;
+  name: string;
+  catKey: keyof TransitionsStrings;
+  statKey: keyof TransitionsStrings;
+  n: string;
+};
 const ITEMS: ListItem[] = [
-  { id: 1, name: "Project Alpha", cat: "Design", stat: "In progress", n: "3" },
-  { id: 2, name: "Project Beta", cat: "Engineering", stat: "Review", n: "7" },
-  { id: 3, name: "Project Gamma", cat: "Marketing", stat: "Done", n: "12" },
+  { id: 1, name: "Project Alpha", catKey: "catDesign", statKey: "statusInProgress", n: "3" },
+  { id: 2, name: "Project Beta", catKey: "catEngineering", statKey: "statusReview", n: "7" },
+  { id: 3, name: "Project Gamma", catKey: "catMarketing", statKey: "statusDone", n: "12" },
 ];
 
 function ContextDemo() {
+  const { locale } = useI18n();
+  const S = locale === "en" ? en : fr;
+  const tabLabels: Record<"Overview" | "Activity" | "Settings", string> = {
+    Overview: S.tabOverview,
+    Activity: S.tabActivity,
+    Settings: S.tabSettings,
+  };
   const [tab, setTab] = useState<"Overview" | "Activity" | "Settings">("Overview");
   const [loading, setLoading] = useState(false);
   const [key, setKey] = useState(0);
@@ -82,7 +102,7 @@ function ContextDemo() {
   return (
     <div style={{ marginBottom: 48 }}>
       <h3 className="mono" style={{ fontSize: 11, fontWeight: 500, letterSpacing: "0.08em", color: "#737373", marginBottom: 12, textTransform: "uppercase" }}>
-        Context (tabs + skeleton → content)
+        {S.contextHeading}
       </h3>
       <div style={{ display: "flex", gap: 4, marginBottom: 16 }}>
         {tabs.map((t) => (
@@ -102,7 +122,7 @@ function ContextDemo() {
               cursor: "pointer",
             }}
           >
-            {t}
+            {tabLabels[t]}
           </button>
         ))}
       </div>
@@ -117,7 +137,7 @@ function ContextDemo() {
             ))
           : items.map((item, i) => (
               <div
-                key={item.label}
+                key={item.labelKey}
                 className="fade-up"
                 style={{
                   animationDelay: `${i * 40}ms`,
@@ -128,7 +148,7 @@ function ContextDemo() {
                   border: "1px solid #262626",
                 }}
               >
-                <div className="mono" style={{ fontSize: 11, color: "#737373", marginBottom: 4 }}>{item.label}</div>
+                <div className="mono" style={{ fontSize: 11, color: "#737373", marginBottom: 4 }}>{S[item.labelKey]}</div>
                 <div style={{ fontSize: 18, fontWeight: 400 }}>{item.value}</div>
                 <div className="mono" style={{ fontSize: 12, color: "#a3a3a3" }}>{item.delta}</div>
               </div>
@@ -139,6 +159,8 @@ function ContextDemo() {
 }
 
 function DrillDemo() {
+  const { locale } = useI18n();
+  const S = locale === "en" ? en : fr;
   const [selected, setSelected] = useState<ListItem | null>(null);
   const [listKey, setListKey] = useState(0);
   const [detailKey, setDetailKey] = useState(0);
@@ -156,7 +178,7 @@ function DrillDemo() {
   return (
     <div style={{ marginBottom: 48 }}>
       <h3 className="mono" style={{ fontSize: 11, fontWeight: 500, letterSpacing: "0.08em", color: "#737373", marginBottom: 12, textTransform: "uppercase" }}>
-        Drill (list → detail, slide-in)
+        {S.drillHeading}
       </h3>
       <div style={{ position: "relative", minHeight: 200 }}>
         {selected == null ? (
@@ -188,7 +210,7 @@ function DrillDemo() {
                 }}
               >
                 <span style={{ fontWeight: 500 }}>{item.name}</span>
-                <span className="mono" style={{ fontSize: 12, color: "#737373", marginLeft: 8 }}>{item.cat}</span>
+                <span className="mono" style={{ fontSize: 12, color: "#737373", marginLeft: 8 }}>{S[item.catKey]}</span>
               </button>
             ))}
           </div>
@@ -221,12 +243,12 @@ function DrillDemo() {
                 cursor: "pointer",
               }}
             >
-              ← back
+              {S.back}
             </button>
             <div style={{ fontSize: 18, marginBottom: 4 }}>{selected.name}</div>
-            <div className="mono" style={{ fontSize: 12, color: "#737373", marginBottom: 4 }}>{selected.cat}</div>
-            <div style={{ fontSize: 14, color: "#a3a3a3" }}>Status: {selected.stat}</div>
-            <div className="mono" style={{ fontSize: 12, color: "#737373", marginTop: 4 }}>Items: {selected.n}</div>
+            <div className="mono" style={{ fontSize: 12, color: "#737373", marginBottom: 4 }}>{S[selected.catKey]}</div>
+            <div style={{ fontSize: 14, color: "#a3a3a3" }}>{S.statusLabel}: {S[selected.statKey]}</div>
+            <div className="mono" style={{ fontSize: 12, color: "#737373", marginTop: 4 }}>{S.itemsLabel}: {selected.n}</div>
           </div>
         )}
       </div>
@@ -235,13 +257,15 @@ function DrillDemo() {
 }
 
 function ContinuityDemo() {
+  const { locale } = useI18n();
+  const S = locale === "en" ? en : fr;
   const [expanded, setExpanded] = useState(false);
   const cardRef = useRef<HTMLDivElement>(null);
 
   return (
     <div style={{ marginBottom: 48 }}>
       <h3 className="mono" style={{ fontSize: 11, fontWeight: 500, letterSpacing: "0.08em", color: "#737373", marginBottom: 12, textTransform: "uppercase" }}>
-        Continuity (card → overlay, scale-up)
+        {S.continuityHeading}
       </h3>
       <div style={{ position: "relative" }}>
         <div
@@ -256,11 +280,11 @@ function ContinuityDemo() {
             transition: "opacity 0.2s ease",
           }}
         >
-          <div style={{ fontSize: 16, marginBottom: 8 }}>Storage</div>
+          <div style={{ fontSize: 16, marginBottom: 8 }}>{S.storage}</div>
           <div style={{ height: 6, background: "#262626", borderRadius: 3, overflow: "hidden", marginBottom: 8 }}>
             <div style={{ width: "68%", height: "100%", background: "#a3a3a3", borderRadius: 3 }} />
           </div>
-          <div className="mono" style={{ fontSize: 12, color: "#737373", marginBottom: 12 }}>68% used</div>
+          <div className="mono" style={{ fontSize: 12, color: "#737373", marginBottom: 12 }}>{S.usedShort}</div>
           <button
             type="button"
             onClick={() => setExpanded(true)}
@@ -275,7 +299,7 @@ function ContinuityDemo() {
               cursor: "pointer",
             }}
           >
-            expand ↗
+            {S.expand}
           </button>
         </div>
         {expanded && (
@@ -295,7 +319,7 @@ function ContinuityDemo() {
             }}
           >
             <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 16 }}>
-              <div style={{ fontSize: 18 }}>Storage (expanded)</div>
+              <div style={{ fontSize: 18 }}>{S.storageExpanded}</div>
               <button
                 type="button"
                 onClick={() => setExpanded(false)}
@@ -309,13 +333,13 @@ function ContinuityDemo() {
                   cursor: "pointer",
                 }}
               >
-                ✕ close
+                {S.close}
               </button>
             </div>
             <div style={{ height: 8, background: "#262626", borderRadius: 4, overflow: "hidden", marginBottom: 8 }}>
               <div style={{ width: "68%", height: "100%", background: "#737373", borderRadius: 4 }} />
             </div>
-            <div className="mono" style={{ fontSize: 12, color: "#737373" }}>68% used — 12.4 GB of 18 GB</div>
+            <div className="mono" style={{ fontSize: 12, color: "#737373" }}>{S.storageDetail}</div>
           </div>
         )}
       </div>
@@ -324,17 +348,37 @@ function ContinuityDemo() {
 }
 
 export default function UITransitions() {
+  const { locale } = useI18n();
+  const S = locale === "en" ? en : fr;
   return (
     <>
       <style dangerouslySetInnerHTML={{ __html: FONT_IMPORTS + ANIMATION_CSS }} />
-      <div className="ui-transitions-page" style={{ padding: "48px 24px", maxWidth: 720, margin: "0 auto" }}>
-        <h1 style={{ fontSize: 28, fontWeight: 400, marginBottom: 8 }}>UI Transitions</h1>
-        <p className="mono" style={{ fontSize: 14, color: "#737373", marginBottom: 40 }}>
-          Context, drill-down, and continuity patterns — CSS only.
-        </p>
-        <ContextDemo />
-        <DrillDemo />
-        <ContinuityDemo />
+      <div className="ui-transitions-page" style={{ minHeight: "100vh", position: "relative" }}>
+        {/* Bascule FR/EN visible : page sans chrome, donc on l'ancre en haut à
+            droite dans un petit conteneur sombre pour rester lisible. */}
+        <div
+          style={{
+            position: "fixed",
+            top: 16,
+            right: 16,
+            zIndex: 50,
+            padding: 6,
+            background: "#141414",
+            border: "1px solid #262626",
+            borderRadius: 8,
+          }}
+        >
+          <LocaleSwitch />
+        </div>
+        <div style={{ padding: "48px 24px", maxWidth: 720, margin: "0 auto" }}>
+          <h1 style={{ fontSize: 28, fontWeight: 400, marginBottom: 8 }}>{S.pageTitle}</h1>
+          <p className="mono" style={{ fontSize: 14, color: "#737373", marginBottom: 40 }}>
+            {S.pageSubtitle}
+          </p>
+          <ContextDemo />
+          <DrillDemo />
+          <ContinuityDemo />
+        </div>
       </div>
     </>
   );
