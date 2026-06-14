@@ -3,8 +3,10 @@
 import { useMemo, useState, useCallback } from "react";
 import { Title, Table, Badge, Button } from "@/components/bpm";
 import type { DemoAlert } from "@/lib/demo-production-data";
+import { useI18n } from "@/lib/i18n/LocaleProvider";
 import { useDemoPeriod } from "../DemoPeriodContext";
 import { exportAlertsCSV } from "../demo-export";
+import { STR } from "../strings";
 
 type SeverityFilter = "all" | "critical" | "warning" | "info";
 type StatusFilter = "active" | "all";
@@ -17,6 +19,8 @@ function severityVariant(s: string): "success" | "warning" | "error" | "default"
 }
 
 export function DemoAlertsClient({ initialAlerts }: { initialAlerts: DemoAlert[] }) {
+  const { locale } = useI18n();
+  const t = STR[locale];
   const { period } = useDemoPeriod();
   const [severity, setSeverity] = useState<SeverityFilter>("all");
   const [status, setStatus] = useState<StatusFilter>("active");
@@ -56,7 +60,7 @@ export function DemoAlertsClient({ initialAlerts }: { initialAlerts: DemoAlert[]
 
   const tableData = filtered.map((a) => ({
     id: a.id,
-    createdAt: a.createdAt ? new Date(a.createdAt).toLocaleString("fr-FR") : "—",
+    createdAt: a.createdAt ? new Date(a.createdAt).toLocaleString(locale === "en" ? "en-GB" : "fr-FR") : "—",
     lineName: a.line?.name ?? "—",
     type: a.type,
     severity: a.severity,
@@ -67,13 +71,13 @@ export function DemoAlertsClient({ initialAlerts }: { initialAlerts: DemoAlert[]
 
   return (
     <div className="space-y-4">
-      <Title level={1}>Alertes</Title>
+      <Title level={1}>{t.alertsTitle}</Title>
       <p className="text-sm" style={{ color: "var(--bpm-text-secondary)" }}>
-        {activeCount} alerte(s) active(s) dont {criticalCount} critique(s).
+        {t.alertsCount(activeCount, criticalCount)}
       </p>
       <div className="flex flex-wrap items-center gap-4 print:hidden">
         <div className="flex items-center gap-2">
-          <span className="text-sm">Sévérité :</span>
+          <span className="text-sm">{t.severityLabel}</span>
           {(["all", "critical", "warning", "info"] as const).map((s) => (
             <button
               key={s}
@@ -85,12 +89,12 @@ export function DemoAlertsClient({ initialAlerts }: { initialAlerts: DemoAlert[]
                 color: severity === s ? "#fff" : "var(--bpm-text-primary)",
               }}
             >
-              {s === "all" ? "Toutes" : s}
+              {s === "all" ? t.severityAll : s}
             </button>
           ))}
         </div>
         <div className="flex items-center gap-2">
-          <span className="text-sm">Statut :</span>
+          <span className="text-sm">{t.statusLabel}</span>
           {(["active", "all"] as const).map((s) => (
             <button
               key={s}
@@ -102,34 +106,34 @@ export function DemoAlertsClient({ initialAlerts }: { initialAlerts: DemoAlert[]
                 color: status === s ? "#fff" : "var(--bpm-text-primary)",
               }}
             >
-              {s === "active" ? "Actives" : "Toutes"}
+              {s === "active" ? t.statusActive : t.statusAllPlural}
             </button>
           ))}
         </div>
         <Button variant="outline" size="small" onClick={handleExportCSV}>
-          Export CSV
+          {t.exportCSV}
         </Button>
         <Button variant="outline" size="small" onClick={handlePrint}>
-          Export PDF (impression)
+          {t.exportPDF}
         </Button>
       </div>
       <div className="overflow-x-auto">
         <Table
           columns={[
-            { key: "createdAt", label: "Date" },
-            { key: "lineName", label: "Ligne" },
-            { key: "type", label: "Type" },
+            { key: "createdAt", label: t.colDate },
+            { key: "lineName", label: t.colLine },
+            { key: "type", label: t.colType },
             {
               key: "severity",
-              label: "Sévérité",
+              label: t.colSeverity,
               render: (_, row) => (
                 <Badge variant={severityVariant(String(row.severity))}>
                   {String(row.severity)}
                 </Badge>
               ),
             },
-            { key: "message", label: "Message" },
-            { key: "valueVsThreshold", label: "Valeur vs Seuil" },
+            { key: "message", label: t.colMessage },
+            { key: "valueVsThreshold", label: t.colValueVsThreshold },
             {
               key: "action",
               label: "",
@@ -140,10 +144,10 @@ export function DemoAlertsClient({ initialAlerts }: { initialAlerts: DemoAlert[]
                     size="small"
                     onClick={() => handleAck(String(row.id))}
                   >
-                    Acquitter
+                    {t.acknowledge}
                   </Button>
                 ) : (
-                  <Badge variant="success">Acquittée ✓</Badge>
+                  <Badge variant="success">{t.acknowledged}</Badge>
                 ),
             },
           ]}

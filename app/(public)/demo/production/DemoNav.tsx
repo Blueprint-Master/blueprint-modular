@@ -2,15 +2,10 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { useI18n } from "@/lib/i18n/LocaleProvider";
 import { useDemoPeriod } from "./DemoPeriodContext";
 import type { DemoPeriod } from "./DemoPeriodContext";
-
-const TABS: { label: string; href: string }[] = [
-  { label: "Vue globale", href: "/demo/production" },
-  { label: "Lignes", href: "/demo/production/lines" },
-  { label: "Alertes", href: "/demo/production/alerts" },
-  { label: "Saisir une session", href: "/demo/production/sessions/new" },
-];
+import { STR } from "./strings";
 
 const PERIOD_LABELS: Record<DemoPeriod, string> = {
   "7d": "7j",
@@ -20,7 +15,16 @@ const PERIOD_LABELS: Record<DemoPeriod, string> = {
 
 export function DemoNav() {
   const pathname = usePathname();
+  const { locale } = useI18n();
+  const t = STR[locale];
   const { period, setPeriod } = useDemoPeriod();
+
+  const TABS: { label: string; href: string }[] = [
+    { label: t.navOverview, href: "/demo/production" },
+    { label: t.navLines, href: "/demo/production/lines" },
+    { label: t.navAlerts, href: "/demo/production/alerts" },
+    { label: t.navNewSession, href: "/demo/production/sessions/new" },
+  ];
 
   return (
     <nav

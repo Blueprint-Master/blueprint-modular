@@ -9,7 +9,9 @@ import { NotificationProviders } from "@/components/NotificationProviders";
 import { ChunkLoadHandler } from "@/components/ChunkLoadHandler";
 import { PwaSwRegister } from "@/components/PwaSwRegister";
 
-const BASE_URL = process.env.NEXT_PUBLIC_APP_URL ?? "https://app.blueprint-modular.com";
+// Origine canonique unique du site = apex blueprint-modular.com (décision UX/SEO).
+// NEXT_PUBLIC_APP_URL peut pointer vers l'hôte de déploiement ; le défaut reste l'apex.
+const BASE_URL = process.env.NEXT_PUBLIC_APP_URL ?? "https://blueprint-modular.com";
 const DEFAULT_DESC = "Briques Python/React pour vos interfaces métier. Sans HTML ni JavaScript.";
 const FAVICON_QUERY = `?v=${process.env.NEXT_PUBLIC_FAVICON_V ?? APP_VERSION}`;
 
@@ -26,7 +28,9 @@ export const metadata: Metadata = {
   description: DEFAULT_DESC,
   applicationName: "Blueprint Modular",
   manifest: "/manifest",
-  alternates: { canonical: BASE_URL },
+  // Pas de canonical global « fourre-tout » : il forçait chaque page (dont les
+  // ~112 fiches composants) à pointer vers l'accueil. Chaque surface définit son
+  // propre canonical (self-référentiel par défaut).
   icons: {
     icon: [
       { url: `/img/icon-pwa-192.png${FAVICON_QUERY}`, type: "image/png", sizes: "192x192" },

@@ -5,10 +5,12 @@ import Image from "next/image";
 import { usePathname } from "next/navigation";
 import { useSession, signOut } from "next-auth/react";
 import { useTheme } from "@/components/ThemeProvider";
-import { Sun } from "lucide-react";
+import { Sun, Link2 } from "lucide-react";
 import { useState } from "react";
 import { SandboxIcon } from "@/components/icons/SandboxIcon";
 import { useSidebar } from "@/contexts/SidebarContext";
+import { useI18n } from "@/lib/i18n/LocaleProvider";
+import type { Locale } from "@/lib/i18n";
 
 const vb = "0 -960 960 960";
 
@@ -68,18 +70,59 @@ function IconSidebarChevronRight() {
   );
 }
 
-const navItems = [
-  { href: "/dashboard", label: "Accueil", icon: IconAccueil },
-  { href: "/composants", label: "Composants", icon: IconComposants },
-  { href: "/modules", label: "Modules", icon: IconModules },
-  { href: "/sandbox", label: "Sandbox", icon: SandboxIcon },
-  { href: "/demo", label: "Demo", icon: IconDemo },
+/** Libellés bilingues de la nav App (i18n local, `en` typé sur `fr` — toute clé
+ * manquante casse la compilation). Pattern identique aux modules, sans toucher au
+ * dictionnaire partagé lib/i18n (zone i18n potentiellement gelée). */
+const SIDEBAR_FR = {
+  accueil: "Accueil",
+  composants: "Composants",
+  modules: "Modules",
+  connecteurs: "Connecteurs",
+  sandbox: "Sandbox",
+  demo: "Demo",
+  theme: "Thème",
+  logout: "Se déconnecter",
+  user: "Utilisateur",
+  openMenu: "Ouvrir le menu",
+  closeMenu: "Réduire le menu",
+  mainNav: "Navigation principale",
+  mobileNav: "Navigation mobile",
+};
+const SIDEBAR_STRINGS: Record<Locale, typeof SIDEBAR_FR> = {
+  fr: SIDEBAR_FR,
+  en: {
+    accueil: "Home",
+    composants: "Components",
+    modules: "Modules",
+    connecteurs: "Connectors",
+    sandbox: "Sandbox",
+    demo: "Demo",
+    theme: "Theme",
+    logout: "Sign out",
+    user: "User",
+    openMenu: "Expand menu",
+    closeMenu: "Collapse menu",
+    mainNav: "Main navigation",
+    mobileNav: "Mobile navigation",
+  },
+};
+
+type NavKey = "accueil" | "composants" | "modules" | "connecteurs" | "sandbox" | "demo";
+const navItems: { href: string; key: NavKey; icon: React.ElementType }[] = [
+  { href: "/dashboard", key: "accueil", icon: IconAccueil },
+  { href: "/composants", key: "composants", icon: IconComposants },
+  { href: "/modules", key: "modules", icon: IconModules },
+  { href: "/connecteurs", key: "connecteurs", icon: Link2 },
+  { href: "/sandbox", key: "sandbox", icon: SandboxIcon },
+  { href: "/demo", key: "demo", icon: IconDemo },
 ];
 
 export function Sidebar() {
   const pathname = usePathname();
   const { data: session } = useSession();
   const { theme, toggleTheme } = useTheme();
+  const { locale } = useI18n();
+  const S = SIDEBAR_STRINGS[locale];
   const sidebarCtx = useSidebar();
   const collapsed = sidebarCtx?.collapsed ?? false;
   const setCollapsed = sidebarCtx?.setCollapsed ?? (() => {});
@@ -112,7 +155,7 @@ export function Sidebar() {
   /* Barre mobile / PWA en bas : tous les liens dont Accueil */
   const mobileNavBar = (
     <aside
-      aria-label="Navigation mobile"
+      aria-label={S.mobileNav}
       className="fixed left-0 right-0 bottom-0 z-40 md:hidden flex flex-row items-stretch border-t pb-[env(safe-area-inset-bottom,0)] pt-2 bpm-mobile-nav-bar"
       style={{
         background: "var(--bpm-sidebar-bg)",
@@ -123,7 +166,7 @@ export function Sidebar() {
       }}
     >
       {navItems.map((item) => (
-        <NavIcon key={item.href} href={item.href} label={item.label} icon={item.icon} compact />
+        <NavIcon key={item.href} href={item.href} label={S[item.key]} icon={item.icon} compact />
       ))}
     </aside>
   );
@@ -158,15 +201,15 @@ export function Sidebar() {
             type="button"
             className={`bpm-sidebar-toggle-btn ${sidebarHovered ? "bpm-sidebar-toggle-btn-visible" : ""} focus:opacity-100 focus-visible:opacity-100`}
             onClick={() => setCollapsed(!collapsed)}
-            aria-label={collapsed ? "Ouvrir le menu" : "Réduire le menu"}
+            aria-label={collapsed ? S.openMenu : S.closeMenu}
           >
             {collapsed ? <IconSidebarChevronRight /> : <IconSidebarChevronLeft />}
           </button>
         </div>
 
-        <nav className="bpm-sidebar-nav" aria-label="Navigation principale">
+        <nav className="bpm-sidebar-nav" aria-label={S.mainNav}>
           {navItems.map((item) => (
-            <NavIcon key={item.href} href={item.href} label={item.label} icon={item.icon} />
+            <NavIcon key={item.href} href={item.href} label={S[item.key]} icon={item.icon} />
           ))}
         </nav>
 
@@ -179,7 +222,7 @@ export function Sidebar() {
             <span className="bpm-sidebar-icon-wrap">
               {theme === "dark" ? <Sun className="w-5 h-5" /> : <IconThemeDark className="w-5 h-5" />}
             </span>
-            <span className="bpm-sidebar-item-label">Thème</span>
+            <span className="bpm-sidebar-item-label">{S.theme}</span>
           </button>
           {session?.user && (
             <>
@@ -194,7 +237,7 @@ export function Sidebar() {
                 {!collapsed && (
                   <div className="min-w-0 flex-1">
                     <p className="text-sm font-bold truncate bpm-sidebar-item-label">
-                      {session.user.name ?? "Utilisateur"}
+                      {session.user.name ?? S.user}
                     </p>
                     {session.user.email && (
                       <p className="text-xs truncate" style={{ color: "var(--bpm-sidebar-text-muted)" }}>
@@ -215,7 +258,7 @@ export function Sidebar() {
                     borderColor: "var(--bpm-sidebar-logout-border)",
                   }}
                 >
-                  Se déconnecter
+                  {S.logout}
                 </button>
               )}
             </>

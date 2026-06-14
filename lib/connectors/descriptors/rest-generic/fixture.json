@@ -1,0 +1,9 @@
+{
+  "items": [
+    { "id": "rec_001", "title": "Demande d'accès — Atelier 4", "status": "active", "createdAt": 1700000000 },
+    { "id": "rec_002", "title": "Renouvellement licence CAO", "status": "active", "createdAt": 1700086400 },
+    { "id": "rec_003", "title": "Audit annuel — clôturé", "status": "archived", "createdAt": 1699913600 }
+  ],
+  "page": 1,
+  "total": 3
+}

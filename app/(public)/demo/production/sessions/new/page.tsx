@@ -20,18 +20,14 @@ import {
   calculatePerformance,
   calculateQuality,
 } from "@/lib/compute";
+import { useI18n } from "@/lib/i18n/LocaleProvider";
+import { STR } from "../../strings";
 
 const LINES = [
   { value: "EXT-A", label: "Ligne Extrudeur A" },
   { value: "EXT-B", label: "Ligne Extrudeur B" },
   { value: "FORM-1", label: "Ligne Formeur 1" },
   { value: "COND-1", label: "Ligne Conditionnement 1" },
-];
-
-const SHIFTS = [
-  { value: "matin", label: "Matin" },
-  { value: "après-midi", label: "Après-midi" },
-  { value: "nuit", label: "Nuit" },
 ];
 
 type FormState = {
@@ -71,6 +67,15 @@ const defaultForm: FormState = {
 };
 
 export default function DemoSessionNewPage() {
+  const { locale } = useI18n();
+  const t = STR[locale];
+
+  const SHIFTS = [
+    { value: "matin", label: t.shiftMorning },
+    { value: "après-midi", label: t.shiftAfternoon },
+    { value: "nuit", label: t.shiftNight },
+  ];
+
   const [form, setForm] = useState<FormState>(defaultForm);
   const [result, setResult] = useState<{
     trs: number;
@@ -132,12 +137,12 @@ export default function DemoSessionNewPage() {
 
   return (
     <div className="space-y-6">
-      <Title level={1}>Saisir une session (simulation)</Title>
+      <Title level={1}>{t.newSessionTitle}</Title>
       <form onSubmit={handleSubmit} className="space-y-6">
         <Grid cols={2}>
           <Column>
             <label className="block text-sm font-medium mb-1" style={{ color: "var(--bpm-text-primary)" }}>
-              Ligne de production
+              {t.fieldProductionLine}
             </label>
             <Selectbox
               options={LINES}
@@ -147,7 +152,7 @@ export default function DemoSessionNewPage() {
           </Column>
           <Column>
             <label className="block text-sm font-medium mb-1" style={{ color: "var(--bpm-text-primary)" }}>
-              Shift
+              {t.fieldShift}
             </label>
             <Selectbox
               options={SHIFTS}
@@ -158,18 +163,18 @@ export default function DemoSessionNewPage() {
         </Grid>
         <div>
           <label className="block text-sm font-medium mb-1" style={{ color: "var(--bpm-text-primary)" }}>
-            Opérateur
+            {t.fieldOperator}
           </label>
           <Input
             value={form.operatorName}
             onChange={(v) => update({ operatorName: v })}
-            placeholder="Nom de l'opérateur"
+            placeholder={t.operatorPlaceholder}
           />
         </div>
         <Grid cols={2}>
           <Column>
             <label className="block text-sm font-medium mb-1" style={{ color: "var(--bpm-text-primary)" }}>
-              Début
+              {t.fieldStart}
             </label>
             <div className="flex gap-2">
               <DateInput
@@ -184,7 +189,7 @@ export default function DemoSessionNewPage() {
           </Column>
           <Column>
             <label className="block text-sm font-medium mb-1" style={{ color: "var(--bpm-text-primary)" }}>
-              Fin
+              {t.fieldEnd}
             </label>
             <div className="flex gap-2">
               <DateInput
@@ -201,7 +206,7 @@ export default function DemoSessionNewPage() {
         <Grid cols={3}>
           <Column>
             <label className="block text-sm font-medium mb-1" style={{ color: "var(--bpm-text-primary)" }}>
-              Temps disponible (min)
+              {t.fieldAvailableTime}
             </label>
             <NumberInput
               value={form.availableTime}
@@ -211,7 +216,7 @@ export default function DemoSessionNewPage() {
           </Column>
           <Column>
             <label className="block text-sm font-medium mb-1" style={{ color: "var(--bpm-text-primary)" }}>
-              Arrêts planifiés (min)
+              {t.fieldPlannedStops}
             </label>
             <NumberInput
               value={form.plannedStops}
@@ -221,7 +226,7 @@ export default function DemoSessionNewPage() {
           </Column>
           <Column>
             <label className="block text-sm font-medium mb-1" style={{ color: "var(--bpm-text-primary)" }}>
-              Arrêts non planifiés (min)
+              {t.fieldUnplannedStops}
             </label>
             <NumberInput
               value={form.unplannedStops}
@@ -233,7 +238,7 @@ export default function DemoSessionNewPage() {
         <Grid cols={3}>
           <Column>
             <label className="block text-sm font-medium mb-1" style={{ color: "var(--bpm-text-primary)" }}>
-              Pièces produites
+              {t.fieldPartsProduced}
             </label>
             <NumberInput
               value={form.totalParts}
@@ -243,7 +248,7 @@ export default function DemoSessionNewPage() {
           </Column>
           <Column>
             <label className="block text-sm font-medium mb-1" style={{ color: "var(--bpm-text-primary)" }}>
-              Pièces conformes
+              {t.fieldGoodParts}
             </label>
             <NumberInput
               value={form.goodParts}
@@ -253,7 +258,7 @@ export default function DemoSessionNewPage() {
           </Column>
           <Column>
             <label className="block text-sm font-medium mb-1" style={{ color: "var(--bpm-text-primary)" }}>
-              Matière utilisée (kg)
+              {t.fieldMaterialUsed}
             </label>
             <NumberInput
               value={form.rawMaterialUsed}
@@ -264,7 +269,7 @@ export default function DemoSessionNewPage() {
         </Grid>
         <div>
           <label className="block text-sm font-medium mb-1" style={{ color: "var(--bpm-text-primary)" }}>
-            Matière perdue (kg)
+            {t.fieldMaterialLost}
           </label>
           <NumberInput
             value={form.rawMaterialLost}
@@ -274,31 +279,28 @@ export default function DemoSessionNewPage() {
         </div>
         <div>
           <label className="block text-sm font-medium mb-1" style={{ color: "var(--bpm-text-primary)" }}>
-            Notes
+            {t.fieldNotes}
           </label>
           <Textarea
             value={form.notes}
             onChange={(v) => update({ notes: v })}
-            placeholder="Notes optionnelles"
+            placeholder={t.notesPlaceholder}
             rows={3}
           />
         </div>
-        <Button type="submit">Enregistrer (simulation)</Button>
+        <Button type="submit">{t.saveSimulation}</Button>
       </form>
 
       {result && (
-        <Panel title="Résultat (simulation)" variant="success">
+        <Panel title={t.resultTitle} variant="success">
           <p className="text-sm mb-2">
-            Session enregistrée (simulation) — TRS calculé : {result.trs}% |
-            Disponibilité : {result.availability}% | Performance : {result.performance}% |
-            Qualité : {result.quality}%
+            {t.resultSummary(result.trs, result.availability, result.performance, result.quality)}
           </p>
           <p className="text-xs" style={{ color: "var(--bpm-text-secondary)" }}>
-            En production réelle, cette session serait enregistrée en base et
-            déclencherait une alerte si TRS &lt; 70%.
+            {t.resultNote}
           </p>
           <Button variant="secondary" size="small" onClick={resetForm} className="mt-3">
-            Nouvelle saisie
+            {t.newEntry}
           </Button>
         </Panel>
       )}

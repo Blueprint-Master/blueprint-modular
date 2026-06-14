@@ -3,8 +3,51 @@
 import { useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
+import { useI18n } from "@/lib/i18n/LocaleProvider";
 import { AuthSplitLayout } from "./AuthSplitLayout";
 import styles from "./AuthForm.module.css";
+
+const fr = {
+  heading: "Créer un compte",
+  subtitle: "Utilisez Google ou Apple pour vous inscrire, ou créez un compte avec votre e-mail.",
+  appleSoon: "Inscription avec Apple bientôt disponible. Utilisez Google.",
+  or: "ou",
+  fullName: "Nom complet",
+  emailLabel: "Email",
+  passwordLabel: "Mot de passe",
+  creatingAccount: "Création du compte…",
+  submit: "Valider",
+  signIn: "Se connecter",
+  backToHome: "Retour à l'accueil",
+  termsPrefix: "En créant un compte, vous acceptez nos ",
+  termsLink: "Conditions générales",
+  termsMiddle: " et notre ",
+  privacyLink: "Politique de confidentialité",
+  termsSuffix: ".",
+  errorRegister: "Inscription impossible. Utilisez Google pour créer un compte.",
+  errorNetwork: "Erreur réseau. Réessayez ou utilisez Google.",
+};
+
+const en: typeof fr = {
+  heading: "Create an account",
+  subtitle: "Use Google or Apple to sign up, or create an account with your email.",
+  appleSoon: "Apple sign-up coming soon. Use Google.",
+  or: "or",
+  fullName: "Full name",
+  emailLabel: "Email",
+  passwordLabel: "Password",
+  creatingAccount: "Creating account…",
+  submit: "Submit",
+  signIn: "Sign in",
+  backToHome: "Back to home",
+  termsPrefix: "By creating an account, you agree to our ",
+  termsLink: "Terms & Conditions",
+  termsMiddle: " and our ",
+  privacyLink: "Privacy Policy",
+  termsSuffix: ".",
+  errorRegister: "Registration failed. Use Google to create an account.",
+  errorNetwork: "Network error. Try again or use Google.",
+};
 
 type RegisterPageProps = {
   title?: string;
@@ -39,6 +82,8 @@ export function RegisterPage({
   callbackUrl = null,
   useSplitLayout = false,
 }: RegisterPageProps) {
+  const { locale } = useI18n();
+  const S = locale === "en" ? en : fr;
   const [fullName, setFullName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -74,9 +119,9 @@ export function RegisterPage({
         window.location.href = data.redirectUrl ?? "/login";
         return;
       }
-      setError((data as { error?: string }).error ?? "Inscription impossible. Utilisez Google pour créer un compte.");
+      setError((data as { error?: string }).error ?? S.errorRegister);
     } catch {
-      setError("Erreur réseau. Réessayez ou utilisez Google.");
+      setError(S.errorNetwork);
     } finally {
       setLoading(false);
     }
@@ -97,10 +142,8 @@ export function RegisterPage({
             />
           </div>
         )}
-        <h1 className={styles.title}>Create an account</h1>
-        <p className={styles.subtitle}>
-          Utilisez Google ou Apple pour vous inscrire, ou créez un compte avec votre e-mail.
-        </p>
+        <h1 className={styles.title}>{S.heading}</h1>
+        <p className={styles.subtitle}>{S.subtitle}</p>
 
         {error && <div className={styles.error}>{error}</div>}
 
@@ -108,7 +151,7 @@ export function RegisterPage({
           <button
             type="button"
             className={`${styles.methodButton} ${styles.methodButtonApple}`}
-            onClick={() => setError("Inscription avec Apple bientôt disponible. Utilisez Google.")}
+            onClick={() => setError(S.appleSoon)}
           >
             <AppleIcon />
             Apple
@@ -124,12 +167,12 @@ export function RegisterPage({
         </div>
 
         <div className={styles.divider}>
-          <span>ou</span>
+          <span>{S.or}</span>
         </div>
 
         <form className={styles.form} onSubmit={handleSubmit}>
           <div className={styles.formGroup}>
-            <label htmlFor="register-name">Full name</label>
+            <label htmlFor="register-name">{S.fullName}</label>
             <input
               id="register-name"
               type="text"
@@ -141,7 +184,7 @@ export function RegisterPage({
             />
           </div>
           <div className={styles.formGroup}>
-            <label htmlFor="register-email">Email</label>
+            <label htmlFor="register-email">{S.emailLabel}</label>
             <input
               id="register-email"
               type="email"
@@ -154,7 +197,7 @@ export function RegisterPage({
             />
           </div>
           <div className={styles.formGroup}>
-            <label htmlFor="register-password">Password</label>
+            <label htmlFor="register-password">{S.passwordLabel}</label>
             <input
               id="register-password"
               type="password"
@@ -174,7 +217,7 @@ export function RegisterPage({
               disabled={loading || !email.trim() || !password}
               style={{ flex: "1 1 100%" }}
             >
-              {loading ? "Création du compte…" : "Submit"}
+              {loading ? S.creatingAccount : S.submit}
             </button>
           </div>
         </form>
@@ -182,17 +225,19 @@ export function RegisterPage({
         <footer className={styles.footer}>
           <div className={styles.footerLinks}>
             <Link href="/login" className={styles.footerLink}>
-              Sign in
+              {S.signIn}
             </Link>
             <span className={styles.footerSep}>·</span>
             <Link href="/" className={styles.footerLink}>
-              Retour à l’accueil
+              {S.backToHome}
             </Link>
           </div>
           <p className={styles.terms}>
-            En créant un compte, vous acceptez nos{" "}
-            <Link href="/terms">Terms &amp; Conditions</Link> et notre{" "}
-            <Link href="/privacy">Politique de confidentialité</Link>.
+            {S.termsPrefix}
+            <Link href="/terms">{S.termsLink}</Link>
+            {S.termsMiddle}
+            <Link href="/privacy">{S.privacyLink}</Link>
+            {S.termsSuffix}
           </p>
         </footer>
       </div>
