@@ -1,6 +1,8 @@
 "use client";
 
 import Link from "next/link";
+import { useI18n } from "@/lib/i18n/LocaleProvider";
+import { STR } from "./strings";
 
 export default function DemoProductionError({
   reset,
@@ -8,6 +10,8 @@ export default function DemoProductionError({
   error: Error & { digest?: string };
   reset: () => void;
 }) {
+  const { locale } = useI18n();
+  const t = STR[locale];
   return (
     <div
       className="min-h-[40vh] flex items-center justify-center px-4"
@@ -21,9 +25,9 @@ export default function DemoProductionError({
           color: "var(--bpm-text-primary)",
         }}
       >
-        <h2 className="text-lg font-semibold mb-2">Démo indisponible</h2>
+        <h2 className="text-lg font-semibold mb-2">{t.unavailableTitle}</h2>
         <p className="text-sm mb-4" style={{ color: "var(--bpm-text-secondary)" }}>
-          Le serveur n&apos;a pas pu charger les données. Vérifiez la base de données ou réessayez plus tard.
+          {t.unavailableBody}
         </p>
         <div className="flex flex-wrap gap-3 justify-center">
           <button
@@ -32,14 +36,14 @@ export default function DemoProductionError({
             className="px-4 py-2 rounded text-sm font-medium underline"
             style={{ color: "var(--bpm-accent-cyan)" }}
           >
-            Réessayer
+            {t.retry}
           </button>
           <Link
             href="/"
             className="px-4 py-2 rounded text-sm font-medium underline"
             style={{ color: "var(--bpm-accent-cyan)" }}
           >
-            Retour à l&apos;accueil
+            {t.backHome}
           </Link>
         </div>
       </div>

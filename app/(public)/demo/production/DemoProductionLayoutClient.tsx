@@ -2,14 +2,19 @@
 
 import Link from "next/link";
 import { Suspense } from "react";
+import { LocaleSwitch } from "@/components/LocaleSwitch";
+import { useI18n } from "@/lib/i18n/LocaleProvider";
 import { DemoPeriodProvider } from "./DemoPeriodContext";
 import { DemoNav } from "./DemoNav";
+import { STR } from "./strings";
 
 export function DemoProductionLayoutClient({
   children,
 }: {
   children: React.ReactNode;
 }) {
+  const { locale } = useI18n();
+  const t = STR[locale];
   return (
     <div
       className="min-h-screen"
@@ -37,7 +42,7 @@ export function DemoProductionLayoutClient({
               color: "var(--bpm-text-secondary)",
             }}
           >
-            Démo Production
+            {t.demoBadge}
           </span>
         </div>
         <nav className="flex items-center gap-3 text-sm">
@@ -48,15 +53,16 @@ export function DemoProductionLayoutClient({
             className="underline"
             style={{ color: "var(--bpm-accent-cyan)" }}
           >
-            Documentation
+            {t.documentation}
           </a>
           <Link
             href="/sandbox"
             className="underline"
             style={{ color: "var(--bpm-accent-cyan)" }}
           >
-            App Builder
+            {t.appBuilder}
           </Link>
+          <LocaleSwitch />
         </nav>
       </header>
 
@@ -68,8 +74,7 @@ export function DemoProductionLayoutClient({
           borderBottom: "1px solid rgba(245, 158, 11, 0.3)",
         }}
       >
-        Démo — données fictives. Déployez votre propre instance pour connecter
-        vos lignes et indicateurs.
+        {t.demoBanner}
       </div>
 
       <Suspense fallback={<div className="h-12" />}>

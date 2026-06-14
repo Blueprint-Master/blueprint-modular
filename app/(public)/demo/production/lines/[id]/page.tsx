@@ -1,6 +1,8 @@
 import Link from "next/link";
 import { getCachedDemoLineDetail } from "@/lib/demo-production-data";
 import type { DemoPeriod } from "@/lib/demo-production-data";
+import { getLocale } from "@/lib/i18n/server";
+import { STR } from "../../strings";
 import {
   Title,
   Metric,
@@ -28,6 +30,8 @@ export default async function DemoLineDetailPage({
   params: Promise<{ id: string }>;
   searchParams?: Promise<{ period?: string }> | { period?: string };
 }) {
+  const locale = await getLocale();
+  const t = STR[locale];
   const { id: lineCode } = await params;
   const rawSp = searchParams != null
     ? typeof (searchParams as Promise<unknown>).then === "function"
@@ -46,10 +50,10 @@ export default async function DemoLineDetailPage({
     return (
       <div className="space-y-4">
         <p style={{ color: "var(--bpm-text-secondary)" }}>
-          Ligne &quot;{lineCode}&quot; introuvable.
+          {t.lineNotFound(lineCode)}
         </p>
         <Link href={`/demo/production/lines?period=${period}`}>
-          <Button variant="secondary">← Retour aux lignes</Button>
+          <Button variant="secondary">{t.backToLines}</Button>
         </Link>
       </div>
     );
@@ -63,19 +67,18 @@ export default async function DemoLineDetailPage({
         <div>
           <Title level={1}>{line.name}</Title>
           <p className="text-sm mt-1" style={{ color: "var(--bpm-text-secondary)" }}>
-            Code : {line.code} — Statut : {line.status} — Cadence théorique :{" "}
-            {line.theoreticalRate} u/h
+            {t.lineMeta(line.code, line.status, line.theoreticalRate)}
           </p>
         </div>
         <Link href={`/demo/production/lines?period=${period}`}>
-          <Button variant="secondary">← Retour aux lignes</Button>
+          <Button variant="secondary">{t.backToLines}</Button>
         </Link>
       </div>
 
       <Grid cols={4}>
         <Column>
           <Metric
-            label="TRS"
+            label={t.metricTRS}
             value={
               trsHistory.length
                 ? `${(trsHistory.reduce((a, x) => a + x.trs, 0) / trsHistory.length).toFixed(1)} %`
@@ -86,22 +89,22 @@ export default async function DemoLineDetailPage({
         </Column>
         <Column>
           <Metric
-            label="Disponibilité"
+            label={t.metricAvailability}
             value="—"
             border
           />
         </Column>
         <Column>
-          <Metric label="Performance" value="—" border />
+          <Metric label={t.metricPerformance} value="—" border />
         </Column>
         <Column>
-          <Metric label="Qualité" value="—" border />
+          <Metric label={t.metricQuality} value="—" border />
         </Column>
       </Grid>
 
       {trsHistory.length > 0 && (
         <div style={{ minHeight: 220 }}>
-          <Title level={2}>Évolution TRS (période)</Title>
+          <Title level={2}>{t.trsEvolution}</Title>
           <div style={{ width: "100%", maxWidth: 600, height: 200 }}>
             <LineChart
               data={trsHistory.map((d) => ({
@@ -117,7 +120,7 @@ export default async function DemoLineDetailPage({
 
       {lossHistory.length > 0 && (
         <div style={{ minHeight: 220 }}>
-          <Title level={2}>Pertes matière (période)</Title>
+          <Title level={2}>{t.materialLossPeriod}</Title>
           <div style={{ width: "100%", maxWidth: 600, height: 200 }}>
             <BarChart
               data={lossHistory.map((d) => ({
@@ -131,19 +134,19 @@ export default async function DemoLineDetailPage({
         </div>
       )}
 
-      <Title level={2}>Dernières sessions</Title>
+      <Title level={2}>{t.lastSessions}</Title>
       <Table
         columns={[
-          { key: "startedAt", label: "Date" },
-          { key: "shift", label: "Shift" },
-          { key: "operatorName", label: "Opérateur" },
-          { key: "trs", label: "TRS %" },
-          { key: "parts", label: "Bonnes / Total" },
-          { key: "rawMaterialLost", label: "Pertes (kg)" },
-          { key: "notes", label: "Notes" },
+          { key: "startedAt", label: t.colDate },
+          { key: "shift", label: t.colShift },
+          { key: "operatorName", label: t.colOperator },
+          { key: "trs", label: t.colTRS },
+          { key: "parts", label: t.colGoodTotal },
+          { key: "rawMaterialLost", label: t.colLossesKg },
+          { key: "notes", label: t.colNotes },
         ]}
         data={sessions.map((s) => ({
-          startedAt: new Date(s.startedAt).toLocaleString("fr-FR", { dateStyle: "short", timeStyle: "short" }),
+          startedAt: new Date(s.startedAt).toLocaleString(locale === "en" ? "en-GB" : "fr-FR", { dateStyle: "short", timeStyle: "short" }),
           shift: s.shift ?? "—",
           operatorName: s.operatorName ?? "—",
           trs: `${s.trs} %`,
@@ -156,7 +159,7 @@ export default async function DemoLineDetailPage({
 
       {alerts.length > 0 && (
         <>
-          <Title level={2}>Alertes de cette ligne</Title>
+          <Title level={2}>{t.lineAlerts}</Title>
           <div className="space-y-2">
             {alerts.map((a) => (
               <Panel key={a.id} title={a.type} variant="warning">

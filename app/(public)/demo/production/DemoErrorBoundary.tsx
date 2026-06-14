@@ -1,10 +1,16 @@
 "use client";
 
 import React from "react";
+import { useI18n } from "@/lib/i18n/LocaleProvider";
+import { STR } from "./strings";
 
-type Props = { children: React.ReactNode };
+type Props = {
+  children: React.ReactNode;
+  errorTitle: string;
+  errorBody: string;
+};
 
-export class DemoErrorBoundary extends React.Component<
+class DemoErrorBoundaryInner extends React.Component<
   Props,
   { hasError: boolean; error?: Error }
 > {
@@ -32,10 +38,8 @@ export class DemoErrorBoundary extends React.Component<
             color: "var(--bpm-text-primary)",
           }}
         >
-          <h2 className="text-lg font-semibold mb-2">Erreur d’affichage</h2>
-          <p className="text-sm mb-4">
-            Le dashboard démo n’a pas pu s’afficher. Rechargez la page ou réessayez plus tard.
-          </p>
+          <h2 className="text-lg font-semibold mb-2">{this.props.errorTitle}</h2>
+          <p className="text-sm mb-4">{this.props.errorBody}</p>
           {typeof window !== "undefined" && this.state.error && (
             <pre className="text-xs overflow-auto p-3 rounded bg-black/5" style={{ color: "var(--bpm-text-secondary)" }}>
               {this.state.error.message}
@@ -46,4 +50,14 @@ export class DemoErrorBoundary extends React.Component<
     }
     return this.props.children;
   }
+}
+
+export function DemoErrorBoundary({ children }: { children: React.ReactNode }) {
+  const { locale } = useI18n();
+  const t = STR[locale];
+  return (
+    <DemoErrorBoundaryInner errorTitle={t.errorTitle} errorBody={t.errorBody}>
+      {children}
+    </DemoErrorBoundaryInner>
+  );
 }

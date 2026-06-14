@@ -2,10 +2,12 @@
 
 import { useCallback } from "react";
 import { useRouter } from "next/navigation";
-import { Title, Table, Badge, Button } from "@/components/bpm";
+import { Table, Badge, Button } from "@/components/bpm";
 import type { LineWithMetrics } from "@/lib/demo-production-data";
 import type { DemoPeriod } from "@/lib/demo-production-data";
+import { useI18n } from "@/lib/i18n/LocaleProvider";
 import { exportLinesCSV } from "../demo-export";
+import { STR } from "../strings";
 
 function statusVariant(status: string): "success" | "warning" | "error" {
   if (status === "active") return "success";
@@ -20,6 +22,8 @@ export function DemoLinesClient({
   lines: LineWithMetrics[];
   period: DemoPeriod;
 }) {
+  const { locale } = useI18n();
+  const t = STR[locale];
   const router = useRouter();
 
   const handleRowClick = useCallback(
@@ -54,20 +58,20 @@ export function DemoLinesClient({
     <div className="space-y-4">
       <div className="flex flex-wrap items-center justify-end gap-2 print:hidden">
         <Button variant="outline" size="small" onClick={handleExportCSV}>
-          Export CSV
+          {t.exportCSV}
         </Button>
         <Button variant="outline" size="small" onClick={handlePrint}>
-          Export PDF (impression)
+          {t.exportPDF}
         </Button>
       </div>
       <div className="overflow-x-auto">
         <Table
           columns={[
-            { key: "name", label: "Ligne" },
-            { key: "code", label: "Code" },
+            { key: "name", label: t.colLine },
+            { key: "code", label: t.colCode },
             {
               key: "status",
-              label: "Statut",
+              label: t.colStatus,
               render: (_, row) => (
                 <Badge variant={statusVariant(String(row.status))}>
                   {String(row.status)}
@@ -76,7 +80,7 @@ export function DemoLinesClient({
             },
             {
               key: "todayTRS",
-              label: "TRS %",
+              label: t.colTRS,
               render: (_, row) => (
                 <div className="flex items-center gap-2">
                   <span>{Number(row.todayTRS).toFixed(1)} %</span>
@@ -92,10 +96,10 @@ export function DemoLinesClient({
                 </div>
               ),
             },
-            { key: "todayAvailability", label: "Disponibilité %", decimals: 1 },
-            { key: "todayPerformance", label: "Performance %", decimals: 1 },
-            { key: "todayQuality", label: "Qualité %", decimals: 1 },
-            { key: "activeSessions", label: "Sessions" },
+            { key: "todayAvailability", label: t.colAvailability, decimals: 1 },
+            { key: "todayPerformance", label: t.colPerformance, decimals: 1 },
+            { key: "todayQuality", label: t.colQuality, decimals: 1 },
+            { key: "activeSessions", label: t.colSessions },
           ]}
           data={tableData}
           defaultSortColumn="todayTRS"

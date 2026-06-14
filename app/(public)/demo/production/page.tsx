@@ -2,7 +2,9 @@
 import Link from "next/link";
 import { getCachedDemoProductionData } from "@/lib/demo-production-data";
 import type { DemoPeriod } from "@/lib/demo-production-data";
+import { getLocale } from "@/lib/i18n/server";
 import { DemoErrorBoundary } from "./DemoErrorBoundary";
+import { STR } from "./strings";
 import {
   Title,
   Metric,
@@ -23,7 +25,7 @@ function parsePeriod(s: string | null): DemoPeriod {
   return "30d";
 }
 
-function DemoUnavailableFallback() {
+function DemoUnavailableFallback({ t }: { t: (typeof STR)["fr"] }) {
   return (
     <div
       className="min-h-[40vh] flex items-center justify-center px-4"
@@ -37,9 +39,9 @@ function DemoUnavailableFallback() {
           color: "var(--bpm-text-primary)",
         }}
       >
-        <h2 className="text-lg font-semibold mb-2">Démo indisponible</h2>
+        <h2 className="text-lg font-semibold mb-2">{t.unavailableTitle}</h2>
         <p className="text-sm mb-4" style={{ color: "var(--bpm-text-secondary)" }}>
-          Le serveur n&apos;a pas pu charger les données. Vérifiez la base de données ou réessayez plus tard.
+          {t.unavailableBody}
         </p>
         <div className="flex flex-wrap gap-3 justify-center">
           <Link
@@ -47,14 +49,14 @@ function DemoUnavailableFallback() {
             className="px-4 py-2 rounded text-sm font-medium underline"
             style={{ color: "var(--bpm-accent-cyan)" }}
           >
-            Réessayer
+            {t.retry}
           </Link>
           <Link
             href="/"
             className="px-4 py-2 rounded text-sm font-medium underline"
             style={{ color: "var(--bpm-accent-cyan)" }}
           >
-            Retour à l&apos;accueil
+            {t.backHome}
           </Link>
         </div>
       </div>
@@ -67,6 +69,8 @@ export default async function DemoProductionPage({
 }: {
   searchParams?: Promise<{ period?: string }> | { period?: string };
 }) {
+  const locale = await getLocale();
+  const t = STR[locale];
   let period: DemoPeriod = "30d";
   let data: Awaited<ReturnType<typeof getCachedDemoProductionData>>;
 
@@ -79,7 +83,7 @@ export default async function DemoProductionPage({
     period = parsePeriod(raw?.period ?? null);
     data = await getCachedDemoProductionData(period);
   } catch {
-    return <DemoUnavailableFallback />;
+    return <DemoUnavailableFallback t={t} />;
   }
 
   const metrics = data.metrics;
@@ -90,21 +94,21 @@ export default async function DemoProductionPage({
   return (
     <DemoErrorBoundary>
       <div className="space-y-6">
-        <Title level={1}>Vue globale</Title>
+        <Title level={1}>{t.overviewTitle}</Title>
 
         {metrics ? (
           <>
             <Grid cols={4}>
               <Column>
                 <Metric
-                  label="TRS global"
+                  label={t.metricGlobalTRS}
                   value={`${Number(metrics.globalTRS) ?? 0} %`}
                   border
                 />
               </Column>
               <Column>
                 <Metric
-                  label="Taux de rejet"
+                  label={t.metricRejectRate}
                   value={
                     metrics.totalProduction > 0
                       ? `${((Number(metrics.totalRejects) / metrics.totalProduction) * 100).toFixed(2)} %`
@@ -115,15 +119,15 @@ export default async function DemoProductionPage({
               </Column>
               <Column>
                 <Metric
-                  label="Pertes matière (%)"
+                  label={t.metricMaterialLoss}
                   value={`${Number(metrics.globalLossRate) ?? 0} %`}
                   border
                 />
               </Column>
               <Column>
                 <Metric
-                  label="Pièces produites"
-                  value={Number(metrics.totalProduction).toLocaleString("fr-FR")}
+                  label={t.metricPartsProduced}
+                  value={Number(metrics.totalProduction).toLocaleString(locale === "en" ? "en-GB" : "fr-FR")}
                   border
                 />
               </Column>
@@ -132,18 +136,18 @@ export default async function DemoProductionPage({
             <Progress
               value={Number(metrics.globalTRS) || 0}
               max={Number(metrics.trsTarget) || 80}
-              label={`${Number(metrics.globalTRS).toFixed(2)}% / objectif ${metrics.trsTarget ?? 80}%`}
+              label={t.trsObjective(Number(metrics.globalTRS).toFixed(2), metrics.trsTarget ?? 80)}
               showValue
             />
             {Number(metrics.globalTRS) < 80 && (
               <p className="text-sm" style={{ color: "var(--bpm-text-secondary)" }}>
-                TRS sous l&apos;objectif — couleur d&apos;alerte appliquée au besoin.
+                {t.trsBelowObjective}
               </p>
             )}
 
             {Array.isArray(metrics.trsEvolution) && metrics.trsEvolution.length > 0 && (
               <div style={{ minHeight: 240 }}>
-                <Title level={2}>Évolution TRS (période)</Title>
+                <Title level={2}>{t.trsEvolution}</Title>
                 <div style={{ width: "100%", maxWidth: 700, height: 220 }}>
                   <LineChart
                     data={metrics.trsEvolution.map((d) => ({
@@ -157,23 +161,23 @@ export default async function DemoProductionPage({
               </div>
             )}
 
-            <Title level={2}>Résumé des lignes</Title>
+            <Title level={2}>{t.linesSummary}</Title>
             <Table
               columns={[
-                { key: "name", label: "Ligne" },
-                { key: "code", label: "Code" },
-                { key: "todayTRS", label: "TRS %" },
-                { key: "status", label: "Statut" },
+                { key: "name", label: t.colLine },
+                { key: "code", label: t.colCode },
+                { key: "todayTRS", label: t.colTRS },
+                { key: "status", label: t.colStatus },
                 {
                   key: "action",
-                  label: "Action",
+                  label: t.colAction,
                   render: (_, row) => (
                     <Link
                       href={`/demo/production/lines/${row.code}?period=${period}`}
                       className="text-sm underline"
                       style={{ color: "var(--bpm-accent-cyan)" }}
                     >
-                      Voir le détail →
+                      {t.seeDetail}
                     </Link>
                   ),
                 },
@@ -190,7 +194,7 @@ export default async function DemoProductionPage({
 
             {criticalAlerts.length > 0 && (
               <>
-                <Title level={2}>Alertes critiques actives</Title>
+                <Title level={2}>{t.activeCriticalAlerts}</Title>
                 <div className="space-y-3">
                   {criticalAlerts.map((a) => (
                     <Panel key={a.id} title={`${a.type} — ${a.line?.name ?? "—"}`} variant="warning">
@@ -200,7 +204,7 @@ export default async function DemoProductionPage({
                 </div>
                 <Link href={`/demo/production/alerts?period=${period}`}>
                   <Button variant="secondary" size="small">
-                    Voir toutes les alertes →
+                    {t.seeAllAlerts}
                   </Button>
                 </Link>
               </>
@@ -208,7 +212,7 @@ export default async function DemoProductionPage({
           </>
         ) : (
           <p style={{ color: "var(--bpm-text-secondary)" }}>
-            Aucune donnée production. Lancez le seed :{" "}
+            {t.noProductionData}{" "}
             <code>npm run seed:production</code>
           </p>
         )}
