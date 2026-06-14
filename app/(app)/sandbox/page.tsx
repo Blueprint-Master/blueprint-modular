@@ -1504,11 +1504,12 @@ function SandboxContent() {
     setCode(S.genInProgressComment);
 
     try {
-      const res = await fetch("/api/sandbox/generate", {
+      // Proxy serveur→serveur vers l'API interne Maker (cf. lib/sandbox/spark-preview).
+      // Même origine que le site Modular → autorisé par l'allowlist d'origine.
+      const res = await fetch("/api/sandbox/spark-preview", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ description: aiDescription }),
-        credentials: "include",
+        body: JSON.stringify({ prompt: aiDescription }),
       });
 
       if (!res.ok) {
@@ -1523,47 +1524,21 @@ function SandboxContent() {
         return;
       }
 
-      const reader = res.body?.getReader();
-      const decoder = new TextDecoder();
-      let full = "";
-
-      if (reader) {
-        while (true) {
-          const { done, value } = await reader.read();
-          if (done) break;
-          const chunk = decoder.decode(value, { stream: true });
-          for (const line of chunk.split("\n")) {
-            if (!line.startsWith("data: ")) continue;
-            try {
-              const data = JSON.parse(line.slice(6)) as { type: string; t?: string; message?: string };
-              if (data.type === "chunk" && data.t) {
-                full += data.t;
-                // Filtre les lignes non-bpm en temps réel
-                const validLines = full
-                  .split("\n")
-                  .filter((l) => l.trim().startsWith("bpm.") || l.trim() === "" || l.trim().startsWith("#"))
-                  .join("\n");
-                setCode(validLines);
-              }
-              if (data.type === "error") {
-                const raw = data.message ?? S.genUnknownError;
-                const friendly =
-                  /network error|failed to fetch|fetch failed|econnrefused|econnreset|network request failed/i.test(raw)
-                    ? S.genOllamaError
-                    : raw;
-                setAiError(friendly);
-              }
-            } catch { /* ignore */ }
-          }
-        }
+      const data = (await res.json()) as { code?: string };
+      const generated = (data.code ?? "").trim();
+      if (!generated) {
+        setAiError(S.genUnknownError);
+        setCode("");
+        return;
       }
-      // Bascule automatiquement en mode code pour voir le résultat
+      setCode(generated);
+      // Bascule automatiquement en mode code pour voir le résultat.
       setMode("code");
     } catch (err) {
       const raw = err instanceof Error ? err.message : S.genNetworkError;
       const friendly =
         /network error|failed to fetch|fetch failed|econnrefused|econnreset|network request failed/i.test(raw)
-          ? S.genOllamaError
+          ? S.genNetworkError
           : raw;
       setAiError(friendly);
       setCode("");

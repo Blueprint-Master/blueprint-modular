@@ -1,26 +1,24 @@
 /**
- * Tests de la route éphémère Sandbox IA « Spark » (no-persist).
+ * Tests de la route éphémère Sandbox IA « Spark » (proxy → API interne Maker).
  *
- * Couvre les garanties du chantier sandbox-ia-spark-ephemeral :
+ * Couvre :
  *  - contrat strict { prompt } seul (refus des uploads / champs superflus) ;
  *  - allowlist d'origine + jeton serveur ;
  *  - rate-limit effectif par IP ;
- *  - flux éphémère : code bpm.* + seed en mémoire, plan NON exposé ;
+ *  - proxy serveur→serveur vers le Maker : Bearer, mapping de la réponse,
+ *    aucune fuite d'URL/secret en cas d'erreur ;
  *  - aucune persistance / déploiement / export sur le chemin (vérif statique).
  */
 import { readFileSync } from "node:fs";
 import { resolve } from "node:path";
-import { describe, it, expect, beforeEach } from "vitest";
+import { describe, it, expect, beforeEach, afterEach, vi } from "vitest";
 import {
   parseSparkPreviewBody,
   isRequestAllowed,
   checkSparkRateLimit,
-  buildSeedFromSpec,
   runSparkPreview,
   __resetSparkRateLimit,
-  type SparkBuilder,
 } from "@/lib/sandbox/spark-preview";
-import type { BuilderSpec } from "@/lib/ai/builder";
 
 const REPO_ROOT = resolve(__dirname, "..");
 
@@ -135,87 +133,80 @@ describe("checkSparkRateLimit — rate-limit effectif par IP", () => {
   });
 });
 
-describe("buildSeedFromSpec — seed déterministe en mémoire", () => {
-  const spec: BuilderSpec = {
-    title: "CRM",
-    domain: "crm",
-    entities: [
-      { name: "Client", fields: [{ name: "nom", type: "string" }, { name: "actif", type: "bool" }, { name: "ca", type: "number" }] },
-    ],
-    relations: [],
-    rules: [],
-    components: ["table"],
-    modules: [],
-    api_routes: [],
-    deployment: "vercel",
-    generated_at: "2025-01-01T00:00:00.000Z",
-  };
+describe("runSparkPreview — proxy serveur→serveur vers le Maker", () => {
+  const OLD_ENV = { ...process.env };
 
-  it("génère 3 lignes par entité, typées et déterministes", () => {
-    const seed = buildSeedFromSpec(spec);
-    expect(seed.Client).toHaveLength(3);
-    expect(seed.Client[0]).toEqual({ nom: "nom 1", actif: true, ca: 10 });
-    // Déterministe : deux appels donnent le même résultat.
-    expect(buildSeedFromSpec(spec)).toEqual(seed);
+  beforeEach(() => {
+    process.env.MAKER_INTERNAL_URL = "http://localhost:3001";
+    process.env.INTERNAL_API_SECRET = "test-secret";
   });
 
-  it("renvoie un objet vide si pas de plan", () => {
-    expect(buildSeedFromSpec(null)).toEqual({});
+  afterEach(() => {
+    vi.unstubAllGlobals();
+    process.env = { ...OLD_ENV };
   });
-});
 
-describe("runSparkPreview — flux éphémère, plan non exposé", () => {
-  it("renvoie code + seed, sans exposer le plan", async () => {
-    const spec: BuilderSpec = {
-      title: "Suivi",
-      domain: "custom",
-      entities: [{ name: "Tache", fields: [{ name: "titre", type: "string" }] }],
-      relations: [],
-      rules: [],
-      components: ["title", "table"],
-      modules: [],
-      api_routes: [],
-      deployment: "vercel",
-      generated_at: "2025-01-01T00:00:00.000Z",
-    };
-    const fakeBuilder: SparkBuilder = {
-      buildFromPrompt: async () => ({
-        output: {
-          code: 'bpm.title("Suivi", level=1)\nbpm.table("Titre;A")',
-          title: "Suivi",
-          description: "x",
-          components: ["title", "table"],
+  function jsonResponse(body: unknown, status = 200): Response {
+    return new Response(JSON.stringify(body), {
+      status,
+      headers: { "Content-Type": "application/json" },
+    });
+  }
+
+  it("relaie le prompt au Maker (Bearer + tier spark) et mappe le rendu bpm.*", async () => {
+    const fetchMock = vi.fn(async () =>
+      jsonResponse({
+        rendered: {
+          "app/_page-content.tsx": "// rendu bpm.title bpm.metric bpm.table",
+          "app/page.tsx": "// ignoré",
         },
-        spec,
-      }),
-      generate: async () => {
-        throw new Error("ne doit pas être appelé quand le plan réussit");
-      },
-    };
-    const result = await runSparkPreview("une todo", fakeBuilder);
+        meta: { appName: "Mon CRM", tier: "spark" },
+      })
+    );
+    vi.stubGlobal("fetch", fetchMock);
+
+    const result = await runSparkPreview("un CRM simple");
+
+    expect(fetchMock).toHaveBeenCalledTimes(1);
+    const [url, init] = fetchMock.mock.calls[0] as unknown as [string, RequestInit];
+    expect(url).toBe("http://localhost:3001/api/internal/spark-preview");
+    expect((init.headers as Record<string, string>).Authorization).toBe("Bearer test-secret");
+    expect(JSON.parse(init.body as string)).toEqual({ prompt: "un CRM simple", tier: "spark" });
+
+    expect(result.title).toBe("Mon CRM");
     expect(result.code).toContain("bpm.title");
-    expect(result.seed.Tache).toHaveLength(3);
-    // Le plan (spec) n'apparaît jamais dans la réponse.
+    expect(result.components).toEqual(expect.arrayContaining(["title", "metric", "table"]));
+    // Le plan n'est jamais exposé : seed vide, et seulement le contrat public.
+    expect(result.seed).toEqual({});
     expect(Object.keys(result)).toEqual(["code", "title", "components", "seed"]);
-    expect(JSON.stringify(result)).not.toContain("generated_at");
-    expect(JSON.stringify(result)).not.toContain("api_routes");
   });
 
-  it("repli sur generate() si la génération du plan échoue (sans seed)", async () => {
-    const fakeBuilder: SparkBuilder = {
-      buildFromPrompt: async () => {
-        throw new Error("Spec generation failed");
-      },
-      generate: async () => ({
-        code: 'bpm.title("Repli", level=1)',
-        title: "Repli",
-        description: "x",
-        components: ["title"],
-      }),
-    };
-    const result = await runSparkPreview("prompt", fakeBuilder);
-    expect(result.code).toContain("Repli");
-    expect(result.seed).toEqual({});
+  it("ne fuite ni URL ni secret en cas d'erreur Maker (message FR neutre)", async () => {
+    const fetchMock = vi.fn(async () =>
+      new Response("internal detail http://localhost:3001 Bearer test-secret", { status: 502 })
+    );
+    vi.stubGlobal("fetch", fetchMock);
+
+    await expect(runSparkPreview("x")).rejects.toThrow(/échou/i);
+    const err = await runSparkPreview("x").catch((e: Error) => e);
+    expect((err as Error).message).not.toContain("localhost");
+    expect((err as Error).message).not.toContain("test-secret");
+  });
+
+  it("n'appelle pas le Maker si INTERNAL_API_SECRET est absent", async () => {
+    delete process.env.INTERNAL_API_SECRET;
+    const fetchMock = vi.fn();
+    vi.stubGlobal("fetch", fetchMock);
+
+    await expect(runSparkPreview("x")).rejects.toThrow();
+    expect(fetchMock).not.toHaveBeenCalled();
+  });
+
+  it("échoue proprement si MAKER_INTERNAL_URL est absent", async () => {
+    delete process.env.MAKER_INTERNAL_URL;
+    vi.stubGlobal("fetch", vi.fn());
+
+    await expect(runSparkPreview("x")).rejects.toThrow();
   });
 });
 

@@ -1,17 +1,17 @@
 /**
  * POST /api/sandbox/spark-preview
  *
- * Route éphémère appelée par la sandbox IA du site Modular. Lance le flux
- * Sketch OFF (plan-first → code bpm.*) EN MÉMOIRE et renvoie uniquement le code
- * généré + un seed d'exemple. Mode strictement éphémère :
+ * Route éphémère appelée par la sandbox IA du site Modular. PROXY serveur→serveur
+ * vers l'API interne du Maker (pipeline prompt → AppSpec → bpm.*) : renvoie le
+ * rendu bpm.* EN MÉMOIRE. Mode strictement éphémère :
  *   - accepte { prompt } SEUL (aucun upload, aucun BYOK, aucun plan injecté),
  *   - NE crée AUCUN enregistrement (pas de GeneratedApp.create/update),
  *   - NE déploie pas, NE renvoie AUCUNE voie d'export/download,
- *   - le plan (Spec) reste interne et n'est pas exposé.
+ *   - le plan (Spec) reste interne au Maker et n'est pas exposé.
  *
- * NE réutilise PAS /api/generate (qui, lui, porterait session NextAuth +
- * billing + brouillon DB). Ici : clé LLM serveur (via getProvider, jamais
- * fournie par le client), rate-limit par IP, allowlist d'origine (site Modular).
+ * Bord de sécurité conservé : rate-limit par IP, allowlist d'origine (site
+ * Modular), contrat strict { prompt }. Le secret interne (INTERNAL_API_SECRET)
+ * et l'URL Maker (MAKER_INTERNAL_URL) restent strictement côté serveur.
  */
 import { NextResponse } from "next/server";
 import {
