@@ -19,12 +19,14 @@ export default defineConfig({
       entry: {
         index: resolve(__dirname, 'src/index.ts'),
         'schema/index': resolve(__dirname, 'src/schema/index.ts'),
+        'connectors/index': resolve(__dirname, 'src/connectors/index.ts'),
       },
       name: 'BlueprintModular',
       formats: ['es', 'cjs'],
       fileName: (format, entryName) => {
         const ext = format === 'es' ? 'mjs' : 'js';
-        return entryName === 'schema/index' ? `schema/index.${ext}` : `index.${ext}`;
+        // Entrées imbriquées (schema/index, connectors/index) conservent leur chemin.
+        return entryName.includes('/') ? `${entryName}.${ext}` : `index.${ext}`;
       },
     },
     rollupOptions: {
