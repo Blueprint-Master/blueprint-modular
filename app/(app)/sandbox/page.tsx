@@ -80,6 +80,10 @@ import {
   AssistantPanel,
 } from "@/components/bpm";
 import { useBPMPage } from "@/lib/ai/context";
+import { useI18n } from "@/lib/i18n/LocaleProvider";
+import { STR } from "./strings";
+
+type S = (typeof STR)["fr"];
 
 const DEFAULT_CODE = `bpm.title("Ma page", level=1)
 bpm.metric("CA", "142 500")
@@ -88,11 +92,11 @@ bpm.panel("Info", "Contenu du panneau.")
 bpm.message("Message de confirmation", type="success")`;
 
 /** Wrapper pour bpm.modal (état open local). */
-function SandboxModalWrapper({ title, content, itemKey }: { title: string; content: string; itemKey: number }) {
+function SandboxModalWrapper({ title, content, itemKey, S }: { title: string; content: string; itemKey: number; S: S }) {
   const [open, setOpen] = useState(false);
   return (
     <React.Fragment key={itemKey}>
-      <Button onClick={() => setOpen(true)}>Ouvrir le modal</Button>
+      <Button onClick={() => setOpen(true)}>{S.openModal}</Button>
       <Modal isOpen={open} onClose={() => setOpen(false)} title={title}>
         {content}
       </Modal>
@@ -101,11 +105,11 @@ function SandboxModalWrapper({ title, content, itemKey }: { title: string; conte
 }
 
 /** Wrapper pour bpm.drawer (état open local). */
-function SandboxDrawerWrapper({ title, content, itemKey }: { title: string; content: string; itemKey: number }) {
+function SandboxDrawerWrapper({ title, content, itemKey, S }: { title: string; content: string; itemKey: number; S: S }) {
   const [open, setOpen] = useState(false);
   return (
     <React.Fragment key={itemKey}>
-      <Button onClick={() => setOpen(true)}>Ouvrir le tiroir</Button>
+      <Button onClick={() => setOpen(true)}>{S.openDrawer}</Button>
       <Drawer open={open} onClose={() => setOpen(false)} title={title}>
         {content}
       </Drawer>
@@ -114,32 +118,32 @@ function SandboxDrawerWrapper({ title, content, itemKey }: { title: string; cont
 }
 
 /** Prévisualisation drawer pour le sélecteur (état local). */
-function DrawerPreview() {
+function DrawerPreview({ S }: { S: S }) {
   const [open, setOpen] = useState(false);
   return (
     <div style={{ padding: 16 }}>
-      <Button onClick={() => setOpen(true)}>Ouvrir le tiroir</Button>
-      <Drawer open={open} onClose={() => setOpen(false)} title="Détails">
-        <p style={{ color: "var(--bpm-text-secondary)", fontSize: 14 }}>Contenu du tiroir latéral.</p>
+      <Button onClick={() => setOpen(true)}>{S.openDrawer}</Button>
+      <Drawer open={open} onClose={() => setOpen(false)} title={S.drawerPreviewTitle}>
+        <p style={{ color: "var(--bpm-text-secondary)", fontSize: 14 }}>{S.drawerPreviewContent}</p>
       </Drawer>
     </div>
   );
 }
 
 /** Prévisualisation toast (nécessite useToast dans le rendu). */
-function ToastPreview() {
+function ToastPreview({ S }: { S: S }) {
   const { showToast } = useToast();
   return (
     <div style={{ padding: 16, display: "flex", gap: 8, flexWrap: "wrap" }}>
-      <Button onClick={() => showToast("Message de démo", "info")}>Toast info</Button>
-      <Button onClick={() => showToast("Succès enregistré", "success")}>Toast success</Button>
-      <Button onClick={() => showToast("Attention requise", "warning")}>Toast warning</Button>
+      <Button onClick={() => showToast(S.toastDemoMessage, "info")}>{S.toastInfoBtn}</Button>
+      <Button onClick={() => showToast(S.toastSuccessMessage, "success")}>{S.toastSuccessBtn}</Button>
+      <Button onClick={() => showToast(S.toastWarningMessage, "warning")}>{S.toastWarningBtn}</Button>
     </div>
   );
 }
 
 /** Parse une ligne du type bpm.xxx("...", ...) et retourne un noeud React ou null */
-function parseBpmLine(line: string, key: number): React.ReactNode {
+function parseBpmLine(line: string, key: number, S: S): React.ReactNode {
   const trimmed = line.trim();
   if (!trimmed || trimmed.startsWith("#")) return null;
 
@@ -488,7 +492,7 @@ function parseBpmLine(line: string, key: number): React.ReactNode {
 
   // === AVANCÉS ===
   const modalMatch = trimmed.match(/bpm\.modal\s*\(\s*["']([^"']*)["']\s*,\s*["']([^"']*)["']\s*\)/);
-  if (modalMatch) return <SandboxModalWrapper key={key} itemKey={key} title={modalMatch[1]} content={modalMatch[2]} />;
+  if (modalMatch) return <SandboxModalWrapper key={key} itemKey={key} title={modalMatch[1]} content={modalMatch[2]} S={S} />;
   const popoverMatch = trimmed.match(/bpm\.popover\s*\(\s*["']([^"']*)["']\s*,\s*["']([^"']*)["']\s*\)/);
   if (popoverMatch) {
     return (
@@ -520,7 +524,7 @@ function parseBpmLine(line: string, key: number): React.ReactNode {
     return <NfcBadge key={key} label={nfcbadgeMatch[1]} variant={variant} />;
   }
   const drawerMatch = trimmed.match(/bpm\.drawer\s*\(\s*["']([^"']*)["']\s*,\s*["']([^"']*)["']\s*\)/);
-  if (drawerMatch) return <SandboxDrawerWrapper key={key} itemKey={key} title={drawerMatch[1]} content={drawerMatch[2]} />;
+  if (drawerMatch) return <SandboxDrawerWrapper key={key} itemKey={key} title={drawerMatch[1]} content={drawerMatch[2]} S={S} />;
   const paginationMatch = trimmed.match(/bpm\.pagination\s*\(\s*page\s*=\s*(\d+)\s*,\s*total\s*=\s*(\d+)\s*(?:,\s*label\s*=\s*["']([^"']*)["'])?\s*\)/);
   if (paginationMatch) {
     const page = Math.max(1, parseInt(paginationMatch[1], 10));
@@ -558,7 +562,7 @@ function parseBpmLine(line: string, key: number): React.ReactNode {
           fontFamily: "monospace",
         }}
       >
-        ⚠ Composant <strong>bpm.{unknownMatch[1]}</strong> non reconnu dans la Sandbox
+        ⚠ {S.unknownComponentPrefix} <strong>bpm.{unknownMatch[1]}</strong> {S.unknownComponentSuffix}
       </div>
     );
   }
@@ -575,7 +579,7 @@ function parseChartData(str: string | undefined): { x: string; y: number }[] {
   }).filter((d) => d.x.length > 0);
 }
 
-function parseCodeToPreview(code: string): React.ReactNode[] {
+function parseCodeToPreview(code: string, S: S): React.ReactNode[] {
   const nodes: React.ReactNode[] = [];
   const lines = code.split("\n");
   let i = 0;
@@ -622,7 +626,7 @@ function parseCodeToPreview(code: string): React.ReactNode[] {
         label,
         content: (
           <div key={j} className="flex flex-col gap-3">
-            {tabBlocks[j].map((l, k) => parseBpmLine(l, (i + 1) * 10000 + j * 1000 + k)).filter(Boolean)}
+            {tabBlocks[j].map((l, k) => parseBpmLine(l, (i + 1) * 10000 + j * 1000 + k, S)).filter(Boolean)}
           </div>
         ),
       }));
@@ -630,7 +634,7 @@ function parseCodeToPreview(code: string): React.ReactNode[] {
       i = idx;
       continue;
     }
-    const node = parseBpmLine(line, i);
+    const node = parseBpmLine(line, i, S);
     if (node) nodes.push(node);
     i++;
   }
@@ -713,17 +717,21 @@ const SANDBOX_COMPONENTS = [
   { value: "html", label: "bpm.html" },
 ] as const;
 
-const SANDBOX_MODULES = [
-  { href: "/modules/auth", label: "Auth", description: "Authentification (Google, e-mail), session et whitelist." },
-  { href: "/modules/wiki", label: "Wiki", description: "Wiki interne et pages documentées." },
-  { href: "/modules/ia", label: "IA", description: "Assistant et chat IA." },
-  { href: "/modules/documents", label: "Analyse de documents", description: "Analyse et gestion de documents." },
-  { href: "/modules/contracts", label: "Base contractuelle", description: "Contrats fournisseurs et CGV : upload, analyse IA." },
-  { href: "/modules/veille", label: "Veille", description: "Veille et flux d'information." },
-  { href: "/modules/notification", label: "Notification", description: "Historique des notifications, niveaux 1–3." },
-] as const;
+function getSandboxModules(S: S) {
+  return [
+    { href: "/modules/auth", label: "Auth", description: S.modAuthDesc },
+    { href: "/modules/wiki", label: "Wiki", description: S.modWikiDesc },
+    { href: "/modules/ia", label: "IA", description: S.modIaDesc },
+    { href: "/modules/documents", label: S.modDocumentsLabel, description: S.modDocumentsDesc },
+    { href: "/modules/contracts", label: S.modContractsLabel, description: S.modContractsDesc },
+    { href: "/modules/veille", label: "Veille", description: S.modVeilleDesc },
+    { href: "/modules/notification", label: "Notification", description: S.modNotificationDesc },
+  ] as const;
+}
 
 function SandboxContent() {
+  const { locale } = useI18n();
+  const S = STR[locale];
   const router = useRouter();
   const searchParams = useSearchParams();
   const component = (searchParams.get("component") || searchParams.get("c") || "panel").toLowerCase().replace("bpm.", "");
@@ -739,7 +747,7 @@ function SandboxContent() {
   const [aiGenerating, setAiGenerating] = useState(false);
   const [aiError, setAiError] = useState<string | null>(null);
   const [aiHealth, setAiHealth] = useState<{ available: boolean; model?: string; latencyMs?: number } | null>(null);
-  const [assistantName, setAssistantName] = useState("Assistant");
+  const [assistantName, setAssistantName] = useState(S.assistantDefaultName);
   const [code, setCode] = useState(DEFAULT_CODE);
   const [completionOpen, setCompletionOpen] = useState(false);
   const [completionPrefix, setCompletionPrefix] = useState("");
@@ -757,7 +765,7 @@ function SandboxContent() {
     () => /production|trs|usine|ligne|fabrication/i.test(code) || /production|trs|usine|ligne|fabrication/i.test(aiDescription),
     [code, aiDescription]
   );
-  useBPMPage(isProductionDashboard ? "production" : "app", isProductionDashboard ? "Dashboard Production" : undefined);
+  useBPMPage(isProductionDashboard ? "production" : "app", isProductionDashboard ? S.dashboardProductionLabel : undefined);
 
   useEffect(() => {
     setCompletionIndex((i) => Math.min(i, Math.max(0, completionList.length - 1)));
@@ -881,8 +889,8 @@ function SandboxContent() {
   const content = useMemo(() => {
     if (component === "panel") {
       return (
-        <Panel variant={variant as "info" | "success" | "warning" | "error"} title={title || `Panneau ${variant}`}>
-          Contenu du panneau. Variante : <strong>{variant}</strong>.
+        <Panel variant={variant as "info" | "success" | "warning" | "error"} title={title || S.panelTitle.replace("{variant}", variant)}>
+          {S.panelBody} <strong>{variant}</strong>.
         </Panel>
       );
     }
@@ -891,7 +899,7 @@ function SandboxContent() {
         <Message type={variant as "info" | "success" | "warning" | "error"}>
           {title ? <strong>{title}</strong> : null}
           {title && <br />}
-          Contenu du message.
+          {S.messageBody}
         </Message>
       );
     }
@@ -909,21 +917,21 @@ function SandboxContent() {
     if (component === "metric") {
       return (
         <div style={{ padding: 16, display: "flex", gap: 16, flexWrap: "wrap" }}>
-          <Metric label={label || "CA"} value={value || "142 500"} delta={3200} />
-          <Metric label="Taux" value="12,5 %" />
-          <Metric label="Tendance" value="+3,2 %" delta={3.2} />
+          <Metric label={label || S.metricCa} value={value || "142 500"} delta={3200} />
+          <Metric label={S.metricRate} value="12,5 %" />
+          <Metric label={S.metricTrend} value="+3,2 %" delta={3.2} />
         </div>
       );
     }
     if (component === "table") {
-      const columns = [{ key: "name", label: "Nom" }, { key: "val", label: "Valeur" }];
+      const columns = [{ key: "name", label: S.tableColName }, { key: "val", label: S.tableColValue }];
       const data = [{ name: "A", val: "1" }, { name: "B", val: "2" }, { name: "C", val: "3" }];
       return (
         <div style={{ padding: 16 }}>
           <Table columns={columns} data={data} onRowClick={(row) => setTableSelectedRow(row)} />
           {tableSelectedRow && (
             <p className="mt-3 text-sm" style={{ color: "var(--bpm-text-secondary)" }}>
-              Ligne cliquée : {JSON.stringify(tableSelectedRow)}
+              {S.tableRowClicked} {JSON.stringify(tableSelectedRow)}
             </p>
           )}
         </div>
@@ -931,8 +939,8 @@ function SandboxContent() {
     }
     if (component === "tabs") {
       const tabItems = [
-        { label: "Onglet 1", content: <div>Contenu onglet 1</div> },
-        { label: "Onglet 2", content: <div>Contenu onglet 2</div> },
+        { label: S.tab1, content: <div>{S.tab1Content}</div> },
+        { label: S.tab2, content: <div>{S.tab2Content}</div> },
       ];
       return (
         <div style={{ padding: 16 }}>
@@ -943,24 +951,24 @@ function SandboxContent() {
     if (component === "title") {
       return (
         <div style={{ padding: 16 }}>
-          <Title level={1}>Titre niveau 1</Title>
-          <Title level={2}>Titre niveau 2</Title>
-          <Title level={3}>Titre niveau 3</Title>
+          <Title level={1}>{S.titleLevel1}</Title>
+          <Title level={2}>{S.titleLevel2}</Title>
+          <Title level={3}>{S.titleLevel3}</Title>
         </div>
       );
     }
     if (component === "text") {
       return (
         <div style={{ padding: 16, display: "flex", flexDirection: "column", gap: 8 }}>
-          <Text>Texte simple (bpm.text).</Text>
-          <Text mono>Texte monospace (mono=True).</Text>
+          <Text>{S.textSimple}</Text>
+          <Text mono>{S.textMono}</Text>
         </div>
       );
     }
     if (component === "caption") {
       return (
         <div style={{ padding: 16 }}>
-          <Caption>Légende ou sous-titre (bpm.caption).</Caption>
+          <Caption>{S.caption}</Caption>
         </div>
       );
     }
@@ -968,7 +976,7 @@ function SandboxContent() {
       return (
         <div style={{ padding: 16, display: "flex", gap: 24, alignItems: "center", flexWrap: "wrap" }}>
           <Spinner size="small" text="" variant="circle" />
-          <Spinner size="medium" text="Chargement…" variant="circle" />
+          <Spinner size="medium" text={S.spinnerLoading} variant="circle" />
           <Spinner size="medium" text="" variant="dot" />
           <Spinner size="large" text="Dot…" variant="dot" />
           <Spinner size="medium" text="" variant="wheel" />
@@ -996,7 +1004,7 @@ function SandboxContent() {
     if (component === "tooltip") {
       return (
         <div style={{ padding: 16 }}>
-          <Tooltip text="Info-bulle au survol"><span className="underline">Survolez-moi</span></Tooltip>
+          <Tooltip text={S.tooltipText}><span className="underline">{S.tooltipTrigger}</span></Tooltip>
         </div>
       );
     }
@@ -1021,8 +1029,8 @@ function SandboxContent() {
     if (component === "card") {
       return (
         <div style={{ padding: 16 }}>
-          <Card title="Carte exemple" subtitle="Sous-titre" variant="outlined">
-            Contenu de la carte. Actions et variantes disponibles.
+          <Card title={S.cardTitle} subtitle={S.cardSubtitle} variant="outlined">
+            {S.cardBody}
           </Card>
         </div>
       );
@@ -1030,45 +1038,45 @@ function SandboxContent() {
     if (component === "input") {
       return (
         <div style={{ padding: 16, maxWidth: 320 }}>
-          <Input label="Champ texte" placeholder="Saisissez…" value={title} onChange={() => {}} />
+          <Input label={S.inputLabel} placeholder={S.inputPlaceholder} value={title} onChange={() => {}} />
         </div>
       );
     }
     if (component === "textarea") {
       return (
         <div style={{ padding: 16, maxWidth: 400 }}>
-          <Textarea label="Zone de texte" placeholder="Contenu…" rows={4} value="" onChange={() => {}} />
+          <Textarea label={S.textareaLabel} placeholder={S.textareaPlaceholder} rows={4} value="" onChange={() => {}} />
         </div>
       );
     }
     if (component === "checkbox") {
       return (
         <div style={{ padding: 16, display: "flex", gap: 12, flexDirection: "column" }}>
-          <Checkbox label="Option A" checked={false} onChange={() => {}} />
-          <Checkbox label="Option B" checked onChange={() => {}} />
+          <Checkbox label={S.checkboxA} checked={false} onChange={() => {}} />
+          <Checkbox label={S.checkboxB} checked onChange={() => {}} />
         </div>
       );
     }
     if (component === "toggle") {
       return (
         <div style={{ padding: 16, display: "flex", gap: 16, alignItems: "center" }}>
-          <Toggle label="Activer" value={false} onChange={() => {}} />
-          <Toggle label="Activé" value onChange={() => {}} />
+          <Toggle label={S.toggleEnable} value={false} onChange={() => {}} />
+          <Toggle label={S.toggleEnabled} value onChange={() => {}} />
         </div>
       );
     }
     if (component === "selectbox") {
-      const options = [{ value: "a", label: "Option A" }, { value: "b", label: "Option B" }, { value: "c", label: "Option C" }];
+      const options = [{ value: "a", label: S.selectOptionA }, { value: "b", label: S.selectOptionB }, { value: "c", label: S.selectOptionC }];
       return (
         <div style={{ padding: 16, maxWidth: 280 }}>
-          <Selectbox label="Choix" options={options} value="a" onChange={() => {}} />
+          <Selectbox label={S.selectLabel} options={options} value="a" onChange={() => {}} />
         </div>
       );
     }
     if (component === "accordion") {
       const sections = [
-        { id: "1", title: "Section 1", content: "Contenu de la section 1." },
-        { id: "2", title: "Section 2", content: "Contenu de la section 2." },
+        { id: "1", title: S.accordionSection1Title, content: S.accordionSection1Content },
+        { id: "2", title: S.accordionSection2Title, content: S.accordionSection2Content },
       ];
       return (
         <div style={{ padding: 16 }}>
@@ -1079,8 +1087,8 @@ function SandboxContent() {
     if (component === "expander") {
       return (
         <div style={{ padding: 16 }}>
-          <Expander title="Développer pour voir" defaultExpanded={false}>
-            Contenu masqué par défaut.
+          <Expander title={S.expanderTitle} defaultExpanded={false}>
+            {S.expanderBody}
           </Expander>
         </div>
       );
@@ -1097,15 +1105,15 @@ function SandboxContent() {
     if (component === "slider") {
       return (
         <div style={{ padding: 16, maxWidth: 320 }}>
-          <Slider label="Volume" min={0} max={100} value={50} onChange={() => {}} />
+          <Slider label={S.sliderLabel} min={0} max={100} value={50} onChange={() => {}} />
         </div>
       );
     }
     if (component === "progress") {
       return (
         <div style={{ padding: 16, display: "flex", flexDirection: "column", gap: 16 }}>
-          <Progress value={30} max={100} label="Progression" showValue />
-          <Progress value={70} max={100} label="Avancement" showValue />
+          <Progress value={30} max={100} label={S.progressLabel1} showValue />
+          <Progress value={70} max={100} label={S.progressLabel2} showValue />
         </div>
       );
     }
@@ -1118,7 +1126,7 @@ function SandboxContent() {
       );
     }
     if (component === "breadcrumb") {
-      const items = [{ href: "#", label: "Accueil" }, { href: "#", label: "Docs" }, { label: "Sandbox" }];
+      const items = [{ href: "#", label: S.breadcrumbHome }, { href: "#", label: "Docs" }, { label: "Sandbox" }];
       return (
         <div style={{ padding: 16 }}>
           <Breadcrumb items={items} />
@@ -1128,16 +1136,16 @@ function SandboxContent() {
     if (component === "divider") {
       return (
         <div style={{ padding: 16 }}>
-          <p>Au-dessus</p>
+          <p>{S.dividerAbove}</p>
           <Divider />
-          <p>En dessous</p>
+          <p>{S.dividerBelow}</p>
         </div>
       );
     }
     if (component === "emptystate") {
       return (
         <div style={{ padding: 16 }}>
-          <EmptyState title="Aucun élément" description="La liste est vide pour le moment." />
+          <EmptyState title={S.emptyStateTitle} description={S.emptyStateDesc} />
         </div>
       );
     }
@@ -1146,29 +1154,29 @@ function SandboxContent() {
         <div style={{ padding: 16, display: "flex", gap: 8, flexWrap: "wrap" }}>
           <Chip label="Chip" />
           <Chip label="Primary" variant="primary" />
-          <Chip label="Supprimable" onDelete={() => {}} />
+          <Chip label={S.chipDeletable} onDelete={() => {}} />
         </div>
       );
     }
     if (component === "modal") {
       return (
         <div style={{ padding: 16 }}>
-          <Modal isOpen={false} onClose={() => {}} title="Modal exemple" size="medium">
-            Contenu du modal. Ouvrir via state pour tester.
+          <Modal isOpen={false} onClose={() => {}} title={S.modalTitle} size="medium">
+            {S.modalBody}
           </Modal>
-          <p className="text-sm" style={{ color: "var(--bpm-text-secondary)" }}>Le modal est fermé ici ; à ouvrir via un bouton en contexte.</p>
+          <p className="text-sm" style={{ color: "var(--bpm-text-secondary)" }}>{S.modalNote}</p>
         </div>
       );
     }
     if (component === "highlightbox") {
       return (
         <div style={{ padding: 16 }}>
-          <HighlightBox value={1} label="Exemple" title="Encadré important" />
+          <HighlightBox value={1} label={S.highlightLabel} title={S.highlightTitle} />
         </div>
       );
     }
     if (component === "stepper") {
-      const steps = [{ id: "1", label: "Étape 1" }, { id: "2", label: "Étape 2" }, { id: "3", label: "Étape 3" }];
+      const steps = [{ id: "1", label: S.step1 }, { id: "2", label: S.step2 }, { id: "3", label: S.step3 }];
       return (
         <div style={{ padding: 16 }}>
           <Stepper steps={steps} currentStep={1} />
@@ -1178,21 +1186,21 @@ function SandboxContent() {
     if (component === "markdown") {
       return (
         <div style={{ padding: 16 }}>
-          <Markdown text="## Titre\n\nParagraphe avec **gras** et *italique*." />
+          <Markdown text={S.markdownDemo} />
         </div>
       );
     }
     if (component === "jsonviewer") {
       return (
         <div style={{ padding: 16 }}>
-          <JsonViewer data={{ a: 1, b: "texte", c: [1, 2, 3] }} />
+          <JsonViewer data={{ a: 1, b: S.jsonText, c: [1, 2, 3] }} />
         </div>
       );
     }
     if (component === "empty") {
       return (
         <div style={{ padding: 16 }}>
-          <Empty>Aucune donnée</Empty>
+          <Empty>{S.emptyNoData}</Empty>
         </div>
       );
     }
@@ -1210,15 +1218,15 @@ function SandboxContent() {
     if (component === "column") {
       return (
         <div style={{ padding: 16 }}>
-          <Column><Panel variant="info" title="Colonne">Contenu dans une colonne.</Panel></Column>
+          <Column><Panel variant="info" title={S.columnTitle}>{S.columnBody}</Panel></Column>
         </div>
       );
     }
     if (component === "theme") {
       return (
         <div style={{ padding: 16 }}>
-          <Theme variant="toggle" label="Thème" />
-          <p className="mt-2 text-sm" style={{ color: "var(--bpm-text-secondary)" }}>Bascule clair / sombre.</p>
+          <Theme variant="toggle" label={S.themeLabel} />
+          <p className="mt-2 text-sm" style={{ color: "var(--bpm-text-secondary)" }}>{S.themeNote}</p>
         </div>
       );
     }
@@ -1226,7 +1234,7 @@ function SandboxContent() {
       return (
         <div style={{ padding: 16 }}>
           <Container>
-            <Panel variant="info" title="Contenu dans un container">Contenu.</Panel>
+            <Panel variant="info" title={S.containerTitle}>{S.containerBody}</Panel>
           </Container>
         </div>
       );
@@ -1234,45 +1242,45 @@ function SandboxContent() {
     if (component === "statusbox") {
       return (
         <div style={{ padding: 16, display: "flex", gap: 12, flexWrap: "wrap" }}>
-          <StatusBox state="complete" label="Succès" />
-          <StatusBox state="running" label="En cours" />
-          <StatusBox state="error" label="Erreur" />
+          <StatusBox state="complete" label={S.statusSuccess} />
+          <StatusBox state="running" label={S.statusRunning} />
+          <StatusBox state="error" label={S.statusError} />
         </div>
       );
     }
     if (component === "numberinput") {
       return (
         <div style={{ padding: 16, maxWidth: 160 }}>
-          <NumberInput label="Quantité" value={42} min={0} max={100} onChange={() => {}} />
+          <NumberInput label={S.numberLabel} value={42} min={0} max={100} onChange={() => {}} />
         </div>
       );
     }
     if (component === "dateinput") {
       return (
         <div style={{ padding: 16, maxWidth: 200 }}>
-          <DateInput label="Date" value="" onChange={() => {}} />
+          <DateInput label={S.dateLabel} value="" onChange={() => {}} />
         </div>
       );
     }
     if (component === "daterangepicker") {
       return (
         <div style={{ padding: 16, maxWidth: 320 }}>
-          <DateRangePicker label="Période" start={null} end={null} onChange={() => {}} />
+          <DateRangePicker label={S.daterangeLabel} start={null} end={null} onChange={() => {}} />
         </div>
       );
     }
     if (component === "timeinput") {
       return (
         <div style={{ padding: 16, maxWidth: 200 }}>
-          <TimeInput label="Heure" value={null} onChange={() => {}} />
+          <TimeInput label={S.timeLabel} value={null} onChange={() => {}} />
         </div>
       );
     }
     if (component === "radiogroup") {
-      const options = [{ value: "x", label: "Option X" }, { value: "y", label: "Option Y" }];
+      const options = [{ value: "x", label: S.radioOptionX }, { value: "y", label: S.radioOptionY }];
       return (
         <div style={{ padding: 16 }}>
-          <RadioGroup name="demo" options={options} value="x" onChange={() => {}} label="Choix unique" />
+          <RadioGroup name="demo" options={options} value="x" onChange={() => {}} label={S.radioLabel} />
         </div>
       );
     }
@@ -1286,19 +1294,19 @@ function SandboxContent() {
     if (component === "fileuploader") {
       return (
         <div style={{ padding: 16, maxWidth: 400 }}>
-          <FileUploader accept=".pdf,.doc" onFiles={() => {}} label="Fichier" />
+          <FileUploader accept=".pdf,.doc" onFiles={() => {}} label={S.fileLabel} />
         </div>
       );
     }
     if (component === "colorpicker") {
       return (
         <div style={{ padding: 16 }}>
-          <ColorPicker label="Couleur" value="#3b82f6" onChange={() => {}} />
+          <ColorPicker label={S.colorLabel} value="#3b82f6" onChange={() => {}} />
         </div>
       );
     }
     if (component === "linechart") {
-      const data = [{ x: "Jan", y: 10 }, { x: "Fév", y: 20 }, { x: "Mar", y: 15 }];
+      const data = [{ x: "Jan", y: 10 }, { x: S.monthFeb, y: 20 }, { x: "Mar", y: 15 }];
       return (
         <div style={{ padding: 16, height: 200 }}>
           <LineChart data={data} width={400} height={180} />
@@ -1314,7 +1322,7 @@ function SandboxContent() {
       );
     }
     if (component === "areachart") {
-      const data = [{ x: "Jan", y: 10 }, { x: "Fév", y: 25 }, { x: "Mar", y: 18 }];
+      const data = [{ x: "Jan", y: 10 }, { x: S.monthFeb, y: 25 }, { x: "Mar", y: 18 }];
       return (
         <div style={{ padding: 16, height: 200 }}>
           <AreaChart data={data} width={400} height={180} />
@@ -1344,7 +1352,7 @@ function SandboxContent() {
       );
     }
     if (component === "topnav") {
-      const items = [{ label: "Accueil", href: "/" }, { label: "Sandbox", href: "/sandbox" }, { label: "Docs", href: "/docs" }];
+      const items = [{ label: S.topnavHome, href: "/" }, { label: "Sandbox", href: "/sandbox" }, { label: "Docs", href: "/docs" }];
       return (
         <div style={{ padding: 0 }}>
           <TopNav title="Blueprint Modular" titleHref="/" items={items} />
@@ -1354,17 +1362,17 @@ function SandboxContent() {
     if (component === "fab") {
       return (
         <div style={{ padding: 16, minHeight: 200, position: "relative" }}>
-          <FAB icon="+" label="Action" onClick={() => window.alert("FAB cliqué")} position="bottom-right" />
+          <FAB icon="+" label={S.fabLabel} onClick={() => window.alert(S.fabAlert)} position="bottom-right" />
         </div>
       );
     }
     if (component === "treeview") {
       const nodes = [
-        { id: "1", label: "Racine", defaultOpen: true, children: [
-          { id: "1-1", label: "Enfant 1" },
-          { id: "1-2", label: "Enfant 2", children: [{ id: "1-2-1", label: "Sous-enfant" }] },
+        { id: "1", label: S.treeRoot, defaultOpen: true, children: [
+          { id: "1-1", label: S.treeChild1 },
+          { id: "1-2", label: S.treeChild2, children: [{ id: "1-2-1", label: S.treeSubChild }] },
         ]},
-        { id: "2", label: "Autre nœud" },
+        { id: "2", label: S.treeOtherNode },
       ];
       return (
         <div style={{ padding: 16, maxWidth: 320 }}>
@@ -1374,9 +1382,9 @@ function SandboxContent() {
     }
     if (component === "timeline") {
       const timelineItems = [
-        { title: "Étape 1", description: "Terminée", date: "Jan 2025", status: "done" as const },
-        { title: "Étape 2", description: "En cours", date: "Fév 2025", status: "current" as const },
-        { title: "Étape 3", description: "À venir", date: "Mar 2025", status: "upcoming" as const },
+        { title: S.step1, description: S.timelineDone, date: "Jan 2025", status: "done" as const },
+        { title: S.step2, description: S.timelineCurrent, date: `${S.monthFeb} 2025`, status: "current" as const },
+        { title: S.step3, description: S.timelineUpcoming, date: "Mar 2025", status: "upcoming" as const },
       ];
       return (
         <div style={{ padding: 16 }}>
@@ -1388,7 +1396,7 @@ function SandboxContent() {
       return (
         <div style={{ padding: 16 }}>
           <div style={{ width: 300, height: 200, border: "1px solid var(--bpm-border)" }}>
-            <Image src="https://picsum.photos/400/300" alt="Exemple" fit="contain" width={300} height={200} />
+            <Image src="https://picsum.photos/400/300" alt={S.imageAlt} fit="contain" width={300} height={200} />
           </div>
         </div>
       );
@@ -1404,7 +1412,7 @@ function SandboxContent() {
       const opts = [{ value: "paris", label: "Paris" }, { value: "lyon", label: "Lyon" }, { value: "marseille", label: "Marseille" }];
       return (
         <div style={{ padding: 16, maxWidth: 280 }}>
-          <Autocomplete options={opts} value="" onChange={() => {}} placeholder="Rechercher une ville…" />
+          <Autocomplete options={opts} value="" onChange={() => {}} placeholder={S.autocompletePlaceholder} />
         </div>
       );
     }
@@ -1446,45 +1454,45 @@ function SandboxContent() {
     if (component === "nfcbadge") {
       return (
         <div style={{ padding: 16, display: "flex", gap: 8, flexWrap: "wrap" }}>
-          <NfcBadge label="Scannable" variant="default" />
-          <NfcBadge label="Actif" variant="primary" />
-          <NfcBadge label="Validé" variant="success" />
+          <NfcBadge label={S.nfcScannable} variant="default" />
+          <NfcBadge label={S.nfcActive} variant="primary" />
+          <NfcBadge label={S.nfcValidated} variant="success" />
         </div>
       );
     }
-    if (component === "drawer") return <DrawerPreview />;
+    if (component === "drawer") return <DrawerPreview S={S} />;
     if (component === "pagination") {
       return (
         <div style={{ padding: 16 }}>
-          <Pagination page={2} totalPages={5} onPageChange={() => {}} label="Page 2 sur 5" />
+          <Pagination page={2} totalPages={5} onPageChange={() => {}} label={S.paginationLabel} />
         </div>
       );
     }
     if (component === "popover") {
       return (
         <div style={{ padding: 16 }}>
-          <Popover trigger={<Button>Ouvrir</Button>}>
-            <p style={{ padding: 8, margin: 0 }}>Contenu du popover.</p>
+          <Popover trigger={<Button>{S.popoverOpen}</Button>}>
+            <p style={{ padding: 8, margin: 0 }}>{S.popoverBody}</p>
           </Popover>
         </div>
       );
     }
-    if (component === "toast") return <ToastPreview />;
+    if (component === "toast") return <ToastPreview S={S} />;
     if (component === "html") {
       return (
         <div style={{ padding: 16 }}>
-          <Html html='<p>Contenu <strong>HTML</strong> (bpm.html). Utiliser uniquement avec du contenu de confiance.</p>' />
+          <Html html={S.htmlDemo} />
         </div>
       );
     }
     return (
-      <Panel variant="info" title="Sandbox BPM">
-        <p>Composant : <code>{component}</code></p>
-        <p>Sélectionnez un composant dans la liste ou utilisez <code>?component=...</code>.</p>
+      <Panel variant="info" title={S.defaultTitle}>
+        <p>{S.defaultComponentLine} <code>{component}</code></p>
+        <p>{S.defaultSelectHint} <code>?component=...</code>.</p>
         <p><code>?variant=warning</code>, <code>?title=Mon titre</code>, <code>?theme=dark</code>.</p>
       </Panel>
     );
-  }, [component, variant, title, value, label, tableSelectedRow]);
+  }, [component, variant, title, value, label, tableSelectedRow, S]);
 
   const hasVariant = component === "panel" || component === "message";
   const hasTitle = component === "panel" || component === "message";
@@ -1493,7 +1501,7 @@ function SandboxContent() {
     if (!aiDescription.trim() || aiGenerating) return;
     setAiGenerating(true);
     setAiError(null);
-    setCode("# Génération en cours…");
+    setCode(S.genInProgressComment);
 
     try {
       const res = await fetch("/api/sandbox/generate", {
@@ -1505,7 +1513,7 @@ function SandboxContent() {
 
       if (!res.ok) {
         const errBody = await res.text();
-        let msg = `Erreur ${res.status}`;
+        let msg = S.genErrorStatus.replace("{status}", String(res.status));
         try {
           const data = JSON.parse(errBody) as { error?: string };
           if (data.error) msg = data.error;
@@ -1538,10 +1546,10 @@ function SandboxContent() {
                 setCode(validLines);
               }
               if (data.type === "error") {
-                const raw = data.message ?? "Erreur inconnue";
+                const raw = data.message ?? S.genUnknownError;
                 const friendly =
                   /network error|failed to fetch|fetch failed|econnrefused|econnreset|network request failed/i.test(raw)
-                    ? "Vérifiez qu'Ollama est démarré (ex. http://localhost:11434). Sinon, définissez AI_MOCK=true dans .env pour le mode démo."
+                    ? S.genOllamaError
                     : raw;
                 setAiError(friendly);
               }
@@ -1552,17 +1560,17 @@ function SandboxContent() {
       // Bascule automatiquement en mode code pour voir le résultat
       setMode("code");
     } catch (err) {
-      const raw = err instanceof Error ? err.message : "Erreur réseau";
+      const raw = err instanceof Error ? err.message : S.genNetworkError;
       const friendly =
         /network error|failed to fetch|fetch failed|econnrefused|econnreset|network request failed/i.test(raw)
-          ? "Vérifiez qu'Ollama est démarré (ex. http://localhost:11434). Sinon, définissez AI_MOCK=true dans .env pour le mode démo."
+          ? S.genOllamaError
           : raw;
       setAiError(friendly);
       setCode("");
     } finally {
       setAiGenerating(false);
     }
-  }, [aiDescription, aiGenerating]);
+  }, [aiDescription, aiGenerating, S]);
 
   return (
     <div
@@ -1576,14 +1584,14 @@ function SandboxContent() {
     >
       <div className="doc-page w-full">
         <div className="doc-page-header">
-          <h1>Sandbox</h1>
+          <h1>{S.pageHeading}</h1>
           <p className="doc-description">
-            Choisissez un composant ou écrivez du code pour composer une page en direct.
+            {S.pageDescription}
           </p>
           <div className="mt-4 p-4 rounded-lg border" style={{ background: "var(--bpm-bg-primary)", borderColor: "var(--bpm-border)" }}>
-            <p className="text-sm font-semibold mb-2" style={{ color: "var(--bpm-text-secondary)" }}>Modules de l&apos;app</p>
+            <p className="text-sm font-semibold mb-2" style={{ color: "var(--bpm-text-secondary)" }}>{S.appModules}</p>
             <div className="flex flex-wrap gap-2">
-              {SANDBOX_MODULES.map((mod) => (
+              {getSandboxModules(S).map((mod) => (
                 <Link
                   key={mod.href}
                   href={mod.href}
@@ -1600,7 +1608,7 @@ function SandboxContent() {
               ))}
             </div>
             <p className="text-xs mt-2" style={{ color: "var(--bpm-text-secondary)" }}>
-              {SANDBOX_MODULES.map((m) => m.label).join(" · ")}
+              {getSandboxModules(S).map((m) => m.label).join(" · ")}
             </p>
           </div>
         </div>
@@ -1615,7 +1623,7 @@ function SandboxContent() {
               border: "1px solid var(--bpm-border)",
             }}
           >
-            Par code
+            {S.modeCode}
           </button>
           <button
             type="button"
@@ -1627,7 +1635,7 @@ function SandboxContent() {
               border: "1px solid var(--bpm-border)",
             }}
           >
-            Par composant
+            {S.modeSelector}
           </button>
           <button
             type="button"
@@ -1639,7 +1647,7 @@ function SandboxContent() {
               border: "1px solid var(--bpm-border)",
             }}
           >
-            ✦ Par IA
+            {S.modeAi}
           </button>
         </div>
 
@@ -1653,7 +1661,7 @@ function SandboxContent() {
               }}
             >
               <label className="block text-xs font-semibold p-3 pb-1" style={{ color: "var(--bpm-text-secondary)" }}>
-                Code (appels bpm.*)
+                {S.codeLabel}
               </label>
               <div className="relative">
                 <textarea
@@ -1701,7 +1709,7 @@ function SandboxContent() {
                 )}
               </div>
               <p className="text-xs px-3 pb-3 pt-2" style={{ color: "var(--bpm-text-secondary)" }}>
-                Tapez <code>bpm.</code> pour l&apos;autocomplétion. Exemples : bpm.title(...), bpm.metric(...), bpm.barchart(...).
+                {S.codeHint}
               </p>
             </div>
             <div
@@ -1709,17 +1717,17 @@ function SandboxContent() {
               style={{ background: "var(--bpm-bg-primary)", borderColor: "var(--bpm-border)" }}
               role="status"
               aria-live="polite"
-              aria-label="Aperçu en direct"
+              aria-label={S.livePreviewAria}
             >
               <p className="text-xs font-semibold mb-3" style={{ color: "var(--bpm-text-secondary)" }}>
-                Aperçu en direct
+                {S.livePreviewTitle}
               </p>
               <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
-                {parseCodeToPreview(code).length ? (
-                  parseCodeToPreview(code).map((node, i) => <React.Fragment key={i}>{node}</React.Fragment>)
+                {parseCodeToPreview(code, S).length ? (
+                  parseCodeToPreview(code, S).map((node, i) => <React.Fragment key={i}>{node}</React.Fragment>)
                 ) : (
                   <p className="text-sm" style={{ color: "var(--bpm-text-secondary)" }}>
-                    Écrivez des appels bpm.* ci-dessus pour voir le rendu ici.
+                    {S.livePreviewEmpty}
                   </p>
                 )}
               </div>
@@ -1738,7 +1746,7 @@ function SandboxContent() {
         >
           <div>
             <label className="block text-xs font-semibold mb-1" style={{ color: "var(--bpm-text-secondary)" }}>
-              Composant
+              {S.selectorComponent}
             </label>
             <select
               value={SANDBOX_COMPONENTS.some((c) => c.value === component) ? component : "panel"}
@@ -1760,7 +1768,7 @@ function SandboxContent() {
           {hasVariant && (
             <div>
               <label className="block text-xs font-semibold mb-1" style={{ color: "var(--bpm-text-secondary)" }}>
-                Variante
+                {S.selectorVariant}
               </label>
               <select
                 value={variant}
@@ -1782,13 +1790,13 @@ function SandboxContent() {
           {hasTitle && (
             <div>
               <label className="block text-xs font-semibold mb-1" style={{ color: "var(--bpm-text-secondary)" }}>
-                Titre
+                {S.selectorTitle}
               </label>
               <input
                 type="text"
                 value={title}
                 onChange={(e) => setParams({ title: e.target.value })}
-                placeholder="Optionnel"
+                placeholder={S.selectorTitlePlaceholder}
                 className="px-3 py-2 rounded-lg border text-sm min-w-[120px]"
                 style={{
                   background: "var(--bpm-bg-primary)",
@@ -1800,7 +1808,7 @@ function SandboxContent() {
           )}
           <div>
             <label className="block text-xs font-semibold mb-1" style={{ color: "var(--bpm-text-secondary)" }}>
-              Thème
+              {S.selectorTheme}
             </label>
             <select
               value={theme}
@@ -1812,8 +1820,8 @@ function SandboxContent() {
                 color: "var(--bpm-text-primary)",
               }}
             >
-              <option value="light">Clair</option>
-              <option value="dark">Sombre</option>
+              <option value="light">{S.themeLight}</option>
+              <option value="dark">{S.themeDark}</option>
             </select>
           </div>
         </div>
@@ -1832,11 +1840,11 @@ function SandboxContent() {
               className="block text-xs font-semibold mb-2"
               style={{ color: "var(--bpm-text-secondary)" }}
             >
-              Décrivez la page que vous voulez générer
+              {S.aiDescribeLabel}
             </label>
             {aiHealth && !aiHealth.available && (
               <p className="text-xs mb-2" style={{ color: "var(--bpm-text-secondary)" }}>
-                {"Vérifiez qu'Ollama est démarré (ex. http://localhost:11434) ou définissez AI_MOCK=true dans .env pour le mode démo."}
+                {S.aiOllamaHint}
               </p>
             )}
             <textarea
@@ -1848,12 +1856,7 @@ function SandboxContent() {
                   generateFromAI();
                 }
               }}
-              placeholder={
-                "Exemples :\n" +
-                "• Un dashboard avec le CA mensuel, le taux de marge et un graphique de tendance\n" +
-                "• Une page de suivi de contrats avec statut et date d'échéance\n" +
-                "• Un formulaire de saisie de commande fournisseur"
-              }
+              placeholder={S.aiPlaceholder}
               rows={4}
               className="w-full rounded border px-3 py-2 text-sm resize-none mb-3"
               style={{
@@ -1883,24 +1886,24 @@ function SandboxContent() {
                   cursor: aiGenerating || !aiDescription.trim() ? "not-allowed" : "pointer",
                 }}
               >
-                {aiGenerating ? "Génération…" : "Générer"}
+                {aiGenerating ? S.aiGenerating : S.aiGenerate}
               </button>
               {aiGenerating && (
                 <span className="inline-flex items-center gap-2" style={{ color: "var(--bpm-text-secondary)" }}>
                   <Spinner size="small" text="" className="shrink-0" />
-                  <span className="text-xs">{assistantName} génère votre page (~30-60s)…</span>
+                  <span className="text-xs">{assistantName} {S.aiGeneratingFor}</span>
                 </span>
               )}
               {!aiGenerating && (
                 <span className="text-xs" style={{ color: "var(--bpm-text-secondary)" }}>
-                  Cmd+Entrée pour lancer · Le résultat s&apos;ouvrira en mode &quot;Par code&quot;
+                  {S.aiHint}
                 </span>
               )}
             </div>
             {aiGenerating && (
               <div className="mt-6 pt-4 border-t" style={{ borderColor: "var(--bpm-border)" }}>
                 <p className="text-xs font-semibold mb-3" style={{ color: "var(--bpm-text-secondary)" }}>
-                  Génération en cours…
+                  {S.aiGenerationInProgress}
                 </p>
                 <div className="flex flex-col gap-3">
                   <Skeleton variant="text" className="w-full" />
@@ -1912,7 +1915,7 @@ function SandboxContent() {
           </div>
         )}
       </div>
-      {isProductionDashboard && mode === "code" && <AssistantPanel title="Assistant Production" />}
+      {isProductionDashboard && mode === "code" && <AssistantPanel title={S.assistantProductionTitle} />}
     </div>
   );
 }
@@ -1923,8 +1926,10 @@ function SandboxContent() {
  * Embed iframe depuis la doc statique : app.blueprint-modular.com/sandbox?component=...
  */
 export default function SandboxPage() {
+  const { locale } = useI18n();
+  const S = STR[locale];
   return (
-    <Suspense fallback={<div style={{ minHeight: "100vh", background: "var(--bpm-bg-secondary)", padding: 24, display: "flex", alignItems: "center", justifyContent: "center" }}>Chargement…</div>}>
+    <Suspense fallback={<div style={{ minHeight: "100vh", background: "var(--bpm-bg-secondary)", padding: 24, display: "flex", alignItems: "center", justifyContent: "center" }}>{S.loading}</div>}>
       <SandboxContent />
     </Suspense>
   );
