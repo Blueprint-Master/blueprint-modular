@@ -158,7 +158,7 @@ function AppLayoutInner({ children }: { children: React.ReactNode }) {
             style={{ background: "var(--bpm-bg-primary)" }}
           >
             {/* Marque visible uniquement en mobile (desktop : la sidebar porte déjà la marque) */}
-            <Link href="/dashboard" className="app-titlebar-brand md:hidden" aria-label="Blueprint Modular — accueil">
+            <Link href="/" className="app-titlebar-brand md:hidden" aria-label="Blueprint Modular — accueil">
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img src="/img/icon-pwa-192.png" alt="" className="bpm-brand-logo" width={28} height={28} />
               <span className="app-titlebar-brand-text">
