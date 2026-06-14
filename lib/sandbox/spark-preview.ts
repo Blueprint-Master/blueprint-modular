@@ -22,16 +22,16 @@ import { clientIp } from "@/lib/mcp/rateLimit";
 
 export const MAX_PROMPT_LENGTH = 4000;
 
-/** Réponse renvoyée au client : code bpm.* + métadonnées. Rien d'interne. */
+/**
+ * Réponse renvoyée au client : HTML statique rendu par le Maker + indicateur de
+ * repli. AUCUNE source app (ni TSX, ni plan) — le Maker rend déjà l'écran bpm.*
+ * en HTML autoportant ; le proxy ne fait que relayer.
+ */
 export interface SparkPreviewResult {
-  code: string;
-  title: string;
-  components: string[];
-  /**
-   * Données d'exemple en mémoire. Le Maker n'expose pas le plan (anti-extraction),
-   * donc ce champ reste vide côté proxy ; conservé pour la compatibilité du contrat.
-   */
-  seed: Record<string, Array<Record<string, string | number | boolean>>>;
+  /** HTML autoportant (markup bpm.* + CSS inline) à injecter en iframe `srcdoc`. */
+  html: string;
+  /** Vrai si le Maker a servi un rendu de repli (aperçu partiel). */
+  degraded: boolean;
 }
 
 // ── Validation d'entrée (contrat strict { prompt } seul) ──────────────────────
@@ -151,7 +151,9 @@ const MAKER_TIMEOUT_MS = 120_000;
 
 /** Forme attendue de la réponse Maker `/api/internal/spark-preview`. */
 interface MakerSparkResponse {
-  rendered?: Record<string, string>;
+  /** HTML statique de l'écran bpm.* rendu côté Maker (jamais de source). */
+  html?: string;
+  degraded?: boolean;
   meta?: { appName?: string | null; tier?: string };
   error?: string;
 }
@@ -168,26 +170,12 @@ function makerBaseUrl(): string {
   return url.replace(/\/+$/, "");
 }
 
-/** Extrait le rendu bpm.* principal de la map de fichiers renvoyée par le Maker. */
-function pickRenderedCode(rendered: Record<string, string> | undefined): string {
-  if (!rendered) return "";
-  return rendered["app/_page-content.tsx"] ?? rendered["app/page.tsx"] ?? "";
-}
-
-/** Liste best-effort des composants bpm.* référencés dans le code rendu. */
-function extractComponents(code: string): string[] {
-  const set = new Set<string>();
-  const re = /\bbpm\.(\w+)/g;
-  let m: RegExpExecArray | null;
-  while ((m = re.exec(code)) !== null) set.add(m[1]);
-  return [...set];
-}
-
 /**
- * Relaie le prompt à l'API interne du Maker et renvoie le rendu bpm.* mappé sur
- * le contrat public. Aucune persistance, aucun déploiement, aucun export ; le
- * secret interne et l'URL Maker ne fuient jamais vers le client (messages FR
- * neutres en cas d'erreur).
+ * Relaie le prompt à l'API interne du Maker et renvoie le HTML rendu mappé sur le
+ * contrat public `{ html, degraded }`. Aucune persistance, aucun déploiement,
+ * aucun export ; le secret interne et l'URL Maker ne fuient jamais vers le client
+ * (messages FR neutres en cas d'erreur). Le Maker garantit déjà l'absence de
+ * source dans `html`.
  */
 export async function runSparkPreview(prompt: string): Promise<SparkPreviewResult> {
   const secret = process.env.INTERNAL_API_SECRET?.trim();
@@ -226,11 +214,9 @@ export async function runSparkPreview(prompt: string): Promise<SparkPreviewResul
     throw new Error("Réponse invalide du générateur.");
   }
 
-  const code = pickRenderedCode(data.rendered);
-  return {
-    code,
-    title: (data.meta?.appName ?? "").toString(),
-    components: extractComponents(code),
-    seed: {},
-  };
+  const html = typeof data.html === "string" ? data.html : "";
+  if (!html) {
+    throw new Error("Réponse invalide du générateur.");
+  }
+  return { html, degraded: data.degraded === true };
 }

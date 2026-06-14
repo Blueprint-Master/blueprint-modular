@@ -746,6 +746,10 @@ function SandboxContent() {
   const [aiDescription, setAiDescription] = useState("");
   const [aiGenerating, setAiGenerating] = useState(false);
   const [aiError, setAiError] = useState<string | null>(null);
+  /** HTML rendu par le Maker, injecté en iframe `srcdoc` (jamais de source app). */
+  const [aiHtml, setAiHtml] = useState<string | null>(null);
+  /** Vrai si le Maker a servi un rendu de repli (aperçu partiel). */
+  const [aiDegraded, setAiDegraded] = useState(false);
   const [aiHealth, setAiHealth] = useState<{ available: boolean; model?: string; latencyMs?: number } | null>(null);
   const [assistantName, setAssistantName] = useState(S.assistantDefaultName);
   const [code, setCode] = useState(DEFAULT_CODE);
@@ -1501,11 +1505,13 @@ function SandboxContent() {
     if (!aiDescription.trim() || aiGenerating) return;
     setAiGenerating(true);
     setAiError(null);
-    setCode(S.genInProgressComment);
+    setAiHtml(null);
+    setAiDegraded(false);
 
     try {
       // Proxy serveur→serveur vers l'API interne Maker (cf. lib/sandbox/spark-preview).
       // Même origine que le site Modular → autorisé par l'allowlist d'origine.
+      // Réponse : { html, degraded } — du HTML rendu, JAMAIS de source app.
       const res = await fetch("/api/sandbox/spark-preview", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -1520,20 +1526,17 @@ function SandboxContent() {
           if (data.error) msg = data.error;
         } catch { /* garder msg par défaut */ }
         setAiError(msg);
-        setCode("");
         return;
       }
 
-      const data = (await res.json()) as { code?: string };
-      const generated = (data.code ?? "").trim();
-      if (!generated) {
+      const data = (await res.json()) as { html?: string; degraded?: boolean };
+      const html = typeof data.html === "string" ? data.html : "";
+      if (!html) {
         setAiError(S.genUnknownError);
-        setCode("");
         return;
       }
-      setCode(generated);
-      // Bascule automatiquement en mode code pour voir le résultat.
-      setMode("code");
+      setAiHtml(html);
+      setAiDegraded(data.degraded === true);
     } catch (err) {
       const raw = err instanceof Error ? err.message : S.genNetworkError;
       const friendly =
@@ -1541,7 +1544,6 @@ function SandboxContent() {
           ? S.genNetworkError
           : raw;
       setAiError(friendly);
-      setCode("");
     } finally {
       setAiGenerating(false);
     }
@@ -1885,6 +1887,32 @@ function SandboxContent() {
                   <Skeleton variant="text" className="w-[85%]" />
                   <Skeleton variant="rectangular" className="w-full" height={120} />
                 </div>
+              </div>
+            )}
+            {!aiGenerating && aiHtml && (
+              <div className="mt-6 pt-4 border-t" style={{ borderColor: "var(--bpm-border)" }}>
+                <div className="flex items-center justify-between mb-3">
+                  <p className="text-xs font-semibold" style={{ color: "var(--bpm-text-secondary)" }}>
+                    {S.aiPreviewTitle}
+                  </p>
+                  {aiDegraded && (
+                    <span
+                      className="text-xs px-2 py-0.5 rounded"
+                      style={{ background: "var(--bpm-bg-secondary)", color: "var(--bpm-text-secondary)" }}
+                    >
+                      {S.aiPreviewPartial}
+                    </span>
+                  )}
+                </div>
+                {/* HTML rendu par le Maker, isolé : sandbox sans scripts ni
+                    same-origin (le rendu est statique). Jamais de source app. */}
+                <iframe
+                  title={S.aiPreviewTitle}
+                  srcDoc={aiHtml}
+                  sandbox=""
+                  className="w-full rounded-lg border"
+                  style={{ height: 600, background: "#ffffff", borderColor: "var(--bpm-border)" }}
+                />
               </div>
             )}
           </div>
