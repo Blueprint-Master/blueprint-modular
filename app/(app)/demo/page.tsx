@@ -26,6 +26,8 @@ import {
   Tooltip,
   EmptyState,
 } from "@/components/bpm";
+import { useI18n } from "@/lib/i18n/LocaleProvider";
+import { getDemoStrings, statusLabel } from "./strings";
 
 // ——— Données cohérentes pour toute la démo ———
 
@@ -71,6 +73,8 @@ const CA_PAR_COMMERCIAL = COMMERCIAUX.map((c) => ({ x: c.nom.split(" ")[0], y: c
 // ——— Composant page ———
 
 export default function DemoPage() {
+  const { locale } = useI18n();
+  const S = getDemoStrings(locale);
   const [activeTab, setActiveTab] = useState(0);
   const [searchClient, setSearchClient] = useState("");
   const [filterStatut, setFilterStatut] = useState<string | null>(null);
@@ -89,76 +93,76 @@ export default function DemoPage() {
 
   const tabs: { label: string; content: React.ReactNode }[] = [
     {
-      label: "Tableau de bord",
+      label: S.tabDashboard,
       content: (
         <div className="space-y-6">
           <div className="grid gap-4" style={{ gridTemplateColumns: "repeat(auto-fill, minmax(180px, 1fr))" }}>
-            <Metric label="CA du mois (k€)" value={142} delta={8.2} />
-            <Metric label="Commandes" value={24} delta={2} />
-            <Metric label="Taux de conversion" value="3,4 %" />
-            <Metric label="Objectif trimestre" value="85 %" />
+            <Metric label={S.metricRevenue} value={142} delta={8.2} />
+            <Metric label={S.metricOrders} value={24} delta={2} />
+            <Metric label={S.metricConversion} value="3,4 %" />
+            <Metric label={S.metricQuarterGoal} value="85 %" />
           </div>
           {showSyncSuccess && (
             <Message type="success">
-              Données synchronisées avec le serveur.{" "}
+              {S.syncSuccess}{" "}
               <button
                 type="button"
                 onClick={() => setShowSyncSuccess(false)}
                 className="underline ml-1"
                 style={{ color: "inherit" }}
               >
-                Masquer
+                {S.hide}
               </button>
             </Message>
           )}
           <div className="grid gap-4" style={{ gridTemplateColumns: "repeat(auto-fill, minmax(320px, 1fr))" }}>
-            <Card title="Évolution du CA" variant="outlined">
+            <Card title={S.cardRevenueTrend} variant="outlined">
               <LineChart data={CA_MENSUEL} width={320} height={200} />
             </Card>
-            <Card title="CA par commercial" variant="outlined">
+            <Card title={S.cardRevenuePerRep} variant="outlined">
               <BarChart data={CA_PAR_COMMERCIAL} width={320} height={200} />
             </Card>
           </div>
-          <Panel variant="info" title="Objectif trimestre">
-            <Progress value={72} max={100} label="Progression équipe" showValue />
+          <Panel variant="info" title={S.panelQuarterGoal}>
+            <Progress value={72} max={100} label={S.progressTeam} showValue />
           </Panel>
-          <StatusBox label="Synchronisation CRM" state="complete" defaultExpanded>
+          <StatusBox label={S.statusCrmSync} state="complete" defaultExpanded>
             <p className="text-sm" style={{ color: "var(--bpm-text-secondary)" }}>
-              Dernière synchro : aujourd’hui, 14h32. Prochaine : dans 2 h.
+              {S.lastSync}
             </p>
             <Button variant="secondary" className="mt-2" onClick={() => setShowSyncSuccess(true)}>
-              Forcer une synchro
+              {S.forceSync}
             </Button>
           </StatusBox>
         </div>
       ),
     },
     {
-      label: "Clients",
+      label: S.tabClients,
       content: (
         <div className="space-y-4">
           <div className="flex flex-wrap items-center gap-3">
             <Input
-              label="Recherche"
-              placeholder="Client ou contact…"
+              label={S.search}
+              placeholder={S.searchPlaceholder}
               value={searchClient}
               onChange={(value) => setSearchClient(value)}
             />
             <Selectbox
-              label="Statut"
+              label={S.status}
               options={[
-                { value: "", label: "Tous" },
-                { value: "Actif", label: "Actif" },
-                { value: "Prospect", label: "Prospect" },
-                { value: "En attente", label: "En attente" },
+                { value: "", label: S.statusAll },
+                { value: "Actif", label: S.statusActive },
+                { value: "Prospect", label: S.statusProspect },
+                { value: "En attente", label: S.statusPending },
               ]}
               value={filterStatut ?? ""}
               onChange={(v) => setFilterStatut(v === "" ? null : v)}
-              placeholder="Statut"
+              placeholder={S.status}
             />
             {(searchClient || filterStatut) && (
               <Chip
-                label="Effacer les filtres"
+                label={S.clearFilters}
                 variant="primary"
                 onClick={() => {
                   setSearchClient("");
@@ -171,14 +175,16 @@ export default function DemoPage() {
             {clientsFiltres.length > 0 ? (
               <Table
                 columns={[
-                  { key: "client", label: "Client" },
-                  { key: "contact", label: "Contact" },
-                  { key: "ca", label: "CA (k€)", align: "right" },
+                  { key: "client", label: S.colClient },
+                  { key: "contact", label: S.colContact },
+                  { key: "ca", label: S.colRevenue, align: "right" },
                   {
                     key: "statut",
-                    label: "Statut",
+                    label: S.colStatus,
                     render: (_, row) => (
-                      <Badge variant={row.statut === "Actif" ? "primary" : "default"}>{String(row.statut)}</Badge>
+                      <Badge variant={row.statut === "Actif" ? "primary" : "default"}>
+                        {statusLabel(S, String(row.statut))}
+                      </Badge>
                     ),
                   },
                 ]}
@@ -187,30 +193,30 @@ export default function DemoPage() {
                 hover
               />
             ) : (
-              <EmptyState title="Aucun client" description="Modifiez les filtres pour afficher des résultats." />
+              <EmptyState title={S.emptyClientsTitle} description={S.emptyClientsDesc} />
             )}
           </div>
         </div>
       ),
     },
     {
-      label: "Commandes",
+      label: S.tabOrders,
       content: (
         <div className="space-y-6">
-          <Caption>Dernières commandes</Caption>
+          <Caption>{S.latestOrders}</Caption>
           <Table
             columns={[
-              { key: "ref", label: "Référence" },
-              { key: "client", label: "Client" },
-              { key: "montant", label: "Montant (€)", align: "right" },
-              { key: "date", label: "Date" },
+              { key: "ref", label: S.colRef },
+              { key: "client", label: S.colClient },
+              { key: "montant", label: S.colAmount, align: "right" },
+              { key: "date", label: S.colDate },
               {
                 key: "statut",
-                label: "Statut",
+                label: S.colStatus,
                 render: (_, row) => {
                   const s = String(row.statut);
                   const v = s === "Livrée" ? "primary" : "default";
-                  return <Badge variant={v}>{s}</Badge>;
+                  return <Badge variant={v}>{statusLabel(S, s)}</Badge>;
                 },
               },
             ]}
@@ -219,12 +225,12 @@ export default function DemoPage() {
             hover
           />
           <Divider />
-          <Expander title="Suivi d’une commande (exemple)" defaultExpanded>
+          <Expander title={S.orderTrackingTitle} defaultExpanded>
             <Stepper
               steps={[
-                { id: "1", label: "Validation" },
-                { id: "2", label: "Préparation" },
-                { id: "3", label: "Livraison" },
+                { id: "1", label: S.stepValidation },
+                { id: "2", label: S.stepPreparation },
+                { id: "3", label: S.stepDelivery },
               ]}
               currentStep={stepperCommande}
               onStepClick={setStepperCommande}
@@ -233,7 +239,7 @@ export default function DemoPage() {
               <Progress
                 value={stepperCommande === 0 ? 0 : stepperCommande === 1 ? 50 : 100}
                 max={100}
-                label="Avancement CMD-2024-002"
+                label={S.orderProgress}
                 showValue
               />
             </div>
@@ -242,11 +248,11 @@ export default function DemoPage() {
       ),
     },
     {
-      label: "Produits",
+      label: S.tabProducts,
       content: (
         <div className="space-y-4">
-          <Panel variant="info" title="Catalogue">
-            Offres et services proposés aux clients. Les abonnements ont un stock illimité.
+          <Panel variant="info" title={S.catalog}>
+            {S.catalogDesc}
           </Panel>
           <div className="grid gap-4" style={{ gridTemplateColumns: "repeat(auto-fill, minmax(260px, 1fr))" }}>
             {PRODUITS.map((p) => (
@@ -254,7 +260,7 @@ export default function DemoPage() {
                 <div className="flex flex-wrap items-center gap-2 mt-1">
                   <Badge variant="default">{p.type}</Badge>
                   {p.stock !== "—" && (
-                    <Tooltip text="Stock disponible">
+                    <Tooltip text={S.stockAvailable}>
                       <span>
                         <Chip label={p.stock} />
                       </span>
@@ -271,16 +277,16 @@ export default function DemoPage() {
       ),
     },
     {
-      label: "Équipe",
+      label: S.tabTeam,
       content: (
         <div className="space-y-6">
-          <Caption>Performance des commerciaux ce mois</Caption>
+          <Caption>{S.teamPerformance}</Caption>
           <BarChart data={CA_PAR_COMMERCIAL} width={400} height={220} />
           <Table
             columns={[
-              { key: "nom", label: "Commercial" },
-              { key: "objectif", label: "Objectif (k€)", align: "right" },
-              { key: "realise", label: "Réalisé (k€)", align: "right" },
+              { key: "nom", label: S.colRep },
+              { key: "objectif", label: S.colGoal, align: "right" },
+              { key: "realise", label: S.colDone, align: "right" },
               {
                 key: "pct",
                 label: "%",
@@ -308,10 +314,9 @@ export default function DemoPage() {
 
   return (
     <div className="doc-page" style={{ maxWidth: 1000, margin: "0 auto" }}>
-      <Title level={1}>Demo - Suivi commercial</Title>
+      <Title level={1}>{S.pageTitle}</Title>
       <p className="doc-description" style={{ marginTop: 8, marginBottom: 24 }}>
-        Démo d’une petite application de suivi commercial : tableau de bord, clients, commandes, produits et équipe.
-        Tout est construit avec les composants <code>bpm.*</code>.
+        {S.pageDescription}
       </p>
 
       <Divider />
