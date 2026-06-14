@@ -408,6 +408,25 @@ const en: Dictionary = {
     searchAria: "Search a component by keywords",
     breadcrumb: "Catalog",
   },
+  modulesCatalog: {
+    eyebrow: "Catalog",
+    title: "Modules",
+    lead:
+      "The {count} available modules, grouped by category. Each module has a documentation page and a live simulator to try it online.",
+    meta: "{count} modules",
+    searchPlaceholder: "Search a module (keywords…)",
+    searchAria: "Search a module by keywords",
+    documentation: "Documentation",
+    simulator: "Simulator",
+    categories: {
+      auth: "Authentication",
+      content: "Content & productivity",
+      data: "Data & reporting",
+      process: "Process & workflow",
+      integrations: "Integrations & technical",
+      business: "Business",
+    },
+  },
   componentPage: {
     apiTitle: "API reference",
     apiNote:

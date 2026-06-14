@@ -408,6 +408,25 @@ const fr = {
     searchAria: "Rechercher un composant par mots-clés",
     breadcrumb: "Catalogue",
   },
+  modulesCatalog: {
+    eyebrow: "Catalogue",
+    title: "Modules",
+    lead:
+      "Les {count} modules disponibles, classés par catégorie. Chaque module dispose d'une page avec documentation et simulateur pour tester en ligne.",
+    meta: "{count} modules",
+    searchPlaceholder: "Rechercher un module (mots-clés…)",
+    searchAria: "Rechercher un module par mots-clés",
+    documentation: "Documentation",
+    simulator: "Simulateur",
+    categories: {
+      auth: "Authentification",
+      content: "Contenu & productivité",
+      data: "Données & reporting",
+      process: "Processus & workflow",
+      integrations: "Intégrations & technique",
+      business: "Métier",
+    },
+  },
   componentPage: {
     apiTitle: "Référence d'API",
     apiNote:
