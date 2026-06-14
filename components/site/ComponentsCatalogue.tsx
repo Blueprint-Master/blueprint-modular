@@ -89,14 +89,14 @@ import {
 import registry from "@/lib/generated/bpm-components.json";
 import { useI18n } from "@/lib/i18n/LocaleProvider";
 import { fmt } from "@/lib/i18n";
+import { CatalogueHero, CatalogueSection } from "@/components/site/CatalogueLayout";
 
 /**
- * Catalogue des composants partagé entre la vitrine (/docs/components, shell
- * public) et l'app (/composants, shell applicatif avec sidebar + cloche). Le
- * même contenu — recherche, catégories, aperçus en direct — est rendu dans
- * l'un ou l'autre shell selon le contexte de navigation, pour que Composants
- * et Modules offrent la même mise en page. Les fiches de détail restent sous
- * /docs/components/<slug>.
+ * Catalogue des composants, rendu dans le shell App (/composants, sidebar +
+ * cloche). Mise en page homogène avec Modules et Connecteurs via le scaffold
+ * partagé (CatalogueHero + CatalogueSection). Les fiches de détail sont
+ * co-localisées dans le même shell sous /composants/<slug> (zéro croisement de
+ * shell). Les anciennes URL /docs/components et /components redirigent ici.
  */
 
 type ComponentEntry = (typeof registry.components)[number];
@@ -208,8 +208,15 @@ function groupByCategory(components: ComponentEntry[]): { name: string; items: C
   return Array.from(byCat.entries()).map(([name, items]) => ({ name, items }));
 }
 
+/** Libellés locaux du catalogue absents du dictionnaire partagé (eyebrow/méta/cta). */
+const CATALOGUE_LABELS = {
+  fr: { eyebrow: "Catalogue", count: (n: number) => `${n} composants`, viewCard: "Voir la fiche" },
+  en: { eyebrow: "Catalog", count: (n: number) => `${n} components`, viewCard: "View component" },
+} as const;
+
 export function ComponentsCatalogue() {
-  const { dict } = useI18n();
+  const { dict, locale } = useI18n();
+  const L = CATALOGUE_LABELS[locale];
   const [searchQuery, setSearchQuery] = useState("");
   const categories = groupByCategory(registry.components);
 
@@ -237,50 +244,69 @@ export function ComponentsCatalogue() {
   }, [categories, keywords]);
 
   return (
-    <div className="doc-page">
-      <div className="doc-page-header">
-        <h1>{dict.catalog.title}</h1>
-        <p className="doc-description">{fmt(dict.catalog.lead, { count: registry.components.length })}</p>
-        <div className="mt-4 max-w-md">
-          <Input
-            type="search"
-            value={searchQuery}
-            onChange={setSearchQuery}
-            placeholder={dict.catalog.searchPlaceholder}
-            aria-label={dict.catalog.searchAria}
-          />
-        </div>
-      </div>
-      <div className="space-y-10">
-        {filteredCategories.map((cat) => (
-          <section key={cat.name}>
-            <h2 className="text-lg font-semibold mb-4" style={{ color: "var(--bpm-text-primary)" }}>
-              {cat.name}
-            </h2>
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-              {cat.items.map((item) => (
-                <Link
-                  key={item.slug}
-                  href={"/docs/components/" + item.slug}
-                  className="block p-4 rounded-xl border transition-colors hover:border-[var(--bpm-accent-cyan)]"
-                  style={{ borderColor: "var(--bpm-border)", background: "var(--bpm-surface)" }}
-                >
-                  <div className="font-mono text-sm font-medium mb-1" style={{ color: "var(--bpm-accent-cyan)" }}>
+    <>
+      <CatalogueHero
+        eyebrow={L.eyebrow}
+        title={dict.catalog.title}
+        lead={fmt(dict.catalog.lead, { count: registry.components.length })}
+        meta={L.count(registry.components.length)}
+      >
+        <Input
+          type="search"
+          value={searchQuery}
+          onChange={setSearchQuery}
+          placeholder={dict.catalog.searchPlaceholder}
+          aria-label={dict.catalog.searchAria}
+        />
+      </CatalogueHero>
+
+      {filteredCategories.map((cat) => (
+        <CatalogueSection key={cat.name} title={cat.name}>
+          {cat.items.map((item) => (
+            <Link
+              key={item.slug}
+              href={"/composants/" + item.slug}
+              style={{ textDecoration: "none", display: "block" }}
+              aria-label={`${item.name} — ${L.viewCard}`}
+            >
+              <Card
+                title={
+                  <span
+                    className="font-mono"
+                    style={{ fontSize: 14, fontWeight: 500, color: "var(--bpm-accent-cyan)" }}
+                  >
                     {item.name}
-                  </div>
-                  <p className="text-sm mb-3" style={{ color: "var(--bpm-text-secondary)" }}>
+                  </span>
+                }
+                variant="outlined"
+              >
+                <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
+                  <p style={{ margin: 0, fontSize: 14, lineHeight: 1.6, color: "var(--bpm-text-secondary)" }}>
                     {item.description}
                   </p>
-                  <div className="min-h-[60px] flex items-center justify-center p-3 rounded-lg" style={{ background: "var(--bpm-bg-secondary)" }}>
+                  <div
+                    style={{
+                      minHeight: 60,
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "center",
+                      padding: 12,
+                      borderRadius: 8,
+                      background: "var(--bpm-bg-secondary)",
+                    }}
+                  >
                     {PREVIEW_BY_SLUG[item.slug] ?? null}
                   </div>
-                </Link>
-              ))}
-            </div>
-          </section>
-        ))}
-      </div>
-    </div>
+                  <span style={{ fontSize: 13, fontWeight: 600, color: "var(--bpm-accent-cyan)" }}>
+                    {L.viewCard} →
+                  </span>
+                </div>
+              </Card>
+            </Link>
+          ))}
+        </CatalogueSection>
+      ))}
+    </>
   );
 }
 
