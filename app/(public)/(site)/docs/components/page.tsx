@@ -1,10 +1,5 @@
-import { ComponentsCatalogue } from "@/components/site/ComponentsCatalogue";
+import { redirect } from "next/navigation";
 
-/**
- * Catalogue des composants dans le shell public (vitrine + docs). Le contenu
- * — recherche, catégories, aperçus en direct — vit dans <ComponentsCatalogue>,
- * partagé avec la vue app /composants pour une UX identique.
- */
-export default function DocsComponentsPage() {
-  return <ComponentsCatalogue />;
+export default function DocsComponentsRedirect() {
+  redirect("/composants");
 }

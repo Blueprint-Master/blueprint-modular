@@ -132,10 +132,10 @@ export function ComponentShowcase({ dict }: { dict: Dictionary }) {
         </div>
 
         <div className="site-hero-actions">
-          <Link href="/components" className="site-cta-primary">
+          <Link href="/composants" className="site-cta-primary">
             {catalog.ctaGallery}
           </Link>
-          <Link href="/docs/components" className="site-cta-secondary">
+          <Link href="/composants" className="site-cta-secondary">
             {catalog.ctaCatalog}
           </Link>
         </div>

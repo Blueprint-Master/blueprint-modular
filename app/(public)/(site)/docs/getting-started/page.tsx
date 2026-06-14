@@ -84,7 +84,7 @@ export default function Dashboard() {
         </h2>
         <ul style={{ display: "grid", gap: 8, padding: 0, listStyle: "none", margin: 0 }}>
           <li style={{ fontSize: 14.5, lineHeight: 1.6, color: "var(--bpm-text-secondary)" }}>
-            <Link href="/docs/components" style={{ color: "var(--bpm-color-link)" }}>
+            <Link href="/composants" style={{ color: "var(--bpm-color-link)" }}>
               {fmt(gs.next.catalog, { count })}
             </Link>
           </li>
