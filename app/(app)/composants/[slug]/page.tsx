@@ -6,19 +6,13 @@ import { getLlmsPropsBlock } from "@/lib/llmsDoc";
 import { getSemantics } from "@/lib/semantics";
 import { getDict } from "@/lib/i18n/server";
 import type { Metadata } from "next";
+import { ficheMetadata } from "@/lib/ficheMetadata";
 
 type Props = { params: Promise<{ slug: string }> };
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { slug } = await params;
-  const entry = registry.components.find((c) => c.slug === slug);
-  if (!entry) return {};
-  const url = `https://blueprint-modular.com/composants/${slug}`;
-  return {
-    title: { absolute: `${entry.name} — Composants — Blueprint Modular` },
-    description: entry.description,
-    alternates: { canonical: url },
-  };
+  return ficheMetadata(slug);
 }
 
 /** Ligne label → contenu de la couche sémantique. */
