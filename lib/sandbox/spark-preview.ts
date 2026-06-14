@@ -1,37 +1,36 @@
 /**
- * Sandbox IA — aperçu éphémère « Spark » (flux Sketch OFF, no-persist).
+ * Sandbox IA — aperçu éphémère « Spark » : PROXY serveur→serveur vers l'API
+ * interne du Maker.
  *
- * Lance le flux plan-first du Builder (Spec interne → code bpm.*) jusqu'au point
- * de coupure EN MÉMOIRE et renvoie uniquement le code généré (+ un seed de
- * données d'exemple dérivé du plan). Aucune persistance, aucun déploiement,
- * aucun export :
- *   - AUCUN import Prisma / GeneratedApp.create|update,
- *   - AUCUN appel deploy / export / download,
- *   - le plan (Spec) est généré en interne et N'EST PAS exposé.
+ * Le moteur de génération ne vit plus ici : il est porté par le Maker
+ * (`POST /api/internal/spark-preview`, pipeline prompt → AppSpec → bpm.*). Cette
+ * couche ne fait plus que :
+ *   - valider le contrat strict { prompt } seul (aucun upload / BYOK / plan),
+ *   - appliquer le bord de sécurité (allowlist d'origine, rate-limit par IP),
+ *   - relayer le prompt au Maker avec le secret interne (Bearer),
+ *   - mapper la réponse Maker vers le contrat public { code, title, components, seed }.
  *
- * Sécurité côté appelant (cf. route) : clé LLM serveur (jamais BYOK depuis le
- * body), rate-limit par IP, allowlist d'origine (site Modular). Aucun upload
- * accepté en entrée (contrat strict { prompt } seul).
+ * No-persist : aucune écriture DB, aucun déploiement, aucun export ici ; le Maker
+ * lui-même n'expose qu'un rendu éphémère en mémoire (pas de GeneratedApp, pas de
+ * Docker). Le secret interne et l'URL Maker ne transitent jamais vers le client.
+ *
+ * Sécurité côté appelant (cf. route) : rate-limit par IP, allowlist d'origine
+ * (site Modular), contrat strict { prompt } seul. Le secret/URL Maker restent
+ * strictement côté serveur (variables d'environnement).
  */
-import { builderAI, type BuilderOutput, type BuilderSpec } from "@/lib/ai/builder";
 import { clientIp } from "@/lib/mcp/rateLimit";
 
 export const MAX_PROMPT_LENGTH = 4000;
 
-/** Sous-ensemble du Builder utilisé ici — facilite l'injection en test. */
-export interface SparkBuilder {
-  buildFromPrompt(
-    prompt: string
-  ): Promise<{ output: BuilderOutput; spec: BuilderSpec }>;
-  generate(prompt: string): Promise<BuilderOutput>;
-}
-
-/** Réponse renvoyée au client : code bpm.* + seed. Rien d'autre. */
+/** Réponse renvoyée au client : code bpm.* + métadonnées. Rien d'interne. */
 export interface SparkPreviewResult {
   code: string;
   title: string;
   components: string[];
-  /** Données d'exemple en mémoire dérivées du plan (jamais persistées). */
+  /**
+   * Données d'exemple en mémoire. Le Maker n'expose pas le plan (anti-extraction),
+   * donc ce champ reste vide côté proxy ; conservé pour la compatibilité du contrat.
+   */
   seed: Record<string, Array<Record<string, string | number | boolean>>>;
 }
 
@@ -145,75 +144,93 @@ export function __resetSparkRateLimit(): void {
   rlHits.clear();
 }
 
-// ── Seed déterministe dérivé du plan (jamais persisté) ────────────────────────
+// ── Proxy vers l'API interne Maker ────────────────────────────────────────────
 
-function sampleValue(
-  fieldName: string,
-  fieldType: string,
-  row: number
-): string | number | boolean {
-  const type = (fieldType || "").toLowerCase();
-  if (/bool/.test(type)) return row % 2 === 0;
-  if (/int|number|float|decimal|num/.test(type)) return (row + 1) * 10;
-  if (/date|time/.test(type)) {
-    const d = new Date(Date.UTC(2025, 0, row + 1));
-    return d.toISOString().slice(0, 10);
-  }
-  return `${fieldName} ${row + 1}`;
+/** Le rendu Maker (spec → build) peut prendre plusieurs dizaines de secondes. */
+const MAKER_TIMEOUT_MS = 120_000;
+
+/** Forme attendue de la réponse Maker `/api/internal/spark-preview`. */
+interface MakerSparkResponse {
+  rendered?: Record<string, string>;
+  meta?: { appName?: string | null; tier?: string };
+  error?: string;
 }
 
 /**
- * Construit un seed de données d'exemple (3 lignes par entité) à partir des
- * entités du plan. Pur et déterministe : aucun appel LLM, aucune écriture.
+ * URL interne du Maker (serveur→serveur, jamais publique). Lue depuis
+ * `MAKER_INTERNAL_URL` (ex. http://localhost:3001 sur bpm-prod). Jamais hardcodée.
  */
-export function buildSeedFromSpec(
-  spec: BuilderSpec | null
-): SparkPreviewResult["seed"] {
-  const seed: SparkPreviewResult["seed"] = {};
-  if (!spec || !Array.isArray(spec.entities)) return seed;
-  for (const entity of spec.entities) {
-    if (!entity?.name || !Array.isArray(entity.fields)) continue;
-    const rows: Array<Record<string, string | number | boolean>> = [];
-    for (let r = 0; r < 3; r++) {
-      const row: Record<string, string | number | boolean> = {};
-      for (const field of entity.fields) {
-        if (!field?.name) continue;
-        row[field.name] = sampleValue(field.name, field.type, r);
-      }
-      rows.push(row);
-    }
-    seed[entity.name] = rows;
+function makerBaseUrl(): string {
+  const url = process.env.MAKER_INTERNAL_URL?.trim();
+  if (!url) {
+    throw new Error("MAKER_INTERNAL_URL non configurée côté serveur.");
   }
-  return seed;
+  return url.replace(/\/+$/, "");
 }
 
-// ── Orchestrateur éphémère ────────────────────────────────────────────────────
+/** Extrait le rendu bpm.* principal de la map de fichiers renvoyée par le Maker. */
+function pickRenderedCode(rendered: Record<string, string> | undefined): string {
+  if (!rendered) return "";
+  return rendered["app/_page-content.tsx"] ?? rendered["app/page.tsx"] ?? "";
+}
+
+/** Liste best-effort des composants bpm.* référencés dans le code rendu. */
+function extractComponents(code: string): string[] {
+  const set = new Set<string>();
+  const re = /\bbpm\.(\w+)/g;
+  let m: RegExpExecArray | null;
+  while ((m = re.exec(code)) !== null) set.add(m[1]);
+  return [...set];
+}
 
 /**
- * Exécute le flux Sketch OFF jusqu'au point no-persist et renvoie code + seed.
- *
- * Plan-first : `buildFromPrompt` génère la Spec (plan) puis le code, le tout en
- * mémoire. En cas d'échec de génération du plan (JSON invalide…), repli sur le
- * `generate()` one-shot — sans plan, donc sans seed. Le plan n'est jamais
- * renvoyé. Aucune persistance, aucun déploiement, aucun export.
+ * Relaie le prompt à l'API interne du Maker et renvoie le rendu bpm.* mappé sur
+ * le contrat public. Aucune persistance, aucun déploiement, aucun export ; le
+ * secret interne et l'URL Maker ne fuient jamais vers le client (messages FR
+ * neutres en cas d'erreur).
  */
-export async function runSparkPreview(
-  prompt: string,
-  builder: SparkBuilder = builderAI
-): Promise<SparkPreviewResult> {
-  let output: BuilderOutput;
-  let spec: BuilderSpec | null = null;
+export async function runSparkPreview(prompt: string): Promise<SparkPreviewResult> {
+  const secret = process.env.INTERNAL_API_SECRET?.trim();
+  if (!secret) {
+    throw new Error("Service de génération mal configuré.");
+  }
+
+  let res: Response;
   try {
-    const built = await builder.buildFromPrompt(prompt);
-    output = built.output;
-    spec = built.spec;
-  } catch {
-    output = await builder.generate(prompt);
+    res = await fetch(`${makerBaseUrl()}/api/internal/spark-preview`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${secret}`,
+      },
+      body: JSON.stringify({ prompt, tier: "spark" }),
+      signal: AbortSignal.timeout(MAKER_TIMEOUT_MS),
+      cache: "no-store",
+    });
+  } catch (err) {
+    if (err instanceof Error && err.name === "TimeoutError") {
+      throw new Error("Le générateur a mis trop de temps à répondre. Réessayez.");
+    }
+    throw new Error("Service de génération indisponible. Réessayez dans un instant.");
   }
+
+  if (!res.ok) {
+    // Jamais de fuite d'URL/secret/stack : message FR neutre.
+    throw new Error("La génération a échoué. Réessayez dans un instant.");
+  }
+
+  let data: MakerSparkResponse;
+  try {
+    data = (await res.json()) as MakerSparkResponse;
+  } catch {
+    throw new Error("Réponse invalide du générateur.");
+  }
+
+  const code = pickRenderedCode(data.rendered);
   return {
-    code: output.code,
-    title: output.title,
-    components: output.components,
-    seed: buildSeedFromSpec(spec),
+    code,
+    title: (data.meta?.appName ?? "").toString(),
+    components: extractComponents(code),
+    seed: {},
   };
 }
