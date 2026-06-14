@@ -66,6 +66,14 @@ else
   if [ -f "Logo BPM.png" ]; then cp -f "Logo BPM.png" public/img/logo-bpm-nom.png; cp -f "Logo BPM.png" public/img/logo-bpm.png; fi
 
   npm install
+  # Build du paquet @blueprint-modular/core AVANT le build de l'app.
+  # L'app consomme core via le lien local (file:packages/core) → son dist/ doit
+  # être frais. Le déploiement ne reconstruisait pas core et s'appuyait sur un dist
+  # périmé : tout NOUVEAU sous-chemin exporté (ex. ./connectors) manquait → build
+  # de l'app en échec (« export X doesn't exist / module has no exports »).
+  # On reconstruit donc core depuis ses sources (mêmes étapes que le gate CI).
+  echo "    Build du paquet @blueprint-modular/core (dist consommé par l'app)..."
+  ( cd packages/core && npm install && npm run build )
   echo "    Génération du bundle blueprint-modules (zip pour devs sans accès Git)..."
   node scripts/build-modules-bundle.cjs 2>/dev/null || true
   # Constat (2026-06) : le zip est généré dans frontend/static/downloads/ mais n'est
