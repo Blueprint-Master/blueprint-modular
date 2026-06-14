@@ -4,8 +4,51 @@ import { useState } from "react";
 import { signIn } from "next-auth/react";
 import Link from "next/link";
 import Image from "next/image";
+import { useI18n } from "@/lib/i18n/LocaleProvider";
 import { AuthSplitLayout } from "./AuthSplitLayout";
 import styles from "./AuthForm.module.css";
+
+const fr = {
+  subtitle: "Connexion sécurisée (Google ou e-mail)",
+  or: "ou",
+  continueWithEmail: "Continuer avec l'e-mail",
+  emailLabel: "Email",
+  passwordLabel: "Mot de passe",
+  back: "Retour",
+  signingIn: "Connexion…",
+  signIn: "Se connecter",
+  createAccount: "Créer un compte",
+  continueWithoutSigningIn: "Accéder sans se connecter",
+  backToHome: "Retour à l'accueil",
+  termsPrefix: "En vous connectant, vous acceptez nos ",
+  termsLink: "Conditions générales",
+  termsMiddle: " et notre ",
+  privacyLink: "Politique de confidentialité",
+  termsSuffix: ".",
+  errorInvalid: "Email ou mot de passe incorrect, ou accès non autorisé.",
+  errorGeneric: "Erreur lors de la connexion.",
+};
+
+const en: typeof fr = {
+  subtitle: "Secure sign-in (Google or email)",
+  or: "or",
+  continueWithEmail: "Continue with email",
+  emailLabel: "Email",
+  passwordLabel: "Password",
+  back: "Back",
+  signingIn: "Signing in…",
+  signIn: "Sign in",
+  createAccount: "Create an account",
+  continueWithoutSigningIn: "Continue without signing in",
+  backToHome: "Back to home",
+  termsPrefix: "By signing in, you agree to our ",
+  termsLink: "Terms & Conditions",
+  termsMiddle: " and our ",
+  privacyLink: "Privacy Policy",
+  termsSuffix: ".",
+  errorInvalid: "Incorrect email or password, or access not authorized.",
+  errorGeneric: "Sign-in error.",
+};
 
 type LoginPageProps = {
   title?: string;
@@ -30,12 +73,15 @@ function GoogleIcon() {
 
 export function LoginPage({
   title = "Blueprint Modular",
-  subtitle = "Connexion sécurisée (Google ou e-mail)",
+  subtitle,
   logoSrc = null,
   callbackUrl = null,
   showEmailOption = true,
   useSplitLayout = false,
 }: LoginPageProps) {
+  const { locale } = useI18n();
+  const S = locale === "en" ? en : fr;
+  const resolvedSubtitle = subtitle ?? S.subtitle;
   const [loginMethod, setLoginMethod] = useState<"email" | "google" | null>(null);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -64,12 +110,12 @@ export function LoginPage({
         callbackUrl: callbackUrl ?? "/dashboard",
       });
       if (res?.error) {
-        setError("Email ou mot de passe incorrect, ou accès non autorisé.");
+        setError(S.errorInvalid);
         return;
       }
       if (res?.url) window.location.href = res.url;
     } catch {
-      setError("Erreur lors de la connexion.");
+      setError(S.errorGeneric);
     } finally {
       setLoading(false);
     }
@@ -91,7 +137,7 @@ export function LoginPage({
           </div>
         )}
         <h1 className={styles.title}>{title}</h1>
-        <p className={styles.subtitle}>{subtitle}</p>
+        <p className={styles.subtitle}>{resolvedSubtitle}</p>
 
         {error && <div className={styles.error}>{error}</div>}
 
@@ -108,7 +154,7 @@ export function LoginPage({
             {showEmailOption && (
               <>
                 <div className={styles.divider}>
-                  <span>ou</span>
+                  <span>{S.or}</span>
                 </div>
                 <button
                   type="button"
@@ -118,7 +164,7 @@ export function LoginPage({
                   <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" style={{ marginRight: 12 }} aria-hidden>
                     <path d="M20 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z" />
                   </svg>
-                  {"Continuer avec l'e-mail"}
+                  {S.continueWithEmail}
                 </button>
               </>
             )}
@@ -128,7 +174,7 @@ export function LoginPage({
         {loginMethod === "email" && (
           <form className={styles.form} onSubmit={handleEmailSubmit}>
             <div className={styles.formGroup}>
-              <label htmlFor="auth-email">Email</label>
+              <label htmlFor="auth-email">{S.emailLabel}</label>
               <input
                 id="auth-email"
                 type="email"
@@ -141,7 +187,7 @@ export function LoginPage({
               />
             </div>
             <div className={styles.formGroup}>
-              <label htmlFor="auth-password">Mot de passe</label>
+              <label htmlFor="auth-password">{S.passwordLabel}</label>
               <input
                 id="auth-password"
                 type="password"
@@ -165,10 +211,10 @@ export function LoginPage({
                 }}
                 disabled={loading}
               >
-                Retour
+                {S.back}
               </button>
               <button type="submit" className={styles.submitButton} disabled={loading || !email.trim()}>
-                {loading ? "Connexion…" : "Se connecter"}
+                {loading ? S.signingIn : S.signIn}
               </button>
             </div>
           </form>
@@ -177,17 +223,19 @@ export function LoginPage({
         <footer className={styles.footer}>
           <div className={styles.footerLinks}>
             <Link href="/register" className={styles.footerLink}>
-              Create an account
+              {S.createAccount}
             </Link>
             <span className={styles.footerSep}>·</span>
             <Link href={callbackUrl || "/"} className={styles.footerLink}>
-              {callbackUrl ? "Accéder sans se connecter" : "Retour à l'accueil"}
+              {callbackUrl ? S.continueWithoutSigningIn : S.backToHome}
             </Link>
           </div>
           <p className={styles.terms}>
-            En vous connectant, vous acceptez nos{" "}
-            <Link href="/terms">Terms &amp; Conditions</Link> et notre{" "}
-            <Link href="/privacy">Politique de confidentialité</Link>.
+            {S.termsPrefix}
+            <Link href="/terms">{S.termsLink}</Link>
+            {S.termsMiddle}
+            <Link href="/privacy">{S.privacyLink}</Link>
+            {S.termsSuffix}
           </p>
         </footer>
       </div>
@@ -207,4 +255,3 @@ export function LoginPage({
     </AuthSplitLayout>
   );
 }
-

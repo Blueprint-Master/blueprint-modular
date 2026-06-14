@@ -2,7 +2,18 @@
 
 import React from "react";
 import Image from "next/image";
+import { useI18n } from "@/lib/i18n/LocaleProvider";
 import styles from "./AuthSplitLayout.module.css";
+
+const fr = {
+  cardTitle: "Réunion équipe",
+  cardMeta: "Lun. 10:00 · Salle A",
+};
+
+const en: typeof fr = {
+  cardTitle: "Team meeting",
+  cardMeta: "Mon 10:00 · Room A",
+};
 
 /** Image Unsplash : équipe en collaboration (gratuit, pas d'attribution requise) */
 const HERO_IMAGE =
@@ -10,10 +21,12 @@ const HERO_IMAGE =
 
 /** Overlay par défaut : carte type réunion (optionnel sur le visuel droit) */
 function DefaultRightOverlay() {
+  const { locale } = useI18n();
+  const S = locale === "en" ? en : fr;
   return (
     <div className={styles.overlayCard}>
-      <div className={styles.overlayCardTitle}>Réunion équipe</div>
-      <div className={styles.overlayCardMeta}>Lun. 10:00 · Salle A</div>
+      <div className={styles.overlayCardTitle}>{S.cardTitle}</div>
+      <div className={styles.overlayCardMeta}>{S.cardMeta}</div>
     </div>
   );
 }
