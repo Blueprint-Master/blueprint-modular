@@ -5,7 +5,7 @@ import Image from "next/image";
 import { usePathname } from "next/navigation";
 import { useSession, signOut } from "next-auth/react";
 import { useTheme } from "@/components/ThemeProvider";
-import { Sun, Link2 } from "lucide-react";
+import { Sun } from "lucide-react";
 import { useState } from "react";
 import { SandboxIcon } from "@/components/icons/SandboxIcon";
 import { useSidebar } from "@/contexts/SidebarContext";
@@ -34,6 +34,14 @@ function IconModules({ className }: { className?: string }) {
   return (
     <svg xmlns="http://www.w3.org/2000/svg" viewBox={vb} fill="currentColor" className={className}>
       <path d="M120-200v-411.54h113.08V-760h191.54v148.46h110.76V-760h191.54v148.46H840V-200H120Zm40-40h640v-331.54H160V-240Zm113.08-371.54h111.54V-720H273.08v108.46Zm302.3 0h111.54V-720H575.38v108.46ZM160-240h640-640Zm113.08-371.54h111.54-111.54Zm302.3 0h111.54-111.54Z" />
+    </svg>
+  );
+}
+
+function IconConnecteurs({ className }: { className?: string }) {
+  return (
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox={vb} fill="currentColor" className={className}>
+      <path d="M444.62-298.46H280q-74.92 0-127.46-52.54Q100-403.54 100-478.46q0-74.92 52.54-127.46 52.54-52.54 127.46-52.54h164.62v40H280q-58.46 0-99.23 40.77Q140-536.92 140-478.46q0 58.46 40.77 99.23Q221.54-338.46 280-338.46h164.62v40ZM340-458.46v-40h280v40H340Zm175.38 160v-40H680q58.46 0 99.23-40.77Q820-420 820-478.46q0-58.46-40.77-99.23Q738.46-618.46 680-618.46H515.38v-40H680q74.92 0 127.46 52.54Q860-553.38 860-478.46q0 74.92-52.54 127.46-52.54 52.54-127.46 52.54H515.38Z" />
     </svg>
   );
 }
@@ -112,7 +120,7 @@ const navItems: { href: string; key: NavKey; icon: React.ElementType }[] = [
   { href: "/dashboard", key: "accueil", icon: IconAccueil },
   { href: "/composants", key: "composants", icon: IconComposants },
   { href: "/modules", key: "modules", icon: IconModules },
-  { href: "/connecteurs", key: "connecteurs", icon: Link2 },
+  { href: "/connecteurs", key: "connecteurs", icon: IconConnecteurs },
   { href: "/sandbox", key: "sandbox", icon: SandboxIcon },
   { href: "/demo", key: "demo", icon: IconDemo },
 ];
