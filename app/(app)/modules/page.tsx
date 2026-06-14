@@ -5,6 +5,8 @@ import Link from "next/link";
 import { Bell, BookMarked, Bot, Calendar, FileText, LayoutDashboard, Link2, Mail, MessageSquare, Monitor, Package, PenTool, Radio, Settings, Shield, StickyNote, Sun, Table2, Webhook } from "lucide-react";
 import { Input, Card } from "@/components/bpm";
 import { CatalogueHero, CatalogueSection } from "@/components/site/CatalogueLayout";
+import { useI18n } from "@/lib/i18n/LocaleProvider";
+import { fmt, type Dictionary } from "@/lib/i18n";
 
 /** Catégories dans l’ordre d’affichage. À l’intérieur de chaque catégorie, les modules sont triés par label. */
 const CATEGORY_ORDER = [
@@ -15,6 +17,16 @@ const CATEGORY_ORDER = [
   "Intégrations & technique",
   "Métier",
 ] as const;
+
+/** Clé i18n par catégorie : le libellé affiché bascule FR/EN via dict.modulesCatalog.categories. */
+const CATEGORY_I18N_KEY: Record<(typeof CATEGORY_ORDER)[number], keyof Dictionary["modulesCatalog"]["categories"]> = {
+  Authentification: "auth",
+  "Contenu & productivité": "content",
+  "Données & reporting": "data",
+  "Processus & workflow": "process",
+  "Intégrations & technique": "integrations",
+  Métier: "business",
+};
 
 type ModuleEntry = {
   href: string;
@@ -74,6 +86,8 @@ const MODULES_BY_CATEGORY: Record<(typeof CATEGORY_ORDER)[number], ModuleEntry[]
 };
 
 export default function ModulesPage() {
+  const { dict } = useI18n();
+  const t = dict.modulesCatalog;
   const [searchQuery, setSearchQuery] = useState("");
   const linkStyle = { color: "var(--bpm-accent-cyan)" };
 
@@ -108,17 +122,17 @@ export default function ModulesPage() {
   return (
     <>
       <CatalogueHero
-        eyebrow="Catalogue"
-        title="Modules"
-        lead="Modules disponibles, classés par catégorie. Chaque module dispose d'une page avec Documentation et Simulateur pour tester en ligne."
-        meta={`${totalModules} modules`}
+        eyebrow={t.eyebrow}
+        title={t.title}
+        lead={fmt(t.lead, { count: totalModules })}
+        meta={fmt(t.meta, { count: totalModules })}
       >
         <Input
           type="search"
           value={searchQuery}
           onChange={setSearchQuery}
-          placeholder="Rechercher un module (mots-clés…)"
-          aria-label="Rechercher un module par mots-clés"
+          placeholder={t.searchPlaceholder}
+          aria-label={t.searchAria}
         />
       </CatalogueHero>
 
@@ -126,7 +140,7 @@ export default function ModulesPage() {
         const items = filteredByCategory[category];
         if (!items?.length) return null;
         return (
-          <CatalogueSection key={category} title={category}>
+          <CatalogueSection key={category} title={t.categories[CATEGORY_I18N_KEY[category]]}>
             {items.map((mod) => {
               const Icon = mod.icon;
               return (
@@ -160,11 +174,11 @@ export default function ModulesPage() {
                     </p>
                     <div style={{ display: "flex", flexWrap: "wrap", gap: 12 }}>
                       <Link href={`${mod.href}/documentation`} className="hover:underline" style={{ ...linkStyle, fontSize: 13, fontWeight: 600 }}>
-                        Documentation
+                        {t.documentation}
                       </Link>
                       {mod.simulatorAndDoc && (
                         <Link href={mod.simulateurHref ?? `${mod.href}/simulateur`} className="hover:underline" style={{ ...linkStyle, fontSize: 13, fontWeight: 600 }}>
-                          Simulateur
+                          {t.simulator}
                         </Link>
                       )}
                     </div>
