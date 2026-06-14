@@ -2,300 +2,498 @@
   "generatedFrom": "git first-parent (merges de PR)",
   "repoUrl": "https://github.com/Blueprint-Master/blueprint-modular",
   "grouping": "version",
-  "totalEntries": 32,
+  "totalEntries": 54,
   "groups": [
     {
-      "key": "v0.1.52",
-      "label": "v0.1.52",
-      "date": "2026-06-12",
+      "key": "unreleased",
+      "label": "unreleased",
+      "date": "9999-99-99",
       "entries": [
         {
-          "pr": 44,
-          "date": "2026-06-12",
-          "type": "other",
-          "scope": null,
-          "breaking": false,
-          "title": "Homogénéise la nav publique, sort la Documentation du shell app et ajoute une page Présentation",
-          "hash": "ad7ec6433"
-        },
-        {
-          "pr": 43,
-          "date": "2026-06-12",
-          "type": "other",
-          "scope": null,
-          "breaking": false,
-          "title": "Aligne la mise en page Composants et Documentation sur MCP/Ressources",
-          "hash": "3a1c0cabb"
-        },
-        {
-          "pr": 42,
-          "date": "2026-06-12",
+          "pr": 108,
+          "date": "2026-06-14",
           "type": "fix",
-          "scope": "table",
+          "scope": "shell",
           "breaking": false,
-          "title": "visuel net — supprime le quadrillage, séparateurs horizontaux seuls",
-          "hash": "2ae92e8fe"
+          "title": "point app brand to vitrine home page",
+          "hash": "fdc8eaca6"
         },
         {
-          "pr": 41,
-          "date": "2026-06-12",
-          "type": "fix",
-          "scope": "table",
-          "breaking": false,
-          "title": "visuel net — supprime le quadrillage, séparateurs horizontaux seuls",
-          "hash": "172f722c8"
-        },
-        {
-          "pr": 40,
-          "date": "2026-06-12",
-          "type": "other",
-          "scope": null,
-          "breaking": false,
-          "title": "Feat/docs python functions",
-          "hash": "35e4a4c58"
-        },
-        {
-          "pr": 38,
-          "date": "2026-06-12",
+          "pr": 107,
+          "date": "2026-06-14",
           "type": "feat",
-          "scope": "runtime",
+          "scope": "sandbox",
           "breaking": false,
-          "title": "le renderer bpm run délègue au catalogue @blueprint-modular/core",
-          "hash": "2d48bcc21"
+          "title": "consomme le HTML rendu (iframe), n'affiche plus de code",
+          "hash": "0a3b048a7"
         },
         {
-          "pr": 37,
-          "date": "2026-06-12",
-          "type": "other",
-          "scope": null,
-          "breaking": false,
-          "title": "Supprime le logo dans la sidebar de gauche",
-          "hash": "eca1aac4c"
-        },
-        {
-          "pr": 36,
-          "date": "2026-06-12",
-          "type": "fix",
-          "scope": "wiki",
-          "breaking": false,
-          "title": "neutralise le stored XSS de la base de connaissances et de la recherche",
-          "hash": "efb186afd"
-        },
-        {
-          "pr": 35,
-          "date": "2026-06-12",
+          "pr": 106,
+          "date": "2026-06-14",
           "type": "feat",
-          "scope": "vitrine",
+          "scope": "sidebar",
           "breaking": false,
-          "title": "source Python sous chaque tuile de la galerie live + copier",
-          "hash": "175f85f82"
+          "title": "use Material Symbols link icon for connecteurs nav",
+          "hash": "ac759845c"
         },
         {
-          "pr": 34,
-          "date": "2026-06-12",
+          "pr": 105,
+          "date": "2026-06-14",
+          "type": "feat",
+          "scope": "sandbox",
+          "breaking": false,
+          "title": "proxy /api/sandbox/spark-preview vers l'API interne Maker",
+          "hash": "d0824ca10"
+        },
+        {
+          "pr": 104,
+          "date": "2026-06-14",
+          "type": "feat",
+          "scope": "modules",
+          "breaking": false,
+          "title": "catalogue /modules bilingue FR/EN via le helper i18n",
+          "hash": "c2a7de7fa"
+        },
+        {
+          "pr": 103,
+          "date": "2026-06-14",
           "type": "other",
           "scope": null,
           "breaking": false,
-          "title": "Replace logo asset with transparent PWA icon",
-          "hash": "a8f84c79f"
+          "title": "Consolidation fiches Composants (shell App) + layout homogène + fiches indexables (métadonnée par fiche)",
+          "hash": "b67ff3d2a"
         },
         {
-          "pr": 33,
-          "date": "2026-06-12",
-          "type": "fix",
-          "scope": "legal",
+          "pr": 102,
+          "date": "2026-06-14",
+          "type": "other",
+          "scope": null,
           "breaking": false,
-          "title": "formulations de contact pointent vers l'adresse de l'éditeur (plus de renvoi orphelin)",
-          "hash": "f2f723726"
+          "title": "UX shells sémantiques (B) + pilier Connecteurs + bilinguisme — démarche P0→P4",
+          "hash": "6f2462f95"
         },
         {
-          "pr": 32,
-          "date": "2026-06-12",
+          "pr": 100,
+          "date": "2026-06-13",
+          "type": "other",
+          "scope": null,
+          "breaking": false,
+          "title": "Aligner l'UX du catalogue Composants sur celle des Modules",
+          "hash": "d2d5f4178"
+        },
+        {
+          "pr": 97,
+          "date": "2026-06-13",
+          "type": "feat",
+          "scope": "connecteurs",
+          "breaking": false,
+          "title": "schéma ConnectorDescriptor + garde CI anti-secret",
+          "hash": "0b3287413"
+        },
+        {
+          "pr": 96,
+          "date": "2026-06-13",
+          "type": "feat",
+          "scope": "components",
+          "breaking": false,
+          "title": "même UX que /modules (catalogue par catégories + cartes)",
+          "hash": "b9527e30b"
+        },
+        {
+          "pr": 95,
+          "date": "2026-06-13",
           "type": "fix",
+          "scope": "app",
+          "breaking": false,
+          "title": "sélecteur de langue FR/EN identique à la vitrine (gris)",
+          "hash": "953ee49a4"
+        },
+        {
+          "pr": 94,
+          "date": "2026-06-13",
+          "type": "feat",
+          "scope": "sandbox",
+          "breaking": false,
+          "title": "route éphémère Spark IA (Sketch OFF, no-persist)",
+          "hash": "cb19fc202"
+        },
+        {
+          "pr": 73,
+          "date": "2026-06-13",
+          "type": "fix",
+          "scope": "galerie",
+          "breaking": false,
+          "title": "démos réellement interactives + badge « aperçu statique »",
+          "hash": "f208d8b8d"
+        },
+        {
+          "pr": 50,
+          "date": "2026-06-13",
+          "type": "feat",
+          "scope": "changelog",
+          "breaking": false,
+          "title": "changelog généré depuis l'historique des PR",
+          "hash": "324c7cd6b"
+        },
+        {
+          "pr": 93,
+          "date": "2026-06-13",
+          "type": "feat",
           "scope": "asset-manager",
           "breaking": false,
-          "title": "enforce RBAC on mutations (close vertical privesc)",
-          "hash": "02fb3df21"
+          "title": "module bilingue FR/EN",
+          "hash": "f33f7a0a3"
         },
         {
-          "pr": 31,
-          "date": "2026-06-12",
+          "pr": 92,
+          "date": "2026-06-13",
+          "type": "feat",
+          "scope": "wiki",
+          "breaking": false,
+          "title": "module bilingue FR/EN",
+          "hash": "180df9e90"
+        },
+        {
+          "pr": 91,
+          "date": "2026-06-13",
+          "type": "feat",
+          "scope": "contracts",
+          "breaking": false,
+          "title": "module bilingue FR/EN",
+          "hash": "1b2030987"
+        },
+        {
+          "pr": 90,
+          "date": "2026-06-13",
+          "type": "feat",
+          "scope": "calendrier",
+          "breaking": false,
+          "title": "module bilingue FR/EN",
+          "hash": "e5d32c722"
+        },
+        {
+          "pr": 89,
+          "date": "2026-06-13",
+          "type": "feat",
+          "scope": "ia",
+          "breaking": false,
+          "title": "chrome du module bilingue FR/EN",
+          "hash": "31d88cf15"
+        },
+        {
+          "pr": 88,
+          "date": "2026-06-13",
+          "type": "feat",
+          "scope": "documents",
+          "breaking": false,
+          "title": "module bilingue FR/EN",
+          "hash": "569246fe9"
+        },
+        {
+          "pr": 87,
+          "date": "2026-06-13",
+          "type": "feat",
+          "scope": "docs",
+          "breaking": false,
+          "title": "fiches composant lot 4 bilingues FR/EN",
+          "hash": "f16c6f447"
+        },
+        {
+          "pr": 86,
+          "date": "2026-06-13",
+          "type": "feat",
+          "scope": "docs",
+          "breaking": false,
+          "title": "fiches composant lot 3 bilingues FR/EN",
+          "hash": "a4542cd77"
+        },
+        {
+          "pr": 85,
+          "date": "2026-06-13",
+          "type": "feat",
+          "scope": "docs",
+          "breaking": false,
+          "title": "fiches composant lot 2 bilingues FR/EN",
+          "hash": "db365cb46"
+        },
+        {
+          "pr": 84,
+          "date": "2026-06-13",
+          "type": "feat",
+          "scope": "docs",
+          "breaking": false,
+          "title": "fiches composant lot 1 bilingues FR/EN",
+          "hash": "dfd12407a"
+        },
+        {
+          "pr": 48,
+          "date": "2026-06-13",
           "type": "fix",
-          "scope": "legal",
+          "scope": "versions",
           "breaking": false,
-          "title": "retirer le bloc Contact (mailto) du shell partagé LegalArticle",
-          "hash": "ea7bdc730"
+          "title": "versions réelles par surface, dérivées au build",
+          "hash": "2cf83f5aa"
         },
         {
-          "pr": 30,
-          "date": "2026-06-12",
+          "pr": 83,
+          "date": "2026-06-13",
           "type": "feat",
-          "scope": "legal",
+          "scope": "commentaires",
           "breaking": false,
-          "title": "mentions légales définitives de l'éditeur (BEAM Consulting) FR/EN",
-          "hash": "d61af0638"
+          "title": "module bilingue FR/EN",
+          "hash": "b6cf0b4e8"
         },
         {
-          "pr": 29,
-          "date": "2026-06-12",
+          "pr": 82,
+          "date": "2026-06-13",
           "type": "feat",
-          "scope": "headers",
+          "scope": "notification",
           "breaking": false,
-          "title": "logo de marque sur la nav site et le shell de l'app",
-          "hash": "2b2d23787"
+          "title": "module bilingue FR/EN",
+          "hash": "07fab8d76"
         },
         {
-          "pr": 28,
-          "date": "2026-06-12",
-          "type": "other",
-          "scope": null,
-          "breaking": false,
-          "title": "Couche sémantique des 101 composants — instance de l'ontologie Ω, proposée par la boucle, curée par l'humain",
-          "hash": "6800d101c"
-        },
-        {
-          "pr": 27,
-          "date": "2026-06-11",
-          "type": "other",
-          "scope": null,
-          "breaking": false,
-          "title": "Mise à niveau : 101/101 composants au standard (8/8), correctif casse API, surfaces React/Python honnêtes",
-          "hash": "d31e107ea"
-        },
-        {
-          "pr": 26,
-          "date": "2026-06-11",
-          "type": "other",
-          "scope": null,
-          "breaking": false,
-          "title": "Convergence vitrine : pages légales bilingues, burger mobile, intention commerciale, responsive /components",
-          "hash": "a26d9c882"
-        },
-        {
-          "pr": 25,
-          "date": "2026-06-11",
-          "type": "style",
-          "scope": "site",
-          "breaking": false,
-          "title": "appliquer la direction visuelle de la maquette à la vitrine",
-          "hash": "cabd1b503"
-        },
-        {
-          "pr": 24,
-          "date": "2026-06-11",
+          "pr": 81,
+          "date": "2026-06-13",
           "type": "feat",
-          "scope": "mcp",
+          "scope": "skeleton",
           "breaking": false,
-          "title": "exposer l'endpoint public mcp.blueprint-modular.com/api/mcp (décision produit)",
-          "hash": "e49ca09a7"
+          "title": "module bilingue FR/EN",
+          "hash": "066753da0"
         },
         {
-          "pr": 23,
-          "date": "2026-06-11",
+          "pr": 80,
+          "date": "2026-06-13",
           "type": "feat",
-          "scope": "site",
+          "scope": "newsletter",
           "breaking": false,
-          "title": "refonte vitrine — pages /mcp et /resources, teasers home, nav/footer enrichis",
-          "hash": "6212c2bb7"
+          "title": "module bilingue FR/EN",
+          "hash": "56c9c3619"
         },
         {
-          "pr": 22,
-          "date": "2026-06-11",
+          "pr": 79,
+          "date": "2026-06-13",
           "type": "feat",
-          "scope": "site",
+          "scope": "keep-screen-on",
           "breaking": false,
-          "title": "push commercial — /mcp dans le shell, /resources, nav/footer, doc resync, module Veille",
-          "hash": "27cb44b74"
+          "title": "module bilingue FR/EN",
+          "hash": "ddd45e4d8"
         },
         {
-          "pr": 21,
-          "date": "2026-06-11",
+          "pr": 78,
+          "date": "2026-06-13",
           "type": "feat",
-          "scope": "site",
+          "scope": "veille",
           "breaking": false,
-          "title": "refonte de la vitrine d'accueil modulaire et responsive",
-          "hash": "3a2a9237b"
+          "title": "module bilingue FR/EN",
+          "hash": "3f556b82d"
         },
         {
-          "pr": 19,
-          "date": "2026-06-11",
-          "type": "fix",
-          "scope": "deploy",
-          "breaking": false,
-          "title": "fail-closed deploy-from-git.sh — build app obligatoire + gate de santé",
-          "hash": "07d05e889"
-        },
-        {
-          "pr": 17,
-          "date": "2026-06-11",
+          "pr": 77,
+          "date": "2026-06-13",
           "type": "feat",
-          "scope": "site",
+          "scope": "tableau-blanc",
           "breaking": false,
-          "title": "réconciliation #15 avec master (#11–#14, #16)",
-          "hash": "ffe2a6865"
+          "title": "module bilingue FR/EN",
+          "hash": "2c7a66ca7"
         },
         {
-          "pr": 14,
-          "date": "2026-06-11",
+          "pr": 76,
+          "date": "2026-06-13",
           "type": "feat",
-          "scope": "mcp",
+          "scope": "workflow",
           "breaking": false,
-          "title": "directory-compliant read-only MCP connector (Claude + ChatGPT)",
-          "hash": "f1381e1a2"
+          "title": "module bilingue FR/EN",
+          "hash": "6020248ac"
         },
         {
-          "pr": 13,
-          "date": "2026-06-11",
-          "type": "docs",
-          "scope": null,
-          "breaking": false,
-          "title": "boucle nocturne — couverture JSDoc 100% (151/151 composants bpm.*)",
-          "hash": "d2768323c"
-        },
-        {
-          "pr": 12,
-          "date": "2026-06-11",
-          "type": "other",
-          "scope": null,
-          "breaking": false,
-          "title": "Élévation bpm.* au standard « jugement » — interpret() + 26 composants + showcase /components",
-          "hash": "4f110b6d1"
-        },
-        {
-          "pr": 9,
-          "date": "2026-06-10",
+          "pr": 75,
+          "date": "2026-06-13",
           "type": "feat",
-          "scope": "gate",
+          "scope": "templates",
           "breaking": false,
-          "title": "convergence gate + Badge.size θ-additive pilot",
-          "hash": "1b9a36aa3"
+          "title": "module bilingue FR/EN",
+          "hash": "9fa9e54d2"
         },
         {
-          "pr": 8,
-          "date": "2026-05-19",
-          "type": "other",
-          "scope": null,
+          "pr": 72,
+          "date": "2026-06-13",
+          "type": "feat",
+          "scope": "i18n",
           "breaking": false,
-          "title": "[DIAG] SVG generator v3 (Otl Aicher) — mauvais repo actif",
-          "hash": "e2af2daa3"
+          "title": "bascule FR/EN dans le header du shell applicatif",
+          "hash": "d9dbaf8cb"
         },
         {
-          "pr": 7,
-          "date": "2026-05-19",
-          "type": "docs",
-          "scope": "bpm",
+          "pr": 71,
+          "date": "2026-06-13",
+          "type": "feat",
+          "scope": "docs",
           "breaking": false,
-          "title": "documentation complète de bpm.activityFeed",
-          "hash": "a0f885ebf"
+          "title": "vraies démos interactives — pdfViewer, map, gps, image, topNav",
+          "hash": "753795a24"
         },
         {
-          "pr": 6,
-          "date": "2026-05-19",
-          "type": "docs",
-          "scope": "bpm.gps",
+          "pr": 70,
+          "date": "2026-06-13",
+          "type": "feat",
+          "scope": "docs",
           "breaking": false,
-          "title": "add full JSDoc and enrich llms.txt entry",
-          "hash": "e0297fe6b"
+          "title": "données métier réalistes dans les fiches charts et structure",
+          "hash": "31d7df3c5"
+        },
+        {
+          "pr": 69,
+          "date": "2026-06-13",
+          "type": "feat",
+          "scope": "monitor",
+          "breaking": false,
+          "title": "présentation de démonstration embarquée dans le prompteur",
+          "hash": "279eb3026"
+        },
+        {
+          "pr": 68,
+          "date": "2026-06-13",
+          "type": "feat",
+          "scope": "referentiels",
+          "breaking": false,
+          "title": "module au niveau — gestionnaire de tables de codes complet",
+          "hash": "b17657bf9"
+        },
+        {
+          "pr": 67,
+          "date": "2026-06-13",
+          "type": "feat",
+          "scope": "devis-facturation",
+          "breaking": false,
+          "title": "module au niveau — devis éditables, totaux recalculés, cycle de statuts",
+          "hash": "8c41a349e"
+        },
+        {
+          "pr": 66,
+          "date": "2026-06-13",
+          "type": "feat",
+          "scope": "taches",
+          "breaking": false,
+          "title": "module au niveau — gestion de tâches d'équipe complète",
+          "hash": "89ce22eed"
+        },
+        {
+          "pr": 65,
+          "date": "2026-06-13",
+          "type": "feat",
+          "scope": "docs",
+          "breaking": false,
+          "title": "fiches composant manquantes — orgChart, commandPalette, title1/2/3",
+          "hash": "72bcaf4b8"
+        },
+        {
+          "pr": 64,
+          "date": "2026-06-13",
+          "type": "feat",
+          "scope": "docs",
+          "breaking": false,
+          "title": "fiches composant manquantes — activityFeed, liveGauge, anomalyAlert, masterDetail",
+          "hash": "11e684ad0"
+        },
+        {
+          "pr": 63,
+          "date": "2026-06-13",
+          "type": "feat",
+          "scope": "docs",
+          "breaking": false,
+          "title": "fiches composant manquantes — flowDiagram, statusTracker, approvalFlow, wizardForm",
+          "hash": "2bbf3db1e"
+        },
+        {
+          "pr": 62,
+          "date": "2026-06-13",
+          "type": "feat",
+          "scope": "auth",
+          "breaking": false,
+          "title": "module au niveau — flux d'authentification jouables in situ",
+          "hash": "e4ba969ed"
+        },
+        {
+          "pr": 61,
+          "date": "2026-06-13",
+          "type": "feat",
+          "scope": "multi-langue",
+          "breaking": false,
+          "title": "module au niveau — système i18n démontré de bout en bout",
+          "hash": "2648f9e50"
+        },
+        {
+          "pr": 60,
+          "date": "2026-06-13",
+          "type": "feat",
+          "scope": "reservation-creneaux",
+          "breaking": false,
+          "title": "module au niveau — réservation de salles avec planning visuel",
+          "hash": "bc53e947d"
+        },
+        {
+          "pr": 59,
+          "date": "2026-06-13",
+          "type": "feat",
+          "scope": "notifications-ciblees",
+          "breaking": false,
+          "title": "module au niveau — moteur de règles avec banc d'essai réel",
+          "hash": "49f3705ee"
+        },
+        {
+          "pr": 58,
+          "date": "2026-06-13",
+          "type": "feat",
+          "scope": "audit-log",
+          "breaking": false,
+          "title": "module au niveau — journal d'audit réel et seedé",
+          "hash": "fd5d2589a"
+        },
+        {
+          "pr": 57,
+          "date": "2026-06-13",
+          "type": "feat",
+          "scope": "formulaire-dynamique",
+          "breaking": false,
+          "title": "module au niveau — moteur de formulaires conditionnels piloté par schéma",
+          "hash": "45614dd15"
+        },
+        {
+          "pr": 56,
+          "date": "2026-06-13",
+          "type": "feat",
+          "scope": "catalogue-produits",
+          "breaking": false,
+          "title": "module au niveau — catalogue produits réel et seedé",
+          "hash": "8e257a862"
+        },
+        {
+          "pr": 55,
+          "date": "2026-06-13",
+          "type": "feat",
+          "scope": "tableaux-de-bord",
+          "breaking": false,
+          "title": "module au niveau — dashboard à widgets réellement personnalisable",
+          "hash": "30e9a34b3"
+        },
+        {
+          "pr": 54,
+          "date": "2026-06-13",
+          "type": "feat",
+          "scope": "themes",
+          "breaking": false,
+          "title": "module au niveau — studio de thème white-label réel et seedé",
+          "hash": "862cb0a74"
+        },
+        {
+          "pr": 53,
+          "date": "2026-06-13",
+          "type": "feat",
+          "scope": "connecteurs",
+          "breaking": false,
+          "title": "module au niveau — hub de connecteurs de données réel et seedé",
+          "hash": "b3b0c279e"
         }
       ]
     }

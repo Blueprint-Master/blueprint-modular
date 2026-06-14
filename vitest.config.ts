@@ -10,6 +10,12 @@ import { resolve } from "path";
 export default defineConfig({
   resolve: {
     alias: {
+      // Contrat connecteurs : résout vers la SOURCE core (pas le dist) en test,
+      // pour ne pas dépendre d'un build préalable de @blueprint-modular/core.
+      "@blueprint-modular/core/connectors": resolve(
+        __dirname,
+        "packages/core/src/connectors/index.ts"
+      ),
       "@": resolve(__dirname, "."),
     },
   },

@@ -1,7 +1,7 @@
 # Blueprint Modular — Agent Context File (CORE)
-# Version React (@blueprint-modular/core, npm) : 0.3.0
+# Version React (@blueprint-modular/core, npm) : 0.4.0
 # Version Python (blueprint-modular, PyPI)      : 0.1.53
-# Date    : 2026-06-12
+# Date    : 2026-06-14
 # Format compact pour modèles locaux (Qwen, Mistral)
 # Composants essentiels uniquement — référence complète : blueprint-modular.com/llms.txt
 

@@ -25,7 +25,12 @@ import { fileURLToPath } from "node:url";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const REPO_ROOT = path.resolve(__dirname, "..");
-const SCAN_ROOT = path.join(REPO_ROOT, "lib", "connectors");
+// Source canonique du contrat = packages/core/src/connectors (D3) ; lib/connectors
+// ne contient plus que des ré-exports (scanné aussi, par sécurité).
+const SCAN_ROOTS = [
+  path.join(REPO_ROOT, "packages", "core", "src", "connectors"),
+  path.join(REPO_ROOT, "lib", "connectors"),
+];
 const SCAN_EXT = new Set([".ts", ".tsx", ".js", ".mjs", ".cjs", ".json"]);
 
 /** Motifs de secrets réels. Chaque entrée : { name, re }. */
@@ -66,7 +71,7 @@ function walk(dir) {
 /** @type {{file:string, line:number, kind:string, snippet:string}[]} */
 const findings = [];
 
-for (const file of walk(SCAN_ROOT)) {
+for (const file of SCAN_ROOTS.flatMap((root) => walk(root))) {
   const text = fs.readFileSync(file, "utf8");
   const lines = text.split(/\r?\n/);
   const rel = path.relative(REPO_ROOT, file);
