@@ -201,7 +201,7 @@ export function Sidebar() {
       >
         <div className="bpm-sidebar-toggle-row shrink-0">
           {!collapsed && (
-            <Link href="/dashboard" className="bpm-sidebar-title">
+            <Link href="/" className="bpm-sidebar-title">
               <span className="bpm-sidebar-item-label">.Modular</span>
             </Link>
           )}
