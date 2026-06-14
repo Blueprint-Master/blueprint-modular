@@ -11,6 +11,13 @@ const nextConfig = {
       { source: "/favicon.ico", destination: "/img/logo-bpm.png" },
     ];
   },
+  async redirects() {
+    return [
+      { source: "/docs/components", destination: "/composants", permanent: true },
+      { source: "/docs/components/:slug", destination: "/composants/:slug", permanent: true },
+      { source: "/components", destination: "/composants", permanent: true },
+    ];
+  },
   experimental: {
     serverActions: {
       bodySizeLimit: "100mb",

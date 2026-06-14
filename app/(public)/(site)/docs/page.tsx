@@ -13,8 +13,8 @@ type CardKey = "gettingStarted" | "catalog" | "gallery" | "llms" | "changelog" |
 /** Destinations vérifiées : routes internes réelles + liens externes stables. */
 const CARD_HREF: Record<CardKey, { href: string; external: boolean }> = {
   gettingStarted: { href: "/docs/getting-started", external: false },
-  catalog: { href: "/docs/components", external: false },
-  gallery: { href: "/components", external: false },
+  catalog: { href: "/composants", external: false },
+  gallery: { href: "/composants", external: false },
   llms: { href: "/llms.txt", external: true },
   changelog: { href: "/docs/changelog", external: false },
   database: {

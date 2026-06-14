@@ -58,7 +58,7 @@ export function McpContent() {
             <code className="site-endpoint">{MCP_ENDPOINT}</code>
           </div>
           <div className="site-hero-actions">
-            <Link href="/components" className="site-cta-primary">
+            <Link href="/composants" className="site-cta-primary">
               {mcp.ctaComponents}
             </Link>
             <Link href="/docs" className="site-cta-secondary">
@@ -144,10 +144,10 @@ export function McpContent() {
         <div className="site-container">
           <h2>{mcp.linksTitle}</h2>
           <div className="site-hero-actions">
-            <Link href="/docs/components" className="site-cta-secondary">
+            <Link href="/composants" className="site-cta-secondary">
               {mcp.linkCatalog}
             </Link>
-            <Link href="/components" className="site-cta-secondary">
+            <Link href="/composants" className="site-cta-secondary">
               {mcp.linkGallery}
             </Link>
             <Link href="/resources" className="site-cta-secondary">

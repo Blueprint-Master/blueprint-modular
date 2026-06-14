@@ -17,7 +17,7 @@ export function FinalCta({ dict }: { dict: Dictionary }) {
           <Link href="/docs/getting-started" className="site-cta-primary">
             {cta.primary}
           </Link>
-          <Link href="/components" className="site-cta-secondary">
+          <Link href="/composants" className="site-cta-secondary">
             {cta.secondary}
           </Link>
           <a href={`mailto:${CONTACT_EMAIL}`} className="site-cta-secondary">

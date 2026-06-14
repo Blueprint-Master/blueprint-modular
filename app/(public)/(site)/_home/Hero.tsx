@@ -24,7 +24,7 @@ export function Hero({ dict }: { dict: Dictionary }) {
             <Link href="/docs/getting-started" className="site-cta-primary">
               {home.hero.ctaPrimary}
             </Link>
-            <Link href="/components" className="site-cta-secondary">
+            <Link href="/composants" className="site-cta-secondary">
               {home.hero.ctaSecondary}
             </Link>
           </div>

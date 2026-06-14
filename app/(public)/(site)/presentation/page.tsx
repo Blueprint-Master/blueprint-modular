@@ -32,7 +32,7 @@ export async function generateMetadata(): Promise<Metadata> {
 
 /** Pilliers du produit : destinations internes réelles, dans l'ordre du parcours. */
 const ECOSYSTEM = [
-  { key: "components", href: "/components" },
+  { key: "components", href: "/composants" },
   { key: "modules", href: "/modules" },
   { key: "mcp", href: "/mcp" },
   { key: "docs", href: "/docs" },

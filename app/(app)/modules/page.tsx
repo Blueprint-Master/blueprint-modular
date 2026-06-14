@@ -3,7 +3,8 @@
 import React, { useState, useMemo } from "react";
 import Link from "next/link";
 import { Bell, BookMarked, Bot, Calendar, FileText, LayoutDashboard, Link2, Mail, MessageSquare, Monitor, Package, PenTool, Radio, Settings, Shield, StickyNote, Sun, Table2, Webhook } from "lucide-react";
-import { Input } from "@/components/bpm";
+import { Input, Card } from "@/components/bpm";
+import { CatalogueHero, CatalogueSection } from "@/components/site/CatalogueLayout";
 
 /** Catégories dans l’ordre d’affichage. À l’intérieur de chaque catégorie, les modules sont triés par label. */
 const CATEGORY_ORDER = [
@@ -102,72 +103,78 @@ export default function ModulesPage() {
     return out;
   }, [keywords]);
 
+  const totalModules = Object.values(MODULES_BY_CATEGORY).reduce((n, list) => n + list.length, 0);
+
   return (
-    <div className="doc-page">
-      <div className="doc-page-header">
-        <h1>Modules</h1>
-        <p className="doc-description">
-          Modules disponibles, classés par catégorie. Chaque module dispose d&apos;une page avec Documentation et Simulateur pour tester en ligne.
-        </p>
-        <div className="mt-4 max-w-md">
-          <Input
-            type="search"
-            value={searchQuery}
-            onChange={setSearchQuery}
-            placeholder="Rechercher un module (mots-clés…)"
-            aria-label="Rechercher un module par mots-clés"
-          />
-        </div>
-      </div>
+    <>
+      <CatalogueHero
+        eyebrow="Catalogue"
+        title="Modules"
+        lead="Modules disponibles, classés par catégorie. Chaque module dispose d'une page avec Documentation et Simulateur pour tester en ligne."
+        meta={`${totalModules} modules`}
+      >
+        <Input
+          type="search"
+          value={searchQuery}
+          onChange={setSearchQuery}
+          placeholder="Rechercher un module (mots-clés…)"
+          aria-label="Rechercher un module par mots-clés"
+        />
+      </CatalogueHero>
 
       {CATEGORY_ORDER.map((category) => {
         const items = filteredByCategory[category];
         if (!items?.length) return null;
         return (
-          <section key={category} className="mb-10">
-            <h2 className="text-lg font-semibold mb-4" style={{ color: "var(--bpm-text-primary)" }}>
-              {category}
-            </h2>
-            <div className="grid gap-4 grid-cols-1 md:grid-cols-2 lg:grid-cols-3 items-stretch">
-              {items.map((mod) => {
-                const Icon = mod.icon;
-                const cardClassName = "flex flex-col p-4 rounded-xl border transition hover:border-[var(--bpm-accent-cyan)] hover:shadow-md min-h-[140px]";
-                const cardStyle = { background: "var(--bpm-bg-primary)", borderColor: "var(--bpm-border)" };
-                return (
-                  <div key={mod.href} className={`block ${cardClassName}`} style={cardStyle}>
-                    <div className="flex items-center gap-3 mb-2">
+          <CatalogueSection key={category} title={category}>
+            {items.map((mod) => {
+              const Icon = mod.icon;
+              return (
+                <Card
+                  key={mod.href}
+                  variant="outlined"
+                  title={
+                    <span style={{ display: "flex", alignItems: "center", gap: 10 }}>
                       <span
-                        className="flex items-center justify-center w-10 h-10 rounded-lg shrink-0"
-                        style={{ background: "var(--bpm-bg-secondary)", color: "var(--bpm-accent-cyan)" }}
+                        style={{
+                          display: "flex",
+                          alignItems: "center",
+                          justifyContent: "center",
+                          width: 36,
+                          height: 36,
+                          borderRadius: 8,
+                          flexShrink: 0,
+                          background: "var(--bpm-bg-secondary)",
+                          color: "var(--bpm-accent-cyan)",
+                        }}
                       >
                         <Icon className="w-5 h-5" aria-hidden />
                       </span>
-                      <span className="font-semibold" style={{ color: "var(--bpm-text-primary)" }}>
-                        {mod.label}
-                      </span>
-                    </div>
-                    <div className="flex flex-col flex-1 min-h-0">
-                      <p className="text-sm" style={{ color: "var(--bpm-text-secondary)", marginLeft: "52px" }}>
-                        {mod.description}
-                      </p>
-                      <div className="flex flex-wrap gap-3 mt-auto pt-3" style={{ marginLeft: "52px" }}>
-                        <Link href={`${mod.href}/documentation`} className="text-sm font-medium hover:underline" style={linkStyle}>
-                          Documentation
+                      <span style={{ color: "var(--bpm-text-primary)" }}>{mod.label}</span>
+                    </span>
+                  }
+                >
+                  <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
+                    <p style={{ margin: 0, fontSize: 14, lineHeight: 1.6, color: "var(--bpm-text-secondary)" }}>
+                      {mod.description}
+                    </p>
+                    <div style={{ display: "flex", flexWrap: "wrap", gap: 12 }}>
+                      <Link href={`${mod.href}/documentation`} className="hover:underline" style={{ ...linkStyle, fontSize: 13, fontWeight: 600 }}>
+                        Documentation
+                      </Link>
+                      {mod.simulatorAndDoc && (
+                        <Link href={mod.simulateurHref ?? `${mod.href}/simulateur`} className="hover:underline" style={{ ...linkStyle, fontSize: 13, fontWeight: 600 }}>
+                          Simulateur
                         </Link>
-                        {mod.simulatorAndDoc && (
-                          <Link href={mod.simulateurHref ?? `${mod.href}/simulateur`} className="text-sm font-medium hover:underline" style={linkStyle}>
-                            Simulateur
-                          </Link>
-                        )}
-                      </div>
+                      )}
                     </div>
                   </div>
-                );
-              })}
-            </div>
-          </section>
+                </Card>
+              );
+            })}
+          </CatalogueSection>
         );
       })}
-    </div>
+    </>
   );
 }

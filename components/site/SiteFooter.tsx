@@ -20,9 +20,9 @@ export function SiteFooter() {
 
         <nav className="site-footer-col" aria-label={dict.footer.product}>
           <h2>{dict.footer.product}</h2>
-          <Link href="/components">{dict.footer.gallery}</Link>
+          <Link href="/composants">{dict.footer.gallery}</Link>
           <Link href="/modules">{dict.footer.modules}</Link>
-          <Link href="/docs/components">{dict.footer.catalog}</Link>
+          <Link href="/composants">{dict.footer.catalog}</Link>
           <Link href="/docs/changelog">{dict.footer.changelog}</Link>
         </nav>
 
