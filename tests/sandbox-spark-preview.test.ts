@@ -153,13 +153,11 @@ describe("runSparkPreview — proxy serveur→serveur vers le Maker", () => {
     });
   }
 
-  it("relaie le prompt au Maker (Bearer + tier spark) et mappe le rendu bpm.*", async () => {
+  it("relaie le prompt au Maker (Bearer + tier spark) et mappe { html, degraded }", async () => {
     const fetchMock = vi.fn(async () =>
       jsonResponse({
-        rendered: {
-          "app/_page-content.tsx": "// rendu bpm.title bpm.metric bpm.table",
-          "app/page.tsx": "// ignoré",
-        },
+        html: "<!doctype html><html><body><div class=\"bpm-metric\">CA</div></body></html>",
+        degraded: false,
         meta: { appName: "Mon CRM", tier: "spark" },
       })
     );
@@ -173,12 +171,26 @@ describe("runSparkPreview — proxy serveur→serveur vers le Maker", () => {
     expect((init.headers as Record<string, string>).Authorization).toBe("Bearer test-secret");
     expect(JSON.parse(init.body as string)).toEqual({ prompt: "un CRM simple", tier: "spark" });
 
-    expect(result.title).toBe("Mon CRM");
-    expect(result.code).toContain("bpm.title");
-    expect(result.components).toEqual(expect.arrayContaining(["title", "metric", "table"]));
-    // Le plan n'est jamais exposé : seed vide, et seulement le contrat public.
-    expect(result.seed).toEqual({});
-    expect(Object.keys(result)).toEqual(["code", "title", "components", "seed"]);
+    // Contrat public : uniquement le HTML rendu + l'indicateur de repli.
+    expect(result.html).toContain("bpm-metric");
+    expect(result.degraded).toBe(false);
+    expect(Object.keys(result).sort()).toEqual(["degraded", "html"]);
+  });
+
+  it("propage degraded:true du Maker", async () => {
+    const fetchMock = vi.fn(async () =>
+      jsonResponse({ html: "<!doctype html><html><body><div>repli</div></body></html>", degraded: true })
+    );
+    vi.stubGlobal("fetch", fetchMock);
+    const result = await runSparkPreview("x");
+    expect(result.degraded).toBe(true);
+    expect(result.html).toContain("repli");
+  });
+
+  it("rejette si le Maker ne renvoie pas de html", async () => {
+    const fetchMock = vi.fn(async () => jsonResponse({ meta: { appName: "X" } }));
+    vi.stubGlobal("fetch", fetchMock);
+    await expect(runSparkPreview("x")).rejects.toThrow();
   });
 
   it("ne fuite ni URL ni secret en cas d'erreur Maker (message FR neutre)", async () => {

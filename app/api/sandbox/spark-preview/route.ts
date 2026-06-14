@@ -2,8 +2,8 @@
  * POST /api/sandbox/spark-preview
  *
  * Route éphémère appelée par la sandbox IA du site Modular. PROXY serveur→serveur
- * vers l'API interne du Maker (pipeline prompt → AppSpec → bpm.*) : renvoie le
- * rendu bpm.* EN MÉMOIRE. Mode strictement éphémère :
+ * vers l'API interne du Maker (pipeline prompt → AppSpec → bpm.* → HTML) : renvoie
+ * le HTML statique rendu `{ html, degraded }` (jamais de source). Mode éphémère :
  *   - accepte { prompt } SEUL (aucun upload, aucun BYOK, aucun plan injecté),
  *   - NE crée AUCUN enregistrement (pas de GeneratedApp.create/update),
  *   - NE déploie pas, NE renvoie AUCUNE voie d'export/download,
@@ -50,7 +50,7 @@ export async function POST(req: Request) {
     );
   }
 
-  // 4. Flux éphémère jusqu'au point no-persist : code + seed en mémoire.
+  // 4. Flux éphémère jusqu'au point no-persist : HTML rendu en mémoire (no-store).
   try {
     const result = await runSparkPreview(parsed.prompt);
     return NextResponse.json(result, {

@@ -181,8 +181,10 @@ const fr = {
   aiGenerate: "Générer",
   aiGenerating: "Génération…",
   aiGeneratingFor: "génère votre page (~30-60s)…",
-  aiHint: 'Cmd+Entrée pour lancer · Le résultat s\'ouvrira en mode "Par code"',
+  aiHint: "Cmd+Entrée pour lancer · L'aperçu s'affichera ci-dessous",
   aiGenerationInProgress: "Génération en cours…",
+  aiPreviewTitle: "Aperçu de votre application",
+  aiPreviewPartial: "Aperçu partiel",
 
   // === Génération IA (messages d'état/erreur) ===
   genInProgressComment: "# Génération en cours…",
@@ -379,8 +381,10 @@ const en: typeof fr = {
   aiGenerate: "Generate",
   aiGenerating: "Generating…",
   aiGeneratingFor: "is generating your page (~30-60s)…",
-  aiHint: 'Cmd+Enter to launch · The result will open in "By code" mode',
+  aiHint: "Cmd+Enter to launch · The preview will appear below",
   aiGenerationInProgress: "Generation in progress…",
+  aiPreviewTitle: "Preview of your application",
+  aiPreviewPartial: "Partial preview",
 
   // === AI generation (status/error messages) ===
   genInProgressComment: "# Generation in progress…",
