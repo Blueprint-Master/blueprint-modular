@@ -178,8 +178,18 @@ function makerBaseUrl(): string {
  * source dans `html`.
  */
 export async function runSparkPreview(prompt: string): Promise<SparkPreviewResult> {
+  // Gardes de configuration séparées : on journalise PRÉCISÉMENT côté serveur
+  // laquelle des deux variables manque (secret vs URL), mais le message renvoyé
+  // au client reste un FR générique identique dans les deux cas — aucune fuite
+  // du nom de la variable manquante dans le payload public (cf. bord #94).
   const secret = process.env.INTERNAL_API_SECRET?.trim();
+  const makerUrl = process.env.MAKER_INTERNAL_URL?.trim();
   if (!secret) {
+    console.error("[spark-preview] config manquante côté serveur: secret (INTERNAL_API_SECRET)");
+    throw new Error("Service de génération mal configuré.");
+  }
+  if (!makerUrl) {
+    console.error("[spark-preview] config manquante côté serveur: url (MAKER_INTERNAL_URL)");
     throw new Error("Service de génération mal configuré.");
   }
 

@@ -205,20 +205,68 @@ describe("runSparkPreview — proxy serveur→serveur vers le Maker", () => {
     expect((err as Error).message).not.toContain("test-secret");
   });
 
-  it("n'appelle pas le Maker si INTERNAL_API_SECRET est absent", async () => {
+  // Message FR générique unique renvoyé au client quelle que soit la variable
+  // de config manquante (aucune fuite du nom de variable dans le payload public).
+  const GENERIC_MISCONFIG = "Service de génération mal configuré.";
+
+  it("secret absent → log serveur explicite « secret », réponse FR générique (pas de fuite, pas d'appel Maker)", async () => {
     delete process.env.INTERNAL_API_SECRET;
     const fetchMock = vi.fn();
     vi.stubGlobal("fetch", fetchMock);
+    const errSpy = vi.spyOn(console, "error").mockImplementation(() => {});
 
-    await expect(runSparkPreview("x")).rejects.toThrow();
+    const err = await runSparkPreview("x").catch((e: Error) => e);
+
+    // Côté client : message générique, jamais le nom de la variable.
+    expect((err as Error).message).toBe(GENERIC_MISCONFIG);
+    expect((err as Error).message).not.toContain("INTERNAL_API_SECRET");
+    expect((err as Error).message).not.toContain("MAKER_INTERNAL_URL");
+    // Côté serveur : granularité explicite (secret) dans les logs.
+    expect(errSpy).toHaveBeenCalledTimes(1);
+    const logged = String(errSpy.mock.calls[0]?.join(" "));
+    expect(logged.toLowerCase()).toContain("secret");
+    expect(logged).toContain("INTERNAL_API_SECRET");
+    // Aucun appel au Maker.
     expect(fetchMock).not.toHaveBeenCalled();
+
+    errSpy.mockRestore();
   });
 
-  it("échoue proprement si MAKER_INTERNAL_URL est absent", async () => {
+  it("URL absente → log serveur explicite « url », réponse FR générique (pas de fuite, pas d'appel Maker)", async () => {
     delete process.env.MAKER_INTERNAL_URL;
+    const fetchMock = vi.fn();
+    vi.stubGlobal("fetch", fetchMock);
+    const errSpy = vi.spyOn(console, "error").mockImplementation(() => {});
+
+    const err = await runSparkPreview("x").catch((e: Error) => e);
+
+    // Côté client : même message générique que pour le secret absent.
+    expect((err as Error).message).toBe(GENERIC_MISCONFIG);
+    expect((err as Error).message).not.toContain("MAKER_INTERNAL_URL");
+    expect((err as Error).message).not.toContain("INTERNAL_API_SECRET");
+    // Côté serveur : granularité explicite (url) dans les logs.
+    expect(errSpy).toHaveBeenCalledTimes(1);
+    const logged = String(errSpy.mock.calls[0]?.join(" "));
+    expect(logged.toLowerCase()).toContain("url");
+    expect(logged).toContain("MAKER_INTERNAL_URL");
+    // Aucun appel au Maker.
+    expect(fetchMock).not.toHaveBeenCalled();
+
+    errSpy.mockRestore();
+  });
+
+  it("payload public identique (message générique) que ce soit le secret ou l'URL qui manque", async () => {
+    vi.spyOn(console, "error").mockImplementation(() => {});
     vi.stubGlobal("fetch", vi.fn());
 
-    await expect(runSparkPreview("x")).rejects.toThrow();
+    delete process.env.INTERNAL_API_SECRET;
+    const errSecret = await runSparkPreview("x").catch((e: Error) => e);
+
+    process.env.INTERNAL_API_SECRET = "test-secret";
+    delete process.env.MAKER_INTERNAL_URL;
+    const errUrl = await runSparkPreview("x").catch((e: Error) => e);
+
+    expect((errSecret as Error).message).toBe((errUrl as Error).message);
   });
 });
 
