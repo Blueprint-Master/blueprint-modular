@@ -3,7 +3,7 @@
 import { useState, useEffect, useMemo, useCallback } from "react";
 import Link from "next/link";
 import { useParams } from "next/navigation";
-import { Button, Panel, Spinner, Table } from "@/components/bpm";
+import { Button, Card, EmptyState, Spinner, Table } from "@/components/bpm";
 import type { TableColumn } from "@/components/bpm";
 import { useAssistant } from "@/lib/ai/assistant-context";
 import { getWorkspaceLabel } from "@/lib/contracts/labels";
@@ -155,7 +155,7 @@ export default function ContractDetailPage() {
   if (loading || !contract) {
     return (
       <div className="doc-page flex justify-center items-center min-h-[200px]">
-        {loading ? <Spinner size="medium" /> : <Panel variant="warning" title={t.notFoundTitle}>{t.notFoundDesc}</Panel>}
+        {loading ? <Spinner size="medium" /> : <EmptyState title={t.notFoundTitle} description={t.notFoundDesc} />}
       </div>
     );
   }
@@ -265,7 +265,7 @@ export default function ContractDetailPage() {
         <div className="space-y-6">
           <section aria-labelledby="section-parties">
             <h2 id="section-parties" style={{ position: "absolute", width: "1px", height: "1px", padding: 0, margin: "-1px", overflow: "hidden", clip: "rect(0, 0, 0, 0)", whiteSpace: "nowrap", borderWidth: 0 }}>{t.partiesAndSignatories}</h2>
-            <Panel variant="info" title={t.partiesAndSignatories}>
+            <Card variant="outlined" title={t.partiesAndSignatories}>
             <div className="space-y-3">
               {ex?.supplier_name && (
                 <div>
@@ -291,12 +291,12 @@ export default function ContractDetailPage() {
                 <p className="text-sm" style={{ color: "var(--bpm-text-secondary)" }}>{t.notExtracted}</p>
               ) : null}
             </div>
-            </Panel>
+            </Card>
           </section>
 
           <section aria-labelledby="section-dates">
             <h2 id="section-dates" style={{ position: "absolute", width: "1px", height: "1px", padding: 0, margin: "-1px", overflow: "hidden", clip: "rect(0, 0, 0, 0)", whiteSpace: "nowrap", borderWidth: 0 }}>{t.datesTitle}</h2>
-            <Panel variant="info" title={t.datesTitle}>
+            <Card variant="outlined" title={t.datesTitle}>
             <div className="space-y-2 text-sm">
               {ex?.contract_date && (
                 <div>
@@ -332,12 +332,12 @@ export default function ContractDetailPage() {
                 <p className="text-sm" style={{ color: "var(--bpm-text-secondary)" }}>{t.noDateExtracted}</p>
               )}
             </div>
-            </Panel>
+            </Card>
           </section>
 
           <section aria-labelledby="section-commitments">
             <h2 id="section-commitments" style={{ position: "absolute", width: "1px", height: "1px", padding: 0, margin: "-1px", overflow: "hidden", clip: "rect(0, 0, 0, 0)", whiteSpace: "nowrap", borderWidth: 0 }}>{t.commitments}</h2>
-            <Panel variant="info" title={t.commitments}>
+            <Card variant="outlined" title={t.commitments}>
             {commitmentsData.length > 0 ? (
               <Table
                 columns={commitmentsColumns}
@@ -349,12 +349,12 @@ export default function ContractDetailPage() {
             ) : (
               <p className="text-sm" style={{ color: "var(--bpm-text-secondary)" }}>{t.noCommitmentExtracted}</p>
             )}
-            </Panel>
+            </Card>
           </section>
 
           <section aria-labelledby="section-clauses">
             <h2 id="section-clauses" style={{ position: "absolute", width: "1px", height: "1px", padding: 0, margin: "-1px", overflow: "hidden", clip: "rect(0, 0, 0, 0)", whiteSpace: "nowrap", borderWidth: 0 }}>{t.clauses}</h2>
-            <Panel variant="info" title={t.clauses}>
+            <Card variant="outlined" title={t.clauses}>
             <div className="space-y-2 text-sm">
               {ex?.payment_terms && (
                 <div>
@@ -395,12 +395,12 @@ export default function ContractDetailPage() {
                 <p className="text-sm" style={{ color: "var(--bpm-text-secondary)" }}>{t.noClauseExtracted}</p>
               )}
             </div>
-            </Panel>
+            </Card>
           </section>
 
           <section aria-labelledby="section-actions">
             <h2 id="section-actions" style={{ position: "absolute", width: "1px", height: "1px", padding: 0, margin: "-1px", overflow: "hidden", clip: "rect(0, 0, 0, 0)", whiteSpace: "nowrap", borderWidth: 0 }}>{t.recommendedActions}</h2>
-            <Panel variant="info" title={t.recommendedActions}>
+            <Card variant="outlined" title={t.recommendedActions}>
             {actionItemsData.length > 0 ? (
               <Table
                 columns={actionItemsColumns}
@@ -412,25 +412,25 @@ export default function ContractDetailPage() {
             ) : (
               <p className="text-sm" style={{ color: "var(--bpm-text-secondary)" }}>{t.noActionExtracted}</p>
             )}
-            </Panel>
+            </Card>
           </section>
         </div>
 
         <div className="space-y-6">
           <section aria-labelledby="section-summary">
             <h2 id="section-summary" style={{ position: "absolute", width: "1px", height: "1px", padding: 0, margin: "-1px", overflow: "hidden", clip: "rect(0, 0, 0, 0)", whiteSpace: "nowrap", borderWidth: 0 }}>{t.summary}</h2>
-            <Panel variant="info" title={t.summary}>
+            <Card variant="outlined" title={t.summary}>
             {ex?.executive_summary ? (
               <p className="text-sm whitespace-pre-wrap">{ex.executive_summary}</p>
             ) : (
               <p className="text-sm" style={{ color: "var(--bpm-text-secondary)" }}>{t.noSummary}</p>
             )}
-            </Panel>
+            </Card>
           </section>
 
           <section aria-labelledby="section-risks">
             <h2 id="section-risks" style={{ position: "absolute", width: "1px", height: "1px", padding: 0, margin: "-1px", overflow: "hidden", clip: "rect(0, 0, 0, 0)", whiteSpace: "nowrap", borderWidth: 0 }}>{t.risks}</h2>
-            <Panel variant="info" title={t.risks}>
+            <Card variant="outlined" title={t.risks}>
             {ex?.key_risks?.length ? (
               <ul className="list-disc pl-5 text-sm space-y-1">
                 {ex.key_risks.map((r, i) => <li key={i}>{r}</li>)}
@@ -438,12 +438,12 @@ export default function ContractDetailPage() {
             ) : (
               <p className="text-sm" style={{ color: "var(--bpm-text-secondary)" }}>{t.noRisk}</p>
             )}
-            </Panel>
+            </Card>
           </section>
 
           <section aria-labelledby="section-opportunities">
             <h2 id="section-opportunities" style={{ position: "absolute", width: "1px", height: "1px", padding: 0, margin: "-1px", overflow: "hidden", clip: "rect(0, 0, 0, 0)", whiteSpace: "nowrap", borderWidth: 0 }}>{t.opportunities}</h2>
-            <Panel variant="info" title={t.opportunities}>
+            <Card variant="outlined" title={t.opportunities}>
             {ex?.key_opportunities?.length ? (
               <ul className="list-disc pl-5 text-sm space-y-1">
                 {ex.key_opportunities.map((o, i) => <li key={i}>{o}</li>)}
@@ -451,7 +451,7 @@ export default function ContractDetailPage() {
             ) : (
               <p className="text-sm" style={{ color: "var(--bpm-text-secondary)" }}>{t.noOpportunity}</p>
             )}
-            </Panel>
+            </Card>
           </section>
         </div>
       </div>
