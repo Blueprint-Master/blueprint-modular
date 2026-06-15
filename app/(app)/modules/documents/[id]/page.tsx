@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 import Link from "next/link";
-import { Panel, Spinner, Message, Button } from "@/components/bpm";
+import { Panel, Card, Spinner, Message, Button } from "@/components/bpm";
 import { useI18n } from "@/lib/i18n/LocaleProvider";
 import { strings, fmtDate, uploadedOn } from "../strings";
 
@@ -113,43 +113,43 @@ export default function DocumentDetailPage() {
 
       {doc.analysisStatus === "done" && (
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <Panel variant="info" title={t.supplier}>
+          <Card variant="outlined" title={t.supplier}>
             {doc.supplier ?? "—"}
-          </Panel>
-          <Panel variant="info" title={t.client}>
+          </Card>
+          <Card variant="outlined" title={t.client}>
             {doc.client ?? "—"}
-          </Panel>
-          <Panel variant="info" title={t.contractDate}>
+          </Card>
+          <Card variant="outlined" title={t.contractDate}>
             {fmtDate(doc.contractDate, locale)}
-          </Panel>
-          <Panel variant="info" title={t.signatureDate}>
+          </Card>
+          <Card variant="outlined" title={t.signatureDate}>
             {fmtDate(doc.signatureDate, locale)}
-          </Panel>
-          <Panel variant="info" title={t.terminationDate}>
+          </Card>
+          <Card variant="outlined" title={t.terminationDate}>
             {fmtDate(doc.terminationDate, locale)}
-          </Panel>
+          </Card>
           {doc.summary && (
-            <Panel variant="info" title={t.summary} className="md:col-span-2">
+            <Card variant="outlined" title={t.summary} className="md:col-span-2">
               {doc.summary}
-            </Panel>
+            </Card>
           )}
           {keyPointsArr.length > 0 && (
-            <Panel variant="info" title={t.keyPoints} className="md:col-span-2">
+            <Card variant="outlined" title={t.keyPoints} className="md:col-span-2">
               <ul className="list-disc pl-4 space-y-1">
                 {keyPointsArr.map((p, i) => (
                   <li key={i}>{p}</li>
                 ))}
               </ul>
-            </Panel>
+            </Card>
           )}
           {commitmentsArr.length > 0 && (
-            <Panel variant="info" title={t.commitments} className="md:col-span-2">
+            <Card variant="outlined" title={t.commitments} className="md:col-span-2">
               <ul className="list-disc pl-4 space-y-1">
                 {commitmentsArr.map((c, i) => (
                   <li key={i}>{c}</li>
                 ))}
               </ul>
-            </Panel>
+            </Card>
           )}
         </div>
       )}

@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { Panel, Badge, Button } from "@/components/bpm";
+import { Badge, Button, Card } from "@/components/bpm";
 import { useI18n } from "@/lib/i18n/LocaleProvider";
 import { STR, CURRENT_USER, type Status, type HistoryEntry } from "../strings";
 
@@ -38,7 +38,7 @@ export default function WorkflowSimulateurPage() {
         </p>
       </div>
 
-      <Panel variant="info" title={s.documentTitle(42)}>
+      <Card variant="outlined" title={s.documentTitle(42)}>
         <div className="flex flex-wrap gap-2 items-center mb-4">
           <span className="text-sm" style={{ color: "var(--bpm-text-secondary)" }}>{s.statusLabel}</span>
           <Badge variant={status === "archivé" ? "default" : status === "validé" ? "primary" : "default"}>
@@ -68,7 +68,7 @@ export default function WorkflowSimulateurPage() {
             </li>
           ))}
         </ul>
-      </Panel>
+      </Card>
 
       <p className="mt-6 text-sm" style={{ color: "var(--bpm-text-secondary)" }}>
         <Link href="/modules/workflow" className="font-medium underline" style={{ color: "var(--bpm-accent-cyan)" }}>{s.backToModule}</Link>

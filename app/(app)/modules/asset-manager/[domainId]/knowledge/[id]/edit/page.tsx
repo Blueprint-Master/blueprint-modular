@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import { useParams, useRouter } from "next/navigation";
-import { Panel, Button, Spinner, Input, Selectbox } from "@/components/bpm";
+import { Button, Card, Input, Selectbox, Spinner } from "@/components/bpm";
 import { useI18n } from "@/lib/i18n/LocaleProvider";
 import { STR } from "../../../../strings";
 
@@ -90,7 +90,7 @@ export default function AssetManagerKnowledgeEditPage() {
         <h1 className="text-2xl font-bold" style={{ color: "var(--bpm-text-primary)" }}>{tk.editArticleHeading}</h1>
       </div>
 
-      <Panel variant="info" title={tk.editPanelTitle}>
+      <Card variant="outlined" title={tk.editPanelTitle}>
         <form onSubmit={handleSubmit} className="space-y-4">
           <Input label={tk.fieldTitleRequired} value={title} onChange={setTitle} required />
           <div>
@@ -130,7 +130,7 @@ export default function AssetManagerKnowledgeEditPage() {
             </Link>
           </div>
         </form>
-      </Panel>
+      </Card>
 
       <nav className="doc-pagination mt-8 flex flex-wrap gap-4">
         <Link href={`/modules/asset-manager/${domainId}/knowledge/${id}`} style={{ color: "var(--bpm-accent-cyan)" }}>← {tk.backToArticle}</Link>

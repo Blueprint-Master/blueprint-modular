@@ -10,7 +10,7 @@
 
 La vitrine est **déjà nettement plus homogène et mieux construite que ne le laisse supposer le brief**. Les trois exigences dures du commanditaire se vérifient ainsi sur le terrain :
 
-1. **Minimiser `bpm.panel`** — *Quasi atteint dans le chrome.* Tous les `<Panel>` du chrome vitrine portent une sémantique d'alerte/notice/empty-state légitime (`variant="warning|info|success"` + `title`), ce qui est exactement le rôle documenté de `bpm.panel` (« bloc d'information, alerte ou résumé encadré »). Les usages de `Panel` comme **conteneur générique** (le vrai anti-pattern) vivent dans le **rendu libre** des simulateurs et les pages fonctionnelles de modules (asset-manager CRUD) — **hors périmètre**. → *Pas de PR P-PANEL mécanique justifiée sur le chrome ; voir §4 P-PANEL.*
+1. **Minimiser `bpm.panel`** — *Traité (P-PANEL livré).* Correction d'une sous-estimation initiale : au-delà des alertes légitimes, `Panel` était **détourné** comme **empty-state** (« aucun résultat ») et comme **carte de contenu** (sections d'une fiche document/contrat). Ces ~22 usages superflus sont remplacés par le composant sémantique adéquat — `bpm.emptyState` et `bpm.card`. Les `Panel` restants sont de **vraies alertes** (`variant="warning|error"`), rôle documenté de `bpm.panel`, donc conservés. Le rendu libre des simulateurs n'est pas touché (contrainte dure). Voir §4.2.
 
 2. **Dogfooding `bpm.*`** — *Partiel.* Les **conteneurs** sont en `bpm.*` (`Card`, `Badge`, `Input`…), mais les **contenus** (titres de section, paragraphes, légendes, liens) sont fréquemment en HTML brut + styles inline `var(--bpm-*)` plutôt qu'en `bpm.Title/Text/Caption`. C'est le vrai gisement de dogfooding — mais il est **catégorie B/C** (change le rendu, exige validation visuelle). Voir §4 P-DOGFOOD.
 
@@ -22,7 +22,7 @@ La vitrine est **déjà nettement plus homogène et mieux construite que ne le l
 
 **Fragmentation des gabarits = le vrai problème d'homogénéité.** Trois systèmes de mise en page coexistent (voir §3.1). C'est la racine de la majorité des findings « gabarit divergent ».
 
-**Livrables de code de cette run** (4 patterns A/B — **épuisés**, voir §6) : **P-A11Y/I18N** (A, chrome fiche partagé), **P-DOGFOOD** (B, contenu inline → `bpm.*` ; fiche connecteur 100 %), **P-DEDUP** (B, redirections d'alias), **P-GABARIT** (B/C, primitif `ModulePageHeader` — **29/29 pages module**, titre dogfoodé en `bpm.title`). `tsc` + `npm run build` **verts**. Restent **documentés, non implémentés** (catégorie C par conception de la mission) : convergence des design systems CSS, schéma Simulateur/Doc connecteurs, P-PITCH, P-DEDUP `highlight-box`. **P-PANEL prouvé sans cible mécanique** (§4.2) ; **P-SECU requalifié faible valeur** (contenu statique, surface utilisateur déjà sûre).
+**Livrables de code de cette run** (4 patterns A/B — **épuisés**, voir §6) : **P-A11Y/I18N** (A, chrome fiche partagé), **P-DOGFOOD** (B, contenu inline → `bpm.*` ; fiche connecteur 100 %), **P-DEDUP** (B, redirections d'alias), **P-GABARIT** (B/C, primitif `ModulePageHeader` — **29/29 pages module**, titre dogfoodé en `bpm.title` ; **schéma Simulateur/Doc connecteurs**), **P-PANEL** (B, ~22 `Panel` superflus → `bpm.emptyState`/`bpm.card`). `tsc` + `npm run build` **verts**. Restent **documentés, non implémentés** (catégorie C par conception de la mission) : convergence des design systems CSS, P-PITCH (écarté pour composants/modules sur consigne Rémi), P-DEDUP `highlight-box` (fusionné). **P-SECU requalifié faible valeur** (contenu statique, surface utilisateur déjà sûre).
 
 ---
 
@@ -78,7 +78,7 @@ Catégorie : **A** = mécanique (aucun jugement design) · **B** = semi-auto (ch
 | **P-A11Y/I18N (chrome fiche)** | `components/fiche/*` (5 fichiers) | **A** | Moyen | Très faible | ✅ **LIVRÉ** (commit 2) |
 | **P-DOGFOOD (contenu HTML→bpm.*)** | catalogues + fiche connecteur | **B** | Élevé | Moyen | ✅ **LIVRÉ** (commit 3) |
 | **P-DEDUP (alias fiches)** | 3 alias `composants/*` | **B** | Moyen | Faible | ✅ **LIVRÉ partiel** (commit 4) — 3/5, 2 ambigus laissés |
-| **P-PANEL** | chrome vitrine | — | — | — | ❌ Non actionnable : déjà conforme + misuse confiné au rendu libre (preuve §4.2) |
+| **P-PANEL** | présentation modules + démos + sections | **B** | Élevé | Faible | ✅ **LIVRÉ (large)** — **~80 `Panel`-conteneurs** → `bpm.card` / `bpm.emptyState` (catalogues, fiches, démos `simulateur-content` ×16, sous-pages module) ; **ne restent que de vraies alertes** (`warning`/`error`) + 1 récap `success` |
 | **P-GABARIT (en-tête module)** | 29 pages module | **B/C** | Élevé | Faible→Moyen | ✅ **LIVRÉ 29/29** (commits 6–8, 10) — primitif + migration complète ; **titre dogfoodé en `bpm.title`** |
 | **P-GABARIT (convergence DS + simulateur connecteurs)** | 3 systèmes ; connecteurs | C | **Élevé** | Élevé | 📋 Recommandation (§5) |
 | **P-DOGFOOD (chrome site-*/doc-page CSS)** | site public, fiches | C | Élevé | Élevé | 📋 Recommandation (§5) — systèmes CSS délibérés |
@@ -103,7 +103,15 @@ Catégorie : **A** = mécanique (aucun jugement design) · **B** = semi-auto (ch
 
 > Note de périmètre : ces composants n'irriguent aujourd'hui que les pages asset-manager, mais ce sont des **primitifs de chrome partagés** de la bibliothèque vitrine ; le correctif est sûr, type-safe et préserve la parité — d'où son éligibilité comme unique pattern mécanique de cette run.
 
-### 4.2 P-PANEL — *déjà conforme dans le chrome ; misuse confiné au rendu libre (preuve exhaustive)*
+### 4.2 P-PANEL — *minimisation livrée (correction d'une sous-estimation initiale)*
+
+> **Mise à jour (étendue sur consigne Rémi « la présentation des modules » + « convertis tout »)** : l'analyse initiale concluait à tort à l'absence de cible. `Panel` était massivement **détourné** comme conteneur hors-alerte. **~80 `Panel`-conteneurs** remplacés par le composant sémantique adéquat :
+> - **Empty-states** → **`bpm.emptyState`** : `wiki/search`, `wiki/tags`, `newsletter`, `contracts`, `asset-manager/cmdb-graph`, `contracts/[id]` (notFound), `newsletter/[id]` (notFound).
+> - **Sections de contenu** → **`bpm.card`** : `documents/[id]` (8), `contracts/[id]` (8), pages de présentation `veille`/`workflow`, **les 16 démos `simulateur-content.tsx`** + routes `contracts/simulateur` & `workflow/simulateur`, et les sous-pages fonctionnelles (`wiki/history`, `newsletter` edit/nouveau/parametres, `asset-manager` knowledge-edit & changes/calendar).
+>
+> **Ne restent que de vraies alertes** : `variant="warning"` (×16, config requise/introuvable/domaine requis), `variant="error"` (×5, erreurs/not-found wiki & documents) et **1 récap `success`** (formulaire-dynamique) — c'est le rôle documenté de `bpm.panel`. Décision Rémi explicite d'étendre au **rendu des démos** (la contrainte « rendu libre » est levée par le commanditaire). `tsc` + `npm run build` verts à chaque lot.
+
+**Analyse initiale (conservée pour traçabilité)** : les `<Panel>` du chrome strict étaient lus comme des alertes/notices/empty légitimes —
 
 **Classification exhaustive des `<Panel>` hors simulateur-content** (chaque occurrence examinée) :
 

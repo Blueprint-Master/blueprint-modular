@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { Badge, Button, Input, Message, Panel, Tabs, useToast } from "@/components/bpm";
+import { Badge, Button, Card, Input, Message, Tabs, useToast } from "@/components/bpm";
 import { useI18n } from "@/lib/i18n/LocaleProvider";
 import { STR, inlineCode, type AuthJournalEntry, type JournalEventKey } from "./strings";
 
@@ -252,7 +252,7 @@ export default function AuthSimulateur() {
 
   return (
     <div className="space-y-6">
-      <Panel variant="info" title={s.sessionPanelTitle}>
+      <Card variant="outlined" title={s.sessionPanelTitle}>
         {session ? (
           <div className="flex flex-wrap items-center gap-4">
             <span
@@ -284,9 +284,9 @@ export default function AuthSimulateur() {
             {s.noSession}
           </p>
         )}
-      </Panel>
+      </Card>
 
-      <Panel variant="info" title={s.flowsPanelTitle}>
+      <Card variant="outlined" title={s.flowsPanelTitle}>
         <Tabs
           tabs={[
             { label: s.tabLogin, content: loginTab },
@@ -295,15 +295,15 @@ export default function AuthSimulateur() {
           ]}
           defaultTab={0}
         />
-      </Panel>
+      </Card>
 
-      <Panel variant="info" title={s.journalPanelTitle}>
+      <Card variant="outlined" title={s.journalPanelTitle}>
         <ul className="m-0 pl-5 text-sm space-y-1" style={{ color: "var(--bpm-text-secondary)" }}>
           {journal.map((entry, i) => (
             <li key={i}>{renderJournalEntry(entry)}</li>
           ))}
         </ul>
-      </Panel>
+      </Card>
     </div>
   );
 }

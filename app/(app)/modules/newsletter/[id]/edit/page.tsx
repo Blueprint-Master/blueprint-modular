@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import { useParams, useRouter } from "next/navigation";
-import { Button, Panel, Input, Textarea, Spinner } from "@/components/bpm";
+import { Button, Card, Input, Spinner, Textarea } from "@/components/bpm";
 import { useI18n } from "@/lib/i18n/LocaleProvider";
 import { STR } from "../../strings";
 
@@ -106,7 +106,7 @@ export default function NewsletterEditPage() {
         </h1>
       </div>
 
-      <Panel variant="info" title={str.editPanelTitle}>
+      <Card variant="outlined" title={str.editPanelTitle}>
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
             <label className="block text-sm font-medium mb-1" style={{ color: "var(--bpm-text-primary)" }}>
@@ -183,7 +183,7 @@ export default function NewsletterEditPage() {
             </Link>
           </div>
         </form>
-      </Panel>
+      </Card>
 
       <nav className="doc-pagination mt-8">
         <Link href="/modules/newsletter" style={{ color: "var(--bpm-accent-cyan)" }}>

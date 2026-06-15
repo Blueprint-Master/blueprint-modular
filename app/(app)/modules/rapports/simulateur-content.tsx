@@ -1,19 +1,7 @@
 "use client";
 
 import { useMemo, useState, type ReactNode } from "react";
-import {
-  Badge,
-  BarChart,
-  Button,
-  ConfirmModal,
-  LineChart,
-  Metric,
-  MetricRow,
-  Panel,
-  Selectbox,
-  Table,
-  useToast,
-} from "@/components/bpm";
+import { Badge, BarChart, Button, Card, ConfirmModal, LineChart, Metric, MetricRow, Selectbox, Table, useToast } from "@/components/bpm";
 import { useI18n } from "@/lib/i18n/LocaleProvider";
 import type { Locale } from "@/lib/i18n";
 import { STR, type ModeleId, type ModuleStrings, type PeriodeId, type ServiceKey } from "./strings";
@@ -514,7 +502,7 @@ export default function RapportsSimulateur() {
         <Metric label={s.metricLastGenerated} value={derniereGeneration} />
       </MetricRow>
 
-      <Panel variant="info" title={s.panelGenerate}>
+      <Card variant="outlined" title={s.panelGenerate}>
         <div className="grid gap-3 md:grid-cols-2">
           <Selectbox
             label={s.labelTemplate}
@@ -539,10 +527,10 @@ export default function RapportsSimulateur() {
         <Button className="mt-4" onClick={handleGenerate}>
           {s.buttonGenerate}
         </Button>
-      </Panel>
+      </Card>
 
       {view && apercu && (
-        <Panel variant="info" title={`${s.previewTitle} — ${view.titre}`}>
+        <Card variant="outlined" title={`${s.previewTitle} — ${view.titre}`}>
           <p className="mb-4 text-sm" style={{ color: "var(--bpm-text-secondary)" }}>
             {s.previewMeta(
               fmtIso(apercu.genereLe, locale),
@@ -557,10 +545,10 @@ export default function RapportsSimulateur() {
           </MetricRow>
           {view.chart && <div className="my-4">{view.chart}</div>}
           <Table columns={view.columns} data={view.rows} striped hover />
-        </Panel>
+        </Card>
       )}
 
-      <Panel variant="info" title={s.panelHistory}>
+      <Card variant="outlined" title={s.panelHistory}>
         {reports.length > 0 ? (
           <Table columns={reportColumns} data={reportRows as unknown as Record<string, unknown>[]} striped hover />
         ) : (
@@ -568,7 +556,7 @@ export default function RapportsSimulateur() {
             {s.emptyHistory}
           </p>
         )}
-      </Panel>
+      </Card>
 
       <ConfirmModal
         isOpen={toDelete !== null}

@@ -1,19 +1,7 @@
 "use client";
 
 import { useMemo, useState } from "react";
-import {
-  Badge,
-  Button,
-  ConfirmModal,
-  Input,
-  Metric,
-  MetricRow,
-  Modal,
-  Panel,
-  Selectbox,
-  Table,
-  useToast,
-} from "@/components/bpm";
+import { Badge, Button, Card, ConfirmModal, Input, Metric, MetricRow, Modal, Selectbox, Table, useToast } from "@/components/bpm";
 import { useI18n } from "@/lib/i18n/LocaleProvider";
 import { STR, type Priorite, type Statut } from "./strings";
 
@@ -456,7 +444,7 @@ export default function TachesSimulateur() {
         <Metric label={s.overdue} value={String(metriques.enRetard)} />
       </MetricRow>
 
-      <Panel variant="info" title={s.sim.panelTitle(s.formatDate(AUJOURDHUI))}>
+      <Card variant="outlined" title={s.sim.panelTitle(s.formatDate(AUJOURDHUI))}>
         <div className="mb-4 flex flex-wrap items-end gap-3">
           <div className="flex flex-wrap gap-2">
             {statutsBoutons.map((b) => (
@@ -500,7 +488,7 @@ export default function TachesSimulateur() {
             {s.sim.emptyState}
           </p>
         )}
-      </Panel>
+      </Card>
 
       {modalOuverte && (
         <Modal

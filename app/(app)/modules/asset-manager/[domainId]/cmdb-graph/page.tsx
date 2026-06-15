@@ -3,7 +3,7 @@
 import { useState, useEffect, useMemo, useRef, useCallback } from "react";
 import Link from "next/link";
 import { useParams, useRouter } from "next/navigation";
-import { Panel, Spinner, Button } from "@/components/bpm";
+import { Panel, EmptyState, Spinner, Button } from "@/components/bpm";
 import { useI18n } from "@/lib/i18n/LocaleProvider";
 import { STR } from "../../strings";
 
@@ -234,9 +234,7 @@ export default function AssetManagerCmdbGraphPage() {
           <Spinner size="medium" />
         </div>
       ) : nodes.length === 0 ? (
-        <Panel variant="info" title={tc.emptyTitle}>
-          {tc.emptyDescription}
-        </Panel>
+        <EmptyState title={tc.emptyTitle} description={tc.emptyDescription} />
       ) : (
         <div
           className="rounded-xl border overflow-hidden"

@@ -1,23 +1,7 @@
 "use client";
 
 import { useMemo, useState } from "react";
-import {
-  Avatar,
-  Badge,
-  type BadgeVariant,
-  Button,
-  Chip,
-  Drawer,
-  Input,
-  JsonViewer,
-  Metric,
-  MetricRow,
-  Pagination,
-  Panel,
-  Selectbox,
-  Table,
-  useToast,
-} from "@/components/bpm";
+import { Avatar, Badge, Button, Card, Chip, Drawer, Input, JsonViewer, Metric, MetricRow, Pagination, Selectbox, Table, type BadgeVariant, useToast } from "@/components/bpm";
 import { useI18n } from "@/lib/i18n/LocaleProvider";
 import type { Locale } from "@/lib/i18n";
 import { getAuditLogStrings } from "./strings";
@@ -376,7 +360,7 @@ export default function AuditLogSimulateur() {
         <Metric label={s.sim.metricDeletions} value={String(STATS.suppressions)} />
       </MetricRow>
 
-      <Panel variant="info" title={s.sim.filtersTitle}>
+      <Card variant="outlined" title={s.sim.filtersTitle}>
         <div className="grid gap-3 md:grid-cols-4">
           <Input
             label={s.sim.searchLabel}
@@ -466,9 +450,9 @@ export default function AuditLogSimulateur() {
             </Button>
           </div>
         )}
-      </Panel>
+      </Card>
 
-      <Panel variant="info" title={s.sim.eventLogTitle}>
+      <Card variant="outlined" title={s.sim.eventLogTitle}>
         <div className="mb-3 flex flex-wrap items-center justify-between gap-2">
           <span className="text-sm" style={{ color: "var(--bpm-text-secondary)" }}>
             {s.sim.counter(filtered.length, EVENTS.length)}
@@ -497,7 +481,7 @@ export default function AuditLogSimulateur() {
             />
           </div>
         )}
-      </Panel>
+      </Card>
 
       <Drawer
         open={selected !== null}

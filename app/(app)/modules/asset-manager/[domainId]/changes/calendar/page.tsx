@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import { useParams } from "next/navigation";
-import { Panel, Spinner, Button } from "@/components/bpm";
+import { Button, Card, Panel, Spinner } from "@/components/bpm";
 import { useI18n } from "@/lib/i18n/LocaleProvider";
 import { STR, dateLocale } from "../../../strings";
 
@@ -112,7 +112,7 @@ export default function AssetManagerChangesCalendarPage() {
           <Spinner size="medium" />
         </div>
       ) : (
-        <Panel variant="info" title={tch.monthlyView}>
+        <Card variant="outlined" title={tch.monthlyView}>
           <div className="grid grid-cols-7 gap-px rounded-lg overflow-hidden calendar-month-grid" style={{ background: "var(--bpm-border)" }}>
             {weekdayNames.map((day) => (
               <div
@@ -160,7 +160,7 @@ export default function AssetManagerChangesCalendarPage() {
               );
             })}
           </div>
-        </Panel>
+        </Card>
       )}
 
       <nav className="doc-pagination mt-8 flex flex-wrap gap-4">
