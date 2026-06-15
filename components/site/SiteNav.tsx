@@ -12,6 +12,7 @@ import { LOCALES } from "@/lib/i18n";
 // produit (Présentation) puis ses points d'entrée documentaires.
 const LINKS = [
   { href: "/presentation", key: "presentation" as const },
+  { href: "/manifeste", key: "manifeste" as const },
   { href: "/mcp", key: "mcp" as const },
   { href: "/resources", key: "resources" as const },
   { href: "/docs", key: "docs" as const },

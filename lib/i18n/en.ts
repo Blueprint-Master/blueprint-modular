@@ -14,6 +14,7 @@ const en: Dictionary = {
   },
   nav: {
     presentation: "Overview",
+    manifeste: "Manifesto",
     gallery: "Components",
     modules: "Modules",
     mcp: "MCP",
@@ -291,6 +292,46 @@ const en: Dictionary = {
         },
       },
     },
+  },
+  manifestePage: {
+    metaTitle: "Manifesto — Blueprint Modular",
+    metaDescription:
+      "The Blueprint Modular manifesto: business interfaces are composed from semantic bricks, without HTML or JavaScript. We are naming a category — composable business software.",
+    eyebrow: "The Manifesto",
+    title: "Business interfaces are composed. They are not coded.",
+    lead:
+      "Blueprint Modular is a conviction before it is a package: business software deserves to be assembled from bricks that carry meaning — not rewritten tag by tag on every project.",
+    intro:
+      "For twenty years, the same screens have been rebuilt from scratch. A table, a form, a record, a dashboard. The same intentions, rewritten every time — in HTML, JavaScript and CSS — by teams that wanted to speak the language of their business and ended up speaking the language of markup. We believe that era is ending.",
+    sections: [
+      {
+        h: "An interface is a composition of meaning",
+        p: "A business screen is not a stack of tags. It is a sequence of intentions: show a metric, compare two periods, validate a step, raise an alert on a threshold. Blueprint Modular names those intentions and gives each one a brick. You describe what the screen means; the brick knows how to render it.",
+      },
+      {
+        h: "Semantic bricks, not graphical components",
+        p: "Every brick carries a role, not just an appearance. It knows its intent, its place and how it behaves — not only its color. That layer of meaning is what makes a catalog readable by a busy human and by a machine alike. It is what lets an agent compose an interface without ever touching HTML.",
+      },
+      {
+        h: "No HTML, no JavaScript",
+        p: "The business logic is written in Python or React; the brick takes care of the rest. No tag to close, no CSS to tame, no framework to chase. The contract is clear: you describe the intent, the brick guarantees the rendering, the accessibility and the consistency. Every time.",
+      },
+      {
+        h: "Modular all the way down",
+        p: "A brick stands on its own, combines with the others and can be replaced without breaking everything. Components, business modules, connectors: a system where every piece has a clean boundary and a single responsibility. Modularity is not an architectural option — it is the founding principle.",
+      },
+      {
+        h: "Open, readable, verifiable",
+        p: "The package is open-source. The catalog is public and queryable — by you, by your team, by your agents — with no account and no authentication. A system's legitimacy is measured by what it agrees to show. We show everything.",
+      },
+      {
+        h: "We are naming a category",
+        p: "What we are building has a name: composable business software. Not one more theme, not one more component library — a way of building interfaces where meaning comes before markup. Blueprint Modular is the first blueprint of this category. Others will follow; the standard starts here.",
+      },
+    ],
+    signature: "Describe the intent. The brick does the rest.",
+    ctaPrimary: "Get started",
+    ctaSecondary: "Explore the components",
   },
   changelogPage: {
     title: "Changelog",
