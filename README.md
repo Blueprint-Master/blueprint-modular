@@ -1,6 +1,8 @@
 # Blueprint Modular
 
-> Un instrument ne se contente pas d'afficher une valeur — il porte un jugement.
+> Le composant porte l'intelligence ; le monde l'élargit.
+>
+> — Manifeste Blueprint, Principe Six
 
 ![Blueprint Modular](public/Logo-BPM-nom.jpg)
 
@@ -9,10 +11,6 @@
   Quand une vraie capture de /components sera exportée (public/ ou docs/),
   remplacer l'image ci-dessus (ou décommenter la ligne ci-dessous). Ne pas
   inventer d'image.
-  TODO(manifeste) : la phrase de catégorie ci-dessus reflète la primitive
-  `interpret` (components/bpm/interpret.ts). Lui substituer la citation
-  verbatim du Manifeste (repo `memory`, MANIFESTE_Blueprint.md) dès qu'une
-  source publique est disponible.
 -->
 <!-- ![Showcase Blueprint Modular](docs/showcase.png) -->
 
