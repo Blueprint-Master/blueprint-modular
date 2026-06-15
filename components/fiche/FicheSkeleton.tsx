@@ -2,6 +2,7 @@
 
 import React from "react";
 import { Card, Divider, Skeleton } from "@/components/bpm";
+import { useI18n } from "@/lib/i18n/LocaleProvider";
 
 export interface FicheSkeletonProps {
   /** Nombre de cartes de section (défaut 3). */
@@ -46,8 +47,9 @@ export function FicheSkeleton({
   singleSection = false,
   className = "",
 }: FicheSkeletonProps) {
+  const { dict } = useI18n();
   return (
-    <div className={`doc-page ${className}`.trim()} role="status" aria-busy="true" aria-live="polite" aria-label="Chargement de la fiche">
+    <div className={`doc-page ${className}`.trim()} role="status" aria-busy="true" aria-live="polite" aria-label={dict.fiche.loadingAria}>
       <Card variant="elevated">
         <div className="bpm-card-body p-4">
           <Skeleton variant="text" width="75%" height={14} className="mb-2" />

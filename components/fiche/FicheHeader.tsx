@@ -2,6 +2,7 @@
 
 import React from "react";
 import { Card, Divider, Title } from "@/components/bpm";
+import { useI18n } from "@/lib/i18n/LocaleProvider";
 
 export interface FicheHeaderProps {
   breadcrumb: React.ReactNode;
@@ -12,10 +13,11 @@ export interface FicheHeaderProps {
 }
 
 export function FicheHeader({ breadcrumb, title, subtitle, className = "" }: FicheHeaderProps) {
+  const { dict } = useI18n();
   return (
     <>
       <Card variant="outlined" className={className}>
-        <nav className="doc-breadcrumb mb-2" aria-label="Fil d'Ariane">
+        <nav className="doc-breadcrumb mb-2" aria-label={dict.fiche.breadcrumbAria}>
           {breadcrumb}
         </nav>
         <Title level={1}>{title}</Title>

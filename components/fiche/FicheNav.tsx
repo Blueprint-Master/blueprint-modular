@@ -3,6 +3,7 @@
 import React from "react";
 import Link from "next/link";
 import { Button } from "@/components/bpm";
+import { useI18n } from "@/lib/i18n/LocaleProvider";
 
 export interface FicheNavLink {
   href: string;
@@ -20,8 +21,9 @@ export interface FicheNavProps {
 }
 
 export function FicheNav({ backLink, backLabel, secondaryLinks = [], className = "" }: FicheNavProps) {
+  const { dict } = useI18n();
   return (
-    <nav className={`doc-pagination mt-8 flex flex-wrap gap-3 ${className}`.trim()} aria-label="Navigation de fin de page">
+    <nav className={`doc-pagination mt-8 flex flex-wrap gap-3 ${className}`.trim()} aria-label={dict.fiche.endNavAria}>
       <Link href={backLink} className="fiche-nav-back-link">
         <Button variant="outline" size="medium">
           {backLabel}

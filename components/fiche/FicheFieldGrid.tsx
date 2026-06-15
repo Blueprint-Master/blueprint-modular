@@ -2,6 +2,7 @@
 
 import React from "react";
 import { Caption, Text, Badge, Divider } from "@/components/bpm";
+import { useI18n } from "@/lib/i18n/LocaleProvider";
 
 export interface FicheFieldItem {
   label: string;
@@ -19,9 +20,9 @@ export interface FicheFieldGridProps {
   className?: string;
 }
 
-function formatValue(value: React.ReactNode): React.ReactNode {
+function formatValue(value: React.ReactNode, notSetLabel: string): React.ReactNode {
   if (value === null || value === undefined || value === "") {
-    return <Caption className="italic">Non défini</Caption>;
+    return <Caption className="italic">{notSetLabel}</Caption>;
   }
   return value;
 }
@@ -32,15 +33,17 @@ export function FicheFieldGrid({
   withDividers = true,
   className = "",
 }: FicheFieldGridProps) {
+  const { dict } = useI18n();
+  const notSetLabel = dict.fiche.notSet;
   return (
     <dl
       className={`grid gap-x-4 gap-y-2 text-sm ${columns === 2 ? "grid-cols-1 md:grid-cols-2" : "grid-cols-1"} ${className}`.trim()}
     >
       {items.map((item, index) => {
         const valueContent = item.asBadge ? (
-          <Badge variant={item.badgeVariant ?? "default"}>{formatValue(item.value) as React.ReactNode}</Badge>
+          <Badge variant={item.badgeVariant ?? "default"}>{formatValue(item.value, notSetLabel) as React.ReactNode}</Badge>
         ) : (
-          <Text>{formatValue(item.value)}</Text>
+          <Text>{formatValue(item.value, notSetLabel)}</Text>
         );
         return (
           <React.Fragment key={index}>

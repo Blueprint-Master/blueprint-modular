@@ -673,6 +673,12 @@ const fr = {
       ],
     },
   },
+  fiche: {
+    breadcrumbAria: "Fil d'Ariane",
+    endNavAria: "Navigation de fin de page",
+    loadingAria: "Chargement de la fiche",
+    notSet: "Non défini",
+  },
 };
 
 export default fr;

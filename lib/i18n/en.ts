@@ -673,6 +673,12 @@ const en: Dictionary = {
       ],
     },
   },
+  fiche: {
+    breadcrumbAria: "Breadcrumb",
+    endNavAria: "End of page navigation",
+    loadingAria: "Loading card",
+    notSet: "Not set",
+  },
 };
 
 export default en;
