@@ -965,9 +965,24 @@ textarea.bpm-textarea:focus {
 .doc-breadcrumb-header { margin-bottom: 0; }
 .doc-breadcrumb a { color: var(--bpm-color-link); text-decoration: none; }
 .doc-breadcrumb a:hover { text-decoration: underline; color: var(--bpm-color-link-hover); }
-/* Breadcrumb affiché dans le header ; masquer le doublon dans le contenu */
-.app-main .doc-page-header .doc-breadcrumb { display: none; }
+/* Gabarit d'en-tête unifié sur les fiches Connecteurs : le fil d'Ariane des
+   pages module/composant s'affiche en « eyebrow » (mono, capitales, cyan), et
+   le titre adopte la même taille que les fiches connecteur (1.25rem / 600).
+   asset-manager (shell fonctionnel dédié) conserve son propre traitement. */
+.app-main .doc-page-header .doc-breadcrumb {
+  display: block;
+  font-family: var(--site-font-mono);
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--site-cyan-deep);
+  margin-bottom: 14px;
+}
+.app-main .doc-page-header .doc-breadcrumb a { color: var(--site-cyan-deep); }
+.asset-manager-page .doc-page-header .doc-breadcrumb { display: none; }
 .doc-page-header h1 { font-size: 1.75rem; font-weight: 700; color: var(--bpm-text-primary); margin: 0 0 8px; }
+.app-main .doc-page-header h1 { font-size: 1.25rem; font-weight: 600; }
 .doc-description {
   color: var(--bpm-text-secondary);
   margin: 0 0 12px;
