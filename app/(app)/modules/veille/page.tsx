@@ -16,6 +16,7 @@ import {
   ActivityFeed,
   AnomalyAlert,
 } from "@/components/bpm";
+import { ModulePageHeader } from "@/components/site/ModulePageHeader";
 import { useI18n } from "@/lib/i18n/LocaleProvider";
 import {
   STR,
@@ -226,21 +227,14 @@ export default function VeilleModulePage() {
   const s = STR[locale];
   return (
     <div className="doc-page">
-      <div className="doc-page-header">
-        <div className="doc-breadcrumb">
-          <Link href="/modules">{s.breadcrumbModules}</Link> → {s.moduleName}
-        </div>
-        <h1>{s.moduleName}</h1>
-        <p className="doc-description">{s.moduleDescription}</p>
-        <div className="doc-meta">
-          <span className="doc-badge doc-badge-category">{s.categoryBadge}</span>
-        </div>
-        <p className="mt-3 text-sm" style={{ color: "var(--bpm-text-secondary)" }}>
-          <Link href="/modules/veille/documentation" className="font-medium underline" style={{ color: "var(--bpm-accent-cyan)" }}>
-            {s.openDocumentation}
-          </Link>
-        </p>
-      </div>
+      <ModulePageHeader
+        modulesLabel={s.breadcrumbModules}
+        breadcrumbCurrent={s.moduleName}
+        title={s.moduleName}
+        description={s.moduleDescription}
+        category={s.categoryBadge}
+        links={[{ href: "/modules/veille/documentation", label: s.openDocumentation }]}
+      />
       <Tabs
         tabs={[
           { label: s.tabDocumentation, content: <DocTab /> },

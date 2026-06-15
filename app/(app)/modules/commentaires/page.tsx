@@ -1,7 +1,7 @@
 "use client";
 
-import Link from "next/link";
 import { Tabs, CodeBlock } from "@/components/bpm";
+import { ModulePageHeader } from "@/components/site/ModulePageHeader";
 import { useI18n } from "@/lib/i18n/LocaleProvider";
 import { STR } from "./strings";
 
@@ -62,15 +62,13 @@ export default function CommentairesModulePage() {
   const t = STR[locale];
   return (
     <div className="doc-page">
-      <div className="doc-page-header">
-        <div className="doc-breadcrumb"><Link href="/modules">Modules</Link> → {t.breadcrumbComments}</div>
-        <h1>{t.title}</h1>
-        <p className="doc-description">{t.description}</p>
-        <div className="doc-meta"><span className="doc-badge doc-badge-category">{t.category}</span></div>
-        <p className="mt-3 text-sm" style={{ color: "var(--bpm-text-secondary)" }}>
-          <Link href="/modules/commentaires/simulateur" className="font-medium underline" style={{ color: "var(--bpm-accent-cyan)" }}>{t.openSimulator}</Link>
-        </p>
-      </div>
+      <ModulePageHeader
+        breadcrumbCurrent={t.breadcrumbComments}
+        title={t.title}
+        description={t.description}
+        category={t.category}
+        links={[{ href: "/modules/commentaires/simulateur", label: t.openSimulator }]}
+      />
       <Tabs tabs={[{ label: t.tabDocumentation, content: <DocContent /> }, { label: t.tabSimulator, content: <SimuContent /> }]} defaultTab={0} />
     </div>
   );

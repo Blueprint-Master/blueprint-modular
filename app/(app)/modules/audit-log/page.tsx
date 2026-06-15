@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { CodeBlock, Tabs } from "@/components/bpm";
+import { ModulePageHeader } from "@/components/site/ModulePageHeader";
 import { useI18n } from "@/lib/i18n/LocaleProvider";
 import type { Locale } from "@/lib/i18n";
 import AuditLogSimulateur from "./simulateur-content";
@@ -130,25 +131,13 @@ export default function AuditLogModulePage() {
   const s = getAuditLogStrings(locale);
   return (
     <div className="doc-page">
-      <div className="doc-page-header">
-        <div className="doc-breadcrumb">
-          <Link href="/modules">Modules</Link> → {s.modulePage.breadcrumbCurrent}
-        </div>
-        <h1>{s.modulePage.title}</h1>
-        <p className="doc-description">{s.modulePage.description}</p>
-        <div className="doc-meta">
-          <span className="doc-badge doc-badge-category">{s.modulePage.category}</span>
-        </div>
-        <p className="mt-3 text-sm" style={{ color: "var(--bpm-text-secondary)" }}>
-          <Link
-            href="/modules/audit-log/simulateur"
-            className="font-medium underline"
-            style={{ color: "var(--bpm-accent-cyan)" }}
-          >
-            {s.modulePage.openSimulator}
-          </Link>
-        </p>
-      </div>
+      <ModulePageHeader
+        breadcrumbCurrent={s.modulePage.breadcrumbCurrent}
+        title={s.modulePage.title}
+        description={s.modulePage.description}
+        category={s.modulePage.category}
+        links={[{ href: "/modules/audit-log/simulateur", label: s.modulePage.openSimulator }]}
+      />
       <Tabs
         tabs={[
           { label: s.modulePage.tabDocumentation, content: <DocContent locale={locale} /> },

@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { Badge, Card } from "@/components/bpm";
+import { Badge, Card, Caption, Text } from "@/components/bpm";
 import { useI18n } from "@/lib/i18n/LocaleProvider";
 import { CONNECTORS, presentCategories } from "@/lib/connectors/catalog";
 import type { AuthMethod } from "@/lib/connectors/types";
@@ -49,25 +49,10 @@ export function ConnecteursListContent() {
                       </Badge>
                       <Badge variant="default">{S.category[c.category]}</Badge>
                     </div>
-                    <p
-                      style={{
-                        margin: 0,
-                        fontSize: 14,
-                        lineHeight: 1.6,
-                        color: "var(--bpm-text-secondary)",
-                      }}
-                    >
-                      {c.description[locale]}
-                    </p>
-                    <span
-                      style={{
-                        fontSize: 13,
-                        fontWeight: 600,
-                        color: "var(--bpm-accent-cyan)",
-                      }}
-                    >
+                    <Caption style={{ lineHeight: 1.6 }}>{c.description[locale]}</Caption>
+                    <Text style={{ fontSize: 13, fontWeight: 600, color: "var(--bpm-accent-cyan)" }}>
                       {S.viewConnector} →
-                    </span>
+                    </Text>
                   </div>
                 </Card>
               </Link>

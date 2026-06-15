@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { CodeBlock, Tabs } from "@/components/bpm";
+import { ModulePageHeader } from "@/components/site/ModulePageHeader";
 import { useI18n } from "@/lib/i18n/LocaleProvider";
 import TachesSimulateur from "./simulateur-content";
 import { STR } from "./strings";
@@ -84,25 +85,13 @@ export default function TachesModulePage() {
 
   return (
     <div className="doc-page">
-      <div className="doc-page-header">
-        <div className="doc-breadcrumb">
-          <Link href="/modules">Modules</Link> → {s.breadcrumb.tasks}
-        </div>
-        <h1>{s.page.title}</h1>
-        <p className="doc-description">{s.page.description}</p>
-        <div className="doc-meta">
-          <span className="doc-badge doc-badge-category">{s.page.category}</span>
-        </div>
-        <p className="mt-3 text-sm" style={{ color: "var(--bpm-text-secondary)" }}>
-          <Link
-            href="/modules/taches/simulateur"
-            className="font-medium underline"
-            style={{ color: "var(--bpm-accent-cyan)" }}
-          >
-            {s.page.openSimulator}
-          </Link>
-        </p>
-      </div>
+      <ModulePageHeader
+        breadcrumbCurrent={s.breadcrumb.tasks}
+        title={s.page.title}
+        description={s.page.description}
+        category={s.page.category}
+        links={[{ href: "/modules/taches/simulateur", label: s.page.openSimulator }]}
+      />
       <Tabs
         tabs={[
           { label: s.page.tabDocumentation, content: <DocContent /> },

@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { Panel, Spinner } from "@/components/bpm";
+import { ModulePageHeader } from "@/components/site/ModulePageHeader";
 import { useI18n } from "@/lib/i18n/LocaleProvider";
 import { STR } from "./strings";
 
@@ -33,17 +34,13 @@ export default function AssetManagerPage() {
   if (!noDomain) {
     return (
       <div className="doc-page">
-        <div className="doc-page-header mb-6">
-          <nav className="doc-breadcrumb">
-            <Link href="/modules">{t.common.breadcrumbModules}</Link> → {t.common.moduleTitle}
-          </nav>
-          <h1 className="text-2xl font-bold" style={{ color: "var(--bpm-text-primary)" }}>
-            {t.common.moduleTitle}
-          </h1>
-          <p className="doc-description mt-1" style={{ color: "var(--bpm-text-secondary)" }}>
-            {t.common.loading}
-          </p>
-        </div>
+        <ModulePageHeader
+          className="mb-6"
+          modulesLabel={t.common.breadcrumbModules}
+          breadcrumbCurrent={t.common.moduleTitle}
+          title={t.common.moduleTitle}
+          description={t.common.loading}
+        />
         <div className="flex justify-center py-12">
           <Spinner size="medium" />
         </div>
@@ -53,17 +50,13 @@ export default function AssetManagerPage() {
 
   return (
     <div className="doc-page">
-      <div className="doc-page-header mb-6">
-        <nav className="doc-breadcrumb">
-          <Link href="/modules">{t.common.breadcrumbModules}</Link> → {t.common.moduleTitle}
-        </nav>
-        <h1 className="text-2xl font-bold" style={{ color: "var(--bpm-text-primary)" }}>
-          {t.common.moduleTitle}
-        </h1>
-        <p className="doc-description mt-1" style={{ color: "var(--bpm-text-secondary)" }}>
-          {t.hub.noConfigDescription}
-        </p>
-      </div>
+      <ModulePageHeader
+        className="mb-6"
+        modulesLabel={t.common.breadcrumbModules}
+        breadcrumbCurrent={t.common.moduleTitle}
+        title={t.common.moduleTitle}
+        description={t.hub.noConfigDescription}
+      />
       <Panel variant="warning" title={t.hub.configRequiredTitle}>
         {t.hub.noDomainConfiguredPrefix}<code>lib/asset-manager/config/domain.*.json</code>.
       </Panel>

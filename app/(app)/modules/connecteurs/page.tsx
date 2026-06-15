@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { CodeBlock, Tabs } from "@/components/bpm";
+import { ModulePageHeader } from "@/components/site/ModulePageHeader";
 import { useI18n } from "@/lib/i18n/LocaleProvider";
 import ConnecteursSimulateur from "./simulateur-content";
 import { STR } from "./strings";
@@ -59,25 +60,13 @@ bpm.button("Créer et tester", on_click=creer_et_tester)`}
 
   return (
     <div className="doc-page">
-      <div className="doc-page-header">
-        <div className="doc-breadcrumb">
-          <Link href="/modules">Modules</Link> → {S.pageTitle}
-        </div>
-        <h1>{S.pageTitle}</h1>
-        <p className="doc-description">{S.pageDescription}</p>
-        <div className="doc-meta">
-          <span className="doc-badge doc-badge-category">{S.badgeCategory}</span>
-        </div>
-        <p className="mt-3 text-sm" style={{ color: "var(--bpm-text-secondary)" }}>
-          <Link
-            href="/modules/connecteurs/simulateur"
-            className="font-medium underline"
-            style={{ color: "var(--bpm-accent-cyan)" }}
-          >
-            {S.openSimulator}
-          </Link>
-        </p>
-      </div>
+      <ModulePageHeader
+        breadcrumbCurrent={S.pageTitle}
+        title={S.pageTitle}
+        description={S.pageDescription}
+        category={S.badgeCategory}
+        links={[{ href: "/modules/connecteurs/simulateur", label: S.openSimulator }]}
+      />
       <Tabs
         tabs={[
           { label: S.tabDocumentation, content: docContent },

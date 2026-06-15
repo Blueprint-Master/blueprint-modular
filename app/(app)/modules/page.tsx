@@ -3,7 +3,7 @@
 import React, { useState, useMemo } from "react";
 import Link from "next/link";
 import { Bell, BookMarked, Bot, Calendar, FileText, LayoutDashboard, Link2, Mail, MessageSquare, Monitor, Package, PenTool, Radio, Settings, Shield, StickyNote, Sun, Table2, Webhook } from "lucide-react";
-import { Input, Card } from "@/components/bpm";
+import { Input, Card, Caption } from "@/components/bpm";
 import { CatalogueHero, CatalogueSection } from "@/components/site/CatalogueLayout";
 import { useI18n } from "@/lib/i18n/LocaleProvider";
 import { fmt, type Dictionary } from "@/lib/i18n";
@@ -169,9 +169,7 @@ export default function ModulesPage() {
                   }
                 >
                   <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
-                    <p style={{ margin: 0, fontSize: 14, lineHeight: 1.6, color: "var(--bpm-text-secondary)" }}>
-                      {mod.description}
-                    </p>
+                    <Caption style={{ lineHeight: 1.6 }}>{mod.description}</Caption>
                     <div style={{ display: "flex", flexWrap: "wrap", gap: 12 }}>
                       <Link href={`${mod.href}/documentation`} className="hover:underline" style={{ ...linkStyle, fontSize: 13, fontWeight: 600 }}>
                         {t.documentation}

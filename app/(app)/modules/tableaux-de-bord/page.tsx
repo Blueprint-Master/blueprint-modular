@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { CodeBlock, Tabs } from "@/components/bpm";
+import { ModulePageHeader } from "@/components/site/ModulePageHeader";
 import { useI18n } from "@/lib/i18n/LocaleProvider";
 import TableauxDeBordSimulateur from "./simulateur-content";
 import { STR, type ModuleStrings } from "./strings";
@@ -71,25 +72,14 @@ export default function TableauxDeBordModulePage() {
   const s = STR[locale];
   return (
     <div className="doc-page">
-      <div className="doc-page-header">
-        <div className="doc-breadcrumb">
-          <Link href="/modules">{s.breadcrumbModules}</Link> → {s.moduleTitle}
-        </div>
-        <h1>{s.moduleTitle}</h1>
-        <p className="doc-description">{s.pageDescription}</p>
-        <div className="doc-meta">
-          <span className="doc-badge doc-badge-category">{s.categoryBadge}</span>
-        </div>
-        <p className="mt-3 text-sm" style={{ color: "var(--bpm-text-secondary)" }}>
-          <Link
-            href="/modules/tableaux-de-bord/simulateur"
-            className="font-medium underline"
-            style={{ color: "var(--bpm-accent-cyan)" }}
-          >
-            {s.openSimulator}
-          </Link>
-        </p>
-      </div>
+      <ModulePageHeader
+        modulesLabel={s.breadcrumbModules}
+        breadcrumbCurrent={s.moduleTitle}
+        title={s.moduleTitle}
+        description={s.pageDescription}
+        category={s.categoryBadge}
+        links={[{ href: "/modules/tableaux-de-bord/simulateur", label: s.openSimulator }]}
+      />
       <Tabs
         tabs={[
           { label: s.tabDocumentation, content: <DocContent s={s} /> },

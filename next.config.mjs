@@ -16,6 +16,14 @@ const nextConfig = {
       { source: "/docs/components", destination: "/composants", permanent: true },
       { source: "/docs/components/:slug", destination: "/composants/:slug", permanent: true },
       { source: "/components", destination: "/composants", permanent: true },
+      // Dédoublonnage fiches (P-DEDUP) : alias sans composant distinct ni entrée
+      // au registre → fiche canonique. Les redirects priment sur le routage fichier
+      // (la fiche alias devient inatteignable, sans suppression de fichier).
+      { source: "/composants/altair", destination: "/composants/altairchart", permanent: true },
+      { source: "/composants/plotly", destination: "/composants/plotlychart", permanent: true },
+      { source: "/composants/pdf", destination: "/composants/pdfviewer", permanent: true },
+      // Fusion des deux fiches highlight-box → fiche canonique unique (highlightbox).
+      { source: "/composants/highlight-box", destination: "/composants/highlightbox", permanent: true },
     ];
   },
   experimental: {
