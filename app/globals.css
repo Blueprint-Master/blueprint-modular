@@ -869,7 +869,8 @@ h2, .bpm-h2 {
 .app-main .doc-page {
   max-width: var(--site-max-width);
   margin-inline: auto;
-  padding: 8px 24px 56px;
+  /* Gap supérieur aligné sur le gabarit Connecteurs (.site-section : 56px). */
+  padding: 56px 24px 56px;
 }
 
 /* Documentation servie dans le shell site (top-nav, sans sidebar app) :
