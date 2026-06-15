@@ -54,29 +54,33 @@ export default async function ManifestePage() {
         </div>
       </section>
 
-      {/* CORPS — typographie de lecture (mêmes primitives que les pages légales) */}
+      {/* CORPS — typographie de lecture (mêmes primitives que les pages légales).
+          La gouttière gauche/droite suit le même site-container que la page
+          Présentation ; la colonne de lecture reste étroite mais alignée à gauche. */}
       <section className="site-section">
-        <article className="site-container site-legal">
-          <p className="site-legal-intro">{m.intro}</p>
+        <div className="site-container">
+          <article className="site-legal">
+            <p className="site-legal-intro">{m.intro}</p>
 
-          {m.sections.map((s) => (
-            <div className="site-legal-section" key={s.h}>
-              <h2>{s.h}</h2>
-              <p>{s.p}</p>
+            {m.sections.map((s) => (
+              <div className="site-legal-section" key={s.h}>
+                <h2>{s.h}</h2>
+                <p>{s.p}</p>
+              </div>
+            ))}
+
+            <p className="site-legal-signature">{m.signature}</p>
+
+            <div className="site-hero-actions">
+              <Link href="/docs/getting-started" className="site-cta-primary">
+                {m.ctaPrimary}
+              </Link>
+              <Link href="/composants" className="site-cta-secondary">
+                {m.ctaSecondary}
+              </Link>
             </div>
-          ))}
-
-          <p className="site-legal-signature">{m.signature}</p>
-
-          <div className="site-hero-actions">
-            <Link href="/docs/getting-started" className="site-cta-primary">
-              {m.ctaPrimary}
-            </Link>
-            <Link href="/composants" className="site-cta-secondary">
-              {m.ctaSecondary}
-            </Link>
-          </div>
-        </article>
+          </article>
+        </div>
       </section>
     </>
   );
