@@ -1,18 +1,7 @@
 "use client";
 
 import { useMemo, useRef, useState } from "react";
-import {
-  Badge,
-  Button,
-  ConfirmModal,
-  Input,
-  Metric,
-  MetricRow,
-  Panel,
-  Selectbox,
-  Table,
-  useToast,
-} from "@/components/bpm";
+import { Badge, Button, Card, ConfirmModal, Input, Metric, MetricRow, Selectbox, Table, useToast } from "@/components/bpm";
 import { useI18n } from "@/lib/i18n/LocaleProvider";
 import { STR, type ModuleStrings } from "./strings";
 
@@ -421,11 +410,11 @@ export default function WebhooksSimulateur() {
         <Metric label={S.metricSuccessRate} value={S.fmtRate(stats.taux)} />
       </MetricRow>
 
-      <Panel variant="info" title={S.panelConfigured}>
+      <Card variant="outlined" title={S.panelConfigured}>
         <Table columns={webhookColumns} data={webhooks as unknown as Record<string, unknown>[]} striped hover />
-      </Panel>
+      </Card>
 
-      <Panel variant="info" title={S.panelAdd}>
+      <Card variant="outlined" title={S.panelAdd}>
         <div className="grid gap-3 md:grid-cols-2">
           <Selectbox
             label={S.selectLabel}
@@ -449,11 +438,11 @@ export default function WebhooksSimulateur() {
         <Button className="mt-4" onClick={handleCreate}>
           {S.createButton}
         </Button>
-      </Panel>
+      </Card>
 
-      <Panel variant="info" title={S.panelLog}>
+      <Card variant="outlined" title={S.panelLog}>
         <Table columns={deliveryColumns} data={deliveries as unknown as Record<string, unknown>[]} striped hover />
-      </Panel>
+      </Card>
 
       <ConfirmModal
         isOpen={toDelete !== null}

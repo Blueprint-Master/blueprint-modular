@@ -1,20 +1,7 @@
 "use client";
 
 import { useMemo, useState } from "react";
-import {
-  ActivityFeed,
-  type ActivityItem,
-  Badge,
-  Button,
-  ConfirmModal,
-  Input,
-  Metric,
-  MetricRow,
-  Panel,
-  Selectbox,
-  Table,
-  useToast,
-} from "@/components/bpm";
+import { ActivityFeed, Badge, Button, Card, ConfirmModal, Input, Metric, MetricRow, Selectbox, Table, type ActivityItem, useToast } from "@/components/bpm";
 import { useI18n } from "@/lib/i18n/LocaleProvider";
 import {
   ACTIVITY_ACTIONS,
@@ -434,11 +421,11 @@ export default function ExportPlanifieSimulateur() {
         <Metric label={t.metricUniqueRecipients} value={String(stats.uniques)} />
       </MetricRow>
 
-      <Panel variant="info" title={t.panelScheduled}>
+      <Card variant="outlined" title={t.panelScheduled}>
         <Table columns={columns} data={exports as unknown as Record<string, unknown>[]} striped hover />
-      </Panel>
+      </Card>
 
-      <Panel variant="info" title={t.panelNew}>
+      <Card variant="outlined" title={t.panelNew}>
         <div className="grid gap-3 md:grid-cols-2">
           <Selectbox label={t.fieldReport} options={rapportOptions} value={rapport} onChange={setRapport} placeholder={t.phChooseReport} />
           <Selectbox label={t.fieldFormat} options={FORMAT_OPTIONS} value={format} onChange={setFormat} placeholder={t.phFormat} />
@@ -461,11 +448,11 @@ export default function ExportPlanifieSimulateur() {
         <Button className="mt-4" onClick={handleCreate}>
           {t.btnSchedule}
         </Button>
-      </Panel>
+      </Card>
 
-      <Panel variant="info" title={t.panelRecent}>
+      <Card variant="outlined" title={t.panelRecent}>
         <ActivityFeed activities={activityItems} maxItems={6} compact />
-      </Panel>
+      </Card>
 
       <ConfirmModal
         isOpen={toDelete !== null}

@@ -1,19 +1,7 @@
 "use client";
 
 import { useMemo, useRef, useState } from "react";
-import {
-  Badge,
-  Button,
-  ConfirmModal,
-  Input,
-  Metric,
-  MetricRow,
-  Modal,
-  NumberInput,
-  Panel,
-  Table,
-  useToast,
-} from "@/components/bpm";
+import { Badge, Button, Card, ConfirmModal, Input, Metric, MetricRow, Modal, NumberInput, Table, useToast } from "@/components/bpm";
 import { useI18n } from "@/lib/i18n/LocaleProvider";
 import { STR, NEW_QUOTE_SUBJECT, fmtDate, fmtEUR, lt, pick, todayISO, type L10n } from "./strings";
 
@@ -489,7 +477,7 @@ export default function DevisFacturationSimulateur() {
         <Metric label={S.metricCollected} value={fmt(stats.encaisse)} />
       </MetricRow>
 
-      <Panel variant="info" title={S.quotesPanelTitle}>
+      <Card variant="outlined" title={S.quotesPanelTitle}>
         <div className="mb-3 flex items-center justify-between gap-3 flex-wrap">
           <p className="text-sm m-0" style={{ color: "var(--bpm-text-secondary)" }}>
             {S.listHint}
@@ -505,10 +493,10 @@ export default function DevisFacturationSimulateur() {
           hover
           onRowClick={(row) => handleSelect(String(row.numero))}
         />
-      </Panel>
+      </Card>
 
       {selected && (
-        <Panel variant="info" title={S.editorTitle(selected.numero, pick(selected.objet, locale))}>
+        <Card variant="outlined" title={S.editorTitle(selected.numero, pick(selected.objet, locale))}>
           <div className="flex flex-wrap items-center gap-2 mb-4">
             <Badge variant={STATUT_VARIANT[selected.statut]}>{S.status[selected.statut]}</Badge>
             <span className="text-sm" style={{ color: "var(--bpm-text-secondary)" }}>
@@ -620,7 +608,7 @@ export default function DevisFacturationSimulateur() {
               </p>
             )}
           </div>
-        </Panel>
+        </Card>
       )}
 
       {previewOpen && selected && (

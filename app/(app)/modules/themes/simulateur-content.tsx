@@ -1,18 +1,7 @@
 "use client";
 
 import { useMemo, useState } from "react";
-import {
-  Badge,
-  Button,
-  ColorPicker,
-  ConfirmModal,
-  Input,
-  Metric,
-  MetricRow,
-  Panel,
-  Slider,
-  useToast,
-} from "@/components/bpm";
+import { Badge, Button, Card, ColorPicker, ConfirmModal, Input, Metric, MetricRow, Slider, useToast } from "@/components/bpm";
 import { useI18n } from "@/lib/i18n/LocaleProvider";
 import { STR } from "./strings";
 
@@ -298,7 +287,7 @@ export default function ThemesSimulateur() {
 
       <div className="grid gap-6 lg:grid-cols-2">
         <div className="space-y-6">
-          <Panel variant="info" title={s.panelThemes}>
+          <Card variant="outlined" title={s.panelThemes}>
             <div className="space-y-2">
               {themes.map((theme) => {
                 const actif = theme.id === selectedId;
@@ -361,9 +350,9 @@ export default function ThemesSimulateur() {
                 {s.cannotDeleteDefault}
               </p>
             )}
-          </Panel>
+          </Card>
 
-          <Panel variant="info" title={s.panelCustomize}>
+          <Card variant="outlined" title={s.panelCustomize}>
             <p className="mb-3 text-sm" style={{ color: "var(--bpm-text-secondary)" }}>
               {s.customizeBasePrefix}
               <strong style={{ color: "var(--bpm-text-primary)" }}>{themeName(selected)}</strong>
@@ -421,10 +410,10 @@ export default function ThemesSimulateur() {
                 {nomError}
               </p>
             )}
-          </Panel>
+          </Card>
         </div>
 
-        <Panel variant="info" title={s.panelPreview}>
+        <Card variant="outlined" title={s.panelPreview}>
           <p className="mb-3 text-sm" style={{ color: "var(--bpm-text-secondary)" }}>
             {s.previewIntro}
           </p>
@@ -554,7 +543,7 @@ export default function ThemesSimulateur() {
               </button>
             </div>
           </div>
-        </Panel>
+        </Card>
       </div>
 
       <ConfirmModal

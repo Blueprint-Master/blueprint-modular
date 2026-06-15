@@ -1,21 +1,7 @@
 "use client";
 
 import { useMemo, useState } from "react";
-import {
-  ActivityFeed,
-  type ActivityItem,
-  Badge,
-  Button,
-  ConfirmModal,
-  Input,
-  Metric,
-  MetricRow,
-  Modal,
-  Panel,
-  Selectbox,
-  Table,
-  useToast,
-} from "@/components/bpm";
+import { ActivityFeed, Badge, Button, Card, ConfirmModal, Input, Metric, MetricRow, Modal, Selectbox, Table, type ActivityItem, useToast } from "@/components/bpm";
 import { useI18n } from "@/lib/i18n/LocaleProvider";
 import type { Locale } from "@/lib/i18n";
 import { STR, type LText, type Strings } from "./strings";
@@ -709,7 +695,7 @@ export default function ReferentielsSimulateur() {
         <Metric label={s.metricInactiveEntries} value={String(stats.inactives)} />
       </MetricRow>
 
-      <Panel variant="info" title={s.refPanelTitle(defNom, entries.length)}>
+      <Card variant="outlined" title={s.refPanelTitle(defNom, entries.length)}>
         <div className="grid gap-3 md:grid-cols-3">
           <Selectbox
             label={s.selectorLabel}
@@ -740,9 +726,9 @@ export default function ReferentielsSimulateur() {
             {s.noSearchMatch(search)}
           </p>
         )}
-      </Panel>
+      </Card>
 
-      <Panel variant="info" title={s.addPanelTitle(defNom)}>
+      <Card variant="outlined" title={s.addPanelTitle(defNom)}>
         <div className="grid gap-3 md:grid-cols-2">
           <Input
             label={s.codeFieldLabel(def.codeHint[locale])}
@@ -766,11 +752,11 @@ export default function ReferentielsSimulateur() {
         <Button className="mt-4" onClick={handleAdd}>
           {s.addEntryButton}
         </Button>
-      </Panel>
+      </Card>
 
-      <Panel variant="info" title={s.historyTitle}>
+      <Card variant="outlined" title={s.historyTitle}>
         <ActivityFeed activities={activityItems} maxItems={6} compact />
-      </Panel>
+      </Card>
 
       {editing && (
         <Modal

@@ -1,18 +1,7 @@
 "use client";
 
 import { useMemo, useState } from "react";
-import {
-  Badge,
-  Button,
-  ConfirmModal,
-  Input,
-  Metric,
-  MetricRow,
-  Modal,
-  Panel,
-  Selectbox,
-  useToast,
-} from "@/components/bpm";
+import { Badge, Button, Card, ConfirmModal, Input, Metric, MetricRow, Modal, Selectbox, useToast } from "@/components/bpm";
 import { useI18n } from "@/lib/i18n/LocaleProvider";
 import { STR, type LocalizedText } from "./strings";
 
@@ -269,7 +258,7 @@ export default function ReservationCreneauxSimulateur() {
         <Metric label={s.metricTopRoom} value={stats.topNom} />
       </MetricRow>
 
-      <Panel variant="info" title={s.planningTitle}>
+      <Card variant="outlined" title={s.planningTitle}>
         <div className="mb-4 flex flex-wrap items-end gap-4">
           <div className="min-w-[220px]">
             <Selectbox
@@ -405,9 +394,9 @@ export default function ReservationCreneauxSimulateur() {
             {s.legendMine}
           </span>
         </div>
-      </Panel>
+      </Card>
 
-      <Panel variant="info" title={s.myBookingsTitle}>
+      <Card variant="outlined" title={s.myBookingsTitle}>
         {mesReservations.length === 0 ? (
           <p className="text-sm m-0" style={{ color: "var(--bpm-text-secondary)" }}>
             {s.myBookingsEmpty}
@@ -441,7 +430,7 @@ export default function ReservationCreneauxSimulateur() {
             })}
           </ul>
         )}
-      </Panel>
+      </Card>
 
       {/* Modal de réservation d'un créneau libre */}
       <Modal

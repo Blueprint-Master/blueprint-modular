@@ -1,25 +1,7 @@
 "use client";
 
 import { useMemo, useRef, useState } from "react";
-import {
-  Badge,
-  Barcode,
-  Button,
-  ConfirmModal,
-  Drawer,
-  Input,
-  LabelValue,
-  Metric,
-  MetricRow,
-  Modal,
-  NumberInput,
-  Panel,
-  QRCode,
-  Selectbox,
-  Table,
-  type TableColumn,
-  useToast,
-} from "@/components/bpm";
+import { Badge, Barcode, Button, Card, ConfirmModal, Drawer, Input, LabelValue, Metric, MetricRow, Modal, NumberInput, QRCode, Selectbox, Table, type TableColumn, useToast } from "@/components/bpm";
 import { useI18n } from "@/lib/i18n/LocaleProvider";
 import { STR, type Localized } from "./strings";
 
@@ -527,7 +509,7 @@ export default function CatalogueProduitsSimulateur() {
         <Metric label={T.metricAlerts} value={String(stats.alertes)} />
       </MetricRow>
 
-      <Panel variant="info" title={T.panelTitle}>
+      <Card variant="outlined" title={T.panelTitle}>
         <div className="grid gap-3 md:grid-cols-3">
           <Input
             label={T.searchLabel}
@@ -567,7 +549,7 @@ export default function CatalogueProduitsSimulateur() {
         <div className="mt-4">
           <Button onClick={ouvrirCreation}>{T.btnNewProduct}</Button>
         </div>
-      </Panel>
+      </Card>
 
       <Drawer
         open={ficheProduit !== null}

@@ -13,6 +13,7 @@ import {
   Message,
   Metric,
   MetricRow,
+  Card,
   Panel,
   RadioGroup,
   Selectbox,
@@ -709,7 +710,7 @@ export default function FormulaireDynamiqueSimulateur() {
 
       <div className="grid gap-6 lg:grid-cols-3">
         <div className="space-y-6 lg:col-span-2">
-          <Panel variant="info" title={t.sim.newRequestPanel}>
+          <Card variant="outlined" title={t.sim.newRequestPanel}>
             <Selectbox
               label={t.sim.requestTypeLabel}
               options={typeOptions}
@@ -747,7 +748,7 @@ export default function FormulaireDynamiqueSimulateur() {
                 </Button>
               </>
             )}
-          </Panel>
+          </Card>
 
           {recap && (
             <Panel variant="success" title={t.sim.recapPanelTitle(recap.title)}>
@@ -762,13 +763,13 @@ export default function FormulaireDynamiqueSimulateur() {
             </Panel>
           )}
 
-          <Panel variant="info" title={t.sim.submittedPanel}>
+          <Card variant="outlined" title={t.sim.submittedPanel}>
             <Table columns={columns} data={tableRows as unknown as Record<string, unknown>[]} striped hover />
-          </Panel>
+          </Card>
         </div>
 
         <div className="lg:col-span-1">
-          <Panel variant="info" title={t.sim.schemaPanel}>
+          <Card variant="outlined" title={t.sim.schemaPanel}>
             {schema && localizedSchema ? (
               <>
                 <p className="mb-3 text-sm" style={{ color: "var(--bpm-text-secondary)" }}>
@@ -790,7 +791,7 @@ export default function FormulaireDynamiqueSimulateur() {
                 </ul>
               </Expander>
             </div>
-          </Panel>
+          </Card>
         </div>
       </div>
     </div>
