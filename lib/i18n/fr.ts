@@ -18,6 +18,7 @@ const fr = {
     gallery: "Composants",
     modules: "Modules",
     mcp: "MCP",
+    builtForAI: "Built for AI",
     resources: "Ressources",
     docs: "Documentation",
     gettingStarted: "Démarrage",
@@ -566,6 +567,57 @@ const fr = {
     linksTitle: "Aller plus loin",
     linkCatalog: "Catalogue des composants",
     linkGallery: "Galerie live",
+  },
+  builtForAI: {
+    metaTitle: "Built for AI — Blueprint Modular consommable par les agents",
+    metaDescription:
+      "Blueprint Modular est nativement consommable par les agents IA via MCP. Décrivez un écran en langage naturel, l'outil suggest_composition renvoie des composants bpm.* réels — affichés puis rendus.",
+    eyebrow: "Built for AI",
+    title: "Un design system que les agents savent lire — et composer.",
+    lead:
+      "Quatre outils MCP read-only exposent les {count} composants à n'importe quel agent. Décrivez un écran en langage naturel : suggest_composition le traduit en composants bpm.* réels, vérifiés, puis rendus. Aucun autre design system ne montre ça.",
+    endpointLabel: "Endpoint MCP",
+    ctaTry: "Essayer la démo",
+    ctaMcp: "Détail du connecteur MCP",
+    toolsTitle: "Les quatre outils exposés à un agent",
+    toolsBody:
+      "Read-only, sans authentification. Un agent déclare le serveur MCP distant à l'URL ci-dessus, liste les outils via tools/list, puis les appelle via tools/call.",
+    toolsConnectNote:
+      "Ajoutez l'endpoint comme connecteur MCP distant (Claude : Réglages → Connecteurs) — les quatre outils apparaissent aussitôt.",
+    demoTitle: "Démonstration : du langage naturel aux composants",
+    demoBody:
+      "Décrivez l'écran voulu. La page appelle suggest_composition (la même logique d'outil que le serveur MCP), affiche la réponse brute reçue par un agent, vérifie chaque composant via get_component, puis rend les composants bpm.* correspondants.",
+    demoInputLabel: "Décrivez l'écran à construire",
+    demoPlaceholder: "ex. un dashboard de suivi de commandes",
+    demoSubmit: "Suggérer une composition",
+    demoSubmitting: "Appel de suggest_composition…",
+    presetsLabel: "Exemples :",
+    presets: [
+      "un dashboard de suivi de commandes",
+      "des indicateurs de performance et une jauge",
+      "un tableau de données avec recherche et pagination",
+    ],
+    requestLabel: "Appel de l'outil",
+    responseLabel: "Réponse de l'outil (ce que reçoit l'agent)",
+    compositionTitle: "Composition suggérée",
+    compositionBody: "{count} composants proposés pour : « {need} ».",
+    verifiedLabel: "vérifié via get_component",
+    whyLabel: "Correspond à",
+    renderTitle: "Rendu des composants bpm.*",
+    renderBody:
+      "Les composants suggérés, rendus en direct depuis @blueprint-modular/core. Ceux sans aperçu dédié apparaissent en fiche catalogue vérifiée.",
+    livePreview: "rendu live",
+    catalogOnly: "fiche catalogue",
+    sourceLive: "Source : logique d'outil en direct (lib/mcp/registry).",
+    sourceFallback: "Source : réponse pré-capturée (repli hors-ligne).",
+    fallbackNotice:
+      "Le connecteur live est momentanément indisponible — affichage d'une réponse pré-capturée. La démo reste fidèle à la sortie réelle de l'outil.",
+    errorTitle: "Besoin non interprété",
+    errorBody: "Décrivez l'écran ou la fonctionnalité à construire, puis relancez.",
+    retry: "Réessayer",
+    diffTitle: "Le différenciateur",
+    diffBody:
+      "Un design system documenté pour les humains se consulte. Blueprint Modular se consomme : un agent interroge le catalogue, obtient des composants réels et vérifiés, et compose une interface — sans intervention humaine. Read-only, sans donnée personnelle.",
   },
   resources: {
     metaTitle: "Ressources & guides — Blueprint Modular",
