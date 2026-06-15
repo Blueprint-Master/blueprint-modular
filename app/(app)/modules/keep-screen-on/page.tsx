@@ -3,6 +3,7 @@
 import { useState, useEffect, useRef, useCallback } from "react";
 import Link from "next/link";
 import { Button, Spinner } from "@/components/bpm";
+import { ModulePageHeader } from "@/components/site/ModulePageHeader";
 import { useI18n } from "@/lib/i18n/LocaleProvider";
 import { STR } from "./strings";
 
@@ -134,21 +135,18 @@ export default function KeepScreenOnPage() {
 
   return (
     <div className="doc-page">
-      <div className="doc-page-header mb-6">
-        <nav className="doc-breadcrumb">
-          <Link href="/modules" style={{ color: "var(--bpm-accent-cyan)" }}>{str.breadcrumbModules}</Link> →{" "}
-          <Link href="/modules/keep-screen-on" style={{ color: "var(--bpm-accent-cyan)" }}>{str.moduleName}</Link>
-        </nav>
-        <h1 className="text-2xl font-bold" style={{ color: "var(--bpm-text-primary)" }}>
-          {str.pageTitle}
-        </h1>
-        <p className="doc-description mt-1" style={{ color: "var(--bpm-text-secondary)" }}>
-          {str.pageDescription}
-        </p>
-        <div className="doc-meta mt-2">
-          <span className="doc-badge doc-badge-category">{str.badgeCategory}</span>
-        </div>
-      </div>
+      <ModulePageHeader
+        className="mb-6"
+        breadcrumb={
+          <>
+            <Link href="/modules" style={{ color: "var(--bpm-accent-cyan)" }}>{str.breadcrumbModules}</Link> →{" "}
+            <Link href="/modules/keep-screen-on" style={{ color: "var(--bpm-accent-cyan)" }}>{str.moduleName}</Link>
+          </>
+        }
+        title={str.pageTitle}
+        description={str.pageDescription}
+        category={str.badgeCategory}
+      />
 
       <div
         className="rounded-xl border overflow-hidden"

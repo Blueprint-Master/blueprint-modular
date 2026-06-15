@@ -3,6 +3,7 @@
 import { useSession, signOut } from "next-auth/react";
 import Link from "next/link";
 import Image from "next/image";
+import { ModulePageHeader } from "@/components/site/ModulePageHeader";
 import { useI18n } from "@/lib/i18n/LocaleProvider";
 import { STR, inlineCode } from "./strings";
 
@@ -14,28 +15,20 @@ export default function AuthModulePage() {
   if (status === "loading") {
     return (
       <div className="doc-page">
-        <div className="doc-page-header">
-          <div className="doc-breadcrumb"><Link href="/modules">Modules</Link> → bpm.auth</div>
-          <h1>bpm.auth</h1>
-          <p className="doc-description">{s.loading}</p>
-        </div>
+        <ModulePageHeader breadcrumbCurrent="bpm.auth" title="bpm.auth" description={s.loading} />
       </div>
     );
   }
 
   return (
     <div className="doc-page">
-      <div className="doc-page-header">
-        <div className="doc-breadcrumb"><Link href="/modules">Modules</Link> → bpm.auth</div>
-        <h1>bpm.auth</h1>
-        <p className="doc-description">
-          {s.description}
-        </p>
-        <div className="doc-meta">
-          <span className="doc-badge doc-badge-category">Module</span>
-          <span className="doc-reading-time">⏱ 1 min</span>
-        </div>
-      </div>
+      <ModulePageHeader
+        breadcrumbCurrent="bpm.auth"
+        title="bpm.auth"
+        description={s.description}
+        category="Module"
+        metaExtra={<span className="doc-reading-time">⏱ 1 min</span>}
+      />
 
       <p className="mb-4" style={{ color: "var(--bpm-text-secondary)" }}>
         <Link href="/modules/auth/simulateur" className="font-medium underline" style={{ color: "var(--bpm-accent-cyan)" }}>

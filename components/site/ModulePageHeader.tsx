@@ -1,14 +1,16 @@
 import React from "react";
 import Link from "next/link";
+import { Title } from "@/components/bpm";
 
 /**
  * En-tête commun des pages module (`/modules/<nom>`). Converge le gabarit
- * `doc-page-header` dupliqué dans ~29 pages module en un primitif unique, à
- * markup **identique** (mêmes classes `doc-*`) — aucun changement visuel.
+ * `doc-page-header` dupliqué dans les pages module en un primitif unique.
  *
- * C'est le point d'ancrage unique pour un futur dogfooding du titre vers
- * `bpm.title` (un seul endroit à modifier au lieu de 29). Tokens `--bpm-*` /
- * classes `doc-*` uniquement.
+ * Dogfooding : le titre est rendu via `bpm.title` (et non un `<h1>` brut). Pour
+ * éviter toute régression visuelle, on **réplique fidèlement** la règle CSS
+ * historique `.site-shell .doc-page .doc-page-header h1` (police display, taille
+ * `clamp` responsive, interlettrage). Les classes `doc-*` et tokens `--bpm-*`
+ * restent la source de style pour le reste de l'en-tête.
  */
 export interface ModulePageHeaderLink {
   href: string;
@@ -17,35 +19,72 @@ export interface ModulePageHeaderLink {
 
 export interface ModulePageHeaderProps {
   /** Texte courant du fil d'Ariane, après « Modules → ». */
-  breadcrumbCurrent: React.ReactNode;
+  breadcrumbCurrent?: React.ReactNode;
   /** Libellé du lien racine du fil d'Ariane (défaut « Modules »). */
   modulesLabel?: React.ReactNode;
+  /** Override complet du contenu du fil d'Ariane (cas à plusieurs liens). */
+  breadcrumb?: React.ReactNode;
   title: React.ReactNode;
-  description: React.ReactNode;
+  /** Taille du titre. Défaut : clamp display du shell. */
+  titleSize?: string;
+  /** Styles additionnels fusionnés sur le titre (ex. marge spécifique). */
+  titleStyle?: React.CSSProperties;
+  description?: React.ReactNode;
   /** Badge de catégorie (texte). Optionnel. */
   category?: React.ReactNode;
   /** Contenu additionnel dans la ligne de méta (ex. temps de lecture). Optionnel. */
   metaExtra?: React.ReactNode;
   /** Liens d'accès rapide (Simulateur / Documentation), rendus en accent cyan. */
   links?: ModulePageHeaderLink[];
+  /** id sur le conteneur (ancre, ex. "documentation"). Optionnel. */
+  wrapperId?: string;
+  /** Classes additionnelles sur le conteneur (ex. "mb-6"). Optionnel. */
+  className?: string;
+  /** Styles additionnels sur le conteneur (ex. flexShrink). Optionnel. */
+  wrapperStyle?: React.CSSProperties;
 }
+
+/** Réplique fidèle de `.site-shell .doc-page .doc-page-header h1`. */
+const TITLE_BASE_STYLE: React.CSSProperties = {
+  fontFamily: "var(--site-font-display)",
+  lineHeight: 1.12,
+  letterSpacing: "-0.02em",
+  margin: "0 0 12px",
+};
 
 export function ModulePageHeader({
   breadcrumbCurrent,
   modulesLabel = "Modules",
+  breadcrumb,
   title,
+  titleSize = "clamp(28px, 4vw, 38px)",
+  titleStyle,
   description,
   category,
   metaExtra,
   links = [],
+  wrapperId,
+  className = "",
+  wrapperStyle,
 }: ModulePageHeaderProps) {
   return (
-    <div className="doc-page-header">
+    <div id={wrapperId} className={`doc-page-header ${className}`.trim()} style={wrapperStyle}>
       <div className="doc-breadcrumb">
-        <Link href="/modules">{modulesLabel}</Link> → {breadcrumbCurrent}
+        {breadcrumb ?? (
+          <>
+            <Link href="/modules">{modulesLabel}</Link> → {breadcrumbCurrent}
+          </>
+        )}
       </div>
-      <h1>{title}</h1>
-      <p className="doc-description">{description}</p>
+      <Title
+        level={1}
+        size={titleSize}
+        color="var(--bpm-text-primary)"
+        style={{ ...TITLE_BASE_STYLE, ...titleStyle }}
+      >
+        {title}
+      </Title>
+      {description != null && <p className="doc-description">{description}</p>}
       {(category != null || metaExtra != null) && (
         <div className="doc-meta">
           {category != null && <span className="doc-badge doc-badge-category">{category}</span>}
