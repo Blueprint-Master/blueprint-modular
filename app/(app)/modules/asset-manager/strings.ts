@@ -64,6 +64,9 @@ const fr = {
     noConfigDescription: "Aucune configuration de domaine disponible.",
     configRequiredTitle: "Configuration requise",
     noDomainConfiguredPrefix: "Aucun domaine n'est configuré. Vérifiez les fichiers ",
+    authRequiredTitle: "Connexion requise",
+    authRequiredDescription: "Cette démonstration nécessite une session. Connectez-vous pour accéder à la gestion de parc.",
+    loginCta: "Se connecter",
     configNotFoundTitle: "Configuration introuvable",
     domainNotConfigured: (domainId: string) => (
       `Le domaine "${domainId}" n'existe pas ou n'est pas configuré.`
@@ -275,6 +278,9 @@ const en: typeof fr = {
     noConfigDescription: "No domain configuration available.",
     configRequiredTitle: "Configuration required",
     noDomainConfiguredPrefix: "No domain is configured. Check the ",
+    authRequiredTitle: "Sign-in required",
+    authRequiredDescription: "This demo requires a session. Sign in to access asset management.",
+    loginCta: "Sign in",
     configNotFoundTitle: "Configuration not found",
     domainNotConfigured: (domainId: string) => (
       `Domain "${domainId}" does not exist or is not configured.`
