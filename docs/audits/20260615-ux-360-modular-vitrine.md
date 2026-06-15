@@ -233,14 +233,15 @@ Trois patterns propagés à tous leurs éléments concernés, un **commit atomiq
 
 ## 7. Ce qui reste (prochaines PR suggérées, par levier décroissant)
 
-> **Patterns A/B : épuisés.** Cette run a livré P-A11Y/I18N, P-DOGFOOD (contenu inline + fiche connecteur 100 %), P-DEDUP (3 alias) et P-GABARIT (**29/29 pages** sur `ModulePageHeader`, **titre dogfoodé en `bpm.title`**). `tsc` + `npm run build` verts. Il ne reste que des éléments **catégorie C** (jugement design / création de contenu / arbitrage) que la mission demande de **documenter, non d'implémenter**, plus un B requalifié faible valeur.
+> **Patterns A/B : épuisés.** Cette run a livré P-A11Y/I18N, P-DOGFOOD (contenu inline + fiche connecteur 100 %), P-DEDUP (3 alias), P-GABARIT (**29/29 pages** sur `ModulePageHeader`, titre en `bpm.title`) **et le schéma Simulateur/Documentation des connecteurs** (mission #3 — fiche connecteur en `bpm.Tabs(Documentation | Simulateur)`). `tsc` + `npm run build` verts. Il ne reste que des éléments **catégorie C** que la mission demande de **documenter, non d'implémenter**, plus un B requalifié faible valeur.
 
 1. **P-GABARIT convergence DS** (C) — unifier `doc-page` ↔ `site-*` ↔ `components/fiche/*` en un primitif unique — *gabarit par gabarit, captures avant/après*.
 2. **P-DOGFOOD (design systems CSS)** (C) — migration des classes `doc-page`/`site-*` vers `bpm.*` — démantèle un DS délibéré, décision design.
-3. **P-GABARIT connecteurs** (C) — ajouter le schéma Simulateur + Documentation aux fiches connecteur (création de contenu ; ne pas toucher le contrat Zod ; règle de découpage doc/simulateur à fixer par Rémi).
-4. **P-DEDUP `highlight-box`** (C) — trancher le canonique (l'alias hors registre a *plus* de contenu) avant de rediriger.
-5. **P-SECU `monitor`** (B, **requalifié faible valeur**) — contenu 100 % statique, sans surface d'entrée utilisateur (pas de cible XSS) ; `bpm.markdown` est inerte au HTML → conversion = réécriture de ~14 chaînes HTML (dont `<kbd>`) FR+EN, risque > bénéfice. La surface de rendu de **texte utilisateur** (`wiki/HighlightedText`) évite déjà `dangerouslySetInnerHTML` → P-SECU de fait satisfait.
-6. **P-PITCH** (C, éditorial) — blocs « accroche + cas d'usage + value prop » par composant/module/connecteur.
-7. **Schéma module** (C) — standardiser `simulateur-content.tsx` (16/28) ; statuer sur les 4 modules sans `/simulateur`.
+3. **P-DEDUP `highlight-box`** (C) — trancher le canonique (l'alias hors registre a *plus* de contenu) avant de rediriger.
+4. **P-SECU `monitor`** (B, **requalifié faible valeur**) — contenu 100 % statique, sans surface d'entrée utilisateur (pas de cible XSS) ; `bpm.markdown` est inerte au HTML → conversion = réécriture de ~14 chaînes HTML (dont `<kbd>`) FR+EN, risque > bénéfice. La surface de rendu de **texte utilisateur** (`wiki/HighlightedText`) évite déjà `dangerouslySetInnerHTML` → P-SECU de fait satisfait.
+5. **P-PITCH** (C, éditorial) — blocs « accroche + cas d'usage + value prop » par composant/module/connecteur.
+6. **Schéma module** (C) — standardiser `simulateur-content.tsx` (16/28) ; statuer sur les 4 modules sans `/simulateur`.
+
+> **Note décision (P-GABARIT connecteurs)** : le découpage Documentation/Simulateur retenu est un **défaut réversible** (Documentation = référence auth/OAuth/hôtes/mapping ; Simulateur = démos live de mapping). À confirmer/ajuster par Rémi.
 
 > **Rappel** : harness vert ≠ validé fonctionnellement. Toute PR de catégorie B/C ci-dessus exige une validation visuelle sur rendu déployé avant merge.
