@@ -79,7 +79,7 @@ Catégorie : **A** = mécanique (aucun jugement design) · **B** = semi-auto (ch
 | **P-DOGFOOD (contenu HTML→bpm.*)** | catalogues + fiche connecteur | **B** | Élevé | Moyen | ✅ **LIVRÉ** (commit 3) |
 | **P-DEDUP (alias fiches)** | 3 alias `composants/*` | **B** | Moyen | Faible | ✅ **LIVRÉ partiel** (commit 4) — 3/5, 2 ambigus laissés |
 | **P-PANEL** | chrome vitrine | — | — | — | ❌ Non actionnable : déjà conforme + misuse confiné au rendu libre (preuve §4.2) |
-| **P-GABARIT (en-tête module)** | 29 pages module | **B** | Élevé | Faible (markup identique) | ✅ **LIVRÉ 22/29** (commits 6–7) — primitif + migration ; 7 pages non-standard laissées |
+| **P-GABARIT (en-tête module)** | 29 pages module | **B/C** | Élevé | Faible→Moyen | ✅ **LIVRÉ 27/29** (commits 6–8) — primitif + migration ; **titre dogfoodé en `bpm.title`** ; 2 pages non-standard laissées (wiki, asset-manager) |
 | **P-GABARIT (convergence DS + simulateur connecteurs)** | 3 systèmes ; connecteurs | C | **Élevé** | Élevé | 📋 Recommandation (§5) |
 | **P-DOGFOOD (chrome site-*/doc-page CSS)** | site public, fiches | C | Élevé | Élevé | 📋 Recommandation (§5) — systèmes CSS délibérés |
 | **P-PITCH (mise en avant)** | composants, modules, connecteurs | C | Moyen | — | 📋 Recommandation (§5) |
@@ -231,10 +231,10 @@ Trois patterns propagés à tous leurs éléments concernés, un **commit atomiq
 
 ## 7. Ce qui reste (prochaines PR suggérées, par levier décroissant)
 
-> Cette run a livré P-A11Y/I18N, P-DOGFOOD (contenu inline), P-DEDUP (3 alias) et P-GABARIT (primitif `ModulePageHeader` + **22/29 pages migrées**). Le reste exige un arbitrage Rémi ou une validation visuelle.
+> Cette run a livré P-A11Y/I18N, P-DOGFOOD (contenu inline), P-DEDUP (3 alias) et P-GABARIT (primitif `ModulePageHeader`, **27/29 pages**, **titre dogfoodé en `bpm.title`**). Le reste exige un arbitrage Rémi ou une validation visuelle.
 
-1. **P-GABARIT en-tête module — 7 pages non-standard** : `asset-manager`, `auth`, `ia`, `keep-screen-on`, `monitor`, `newsletter`, `wiki` (h1 stylé custom, ancres `id`, fil d'Ariane à 2 liens, états *loading*). Soit étendre `ModulePageHeader` (props `titleClassName`/`wrapperId`/`breadcrumb` libre), soit migrer à la main — **avec** validation visuelle (markup non identique).
-   *(Puis, une fois toutes migrées : passer le `<h1>` du primitif à `bpm.title` en un seul endroit — petit pas C de dogfooding.)*
+1. **P-GABARIT — 2 pages non-standard restantes** : `wiki` (en-tête masqué par `.wiki-page .doc-page-header { display:none }` + ancre `id` — migration sans gain visuel) et `asset-manager` (hub fonctionnel avec CSS dédiée `.asset-manager-page` + états *loading*/loaded). Décision : laisser tel quel ou migrer **avec** validation visuelle.
+   *(Le `<h1>` est désormais rendu via `bpm.title` dans le primitif — commit 8 ; réplique fidèle de la règle CSS display historique, à confirmer de visu.)*
 2. **P-GABARIT convergence DS** — unifier `doc-page` ↔ `site-*` ↔ `components/fiche/*` (C, fort levier, fort risque) — *gabarit par gabarit, captures avant/après*.
 3. **P-DOGFOOD (suite, design systems CSS)** — migration des classes `doc-page`/`site-*` vers `bpm.*` (C) — *surface par surface* ; démantèle un DS, décision design.
 4. **P-GABARIT connecteurs** — ajouter le schéma Simulateur + Documentation aux fiches connecteur (C, création de contenu ; ne pas toucher le contrat Zod).
