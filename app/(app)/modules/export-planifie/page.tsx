@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { CodeBlock, Tabs } from "@/components/bpm";
+import { ModulePageHeader } from "@/components/site/ModulePageHeader";
 import { useI18n } from "@/lib/i18n/LocaleProvider";
 import ExportPlanifieSimulateur from "./simulateur-content";
 import { STR, type ModuleStrings } from "./strings";
@@ -60,25 +61,13 @@ export default function ExportPlanifieModulePage() {
   const t = STR[locale];
   return (
     <div className="doc-page">
-      <div className="doc-page-header">
-        <div className="doc-breadcrumb">
-          <Link href="/modules">Modules</Link> → {t.moduleTitle}
-        </div>
-        <h1>{t.moduleTitle}</h1>
-        <p className="doc-description">{t.moduleDescription}</p>
-        <div className="doc-meta">
-          <span className="doc-badge doc-badge-category">{t.categoryBadge}</span>
-        </div>
-        <p className="mt-3 text-sm" style={{ color: "var(--bpm-text-secondary)" }}>
-          <Link
-            href="/modules/export-planifie/simulateur"
-            className="font-medium underline"
-            style={{ color: "var(--bpm-accent-cyan)" }}
-          >
-            {t.openSimulator}
-          </Link>
-        </p>
-      </div>
+      <ModulePageHeader
+        breadcrumbCurrent={t.moduleTitle}
+        title={t.moduleTitle}
+        description={t.moduleDescription}
+        category={t.categoryBadge}
+        links={[{ href: "/modules/export-planifie/simulateur", label: t.openSimulator }]}
+      />
       <Tabs
         tabs={[
           { label: t.docLabel, content: <DocContent t={t} /> },

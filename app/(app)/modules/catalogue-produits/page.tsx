@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { CodeBlock, Tabs } from "@/components/bpm";
+import { ModulePageHeader } from "@/components/site/ModulePageHeader";
 import { useI18n } from "@/lib/i18n/LocaleProvider";
 import CatalogueProduitsSimulateur from "./simulateur-content";
 import { STR } from "./strings";
@@ -81,25 +82,13 @@ bpm.button("Nouveau produit", on_click=creer_produit)`}
 
   return (
     <div className="doc-page">
-      <div className="doc-page-header">
-        <div className="doc-breadcrumb">
-          <Link href="/modules">Modules</Link> → {T.moduleName}
-        </div>
-        <h1>{T.moduleName}</h1>
-        <p className="doc-description">{T.pageDescription}</p>
-        <div className="doc-meta">
-          <span className="doc-badge doc-badge-category">{T.badgeCategory}</span>
-        </div>
-        <p className="mt-3 text-sm" style={{ color: "var(--bpm-text-secondary)" }}>
-          <Link
-            href="/modules/catalogue-produits/simulateur"
-            className="font-medium underline"
-            style={{ color: "var(--bpm-accent-cyan)" }}
-          >
-            {T.openSimulator}
-          </Link>
-        </p>
-      </div>
+      <ModulePageHeader
+        breadcrumbCurrent={T.moduleName}
+        title={T.moduleName}
+        description={T.pageDescription}
+        category={T.badgeCategory}
+        links={[{ href: "/modules/catalogue-produits/simulateur", label: T.openSimulator }]}
+      />
       <Tabs
         tabs={[
           { label: T.tabDocumentation, content: docContent },

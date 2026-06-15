@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { Tabs, CodeBlock } from "@/components/bpm";
+import { ModulePageHeader } from "@/components/site/ModulePageHeader";
 import { useI18n } from "@/lib/i18n/LocaleProvider";
 import { STR } from "./strings";
 
@@ -47,15 +48,13 @@ export default function SkeletonModulePage() {
   const str = STR[locale];
   return (
     <div className="doc-page">
-      <div className="doc-page-header">
-        <div className="doc-breadcrumb"><Link href="/modules">Modules</Link> → {str.moduleName}</div>
-        <h1>{str.moduleName}</h1>
-        <p className="doc-description">{str.pageDescription}</p>
-        <div className="doc-meta"><span className="doc-badge doc-badge-category">{str.categoryBadge}</span></div>
-        <p className="mt-3 text-sm" style={{ color: "var(--bpm-text-secondary)" }}>
-          <Link href="/modules/skeleton/simulateur" className="font-medium underline" style={{ color: "var(--bpm-accent-cyan)" }}>{str.openSimulator}</Link>
-        </p>
-      </div>
+      <ModulePageHeader
+        breadcrumbCurrent={str.moduleName}
+        title={str.moduleName}
+        description={str.pageDescription}
+        category={str.categoryBadge}
+        links={[{ href: "/modules/skeleton/simulateur", label: str.openSimulator }]}
+      />
       <Tabs tabs={[{ label: str.tabDocumentation, content: <DocContent /> }, { label: str.tabSimulator, content: <SimuContent /> }]} defaultTab={0} />
 
       <nav className="doc-pagination mt-8">
