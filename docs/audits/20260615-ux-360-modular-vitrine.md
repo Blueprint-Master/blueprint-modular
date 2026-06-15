@@ -222,6 +222,8 @@ Trois patterns propagés à tous leurs éléments concernés, un **commit atomiq
 
 **Garanties transverses** : aucun composant `bpm.*` introduit sans vérification de ses props (types locaux `@/components/bpm`, contrôlés par `tsc`) ; parité i18n préservée ; aucun secret ; périmètre respecté (hero `site-*`, design systems CSS et rendu libre des simulateurs **non touchés**).
 
+**Validation globale (toute la branche)** : `npx tsc --noEmit` **vert** ET **`npm run build` (production Next.js) vert** — aucune erreur ni warning ; parité i18n 476 = 476 (type-enforced). Le dogfooding du contenu connecteur est complété (bloc OAuth2 → `bpm.label_value`).
+
 ### À valider de visu par Rémi
 - **P-A11Y/I18N** : libellés EN proposés (« Breadcrumb », « End of page navigation », « Loading card », « Not set ») — ajuster si terminologie produit. Aucun impact mise en page.
 - **P-DOGFOOD** : `bpm.Title level={2}` (typographie DS vs ancien `h2` 20px/700) et `Caption` (14px) — confirmer l'absence de décalage visuel sur la fiche connecteur et les cartes de catalogue.
