@@ -14,6 +14,7 @@ const fr = {
   },
   nav: {
     presentation: "Présentation",
+    manifeste: "Manifeste",
     gallery: "Composants",
     modules: "Modules",
     mcp: "MCP",
@@ -291,6 +292,46 @@ const fr = {
         },
       },
     },
+  },
+  manifestePage: {
+    metaTitle: "Manifeste — Blueprint Modular",
+    metaDescription:
+      "Le manifeste de Blueprint Modular : l'interface métier se compose à partir de briques sémantiques, sans HTML ni JavaScript. Nous nommons une catégorie — le logiciel métier composable.",
+    eyebrow: "Le Manifeste",
+    title: "L'interface métier se compose. Elle ne se code pas.",
+    lead:
+      "Blueprint Modular est une conviction avant d'être un package : un logiciel métier mérite d'être assemblé à partir de briques qui ont un sens — pas réécrit balise par balise à chaque projet.",
+    intro:
+      "Depuis vingt ans, les mêmes écrans sont reconstruits à l'identique. Un tableau, un formulaire, une fiche, un tableau de bord. Toujours les mêmes intentions, toujours réécrites — en HTML, en JavaScript, en CSS — par des équipes qui voulaient parler métier et finissent par parler balises. Nous pensons que cette époque se termine.",
+    sections: [
+      {
+        h: "Une interface est une composition de sens",
+        p: "Un écran métier n'est pas un empilement de balises. C'est une suite d'intentions : afficher une métrique, comparer deux périodes, valider une étape, alerter sur un seuil. Blueprint Modular nomme ces intentions et leur donne une brique. Vous décrivez ce que l'écran veut dire ; la brique sait comment le rendre.",
+      },
+      {
+        h: "Des briques sémantiques, pas des composants graphiques",
+        p: "Chaque brique porte un rôle, pas seulement une apparence. Elle connaît son intention, sa place et sa manière de se comporter — pas uniquement sa couleur. Cette couche de sens est ce qui rend un catalogue lisible à la fois par un humain pressé et par une machine. C'est elle qui permet à un agent de composer une interface sans jamais toucher au HTML.",
+      },
+      {
+        h: "Sans HTML ni JavaScript",
+        p: "Le métier s'écrit en Python ou en React ; la brique se charge du reste. Aucune balise à fermer, aucun CSS à dompter, aucun framework à suivre. Le contrat est net : vous décrivez l'intention, la brique garantit le rendu, l'accessibilité et la cohérence. À chaque fois.",
+      },
+      {
+        h: "Modulaire jusqu'au bout",
+        p: "Une brique tient seule, se combine avec les autres et se remplace sans tout casser. Des composants, des modules métier, des connecteurs : un système où chaque pièce a une frontière nette et une responsabilité unique. La modularité n'est pas une option d'architecture — c'est le principe fondateur.",
+      },
+      {
+        h: "Ouvert, lisible, vérifiable",
+        p: "Le package est open-source. Le catalogue est public et interrogeable — par vous, par votre équipe, par vos agents — sans compte ni authentification. La légitimité d'un système se mesure à ce qu'il accepte de montrer. Nous montrons tout.",
+      },
+      {
+        h: "Nous nommons une catégorie",
+        p: "Ce que nous construisons porte un nom : le logiciel métier composable. Pas un thème de plus, pas une librairie de composants supplémentaire — une manière de fabriquer des interfaces où le sens précède la balise. Blueprint Modular est le premier blueprint de cette catégorie. Les suivants viendront ; le standard, lui, commence ici.",
+      },
+    ],
+    signature: "Décrivez l'intention. La brique fait le reste.",
+    ctaPrimary: "Commencer",
+    ctaSecondary: "Explorer les composants",
   },
   changelogPage: {
     title: "Changelog",
