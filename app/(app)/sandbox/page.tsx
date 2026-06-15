@@ -81,6 +81,7 @@ import {
 } from "@/components/bpm";
 import { useBPMPage } from "@/lib/ai/context";
 import { useI18n } from "@/lib/i18n/LocaleProvider";
+import { CatalogueHero } from "@/components/site/CatalogueLayout";
 import { STR } from "./strings";
 
 type S = (typeof STR)["fr"];
@@ -1550,22 +1551,11 @@ function SandboxContent() {
   }, [aiDescription, aiGenerating, S]);
 
   return (
-    <div
-      className={isDark ? "theme-dark" : ""}
-      style={{
-        minHeight: "100%",
-        background: "var(--bpm-bg-secondary, #f5f5f5)",
-        padding: 24,
-        boxSizing: "border-box",
-      }}
-    >
-      <div className="doc-page w-full">
-        <div className="doc-page-header">
-          <h1>{S.pageHeading}</h1>
-          <p className="doc-description">
-            {S.pageDescription}
-          </p>
-          <div className="mt-4 p-4 rounded-lg border" style={{ background: "var(--bpm-bg-primary)", borderColor: "var(--bpm-border)" }}>
+    <div className={isDark ? "theme-dark" : undefined}>
+      <CatalogueHero eyebrow={S.eyebrow} title={S.pageHeading} lead={S.pageDescription} />
+      <section className="site-section site-section-bordered">
+        <div className="site-container">
+          <div className="p-4 rounded-lg border mb-6" style={{ background: "var(--bpm-bg-primary)", borderColor: "var(--bpm-border)" }}>
             <p className="text-sm font-semibold mb-2" style={{ color: "var(--bpm-text-secondary)" }}>{S.appModules}</p>
             <div className="flex flex-wrap gap-2">
               {getSandboxModules(S).map((mod) => (
@@ -1588,7 +1578,6 @@ function SandboxContent() {
               {getSandboxModules(S).map((m) => m.label).join(" · ")}
             </p>
           </div>
-        </div>
         <div className="flex gap-2 mb-4">
           <button
             type="button"
@@ -1917,7 +1906,8 @@ function SandboxContent() {
             )}
           </div>
         )}
-      </div>
+        </div>
+      </section>
       {isProductionDashboard && mode === "code" && <AssistantPanel title={S.assistantProductionTitle} />}
     </div>
   );
