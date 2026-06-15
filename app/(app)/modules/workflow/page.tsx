@@ -1,7 +1,7 @@
 "use client";
 
-import Link from "next/link";
 import { Tabs, CodeBlock, Panel, Button, Badge } from "@/components/bpm";
+import { ModulePageHeader } from "@/components/site/ModulePageHeader";
 import { useI18n } from "@/lib/i18n/LocaleProvider";
 import { STR, type HistoryEntry, type Segment } from "./strings";
 
@@ -66,15 +66,14 @@ export default function WorkflowModulePage() {
 
   return (
     <div className="doc-page">
-      <div className="doc-page-header">
-        <div className="doc-breadcrumb"><Link href="/modules">{s.breadcrumbModules}</Link> → {s.moduleName}</div>
-        <h1>{s.moduleName}</h1>
-        <p className="doc-description">{s.moduleDescription}</p>
-        <div className="doc-meta"><span className="doc-badge doc-badge-category">{s.categoryBadge}</span></div>
-        <p className="mt-3 text-sm" style={{ color: "var(--bpm-text-secondary)" }}>
-          <Link href="/modules/workflow/simulateur" className="font-medium underline" style={{ color: "var(--bpm-accent-cyan)" }}>{s.openSimulator}</Link>
-        </p>
-      </div>
+      <ModulePageHeader
+        modulesLabel={s.breadcrumbModules}
+        breadcrumbCurrent={s.moduleName}
+        title={s.moduleName}
+        description={s.moduleDescription}
+        category={s.categoryBadge}
+        links={[{ href: "/modules/workflow/simulateur", label: s.openSimulator }]}
+      />
       <Tabs tabs={[{ label: s.tabDocumentation, content: docContent }, { label: s.tabSimulator, content: simuContent }]} defaultTab={0} />
     </div>
   );
