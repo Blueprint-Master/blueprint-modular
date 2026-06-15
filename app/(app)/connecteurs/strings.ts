@@ -85,6 +85,12 @@ const fr = {
   // ----- Sécurité -----
   securityNote:
     "Invariant : un descripteur ne porte que des clés de champ (fields[].key). Les valeurs de secrets sont résolues à l'exécution par vault.get(appId, connectorId, key) — jamais committées.",
+
+  // ----- Schéma Simulateur / Documentation -----
+  tabDocumentation: "Documentation",
+  tabSimulator: "Simulateur",
+  simulatorLead:
+    "Testez le mapping de réponse de chaque opération sur une fixture : réponse brute de l'API → sortie normalisée par le connecteur.",
 };
 
 const en: typeof fr = {
@@ -156,6 +162,11 @@ const en: typeof fr = {
 
   securityNote:
     "Invariant: a descriptor only carries field keys (fields[].key). Secret values are resolved at runtime by vault.get(appId, connectorId, key) — never committed.",
+
+  tabDocumentation: "Documentation",
+  tabSimulator: "Simulator",
+  simulatorLead:
+    "Test each operation's response mapping on a fixture: raw API response → output normalized by the connector.",
 };
 
 export const STR = { fr, en } as const;
