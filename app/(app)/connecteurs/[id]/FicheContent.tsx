@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { Badge, Chip, Divider, JsonViewer, Message, Table } from "@/components/bpm";
+import { Badge, Caption, Chip, Divider, JsonViewer, Message, Table, Title } from "@/components/bpm";
 import { useI18n } from "@/lib/i18n/LocaleProvider";
 import { getConnectorById } from "@/lib/connectors/catalog";
 import { applyResponseMapping } from "@/lib/connectors/mapping";
@@ -11,12 +11,8 @@ import { STR } from "../strings";
 function SectionTitle({ children, lead }: { children: React.ReactNode; lead?: string }) {
   return (
     <div style={{ marginTop: 32 }}>
-      <h2 style={{ fontSize: 20, fontWeight: 700, color: "var(--bpm-text-primary)", margin: 0 }}>
-        {children}
-      </h2>
-      {lead && (
-        <p style={{ margin: "4px 0 0", fontSize: 13, color: "var(--bpm-text-secondary)" }}>{lead}</p>
-      )}
+      <Title level={2}>{children}</Title>
+      {lead && <Caption style={{ marginTop: 4 }}>{lead}</Caption>}
     </div>
   );
 }
@@ -60,9 +56,9 @@ export function ConnecteurFicheContent({ id }: { id: string }) {
           <Badge variant="primary">{op.httpMethod}</Badge>
           <code style={{ fontSize: 13, color: "var(--bpm-text-primary)" }}>{op.pathTemplate}</code>
         </div>
-        <p style={{ margin: "8px 0 0", fontSize: 13, color: "var(--bpm-text-secondary)" }}>
+        <Caption style={{ marginTop: 8 }}>
           <strong>{S.thInputs} :</strong> {inputs}
-        </p>
+        </Caption>
 
         <SectionTitle>{S.secMapping}</SectionTitle>
         <Table
@@ -87,15 +83,11 @@ export function ConnecteurFicheContent({ id }: { id: string }) {
             }}
           >
             <div>
-              <p style={{ margin: "0 0 6px", fontSize: 12, fontWeight: 600, color: "var(--bpm-text-secondary)" }}>
-                {S.demoInput}
-              </p>
+              <Caption style={{ marginBottom: 6, fontWeight: 600 }}>{S.demoInput}</Caption>
               <JsonViewer data={op.sampleResponse} defaultExpandedLevel={2} maxHeight={320} />
             </div>
             <div>
-              <p style={{ margin: "0 0 6px", fontSize: 12, fontWeight: 600, color: "var(--bpm-text-secondary)" }}>
-                {S.demoOutput}
-              </p>
+              <Caption style={{ marginBottom: 6, fontWeight: 600 }}>{S.demoOutput}</Caption>
               <JsonViewer data={mapped} defaultExpandedLevel={3} maxHeight={320} />
             </div>
           </div>
@@ -119,9 +111,9 @@ export function ConnecteurFicheContent({ id }: { id: string }) {
           <Badge variant="success">{S.authMethod[connector.auth.method]}</Badge>
           <Badge variant="default">{S.category[connector.category]}</Badge>
         </div>
-        <p style={{ fontSize: 15, lineHeight: 1.7, color: "var(--bpm-text-secondary)", maxWidth: "70ch" }}>
+        <Caption style={{ lineHeight: 1.7, maxWidth: "70ch" }}>
           {connector.description[locale]}
-        </p>
+        </Caption>
 
         <Message type="info">{S.securityNote}</Message>
 
@@ -175,9 +167,7 @@ export function ConnecteurFicheContent({ id }: { id: string }) {
         {connector.operations.map(renderOperation)}
 
         <Divider />
-        <p style={{ fontSize: 12, color: "var(--bpm-text-secondary)", lineHeight: 1.6 }}>
-          {S.securityNote}
-        </p>
+        <Caption style={{ lineHeight: 1.6 }}>{S.securityNote}</Caption>
       </div>
     </section>
   );
