@@ -78,6 +78,14 @@ describe("isRequestAllowed — allowlist d'origine + jeton serveur", () => {
     expect(isRequestAllowed(req({ origin: "https://blueprint-modular.com" }))).toBe(true);
   });
 
+  it("autorise le sous-domaine app. via le défaut (sans SANDBOX_PREVIEW_ALLOWED_ORIGINS)", () => {
+    // La sandbox « Par IA » est servie sur https://app.blueprint-modular.com et
+    // fait un fetch same-origin vers /api/sandbox/spark-preview : l'Origin doit
+    // figurer dans le défaut codé en dur, sans override d'environnement.
+    expect(process.env.SANDBOX_PREVIEW_ALLOWED_ORIGINS).toBeUndefined();
+    expect(isRequestAllowed(req({ origin: "https://app.blueprint-modular.com" }))).toBe(true);
+  });
+
   it("refuse une origine hors allowlist", () => {
     expect(isRequestAllowed(req({ origin: "https://evil.example.com" }))).toBe(false);
   });
