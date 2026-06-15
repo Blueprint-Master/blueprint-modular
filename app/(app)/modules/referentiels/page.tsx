@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { CodeBlock, Tabs } from "@/components/bpm";
+import { ModulePageHeader } from "@/components/site/ModulePageHeader";
 import { useI18n } from "@/lib/i18n/LocaleProvider";
 import ReferentielsSimulateur from "./simulateur-content";
 import { STR } from "./strings";
@@ -90,25 +91,13 @@ export default function ReferentielsModulePage() {
   const s = STR[locale];
   return (
     <div className="doc-page">
-      <div className="doc-page-header">
-        <div className="doc-breadcrumb">
-          <Link href="/modules">Modules</Link> → {s.moduleName}
-        </div>
-        <h1>{s.moduleName}</h1>
-        <p className="doc-description">{s.moduleDescription}</p>
-        <div className="doc-meta">
-          <span className="doc-badge doc-badge-category">{s.categoryBadge}</span>
-        </div>
-        <p className="mt-3 text-sm" style={{ color: "var(--bpm-text-secondary)" }}>
-          <Link
-            href="/modules/referentiels/simulateur"
-            className="font-medium underline"
-            style={{ color: "var(--bpm-accent-cyan)" }}
-          >
-            {s.openSimulator}
-          </Link>
-        </p>
-      </div>
+      <ModulePageHeader
+        breadcrumbCurrent={s.moduleName}
+        title={s.moduleName}
+        description={s.moduleDescription}
+        category={s.categoryBadge}
+        links={[{ href: "/modules/referentiels/simulateur", label: s.openSimulator }]}
+      />
       <Tabs
         tabs={[
           { label: s.tabDocumentation, content: <DocContent /> },

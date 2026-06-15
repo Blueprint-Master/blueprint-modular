@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { CodeBlock, Tabs } from "@/components/bpm";
+import { ModulePageHeader } from "@/components/site/ModulePageHeader";
 import { useI18n } from "@/lib/i18n/LocaleProvider";
 import FormulaireDynamiqueSimulateur from "./simulateur-content";
 import { getStrings, rich, type ModuleStrings } from "./strings";
@@ -59,25 +60,13 @@ export default function FormulaireDynamiqueModulePage() {
 
   return (
     <div className="doc-page">
-      <div className="doc-page-header">
-        <div className="doc-breadcrumb">
-          <Link href="/modules">Modules</Link> → {t.moduleName}
-        </div>
-        <h1>{t.module.title}</h1>
-        <p className="doc-description">{t.module.description}</p>
-        <div className="doc-meta">
-          <span className="doc-badge doc-badge-category">{t.module.badgeCategory}</span>
-        </div>
-        <p className="mt-3 text-sm" style={{ color: "var(--bpm-text-secondary)" }}>
-          <Link
-            href="/modules/formulaire-dynamique/simulateur"
-            className="font-medium underline"
-            style={{ color: "var(--bpm-accent-cyan)" }}
-          >
-            {t.openSimulator}
-          </Link>
-        </p>
-      </div>
+      <ModulePageHeader
+        breadcrumbCurrent={t.moduleName}
+        title={t.module.title}
+        description={t.module.description}
+        category={t.module.badgeCategory}
+        links={[{ href: "/modules/formulaire-dynamique/simulateur", label: t.openSimulator }]}
+      />
       <Tabs
         tabs={[
           { label: t.module.tabDocumentation, content: <DocContent t={t} /> },

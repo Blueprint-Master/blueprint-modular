@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { CodeBlock, Tabs } from "@/components/bpm";
+import { ModulePageHeader } from "@/components/site/ModulePageHeader";
 import { useI18n } from "@/lib/i18n/LocaleProvider";
 import { STR } from "./strings";
 import WebhooksSimulateur from "./simulateur-content";
@@ -55,25 +56,13 @@ export default function WebhooksModulePage() {
   const S = STR[locale];
   return (
     <div className="doc-page">
-      <div className="doc-page-header">
-        <div className="doc-breadcrumb">
-          <Link href="/modules">Modules</Link> → {S.moduleTitle}
-        </div>
-        <h1>{S.moduleTitle}</h1>
-        <p className="doc-description">{S.moduleDescription}</p>
-        <div className="doc-meta">
-          <span className="doc-badge doc-badge-category">{S.categoryBadge}</span>
-        </div>
-        <p className="mt-3 text-sm" style={{ color: "var(--bpm-text-secondary)" }}>
-          <Link
-            href="/modules/webhooks/simulateur"
-            className="font-medium underline"
-            style={{ color: "var(--bpm-accent-cyan)" }}
-          >
-            {S.openSimulator}
-          </Link>
-        </p>
-      </div>
+      <ModulePageHeader
+        breadcrumbCurrent={S.moduleTitle}
+        title={S.moduleTitle}
+        description={S.moduleDescription}
+        category={S.categoryBadge}
+        links={[{ href: "/modules/webhooks/simulateur", label: S.openSimulator }]}
+      />
       <Tabs
         tabs={[
           { label: S.tabDocumentation, content: <DocContent /> },

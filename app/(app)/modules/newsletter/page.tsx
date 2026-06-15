@@ -4,6 +4,7 @@ import { useState, useEffect, useCallback } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { Table, Spinner, Panel, Button, Selectbox } from "@/components/bpm";
+import { ModulePageHeader } from "@/components/site/ModulePageHeader";
 import { useI18n } from "@/lib/i18n/LocaleProvider";
 import { STR } from "./strings";
 
@@ -159,17 +160,12 @@ export default function NewsletterPage() {
 
   return (
     <div className="doc-page newsletter-page">
-      <div className="doc-page-header mb-6">
-        <div className="doc-breadcrumb">
-          <Link href="/modules">Modules</Link> → {str.moduleName}
-        </div>
-        <h1 className="text-2xl font-bold" style={{ color: "var(--bpm-text-primary)" }}>
-          {str.moduleName}
-        </h1>
-        <p className="doc-description mt-1" style={{ color: "var(--bpm-text-secondary)" }}>
-          {str.listDescription}
-        </p>
-      </div>
+      <ModulePageHeader
+        className="mb-6"
+        breadcrumbCurrent={str.moduleName}
+        title={str.moduleName}
+        description={str.listDescription}
+      />
 
       <div className="flex flex-wrap items-center gap-4 mb-6">
         <Link href="/modules/newsletter/parametres">

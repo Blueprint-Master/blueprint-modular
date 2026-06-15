@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useNotificationHistory } from "@/contexts/NotificationHistoryContext";
 import { getNotificationLevel } from "@/lib/notificationLevels";
 import { CodeBlock, Tabs } from "@/components/bpm";
+import { ModulePageHeader } from "@/components/site/ModulePageHeader";
 import { useI18n } from "@/lib/i18n/LocaleProvider";
 import { STR, type NotificationTestType } from "./strings";
 
@@ -156,22 +157,14 @@ function MyComponent() {
 
   return (
     <div className="doc-page">
-      <div className="doc-page-header">
-        <div className="doc-breadcrumb"><Link href="/modules">Modules</Link> → bpm.notification</div>
-        <h1>bpm.notification</h1>
-        <p className="doc-description">
-          {s.moduleDescription}
-        </p>
-        <div className="doc-meta">
-          <span className="doc-badge doc-badge-category">{s.badgeModule}</span>
-          <span className="doc-reading-time">{s.readingTime}</span>
-        </div>
-        <p className="mt-3 text-sm" style={{ color: "var(--bpm-text-secondary)" }}>
-          <Link href="/modules/notification/simulateur" className="font-medium underline" style={{ color: "var(--bpm-accent-cyan)" }}>
-            {s.simulatorLinkLabel}
-          </Link>
-        </p>
-      </div>
+      <ModulePageHeader
+        breadcrumbCurrent="bpm.notification"
+        title="bpm.notification"
+        description={s.moduleDescription}
+        category={s.badgeModule}
+        metaExtra={<span className="doc-reading-time">{s.readingTime}</span>}
+        links={[{ href: "/modules/notification/simulateur", label: s.simulatorLinkLabel }]}
+      />
 
       <Tabs
         tabs={[

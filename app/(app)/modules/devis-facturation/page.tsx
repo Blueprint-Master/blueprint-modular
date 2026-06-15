@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { CodeBlock, Tabs } from "@/components/bpm";
+import { ModulePageHeader } from "@/components/site/ModulePageHeader";
 import { useI18n } from "@/lib/i18n/LocaleProvider";
 import DevisFacturationSimulateur from "./simulateur-content";
 import { STR, type Rich } from "./strings";
@@ -81,25 +82,13 @@ export default function DevisFacturationModulePage() {
 
   return (
     <div className="doc-page">
-      <div className="doc-page-header">
-        <div className="doc-breadcrumb">
-          <Link href="/modules">Modules</Link> → {M.title}
-        </div>
-        <h1>{M.title}</h1>
-        <p className="doc-description">{M.description}</p>
-        <div className="doc-meta">
-          <span className="doc-badge doc-badge-category">{M.badgeCategory}</span>
-        </div>
-        <p className="mt-3 text-sm" style={{ color: "var(--bpm-text-secondary)" }}>
-          <Link
-            href="/modules/devis-facturation/simulateur"
-            className="font-medium underline"
-            style={{ color: "var(--bpm-accent-cyan)" }}
-          >
-            {M.openSimulator}
-          </Link>
-        </p>
-      </div>
+      <ModulePageHeader
+        breadcrumbCurrent={M.title}
+        title={M.title}
+        description={M.description}
+        category={M.badgeCategory}
+        links={[{ href: "/modules/devis-facturation/simulateur", label: M.openSimulator }]}
+      />
       <Tabs
         tabs={[
           { label: M.tabDocumentation, content: docContent },
