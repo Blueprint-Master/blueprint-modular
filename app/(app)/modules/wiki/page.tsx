@@ -5,6 +5,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useSession } from "next-auth/react";
 import { Badge, Button } from "@/components/bpm";
+import { ModulePageHeader } from "@/components/site/ModulePageHeader";
 import { getGuestWikiArticles, deleteGuestArticle, type GuestWikiArticle } from "@/lib/wiki-guest";
 import { useI18n } from "@/lib/i18n/LocaleProvider";
 import { STR, type WikiStrings } from "./strings";
@@ -273,16 +274,14 @@ export default function WikiPage() {
   return (
     <div className="wiki-page doc-page">
       <div className="wiki-sticky-header">
-        <div id="documentation" className="doc-page-header">
-          <div className="doc-breadcrumb"><Link href="/modules">{t.common.modules}</Link> → Wiki</div>
-          <h1>Wiki</h1>
-          <p className="doc-description">
-            {t.list.description}
-          </p>
-          <div className="doc-meta">
-            <span className="doc-badge doc-badge-category">{t.list.moduleBadge}</span>
-          </div>
-        </div>
+        <ModulePageHeader
+          wrapperId="documentation"
+          modulesLabel={t.common.modules}
+          breadcrumbCurrent="Wiki"
+          title="Wiki"
+          description={t.list.description}
+          category={t.list.moduleBadge}
+        />
         <div className="wiki-header">
         <h2 className="text-base font-semibold mb-0" style={{ color: "var(--bpm-text-primary)" }}>{t.list.articles}</h2>
         <Link href="/modules/wiki/new" className="btn-primary">
