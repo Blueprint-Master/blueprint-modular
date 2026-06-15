@@ -22,7 +22,7 @@ La vitrine est **déjà nettement plus homogène et mieux construite que ne le l
 
 **Fragmentation des gabarits = le vrai problème d'homogénéité.** Trois systèmes de mise en page coexistent (voir §3.1). C'est la racine de la majorité des findings « gabarit divergent ».
 
-**Livrable de code de cette run** : un seul pattern **mécanique, sûr, sans changement visuel** — P-A11Y/I18N sur le chrome partagé `components/fiche/*` (aria-labels FR codés en dur → dict bilingue). Tout le reste (P-DOGFOOD, P-GABARIT, dédup fiches, simulateur connecteurs) est **documenté en recommandations** (catégorie B/C) car ces changements modifient le rendu et exigent l'arbitrage / la validation visuelle de Rémi.
+**Livrables de code de cette run** (3 patterns A/B, voir §6) : **P-A11Y/I18N** (A, chrome fiche partagé), **P-DOGFOOD** (B, contenu inline → `bpm.*` sur catalogues + fiche connecteur), **P-DEDUP** (B partiel, redirections d'alias). Restent **documentés en recommandations** (catégorie C, ou B nécessitant un arbitrage) : convergence des 3 gabarits, schéma Simulateur/Doc connecteurs, dogfooding des design systems CSS (`site-*`/`doc-page`), P-PITCH, P-SECU. **P-PANEL est prouvé sans cible mécanique** dans le périmètre respectant les contraintes (§4.2).
 
 ---
 
@@ -75,14 +75,17 @@ Catégorie : **A** = mécanique (aucun jugement design) · **B** = semi-auto (ch
 
 | Pattern | Portée | Cat. | Levier | Risque | Action de cette run |
 |---|---|---|---|---|---|
-| **P-A11Y/I18N (chrome fiche)** | `components/fiche/*` (5 fichiers) | **A** | Moyen | Très faible | ✅ **PR livrée (§6)** |
-| **P-PANEL** | chrome vitrine | — | — | — | ❌ Non actionnable : déjà conforme (voir ci-dessous) |
-| **P-DEDUP (doublons fiches)** | 8 dossiers `composants/*` | B | Moyen | Faible-moyen | 📋 Recommandation (§4.3) |
+| **P-A11Y/I18N (chrome fiche)** | `components/fiche/*` (5 fichiers) | **A** | Moyen | Très faible | ✅ **LIVRÉ** (commit 2) |
+| **P-DOGFOOD (contenu HTML→bpm.*)** | catalogues + fiche connecteur | **B** | Élevé | Moyen | ✅ **LIVRÉ** (commit 3) |
+| **P-DEDUP (alias fiches)** | 3 alias `composants/*` | **B** | Moyen | Faible | ✅ **LIVRÉ partiel** (commit 4) — 3/5, 2 ambigus laissés |
+| **P-PANEL** | chrome vitrine | — | — | — | ❌ Non actionnable : déjà conforme + misuse confiné au rendu libre (preuve §4.2) |
 | **P-GABARIT (convergence + simulateur connecteurs)** | 3 systèmes ; connecteurs | C | **Élevé** | Élevé | 📋 Recommandation (§5) |
-| **P-DOGFOOD (contenu HTML→bpm.*)** | fiches, catalogues, connecteurs | B/C | Élevé | Moyen | 📋 Recommandation (§5) |
+| **P-DOGFOOD (chrome site-*/doc-page CSS)** | site public, fiches | C | Élevé | Élevé | 📋 Recommandation (§5) — systèmes CSS délibérés |
 | **P-PITCH (mise en avant)** | composants, modules, connecteurs | C | Moyen | — | 📋 Recommandation (§5) |
 | **P-SECU (durcissement rendu)** | `monitor/documentation` | B | Faible | Faible | 📋 Recommandation (§4.5) |
-| **P-PERF (lazy charts)** | fiches charts/map | A | Faible | Faible | 📋 Voir §4.6 (largement déjà géré) |
+| **P-PERF (lazy charts)** | fiches charts/map | A | Faible | Faible | 📋 §4.6 (largement déjà géré par PlotlyChart) |
+
+> **Note dogfooding (clé du périmètre)** : la vitrine repose sur **trois systèmes de mise en page** dont **deux sont des design systems CSS délibérés** (`site-*` pour le site public — 0 style inline ; `doc-page` pour les fiches). Le dogfooding `bpm.*` **mécaniquement sûr** ne concerne donc que le **contenu stylé en inline** (cartes de catalogue + fiche connecteur) — c'est ce qu'a traité P-DOGFOOD (commit 3). Convertir les systèmes CSS `site-*`/`doc-page` en `bpm.*` est un chantier de **catégorie C** (démantèlement d'un design system = décision + validation visuelle).
 
 ### 4.1 P-A11Y/I18N — aria-labels FR codés en dur dans le chrome partagé *(catégorie A — LIVRÉ)*
 
@@ -99,9 +102,25 @@ Catégorie : **A** = mécanique (aucun jugement design) · **B** = semi-auto (ch
 
 > Note de périmètre : ces composants n'irriguent aujourd'hui que les pages asset-manager, mais ce sont des **primitifs de chrome partagés** de la bibliothèque vitrine ; le correctif est sûr, type-safe et préserve la parité — d'où son éligibilité comme unique pattern mécanique de cette run.
 
-### 4.2 P-PANEL — *déjà conforme dans le chrome (non actionnable mécaniquement)*
+### 4.2 P-PANEL — *déjà conforme dans le chrome ; misuse confiné au rendu libre (preuve exhaustive)*
 
-**Constat (FAIT)** : les 11 `<Panel>` du chrome vitrine sont tous des alertes/notices/empty-states légitimes :
+**Classification exhaustive des `<Panel>` hors simulateur-content** (chaque occurrence examinée) :
+
+| Fichier:ligne | Usage | Verdict |
+|---|---|---|
+| `modules/asset-manager/page.tsx:67` | `variant="warning"` configRequired | ✅ alerte légitime |
+| `modules/contracts/page.tsx:809` | `variant="info"` noResults | ✅ empty-state légitime |
+| `modules/newsletter/page.tsx:194` | `variant="info"` emptyTitle | ✅ empty-state légitime |
+| `modules/veille/page.tsx:201/205/217` | `variant="info"` enrobant Table/form/ActivityFeed | ⚠️ conteneur — **mais** dans le composant de démo interactif (état `setNom`/`addSource`) = **rendu libre protégé** |
+| `modules/workflow/page.tsx:49` | `variant="info"` enrobant la démo d'états | ⚠️ conteneur — **mais** à l'intérieur de `const simuContent` = **contenu du simulateur** = **rendu libre protégé** |
+| `demo/production/* (4)` | `variant="warning|success"` | ✅ alertes légitimes |
+| `composants/panel/Fiche.tsx:74`, `ComponentsCatalogue.tsx:124` | démonstration du composant Panel | ✅ légitime |
+
+**Conclusion (FAIT, et non plus hypothèse)** : les **seuls** `Panel`-conteneurs (anti-pattern) sont dans `veille` (démo interactive) et `workflow` (`simuContent`), c.-à-d. le **rendu libre des composants démontrés** que les « Contraintes — NE PAS CASSER » de la mission interdisent explicitement de modifier. Les modifier pour satisfaire « minimiser Panel » **casserait une contrainte dure**. → P-PANEL n'a **aucune cible mécanique** dans le périmètre respectant les contraintes. Si Rémi souhaite étendre la règle au rendu des démos, c'est une décision de catégorie C, démo par démo.
+
+---
+
+**Constat historique (FAIT)** : les 11 `<Panel>` du chrome strict sont tous des alertes/notices/empty-states légitimes :
 
 ```
 modules/asset-manager/page.tsx:67      — <Panel variant="warning" title=configRequired>      → alerte légitime
@@ -115,6 +134,22 @@ components/site/ComponentsCatalogue.tsx:124 — aperçu du composant panel      
 ```
 
 **Interprétation** : la demande « minimiser `bpm.panel` » visait l'usage de `Panel` comme **conteneur générique**. Cet anti-pattern existe (~109 occurrences) mais **exclusivement dans le rendu libre des simulateurs et les pages fonctionnelles de modules** (asset-manager), que la mission place **hors périmètre**. → **Aucune substitution mécanique justifiée sur le chrome.** Si Rémi souhaite étendre au rendu des démos, ce serait une décision de catégorie C, simulateur par simulateur.
+
+### 4.25 P-DOGFOOD — contenu HTML inline → primitifs `bpm.*` *(catégorie B — LIVRÉ)*
+
+**Constat (FAIT)** : dans le chrome stylé en inline (et non via un design system CSS), les **conteneurs** sont en `bpm.*` mais les **contenus** (titres de section, paragraphes, légendes, CTA) sont en HTML brut + `style={{…var(--bpm-*)…}}` :
+
+```
+[connecteurs-fiche] dogfooding P2 — connecteurs/[id]/FicheContent.tsx:14,18 (SectionTitle ×7), 63,90,96,122,178 — <h2>/<p> inline — bpm.Title/Caption — O
+[catalogue-modules] dogfooding P2 — modules/page.tsx (description carte) — <p> inline — bpm.Caption — O
+[catalogue-connecteurs] dogfooding P2 — connecteurs/ConnecteursListContent.tsx (description+CTA) — <p>/<span> inline — bpm.Caption/Text — O
+```
+
+**✅ LIVRÉ (commit 3)** : `SectionTitle` (×7) → `bpm.Title level={2}` + `bpm.Caption` ; paragraphes/labels → `bpm.Caption` ; CTA → `bpm.Text`. **Primitifs vérifiés** (types locaux `@/components/bpm`, source de compilation `tsc`) : `Title(level, style)`, `Caption(style)`, `Text(style)` — `Caption` rend précisément `<p class="bpm-caption text-sm" style="color:var(--bpm-text-secondary)">`, équivalent sémantique exact des paragraphes secondaires remplacés. `tsc --noEmit` vert.
+
+> **Périmètre respecté** : le **hero `site-*`** de la fiche connecteur (`<h1>`, eyebrow) **n'est pas touché** (design system marketing, catégorie C), ni le rendu libre des simulateurs.
+>
+> **À valider de visu** : `bpm.Title level={2}` adopte la typographie du DS (taille/poids possiblement ≠ de l'ancien `h2` 20px/700) ; `Caption` est `text-sm` (14px) vs anciens 12–15px ponctuels. Aucune rupture de mise en page attendue, mais à confirmer sur rendu.
 
 ### 4.3 P-DEDUP — doublons/recouvrements de fiches composants *(catégorie B)*
 
@@ -130,7 +165,12 @@ composants/title   vs composants/title1 / title2 / title3 / titlebpm   (Title a 
 (spinner vs spinnerdot = composants DISTINCTS — Spinner ≠ SpinnerDot — PAS un doublon)
 ```
 
-**Fix proposé (B)** : pour chaque paire, déterminer le slug canonique (celui présent au registre `bpm-components.json`) et transformer l'alias en **redirection** (`redirect()` Next) vers le canonique, plutôt que deux fiches divergentes — sur le modèle déjà retenu pour `wiki/simulator → wiki/simulateur`. **Risque** : supprimer du contenu indexé (SEO) ; à valider que l'alias ne porte pas de contenu unique. **Généralisable=O** (pattern de redirection d'alias). Non livré : exige de trancher le canonique par paire (jugement) + impact SEO.
+**✅ LIVRÉ (commit 4, partiel)** : redirections 301 dans `next.config.mjs` pour les **3 alias non ambigus** — `altair`, `plotly`, `pdf` — qui n'ont **ni composant distinct** (seuls `AltairChart`/`PlotlyChart`/`PdfViewer` existent dans `components/bpm/`) **ni entrée au registre**. Mécanisme : `redirects()` Next (prime sur le routage fichier, **sans suppression**, réversible, **generator-safe** — `scripts/generate-fiche-pages.mjs` itère les dossiers existants donc ne recrée rien). Validé : `next.config.mjs` charge, 6 redirects au total.
+
+**NON livré (laissé à Rémi, ambigu)** :
+- `highlight-box` (251 l.) vs `highlightbox` (153 l., registre) — l'alias hors registre a **plus** de contenu ; rediriger perdrait du contenu → trancher d'abord le canonique.
+- `empty` vs `emptystate` — **composants DISTINCTS** (les deux au registre, `Empty.tsx` ≠ `EmptyState.tsx`) → **pas un doublon**, ne pas rediriger.
+- `spinner` vs `spinnerdot`, `title` vs `title1/2/3/titlebpm` — distincts (variantes/niveaux), pas des doublons.
 
 ### 4.4 P-GABARIT — convergence des gabarits & schéma Simulateur/Doc connecteurs *(catégorie C, levier élevé)*
 
@@ -169,28 +209,35 @@ Non livré : gain incertain, à confirmer par mesure de bundle (pas de validatio
 
 ---
 
-## 6. Livrable de code : PR-pattern P-A11Y/I18N
+## 6. Livrables de code (patterns A/B implémentés)
 
-**Un seul pattern mécanique, catégorie A**, propagé à tous les éléments concernés (les 5 composants de `components/fiche/*`). Voir le commit dédié. Caractéristiques :
+Trois patterns propagés à tous leurs éléments concernés, un **commit atomique par pattern** (branche unique imposée par le harness, d'où un commit par pattern plutôt qu'une branche par PR) :
 
-- **Aucun composant `bpm.*` nouvellement introduit** → pas de risque de signature/props inventée.
-- **Parité i18n préservée** (clés ajoutées dans `fr` et `en`, typage `en: typeof fr`).
-- **Aucun changement visuel** (seuls des attributs `aria-*` et un fallback texte changent de source).
-- **Validations** : `tsc --noEmit` vert (baseline conservée).
+| Commit | Pattern | Cat. | Fichiers | Validation |
+|---|---|---|---|---|
+| 2 | **P-A11Y/I18N** — aria-labels FR codés en dur → `dict.fiche` (FR/EN) | A | `components/fiche/{FicheHeader,FicheNav,FicheSkeleton,FicheFieldGrid}.tsx` + `lib/i18n/{fr,en}.ts` | `tsc` vert ; parité par typage ; **0 changement visuel** |
+| 3 | **P-DOGFOOD** — contenu HTML inline → `bpm.Title/Caption/Text` | B | `connecteurs/[id]/FicheContent.tsx`, `connecteurs/ConnecteursListContent.tsx`, `modules/page.tsx` | `tsc` vert ; hero `site-*` préservé |
+| 4 | **P-DEDUP** — redirections 301 des alias de fiches | B | `next.config.mjs` | config chargée (6 redirects) |
+
+**Garanties transverses** : aucun composant `bpm.*` introduit sans vérification de ses props (types locaux `@/components/bpm`, contrôlés par `tsc`) ; parité i18n préservée ; aucun secret ; périmètre respecté (hero `site-*`, design systems CSS et rendu libre des simulateurs **non touchés**).
 
 ### À valider de visu par Rémi
-- Les libellés EN des aria-labels (« Breadcrumb », « End of page navigation », « Loading card », « Not set ») sont des traductions proposées — ajuster si une terminologie produit existe.
-- Rien d'autre : ce pattern ne modifie pas la mise en page.
+- **P-A11Y/I18N** : libellés EN proposés (« Breadcrumb », « End of page navigation », « Loading card », « Not set ») — ajuster si terminologie produit. Aucun impact mise en page.
+- **P-DOGFOOD** : `bpm.Title level={2}` (typographie DS vs ancien `h2` 20px/700) et `Caption` (14px) — confirmer l'absence de décalage visuel sur la fiche connecteur et les cartes de catalogue.
+- **P-DEDUP** : confirmer qu'aucun lien entrant ne dépend du contenu propre des alias `altair`/`plotly`/`pdf` (ils redirigent désormais vers le canonique).
 
 ---
 
 ## 7. Ce qui reste (prochaines PR suggérées, par levier décroissant)
 
-1. **P-GABARIT** — convergence des gabarits (C, fort levier, fort risque) — *gabarit par gabarit*.
-2. **P-DOGFOOD** — contenu HTML→`bpm.*` (B/C) — *surface par surface*.
-3. **P-GABARIT connecteurs** — simulateur + doc (C).
-4. **P-DEDUP** — redirections d'alias de fiches (B).
-5. **P-SECU** — `monitor/documentation` → `bpm.markdown` (B).
-6. **P-PITCH** — blocs de mise en avant (C, éditorial).
+> Cette run a livré P-A11Y/I18N, P-DOGFOOD (contenu inline) et P-DEDUP (3 alias). Le reste exige un arbitrage Rémi ou une validation visuelle, d'où la non-implémentation.
+
+1. **P-GABARIT** — convergence des 3 gabarits vers un primitif `bpm.*` unique (C, fort levier, fort risque) — *gabarit par gabarit, captures avant/après*.
+2. **P-DOGFOOD (suite, design systems CSS)** — migration des classes `doc-page`/`site-*` vers `bpm.*` (C) — *surface par surface* ; démantèle un DS, décision design.
+3. **P-GABARIT connecteurs** — ajouter le schéma Simulateur + Documentation aux fiches connecteur (C, création de contenu ; ne pas toucher le contrat Zod).
+4. **P-DEDUP (suite)** — trancher `highlight-box` vs `highlightbox` puis rediriger (B).
+5. **P-SECU** — `monitor/documentation` : `dangerouslySetInnerHTML` statique → `bpm.markdown` (B).
+6. **P-PITCH** — blocs « accroche + cas d'usage + value prop » homogènes par composant/module/connecteur (C, éditorial).
+7. **Schéma module** — standardiser `simulateur-content.tsx` (16/28) ; statuer sur les 4 modules sans `/simulateur`.
 
 > **Rappel** : harness vert ≠ validé fonctionnellement. Toute PR de catégorie B/C ci-dessus exige une validation visuelle sur rendu déployé avant merge.
