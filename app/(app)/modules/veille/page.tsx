@@ -5,7 +5,7 @@ import Link from "next/link";
 import {
   Tabs,
   CodeBlock,
-  Panel,
+  Card,
   Table,
   Badge,
   Button,
@@ -199,11 +199,11 @@ function SimuContent() {
         severity="warning"
       />
 
-      <Panel variant="info" title={s.panelSourcesTitle}>
+      <Card variant="outlined" title={s.panelSourcesTitle}>
         <Table columns={columns} data={rows as unknown as Record<string, unknown>[]} striped hover />
-      </Panel>
+      </Card>
 
-      <Panel variant="info" title={s.panelAddTitle}>
+      <Card variant="outlined" title={s.panelAddTitle}>
         <div className="flex flex-wrap gap-3 items-end">
           <div style={{ minWidth: 240, flex: 1 }}>
             <Input label={s.sourceNameLabel} placeholder={s.sourceNamePlaceholder} value={nom} onChange={setNom} />
@@ -213,11 +213,11 @@ function SimuContent() {
           </div>
           <Button onClick={addSource}>{s.addButton}</Button>
         </div>
-      </Panel>
+      </Card>
 
-      <Panel variant="info" title={s.panelActivityTitle}>
+      <Card variant="outlined" title={s.panelActivityTitle}>
         <ActivityFeed activities={feedItems} maxItems={6} compact />
-      </Panel>
+      </Card>
     </div>
   );
 }

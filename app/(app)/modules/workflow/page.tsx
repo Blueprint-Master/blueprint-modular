@@ -1,6 +1,6 @@
 "use client";
 
-import { Tabs, CodeBlock, Panel, Button, Badge } from "@/components/bpm";
+import { Tabs, CodeBlock, Card, Button, Badge } from "@/components/bpm";
 import { ModulePageHeader } from "@/components/site/ModulePageHeader";
 import { useI18n } from "@/lib/i18n/LocaleProvider";
 import { STR, type HistoryEntry, type Segment } from "./strings";
@@ -46,7 +46,7 @@ export default function WorkflowModulePage() {
   const simuContent = (
     <>
       <h2 className="text-lg font-semibold mt-0 mb-2" style={{ color: "var(--bpm-text-primary)" }}>{s.simuHeading}</h2>
-      <Panel variant="info" title={s.documentTitle(42)}>
+      <Card variant="outlined" title={s.documentTitle(42)}>
         <div className="flex flex-wrap gap-2 items-center mb-4">
           <span className="text-sm" style={{ color: "var(--bpm-text-secondary)" }}>{s.statusLabel}</span>
           <Badge variant="primary">{s.statusBadge["validé"]}</Badge>
@@ -60,7 +60,7 @@ export default function WorkflowModulePage() {
             s.formatDateShort(OVERVIEW_HISTORY.when)
           )}
         </p>
-      </Panel>
+      </Card>
     </>
   );
 
