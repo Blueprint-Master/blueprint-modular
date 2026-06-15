@@ -71,6 +71,7 @@ export function parseSparkPreviewBody(raw: unknown): ParsedBody {
 const DEFAULT_ALLOWED_ORIGINS = [
   "https://blueprint-modular.com",
   "https://www.blueprint-modular.com",
+  "https://app.blueprint-modular.com",
   "http://localhost:3000",
 ];
 
