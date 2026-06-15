@@ -142,6 +142,7 @@ const fr = {
   defaultSelectHint: "Sélectionnez un composant dans la liste ou utilisez",
 
   // === En-tête de page ===
+  eyebrow: "Atelier",
   pageHeading: "Sandbox",
   pageDescription:
     "Choisissez un composant ou écrivez du code pour composer une page en direct.",
@@ -342,6 +343,7 @@ const en: typeof fr = {
   defaultSelectHint: "Select a component from the list or use",
 
   // === Page header ===
+  eyebrow: "Workshop",
   pageHeading: "Sandbox",
   pageDescription:
     "Pick a component or write code to compose a live page.",
