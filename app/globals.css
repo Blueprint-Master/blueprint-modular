@@ -861,6 +861,17 @@ h2, .bpm-h2 {
 /* Doc page: largeur utile (réduit la marge blanche à droite), responsive */
 .doc-page { max-width: 1400px; width: 100%; min-width: 0; box-sizing: border-box; }
 
+/* Gabarit unifié (pages module/composant dans le shell app) : aligné sur le
+   gabarit Connecteurs / catalogues (site-container) — contenu centré à
+   --site-max-width avec gouttières de 24px, pour des marges sidebar↔corps
+   identiques sur toute la vitrine. asset-manager (sidebar secondaire,
+   pleine largeur) conserve sa règle dédiée définie plus bas. */
+.app-main .doc-page {
+  max-width: var(--site-max-width);
+  margin-inline: auto;
+  padding: 8px 24px 56px;
+}
+
 /* Documentation servie dans le shell site (top-nav, sans sidebar app) :
    gouttières + centrage alignés sur le reste du site, et tailles de titres
    équivalentes au shell app (le reset Tailwind neutralise sinon les <h*>). */
