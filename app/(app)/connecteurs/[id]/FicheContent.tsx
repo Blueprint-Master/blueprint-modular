@@ -170,7 +170,7 @@ export function ConnecteurFicheContent({ id }: { id: string }) {
 
   return (
     <section className="site-section">
-      <div className="site-container" style={{ maxWidth: 920 }}>
+      <div className="site-container">
         <div className="site-eyebrow" style={{ marginBottom: 8 }}>
           <Link href="/connecteurs" style={{ color: "var(--bpm-accent-cyan)" }}>
             {S.breadcrumb}
