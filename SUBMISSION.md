@@ -9,7 +9,7 @@ public, sans authentification.
 
 - **Name** (≤100) : `Blueprint Modular`
 - **Tagline** (≤55) : `Catalogue read-only des composants Blueprint Modular`
-- **Endpoint** : `https://blueprint-modular.com/api/mcp`
+- **Endpoint** : `https://mcp.blueprint-modular.com/api/mcp`
 - **Transport** : Streamable HTTP (stateless)
 - **Auth** : None (catalogue public)
 - **Contact** : contact@blueprint-modular.com
@@ -22,7 +22,7 @@ public, sans authentification.
 ## Description (≤2000 caractères)
 
 Blueprint Modular est un serveur MCP public et en lecture seule qui expose le
-catalogue de composants du design system `@blueprint-modular/core` (101
+catalogue de composants du design system `@blueprint-modular/core` (104
 composants, 10 catégories : affichage de données, mise en page, interaction,
 feedback, navigation, média, graphiques, utilitaires, identification &
 traçabilité, IA & spécialisés).
@@ -77,7 +77,7 @@ Servi sur `/privacy`. Texte intégral :
 
 ## Instructions pour le reviewer
 
-1. Ajouter le connecteur avec l'URL `https://blueprint-modular.com/api/mcp`
+1. Ajouter le connecteur avec l'URL `https://mcp.blueprint-modular.com/api/mcp`
    (ou un déploiement preview Vercel), authentification **None**.
 2. Vérifier `GET /api/health` → `{ "status": "ok", "version": "1.0.0", ... }`.
 3. Vérifier que `tools/list` renvoie 4 outils, chacun avec
@@ -125,9 +125,9 @@ Servi sur `/privacy`. Texte intégral :
 ## Assets manquants / à fournir avant publication
 
 - [ ] **Icône** du connecteur (PNG carré, 512×512 recommandé) — non incluse dans ce repo.
-- [ ] **Domaine de production** : configurer le DNS de `blueprint-modular.com`
-      (et/ou `mcp.blueprint-modular.com`) vers le déploiement, puis confirmer que
-      `/api/mcp` répond en HTTPS.
+- [ ] **Domaine de production** : configurer le DNS de `mcp.blueprint-modular.com`
+      (sous-domaine canonique de l'endpoint) vers le déploiement, puis confirmer
+      que `/api/mcp` répond en HTTPS.
 - [ ] **Vérification de domaine ChatGPT** : ajouter l'enregistrement de
       vérification (TXT/redirection) fourni par le developer mode ChatGPT lors de
       la soumission du connecteur.
