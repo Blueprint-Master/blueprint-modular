@@ -60,7 +60,11 @@ export default async function ManifestePage() {
       <section className="site-section">
         <div className="site-container">
           <article className="site-legal">
-            <p className="site-legal-intro">{m.intro}</p>
+            {m.intro.map((p, i) => (
+              <p className="site-legal-intro" key={i}>
+                {p}
+              </p>
+            ))}
 
             {m.sections.map((s) => (
               <div className="site-legal-section" key={s.h}>

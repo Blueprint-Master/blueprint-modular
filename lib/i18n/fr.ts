@@ -296,40 +296,51 @@ const fr = {
   manifestePage: {
     metaTitle: "Manifeste — Blueprint Modular",
     metaDescription:
-      "Le manifeste de Blueprint Modular : l'interface métier se compose à partir de briques sémantiques, sans HTML ni JavaScript. Nous nommons une catégorie — le logiciel métier composable.",
+      "Le Manifeste de Blueprint : des instruments, pas des contraintes. Un logiciel qui traverse les cadres, sent le réel et en restitue le sens — pour penser à travers ce que l'organisation tient séparé.",
     eyebrow: "Le Manifeste",
-    title: "L'interface métier se compose. Elle ne se code pas.",
-    lead:
-      "Blueprint Modular est une conviction avant d'être un package : un logiciel métier mérite d'être assemblé à partir de briques qui ont un sens — pas réécrit balise par balise à chaque projet.",
-    intro:
-      "Depuis vingt ans, les mêmes écrans sont reconstruits à l'identique. Un tableau, un formulaire, une fiche, un tableau de bord. Toujours les mêmes intentions, toujours réécrites — en HTML, en JavaScript, en CSS — par des équipes qui voulaient parler métier et finissent par parler balises. Nous pensons que cette époque se termine.",
+    title: "Manifeste Blueprint",
+    lead: "Des instruments, pas des contraintes",
+    intro: [
+      "L'entreprise a appris à intégrer ses données, puis à les interroger. Elle n'a jamais appris à penser à travers ses propres cadres. Chaque fonction raisonne dans le sien ; la donnée est reliée, mais la pensée reste cloisonnée. Les questions qui transformeraient l'ensemble sont celles que nul n'est en position de poser.",
+      "Les outils existants n'y répondent pas. L'ERP contraint : il impose un chemin. La BI dépend entièrement de celui qui la paramètre et du cadre où il se tient. Le modèle de langage, lui, lit le monde sans le sentir.",
+      "Nous construisons autre chose : un logiciel qui traverse les cadres, qui sent le réel, et qui en restitue le sens.",
+    ],
     sections: [
       {
-        h: "Une interface est une composition de sens",
-        p: "Un écran métier n'est pas un empilement de balises. C'est une suite d'intentions : afficher une métrique, comparer deux périodes, valider une étape, alerter sur un seuil. Blueprint Modular nomme ces intentions et leur donne une brique. Vous décrivez ce que l'écran veut dire ; la brique sait comment le rendre.",
+        h: "Un — On part d'un but. Non d'une spécification.",
+        p: "On exprime un objectif ; l'instrument se construit pour le servir. L'objectif descend, l'instrument remonte.",
       },
       {
-        h: "Des briques sémantiques, pas des composants graphiques",
-        p: "Chaque brique porte un rôle, pas seulement une apparence. Elle connaît son intention, sa place et sa manière de se comporter — pas uniquement sa couleur. Cette couche de sens est ce qui rend un catalogue lisible à la fois par un humain pressé et par une machine. C'est elle qui permet à un agent de composer une interface sans jamais toucher au HTML.",
+        h: "Deux — La cognition est transverse.",
+        p: "L'instrument n'appartient à aucune fonction. C'est ce qui l'autorise à poser la question qu'aucune ne pose. Là où l'organisation sépare, il relie.",
       },
       {
-        h: "Sans HTML ni JavaScript",
-        p: "Le métier s'écrit en Python ou en React ; la brique se charge du reste. Aucune balise à fermer, aucun CSS à dompter, aucun framework à suivre. Le contrat est net : vous décrivez l'intention, la brique garantit le rendu, l'accessibilité et la cohérence. À chaque fois.",
+        h: "Trois — Le sens naît avec la mesure.",
+        p: "Une grandeur isolée ne signifie rien. Elle devient connaissance lorsqu'elle porte son contexte, son repère et sa direction. L'intelligence se tient au point du signal, non dans une lecture d'après-coup.",
       },
       {
-        h: "Modulaire jusqu'au bout",
-        p: "Une brique tient seule, se combine avec les autres et se remplace sans tout casser. Des composants, des modules métier, des connecteurs : un système où chaque pièce a une frontière nette et une responsabilité unique. La modularité n'est pas une option d'architecture — c'est le principe fondateur.",
+        h: "Quatre — La représentation choisit ce qu'elle révèle.",
+        p: "Aucune forme n'est neutre : elle donne à voir ou elle dissimule. Nous retenons celle qui expose le mouvement, l'écart et la structure, non l'état inerte.",
       },
       {
-        h: "Ouvert, lisible, vérifiable",
-        p: "Le package est open-source. Le catalogue est public et interrogeable — par vous, par votre équipe, par vos agents — sans compte ni authentification. La légitimité d'un système se mesure à ce qu'il accepte de montrer. Nous montrons tout.",
+        h: "Cinq — Le logiciel sent, il ne lit pas.",
+        p: "Nous le relions au monde, à ses systèmes comme à sa réalité physique. La donnée vivante prime sur la donnée stockée. On habite le réel par contact, non par description.",
       },
       {
-        h: "Nous nommons une catégorie",
-        p: "Ce que nous construisons porte un nom : le logiciel métier composable. Pas un thème de plus, pas une librairie de composants supplémentaire — une manière de fabriquer des interfaces où le sens précède la balise. Blueprint Modular est le premier blueprint de cette catégorie. Les suivants viendront ; le standard, lui, commence ici.",
+        h: "Six — Le composant porte l'intelligence ; le monde l'élargit.",
+        p: "Chaque brique est conçue pour recevoir de la profondeur. Elle est d'abord configurée par ce que la machine a lu du monde, puis affinée par ce qu'elle en ressent. Une seule surface, deux sources : la lecture, puis le ressenti.",
+      },
+      {
+        h: "Sept — L'application est vivante.",
+        p: "Elle se re-dérive d'une intention qui évolue. Elle change quand le réel change, sans dette ni rupture.",
+      },
+      {
+        h: "Huit — La confiance précède l'audace.",
+        p: "Une intuition transverse n'a de valeur que si l'on peut agir sur elle. Nous l'étayons avant de l'avancer. Un instrument auquel on ne peut se fier n'en est pas un.",
       },
     ],
-    signature: "Décrivez l'intention. La brique fait le reste.",
+    signature:
+      "Blueprint n'est pas un générateur d'applications. C'est un fabricant d'instruments pour comprendre et agir sur le réel — pour penser à travers ce que l'organisation tient séparé.",
     ctaPrimary: "Commencer",
     ctaSecondary: "Explorer les composants",
   },
