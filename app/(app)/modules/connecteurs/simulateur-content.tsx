@@ -1,20 +1,7 @@
 "use client";
 
 import { useMemo, useState } from "react";
-import {
-  ActivityFeed,
-  type ActivityItem,
-  Badge,
-  Button,
-  ConfirmModal,
-  Input,
-  Metric,
-  MetricRow,
-  Panel,
-  Selectbox,
-  Table,
-  useToast,
-} from "@/components/bpm";
+import { ActivityFeed, Badge, Button, Card, ConfirmModal, Input, Metric, MetricRow, Selectbox, Table, type ActivityItem, useToast } from "@/components/bpm";
 import { useI18n } from "@/lib/i18n/LocaleProvider";
 import { STR, type ConnecteursStrings } from "./strings";
 
@@ -456,12 +443,12 @@ export default function ConnecteursSimulateur() {
         <Metric label={S.metricRows} value={S.num(stats.lignes)} />
       </MetricRow>
 
-      <Panel variant="info" title={S.panelConnectors}>
+      <Card variant="outlined" title={S.panelConnectors}>
         <Table columns={columns} data={connecteurs as unknown as Record<string, unknown>[]} striped hover />
-      </Panel>
+      </Card>
 
       {fixing && (
-        <Panel variant="info" title={S.fixTitle(fixing.nom[locale])}>
+        <Card variant="outlined" title={S.fixTitle(fixing.nom[locale])}>
           <p className="mb-3 text-sm" style={{ color: "var(--bpm-text-secondary)" }}>
             {S.fixIntro(fixing.identifiant)}
           </p>
@@ -482,10 +469,10 @@ export default function ConnecteursSimulateur() {
               {S.btnCancel}
             </Button>
           </div>
-        </Panel>
+        </Card>
       )}
 
-      <Panel variant="info" title={S.panelAdd}>
+      <Card variant="outlined" title={S.panelAdd}>
         <div className="grid gap-3 md:grid-cols-2">
           <Input label={S.formNameLabel} placeholder={S.formNamePlaceholder} value={nom} onChange={setNom} />
           <Selectbox
@@ -511,9 +498,9 @@ export default function ConnecteursSimulateur() {
         <Button className="mt-4" disabled={creating} onClick={handleCreate}>
           {creating ? S.btnCreating : S.btnCreate}
         </Button>
-      </Panel>
+      </Card>
 
-      <Panel variant="info" title={S.panelJournal}>
+      <Card variant="outlined" title={S.panelJournal}>
         <ActivityFeed
           activities={activity.map((entry) => ({
             id: entry.id,
@@ -526,7 +513,7 @@ export default function ConnecteursSimulateur() {
           maxItems={8}
           compact
         />
-      </Panel>
+      </Card>
 
       <ConfirmModal
         isOpen={toDelete !== null}

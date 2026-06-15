@@ -1,20 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useState, type ReactNode } from "react";
-import {
-  ActivityFeed,
-  type ActivityItem,
-  BarChart,
-  Button,
-  ConfirmModal,
-  LineChart,
-  Metric,
-  Panel,
-  ProgressRing,
-  Table,
-  type TableColumn,
-  useToast,
-} from "@/components/bpm";
+import { ActivityFeed, BarChart, Button, Card, ConfirmModal, LineChart, Metric, ProgressRing, Table, type ActivityItem, type TableColumn, useToast } from "@/components/bpm";
 import { useI18n } from "@/lib/i18n/LocaleProvider";
 import type { Locale } from "@/lib/i18n";
 import { STR, type ModuleStrings } from "./strings";
@@ -324,11 +311,11 @@ export default function TableauxDeBordSimulateur() {
 
       {/* Grille de widgets */}
       {layout.length === 0 ? (
-        <Panel variant="info" title={s.emptyTitle}>
+        <Card variant="outlined" title={s.emptyTitle}>
           <p className="text-sm m-0" style={{ color: "var(--bpm-text-secondary)" }}>
             {s.emptyAllHidden} {editing ? s.emptyEditingHint : s.emptyIdleHint}
           </p>
-        </Panel>
+        </Card>
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           {layout.map((placed, index) => {
@@ -394,7 +381,7 @@ export default function TableauxDeBordSimulateur() {
       {/* Bibliothèque de widgets (mode personnalisation) */}
       {editing && (
         <div className="mt-6">
-          <Panel title={s.libraryTitle} icon={false}>
+          <Card variant="outlined" title={s.libraryTitle}>
             {hiddenWidgets.length === 0 ? (
               <p className="text-sm m-0" style={{ color: "var(--bpm-text-secondary)" }}>
                 {s.libraryAllShown}
@@ -422,7 +409,7 @@ export default function TableauxDeBordSimulateur() {
                 ))}
               </ul>
             )}
-          </Panel>
+          </Card>
         </div>
       )}
 

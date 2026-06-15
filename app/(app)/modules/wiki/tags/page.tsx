@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
-import { Panel, Button } from "@/components/bpm";
+import { EmptyState, Button } from "@/components/bpm";
 import { useI18n } from "@/lib/i18n/LocaleProvider";
 import { STR } from "../strings";
 
@@ -68,14 +68,15 @@ export default function WikiTagsPage() {
       {loading ? (
         <p style={{ color: "var(--bpm-text-secondary)" }}>{t.common.loadingEllipsis}</p>
       ) : tags.length === 0 ? (
-        <Panel variant="info" title={t.tags.noTagTitle}>
-          <p className="text-sm" style={{ color: "var(--bpm-text-secondary)" }}>
-            {t.tags.noTagBody}
-          </p>
-          <Link href="/modules/wiki" className="inline-block mt-2 underline" style={{ color: "var(--bpm-accent-cyan)" }}>
-            {t.common.backToWikiPlain}
-          </Link>
-        </Panel>
+        <EmptyState
+          title={t.tags.noTagTitle}
+          description={t.tags.noTagBody}
+          action={
+            <Link href="/modules/wiki" className="underline" style={{ color: "var(--bpm-accent-cyan)" }}>
+              {t.common.backToWikiPlain}
+            </Link>
+          }
+        />
       ) : view === "cloud" ? (
         <div className="mt-4 p-4 rounded-lg border" style={{ borderColor: "var(--bpm-border)", background: "var(--bpm-bg-secondary)" }}>
           <h2 className="text-sm font-semibold mb-3" style={{ color: "var(--bpm-text-primary)" }}>{t.tags.cloudHeading}</h2>

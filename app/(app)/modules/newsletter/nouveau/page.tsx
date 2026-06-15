@@ -3,7 +3,7 @@
 import { useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { Button, Panel, Input, Textarea } from "@/components/bpm";
+import { Button, Card, Input, Textarea } from "@/components/bpm";
 import { useI18n } from "@/lib/i18n/LocaleProvider";
 import { STR } from "../strings";
 
@@ -67,7 +67,7 @@ export default function NewsletterNouveauPage() {
         </p>
       </div>
 
-      <Panel variant="info" title={str.newPanelTitle}>
+      <Card variant="outlined" title={str.newPanelTitle}>
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
             <label className="block text-sm font-medium mb-1" style={{ color: "var(--bpm-text-primary)" }}>
@@ -138,7 +138,7 @@ export default function NewsletterNouveauPage() {
             </Link>
           </div>
         </form>
-      </Panel>
+      </Card>
 
       <nav className="doc-pagination mt-8">
         <Link href="/modules/newsletter" style={{ color: "var(--bpm-accent-cyan)" }}>

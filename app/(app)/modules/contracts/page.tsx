@@ -3,7 +3,7 @@
 import { useState, useEffect, useCallback, useMemo, useRef } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { Table, Spinner, Selectbox, Panel, Button, ConfirmModal } from "@/components/bpm";
+import { Table, Spinner, Selectbox, EmptyState, Button, ConfirmModal } from "@/components/bpm";
 import { getWorkspaceLabel } from "@/lib/contracts/labels";
 import { useI18n } from "@/lib/i18n/LocaleProvider";
 import { STR, fn, typeLabel, riskLabel, statusLabel } from "./strings";
@@ -806,9 +806,7 @@ export default function ContractsPage() {
             </div>
           </div>
         ) : filteredContracts.length === 0 ? (
-          <Panel variant="info" title={t.empty.noResultsTitle}>
-            {f.noResultsBody(searchText)}
-          </Panel>
+          <EmptyState title={t.empty.noResultsTitle} description={f.noResultsBody(searchText)} />
         ) : isMobile ? (
           <div className="contracts-mobile-list">
             {data.map((row) => {

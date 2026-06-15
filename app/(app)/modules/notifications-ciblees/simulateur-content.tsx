@@ -1,22 +1,7 @@
 "use client";
 
 import { useMemo, useState } from "react";
-import {
-  ActivityFeed,
-  type ActivityItem,
-  Badge,
-  Button,
-  Checkbox,
-  ConfirmModal,
-  Input,
-  Message,
-  Metric,
-  MetricRow,
-  Panel,
-  Selectbox,
-  Table,
-  useToast,
-} from "@/components/bpm";
+import { ActivityFeed, Badge, Button, Card, Checkbox, ConfirmModal, Input, Message, Metric, MetricRow, Selectbox, Table, type ActivityItem, useToast } from "@/components/bpm";
 import { useNotificationHistory } from "@/contexts/NotificationHistoryContext";
 import { getNotificationLevel } from "@/lib/notificationLevels";
 import { useI18n } from "@/lib/i18n/LocaleProvider";
@@ -556,11 +541,11 @@ export default function NotificationsCibleesSimulateur() {
         <Metric label={s.metricChannels} value={String(stats.canaux)} />
       </MetricRow>
 
-      <Panel variant="info" title={s.panelRules}>
+      <Card variant="outlined" title={s.panelRules}>
         <Table columns={columns} data={regles as unknown as Record<string, unknown>[]} striped hover />
-      </Panel>
+      </Card>
 
-      <Panel variant="info" title={s.panelCreate}>
+      <Card variant="outlined" title={s.panelCreate}>
         <div className="grid gap-3 md:grid-cols-2">
           <Selectbox
             label={s.formEventLabel}
@@ -606,9 +591,9 @@ export default function NotificationsCibleesSimulateur() {
         <Button className="mt-4" onClick={handleCreate}>
           {s.formSubmit}
         </Button>
-      </Panel>
+      </Card>
 
-      <Panel variant="info" title={s.panelBench}>
+      <Card variant="outlined" title={s.panelBench}>
         <p className="mb-3 text-sm" style={{ color: "var(--bpm-text-secondary)", maxWidth: "62ch" }}>
           {s.benchIntro}
         </p>
@@ -635,11 +620,11 @@ export default function NotificationsCibleesSimulateur() {
             {simMessage.texte}
           </Message>
         )}
-      </Panel>
+      </Card>
 
-      <Panel variant="info" title={s.panelJournal}>
+      <Card variant="outlined" title={s.panelJournal}>
         <ActivityFeed activities={journalItems} maxItems={8} compact />
-      </Panel>
+      </Card>
 
       <ConfirmModal
         isOpen={toDelete !== null}

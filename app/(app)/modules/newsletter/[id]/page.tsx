@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import { useParams, useRouter } from "next/navigation";
-import { Button, Panel, Spinner } from "@/components/bpm";
+import { Button, Card, EmptyState, Spinner } from "@/components/bpm";
 import { useI18n } from "@/lib/i18n/LocaleProvider";
 import { STR } from "../strings";
 
@@ -76,9 +76,7 @@ export default function NewsletterArticlePage() {
         <div className="doc-breadcrumb">
           <Link href="/modules">Modules</Link> → <Link href="/modules/newsletter">{str.moduleName}</Link>
         </div>
-        <Panel variant="info" title={str.notFoundTitle}>
-          {str.notFoundBody}
-        </Panel>
+        <EmptyState title={str.notFoundTitle} description={str.notFoundBody} />
         <nav className="doc-pagination mt-8">
           <Link href="/modules/newsletter" style={{ color: "var(--bpm-accent-cyan)" }}>
             {str.backToModule}
@@ -121,14 +119,14 @@ export default function NewsletterArticlePage() {
         </p>
       )}
 
-      <Panel variant="info" title="">
+      <Card variant="outlined">
         <div
           className="prose max-w-none whitespace-pre-wrap"
           style={{ color: "var(--bpm-text-primary)" }}
         >
           {article.content || str.noContent}
         </div>
-      </Panel>
+      </Card>
 
       <div className="flex flex-wrap gap-2 mt-6">
         <Button variant="primary" onClick={() => router.push(`/modules/newsletter/${id}/edit`)}>

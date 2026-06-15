@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { Spinner, Panel, Button } from "@/components/bpm";
+import { Button, Card, Spinner } from "@/components/bpm";
 import { useI18n } from "@/lib/i18n/LocaleProvider";
 import { STR } from "../strings";
 
@@ -51,7 +51,7 @@ export default function ContractsSimulateurPage() {
       </p>
 
       {contracts.length > 0 ? (
-        <Panel variant="info" title={t.availableTitle} className="mt-6">
+        <Card variant="outlined" title={t.availableTitle} className="mt-6">
           <ul className="space-y-2">
             {contracts.map((c) => (
               <li key={c.id} className="flex items-center justify-between gap-4 flex-wrap">
@@ -65,16 +65,16 @@ export default function ContractsSimulateurPage() {
           <p className="mt-3 text-xs" style={{ color: "var(--bpm-text-secondary)" }}>
             {t.onlyAnalyzed}
           </p>
-        </Panel>
+        </Card>
       ) : (
-        <Panel variant="info" title={t.sandboxTitle} className="mt-6">
+        <Card variant="outlined" title={t.sandboxTitle} className="mt-6">
           <p className="text-sm" style={{ color: "var(--bpm-text-secondary)" }}>
             {t.sandboxDesc}
           </p>
           <Link href="/modules/contracts" className="inline-block mt-4">
             <Button variant="primary">{t.goToRepository}</Button>
           </Link>
-        </Panel>
+        </Card>
       )}
 
       <nav className="doc-pagination mt-8">

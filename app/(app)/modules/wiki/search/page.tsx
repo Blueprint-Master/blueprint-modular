@@ -4,7 +4,7 @@ import { useState, useEffect, useCallback } from "react";
 import Link from "next/link";
 import { useSession } from "next-auth/react";
 import { useSearchParams } from "next/navigation";
-import { Badge, Button, Panel } from "@/components/bpm";
+import { Badge, Button, EmptyState } from "@/components/bpm";
 import { HighlightedText } from "@/components/wiki/HighlightedText";
 import { useI18n } from "@/lib/i18n/LocaleProvider";
 import { STR } from "../strings";
@@ -116,11 +116,7 @@ export default function WikiSearchPage() {
               {t.search.results(textResults.length)}
             </h2>
             {textResults.length === 0 ? (
-              <Panel variant="info" title={t.search.noResultsTitle}>
-                <p className="text-sm" style={{ color: "var(--bpm-text-secondary)" }}>
-                  {t.search.noResultsBody}
-                </p>
-              </Panel>
+              <EmptyState title={t.search.noResultsTitle} description={t.search.noResultsBody} />
             ) : (
               <ul className="space-y-4">
                 {textResults.map((a) => (

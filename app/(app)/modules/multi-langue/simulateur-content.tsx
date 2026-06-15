@@ -1,19 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
-import {
-  Badge,
-  Button,
-  Input,
-  Message,
-  Metric,
-  MetricRow,
-  Modal,
-  Panel,
-  Progress,
-  Table,
-  useToast,
-} from "@/components/bpm";
+import { Badge, Button, Card, Input, Message, Metric, MetricRow, Modal, Progress, Table, useToast } from "@/components/bpm";
 import { useI18n } from "@/lib/i18n/LocaleProvider";
 import { STR } from "./strings";
 
@@ -339,7 +327,7 @@ export default function MultiLangueSimulateur() {
         <Metric label={s.metricEsCoverage} value={`${coverage.es} %`} />
       </MetricRow>
 
-      <Panel variant="info" title={s.panelDemoLanguage}>
+      <Card variant="outlined" title={s.panelDemoLanguage}>
         <p className="mb-1 text-sm font-medium" style={{ color: "var(--bpm-text-primary)" }}>
           {s.demoHelp}
         </p>
@@ -362,9 +350,9 @@ export default function MultiLangueSimulateur() {
             <Message type="warning">{s.missingEsPreview(coverage.missingEs.length)}</Message>
           </div>
         )}
-      </Panel>
+      </Card>
 
-      <Panel variant="info" title={s.panelPreview}>
+      <Card variant="outlined" title={s.panelPreview}>
         {/* Barre d'application de la mini-app */}
         <div
           className="flex flex-wrap items-center justify-between gap-3 rounded-lg border px-4 py-3"
@@ -436,9 +424,9 @@ export default function MultiLangueSimulateur() {
             </ul>
           </div>
         )}
-      </Panel>
+      </Card>
 
-      <Panel variant="info" title={s.panelCoverage}>
+      <Card variant="outlined" title={s.panelCoverage}>
         {coverage.missingEs.length > 0 ? (
           <Message type="warning">{s.coverageWarning(coverage.missingEs.length)}</Message>
         ) : (
@@ -457,9 +445,9 @@ export default function MultiLangueSimulateur() {
             <Table columns={keyColumns} data={missingRows as unknown as Record<string, unknown>[]} striped hover />
           </div>
         )}
-      </Panel>
+      </Card>
 
-      <Panel variant="info" title={s.panelDictionary}>
+      <Card variant="outlined" title={s.panelDictionary}>
         <p className="mb-3 text-sm" style={{ color: "var(--bpm-text-secondary)" }}>
           {s.dict1}
           <code>{"{prenom}"}</code>
@@ -468,7 +456,7 @@ export default function MultiLangueSimulateur() {
           {s.dict3}
         </p>
         <Table columns={keyColumns} data={keyRows as unknown as Record<string, unknown>[]} striped hover />
-      </Panel>
+      </Card>
 
       {editingKey !== null && (
         <Modal

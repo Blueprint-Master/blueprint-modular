@@ -3,7 +3,7 @@
 import { useState, useEffect, useCallback } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { Table, Spinner, Panel, Button, Selectbox } from "@/components/bpm";
+import { Table, Spinner, EmptyState, Button, Selectbox } from "@/components/bpm";
 import { ModulePageHeader } from "@/components/site/ModulePageHeader";
 import { useI18n } from "@/lib/i18n/LocaleProvider";
 import { STR } from "./strings";
@@ -187,9 +187,10 @@ export default function NewsletterPage() {
           <Spinner size="medium" />
         </div>
       ) : articles.length === 0 ? (
-        <Panel variant="info" title={str.emptyTitle}>
-          {str.emptyBefore}<strong>{str.emptyStrongNew}</strong>{str.emptyMiddle}<strong>{str.emptyStrongHeader}</strong>{str.emptyAfter}
-        </Panel>
+        <EmptyState
+          title={str.emptyTitle}
+          description={<>{str.emptyBefore}<strong>{str.emptyStrongNew}</strong>{str.emptyMiddle}<strong>{str.emptyStrongHeader}</strong>{str.emptyAfter}</>}
+        />
       ) : (
         <div className="rounded-lg border overflow-hidden" style={{ borderColor: "var(--bpm-border)" }}>
           <Table
