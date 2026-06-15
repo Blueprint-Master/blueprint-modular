@@ -296,40 +296,51 @@ const en: Dictionary = {
   manifestePage: {
     metaTitle: "Manifesto — Blueprint Modular",
     metaDescription:
-      "The Blueprint Modular manifesto: business interfaces are composed from semantic bricks, without HTML or JavaScript. We are naming a category — composable business software.",
+      "The Blueprint Manifesto: instruments, not constraints. Software that crosses frames, senses the real and renders its meaning — to think across what the organization keeps apart.",
     eyebrow: "The Manifesto",
-    title: "Business interfaces are composed. They are not coded.",
-    lead:
-      "Blueprint Modular is a conviction before it is a package: business software deserves to be assembled from bricks that carry meaning — not rewritten tag by tag on every project.",
-    intro:
-      "For twenty years, the same screens have been rebuilt from scratch. A table, a form, a record, a dashboard. The same intentions, rewritten every time — in HTML, JavaScript and CSS — by teams that wanted to speak the language of their business and ended up speaking the language of markup. We believe that era is ending.",
+    title: "Blueprint Manifesto",
+    lead: "Instruments, not constraints",
+    intro: [
+      "The enterprise learned to integrate its data, then to query it. It never learned to think across its own frames. Each function reasons within its own; the data is connected, but the thinking stays siloed. The questions that would transform the whole are the ones no one is positioned to ask.",
+      "Existing tools do not answer this. The ERP constrains: it imposes a path. BI depends entirely on whoever configures it and the frame they stand in. The language model, for its part, reads the world without feeling it.",
+      "We are building something else: software that crosses frames, that senses the real, and that renders its meaning.",
+    ],
     sections: [
       {
-        h: "An interface is a composition of meaning",
-        p: "A business screen is not a stack of tags. It is a sequence of intentions: show a metric, compare two periods, validate a step, raise an alert on a threshold. Blueprint Modular names those intentions and gives each one a brick. You describe what the screen means; the brick knows how to render it.",
+        h: "One — We start from a purpose. Not from a specification.",
+        p: "We state a goal; the instrument builds itself to serve it. The goal descends, the instrument rises to meet it.",
       },
       {
-        h: "Semantic bricks, not graphical components",
-        p: "Every brick carries a role, not just an appearance. It knows its intent, its place and how it behaves — not only its color. That layer of meaning is what makes a catalog readable by a busy human and by a machine alike. It is what lets an agent compose an interface without ever touching HTML.",
+        h: "Two — Cognition is transverse.",
+        p: "The instrument belongs to no single function. That is what allows it to ask the question none of them asks. Where the organization separates, it connects.",
       },
       {
-        h: "No HTML, no JavaScript",
-        p: "The business logic is written in Python or React; the brick takes care of the rest. No tag to close, no CSS to tame, no framework to chase. The contract is clear: you describe the intent, the brick guarantees the rendering, the accessibility and the consistency. Every time.",
+        h: "Three — Meaning is born with measurement.",
+        p: "A quantity in isolation means nothing. It becomes knowledge when it carries its context, its reference, and its direction. Intelligence stands at the point of the signal, not in an after-the-fact reading.",
       },
       {
-        h: "Modular all the way down",
-        p: "A brick stands on its own, combines with the others and can be replaced without breaking everything. Components, business modules, connectors: a system where every piece has a clean boundary and a single responsibility. Modularity is not an architectural option — it is the founding principle.",
+        h: "Four — Representation chooses what it reveals.",
+        p: "No form is neutral: it shows or it conceals. We keep the one that exposes movement, deviation, and structure — not the inert state.",
       },
       {
-        h: "Open, readable, verifiable",
-        p: "The package is open-source. The catalog is public and queryable — by you, by your team, by your agents — with no account and no authentication. A system's legitimacy is measured by what it agrees to show. We show everything.",
+        h: "Five — Software senses, it does not merely read.",
+        p: "We connect it to the world — to its systems and to its physical reality. Live data takes precedence over stored data. We inhabit the real through contact, not through description.",
       },
       {
-        h: "We are naming a category",
-        p: "What we are building has a name: composable business software. Not one more theme, not one more component library — a way of building interfaces where meaning comes before markup. Blueprint Modular is the first blueprint of this category. Others will follow; the standard starts here.",
+        h: "Six — The component carries the intelligence; the world widens it.",
+        p: "Each brick is built to receive depth. It is first configured by what the machine has read of the world, then refined by what it senses of it. One surface, two sources: the reading, then the feeling.",
+      },
+      {
+        h: "Seven — The application is alive.",
+        p: "It re-derives itself from an intention that evolves. It changes when the real changes, without debt or rupture.",
+      },
+      {
+        h: "Eight — Trust precedes audacity.",
+        p: "A transverse intuition is worth nothing unless one can act on it. We substantiate it before we advance it. An instrument you cannot rely on is not one.",
       },
     ],
-    signature: "Describe the intent. The brick does the rest.",
+    signature:
+      "Blueprint is not an application generator. It is a maker of instruments for understanding and acting on the real — for thinking across what the organization keeps apart.",
     ctaPrimary: "Get started",
     ctaSecondary: "Explore the components",
   },
