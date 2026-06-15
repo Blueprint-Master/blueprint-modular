@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { Badge, Caption, Chip, Divider, JsonViewer, Message, Table, Title } from "@/components/bpm";
+import { Badge, Caption, Chip, Divider, JsonViewer, LabelValue, Message, Table, Title } from "@/components/bpm";
 import { useI18n } from "@/lib/i18n/LocaleProvider";
 import { getConnectorById } from "@/lib/connectors/catalog";
 import { applyResponseMapping } from "@/lib/connectors/mapping";
@@ -133,23 +133,17 @@ export function ConnecteurFicheContent({ id }: { id: string }) {
         {connector.auth.oauth2 && (
           <>
             <SectionTitle>{S.secOauth}</SectionTitle>
-            <div style={{ display: "flex", flexDirection: "column", gap: 6, fontSize: 13 }}>
-              <div>
-                <strong>{S.oauthScopes} :</strong>{" "}
-                {connector.auth.oauth2.scopes.map((s) => (
+            <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
+              <LabelValue
+                label={S.oauthScopes}
+                size="sm"
+                value={connector.auth.oauth2.scopes.map((s) => (
                   <Chip key={s} variant="outline" label={s} />
                 ))}
-              </div>
-              <div>
-                <strong>{S.oauthRefresh} :</strong> {connector.auth.oauth2.refresh ? S.yes : S.no}
-              </div>
-              <div>
-                <strong>{S.oauthAuthUrl} :</strong>{" "}
-                <code>{connector.auth.oauth2.authorizationUrl}</code>
-              </div>
-              <div>
-                <strong>{S.oauthTokenUrl} :</strong> <code>{connector.auth.oauth2.tokenUrl}</code>
-              </div>
+              />
+              <LabelValue label={S.oauthRefresh} size="sm" value={connector.auth.oauth2.refresh ? S.yes : S.no} />
+              <LabelValue label={S.oauthAuthUrl} size="sm" value={<code>{connector.auth.oauth2.authorizationUrl}</code>} />
+              <LabelValue label={S.oauthTokenUrl} size="sm" value={<code>{connector.auth.oauth2.tokenUrl}</code>} />
             </div>
           </>
         )}
