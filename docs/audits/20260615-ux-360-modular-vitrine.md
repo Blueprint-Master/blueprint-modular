@@ -78,7 +78,7 @@ Catégorie : **A** = mécanique (aucun jugement design) · **B** = semi-auto (ch
 | **P-A11Y/I18N (chrome fiche)** | `components/fiche/*` (5 fichiers) | **A** | Moyen | Très faible | ✅ **LIVRÉ** (commit 2) |
 | **P-DOGFOOD (contenu HTML→bpm.*)** | catalogues + fiche connecteur | **B** | Élevé | Moyen | ✅ **LIVRÉ** (commit 3) |
 | **P-DEDUP (alias fiches)** | 3 alias `composants/*` | **B** | Moyen | Faible | ✅ **LIVRÉ partiel** (commit 4) — 3/5, 2 ambigus laissés |
-| **P-PANEL** | empty-states + sections de contenu | **B** | Moyen | Faible | ✅ **LIVRÉ** — ~22 Panel superflus → `bpm.emptyState` / `bpm.card` ; alertes légitimes conservées |
+| **P-PANEL** | présentation modules + démos + sections | **B** | Élevé | Faible | ✅ **LIVRÉ (large)** — **~80 `Panel`-conteneurs** → `bpm.card` / `bpm.emptyState` (catalogues, fiches, démos `simulateur-content` ×16, sous-pages module) ; **ne restent que de vraies alertes** (`warning`/`error`) + 1 récap `success` |
 | **P-GABARIT (en-tête module)** | 29 pages module | **B/C** | Élevé | Faible→Moyen | ✅ **LIVRÉ 29/29** (commits 6–8, 10) — primitif + migration complète ; **titre dogfoodé en `bpm.title`** |
 | **P-GABARIT (convergence DS + simulateur connecteurs)** | 3 systèmes ; connecteurs | C | **Élevé** | Élevé | 📋 Recommandation (§5) |
 | **P-DOGFOOD (chrome site-*/doc-page CSS)** | site public, fiches | C | Élevé | Élevé | 📋 Recommandation (§5) — systèmes CSS délibérés |
@@ -105,11 +105,11 @@ Catégorie : **A** = mécanique (aucun jugement design) · **B** = semi-auto (ch
 
 ### 4.2 P-PANEL — *minimisation livrée (correction d'une sous-estimation initiale)*
 
-> **Mise à jour** : l'analyse initiale (ci-dessous) concluait à tort qu'il n'y avait pas de cible. En réexaminant la demande #1, `Panel` était bel et bien **détourné** dans deux cas hors-alerte, désormais corrigés :
-> - **Empty-states** (`Panel variant="info" title="aucun résultat"`) → **`bpm.emptyState`** : `wiki/search`, `wiki/tags`, `newsletter`, `contracts`, `asset-manager/cmdb-graph`, et `contracts/[id]` (notFound).
-> - **Sections de contenu** (`Panel variant="info"` enrobant des données) → **`bpm.card`** : `documents/[id]` (8), `contracts/[id]` (8).
+> **Mise à jour (étendue sur consigne Rémi « la présentation des modules » + « convertis tout »)** : l'analyse initiale concluait à tort à l'absence de cible. `Panel` était massivement **détourné** comme conteneur hors-alerte. **~80 `Panel`-conteneurs** remplacés par le composant sémantique adéquat :
+> - **Empty-states** → **`bpm.emptyState`** : `wiki/search`, `wiki/tags`, `newsletter`, `contracts`, `asset-manager/cmdb-graph`, `contracts/[id]` (notFound), `newsletter/[id]` (notFound).
+> - **Sections de contenu** → **`bpm.card`** : `documents/[id]` (8), `contracts/[id]` (8), pages de présentation `veille`/`workflow`, **les 16 démos `simulateur-content.tsx`** + routes `contracts/simulateur` & `workflow/simulateur`, et les sous-pages fonctionnelles (`wiki/history`, `newsletter` edit/nouveau/parametres, `asset-manager` knowledge-edit & changes/calendar).
 >
-> ~22 `Panel` superflus supprimés. Les `Panel` conservés sont de **vraies alertes** (`variant="warning|error"` — config requise, introuvable, erreur) : c'est le rôle documenté de `bpm.panel`, on ne les remplace pas. Le **rendu libre des simulateurs** (`simulateur-content.tsx`, démos interactives `veille`/`workflow`) n'est pas touché (contrainte dure « NE PAS CASSER »). `tsc` + `npm run build` verts.
+> **Ne restent que de vraies alertes** : `variant="warning"` (×16, config requise/introuvable/domaine requis), `variant="error"` (×5, erreurs/not-found wiki & documents) et **1 récap `success`** (formulaire-dynamique) — c'est le rôle documenté de `bpm.panel`. Décision Rémi explicite d'étendre au **rendu des démos** (la contrainte « rendu libre » est levée par le commanditaire). `tsc` + `npm run build` verts à chaque lot.
 
 **Analyse initiale (conservée pour traçabilité)** : les `<Panel>` du chrome strict étaient lus comme des alertes/notices/empty légitimes —
 
