@@ -79,7 +79,8 @@ Catégorie : **A** = mécanique (aucun jugement design) · **B** = semi-auto (ch
 | **P-DOGFOOD (contenu HTML→bpm.*)** | catalogues + fiche connecteur | **B** | Élevé | Moyen | ✅ **LIVRÉ** (commit 3) |
 | **P-DEDUP (alias fiches)** | 3 alias `composants/*` | **B** | Moyen | Faible | ✅ **LIVRÉ partiel** (commit 4) — 3/5, 2 ambigus laissés |
 | **P-PANEL** | chrome vitrine | — | — | — | ❌ Non actionnable : déjà conforme + misuse confiné au rendu libre (preuve §4.2) |
-| **P-GABARIT (convergence + simulateur connecteurs)** | 3 systèmes ; connecteurs | C | **Élevé** | Élevé | 📋 Recommandation (§5) |
+| **P-GABARIT (en-tête module)** | 29 pages module | **B** | Élevé | Faible (markup identique) | ✅ **LIVRÉ beachhead** (commit 6) — primitif + 6/29 migrés |
+| **P-GABARIT (convergence DS + simulateur connecteurs)** | 3 systèmes ; connecteurs | C | **Élevé** | Élevé | 📋 Recommandation (§5) |
 | **P-DOGFOOD (chrome site-*/doc-page CSS)** | site public, fiches | C | Élevé | Élevé | 📋 Recommandation (§5) — systèmes CSS délibérés |
 | **P-PITCH (mise en avant)** | composants, modules, connecteurs | C | Moyen | — | 📋 Recommandation (§5) |
 | **P-SECU (durcissement rendu)** | `monitor/documentation` | B | Faible | Faible | 📋 Recommandation (§4.5) |
@@ -230,14 +231,16 @@ Trois patterns propagés à tous leurs éléments concernés, un **commit atomiq
 
 ## 7. Ce qui reste (prochaines PR suggérées, par levier décroissant)
 
-> Cette run a livré P-A11Y/I18N, P-DOGFOOD (contenu inline) et P-DEDUP (3 alias). Le reste exige un arbitrage Rémi ou une validation visuelle, d'où la non-implémentation.
+> Cette run a livré P-A11Y/I18N, P-DOGFOOD (contenu inline), P-DEDUP (3 alias) et le beachhead P-GABARIT (primitif `ModulePageHeader` + 6 pages). Le reste exige un arbitrage Rémi ou une validation visuelle.
 
-1. **P-GABARIT** — convergence des 3 gabarits vers un primitif `bpm.*` unique (C, fort levier, fort risque) — *gabarit par gabarit, captures avant/après*.
-2. **P-DOGFOOD (suite, design systems CSS)** — migration des classes `doc-page`/`site-*` vers `bpm.*` (C) — *surface par surface* ; démantèle un DS, décision design.
-3. **P-GABARIT connecteurs** — ajouter le schéma Simulateur + Documentation aux fiches connecteur (C, création de contenu ; ne pas toucher le contrat Zod).
-4. **P-DEDUP (suite)** — trancher `highlight-box` vs `highlightbox` puis rediriger (B).
-5. **P-SECU** — `monitor/documentation` : `dangerouslySetInnerHTML` statique → `bpm.markdown` (B).
-6. **P-PITCH** — blocs « accroche + cas d'usage + value prop » homogènes par composant/module/connecteur (C, éditorial).
-7. **Schéma module** — standardiser `simulateur-content.tsx` (16/28) ; statuer sur les 4 modules sans `/simulateur`.
+1. **P-GABARIT en-tête module (suite)** — migrer les **~23 pages module restantes** vers `components/site/ModulePageHeader` (B, **dé-risqué** : le primitif existe, markup identique). Mécanique, faible risque.
+   *(Puis, une fois toutes migrées : passer le `<h1>` du primitif à `bpm.title` en un seul endroit — petit pas C de dogfooding.)*
+2. **P-GABARIT convergence DS** — unifier `doc-page` ↔ `site-*` ↔ `components/fiche/*` (C, fort levier, fort risque) — *gabarit par gabarit, captures avant/après*.
+3. **P-DOGFOOD (suite, design systems CSS)** — migration des classes `doc-page`/`site-*` vers `bpm.*` (C) — *surface par surface* ; démantèle un DS, décision design.
+4. **P-GABARIT connecteurs** — ajouter le schéma Simulateur + Documentation aux fiches connecteur (C, création de contenu ; ne pas toucher le contrat Zod).
+5. **P-DEDUP (suite)** — trancher `highlight-box` vs `highlightbox` puis rediriger (B).
+6. **P-SECU** — `monitor/documentation` : `dangerouslySetInnerHTML` statique → `bpm.markdown` (B).
+7. **P-PITCH** — blocs « accroche + cas d'usage + value prop » homogènes par composant/module/connecteur (C, éditorial).
+8. **Schéma module** — standardiser `simulateur-content.tsx` (16/28) ; statuer sur les 4 modules sans `/simulateur`.
 
 > **Rappel** : harness vert ≠ validé fonctionnellement. Toute PR de catégorie B/C ci-dessus exige une validation visuelle sur rendu déployé avant merge.
