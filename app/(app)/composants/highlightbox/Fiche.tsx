@@ -25,6 +25,7 @@ const fr = {
   d_rtb: "Points RTB (affichés séparés par ·).",
   d_target: "Points Cible (chaîne ou liste).",
   d_barColor: "Couleur de la barre latérale (hex, rgb ou nom CSS).",
+  d_className: "Classes CSS additionnelles.",
 };
 
 const en: typeof fr = {
@@ -46,6 +47,7 @@ const en: typeof fr = {
   d_rtb: "RTB points (shown separated by ·).",
   d_target: "Target points (string or list).",
   d_barColor: "Side bar color (hex, rgb or CSS name).",
+  d_className: "Additional CSS classes.",
 };
 
 const L = { fr, en } as const;
@@ -137,6 +139,7 @@ export default function DocHighlightboxPage() {
           <tr><td><code>rtbPoints</code></td><td><code>string[] | null</code></td><td>—</td><td>{t.no}</td><td>{t.d_rtb}</td></tr>
           <tr><td><code>targetPoints</code></td><td><code>string | string[] | null</code></td><td>—</td><td>{t.no}</td><td>{t.d_target}</td></tr>
           <tr><td><code>barColor</code></td><td><code>string | null</code></td><td>#212121</td><td>{t.no}</td><td>{t.d_barColor}</td></tr>
+          <tr><td><code>className</code></td><td><code>string</code></td><td>—</td><td>{t.no}</td><td>{t.d_className}</td></tr>
         </tbody>
       </table>
 

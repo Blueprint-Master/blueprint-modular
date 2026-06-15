@@ -22,6 +22,8 @@ const nextConfig = {
       { source: "/composants/altair", destination: "/composants/altairchart", permanent: true },
       { source: "/composants/plotly", destination: "/composants/plotlychart", permanent: true },
       { source: "/composants/pdf", destination: "/composants/pdfviewer", permanent: true },
+      // Fusion des deux fiches highlight-box → fiche canonique unique (highlightbox).
+      { source: "/composants/highlight-box", destination: "/composants/highlightbox", permanent: true },
     ];
   },
   experimental: {
