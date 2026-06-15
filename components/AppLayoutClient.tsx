@@ -13,6 +13,7 @@ import { AIHeaderProvider, useAIHeader } from "@/contexts/AIHeaderContext";
 import { SidebarProvider, useSidebar } from "@/contexts/SidebarContext";
 import { useI18n } from "@/lib/i18n/LocaleProvider";
 import type { Locale } from "@/lib/i18n";
+import { BRAND_MARK_SRC } from "@/lib/brandMark";
 
 /**
  * Bascule FR/EN du shell applicatif (même cookie bpm-locale que la vitrine).
@@ -159,8 +160,9 @@ function AppLayoutInner({ children }: { children: React.ReactNode }) {
           >
             {/* Marque visible uniquement en mobile (desktop : la sidebar porte déjà la marque) */}
             <Link href="/" className="app-titlebar-brand md:hidden" aria-label="Blueprint Modular — accueil">
+              {/* Marque embarquée (data URI) : jamais de 404 si l'asset statique manque. */}
               {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img src="/img/icon-pwa-192.png" alt="" className="bpm-brand-logo" width={28} height={28} />
+              <img src={BRAND_MARK_SRC} alt="" className="bpm-brand-logo" width={28} height={28} />
               <span className="app-titlebar-brand-text">
                 <strong>Blueprint</strong> Modular
               </span>
