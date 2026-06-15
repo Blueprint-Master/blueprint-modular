@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
-import { Button, Panel, Input } from "@/components/bpm";
+import { Button, Card, Input } from "@/components/bpm";
 import { useI18n } from "@/lib/i18n/LocaleProvider";
 import { STR } from "../strings";
 
@@ -69,7 +69,7 @@ export default function NewsletterParametresPage() {
         </p>
       </div>
 
-      <Panel variant="info" title={str.settingsPanelTitle}>
+      <Card variant="outlined" title={str.settingsPanelTitle}>
         <form onSubmit={handleSave} className="space-y-4">
           <div>
             <label className="block text-sm font-medium mb-1" style={{ color: "var(--bpm-text-primary)" }}>
@@ -116,7 +116,7 @@ export default function NewsletterParametresPage() {
             )}
           </div>
         </form>
-      </Panel>
+      </Card>
 
       <nav className="doc-pagination mt-8">
         <Link href="/modules/newsletter" style={{ color: "var(--bpm-accent-cyan)" }}>

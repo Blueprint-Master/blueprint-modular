@@ -4,7 +4,7 @@ import { useState, useEffect } from "react";
 import Link from "next/link";
 import { useParams, useRouter } from "next/navigation";
 import { useSession } from "next-auth/react";
-import { Panel, Button } from "@/components/bpm";
+import { Button, Card, Panel } from "@/components/bpm";
 import { useI18n } from "@/lib/i18n/LocaleProvider";
 import { STR } from "../../strings";
 
@@ -127,7 +127,7 @@ export default function WikiHistoryPage() {
       </p>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        <Panel variant="info" title={t.history.revisionsPanel}>
+        <Card variant="outlined" title={t.history.revisionsPanel}>
           <ul className="space-y-2 max-h-[400px] overflow-y-auto bpm-timeline-vertical">
             {revisions.map((r) => (
               <li key={r.id} className="text-sm flex flex-wrap items-center gap-2 py-2 border-b border-[var(--bpm-border)] last:border-b-0">
@@ -168,11 +168,11 @@ export default function WikiHistoryPage() {
           {revisions.length === 0 && (
             <p className="text-sm" style={{ color: "var(--bpm-text-secondary)" }}>{t.history.noRevision}</p>
           )}
-        </Panel>
+        </Card>
 
         <div className="space-y-4">
           {selected && (
-            <Panel variant="info" title={t.history.revisionOf(new Date(selected.createdAt).toLocaleString(t.common.locale))}>
+            <Card variant="outlined" title={t.history.revisionOf(new Date(selected.createdAt).toLocaleString(t.common.locale))}>
               {previousRevision && (
                 <p className="text-xs mb-2" style={{ color: "var(--bpm-text-secondary)" }}>{t.history.diffVsPrevious}</p>
               )}
@@ -203,10 +203,10 @@ export default function WikiHistoryPage() {
                   {t.history.restoreThisVersion}
                 </Button>
               </div>
-            </Panel>
+            </Card>
           )}
           {selected && compare && selected.id !== compare.id && (
-            <Panel variant="info" title={t.history.comparisonTitle}>
+            <Card variant="outlined" title={t.history.comparisonTitle}>
               <p className="text-xs mb-2" style={{ color: "var(--bpm-text-secondary)" }}>{t.history.comparisonMeta(new Date(compare.createdAt).toLocaleString(t.common.locale), new Date(selected.createdAt).toLocaleString(t.common.locale))}</p>
               <div className="text-xs space-y-0 font-mono max-h-[300px] overflow-y-auto rounded border p-2" style={{ borderColor: "var(--bpm-border)", background: "var(--bpm-bg-primary)" }}>
                 {diffLines(compare.content, selected.content).map((line, i) => (
@@ -224,7 +224,7 @@ export default function WikiHistoryPage() {
                   </div>
                 ))}
               </div>
-            </Panel>
+            </Card>
           )}
         </div>
       </div>
@@ -237,7 +237,7 @@ export default function WikiHistoryPage() {
           aria-modal="true"
           aria-labelledby="restore-dialog-title"
         >
-          <Panel variant="info" title={t.history.restoreDialogTitle} className="max-w-md w-full">
+          <Card variant="outlined" title={t.history.restoreDialogTitle} className="max-w-md w-full">
             <p id="restore-dialog-title" className="text-sm mb-4" style={{ color: "var(--bpm-text-secondary)" }}>
               {t.history.restoreDialogBody}
             </p>
@@ -260,7 +260,7 @@ export default function WikiHistoryPage() {
                 {restoring ? t.history.restoring : t.history.restore}
               </Button>
             </div>
-          </Panel>
+          </Card>
         </div>
       )}
 
