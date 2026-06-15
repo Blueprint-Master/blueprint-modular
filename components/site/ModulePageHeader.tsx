@@ -44,12 +44,9 @@ export interface ModulePageHeaderProps {
   wrapperStyle?: React.CSSProperties;
 }
 
-/** Réplique fidèle de `.site-shell .doc-page .doc-page-header h1`. */
+/** Aligné sur les fiches Connecteurs (`.app-main h1` = 1.25rem / 600). */
 const TITLE_BASE_STYLE: React.CSSProperties = {
-  fontFamily: "var(--site-font-display)",
-  lineHeight: 1.12,
-  letterSpacing: "-0.02em",
-  margin: "0 0 12px",
+  margin: "0 0 8px",
 };
 
 export function ModulePageHeader({
@@ -57,7 +54,7 @@ export function ModulePageHeader({
   modulesLabel = "Modules",
   breadcrumb,
   title,
-  titleSize = "clamp(28px, 4vw, 38px)",
+  titleSize = "1.25rem",
   titleStyle,
   description,
   category,
@@ -79,6 +76,7 @@ export function ModulePageHeader({
       <Title
         level={1}
         size={titleSize}
+        bold={600}
         color="var(--bpm-text-primary)"
         style={{ ...TITLE_BASE_STYLE, ...titleStyle }}
       >
