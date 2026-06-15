@@ -36,6 +36,14 @@ describe("parsePropSpecs — dérivation depuis llms.txt", () => {
     }
   });
 
+  it("slider : onChange (callback) reste non éditable", () => {
+    const specs = parsePropSpecs("bpm.slider");
+    const onChange = specs.find((s) => s.name === "onChange");
+    expect(onChange).toBeDefined();
+    expect(onChange!.editable).toBe(false);
+    expect(onChange!.control).toBeUndefined();
+  });
+
   it("toggle : value → contrôle booléen", () => {
     const specs = parsePropSpecs("bpm.toggle");
     const value = specs.find((s) => s.name === "value");

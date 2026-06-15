@@ -99,13 +99,17 @@ function parseLine(line: string): PropSpec | null {
 
   const spec: PropSpec = { name, type, required, editable: false, description };
 
+  const isFunction = /=>/.test(type); // callback (ex. (value: number) => void)
   const isBoolean = type === "boolean";
   const isNumberOnly = type === "number";
   const isReactNode = /\bReact\.ReactNode\b|\bReactNode\b/.test(type);
-  const options = inferOptions(type, description);
+  const options = isFunction ? [] : inferOptions(type, description);
   const rawDefault = inferDefault(description);
 
-  if (isBoolean) {
+  if (isFunction) {
+    // Callback : non éditable (géré par des handlers par défaut côté renderer).
+    return spec;
+  } else if (isBoolean) {
     spec.editable = true;
     spec.control = "boolean";
     spec.default = /Default:\s*true/i.test(description) ? true : false;
