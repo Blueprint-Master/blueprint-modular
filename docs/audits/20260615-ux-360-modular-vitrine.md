@@ -22,7 +22,7 @@ La vitrine est **déjà nettement plus homogène et mieux construite que ne le l
 
 **Fragmentation des gabarits = le vrai problème d'homogénéité.** Trois systèmes de mise en page coexistent (voir §3.1). C'est la racine de la majorité des findings « gabarit divergent ».
 
-**Livrables de code de cette run** (3 patterns A/B, voir §6) : **P-A11Y/I18N** (A, chrome fiche partagé), **P-DOGFOOD** (B, contenu inline → `bpm.*` sur catalogues + fiche connecteur), **P-DEDUP** (B partiel, redirections d'alias). Restent **documentés en recommandations** (catégorie C, ou B nécessitant un arbitrage) : convergence des 3 gabarits, schéma Simulateur/Doc connecteurs, dogfooding des design systems CSS (`site-*`/`doc-page`), P-PITCH, P-SECU. **P-PANEL est prouvé sans cible mécanique** dans le périmètre respectant les contraintes (§4.2).
+**Livrables de code de cette run** (4 patterns A/B — **épuisés**, voir §6) : **P-A11Y/I18N** (A, chrome fiche partagé), **P-DOGFOOD** (B, contenu inline → `bpm.*` ; fiche connecteur 100 %), **P-DEDUP** (B, redirections d'alias), **P-GABARIT** (B/C, primitif `ModulePageHeader` — **29/29 pages module**, titre dogfoodé en `bpm.title`). `tsc` + `npm run build` **verts**. Restent **documentés, non implémentés** (catégorie C par conception de la mission) : convergence des design systems CSS, schéma Simulateur/Doc connecteurs, P-PITCH, P-DEDUP `highlight-box`. **P-PANEL prouvé sans cible mécanique** (§4.2) ; **P-SECU requalifié faible valeur** (contenu statique, surface utilisateur déjà sûre).
 
 ---
 
@@ -79,7 +79,7 @@ Catégorie : **A** = mécanique (aucun jugement design) · **B** = semi-auto (ch
 | **P-DOGFOOD (contenu HTML→bpm.*)** | catalogues + fiche connecteur | **B** | Élevé | Moyen | ✅ **LIVRÉ** (commit 3) |
 | **P-DEDUP (alias fiches)** | 3 alias `composants/*` | **B** | Moyen | Faible | ✅ **LIVRÉ partiel** (commit 4) — 3/5, 2 ambigus laissés |
 | **P-PANEL** | chrome vitrine | — | — | — | ❌ Non actionnable : déjà conforme + misuse confiné au rendu libre (preuve §4.2) |
-| **P-GABARIT (en-tête module)** | 29 pages module | **B/C** | Élevé | Faible→Moyen | ✅ **LIVRÉ 27/29** (commits 6–8) — primitif + migration ; **titre dogfoodé en `bpm.title`** ; 2 pages non-standard laissées (wiki, asset-manager) |
+| **P-GABARIT (en-tête module)** | 29 pages module | **B/C** | Élevé | Faible→Moyen | ✅ **LIVRÉ 29/29** (commits 6–8, 10) — primitif + migration complète ; **titre dogfoodé en `bpm.title`** |
 | **P-GABARIT (convergence DS + simulateur connecteurs)** | 3 systèmes ; connecteurs | C | **Élevé** | Élevé | 📋 Recommandation (§5) |
 | **P-DOGFOOD (chrome site-*/doc-page CSS)** | site public, fiches | C | Élevé | Élevé | 📋 Recommandation (§5) — systèmes CSS délibérés |
 | **P-PITCH (mise en avant)** | composants, modules, connecteurs | C | Moyen | — | 📋 Recommandation (§5) |
@@ -233,16 +233,14 @@ Trois patterns propagés à tous leurs éléments concernés, un **commit atomiq
 
 ## 7. Ce qui reste (prochaines PR suggérées, par levier décroissant)
 
-> Cette run a livré P-A11Y/I18N, P-DOGFOOD (contenu inline), P-DEDUP (3 alias) et P-GABARIT (primitif `ModulePageHeader`, **27/29 pages**, **titre dogfoodé en `bpm.title`**). Le reste exige un arbitrage Rémi ou une validation visuelle.
+> **Patterns A/B : épuisés.** Cette run a livré P-A11Y/I18N, P-DOGFOOD (contenu inline + fiche connecteur 100 %), P-DEDUP (3 alias) et P-GABARIT (**29/29 pages** sur `ModulePageHeader`, **titre dogfoodé en `bpm.title`**). `tsc` + `npm run build` verts. Il ne reste que des éléments **catégorie C** (jugement design / création de contenu / arbitrage) que la mission demande de **documenter, non d'implémenter**, plus un B requalifié faible valeur.
 
-1. **P-GABARIT — 2 pages non-standard restantes** : `wiki` (en-tête masqué par `.wiki-page .doc-page-header { display:none }` + ancre `id` — migration sans gain visuel) et `asset-manager` (hub fonctionnel avec CSS dédiée `.asset-manager-page` + états *loading*/loaded). Décision : laisser tel quel ou migrer **avec** validation visuelle.
-   *(Le `<h1>` est désormais rendu via `bpm.title` dans le primitif — commit 8 ; réplique fidèle de la règle CSS display historique, à confirmer de visu.)*
-2. **P-GABARIT convergence DS** — unifier `doc-page` ↔ `site-*` ↔ `components/fiche/*` (C, fort levier, fort risque) — *gabarit par gabarit, captures avant/après*.
-3. **P-DOGFOOD (suite, design systems CSS)** — migration des classes `doc-page`/`site-*` vers `bpm.*` (C) — *surface par surface* ; démantèle un DS, décision design.
-4. **P-GABARIT connecteurs** — ajouter le schéma Simulateur + Documentation aux fiches connecteur (C, création de contenu ; ne pas toucher le contrat Zod).
-5. **P-DEDUP (suite)** — trancher `highlight-box` vs `highlightbox` puis rediriger (B).
-6. **P-SECU** — `monitor/documentation` : `dangerouslySetInnerHTML` statique → `bpm.markdown` (B).
-7. **P-PITCH** — blocs « accroche + cas d'usage + value prop » homogènes par composant/module/connecteur (C, éditorial).
-8. **Schéma module** — standardiser `simulateur-content.tsx` (16/28) ; statuer sur les 4 modules sans `/simulateur`.
+1. **P-GABARIT convergence DS** (C) — unifier `doc-page` ↔ `site-*` ↔ `components/fiche/*` en un primitif unique — *gabarit par gabarit, captures avant/après*.
+2. **P-DOGFOOD (design systems CSS)** (C) — migration des classes `doc-page`/`site-*` vers `bpm.*` — démantèle un DS délibéré, décision design.
+3. **P-GABARIT connecteurs** (C) — ajouter le schéma Simulateur + Documentation aux fiches connecteur (création de contenu ; ne pas toucher le contrat Zod ; règle de découpage doc/simulateur à fixer par Rémi).
+4. **P-DEDUP `highlight-box`** (C) — trancher le canonique (l'alias hors registre a *plus* de contenu) avant de rediriger.
+5. **P-SECU `monitor`** (B, **requalifié faible valeur**) — contenu 100 % statique, sans surface d'entrée utilisateur (pas de cible XSS) ; `bpm.markdown` est inerte au HTML → conversion = réécriture de ~14 chaînes HTML (dont `<kbd>`) FR+EN, risque > bénéfice. La surface de rendu de **texte utilisateur** (`wiki/HighlightedText`) évite déjà `dangerouslySetInnerHTML` → P-SECU de fait satisfait.
+6. **P-PITCH** (C, éditorial) — blocs « accroche + cas d'usage + value prop » par composant/module/connecteur.
+7. **Schéma module** (C) — standardiser `simulateur-content.tsx` (16/28) ; statuer sur les 4 modules sans `/simulateur`.
 
 > **Rappel** : harness vert ≠ validé fonctionnellement. Toute PR de catégorie B/C ci-dessus exige une validation visuelle sur rendu déployé avant merge.
