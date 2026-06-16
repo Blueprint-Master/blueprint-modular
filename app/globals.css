@@ -4642,10 +4642,13 @@ body.contract-detail-panel-open .pwa-title-bar {
   border: 1px solid var(--bpm-border);
   background: var(--bpm-bg-secondary);
   color: var(--bpm-text-primary);
-  font-size: 22px;
-  line-height: 1;
   cursor: pointer;
   transition: background 0.15s ease, border-color 0.15s ease;
+}
+
+/* Chevron SVG centré par le flex du bouton (display:block = pas de gap baseline). */
+.apps-gallery-chevron {
+  display: block;
 }
 
 .apps-gallery-nav:hover {

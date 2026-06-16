@@ -49,7 +49,20 @@ export function AppsCarousel({
           aria-label={labels.prev}
           onClick={() => scrollByCard(-1)}
         >
-          <span aria-hidden="true">‹</span>
+          <svg
+            className="apps-gallery-chevron"
+            viewBox="0 0 24 24"
+            width="20"
+            height="20"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="2"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            aria-hidden="true"
+          >
+            <path d="M15 18l-6-6 6-6" />
+          </svg>
         </button>
         <button
           type="button"
@@ -57,7 +70,20 @@ export function AppsCarousel({
           aria-label={labels.next}
           onClick={() => scrollByCard(1)}
         >
-          <span aria-hidden="true">›</span>
+          <svg
+            className="apps-gallery-chevron"
+            viewBox="0 0 24 24"
+            width="20"
+            height="20"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="2"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            aria-hidden="true"
+          >
+            <path d="M9 18l6-6-6-6" />
+          </svg>
         </button>
       </div>
 
