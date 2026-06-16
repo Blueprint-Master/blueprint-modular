@@ -19,7 +19,7 @@ const fr = {
     gallery: "Composants",
     modules: "Modules",
     mcp: "MCP",
-    builtForAI: "Built for AI",
+    builtForAI: "Conçu pour l'IA",
     resources: "Ressources",
     docs: "Documentation",
     gettingStarted: "Démarrage",
