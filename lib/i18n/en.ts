@@ -57,11 +57,12 @@ const en: Dictionary = {
     metaDescription:
       "React components called like Python functions: tables, metrics, workflows, threshold gauges. Documented for humans, readable by agents.",
     hero: {
-      title: "Business interfaces, one function call at a time.",
+      title: "Describe a need. Get a verified interface composition.",
       lead:
-        "Blueprint Modular exposes {count} React components — tables, metrics, workflows, threshold gauges — as plain Python functions. You write the logic; the interface, visual consistency and accessibility are already there.",
+        "{count} semantic components an AI knows how to assemble — callable in React and Python alike.",
       ctaPrimary: "Get started",
       ctaSecondary: "Browse components",
+      ctaDemo: "See the AI demo",
       demoCaption: "Live rendering — these are the package's own components, not screenshots.",
     },
     why: {

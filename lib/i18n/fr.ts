@@ -19,7 +19,7 @@ const fr = {
     gallery: "Composants",
     modules: "Modules",
     mcp: "MCP",
-    builtForAI: "Built for AI",
+    builtForAI: "Conçu pour l'IA",
     resources: "Ressources",
     docs: "Documentation",
     gettingStarted: "Démarrage",
@@ -57,11 +57,12 @@ const fr = {
     metaDescription:
       "Des composants React appelés comme des fonctions Python : tableaux, métriques, workflows, jauges à seuils. Documentés pour les humains, lisibles par les agents.",
     hero: {
-      title: "L'interface métier, en un appel de fonction.",
+      title: "Décrivez un besoin. Obtenez une composition d'interface vérifiée.",
       lead:
-        "Blueprint Modular expose {count} composants React — tableaux, métriques, workflows, jauges à seuils — comme de simples fonctions Python. Vous écrivez la logique ; l'interface, la cohérence visuelle et l'accessibilité sont déjà là.",
+        "{count} composants sémantiques qu'une IA sait assembler — et appeler en React comme en Python.",
       ctaPrimary: "Commencer",
       ctaSecondary: "Voir les composants",
+      ctaDemo: "Voir la démo IA",
       demoCaption: "Rendu réel — ces composants sont ceux du package, pas des captures d'écran.",
     },
     why: {
