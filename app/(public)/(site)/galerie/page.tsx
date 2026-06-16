@@ -66,7 +66,7 @@ export default async function GaleriePage() {
       </section>
 
       {/* CORPS — grille/carrousel de captures, ou état vide neutre */}
-      <section className="site-section">
+      <section className="site-section site-section-bordered">
         <div className="site-container">
           {apps.length === 0 ? (
             <p className="apps-gallery-empty">{g.empty}</p>

@@ -49,7 +49,20 @@ export function AppsCarousel({
           aria-label={labels.prev}
           onClick={() => scrollByCard(-1)}
         >
-          <span aria-hidden="true">‹</span>
+          <svg
+            className="apps-gallery-chevron"
+            viewBox="0 0 24 24"
+            width="20"
+            height="20"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="2"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            aria-hidden="true"
+          >
+            <path d="M15 18l-6-6 6-6" />
+          </svg>
         </button>
         <button
           type="button"
@@ -57,7 +70,20 @@ export function AppsCarousel({
           aria-label={labels.next}
           onClick={() => scrollByCard(1)}
         >
-          <span aria-hidden="true">›</span>
+          <svg
+            className="apps-gallery-chevron"
+            viewBox="0 0 24 24"
+            width="20"
+            height="20"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="2"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            aria-hidden="true"
+          >
+            <path d="M9 18l6-6-6-6" />
+          </svg>
         </button>
       </div>
 
@@ -80,7 +106,16 @@ export function AppsCarousel({
                     loading="lazy"
                   />
                 ) : (
-                  <span className="apps-gallery-noshot">{labels.noShot}</span>
+                  // Pas de capture → vignette de marque (monogramme) plutôt qu'un
+                  // bloc vide ; le titre reste lisible juste dessous.
+                  <span
+                    className="apps-gallery-monogram"
+                    role="img"
+                    aria-label={labels.noShot}
+                    title={labels.noShot}
+                  >
+                    {app.title.trim().charAt(0).toUpperCase() || "•"}
+                  </span>
                 )}
               </div>
 
