@@ -338,10 +338,76 @@ export interface SuggestionMeaning {
   status: string;
 }
 
+/**
+ * État vide UTILE : présent uniquement quand aucun composant ne matche. On oriente
+ * vers des familles existantes plutôt que de fabriquer de fausses suggestions — un
+ * vide honnête vaut mieux qu'un faux positif (le catalogue ne couvre pas tout).
+ */
+export interface SuggestEmptyState {
+  message: string;
+  /** Familles à explorer (proches du besoin si possible, sinon toutes les catégories). */
+  categories: string[];
+}
+
 export interface SuggestResult {
   need: string;
   count: number;
   suggestions: Array<ComponentSummary & { why: string; meaning?: SuggestionMeaning }>;
+  /** Additif : présent SEULEMENT quand count === 0. Le schéma des suggestions ne change pas. */
+  fallback?: SuggestEmptyState;
+}
+
+/**
+ * Table d'expansion métier — déplie les acronymes et termes courts en concepts que la
+ * couche sémantique du catalogue exprime RÉELLEMENT (rôle, frame Ω, guidance). Sans elle,
+ * "CRM" n'a aucun ancrage lexical dans Ω et ne matche rien, alors que les briques (CRUD,
+ * autocomplete…) existent. On déplie donc le besoin AVANT le scoring.
+ *
+ * VOLONTAIREMENT NON EXHAUSTIVE : on ne couvre que des familles dont Ω porte effectivement
+ * les composants. Si un domaine n'existe pas dans le catalogue (planning, réservation…), on
+ * ne l'invente PAS ici — l'état vide honnête s'en charge. Déterministe, sans réseau.
+ * Pour étendre : ajouter une clé (minuscule, >= 3 caractères) → termes métier FR existants.
+ */
+const NEED_EXPANSIONS: Record<string, string> = {
+  crm: "gestion relation client contacts pipeline opportunités ventes table formulaire",
+  erp: "gestion ressources stock commandes facturation table formulaire",
+  pim: "gestion produits catalogue fiches attributs table",
+  cms: "gestion contenu pages articles éditeur markdown",
+  helpdesk: "support tickets demandes statut suivi historique",
+  kpi: "métrique indicateur mesure cible seuil tableau de bord",
+  dashboard: "tableau de bord métriques indicateurs graphique",
+};
+
+/**
+ * Déplie les acronymes/termes métier du besoin via NEED_EXPANSIONS, en CONSERVANT
+ * l'original (les termes propres au besoin restent prioritaires au scoring). Scopé à
+ * suggest_composition : search_components garde un matching strictement lexical.
+ */
+function expandNeed(need: string): string {
+  const extra: string[] = [];
+  for (const t of tokenize(need)) {
+    const exp = NEED_EXPANSIONS[t];
+    if (exp) extra.push(exp);
+  }
+  return extra.length ? `${need} ${extra.join(" ")}` : need;
+}
+
+/** Familles proches du besoin (token présent dans le nom de catégorie), sinon toutes. */
+function nearestCategories(query: string): string[] {
+  const tokens = tokenize(query);
+  const near = CATEGORIES.filter((cat) => tokens.some((t) => fieldMatches(cat.toLowerCase(), t)));
+  return near.length ? near : CATEGORIES;
+}
+
+/** Construit l'état vide utile : message correct + familles à explorer. Zéro faux positif. */
+function emptyState(expandedNeed: string): SuggestEmptyState {
+  return {
+    message:
+      "Aucun composant ne correspond à ce besoin dans le catalogue actuel. " +
+      "Le catalogue ne couvre pas tous les domaines : explorez les familles ci-dessous " +
+      "via list_components, ou reformulez votre recherche avec search_components.",
+    categories: nearestCategories(expandedNeed),
+  };
 }
 
 function meaningOf(c: BpmComponent): SuggestionMeaning | undefined {
@@ -375,7 +441,15 @@ export function suggestComposition(need: string, limit?: number): SuggestResult 
     );
   }
   const cap = Math.min(SUGGEST_MAX, Math.max(1, limit ?? SUGGEST_DEFAULT));
-  const scored = scoreComponents(n).slice(0, cap);
+  // Déplie acronymes/termes métier ("CRM" → concepts portés par Ω) AVANT le scoring.
+  const expanded = expandNeed(n);
+  const scored = scoreComponents(expanded).slice(0, cap);
+
+  // État vide UTILE : pas de tableau nu ni de faux positif, mais une orientation honnête.
+  if (scored.length === 0) {
+    return { need: n, count: 0, suggestions: [], fallback: emptyState(expanded) };
+  }
+
   return {
     need: n,
     count: scored.length,
