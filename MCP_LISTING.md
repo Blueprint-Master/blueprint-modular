@@ -22,7 +22,7 @@ n'est ré-inventée par annuaire. La soumission elle-même est **manuelle**
 | **Une-ligne (tagline, ≤55)** | `Catalogue read-only des composants Blueprint Modular` |
 | **Catégorie / positionnement** | Developer Tools — Design system / UI & composants (catalogue de design system pour la génération d'interfaces) |
 | **Contact** | contact@blueprint-modular.com |
-| **Licence** | MIT |
+| **Licence** | Apache-2.0 |
 
 ### Description longue (≤2000 caractères)
 
@@ -152,15 +152,15 @@ avec des métriques et un graphique`). Réponse bornée.
 | Ressource | URL | État vérif. |
 |-----------|-----|-------------|
 | **Dépôt (repo)** | https://github.com/Blueprint-Master/blueprint-modular | ✅ `200` |
-| **Vitrine (site)** | https://blueprint-modular.com | ⚠️ non vérifiable (egress) |
-| **Page connecteur MCP** | https://blueprint-modular.com/mcp | ⚠️ non vérifiable (egress) |
-| **Manifeste / positionnement** | https://blueprint-modular.com/presentation | ⚠️ non vérifiable (egress) — *page `/presentation` du site ; pas de page « Manifeste » dédiée (voir TODO)* |
+| **Vitrine (site)** | https://blueprint-modular.com | ✅ vérifié `200` (16/06) |
+| **Page connecteur MCP** | https://blueprint-modular.com/mcp | ✅ vérifié `200` (16/06) |
+| **Manifeste / positionnement** | https://blueprint-modular.com/manifeste | ✅ vérifié `200` (16/06) |
 | **Endpoint MCP** | https://mcp.blueprint-modular.com/api/mcp | ⚠️ non vérifiable (egress) — cross-vérifié via le connecteur live |
 | **Confidentialité** | https://blueprint-modular.com/privacy | ⚠️ non vérifiable (egress) |
 | **Référence LLM** | https://blueprint-modular.com/llms.txt | ⚠️ non vérifiable (egress) |
 | **Package npm** | https://www.npmjs.com/package/@blueprint-modular/core | ⚠️ non vérifiable (egress) |
 | **Package PyPI** | https://pypi.org/project/blueprint-modular/ | ✅ `200` |
-| **Licence** | MIT (`README.md`) | — |
+| **Licence** | Apache-2.0 (`packages/core/package.json`, `README.md`) | — |
 
 > **Egress** : la sandbox de préparation n'autorise que `github.com` et
 > `pypi.org` ; les hôtes `*.blueprint-modular.com` et les annuaires renvoient
@@ -186,7 +186,7 @@ avec des métriques et un graphique`). Réponse bornée.
 
 Pré-requis communs à recopier depuis §1–4 : **Nom**, **tagline**,
 **description longue**, **endpoint** `https://mcp.blueprint-modular.com/api/mcp`,
-**transport** Streamable HTTP, **auth** None, **repo**, **licence MIT**, **icône**.
+**transport** Streamable HTTP, **auth** None, **repo**, **licence Apache-2.0**, **icône**.
 
 | # | Annuaire | URL de soumission | Format | Action préparée |
 |---|----------|-------------------|--------|-----------------|
@@ -246,14 +246,17 @@ Les 4 outils décrits ici ont été confrontés à **trois** sources, identiques
 **Outils confirmés :** `list_components`, `search_components`, `get_component`,
 `suggest_composition` — et **aucun autre**.
 
-### ⚠️ Divergences à réconcilier dans le repo (hors périmètre de cette PR)
+### ✅ Divergences réconciliées (2026-06-16)
 
-Pour tenir l'objectif « une source unique, aucune divergence », signaler :
+Les divergences signalées le 2026-06-15 ont été corrigées dans le dépôt — la
+source de référencement est désormais cohérente et alignée sur l'état live :
 
-- `SUBMISSION.md` et `docs/MCP_CONNECTOR.md` utilisent l'endpoint **apex**
-  `https://blueprint-modular.com/api/mcp`, alors que la page vitrine
-  (`app/(public)/(site)/mcp/mcp-content.tsx`) et la présente fiche utilisent le
-  **sous-domaine** `https://mcp.blueprint-modular.com/api/mcp` (= MCP live).
-  → Aligner sur le sous-domaine.
-- `SUBMISSION.md` mentionne **« 101 composants »** ; le registre live en compte
-  **104**. → Mettre à jour.
+- **Endpoint** — `SUBMISSION.md` et `docs/MCP_CONNECTOR.md` utilisent désormais le
+  **sous-domaine canonique** (= MCP live), aligné sur la page vitrine
+  (`app/(public)/(site)/mcp/mcp-content.tsx`) et la présente fiche.
+- **Décompte** — `SUBMISSION.md` affiche désormais **104 composants**, aligné sur
+  le MCP live et `lib/generated/mcp-registry.json`.
+- **Licence** — la présente fiche affiche désormais **Apache-2.0**
+  (`packages/core/package.json` + `README.md`), aligné sur la home publique.
+- **Manifeste** — le lien de positionnement pointe désormais la page
+  `/manifeste` (existante, vérifiée `200` le 16/06), sans TODO résiduel.
