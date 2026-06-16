@@ -78,6 +78,6 @@ Next.js, en composants `bpm.*`. Modular est le substrat ; Maker le fabrique.
 
 ## Licence
 
-`@blueprint-modular/core` : Apache-2.0 · `blueprint-modular` (PyPI) : MIT
+`@blueprint-modular/core` : Apache-2.0 · `blueprint-modular` (PyPI) : Apache-2.0
 </content>
 </invoke>
