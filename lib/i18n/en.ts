@@ -44,6 +44,7 @@ const en: Dictionary = {
     llms: "llms.txt — machine reference",
     llmsCore: "llms-core.txt",
     pypi: "PyPI package",
+    npm: "npm package",
     legalNotice: "Legal notice",
     privacy: "Privacy",
     terms: "Terms of use",
