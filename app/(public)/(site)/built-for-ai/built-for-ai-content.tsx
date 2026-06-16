@@ -4,7 +4,7 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { Badge, Button, Card, Chip, CodeBlock, Input, Message } from "@/components/bpm";
 import { useI18n } from "@/lib/i18n/LocaleProvider";
-import { fmt } from "@/lib/i18n";
+import { fmt, plural } from "@/lib/i18n";
 import { MCP_ENDPOINT, MCP_TOOLS } from "@/lib/mcp/tools";
 import {
   DEMO_PROMPT,
@@ -206,7 +206,7 @@ function Demo() {
           <div>
             <h3 className="site-showcase-subtitle">{t.compositionTitle}</h3>
             <p className="site-section-body">
-              {fmt(t.compositionBody, { count: result.count, need: result.need })}
+              {fmt(plural(t.compositionBody, result.count), { count: result.count, need: result.need })}
             </p>
             <ul className="site-tool-grid">
               {result.suggestions.map((s) => (
