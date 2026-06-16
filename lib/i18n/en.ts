@@ -6,7 +6,7 @@ import type { Dictionary } from "./index";
 const en: Dictionary = {
   common: {
     brand: "Blueprint Modular",
-    tagline: "Business components driven from Python.",
+    tagline: "Business components, in Python and React alike.",
     installCommand: "pip install blueprint-modular",
     openApp: "Open the app",
     rendered: "Rendered",
@@ -74,9 +74,9 @@ const en: Dictionary = {
             "Status tracking, approval flows, alert-threshold gauges, activity feeds: states and display rules live inside the component, not rewritten on every screen.",
         },
         {
-          title: "Python in front, React underneath",
+          title: "Python or React, your call",
           body:
-            "Every component is called like a function. No HTML, no JavaScript, no frontend build to maintain — and the output is real React, themeable, light and dark.",
+            "One component, two ways to call it: as a Python function or as a React/JSX tag. No HTML or frontend build to maintain — and the output is real React, themeable, light and dark.",
         },
         {
           title: "Documented for agents",
@@ -266,7 +266,7 @@ const en: Dictionary = {
     eyebrow: "Overview",
     title: "Blueprint Modular, at a glance.",
     lead:
-      "A business-UI library driven from Python: {components} components rendered live, {modules} ready-to-wire modules, an MCP connector for your agents — one source of truth, from code to catalog.",
+      "A business-UI library, callable in Python and React alike: {components} components rendered live, {modules} ready-to-wire modules, an MCP connector for your agents — one source of truth, from code to catalog.",
     ctaPrimary: "Get started",
     ctaSecondary: "Open the app",
     ecosystem: {

@@ -6,7 +6,7 @@
 const fr = {
   common: {
     brand: "Blueprint Modular",
-    tagline: "Composants métier pilotés depuis Python.",
+    tagline: "Des composants métier, en Python comme en React.",
     installCommand: "pip install blueprint-modular",
     openApp: "Ouvrir l'app",
     rendered: "Rendu",
@@ -74,9 +74,9 @@ const fr = {
             "Suivi de statuts, flux d'approbation, jauges à seuils d'alerte, flux d'activité : les états et les règles d'affichage sont intégrés au composant, pas réécrits à chaque écran.",
         },
         {
-          title: "Python devant, React dessous",
+          title: "Python ou React, au choix",
           body:
-            "Chaque composant s'appelle comme une fonction. Pas de HTML, pas de JavaScript, pas de build front à maintenir — et le rendu reste du vrai React, thémable, clair et sombre.",
+            "Un même composant, deux façons de l'appeler : comme une fonction Python ou comme une balise React/JSX. Pas de HTML ni de build front à maintenir — et le rendu reste du vrai React, thémable, clair et sombre.",
         },
         {
           title: "Documenté pour les agents",
@@ -266,7 +266,7 @@ const fr = {
     eyebrow: "Présentation",
     title: "Blueprint Modular, en un coup d'œil.",
     lead:
-      "Une bibliothèque d'interfaces métier pilotée depuis Python : {components} composants en rendu réel, {modules} modules prêts à brancher, un connecteur MCP pour vos agents — une seule source de vérité, du code au catalogue.",
+      "Une bibliothèque d'interfaces métier, appelable en Python comme en React : {components} composants en rendu réel, {modules} modules prêts à brancher, un connecteur MCP pour vos agents — une seule source de vérité, du code au catalogue.",
     ctaPrimary: "Commencer",
     ctaSecondary: "Ouvrir l'app",
     ecosystem: {
