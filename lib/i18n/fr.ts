@@ -44,6 +44,7 @@ const fr = {
     llms: "llms.txt — référence machine",
     llmsCore: "llms-core.txt",
     pypi: "Package PyPI",
+    npm: "Package npm",
     legalNotice: "Mentions légales",
     privacy: "Confidentialité",
     terms: "Conditions d'utilisation",

@@ -37,6 +37,9 @@ export function SiteFooter() {
           <a href="https://pypi.org/project/blueprint-modular/" target="_blank" rel="noopener noreferrer">
             {dict.footer.pypi}
           </a>
+          <a href="https://www.npmjs.com/package/@blueprint-modular/core" target="_blank" rel="noopener noreferrer">
+            {dict.footer.npm}
+          </a>
         </nav>
 
         <nav className="site-footer-col" aria-label={dict.footer.legal}>
