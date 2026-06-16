@@ -53,9 +53,9 @@ const fr = {
     reactSurface: "React",
   },
   home: {
-    metaTitle: "Blueprint Modular — composants métier pilotés depuis Python",
+    metaTitle: "Blueprint Modular — composez des interfaces vérifiées par IA",
     metaDescription:
-      "Des composants React appelés comme des fonctions Python : tableaux, métriques, workflows, jauges à seuils. Documentés pour les humains, lisibles par les agents.",
+      "Décrivez un besoin, obtenez une composition de composants sémantiques vérifiés — appelables en React comme en Python, lisibles par les agents via MCP.",
     hero: {
       title: "Décrivez un besoin. Obtenez une composition d'interface vérifiée.",
       lead:

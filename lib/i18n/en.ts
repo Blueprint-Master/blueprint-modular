@@ -53,9 +53,9 @@ const en: Dictionary = {
     reactSurface: "React",
   },
   home: {
-    metaTitle: "Blueprint Modular — business components driven from Python",
+    metaTitle: "Blueprint Modular — compose AI-verified interfaces",
     metaDescription:
-      "React components called like Python functions: tables, metrics, workflows, threshold gauges. Documented for humans, readable by agents.",
+      "Describe a need, get a composition of verified semantic components — callable in React and Python, readable by agents via MCP.",
     hero: {
       title: "Describe a need. Get a verified interface composition.",
       lead:
