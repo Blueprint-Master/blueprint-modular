@@ -4567,6 +4567,12 @@ body.contract-detail-panel-open .pwa-title-bar {
     transform: translateY(-7px) rotate(-45deg);
   }
 
+  /* En l'absence des liens (flex:1) masqués sur mobile, on pousse le groupe
+     d'actions (bascule de langue + burger) contre le bord droit. */
+  .site-nav-actions {
+    margin-left: auto;
+  }
+
   /* Cibles tactiles ≥ 44px pour la bascule de langue */
   .site-locale-btn {
     min-height: 44px;
