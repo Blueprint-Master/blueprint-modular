@@ -4706,6 +4706,23 @@ body.contract-detail-panel-open .pwa-title-bar {
   font-size: var(--bpm-font-size-sm);
 }
 
+/* Vignette de marque quand aucune capture n'est disponible : monogramme du
+   titre sur un dégradé doux — une carte n'est jamais visuellement « vide ». */
+.apps-gallery-monogram {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(135deg, var(--bpm-accent-soft), var(--bpm-bg-secondary));
+  font-family: var(--site-font-display);
+  font-size: clamp(48px, 8vw, 72px);
+  font-weight: 700;
+  line-height: 1;
+  color: var(--bpm-accent);
+  user-select: none;
+}
+
 .apps-gallery-body {
   padding: 16px 18px 20px;
   display: flex;

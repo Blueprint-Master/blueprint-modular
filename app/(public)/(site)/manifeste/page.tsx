@@ -57,7 +57,7 @@ export default async function ManifestePage() {
       {/* CORPS — typographie de lecture (mêmes primitives que les pages légales).
           La gouttière gauche/droite suit le même site-container que la page
           Présentation ; la colonne de lecture reste étroite mais alignée à gauche. */}
-      <section className="site-section">
+      <section className="site-section site-section-bordered">
         <div className="site-container">
           <article className="site-legal">
             {m.intro.map((p, i) => (

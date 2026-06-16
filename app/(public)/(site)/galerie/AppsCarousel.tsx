@@ -80,7 +80,16 @@ export function AppsCarousel({
                     loading="lazy"
                   />
                 ) : (
-                  <span className="apps-gallery-noshot">{labels.noShot}</span>
+                  // Pas de capture → vignette de marque (monogramme) plutôt qu'un
+                  // bloc vide ; le titre reste lisible juste dessous.
+                  <span
+                    className="apps-gallery-monogram"
+                    role="img"
+                    aria-label={labels.noShot}
+                    title={labels.noShot}
+                  >
+                    {app.title.trim().charAt(0).toUpperCase() || "•"}
+                  </span>
                 )}
               </div>
 
