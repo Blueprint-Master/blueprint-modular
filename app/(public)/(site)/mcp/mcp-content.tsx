@@ -4,17 +4,14 @@ import Link from "next/link";
 import { CodeBlock } from "@/components/bpm";
 import { useI18n } from "@/lib/i18n/LocaleProvider";
 import { fmt } from "@/lib/i18n";
+import { MCP_ENDPOINT, MCP_TOOLS } from "@/lib/mcp/tools";
 import { COMPONENT_COUNT } from "../_home/data";
 
-export const MCP_ENDPOINT = "https://mcp.blueprint-modular.com/api/mcp";
+// Réexport pour compatibilité avec les imports existants. Source : lib/mcp/tools.ts.
+export { MCP_ENDPOINT };
 
 /** Outils du connecteur : noms et signatures sont des identifiants de code (non traduits). */
-const TOOLS = [
-  { name: "list_components", sig: "category?, cursor?" },
-  { name: "search_components", sig: "query, cursor?" },
-  { name: "get_component", sig: "name" },
-  { name: "suggest_composition", sig: "need, limit?" },
-] as const;
+const TOOLS = MCP_TOOLS;
 
 const INITIALIZE_EXAMPLE = `curl -X POST ${MCP_ENDPOINT} \\
   -H "Content-Type: application/json" \\
