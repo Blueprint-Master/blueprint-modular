@@ -262,7 +262,7 @@ const fr = {
   presentationPage: {
     metaTitle: "Présentation — Blueprint Modular",
     metaDescription:
-      "Blueprint Modular en un coup d'œil : des composants React appelés comme des fonctions Python, des modules métier prêts à brancher, un connecteur MCP pour vos agents et une documentation générée depuis le code.",
+      "Blueprint Modular en un coup d'œil : composants en rendu réel, modules métier prêts à brancher, connecteur MCP pour vos agents, doc générée depuis le code.",
     eyebrow: "Présentation",
     title: "Blueprint Modular, en un coup d'œil.",
     lead:
@@ -300,7 +300,7 @@ const fr = {
   manifestePage: {
     metaTitle: "Manifeste — Blueprint Modular",
     metaDescription:
-      "Le Manifeste de Blueprint : des instruments, pas des contraintes. Un logiciel qui traverse les cadres, sent le réel et en restitue le sens — pour penser à travers ce que l'organisation tient séparé.",
+      "Le Manifeste Blueprint : des instruments, pas des contraintes. Un logiciel qui traverse les cadres, sent le réel et en restitue le sens.",
     eyebrow: "Le Manifeste",
     title: "Manifeste Blueprint",
     lead: "Des instruments, pas des contraintes",
@@ -611,7 +611,7 @@ const fr = {
   builtForAI: {
     metaTitle: "Built for AI — Blueprint Modular consommable par les agents",
     metaDescription:
-      "Blueprint Modular est nativement consommable par les agents IA via MCP. Décrivez un écran en langage naturel, l'outil suggest_composition renvoie des composants bpm.* réels — affichés puis rendus.",
+      "Consommable nativement par les agents via MCP. Décrivez un écran : suggest_composition renvoie des composants bpm.* réels, vérifiés, puis rendus.",
     eyebrow: "Built for AI",
     title: "Un design system que les agents savent lire — et composer.",
     lead:

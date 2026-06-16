@@ -262,7 +262,7 @@ const en: Dictionary = {
   presentationPage: {
     metaTitle: "Overview — Blueprint Modular",
     metaDescription:
-      "Blueprint Modular at a glance: React components called like Python functions, ready-to-wire business modules, an MCP connector for your agents, and documentation generated from the code.",
+      "Blueprint Modular at a glance: live-rendered components, ready-to-wire business modules, an MCP connector for agents, docs generated from code.",
     eyebrow: "Overview",
     title: "Blueprint Modular, at a glance.",
     lead:
@@ -300,7 +300,7 @@ const en: Dictionary = {
   manifestePage: {
     metaTitle: "Manifesto — Blueprint Modular",
     metaDescription:
-      "The Blueprint Manifesto: instruments, not constraints. Software that crosses frames, senses the real and renders its meaning — to think across what the organization keeps apart.",
+      "The Blueprint Manifesto: instruments, not constraints. Software that crosses frames, senses the real and renders its meaning.",
     eyebrow: "The Manifesto",
     title: "Blueprint Manifesto",
     lead: "Instruments, not constraints",
@@ -611,7 +611,7 @@ const en: Dictionary = {
   builtForAI: {
     metaTitle: "Built for AI — Blueprint Modular, consumable by agents",
     metaDescription:
-      "Blueprint Modular is natively consumable by AI agents over MCP. Describe a screen in natural language, suggest_composition returns real bpm.* components — listed, then rendered.",
+      "Natively consumable by AI agents over MCP. Describe a screen: suggest_composition returns real, verified bpm.* components, then renders them.",
     eyebrow: "Built for AI",
     title: "A design system agents can read — and compose.",
     lead:
