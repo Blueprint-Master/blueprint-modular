@@ -8,7 +8,7 @@ version = "0.1.53"
 description = "Briques Python prêtes à l'emploi pour vos interfaces de données"
 readme = "README.md"
 requires-python = ">=3.9"
-license = "MIT"
+license = "Apache-2.0"
 authors = [{ name = "Rémi", email = "contact@blueprint-modular.com" }]
 keywords = ["dashboard", "ui", "framework", "python", "data"]
 classifiers = [
