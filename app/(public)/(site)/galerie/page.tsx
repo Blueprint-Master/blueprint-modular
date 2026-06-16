@@ -79,6 +79,7 @@ export default async function GaleriePage() {
                 noShot: g.noShot,
                 prev: g.prev,
                 next: g.next,
+                viewDetail: g.viewDetail,
               }}
             />
           )}

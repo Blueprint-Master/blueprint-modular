@@ -4752,3 +4752,170 @@ body.contract-detail-panel-open .pwa-title-bar {
     grid-auto-columns: minmax(82%, 82%);
   }
 }
+
+/* Carte cliquable → vue détail */
+.apps-gallery-link {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  text-decoration: none;
+  color: inherit;
+}
+
+.apps-gallery-link:focus-visible {
+  outline: 2px solid var(--bpm-focus-ring);
+  outline-offset: 2px;
+}
+
+.apps-gallery-card {
+  transition: box-shadow 0.15s ease, border-color 0.15s ease, transform 0.15s ease;
+}
+
+.apps-gallery-card:hover {
+  border-color: var(--bpm-border-strong);
+  box-shadow: var(--bpm-shadow-md);
+  transform: translateY(-2px);
+}
+
+.apps-gallery-cta {
+  margin-top: 4px;
+  font-size: var(--bpm-font-size-sm);
+  font-weight: 600;
+  color: var(--bpm-accent);
+}
+
+/* ───────────────────── Vue détail : chaîne de génération ─────────────────── */
+
+.gen-chain-back {
+  display: inline-block;
+  margin-bottom: 16px;
+  font-size: var(--bpm-font-size-sm);
+  font-weight: 600;
+  color: var(--bpm-text-secondary);
+  text-decoration: none;
+}
+
+.gen-chain-back:hover {
+  color: var(--bpm-text-primary);
+}
+
+.gen-chain {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 40px;
+}
+
+.gen-chain-step {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.gen-chain-head {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.gen-chain-num {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  flex: 0 0 32px;
+  border-radius: 999px;
+  background: var(--bpm-accent);
+  color: var(--bpm-accent-contrast);
+  font-weight: 700;
+  font-size: 0.95rem;
+}
+
+.gen-chain-title {
+  margin: 0;
+  font-size: 1.35rem;
+  font-weight: 600;
+  color: var(--bpm-text-primary);
+}
+
+.gen-chain-prompt {
+  margin: 0;
+  padding: 16px 20px;
+  border-left: 3px solid var(--bpm-accent);
+  border-radius: var(--bpm-radius);
+  background: var(--bpm-bg-secondary);
+  color: var(--bpm-text-primary);
+  font-size: 1.05rem;
+  line-height: 1.6;
+  font-style: italic;
+}
+
+.gen-chain-narrative {
+  margin: 0;
+  color: var(--bpm-text-secondary);
+  font-size: var(--bpm-font-size-sm);
+  line-height: 1.5;
+}
+
+.gen-chain-structure {
+  display: flex;
+  flex-direction: column;
+  gap: 28px;
+}
+
+.gen-chain-block {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.gen-chain-block-title {
+  margin: 0;
+  font-size: 0.8rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--bpm-text-muted);
+}
+
+.gen-chain-entities {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 16px;
+}
+
+.gen-chain-kpis {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 16px;
+}
+
+.gen-chain-muted {
+  color: var(--bpm-text-muted);
+}
+
+.gen-chain-shot {
+  border: 1px solid var(--bpm-border);
+  border-radius: var(--bpm-radius-lg);
+  overflow: hidden;
+  background: var(--bpm-bg-tertiary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 200px;
+}
+
+.gen-chain-shot img {
+  width: 100%;
+  height: auto;
+  display: block;
+}
+
+.gen-chain-noshot {
+  padding: 48px 24px;
+  color: var(--bpm-text-muted);
+  font-size: var(--bpm-font-size-sm);
+}
