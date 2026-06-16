@@ -12,7 +12,7 @@ license = "Apache-2.0"
 authors = [{ name = "Rémi", email = "contact@blueprint-modular.com" }]
 keywords = ["dashboard", "ui", "framework", "python", "data"]
 classifiers = [
-  "Development Status :: 3 - Alpha",
+  "Development Status :: 4 - Beta",
   "Intended Audience :: Developers",
   "Programming Language :: Python :: 3",
   "Programming Language :: Python :: 3.9",
