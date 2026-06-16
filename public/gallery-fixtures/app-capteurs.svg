@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 400" role="img" aria-label="Aperçu — Parc de capteurs">
+  <rect width="640" height="400" fill="#0f172a"/>
+  <rect x="24" y="24" width="380" height="352" rx="10" fill="#13233b"/>
+  <path d="M60 120 L160 90 L260 130 L360 100" fill="none" stroke="#1e3a5f" stroke-width="3"/>
+  <path d="M70 220 L180 200 L300 250 L360 210" fill="none" stroke="#1e3a5f" stroke-width="3"/>
+  <circle cx="120" cy="110" r="9" fill="#34d399"/>
+  <circle cx="220" cy="150" r="9" fill="#34d399"/>
+  <circle cx="300" cy="120" r="9" fill="#fbbf24"/>
+  <circle cx="160" cy="250" r="9" fill="#f87171"/>
+  <circle cx="320" cy="230" r="9" fill="#34d399"/>
+  <rect x="420" y="24" width="196" height="352" rx="10" fill="#1e293b"/>
+  <rect x="440" y="48" width="120" height="14" rx="5" fill="#64748b"/>
+  <rect x="440" y="84" width="156" height="40" rx="8" fill="#0f172a"/>
+  <rect x="440" y="136" width="156" height="40" rx="8" fill="#0f172a"/>
+  <rect x="440" y="188" width="156" height="40" rx="8" fill="#3a1d22"/>
+  <circle cx="460" cy="104" r="6" fill="#34d399"/>
+  <circle cx="460" cy="156" r="6" fill="#fbbf24"/>
+  <circle cx="460" cy="208" r="6" fill="#f87171"/>
+</svg>
