@@ -45,7 +45,27 @@ Authorization: Bearer <INTERNAL_API_SECRET>   # optionnel, si le Maker l'exige
       "title": "Suivi de production temps réel",
       "prompt": "Crée un tableau de bord qui suit le rendement de trois lignes…",
       "screenshotUrl": "https://cdn.exemple/captures/ckxyz123.png",
-      "createdAt": "2026-05-28T09:12:00.000Z"
+      "createdAt": "2026-05-28T09:12:00.000Z",
+      "appSpec": {
+        "entities": [
+          {
+            "name": "Article",
+            "label": "Article",
+            "labelPlural": "Articles",
+            "fields": [
+              { "name": "titre", "label": "Titre", "type": "string", "required": true },
+              { "name": "statut", "label": "Statut", "type": "enum", "required": true }
+            ]
+          }
+        ],
+        "modules": [
+          { "key": "articles", "label": "Articles", "layout": "crud-table", "entity": "Article" },
+          { "key": "dashboard", "label": "Tableau de bord", "layout": "kpi-overview", "entity": null }
+        ],
+        "kpis": [
+          { "label": "Articles en préparation", "unit": "number", "aggregation": "count", "entity": "Article" }
+        ]
+      }
     }
   ]
 }
@@ -53,7 +73,7 @@ Authorization: Bearer <INTERNAL_API_SECRET>   # optionnel, si le Maker l'exige
 
 Un tableau nu `[ { … } ]` est également accepté.
 
-### Champs (tous publics, strictement ces 5)
+### Champs (tous publics)
 
 | Champ          | Type             | Notes |
 |----------------|------------------|-------|
@@ -62,10 +82,41 @@ Un tableau nu `[ { … } ]` est également accepté.
 | `prompt`       | `string`         | Prompt d'origine. Peut être vide. |
 | `screenshotUrl`| `string \| null` | URL d'une capture (image, ou poster d'une courte vidéo). `null` si aucune capture. **Pas d'URL de backend live.** |
 | `createdAt`    | `string`         | Date ISO 8601. |
+| `appSpec`      | `object \| null` | **Extension additive** (voir ci-dessous). Vue STRUCTURELLE filtrée de l'AppSpec ayant produit l'app, ou `null`. Jamais l'AppSpec brut. |
+
+> Les **5 premiers champs sont stables et inchangés** : un consommateur qui n'attend
+> que ces 5 champs (ex. le proxy actuel `sanitizeCuratedApps`) ignore simplement
+> `appSpec` et continue de fonctionner sans modification.
+
+### Champ `appSpec` — vue structurelle filtrée (additif)
+
+But : permettre à Modular de montrer « **une phrase a produit cette structure,
+déterministiquement** ». L'endpoint expose une projection **whitelist, construite
+clé par clé** côté Maker — **jamais** l'AppSpec brut sérialisé.
+
+`appSpec` vaut `null` si l'app n'a pas d'AppSpec exploitable (jamais d'objet partiel
+incohérent, jamais d'erreur). Sinon, exactement cette forme (3 clés, toujours
+présentes même si vides) :
+
+| Clé        | Type       | Contenu (uniquement structurel / affichable) |
+|------------|------------|----------------------------------------------|
+| `entities` | `array`    | Entités du domaine : `name`, `label`, `labelPlural`, et `fields[]` = `{ name, label, type, required }`. |
+| `modules`  | `array`    | Modules de navigation (sections) : `key`, `label`, `layout`, `entity` (`string \| null`). |
+| `kpis`     | `array`    | Indicateurs : `label`, `unit` (`string \| null`), `aggregation`, `entity` (`string \| null`). |
+
+**Garantie de filtrage** (côté Maker, `lib/gallery/curated-apps.ts` → `toCuratedAppSpec`) :
+seules les clés ci-dessus transitent. Sont **exclus par construction** : `meta`
+(intention, prompts, `projectId`, raisonnement…), `description`, `seedContext` /
+`seedCount`, valeurs d'enum (`enumValues`) et `defaultValue`, formules de KPI
+(`formula`) et `filters`, `workflows` / `rules` / `events`, code des `freeViews`,
+design / `composerPalette`, couche `cognitive`. **Aucune valeur métier, aucun
+contenu de données, aucun secret.**
 
 ### Interdits (ne JAMAIS inclure)
 
 - `code`, `schema`, `previewUrl`, ni aucune URL pointant vers un backend live.
+- L'**AppSpec brut** ou toute clé hors whitelist `appSpec` (valeurs métier, prompts,
+  formules, code, meta interne).
 - Données d'organisation, d'utilisateur, ou tout champ sensible.
 - Toute app non explicitement pouce vert.
 

@@ -16,6 +16,7 @@ const LINKS = [
   { href: "/manifeste", key: "manifeste" as const },
   { href: "/galerie", key: "apps" as const },
   { href: "/mcp", key: "mcp" as const },
+  { href: "/built-for-ai", key: "builtForAI" as const },
   { href: "/resources", key: "resources" as const },
   { href: "/docs", key: "docs" as const },
 ];

@@ -19,6 +19,7 @@ const en: Dictionary = {
     gallery: "Components",
     modules: "Modules",
     mcp: "MCP",
+    builtForAI: "Built for AI",
     resources: "Resources",
     docs: "Documentation",
     gettingStarted: "Getting started",
@@ -604,6 +605,57 @@ const en: Dictionary = {
     linksTitle: "Go further",
     linkCatalog: "Component catalog",
     linkGallery: "Live gallery",
+  },
+  builtForAI: {
+    metaTitle: "Built for AI — Blueprint Modular, consumable by agents",
+    metaDescription:
+      "Blueprint Modular is natively consumable by AI agents over MCP. Describe a screen in natural language, suggest_composition returns real bpm.* components — listed, then rendered.",
+    eyebrow: "Built for AI",
+    title: "A design system agents can read — and compose.",
+    lead:
+      "Four read-only MCP tools expose the {count} components to any agent. Describe a screen in natural language: suggest_composition turns it into real, verified bpm.* components, then renders them. No other design system shows this.",
+    endpointLabel: "MCP endpoint",
+    ctaTry: "Try the demo",
+    ctaMcp: "MCP connector details",
+    toolsTitle: "The four tools exposed to an agent",
+    toolsBody:
+      "Read-only, no authentication. An agent declares the remote MCP server at the URL above, lists tools via tools/list, then calls them via tools/call.",
+    toolsConnectNote:
+      "Add the endpoint as a remote MCP connector (Claude: Settings → Connectors) — the four tools appear immediately.",
+    demoTitle: "Demo: from natural language to components",
+    demoBody:
+      "Describe the screen you want. The page calls suggest_composition (the same tool logic as the MCP server), shows the raw response an agent receives, verifies each component via get_component, then renders the matching bpm.* components.",
+    demoInputLabel: "Describe the screen to build",
+    demoPlaceholder: "e.g. an order-tracking dashboard",
+    demoSubmit: "Suggest a composition",
+    demoSubmitting: "Calling suggest_composition…",
+    presetsLabel: "Examples:",
+    presets: [
+      "un dashboard de suivi de commandes",
+      "des indicateurs de performance et une jauge",
+      "un tableau de données avec recherche et pagination",
+    ],
+    requestLabel: "Tool call",
+    responseLabel: "Tool response (what the agent receives)",
+    compositionTitle: "Suggested composition",
+    compositionBody: "{count} components proposed for: “{need}”.",
+    verifiedLabel: "verified via get_component",
+    whyLabel: "Matches",
+    renderTitle: "Rendering the bpm.* components",
+    renderBody:
+      "The suggested components, rendered live from @blueprint-modular/core. Those without a dedicated preview appear as a verified catalog card.",
+    livePreview: "live render",
+    catalogOnly: "catalog card",
+    sourceLive: "Source: live tool logic (lib/mcp/registry).",
+    sourceFallback: "Source: pre-captured response (offline fallback).",
+    fallbackNotice:
+      "The live connector is momentarily unavailable — showing a pre-captured response. The demo stays faithful to the tool's real output.",
+    errorTitle: "Need not interpreted",
+    errorBody: "Describe the screen or feature to build, then try again.",
+    retry: "Try again",
+    diffTitle: "The differentiator",
+    diffBody:
+      "A design system documented for humans gets read. Blueprint Modular gets consumed: an agent queries the catalog, gets real, verified components, and composes an interface — with no human in the loop. Read-only, no personal data.",
   },
   resources: {
     metaTitle: "Resources & guides — Blueprint Modular",
