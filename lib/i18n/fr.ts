@@ -6,7 +6,7 @@
 const fr = {
   common: {
     brand: "Blueprint Modular",
-    tagline: "Composants métier pilotés depuis Python.",
+    tagline: "Des composants métier, en Python comme en React.",
     installCommand: "pip install blueprint-modular",
     openApp: "Ouvrir l'app",
     rendered: "Rendu",
@@ -74,9 +74,9 @@ const fr = {
             "Suivi de statuts, flux d'approbation, jauges à seuils d'alerte, flux d'activité : les états et les règles d'affichage sont intégrés au composant, pas réécrits à chaque écran.",
         },
         {
-          title: "Python devant, React dessous",
+          title: "Python ou React, au choix",
           body:
-            "Chaque composant s'appelle comme une fonction. Pas de HTML, pas de JavaScript, pas de build front à maintenir — et le rendu reste du vrai React, thémable, clair et sombre.",
+            "Un même composant, deux façons de l'appeler : comme une fonction Python ou comme une balise React/JSX. Pas de HTML ni de build front à maintenir — et le rendu reste du vrai React, thémable, clair et sombre.",
         },
         {
           title: "Documenté pour les agents",
@@ -262,11 +262,11 @@ const fr = {
   presentationPage: {
     metaTitle: "Présentation — Blueprint Modular",
     metaDescription:
-      "Blueprint Modular en un coup d'œil : des composants React appelés comme des fonctions Python, des modules métier prêts à brancher, un connecteur MCP pour vos agents et une documentation générée depuis le code.",
+      "Blueprint Modular en un coup d'œil : composants en rendu réel, modules métier prêts à brancher, connecteur MCP pour vos agents, doc générée depuis le code.",
     eyebrow: "Présentation",
     title: "Blueprint Modular, en un coup d'œil.",
     lead:
-      "Une bibliothèque d'interfaces métier pilotée depuis Python : {components} composants en rendu réel, {modules} modules prêts à brancher, un connecteur MCP pour vos agents — une seule source de vérité, du code au catalogue.",
+      "Une bibliothèque d'interfaces métier, appelable en Python comme en React : {components} composants en rendu réel, {modules} modules prêts à brancher, un connecteur MCP pour vos agents — une seule source de vérité, du code au catalogue.",
     ctaPrimary: "Commencer",
     ctaSecondary: "Ouvrir l'app",
     ecosystem: {
@@ -300,7 +300,7 @@ const fr = {
   manifestePage: {
     metaTitle: "Manifeste — Blueprint Modular",
     metaDescription:
-      "Le Manifeste de Blueprint : des instruments, pas des contraintes. Un logiciel qui traverse les cadres, sent le réel et en restitue le sens — pour penser à travers ce que l'organisation tient séparé.",
+      "Le Manifeste Blueprint : des instruments, pas des contraintes. Un logiciel qui traverse les cadres, sent le réel et en restitue le sens.",
     eyebrow: "Le Manifeste",
     title: "Manifeste Blueprint",
     lead: "Des instruments, pas des contraintes",
@@ -366,7 +366,7 @@ const fr = {
     // Vue détail /galerie/[id] — chaîne prompt → structure → app
     detailMetaTitle: "{title} — Galerie Modular",
     detailBack: "← Retour à la galerie",
-    detailLead: "Une phrase a produit cette structure, déterministiquement.",
+    detailLead: "Une phrase a produit cette structure — de façon déterministe.",
     stepPromptTitle: "La demande",
     stepStructureTitle: "La structure générée",
     stepAppTitle: "L'application",
@@ -611,11 +611,11 @@ const fr = {
   builtForAI: {
     metaTitle: "Built for AI — Blueprint Modular consommable par les agents",
     metaDescription:
-      "Blueprint Modular est nativement consommable par les agents IA via MCP. Décrivez un écran en langage naturel, l'outil suggest_composition renvoie des composants bpm.* réels — affichés puis rendus.",
+      "Consommable nativement par les agents via MCP. Décrivez un écran : suggest_composition renvoie des composants bpm.* réels, vérifiés, puis rendus.",
     eyebrow: "Built for AI",
     title: "Un design system que les agents savent lire — et composer.",
     lead:
-      "Quatre outils MCP read-only exposent les {count} composants à n'importe quel agent. Décrivez un écran en langage naturel : suggest_composition le traduit en composants bpm.* réels, vérifiés, puis rendus. Aucun autre design system ne montre ça.",
+      "Quatre outils MCP read-only exposent les {count} composants à n'importe quel agent. Décrivez un écran en langage naturel : suggest_composition le traduit en composants bpm.* réels, vérifiés, puis rendus. C'est le différenciateur : un catalogue qu'on consomme, pas qu'on consulte.",
     endpointLabel: "Endpoint MCP",
     ctaTry: "Essayer la démo",
     ctaMcp: "Détail du connecteur MCP",
