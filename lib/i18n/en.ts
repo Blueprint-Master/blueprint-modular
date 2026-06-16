@@ -615,7 +615,7 @@ const en: Dictionary = {
     eyebrow: "Built for AI",
     title: "A design system agents can read — and compose.",
     lead:
-      "Four read-only MCP tools expose the {count} components to any agent. Describe a screen in natural language: suggest_composition turns it into real, verified bpm.* components, then renders them. No other design system shows this.",
+      "Four read-only MCP tools expose the {count} components to any agent. Describe a screen in natural language: suggest_composition turns it into real, verified bpm.* components, then renders them. That's the difference: a catalog you consume, not just read.",
     endpointLabel: "MCP endpoint",
     ctaTry: "Try the demo",
     ctaMcp: "MCP connector details",

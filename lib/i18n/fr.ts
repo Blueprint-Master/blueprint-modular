@@ -366,7 +366,7 @@ const fr = {
     // Vue détail /galerie/[id] — chaîne prompt → structure → app
     detailMetaTitle: "{title} — Galerie Modular",
     detailBack: "← Retour à la galerie",
-    detailLead: "Une phrase a produit cette structure, déterministiquement.",
+    detailLead: "Une phrase a produit cette structure — de façon déterministe.",
     stepPromptTitle: "La demande",
     stepStructureTitle: "La structure générée",
     stepAppTitle: "L'application",
@@ -615,7 +615,7 @@ const fr = {
     eyebrow: "Built for AI",
     title: "Un design system que les agents savent lire — et composer.",
     lead:
-      "Quatre outils MCP read-only exposent les {count} composants à n'importe quel agent. Décrivez un écran en langage naturel : suggest_composition le traduit en composants bpm.* réels, vérifiés, puis rendus. Aucun autre design system ne montre ça.",
+      "Quatre outils MCP read-only exposent les {count} composants à n'importe quel agent. Décrivez un écran en langage naturel : suggest_composition le traduit en composants bpm.* réels, vérifiés, puis rendus. C'est le différenciateur : un catalogue qu'on consomme, pas qu'on consulte.",
     endpointLabel: "Endpoint MCP",
     ctaTry: "Essayer la démo",
     ctaMcp: "Détail du connecteur MCP",
