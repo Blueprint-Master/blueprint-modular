@@ -15,6 +15,7 @@ const fr = {
   nav: {
     presentation: "Présentation",
     manifeste: "Manifeste",
+    apps: "Galerie",
     gallery: "Composants",
     modules: "Modules",
     mcp: "MCP",
@@ -343,6 +344,21 @@ const fr = {
       "Blueprint n'est pas un générateur d'applications. C'est un fabricant d'instruments pour comprendre et agir sur le réel — pour penser à travers ce que l'organisation tient séparé.",
     ctaPrimary: "Commencer",
     ctaSecondary: "Explorer les composants",
+  },
+  galleryPage: {
+    metaTitle: "Apps créées avec Modular — Galerie",
+    metaDescription:
+      "Une sélection d'applications conçues avec Blueprint Modular et validées par leur auteur : titre, capture et prompt d'origine.",
+    eyebrow: "La galerie",
+    title: "Apps créées avec Modular",
+    lead: "Des instruments réels, nés d'un simple prompt — validés un par un.",
+    empty:
+      "Aucune app n'a encore été retenue pour la galerie. Revenez bientôt : les nouvelles créations validées apparaîtront ici.",
+    promptLabel: "Prompt d'origine : ",
+    screenshotAlt: "Capture de l'app",
+    noShot: "Aperçu indisponible",
+    prev: "Carte précédente",
+    next: "Carte suivante",
   },
   changelogPage: {
     title: "Changelog",

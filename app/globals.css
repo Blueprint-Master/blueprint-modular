@@ -4615,3 +4615,140 @@ body.contract-detail-panel-open .pwa-title-bar {
     font-size: 16px;
   }
 }
+
+/* ============================================================================
+   Galerie publique « Apps créées avec Modular » (/galerie)
+   Grille/carrousel responsive de captures. Le composant interactif vit dans
+   app/(public)/(site)/galerie/AppsCarousel.tsx ('use client').
+   ============================================================================ */
+.apps-gallery {
+  position: relative;
+}
+
+.apps-gallery-controls {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+  margin-bottom: 16px;
+}
+
+.apps-gallery-nav {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  border-radius: 999px;
+  border: 1px solid var(--bpm-border);
+  background: var(--bpm-bg-secondary);
+  color: var(--bpm-text-primary);
+  font-size: 22px;
+  line-height: 1;
+  cursor: pointer;
+  transition: background 0.15s ease, border-color 0.15s ease;
+}
+
+.apps-gallery-nav:hover {
+  background: var(--bpm-bg-tertiary);
+  border-color: var(--bpm-border-strong);
+}
+
+.apps-gallery-nav:focus-visible {
+  outline: 2px solid var(--bpm-focus-ring);
+  outline-offset: 2px;
+}
+
+/* Piste défilable : se comporte comme une grille responsive (cartes à largeur
+   fluide) tout en restant un carrousel scroll-snap. */
+.apps-gallery-track {
+  list-style: none;
+  margin: 0;
+  padding: 4px;
+  display: grid;
+  grid-auto-flow: column;
+  grid-auto-columns: minmax(280px, 360px);
+  gap: 20px;
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  scroll-padding: 4px;
+  -webkit-overflow-scrolling: touch;
+}
+
+.apps-gallery-card {
+  scroll-snap-align: start;
+  display: flex;
+  flex-direction: column;
+  border: 1px solid var(--bpm-border);
+  border-radius: var(--bpm-radius-lg);
+  background: var(--bpm-bg-secondary);
+  box-shadow: var(--bpm-shadow-sm);
+  overflow: hidden;
+}
+
+.apps-gallery-shot {
+  aspect-ratio: 16 / 10;
+  background: var(--bpm-bg-tertiary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+}
+
+.apps-gallery-shot img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.apps-gallery-noshot {
+  color: var(--bpm-text-muted);
+  font-size: var(--bpm-font-size-sm);
+}
+
+.apps-gallery-body {
+  padding: 16px 18px 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.apps-gallery-card-title {
+  margin: 0;
+  font-size: 1.05rem;
+  font-weight: 600;
+  color: var(--bpm-text-primary);
+}
+
+.apps-gallery-prompt {
+  margin: 0;
+  font-size: var(--bpm-font-size-sm);
+  line-height: 1.5;
+  color: var(--bpm-text-secondary);
+  /* Tronque proprement les prompts longs. */
+  display: -webkit-box;
+  -webkit-line-clamp: 4;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.apps-gallery-prompt-label {
+  font-weight: 600;
+  color: var(--bpm-text-muted);
+}
+
+.apps-gallery-empty {
+  margin: 0;
+  padding: 48px 24px;
+  text-align: center;
+  color: var(--bpm-text-muted);
+  border: 1px dashed var(--bpm-border);
+  border-radius: var(--bpm-radius-lg);
+  background: var(--bpm-bg-secondary);
+}
+
+@media (max-width: 640px) {
+  .apps-gallery-track {
+    grid-auto-columns: minmax(82%, 82%);
+  }
+}

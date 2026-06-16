@@ -15,6 +15,7 @@ const en: Dictionary = {
   nav: {
     presentation: "Overview",
     manifeste: "Manifesto",
+    apps: "Gallery",
     gallery: "Components",
     modules: "Modules",
     mcp: "MCP",
@@ -343,6 +344,21 @@ const en: Dictionary = {
       "Blueprint is not an application generator. It is a maker of instruments for understanding and acting on the real — for thinking across what the organization keeps apart.",
     ctaPrimary: "Get started",
     ctaSecondary: "Explore the components",
+  },
+  galleryPage: {
+    metaTitle: "Apps built with Modular — Gallery",
+    metaDescription:
+      "A selection of applications built with Blueprint Modular and approved by their author: title, screenshot and original prompt.",
+    eyebrow: "The gallery",
+    title: "Apps built with Modular",
+    lead: "Real instruments, born from a single prompt — vetted one by one.",
+    empty:
+      "No app has been featured in the gallery yet. Check back soon: newly approved creations will appear here.",
+    promptLabel: "Original prompt: ",
+    screenshotAlt: "App screenshot",
+    noShot: "Preview unavailable",
+    prev: "Previous card",
+    next: "Next card",
   },
   changelogPage: {
     title: "Changelog",
