@@ -210,8 +210,18 @@ function groupByCategory(components: ComponentEntry[]): { name: string; items: C
 
 /** Libellés locaux du catalogue absents du dictionnaire partagé (eyebrow/méta/cta). */
 const CATALOGUE_LABELS = {
-  fr: { eyebrow: "Catalogue", count: (n: number) => `${n} composants`, viewCard: "Voir la fiche" },
-  en: { eyebrow: "Catalog", count: (n: number) => `${n} components`, viewCard: "View component" },
+  fr: {
+    eyebrow: "Catalogue",
+    count: (n: number) => `${n} composants`,
+    viewCard: "Voir la fiche",
+    playground: "Essayer le playground — éditez les props en direct →",
+  },
+  en: {
+    eyebrow: "Catalog",
+    count: (n: number) => `${n} components`,
+    viewCard: "View component",
+    playground: "Try the playground — edit props live →",
+  },
 } as const;
 
 export function ComponentsCatalogue() {
@@ -258,6 +268,19 @@ export function ComponentsCatalogue() {
           placeholder={dict.catalog.searchPlaceholder}
           aria-label={dict.catalog.searchAria}
         />
+        <Link
+          href="/playground"
+          style={{
+            display: "inline-block",
+            marginTop: 12,
+            fontSize: 14,
+            fontWeight: 600,
+            color: "var(--bpm-accent-cyan)",
+            textDecoration: "none",
+          }}
+        >
+          {L.playground}
+        </Link>
       </CatalogueHero>
 
       {filteredCategories.map((cat) => (
