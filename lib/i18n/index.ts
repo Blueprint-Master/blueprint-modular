@@ -22,3 +22,14 @@ export async function getDictionary(locale: Locale): Promise<Dictionary> {
 export function fmt(template: string, vars: Record<string, string | number>): string {
   return template.replace(/\{(\w+)\}/g, (m, key) => (key in vars ? String(vars[key]) : m));
 }
+
+/**
+ * Formes plurielles d'une chaîne (accord FR/EN simple).
+ * zero (0) / one (1) / other (n>1) — sélectionnées selon count.
+ */
+export type PluralForms = { zero: string; one: string; other: string };
+export function plural(forms: PluralForms, count: number): string {
+  if (count === 0) return forms.zero;
+  if (count === 1) return forms.one;
+  return forms.other;
+}

@@ -640,7 +640,11 @@ const en: Dictionary = {
     requestLabel: "Tool call",
     responseLabel: "Tool response (what the agent receives)",
     compositionTitle: "Suggested composition",
-    compositionBody: "{count} components proposed for: “{need}”.",
+    compositionBody: {
+      zero: "No component proposed for: “{need}”.",
+      one: "1 component proposed for: “{need}”.",
+      other: "{count} components proposed for: “{need}”.",
+    },
     verifiedLabel: "verified via get_component",
     whyLabel: "Matches",
     renderTitle: "Rendering the bpm.* components",

@@ -640,7 +640,11 @@ const fr = {
     requestLabel: "Appel de l'outil",
     responseLabel: "Réponse de l'outil (ce que reçoit l'agent)",
     compositionTitle: "Composition suggérée",
-    compositionBody: "{count} composants proposés pour : « {need} ».",
+    compositionBody: {
+      zero: "Aucun composant proposé pour : « {need} ».",
+      one: "1 composant proposé pour : « {need} ».",
+      other: "{count} composants proposés pour : « {need} ».",
+    },
     verifiedLabel: "vérifié via get_component",
     whyLabel: "Correspond à",
     renderTitle: "Rendu des composants bpm.*",
