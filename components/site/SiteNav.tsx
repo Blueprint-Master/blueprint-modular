@@ -14,6 +14,7 @@ import { BRAND_MARK_SRC } from "@/lib/brandMark";
 const LINKS = [
   { href: "/presentation", key: "presentation" as const },
   { href: "/manifeste", key: "manifeste" as const },
+  { href: "/galerie", key: "apps" as const },
   { href: "/mcp", key: "mcp" as const },
   { href: "/built-for-ai", key: "builtForAI" as const },
   { href: "/resources", key: "resources" as const },
