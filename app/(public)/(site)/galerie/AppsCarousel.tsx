@@ -1,6 +1,7 @@
 "use client";
 
 import { useCallback, useRef } from "react";
+import Link from "next/link";
 import type { CuratedApp } from "@/lib/gallery/types";
 
 export interface AppsCarouselLabels {
@@ -9,6 +10,8 @@ export interface AppsCarouselLabels {
   noShot: string;
   prev: string;
   next: string;
+  /** Libellé d'accès à la vue détail (chaîne de génération). */
+  viewDetail: string;
 }
 
 /**
@@ -61,31 +64,41 @@ export function AppsCarousel({
       <ul className="apps-gallery-track" ref={trackRef}>
         {apps.map((app) => (
           <li key={app.id} className="apps-gallery-card" data-card>
-            <div className="apps-gallery-shot">
-              {app.screenshotUrl ? (
-                // Capture fournie par le Maker (contrat) — same-origin ou CDN.
-                // eslint-disable-next-line @next/next/no-img-element
-                <img
-                  src={app.screenshotUrl}
-                  alt={`${labels.screenshotAlt} — ${app.title}`}
-                  loading="lazy"
-                />
-              ) : (
-                <span className="apps-gallery-noshot">{labels.noShot}</span>
-              )}
-            </div>
+            {/* Carte entière cliquable → vue détail (chaîne prompt→structure→app). */}
+            <Link
+              href={`/galerie/${app.id}`}
+              className="apps-gallery-link"
+              aria-label={`${labels.viewDetail} — ${app.title}`}
+            >
+              <div className="apps-gallery-shot">
+                {app.screenshotUrl ? (
+                  // Capture fournie par le Maker (contrat) — same-origin ou CDN.
+                  // eslint-disable-next-line @next/next/no-img-element
+                  <img
+                    src={app.screenshotUrl}
+                    alt={`${labels.screenshotAlt} — ${app.title}`}
+                    loading="lazy"
+                  />
+                ) : (
+                  <span className="apps-gallery-noshot">{labels.noShot}</span>
+                )}
+              </div>
 
-            <div className="apps-gallery-body">
-              <h3 className="apps-gallery-card-title">{app.title}</h3>
-              {app.prompt ? (
-                <p className="apps-gallery-prompt">
-                  <span className="apps-gallery-prompt-label">
-                    {labels.promptLabel}
-                  </span>
-                  {app.prompt}
-                </p>
-              ) : null}
-            </div>
+              <div className="apps-gallery-body">
+                <h3 className="apps-gallery-card-title">{app.title}</h3>
+                {app.prompt ? (
+                  <p className="apps-gallery-prompt">
+                    <span className="apps-gallery-prompt-label">
+                      {labels.promptLabel}
+                    </span>
+                    {app.prompt}
+                  </p>
+                ) : null}
+                <span className="apps-gallery-cta" aria-hidden="true">
+                  {labels.viewDetail} →
+                </span>
+              </div>
+            </Link>
           </li>
         ))}
       </ul>
