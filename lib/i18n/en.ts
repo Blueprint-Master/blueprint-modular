@@ -229,14 +229,14 @@ const en: Dictionary = {
       title: "Your agents read the catalog, live.",
       body:
         "The MCP connector exposes the {count} components to Claude and any MCP host — props, examples, compositions — read-only, with no authentication and no personal data.",
-      cta: "Discover the MCP connector",
+      cta: "Explore the MCP connector",
     },
     resourcesTeaser: {
       eyebrow: "Resources",
       title: "Documentation, guides and reference, together.",
       body:
         "A single entry point to the documentation, getting-started guides, component catalog, machine reference and MCP connector.",
-      cta: "Open the resources",
+      cta: "Browse resources",
     },
     cta: {
       title: "Ready to write your first interface?",
@@ -272,7 +272,7 @@ const en: Dictionary = {
     ecosystem: {
       title: "One product, five entry points.",
       lead:
-        "Every building block is discovered, tested and documented in the same place. Here's where to start.",
+        "You discover, test and document every building block in one place. Here's where to start.",
       cards: {
         components: {
           title: "Components",
