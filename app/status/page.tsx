@@ -145,7 +145,7 @@ export default async function StatusPage() {
             marginBottom: 32,
           }}
         >
-          <div style={{ display: "flex", alignItems: "baseline", gap: 6 }}>
+          <div style={{ display: "flex", alignItems: "baseline", gap: 4 }}>
             <span style={{ fontWeight: 700, fontSize: "1.1rem" }}>{s.brand}</span>
             <span style={{ color: "var(--bpm-text-secondary)", fontWeight: 400 }}>{s.suffix}</span>
           </div>
