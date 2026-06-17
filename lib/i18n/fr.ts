@@ -36,6 +36,7 @@ const fr = {
     gallery: "Galerie de composants",
     modules: "Modules métier",
     catalog: "Catalogue",
+    maker: ".Maker",
     gettingStarted: "Démarrage",
     changelog: "Changelog",
     docs: "Documentation",
