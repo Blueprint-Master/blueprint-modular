@@ -61,6 +61,16 @@ else
 
   echo "--> Build et démarrage de l'app Next.js..."
   cd "$REPO_DIR"
+
+  # Charge l'environnement du repo (DATABASE_URL, etc.) AVANT prisma migrate/seed.
+  # Sinon, si le shell de déploiement a des variables d'un autre projet exportées
+  # (ex. DATABASE_URL=…/blueprint_maker, PORT=3001 du Maker), Prisma privilégie
+  # l'env du process sur le .env → migrate/seed ciblent la mauvaise base. On force
+  # donc l'env du .env Modular pour toute la suite du déploiement.
+  set -a
+  . "$REPO_DIR/.env"
+  set +a
+
   mkdir -p public/img
   if [ -f "Logo-BPM-nom.jpg" ]; then cp -f Logo-BPM-nom.jpg public/img/logo-bpm-nom.jpg; fi
   if [ -f "Logo BPM.png" ]; then cp -f "Logo BPM.png" public/img/logo-bpm-nom.png; cp -f "Logo BPM.png" public/img/logo-bpm.png; fi
