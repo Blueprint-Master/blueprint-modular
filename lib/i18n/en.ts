@@ -653,7 +653,7 @@ const en: Dictionary = {
     metaDescription:
       "Natively consumable by AI agents over MCP. Describe a screen: suggest_composition returns real, verified bpm.* components, then renders them.",
     eyebrow: "Built for AI",
-    title: "A design system agents can read — and compose.",
+    title: "A design system that AI agents can read and compose.",
     lead:
       "Four read-only MCP tools expose the {count} components to any agent. Describe a screen in natural language: suggest_composition turns it into real, verified bpm.* components, then renders them. That's the difference: a catalog you consume, not just read.",
     endpointLabel: "MCP endpoint",
