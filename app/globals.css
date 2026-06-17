@@ -4825,6 +4825,14 @@ body.contract-detail-panel-open .pwa-title-bar {
   color: var(--bpm-text-primary);
 }
 
+/* Dans le hero détail, le lien retour occupe sa propre ligne : passé en bloc, il
+   pousse l'eyebrow suivant sur la ligne d'après (la séparation verticale vient du
+   margin-bottom: 16px déjà présent). Contextualisé pour ne pas affecter les
+   .gen-chain-back inline-block utilisés ailleurs dans la chaîne de génération. */
+.site-hero .gen-chain-back {
+  display: block;
+}
+
 .gen-chain {
   list-style: none;
   margin: 0;
