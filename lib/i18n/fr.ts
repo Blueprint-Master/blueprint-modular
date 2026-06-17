@@ -57,7 +57,7 @@ const fr = {
   status: {
     metaTitle: "Statut — Blueprint Modular",
     metaDescription: "Disponibilité de la vitrine et du connecteur MCP Blueprint Modular.",
-    brand: "Blueprint Modular",
+    brand: ".Modular",
     suffix: "Statut",
     updated: "Mis à jour {time}",
     bannerOperational: "Tous les systèmes sont opérationnels",

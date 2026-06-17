@@ -57,7 +57,7 @@ const en: Dictionary = {
   status: {
     metaTitle: "Status — Blueprint Modular",
     metaDescription: "Availability of the Blueprint Modular site and MCP connector.",
-    brand: "Blueprint Modular",
+    brand: ".Modular",
     suffix: "Status",
     updated: "Updated {time}",
     bannerOperational: "All systems operational",
