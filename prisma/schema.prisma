@@ -645,3 +645,22 @@ model ProductionAlert {
   @@index([organizationId])
   @@index([createdAt])
 }
+
+/// Point de mesure de disponibilité publique (sonde uptime).
+/// Une ligne par service surveillé et par exécution de la sonde.
+/// Alimente la page /status (fenêtre glissante 90 jours).
+/// Aucune donnée personnelle : seulement l'état d'un endpoint public.
+model StatusCheck {
+  id        String   @id @default(cuid())
+  service   String   // "vitrine" | "mcp"
+  ok        Boolean
+  status    String   // "operational" | "degraded" | "outage"
+  httpCode  Int?     @map("http_code")
+  latencyMs Int?     @map("latency_ms")
+  detail    String?  @db.Text
+  checkedAt DateTime @default(now()) @map("checked_at")
+
+  @@index([service, checkedAt])
+  @@index([checkedAt])
+  @@map("status_check")
+}

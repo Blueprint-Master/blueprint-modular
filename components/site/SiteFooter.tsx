@@ -57,6 +57,7 @@ export function SiteFooter() {
           <Link href="/legal">{dict.footer.legalNotice}</Link>
           <Link href="/privacy">{dict.footer.privacy}</Link>
           <Link href="/terms">{dict.footer.terms}</Link>
+          <Link href="/status">{dict.footer.status}</Link>
         </nav>
       </div>
       <div className="site-container site-footer-meta">
