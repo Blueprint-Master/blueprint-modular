@@ -57,7 +57,9 @@ export function SiteFooter() {
           <Link href="/legal">{dict.footer.legalNotice}</Link>
           <Link href="/privacy">{dict.footer.privacy}</Link>
           <Link href="/terms">{dict.footer.terms}</Link>
-          <Link href="/status">{dict.footer.status}</Link>
+          {/* Page de statut servie sur son sous-domaine canonique
+              (status.blueprint-modular.com), pas sur /status de l'apex. */}
+          <a href="https://status.blueprint-modular.com">{dict.footer.status}</a>
         </nav>
       </div>
       <div className="site-container site-footer-meta">
