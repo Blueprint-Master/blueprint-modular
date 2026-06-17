@@ -353,8 +353,12 @@ const fr = {
     metaDescription:
       "Une sélection d'applications conçues avec Blueprint Modular et validées par leur auteur : titre, capture et prompt d'origine.",
     eyebrow: "La galerie",
-    title: "Apps créées avec Modular",
-    lead: "Des instruments réels, nés d'un simple prompt — validés un par un.",
+    title: "Applications créées avec .Modular",
+    // Sous-titre découpé en préfixe + texte-lien + suffixe : le segment « .Maker »
+    // devient un lien (rendu côté composant), sans HTML brut dans la traduction.
+    leadBefore: "Générées par ",
+    leadMakerLink: ".Maker",
+    leadAfter: ", nées d'un simple prompt.",
     empty:
       "Aucune app n'a encore été retenue pour la galerie. Revenez bientôt : les nouvelles créations validées apparaîtront ici.",
     promptLabel: "Prompt d'origine : ",
