@@ -1,0 +1,18 @@
+# Sonde de disponibilité de la page /status — à activer côté ops (bpm-prod).
+#
+# Installe une mesure toutes les 5 minutes : la fenêtre 90 jours de /status se
+# remplit ainsi dès l'activation. Le cron appelle l'endpoint POST protégé par
+# jeton (l'app tourne sur localhost:3000). La sonde interroge les URLs PUBLIQUES
+# (vitrine + endpoint MCP), pas un /health interne complaisant.
+#
+# Installation (utilisateur ubuntu) :
+#   1. Définir le jeton dans le .env de l'app (deploy/app-env.example → .env) :
+#        STATUS_PROBE_TOKEN="<jeton aléatoire, ex. openssl rand -hex 24>"
+#      puis redéployer (./deploy/deploy-from-git.sh) pour que l'app lise la var.
+#   2. Exporter le même jeton pour cron, puis :
+#        crontab -e
+#      et y coller la ligne ci-dessous (en remplaçant le jeton).
+#
+# NB : remplacer <STATUS_PROBE_TOKEN> par la valeur réelle (ne pas committer le jeton).
+
+*/5 * * * * curl -fsS -X POST -H "x-status-probe-token: <STATUS_PROBE_TOKEN>" http://127.0.0.1:3000/api/status/probe >/dev/null 2>&1
