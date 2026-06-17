@@ -1,6 +1,5 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
-import Link from "next/link";
 import { getDict } from "@/lib/i18n/server";
 import { JsonLd } from "@/components/site/JsonLd";
 import { getCuratedApp } from "@/lib/gallery/curated";
@@ -73,9 +72,6 @@ export default async function GalerieDetailPage({ params }: Props) {
 
       <section className="site-hero">
         <div className="site-container">
-          <Link href="/galerie" className="gen-chain-back">
-            {g.detailBack}
-          </Link>
           <span className="site-eyebrow">{g.eyebrow}</span>
           <h1>{app.title}</h1>
           <p className="site-lead">{g.detailLead}</p>
