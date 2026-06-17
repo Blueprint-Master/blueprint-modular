@@ -1,7 +1,7 @@
 {
-  "generatedAt": "2026-06-17T07:20:49.504Z",
+  "generatedAt": "2026-06-17T20:00:35.677Z",
   "source": "lib/generated/bpm-components.json + public/llms.txt + lib/semantics/bpm-semantics.json",
-  "total": 104,
+  "total": 154,
   "categories": [
     "Affichage de données",
     "Feedback",
@@ -20,6 +20,7 @@
       "name": "bpm.metric",
       "description": "Métrique avec valeur, label et delta.",
       "category": "Affichage de données",
+      "status": "curated",
       "fullDescription": "Affiche une métrique chiffrée avec label, valeur, variation delta et options de formatage (devise, locale).",
       "props": "  label*: string  — Libellé affiché au-dessus de la valeur.\n  value*: string | number | TrajectoryPoint[]  — Valeur principale (string, number, ou trajectoire v(t) [{t, v}] — affiche le dernier point et révèle la tendance si context est fourni).\n  delta?: number | string | null  — Variation affichée. Format string (ex. \"+12%\") ou number.\n  name?: string | null  — Nom optionnel pour référencer la métrique dans le chat IA : $metric:name ou @name\n  deltaType?: \"aucun\" | \"normal\" | \"inverse\"  — Aucun = pas de couleur, normal = + vert / - rouge, inverse = + rouge / - vert\n  help?: string | null\n  deltaDecimals?: number\n  currency?: string\n  valueLocale?: MetricValueLocale  — Locale pour formater value (et delta) quand ce sont des nombres. Ex. \"fr-FR\" (1 000,50), \"en-US\" (1,000.50).\n  valueDecimals?: number  — Nombre de décimales pour value (si value est un number et valueLocale est défini).\n  valueGrouping?: boolean  — Afficher le séparateur de milliers (true par défaut). false → 1000,50 au lieu de 1 000,50.\n  border?: boolean  — Afficher la bordure autour de la métrique (true par défaut).\n  icon?: React.ReactNode | null  — Icône distinctive (ex. lucide-react) affichée à gauche du label.\n  subtext?: string | null  — Micro-info contextuelle sous la métrique (gris clair).\n  accentColor?: string | null  — Couleur d'accent (bordure gauche ou fond icône).\n  compact?: boolean  — Mode compact : hauteur réduite (~80px), padding et typo plus serrés.\n  trackContext?: boolean  — Si true, expose cette métrique au contexte IA.\n  context?: InterpretContext  — Contexte de jugement { reference, direction, comparisonFrame? } : la métrique porte alors un jugement via interpret(value, context) — écart au repère, tendance (si trajectoire), anomalie — révélé sous la valeur. Additif : sans context, rendu inchangé.",
       "example": "bpm.metric({ label: \"Chiffre d'affaires\", value: 125000, delta: \"+12%\", currency: \"EUR\" })",
@@ -80,6 +81,7 @@
       "name": "bpm.table",
       "description": "Tableau triable avec lignes alternées.",
       "category": "Affichage de données",
+      "status": "curated",
       "fullDescription": "Tableau de données triable avec colonnes personnalisables, formatage numérique et scroll horizontal.",
       "props": "  columns*: TableColumn[]  — Définition des colonnes — obligatoire.\n  data*: Record<string, unknown>[]  — Tableau de données — obligatoire. INTERDIT : JSX dans data[], utiliser render dans TableColumn.\n  striped?: boolean\n  hover?: boolean\n  onRowClick?: (row: Record<string, unknown>) => void  — Callback au clic sur une ligne.\n  defaultSortColumn?: string | null\n  defaultSortDirection?: \"asc\" | \"desc\"\n  name?: string | null\n  keyColumn?: string | null\n  className?: string\n  valueLocale?: MetricValueLocale  — Locale pour formater les nombres (ex. \"fr-FR\", \"en-US\").\n  valueDecimals?: number  — Nombre de décimales par défaut pour les cellules numériques.\n  valueGrouping?: boolean  — Séparateur de milliers (true = 1 000,50).\n  minWidth?: number  — Largeur minimale du tableau en px (déclenche le scroll horizontal dans le wrapper si conteneur plus étroit). Non défini = pas de min-width.\n  trackContext?: boolean  — Si true, expose ce tableau au contexte IA.\n  emptyMessage?: string  — Message affiché quand data est vide. Default: \"Aucune donnée disponible\".\n  loading?: boolean  — État chargement : affiche des lignes squelettes (aria-busy). Additif : défaut false.\n  error?: string | null  — État erreur : affiche le message en ligne role=alert (prioritaire sur loading/empty). Additif : défaut null.\n  density?: \"normal\" | \"compact\"  — Densité d'affichage : \"normal\" (défaut, rendu historique) ou \"compact\" (padding réduit).",
       "example": "bpm.table({ columns: [{ key: \"nom\", label: \"Nom\" }, { key: \"montant\", label: \"Montant\", align: \"right\" }], data: rows, striped: true, hover: true })",
@@ -119,6 +121,7 @@
       "name": "bpm.title",
       "description": "Titre niveaux 1 à 4.",
       "category": "Affichage de données",
+      "status": "curated",
       "props": "  children*: React.ReactNode",
       "semantics": {
         "semanticRole": "affichage",
@@ -144,6 +147,7 @@
       "name": "bpm.title1",
       "description": "Titre niveau 1.",
       "category": "Affichage de données",
+      "status": "curated",
       "fullDescription": "Titre h1 minimal. — bpm.title1 : niveau 1 implicite, ne pas passer level.",
       "props": "  children*: React.ReactNode\n  level?: 1 | 2 | 3 | 4\n  size?: string | null  — Taille de police (ex. \"1.5rem\", \"24px\"). Surcharge le défaut du niveau.\n  bold?: boolean | number | null  — Gras : true = 700, false = 400, ou nombre (ex. 600). Surcharge le défaut du niveau.\n  color?: string | null  — Couleur du texte (ex. \"var(--bpm-text-primary)\", \"#333\"). Surcharge la couleur par défaut.\n  bar?: boolean  — Barre verticale sombre à gauche du titre (comme en-tête de section).\n  barColor?: string | null  — Couleur de la barre gauche (hex, rgb ou nom CSS). Ignoré si bar=false.\n  inverted?: boolean  — Couleur inversée : fond sombre, texte blanc (style badge / scénario).\n  invertedBackground?: string | null  — Couleur de fond quand inverted=true (hex, rgb ou nom CSS). Par défaut : #1d1d1f.\n  logoUrl?: string | null  — Optional logo URL (e.g. from localStorage). Shown only when level === 1.\n  onLogoClick?: () => void",
       "semantics": {
@@ -169,6 +173,7 @@
       "name": "bpm.title2",
       "description": "Titre niveau 2.",
       "category": "Affichage de données",
+      "status": "curated",
       "fullDescription": "Titre h1 minimal. — bpm.title2 : niveau 2 implicite, ne pas passer level.",
       "props": "  children*: React.ReactNode\n  level?: 1 | 2 | 3 | 4\n  size?: string | null  — Taille de police (ex. \"1.5rem\", \"24px\"). Surcharge le défaut du niveau.\n  bold?: boolean | number | null  — Gras : true = 700, false = 400, ou nombre (ex. 600). Surcharge le défaut du niveau.\n  color?: string | null  — Couleur du texte (ex. \"var(--bpm-text-primary)\", \"#333\"). Surcharge la couleur par défaut.\n  bar?: boolean  — Barre verticale sombre à gauche du titre (comme en-tête de section).\n  barColor?: string | null  — Couleur de la barre gauche (hex, rgb ou nom CSS). Ignoré si bar=false.\n  inverted?: boolean  — Couleur inversée : fond sombre, texte blanc (style badge / scénario).\n  invertedBackground?: string | null  — Couleur de fond quand inverted=true (hex, rgb ou nom CSS). Par défaut : #1d1d1f.\n  logoUrl?: string | null  — Optional logo URL (e.g. from localStorage). Shown only when level === 1.\n  onLogoClick?: () => void",
       "semantics": {
@@ -195,6 +200,7 @@
       "name": "bpm.title3",
       "description": "Titre niveau 3.",
       "category": "Affichage de données",
+      "status": "curated",
       "fullDescription": "Titre h1 minimal. — bpm.title3 : niveau 3 implicite, ne pas passer level.",
       "props": "  children*: React.ReactNode\n  level?: 1 | 2 | 3 | 4\n  size?: string | null  — Taille de police (ex. \"1.5rem\", \"24px\"). Surcharge le défaut du niveau.\n  bold?: boolean | number | null  — Gras : true = 700, false = 400, ou nombre (ex. 600). Surcharge le défaut du niveau.\n  color?: string | null  — Couleur du texte (ex. \"var(--bpm-text-primary)\", \"#333\"). Surcharge la couleur par défaut.\n  bar?: boolean  — Barre verticale sombre à gauche du titre (comme en-tête de section).\n  barColor?: string | null  — Couleur de la barre gauche (hex, rgb ou nom CSS). Ignoré si bar=false.\n  inverted?: boolean  — Couleur inversée : fond sombre, texte blanc (style badge / scénario).\n  invertedBackground?: string | null  — Couleur de fond quand inverted=true (hex, rgb ou nom CSS). Par défaut : #1d1d1f.\n  logoUrl?: string | null  — Optional logo URL (e.g. from localStorage). Shown only when level === 1.\n  onLogoClick?: () => void",
       "semantics": {
@@ -220,6 +226,7 @@
       "name": "bpm.text",
       "description": "Texte simple (niveau corps).",
       "category": "Affichage de données",
+      "status": "curated",
       "fullDescription": "Texte simple (niveau corps).",
       "props": "  children*: React.ReactNode\n  mono?: boolean  — Style inline comme st.text (monospace).\n  className?: string\n  style?: React.CSSProperties",
       "semantics": {
@@ -246,6 +253,7 @@
       "name": "bpm.caption",
       "description": "Légende ou texte secondaire.",
       "category": "Affichage de données",
+      "status": "curated",
       "fullDescription": "Légende ou texte secondaire.",
       "props": "  children*: React.ReactNode\n  className?: string\n  style?: React.CSSProperties",
       "semantics": {
@@ -272,6 +280,7 @@
       "name": "bpm.badge",
       "description": "Badge / étiquette (success, warning, etc.).",
       "category": "Affichage de données",
+      "status": "curated",
       "fullDescription": "Badge / étiquette (success, warning, etc.).",
       "props": "  children*: React.ReactNode  — PARENT: bpm.table (colonne statut) | bpm.metric | bpm.card. INTERDIT: texte long >20 chars — utiliser bpm.chip. ASSOCIÉ: bpm.table, bpm.metric, bpm.statusBox.\n  variant?: BadgeVariant  — Style / couleur du badge. Valeurs : 'default' | 'primary' | 'success' | 'warning' | 'error'. Default: 'default'.\n  className?: string\n  size?: \"sm\" | \"md\" | \"lg\"  — Taille du badge. 'sm' (défaut) | 'md' | 'lg'. Additif — n'affecte pas le rendu existant.",
       "semantics": {
@@ -318,6 +327,7 @@
       "name": "bpm.progress",
       "description": "Barre de progression.",
       "category": "Affichage de données",
+      "status": "curated",
       "fullDescription": "Barre de progression.",
       "props": "  value?: number | TrajectoryPoint[]  — Valeur actuelle, ou trajectoire v(t) [{t, v}] (le dernier point remplit la barre ; la tendance est jugée si context est fourni).\n  max?: number\n  label?: string\n  showValue?: boolean\n  className?: string\n  context?: InterpretContext  — Contexte de jugement { reference, direction, comparisonFrame? } : la barre prend la couleur du jugement et une ligne écart/tendance est révélée sous la barre. Additif : sans context, rendu inchangé.",
       "semantics": {
@@ -365,6 +375,7 @@
       "name": "bpm.skeleton",
       "description": "Placeholder de chargement (skeleton).",
       "category": "Affichage de données",
+      "status": "curated",
       "fullDescription": "Placeholder de chargement (skeleton screen).",
       "props": "  variant?: SkeletonVariant\n  width?: number | string\n  height?: number | string\n  className?: string\n  animated?: boolean  — Désactive l'animation pulse (utile pour screenshots, tests, prefers-reduced-motion).\n  shimmer?: boolean  — Animation shimmer (dégradé balayant) en alternative au pulse.\n  rounded?: SkeletonRounded  — Contrôle le rayon des bords (ignoré si variant === \"circular\").\n  lines?: number  — Nombre de lignes de skeleton empilées (variant text). Default: 1.",
       "semantics": {
@@ -391,6 +402,7 @@
       "name": "bpm.jsonViewer",
       "description": "Affichage JSON formaté et repliable.",
       "category": "Affichage de données",
+      "status": "curated",
       "fullDescription": "Affichage JSON formaté et repliable.",
       "props": "  data*: unknown  — Objet ou chaîne JSON à afficher.\n  defaultExpandedLevel?: number  — Nombre de niveaux ouverts par défaut (0 = tout replié).\n  maxHeight?: number  — Hauteur max en px pour scroll.\n  className?: string",
       "semantics": {
@@ -417,6 +429,7 @@
       "name": "bpm.avatar",
       "description": "Avatar utilisateur.",
       "category": "Affichage de données",
+      "status": "curated",
       "fullDescription": "Avatar utilisateur (image, initiales ou icône).",
       "props": "  src?: string | null  — URL de l'image de l'avatar.\n  alt?: string  — Texte alternatif (accessibilité).\n  initials?: string  — Initiales affichées si pas d'image. Ex. \"JD\".\n  size?: AvatarSize  — Taille de l'avatar. Valeurs : 'small' | 'medium' | 'large'. Default: 'medium'.\n  className?: string\n  variant?: \"default\" | \"sidebar\"  — Affiche l'avatar dans un bloc type sidebar : avatar + name + subtitle, optionnellement bouton déconnexion. Valeurs : 'default' | 'sidebar'. Default: 'default'.\n  name?: string  — Nom affiché à côté de l'avatar (variant sidebar).\n  subtitle?: string  — Sous-titre (ex. email) sous le nom (variant sidebar).\n  onLogout?: () => void  — Callback déconnexion (variant sidebar) ; si fourni, affiche un bouton.\n  logoutLabel?: string  — Libellé du bouton déconnexion (variant sidebar). Default: 'Se déconnecter'.\n  editable?: boolean  — Active le mode édition : overlay crayon au survol, file picker au clic.\n  onImageChange?: (file: File) => void  — Callback appelé avec le File sélectionné.",
       "semantics": {
@@ -444,6 +457,7 @@
       "name": "bpm.panel",
       "description": "Panneau informatif (info, success, warning, error).",
       "category": "Mise en page",
+      "status": "curated",
       "fullDescription": "Panneau informatif (info, success, warning, error).",
       "props": "  variant?: \"info\" | \"success\" | \"warning\" | \"error\"  — PARENT: page directe | bpm.grid | bpm.tabs (contenu onglet). INTERDIT: bpm.panel imbriqué trop profond (max 2 niveaux). ASSOCIÉ: bpm.title, bpm.metric, bpm.table, bpm.plotlyChart.\n  title?: string | null\n  icon?: string | null | false\n  inverted?: boolean  — Couleur inversée : fond sombre, texte blanc (style zone type Executive Summary).\n  children?: React.ReactNode\n  className?: string",
       "semantics": {
@@ -470,6 +484,7 @@
       "name": "bpm.tabs",
       "description": "Onglets pour organiser le contenu.",
       "category": "Mise en page",
+      "status": "curated",
       "fullDescription": "Système d'onglets avec contenu associé, scroll horizontal si débordement.",
       "props": "  tabs?: TabsItems  — Onglets : tableau de { label, content } ou chaînes (label uniquement).\n  defaultTab?: number  — Index de l'onglet actif au montage. Default: 0.\n  onChange?: (index: number) => void\n  className?: string",
       "example": "bpm.tabs({ tabs: [{ label: \"Aperçu\", content: <Overview /> }, { label: \"Détails\", content: <Details /> }], defaultTab: 0 })",
@@ -506,6 +521,7 @@
       "name": "bpm.expander",
       "description": "Bloc repliable.",
       "category": "Mise en page",
+      "status": "curated",
       "fullDescription": "Bloc repliable avec titre.",
       "props": "  title*: React.ReactNode\n  children*: React.ReactNode\n  defaultExpanded?: boolean\n  className?: string",
       "semantics": {
@@ -532,6 +548,7 @@
       "name": "bpm.accordion",
       "description": "Accordéon (sections repliables).",
       "category": "Mise en page",
+      "status": "curated",
       "fullDescription": "Accordéon (sections repliables).",
       "props": "  sections?: AccordionSection[]\n  allowMultiple?: boolean\n  defaultOpenIds?: string[]\n  className?: string",
       "semantics": {
@@ -557,6 +574,7 @@
       "name": "bpm.card",
       "description": "Carte avec titre et contenu.",
       "category": "Mise en page",
+      "status": "curated",
       "fullDescription": "Carte avec titre et contenu.",
       "props": "  title?: React.ReactNode\n  subtitle?: React.ReactNode\n  image?: string\n  imageAlt?: string\n  children?: React.ReactNode\n  actions?: React.ReactNode\n  variant?: CardVariant\n  inverted?: boolean  — Couleur inversée : fond sombre, texte blanc (style zone type Executive Summary).\n  className?: string",
       "semantics": {
@@ -583,6 +601,7 @@
       "name": "bpm.highlightBox",
       "description": "Carte avec barre latérale (numéro + label) et contenu structuré (titre, moment, RTB, cible).",
       "category": "Mise en page",
+      "status": "curated",
       "fullDescription": "Bloc de mise en valeur avec barre latérale colorée, numéro, titre et sections RTB/Cible optionnelles.",
       "props": "  value*: number  — Numéro affiché dans la barre gauche (ex. 1)\n  label*: string  — Texte sous le numéro dans la barre (ex. \"DAILY\")\n  title*: string  — Titre principal du contenu\n  momentDescription?: string | null  — Description \"Moment\" (affichée en italique, gris)\n  rtbPoints?: string[] | null  — Points RTB (affichés séparés par ·)\n  targetPoints?: string | string[] | null  — Points Cible (chaîne ou liste)\n  barColor?: string | null  — Couleur de la barre latérale (hex, rgb ou nom CSS). Par défaut : noir (#212121).\n  className?: string",
       "example": "bpm.highlightBox({ value: 1, label: \"DAILY\", title: \"Objectif quotidien\", rtbPoints: [\"Point 1\", \"Point 2\"] })",
@@ -618,6 +637,7 @@
       "name": "bpm.divider",
       "description": "Séparateur horizontal.",
       "category": "Mise en page",
+      "status": "curated",
       "fullDescription": "Séparateur horizontal avec label optionnel.",
       "props": "  label?: string\n  orientation?: \"horizontal\" | \"vertical\"\n  thickness?: number  — Épaisseur en pixels (défaut 1).\n  color?: string  — Couleur de la ligne (CSS, ex. var(--bpm-border), #ccc, rgb(0,0,0)).\n  className?: string",
       "semantics": {
@@ -643,6 +663,7 @@
       "name": "bpm.grid",
       "description": "Grille responsive.",
       "category": "Mise en page",
+      "status": "curated",
       "fullDescription": "Grille responsive avec espacement configurable.",
       "props": "  cols?: number | { xs?: number\n  gap?: number | string\n  className?: string\n  children?: React.ReactNode",
       "semantics": {
@@ -669,6 +690,7 @@
       "name": "bpm.column",
       "description": "Diviser la page en 1, 2, 3 ou plus colonnes.",
       "category": "Mise en page",
+      "status": "curated",
       "fullDescription": "Mise en page multi-colonnes responsive.",
       "props": "  columns?: number  — Nombre de colonnes (1, 2, 3, 4, etc.).\n  gap?: number | string  — Espacement entre les colonnes (CSS, ex. \"1rem\", 16).\n  className?: string\n  children?: React.ReactNode",
       "semantics": {
@@ -694,6 +716,7 @@
       "name": "bpm.emptyState",
       "description": "État vide (aucune donnée).",
       "category": "Mise en page",
+      "status": "curated",
       "fullDescription": "État vide illustré (titre, description, action).",
       "props": "  title?: string\n  description?: React.ReactNode\n  icon?: React.ReactNode\n  action?: React.ReactNode\n  className?: string",
       "semantics": {
@@ -720,6 +743,7 @@
       "name": "bpm.container",
       "description": "Conteneur avec titre optionnel.",
       "category": "Mise en page",
+      "status": "curated",
       "fullDescription": "Conteneur avec titre optionnel.",
       "props": "  children*: React.ReactNode\n  className?: string\n  style?: React.CSSProperties",
       "semantics": {
@@ -746,6 +770,7 @@
       "name": "bpm.empty",
       "description": "État vide minimal (icône + message).",
       "category": "Mise en page",
+      "status": "curated",
       "fullDescription": "État vide minimal (icône + message).",
       "props": "  children?: React.ReactNode\n  className?: string\n  style?: React.CSSProperties",
       "semantics": {
@@ -771,6 +796,7 @@
       "name": "bpm.popover",
       "description": "Contenu au clic ou au survol (popover).",
       "category": "Mise en page",
+      "status": "curated",
       "fullDescription": "Bulle contextuelle positionnée autour d'un déclencheur avec fermeture au clic extérieur.",
       "props": "  trigger*: React.ReactNode\n  children*: React.ReactNode\n  placement?: \"top\" | \"bottom\" | \"left\" | \"right\"\n  className?: string",
       "example": "bpm.popover({ trigger: <button>Info</button>, children: <p>Contenu</p>, placement: \"bottom\" })",
@@ -806,6 +832,7 @@
       "name": "bpm.button",
       "description": "Bouton d'action (primary, secondary, outline).",
       "category": "Interaction",
+      "status": "curated",
       "fullDescription": "Bouton d'action (primary, secondary, outline, ghost, destructive).",
       "props": "  children?: React.ReactNode\n  onClick?: () => void\n  variant?: ButtonVariant\n  size?: ButtonSize\n  raised?: boolean  — Toolbar : ghost avec hover surface + shadow\n  icon?: string | null\n  iconRight?: string | null\n  loading?: boolean\n  disabled?: boolean\n  fullWidth?: boolean\n  type?: \"button\" | \"submit\" | \"reset\"\n  className?: string\n  style?: React.CSSProperties",
       "semantics": {
@@ -833,6 +860,7 @@
       "name": "bpm.theme",
       "description": "Bascule thème clair / sombre.",
       "category": "Interaction",
+      "status": "curated",
       "fullDescription": "Sélecteur de thème clair/sombre avec toggle ou select, persiste en localStorage.",
       "props": "  variant?: ThemeVariant  — Type de contrôle : interrupteur (toggle) ou liste (select).\n  label?: React.ReactNode  — Label à côté du toggle (variant toggle uniquement).\n  lightLabel?: string  — Libellé option \"Clair\" (variant select).\n  darkLabel?: string  — Libellé option \"Sombre\" (variant select).\n  className?: string",
       "example": "bpm.theme({ variant: \"toggle\", label: \"Mode sombre\" })",
@@ -867,6 +895,7 @@
       "name": "bpm.selectbox",
       "description": "Liste déroulante.",
       "category": "Interaction",
+      "status": "curated",
       "fullDescription": "Liste déroulante avec dropdown portalé, support clavier et placeholder.",
       "props": "  label?: string  — Label affiché au-dessus.\n  options?: SelectboxOption[]  — Liste d'options. Format : string[] ou [{value, label}].\n  value?: string | null  — Valeur sélectionnée (contrôlé).\n  onChange?: (value: string) => void  — Callback — reçoit la valeur string sélectionnée.\n  disabled?: boolean\n  help?: string | null\n  placeholder?: string\n  required?: boolean\n  triggerHeight?: number  — Hauteur du trigger (px) pour alignement avec d'autres champs (ex. FilterPanel).",
       "example": "bpm.selectbox({ label: \"Pays\", options: [\"France\", \"Belgique\", \"Suisse\"], value: selected, onChange: setSelected })",
@@ -904,6 +933,7 @@
       "name": "bpm.numberInput",
       "description": "Champ numérique min/max/step.",
       "category": "Interaction",
+      "status": "curated",
       "fullDescription": "Champ de saisie numérique avec validation min/max et formatage au blur.",
       "props": "  label?: string\n  value?: number | null\n  onChange?: (value: number | null) => void\n  min?: number | null\n  max?: number | null\n  step?: number\n  disabled?: boolean\n  help?: string | null\n  placeholder?: string",
       "example": "bpm.numberInput({ label: \"Quantité\", value: 10, onChange: setQty, min: 0, max: 100, step: 1 })",
@@ -938,6 +968,7 @@
       "name": "bpm.input",
       "description": "Champ texte une ligne.",
       "category": "Interaction",
+      "status": "curated",
       "fullDescription": "Champ de saisie texte avec label optionnel. Supporte différents types HTML (text, email, password, etc.).",
       "props": "  label?: string  — Label affiché au-dessus du champ.\n  value?: string  — Valeur contrôlée.\n  onChange?: (value: string) => void  — Callback — reçoit la valeur string, pas un Event. Ex: (v) => setValue(v)\n  placeholder?: string\n  type?: \"text\" | \"email\" | \"password\" | \"number\" | \"search\" | \"date\"  — Type HTML. Default: 'text'.\n  disabled?: boolean  — Désactive le champ.\n  className?: string",
       "example": "bpm.input({ label: \"Email\", value: email, onChange: setEmail, type: \"email\", placeholder: \"exemple@mail.com\" })",
@@ -974,6 +1005,7 @@
       "name": "bpm.textarea",
       "description": "Zone de texte multiligne.",
       "category": "Interaction",
+      "status": "curated",
       "fullDescription": "Zone de texte multiligne.",
       "props": "  label?: string\n  value?: string\n  onChange?: (value: string) => void\n  placeholder?: string\n  rows?: number\n  disabled?: boolean\n  inverted?: boolean  — Couleur inversée : fond sombre, texte blanc (style zone type PJ).\n  className?: string",
       "semantics": {
@@ -999,6 +1031,7 @@
       "name": "bpm.checkbox",
       "description": "Case à cocher.",
       "category": "Interaction",
+      "status": "curated",
       "fullDescription": "Case à cocher.",
       "props": "  label?: React.ReactNode\n  checked?: boolean\n  onChange?: (checked: boolean) => void\n  disabled?: boolean\n  className?: string",
       "semantics": {
@@ -1024,6 +1057,7 @@
       "name": "bpm.radioGroup",
       "description": "Groupe de boutons radio.",
       "category": "Interaction",
+      "status": "curated",
       "fullDescription": "Groupe de boutons radio avec disposition verticale ou horizontale.",
       "props": "  name?: string\n  label?: string\n  options?: RadioOption[]\n  value?: string\n  onChange?: (value: string) => void\n  disabled?: boolean\n  layout?: \"vertical\" | \"horizontal\"\n  className?: string",
       "example": "bpm.radioGroup({ name: \"choix\", label: \"Choisissez\", options: [\"A\", \"B\", \"C\"], value: selected, onChange: setSelected })",
@@ -1060,6 +1094,7 @@
       "name": "bpm.slider",
       "description": "Curseur min/max/step.",
       "category": "Interaction",
+      "status": "curated",
       "fullDescription": "Curseur min/max/step.",
       "props": "  value?: number\n  min?: number\n  max?: number\n  step?: number\n  onChange?: (value: number) => void\n  label?: string\n  disabled?: boolean\n  className?: string",
       "semantics": {
@@ -1085,6 +1120,7 @@
       "name": "bpm.dateInput",
       "description": "Sélecteur de date.",
       "category": "Interaction",
+      "status": "curated",
       "fullDescription": "Sélecteur de date.",
       "props": "  label?: string\n  value?: Date | string | null\n  onChange?: (value: Date | null) => void\n  disabled?: boolean\n  help?: string | null\n  min?: Date | string | null\n  max?: Date | string | null",
       "semantics": {
@@ -1110,6 +1146,7 @@
       "name": "bpm.dateRangePicker",
       "description": "Sélecteur de plage de dates.",
       "category": "Interaction",
+      "status": "curated",
       "fullDescription": "Sélecteur de plage de dates.",
       "props": "  label?: string\n  start?: Date | string | null\n  end?: Date | string | null\n  onChange?: (start: Date | null, end: Date | null) => void\n  disabled?: boolean\n  min?: Date | string | null\n  max?: Date | string | null",
       "semantics": {
@@ -1137,6 +1174,7 @@
       "name": "bpm.timeInput",
       "description": "Saisie de l'heure.",
       "category": "Interaction",
+      "status": "curated",
       "fullDescription": "Champ de sélection d'heure avec popover heures/minutes.",
       "props": "  label?: string\n  value?: Date | string | null\n  onChange?: (value: Date | null) => void\n  disabled?: boolean\n  min?: string\n  max?: string",
       "example": "bpm.timeInput({ label: \"Heure de début\", value: time, onChange: setTime })",
@@ -1173,6 +1211,7 @@
       "name": "bpm.rating",
       "description": "Notation par étoiles.",
       "category": "Interaction",
+      "status": "curated",
       "fullDescription": "Composant d'évaluation par étoiles cliquables avec taille personnalisable.",
       "props": "  value?: number\n  max?: number\n  onChange?: (value: number) => void\n  disabled?: boolean\n  size?: \"small\" | \"medium\" | \"large\"\n  history?: TrajectoryPoint[]  — Historique v(t) [{t, v}] de la note — révèle la tendance si context est fourni.\n  context?: InterpretContext  — Contexte de jugement { reference, direction } (ex. note cible 4.0) : les étoiles pleines prennent la couleur du verdict et un suffixe écart/tendance role=status est révélé. Additif : sans context, rendu inchangé.",
       "example": "bpm.rating({ value: 3, max: 5, onChange: setRating, size: \"medium\" })",
@@ -1208,6 +1247,7 @@
       "name": "bpm.fileUploader",
       "description": "Upload de fichier(s).",
       "category": "Interaction",
+      "status": "curated",
       "fullDescription": "Upload de fichier(s) par glisser-déposer ou sélection.",
       "props": "  accept?: string\n  multiple?: boolean\n  maxSizeBytes?: number\n  onFiles?: (files: File[]) => void\n  disabled?: boolean\n  label?: string",
       "semantics": {
@@ -1233,6 +1273,7 @@
       "name": "bpm.colorPicker",
       "description": "Sélecteur de couleur.",
       "category": "Interaction",
+      "status": "curated",
       "fullDescription": "Sélecteur de couleur.",
       "props": "  label?: string\n  value?: string\n  onChange?: (value: string) => void\n  help?: string | null\n  disabled?: boolean",
       "semantics": {
@@ -1258,6 +1299,7 @@
       "name": "bpm.chip",
       "description": "Pastille / chip.",
       "category": "Interaction",
+      "status": "curated",
       "fullDescription": "Pastille / chip (tag supprimable ou non).",
       "props": "  label*: React.ReactNode\n  onDelete?: () => void\n  onClick?: () => void\n  variant?: ChipVariant\n  disabled?: boolean\n  className?: string",
       "semantics": {
@@ -1284,6 +1326,7 @@
       "name": "bpm.message",
       "description": "Bandeau info/success/warning/error.",
       "category": "Feedback",
+      "status": "curated",
       "fullDescription": "Bandeau info/success/warning/error.",
       "props": "  type?: MessageType\n  children*: React.ReactNode\n  className?: string",
       "semantics": {
@@ -1309,6 +1352,7 @@
       "name": "bpm.spinner",
       "description": "Indicateur de chargement.",
       "category": "Feedback",
+      "status": "curated",
       "fullDescription": "Indicateur de chargement (roue).",
       "props": "  text?: string\n  size?: SpinnerSize\n  variant?: SpinnerVariant\n  neutral?: boolean  — Utilise la couleur texte (gris) au lieu de l'accent pour homogénéiser avec flèches/icônes neutres\n  className?: string",
       "semantics": {
@@ -1334,6 +1378,7 @@
       "name": "bpm.loadingBar",
       "description": "Barre de chargement (sweep, blocks, iso, stacked, arc, dots).",
       "category": "Feedback",
+      "status": "curated",
       "fullDescription": "Barre de chargement (sweep, blocks, iso, stacked, arc, dots).",
       "props": "  variant?: LoadingBarVariant  — Variant visuel (sweep, blocks, iso, stacked, arc, dots).\n  value?: number  — Pour les barres déterminées (ex. iso) : 0–100. Non fourni = indéterminé.\n  size?: \"thin\" | \"default\" | \"thick\"  — Hauteur : thin (6px), default (8px), thick (12px).\n  animated?: boolean  — Désactive l'animation (utile pour screenshots ou prefers-reduced-motion).\n  className?: string",
       "semantics": {
@@ -1359,6 +1404,7 @@
       "name": "bpm.tooltip",
       "description": "Info-bulle au survol.",
       "category": "Feedback",
+      "status": "curated",
       "fullDescription": "Info-bulle au survol.",
       "props": "  text*: string\n  children*: React.ReactNode\n  position?: TooltipPlacement\n  backgroundColor?: string | null  — Couleur de fond du tooltip (hex, rgb ou nom CSS). Par défaut : noir.\n  textColor?: string | null  — Couleur du texte du tooltip (hex, rgb ou nom CSS). Par défaut : blanc.",
       "semantics": {
@@ -1385,6 +1431,7 @@
       "name": "bpm.statusBox",
       "description": "Boîte de statut (success, warning, error, info).",
       "category": "Feedback",
+      "status": "curated",
       "fullDescription": "Boîte de statut (success, warning, error, info).",
       "props": "  label*: string\n  state?: \"running\" | \"complete\" | \"error\"\n  children?: React.ReactNode\n  defaultExpanded?: boolean\n  compact?: boolean  — Réduit le padding pour contextes denses.\n  className?: string\n  value?: number | TrajectoryPoint[]  — Valeur mesurée associée au statut (scalaire ou trajectoire v(t) [{t,v}]) — jugée si context est fourni.\n  context?: InterpretContext  — Contexte de jugement { reference, direction, comparisonFrame? } : un verdict écart/tendance/anomalie est révélé à droite du libellé et la bordure gauche prend la couleur du jugement. Additif : sans context, rendu inchangé.",
       "semantics": {
@@ -1425,6 +1472,7 @@
       "name": "bpm.anomalyAlert",
       "description": "Alerte d'anomalie : valeur attendue vs réelle (severity info/warning/critical).",
       "category": "Feedback",
+      "status": "uncurated",
       "fullDescription": "Alerte d'anomalie avec valeur attendue vs réelle.",
       "props": "  title?: string\n  expected*: string | number\n  actual*: string | number\n  severity?: AnomalySeverity  — Niveau de gravité. Si omis et context fourni, dérivé automatiquement de interpret().severity.\n  className?: string\n  onDismiss?: () => void\n  history?: TrajectoryPoint[]  — Historique v(t) [{t, v}] de la mesure — révèle la tendance dans le verdict si context est fourni.\n  context?: InterpretContext  — Contexte de jugement { reference, direction, comparisonFrame? } : gravité auto-dérivée de la sévérité combinée (≥0.5 critical, >0.15 warning, sinon info) et verdict écart/tendance révélé. Additif : sans context, rendu inchangé.",
       "_haystack": "bpm.anomalyalert anomalyalert alerte d'anomalie : valeur attendue vs réelle (severity info/warning/critical). feedback alerte d'anomalie avec valeur attendue vs réelle.   title?: string\n  expected*: string | number\n  actual*: string | number\n  severity?: anomalyseverity  — niveau de gravité. si omis et context fourni, dérivé automatiquement de interpret().severity.\n  classname?: string\n  ondismiss?: () => void\n  history?: trajectorypoint[]  — historique v(t) [{t, v}] de la mesure — révèle la tendance dans le verdict si context est fourni.\n  context?: interpretcontext  — contexte de jugement { reference, direction, comparisonframe? } : gravité auto-dérivée de la sévérité combinée (≥0.5 critical, >0.15 warning, sinon info) et verdict écart/tendance révélé. additif : sans context, rendu inchangé."
@@ -1434,6 +1482,7 @@
       "name": "bpm.breadcrumb",
       "description": "Fil d'Ariane.",
       "category": "Navigation",
+      "status": "curated",
       "fullDescription": "Fil d'Ariane simple.",
       "props": "  items?: BreadcrumbItem[]\n  separator?: string\n  className?: string",
       "semantics": {
@@ -1459,6 +1508,7 @@
       "name": "bpm.stepper",
       "description": "Progression multi-étapes (horizontal/vertical, tailles sm/md/lg).",
       "category": "Navigation",
+      "status": "curated",
       "fullDescription": "Progression multi-étapes (horizontal/vertical).",
       "props": "  steps?: StepperStep[]\n  currentStep?: number\n  direction?: \"horizontal\" | \"vertical\"\n  onStepClick?: (stepIndex: number) => void\n  size?: \"sm\" | \"md\" | \"lg\"\n  className?: string",
       "semantics": {
@@ -1484,6 +1534,7 @@
       "name": "bpm.audio",
       "description": "Lecteur audio.",
       "category": "Média",
+      "status": "curated",
       "fullDescription": "Lecteur audio HTML5.",
       "props": "  src*: string\n  controls?: boolean\n  loop?: boolean\n  className?: string",
       "semantics": {
@@ -1509,6 +1560,7 @@
       "name": "bpm.video",
       "description": "Lecteur vidéo.",
       "category": "Média",
+      "status": "curated",
       "fullDescription": "Lecteur vidéo HTML5 avec contrôles natifs et options de lecture en boucle/silencieux.",
       "props": "  src*: string\n  controls?: boolean\n  loop?: boolean\n  muted?: boolean\n  width?: number\n  height?: number\n  className?: string",
       "example": "bpm.video({ src: \"/videos/demo.mp4\", controls: true, width: 640, height: 360 })",
@@ -1545,6 +1597,7 @@
       "name": "bpm.html",
       "description": "Contenu HTML brut (iframe).",
       "category": "Média",
+      "status": "curated",
       "fullDescription": "Affiche du HTML brut. À utiliser uniquement avec du contenu de confiance ou préalablement sanitisé.",
       "props": "  html*: string  — HTML brut à afficher (équivalent st.html). À n'utiliser qu'avec du contenu de confiance ou sanitized.\n  className?: string\n  style?: React.CSSProperties",
       "example": "bpm.html({ html: \"<p>Contenu <strong>HTML</strong></p>\" })",
@@ -1578,6 +1631,7 @@
       "name": "bpm.lineChart",
       "description": "Graphique en courbes.",
       "category": "Graphiques",
+      "status": "curated",
       "fullDescription": "Graphique en ligne SVG simple et responsive pour afficher une série de données.",
       "props": "  data*: LineChartDatum[]\n  width?: number\n  height?: number\n  color?: string\n  className?: string\n  context?: InterpretContext  — Contexte de jugement { reference, direction, comparisonFrame? } : la série (lue comme trajectoire v(t), t = x) est jugée par interpret — repère tracé en pointillé, couleur de ligne selon le verdict, aria-label. Additif : sans context, rendu inchangé.",
       "example": "bpm.lineChart({ data: [{ x: 0, y: 10 }, { x: 1, y: 25 }], color: \"#3b82f6\" })",
@@ -1635,6 +1689,7 @@
       "name": "bpm.barChart",
       "description": "Graphique en barres.",
       "category": "Graphiques",
+      "status": "curated",
       "fullDescription": "Graphique en barres.",
       "props": "  data*: BarChartDatum[]\n  width?: number\n  height?: number\n  color?: string\n  className?: string\n  context?: InterpretContext  — Contexte de jugement { reference, direction } : chaque barre est jugée individuellement (couleur par écart au repère), le repère est tracé en pointillé et la série entière reçoit un verdict global (aria-label, data-judgment). Additif : sans context, rendu inchangé.",
       "semantics": {
@@ -1676,6 +1731,7 @@
       "name": "bpm.areaChart",
       "description": "Graphique en aires.",
       "category": "Graphiques",
+      "status": "curated",
       "fullDescription": "Graphique en aires.",
       "props": "  data*: AreaChartDatum[]\n  width?: number\n  height?: number\n  color?: string\n  className?: string\n  context?: InterpretContext  — Contexte de jugement { reference, direction, comparisonFrame? } : la série (trajectoire v(t), t = x) est jugée par interpret — repère pointillé, couleur d'aire selon le verdict, aria-label. Additif : sans context, rendu inchangé.",
       "semantics": {
@@ -1715,6 +1771,7 @@
       "name": "bpm.scatterChart",
       "description": "Graphique en nuage de points.",
       "category": "Graphiques",
+      "status": "curated",
       "fullDescription": "Graphique de dispersion (nuage de points) SVG simple et responsive.",
       "props": "  data*: ScatterChartDatum[]\n  width?: number\n  height?: number\n  color?: string\n  radius?: number\n  className?: string\n  context?: InterpretContext  — Contexte de jugement { reference, direction, comparisonFrame? } : chaque point est jugé (couleur par écart au repère ; anomalie >2σ — du comparisonFrame ou, à défaut, du nuage lui-même — cerclée), repère pointillé tracé, verdict global de la série en aria-label + data-judgment. Additif : sans context, rendu inchangé.",
       "example": "bpm.scatterChart({ data: [{ x: 1, y: 10 }, { x: 2, y: 25 }], color: \"#3b82f6\", radius: 5 })",
@@ -1764,6 +1821,7 @@
       "name": "bpm.modal",
       "description": "Fenêtre modale.",
       "category": "Utilitaires",
+      "status": "curated",
       "fullDescription": "Fenêtre modale avec backdrop, fermeture Échap/clic extérieur. Pattern: {isOpen && bpm.modal({...})}",
       "props": "  isOpen*: boolean  — Contrôle l'affichage. PATTERN OBLIGATOIRE : {isOpen && bpm.modal({ isOpen:true, ... })}\n  onClose*: () => void  — Callback de fermeture — obligatoire.\n  title?: React.ReactNode\n  children*: React.ReactNode  — Contenu du modal.\n  size?: ModalSize  — Largeur : small=400px, medium=600px, large=800px.\n  showCloseButton?: boolean",
       "example": "bpm.modal({ isOpen: true, onClose: () => setOpen(false), title: \"Confirmation\", children: <p>Contenu</p> })",
@@ -1797,6 +1855,7 @@
       "name": "bpm.codeBlock",
       "description": "Bloc de code avec Copier.",
       "category": "Utilitaires",
+      "status": "curated",
       "fullDescription": "Bloc de code avec syntaxe colorée et bouton Copier.",
       "props": "  code*: string\n  language?: string\n  className?: string",
       "semantics": {
@@ -1822,6 +1881,7 @@
       "name": "bpm.topNav",
       "description": "Barre de navigation supérieure (titre + liens).",
       "category": "Navigation",
+      "status": "curated",
       "fullDescription": "Barre de navigation horizontale avec titre/logo et liens/boutons.",
       "props": "  title?: React.ReactNode\n  titleHref?: string\n  items?: TopNavItem[]\n  className?: string",
       "example": "bpm.topNav({ title: \"Mon App\", titleHref: \"/\", items: [{ label: \"Accueil\", href: \"/\" }, { label: \"Aide\", onClick: showHelp }] })",
@@ -1858,6 +1918,7 @@
       "name": "bpm.fab",
       "description": "Bouton d'action flottant (FAB).",
       "category": "Interaction",
+      "status": "curated",
       "fullDescription": "Bouton d'action flottant (FAB).",
       "props": "  icon?: React.ReactNode\n  label?: string\n  onClick?: () => void\n  position?: \"bottom-right\" | \"bottom-left\" | \"top-right\" | \"top-left\"\n  className?: string",
       "semantics": {
@@ -1884,6 +1945,7 @@
       "name": "bpm.treeview",
       "description": "Arbre de nœuds repliables et sélectionnables.",
       "category": "Affichage de données",
+      "status": "curated",
       "fullDescription": "Arborescence hiérarchique dépliable avec sélection de nœud.",
       "props": "  nodes?: TreeviewNode[]\n  onSelect?: (node: TreeviewNode) => void\n  selectedId?: string | null\n  className?: string",
       "example": "bpm.treeview({ nodes: [{ id: \"1\", label: \"Parent\", children: [{ id: \"1.1\", label: \"Enfant\" }] }], onSelect: handleSelect })",
@@ -1921,6 +1983,7 @@
       "name": "bpm.timeline",
       "description": "Frise chronologique (événements ISO, groupement par date, fil vertical).",
       "category": "Affichage de données",
+      "status": "curated",
       "fullDescription": "Frise chronologique (événements ISO, groupement par date).",
       "props": "  events?: TimelineEvent[]  — Nouvelle API — fil chronologique riche.\n  items?: TimelineItem[]  — Ancienne API — conservée pour compatibilité.\n  maxItems?: number\n  sortOrder?: \"asc\" | \"desc\"\n  groupByDate?: boolean\n  className?: string",
       "semantics": {
@@ -1948,6 +2011,7 @@
       "name": "bpm.flowDiagram",
       "description": "Diagramme d'états et transitions interactif (SVG).",
       "category": "Affichage de données",
+      "status": "curated",
       "fullDescription": "Diagramme d'états et transitions interactif (SVG).",
       "props": "  states*: FlowDiagramState[]\n  transitions*: FlowDiagramTransition[]\n  currentState?: string\n  onTransition?: (from: string, to: string) => void\n  direction?: \"horizontal\" | \"vertical\"\n  className?: string",
       "semantics": {
@@ -1974,6 +2038,7 @@
       "name": "bpm.statusTracker",
       "description": "Suivi de statut réel (barre, étapes completed/current/pending/error).",
       "category": "Affichage de données",
+      "status": "curated",
       "fullDescription": "Suivi de statut en étapes (completed/current/pending/error).",
       "props": "  stages*: StatusTrackerStage[]\n  direction?: \"horizontal\" | \"vertical\"\n  compact?: boolean\n  className?: string",
       "semantics": {
@@ -2020,6 +2085,7 @@
       "name": "bpm.activityFeed",
       "description": "Fil d'activité avec avatars et dates relatives.",
       "category": "Affichage de données",
+      "status": "curated",
       "fullDescription": "Flux chronologique d'activités métier avec avatars initiaux, horodatages relatifs en français et état vide.",
       "props": "  activities*: ActivityItem[]  — Liste des activités à afficher (ordre = ordre d'affichage).\n  maxItems?: number  — Limite d'affichage ; au-delà, le bouton « Charger plus » apparaît si onLoadMore est défini.\n  onLoadMore?: () => void  — Déclenché au clic sur « Charger plus » lorsque activities.length > maxItems.\n  emptyMessage?: string  — Texte centré affiché quand `activities` est vide. Défaut : « Aucune activité récente. »\n  compact?: boolean  — Mode compact : lignes plus serrées et avatars plus petits. Défaut : `false`.\n  className?: string  — Classes CSS additionnelles sur le conteneur `.bpm-activity-feed`. Défaut : `\"\"`.",
       "example": "bpm.activityFeed({ activities: [ { id: \"1\", actor: \"Alice\", action: \"a validé\", target: \"le devis DV-001\", timestamp: new Date().toISOString(), color: \"success\" }, ], maxItems: 10, onLoadMore: () => fetchMore(), compact: true, })",
@@ -2048,6 +2114,7 @@
       "name": "bpm.liveGauge",
       "description": "Jauge demi-cercle à seuils (warning/critical) avec aiguille.",
       "category": "Affichage de données",
+      "status": "uncurated",
       "fullDescription": "Jauge demi-cercle avec aiguille et zones colorées (normal/avertissement/critique).",
       "props": "  value*: number | TrajectoryPoint[]  — Valeur actuelle, ou trajectoire v(t) [{t, v}] (l'aiguille pointe le dernier point ; tendance jugée si context fourni).\n  min?: number\n  max?: number\n  warningAbove?: number\n  criticalAbove?: number\n  size?: LiveGaugeSize\n  label?: string\n  className?: string\n  context?: InterpretContext  — Contexte de jugement { reference, direction, comparisonFrame? } : interpret() colore la valeur et révèle écart au repère + tendance + anomalie sous la jauge. Additif : sans context, rendu inchangé.",
       "example": "bpm.liveGauge({ value: 75, min: 0, max: 100, warningAbove: 70, criticalAbove: 90, label: \"CPU\" })",
@@ -2063,6 +2130,7 @@
       "name": "bpm.approvalFlow",
       "description": "Flux de validation multi-étapes (approuvé / en attente / rejeté).",
       "category": "Affichage de données",
+      "status": "uncurated",
       "fullDescription": "Flux de validation multi-étapes (approve/reject par étape).",
       "props": "  steps*: ApprovalStep[]\n  onApprove?: (stepId: string, comment?: string) => void\n  onReject?: (stepId: string, comment?: string) => void\n  direction?: \"horizontal\" | \"vertical\"\n  showCommentInput?: boolean\n  className?: string",
       "_haystack": "bpm.approvalflow approvalflow flux de validation multi-étapes (approuvé / en attente / rejeté). affichage de données flux de validation multi-étapes (approve/reject par étape).   steps*: approvalstep[]\n  onapprove?: (stepid: string, comment?: string) => void\n  onreject?: (stepid: string, comment?: string) => void\n  direction?: \"horizontal\" | \"vertical\"\n  showcommentinput?: boolean\n  classname?: string"
@@ -2072,6 +2140,7 @@
       "name": "bpm.orgChart",
       "description": "Organigramme hiérarchique HTML/CSS (repliable).",
       "category": "Mise en page",
+      "status": "curated",
       "fullDescription": "Organigramme hiérarchique HTML/CSS (repliable).",
       "props": "  nodes*: OrgChartNode[]\n  direction?: \"vertical\" | \"horizontal\"\n  onNodeClick?: (node: OrgChartNode) => void\n  expandable?: boolean\n  rootId?: string\n  className?: string",
       "semantics": {
@@ -2098,6 +2167,7 @@
       "name": "bpm.masterDetail",
       "description": "Vue liste + détail responsive (recherche, mobile).",
       "category": "Mise en page",
+      "status": "curated",
       "fullDescription": "Vue liste + détail responsive (recherche, mobile).",
       "props": "  items*: T[]\n  columns*: MasterDetailColumn<T>[]\n  renderDetail*: (item: T) => React.ReactElement\n  selectedId?: string\n  onSelect*: (item: T) => void\n  idKey?: string\n  searchable?: boolean\n  emptyDetailMessage?: string\n  splitRatio?: number\n  className?: string",
       "semantics": {
@@ -2124,6 +2194,7 @@
       "name": "bpm.wizardForm",
       "description": "Formulaire multi-étapes avec stepper et validation.",
       "category": "Interaction",
+      "status": "curated",
       "fullDescription": "Formulaire multi-étapes avec stepper et validation.",
       "props": "  steps*: WizardStep[]\n  onComplete*: () => void\n  onCancel?: () => void\n  submitLabel?: string\n  showSummary?: boolean\n  className?: string",
       "semantics": {
@@ -2151,6 +2222,7 @@
       "name": "bpm.commandPalette",
       "description": "Palette de commandes modale (fuzzy, clavier, Cmd+K).",
       "category": "Navigation",
+      "status": "curated",
       "fullDescription": "Palette de commandes modale (fuzzy search, clavier, Cmd+K).",
       "props": "  commands*: Command[]\n  isOpen?: boolean  — Mode contrôlé : si défini, l’ouverture au clavier doit être gérée via `onRequestOpen`.\n  onClose*: () => void\n  onRequestOpen?: () => void  — Appelé sur Cmd/Ctrl+K lorsque `isOpen` est fourni (mode contrôlé).\n  placeholder?: string\n  className?: string",
       "semantics": {
@@ -2176,6 +2248,7 @@
       "name": "bpm.image",
       "description": "Image avec alt, dimensions et object-fit.",
       "category": "Média",
+      "status": "curated",
       "fullDescription": "Affiche une image avec chargement différé et options de dimensionnement/ajustement.",
       "props": "  src*: string\n  alt*: string\n  title?: string\n  width?: number | string\n  height?: number | string\n  fit?: \"contain\" | \"cover\" | \"fill\" | \"none\"\n  className?: string",
       "example": "bpm.image({ src: \"/photo.jpg\", alt: \"Photo de profil\", width: 200, fit: \"cover\" })",
@@ -2212,6 +2285,7 @@
       "name": "bpm.pdfViewer",
       "description": "Visualiseur PDF (iframe).",
       "category": "Média",
+      "status": "curated",
       "fullDescription": "Visionneuse PDF embarquée en iframe avec dimensions personnalisables.",
       "props": "  src*: string\n  title?: string\n  width?: number | string\n  height?: number | string\n  className?: string",
       "example": "bpm.pdfViewer({ src: \"/documents/rapport.pdf\", title: \"Rapport annuel\", height: 600 })",
@@ -2248,6 +2322,7 @@
       "name": "bpm.autocomplete",
       "description": "Champ de saisie avec suggestions.",
       "category": "Interaction",
+      "status": "curated",
       "fullDescription": "Champ de saisie avec suggestions.",
       "props": "  label?: string\n  placeholder?: string\n  value?: string\n  onChange?: (value: string) => void\n  options*: AutocompleteOption[]\n  className?: string",
       "semantics": {
@@ -2274,6 +2349,7 @@
       "name": "bpm.plotlyChart",
       "description": "Graphique Plotly (iframe ou placeholder).",
       "category": "Graphiques",
+      "status": "curated",
       "fullDescription": "Graphique interactif Plotly.js avec support de tous types de traces (bar, line, scatter, etc.).",
       "props": "  data?: object[]  — Tableau de traces Plotly (ex. [{type:'bar', x:[], y:[]}]). Obligatoire.\n  layout?: object  — Config layout Plotly (title, xaxis, yaxis, etc.).\n  config?: object  — Config Plotly (responsive, displayModeBar, etc.).\n  height?: number  — Hauteur en pixels. Default: 400.\n  width?: number | string\n  className?: string\n  iframeSrc?: string",
       "example": "bpm.plotlyChart({ data: [{ type: \"bar\", x: [\"A\", \"B\"], y: [10, 20] }], height: 400 })",
@@ -2329,6 +2405,7 @@
       "name": "bpm.map",
       "description": "Carte (OpenStreetMap iframe).",
       "category": "Média",
+      "status": "curated",
       "fullDescription": "Carte OpenStreetMap embarquée en iframe. Utiliser MapView pour des fonctionnalités interactives.",
       "props": "  iframeSrc?: string\n  lat?: number\n  lng?: number\n  width?: number | string\n  height?: number | string\n  className?: string",
       "example": "bpm.map({ lat: 48.8566, lng: 2.3522, height: 300 })",
@@ -2365,6 +2442,7 @@
       "name": "bpm.altairChart",
       "description": "Graphique Altair / Vega-Lite.",
       "category": "Graphiques",
+      "status": "curated",
       "fullDescription": "Graphique Altair / Vega-Lite.",
       "props": "  spec?: Record<string, unknown>  — Spécification Vega-Lite / Altair (JSON). À fournir côté app.\n  iframeSrc?: string  — Ou URL d'un fichier JSON ou d'une vue compilée.\n  width?: number | string\n  height?: number | string\n  className?: string",
       "semantics": {
@@ -2398,6 +2476,7 @@
       "name": "bpm.barcode",
       "description": "Code-barres (EAN-13, Code 128).",
       "category": "Identification & traçabilité",
+      "status": "curated",
       "fullDescription": "Code-barres (EAN-13, Code 128).",
       "props": "  value*: string\n  format?: \"EAN13\" | \"CODE128\"\n  height?: number\n  width?: number\n  lineColor?: string\n  background?: string\n  className?: string",
       "semantics": {
@@ -2425,6 +2504,7 @@
       "name": "bpm.qrCode",
       "description": "QR Code (URL, vCard, texte).",
       "category": "Identification & traçabilité",
+      "status": "curated",
       "fullDescription": "Génère un QR code SVG à partir d'une valeur texte avec couleurs personnalisables.",
       "props": "  value*: string\n  size?: number\n  fgColor?: string\n  bgColor?: string\n  className?: string",
       "example": "bpm.qrCode({ value: \"https://example.com\", size: 150, fgColor: \"#000\" })",
@@ -2461,6 +2541,7 @@
       "name": "bpm.nfcBadge",
       "description": "Badge / tag NFC (statut Scannable, etc.).",
       "category": "Identification & traçabilité",
+      "status": "curated",
       "fullDescription": "Badge indicateur de statut NFC/scannable avec icône et variantes de couleur.",
       "props": "  label?: string\n  variant?: \"default\" | \"primary\" | \"success\"\n  className?: string",
       "example": "bpm.nfcBadge({ label: \"Actif\", variant: \"success\" })",
@@ -2498,6 +2579,7 @@
       "name": "bpm.drawer",
       "description": "Tiroir / panneau latéral (détail, formulaire, filtres).",
       "category": "Mise en page",
+      "status": "curated",
       "fullDescription": "Tiroir / panneau latéral (détail, formulaire, filtres).",
       "props": "  children*: React.ReactNode\n  open*: boolean\n  onClose*: () => void\n  title?: React.ReactNode\n  side?: \"left\" | \"right\"\n  width?: number | string\n  className?: string",
       "semantics": {
@@ -2524,6 +2606,7 @@
       "name": "bpm.pagination",
       "description": "Pagination (page, taille, total) pour listes et tableaux.",
       "category": "Affichage de données",
+      "status": "curated",
       "fullDescription": "Contrôle de pagination avec boutons précédent/suivant, indicateur de page et compteur d'éléments.",
       "props": "  page*: number  — Page courante (1-based).\n  totalPages*: number  — Nombre total de pages.\n  onPageChange*: (page: number) => void  — Callback au changement de page. Reçoit le numéro de page.\n  pageSize?: number  — Taille de page (optionnel, pour affichage).\n  totalItems?: number  — Nombre total d’éléments (optionnel).\n  label?: string  — Libellé optionnel (ex. \"Page 1 sur 5\").\n  className?: string",
       "example": "bpm.pagination({ page: 1, totalPages: 10, onPageChange: setPage, totalItems: 100, pageSize: 10 })",
@@ -2560,6 +2643,7 @@
       "name": "bpm.filterPanel",
       "description": "Panneau de filtres (select, multiselect, daterange, text, toggle).",
       "category": "Interaction",
+      "status": "curated",
       "fullDescription": "Panneau de filtres (select, multiselect, daterange, text, toggle).",
       "props": "  filters*: FilterConfig[]  — Liste des filtres à afficher.\n  values?: Record<string, unknown>  — Valeurs courantes (clé = filter.key).\n  onChange*: (key: string, value: unknown) => void  — Callback à chaque changement d'un filtre.\n  onReset*: () => void  — Callback réinitialisation.\n  orientation?: \"horizontal\" | \"vertical\"  — Disposition : horizontal (flex row) ou vertical (colonne 240px).\n  collapsible?: boolean  — Afficher un bouton pour replier le panneau (avec badge si filtres actifs).",
       "semantics": {
@@ -2587,6 +2671,7 @@
       "name": "bpm.confirmModal",
       "description": "Modal de confirmation pour actions destructives (danger, warning, info).",
       "category": "Mise en page",
+      "status": "curated",
       "fullDescription": "Modal de confirmation pour actions destructives (danger, warning, info).",
       "props": "  isOpen*: boolean\n  onConfirm*: () => void\n  onCancel*: () => void\n  title*: string\n  message*: string\n  confirmLabel?: string\n  cancelLabel?: string\n  variant?: ConfirmModalVariant\n  isLoading?: boolean",
       "semantics": {
@@ -2613,6 +2698,7 @@
       "name": "bpm.toast",
       "description": "Notification éphémère (success, error, info, warning).",
       "category": "Feedback",
+      "status": "curated",
       "props": "  message*: string  — Texte principal\n  type?: string  — success | error | warning | info\n  title?: string | null\n  pageName?: string | null\n  pageIcon?: string | null  — SVG HTML\n  id?: number  — Clé React\n  onClose*: () => void  — Fermeture — apps : ToastProvider + useToast()",
       "semantics": {
         "semanticRole": "feedback",
@@ -2638,6 +2724,7 @@
       "name": "bpm.pageLayout",
       "description": "Layout avec sidebar repliable, titre et zone de contenu.",
       "category": "Mise en page",
+      "status": "curated",
       "fullDescription": "Layout d'application avec sidebar rétractable, navigation par icônes Material et switch de thème.",
       "props": "  title*: string\n  items*: SidebarItem[]\n  currentItem*: string\n  onNavigate*: (key: string) => void\n  children*: React.ReactNode\n  defaultCollapsed?: boolean\n  theme?: \"light\" | \"dark\"  — Thème courant (optionnel). Si fourni avec onThemeChange, affiche le bouton thème en bas de la sidebar (aligné .Maker).\n  onThemeChange?: (theme: \"light\" | \"dark\") => void  — Callback changement de thème (clair ↔ sombre). Affiche le bouton thème en bas si défini.",
       "example": "bpm.pageLayout({ title: \"Mon App\", items: [{ key: \"home\", label: \"Accueil\", icon: \"home\" }], currentItem: \"home\", onNavigate: setPage, children: <Content /> })",
@@ -2672,6 +2759,7 @@
       "name": "bpm.scrollContainer",
       "description": "Conteneur avec défilement interne (hauteur max, scrollbar optionnelle).",
       "category": "Mise en page",
+      "status": "curated",
       "fullDescription": "Conteneur avec scroll vertical, horizontal ou bidirectionnel et option pour masquer la scrollbar.",
       "props": "  children*: React.ReactNode\n  height?: string | number  — Hauteur du conteneur (défaut '100%').\n  maxHeight?: string | number  — Hauteur max pour limiter le scroll.\n  direction?: \"vertical\" | \"horizontal\" | \"both\"  — Direction du scroll (défaut 'vertical').\n  hideScrollbar?: boolean  — Masquer la scrollbar visuelle (défaut false).\n  className?: string",
       "example": "bpm.scrollContainer({ children: <Content />, height: 400, direction: \"vertical\", hideScrollbar: true })",
@@ -2707,6 +2795,7 @@
       "name": "bpm.labelValue",
       "description": "Paire label / valeur (orientation, taille, copyable).",
       "category": "Affichage de données",
+      "status": "curated",
       "fullDescription": "Affiche une paire label/valeur avec options de style, orientation et bouton copier.",
       "props": "  label*: string\n  value*: string | number | React.ReactNode\n  orientation?: \"horizontal\" | \"vertical\"\n  size?: \"sm\" | \"md\" | \"lg\"\n  valueStyle?: \"default\" | \"bold\" | \"accent\" | \"muted\"\n  copyable?: boolean\n  className?: string\n  trajectory?: TrajectoryPoint[]  — Trajectoire v(t) [{t, v}] de la mesure (la valeur affichée reste value) — jugée si context est fourni.\n  context?: InterpretContext  — Contexte de jugement { reference, direction, comparisonFrame? } : la valeur prend la couleur du verdict et un suffixe écart/tendance role=status est révélé. Additif : sans context, rendu inchangé.",
       "example": "bpm.labelValue({ label: \"Référence\", value: \"REF-001\", copyable: true, valueStyle: \"bold\" })",
@@ -2742,6 +2831,7 @@
       "name": "bpm.spinnerDot",
       "description": "Indicateur de chargement (points).",
       "category": "Feedback",
+      "status": "curated",
       "fullDescription": "Spinner compact type cercle tournant pour indicateur de chargement inline.",
       "props": "  className?: string\n  size?: \"small\" | \"medium\" | \"large\"  — Taille : small (16px), medium (24px), large (32px).",
       "example": "bpm.spinnerDot({ size: \"medium\" })",
@@ -2778,6 +2868,7 @@
       "name": "bpm.titleBpm",
       "description": "Titre (alias bpm.title, niveaux 1 à 4).",
       "category": "Affichage de données",
+      "status": "curated",
       "fullDescription": "Titre h1 minimal.",
       "props": "  children*: React.ReactNode\n  level?: 1 | 2 | 3 | 4\n  size?: string | null  — Taille de police (ex. \"1.5rem\", \"24px\"). Surcharge le défaut du niveau.\n  bold?: boolean | number | null  — Gras : true = 700, false = 400, ou nombre (ex. 600). Surcharge le défaut du niveau.\n  color?: string | null  — Couleur du texte (ex. \"var(--bpm-text-primary)\", \"#333\"). Surcharge la couleur par défaut.\n  bar?: boolean  — Barre verticale sombre à gauche du titre (comme en-tête de section).\n  barColor?: string | null  — Couleur de la barre gauche (hex, rgb ou nom CSS). Ignoré si bar=false.\n  inverted?: boolean  — Couleur inversée : fond sombre, texte blanc (style badge / scénario).\n  invertedBackground?: string | null  — Couleur de fond quand inverted=true (hex, rgb ou nom CSS). Par défaut : #1d1d1f.\n  logoUrl?: string | null  — Optional logo URL (e.g. from localStorage). Shown only when level === 1.\n  onLogoClick?: () => void",
       "semantics": {
@@ -2803,6 +2894,7 @@
       "name": "bpm.markdown",
       "description": "Rendu Markdown sécurisé.",
       "category": "Affichage de données",
+      "status": "curated",
       "fullDescription": "Rendu Markdown sécurisé.",
       "props": "  text*: string  — Contenu Markdown. Utilisez `---` sur une ligne pour une ligne horizontale (hr).\n  className?: string",
       "semantics": {
@@ -2829,6 +2921,7 @@
       "name": "bpm.codeEditor",
       "description": "Éditeur de code (textarea avec valeur, onChange, readOnly).",
       "category": "Utilitaires",
+      "status": "curated",
       "fullDescription": "Éditeur de code (textarea avec valeur, onChange, readOnly).",
       "props": "  value*: string\n  onChange*: (value: string) => void\n  language?: string\n  readOnly?: boolean\n  height?: string | number\n  placeholder?: string\n  className?: string",
       "semantics": {
@@ -2855,6 +2948,7 @@
       "name": "bpm.crud",
       "description": "Page CRUD (liste, formulaire, colonnes, champs, endpoint).",
       "category": "Utilitaires",
+      "status": "curated",
       "props": "  title*: string\n  endpoint*: string\n  columns*: CrudColumn[]\n  fields*: CrudField[]\n  domain?: string\n  semantic?: string\n  idKey?: string  — Champ utilisé comme identifiant pour GET/PUT/DELETE (défaut: \"id\").",
       "semantics": {
         "semanticRole": "composite",
@@ -2880,6 +2974,7 @@
       "name": "bpm.gps",
       "description": "Affichage ou sélection de position GPS (carte, picker).",
       "category": "Média",
+      "status": "curated",
       "fullDescription": "Affichage ou sélection de position GPS.",
       "props": "  label?: string  — Titre affiché au-dessus du bloc.\n  showMap?: boolean  — Afficher une carte Leaflet. Default: true.\n  onLocation?: (coords: { lat: number  — Callback appelé quand la position est obtenue (mode display).\n  height?: number  — Hauteur de la carte en px. Default: 300.\n  className?: string  — Classes CSS additionnelles.\n  mode?: \"display\" | \"picker\"  — Mode : 'display' = affichage position, 'picker' = sélection d'un point sur la carte. Default: 'display'.\n  value?: { lat: number  — Position courante (mode picker).\n  onChange?: (coords: { lat: number  — Callback à chaque déplacement du marker ou clic sur la carte (mode picker).",
       "semantics": {
@@ -2906,6 +3001,7 @@
       "name": "bpm.jsonEditor",
       "description": "Éditeur JSON avec validation et formatage.",
       "category": "Utilitaires",
+      "status": "curated",
       "fullDescription": "Éditeur JSON avec validation en temps réel, formatage automatique au blur et indicateur de validité.",
       "props": "  value*: string\n  onChange*: (value: string, isValid: boolean) => void\n  readOnly?: boolean\n  height?: string | number\n  showValidation?: boolean\n  className?: string",
       "example": "bpm.jsonEditor({ value: '{\"key\": \"value\"}', onChange: (v, valid) => console.log(v, valid) })",
@@ -2942,6 +3038,7 @@
       "name": "bpm.notificationCenter",
       "description": "Liste de notifications (lu/non lu, marquage, suppression).",
       "category": "Feedback",
+      "status": "curated",
       "fullDescription": "Centre de notifications (liste, marquage, suppression).",
       "props": "  notifications*: NotificationItem[]\n  onMarkRead*: (id: string) => void\n  onMarkAllRead?: () => void\n  onDismiss?: (id: string) => void\n  maxVisible?: number\n  emptyMessage?: string\n  className?: string",
       "semantics": {
@@ -2968,6 +3065,7 @@
       "name": "bpm.filePreview",
       "description": "Aperçu de fichier (image, PDF, texte/code).",
       "category": "Média",
+      "status": "curated",
       "fullDescription": "Aperçu de fichier (image, PDF, texte/code).",
       "props": "  url*: string\n  filename*: string\n  mimeType?: string\n  height?: string | number\n  showDownload?: boolean\n  className?: string\n  file_url?: string  — Props snake_case (API Python) — normalisées en interne\n  file_name?: string\n  mime_type?: string\n  show_download?: boolean\n  class_name?: string",
       "semantics": {
@@ -2994,6 +3092,7 @@
       "name": "bpm.dataExplorer",
       "description": "Explorateur de données (table, recherche, tri, pagination, export CSV).",
       "category": "IA & Spécialisés",
+      "status": "curated",
       "fullDescription": "Explorateur de données unifié (classique ou analytics).",
       "props": "",
       "semantics": {
@@ -3020,6 +3119,7 @@
       "name": "bpm.chatInterface",
       "description": "Interface de chat (messages, saisie, streaming).",
       "category": "IA & Spécialisés",
+      "status": "curated",
       "fullDescription": "Interface de chat (messages, saisie, streaming).",
       "props": "  messages*: ChatMessage[]\n  onSend*: (content: string) => void\n  isLoading?: boolean  — @deprecated Préférez `typing`.\n  typing?: boolean  — Indicateur « en cours de frappe » côté assistant.\n  placeholder?: string\n  systemContext?: string  — Contexte système affiché en haut si défini.\n  title?: string  — Titre dans l’en-tête du panneau.\n  disabled?: boolean\n  height?: string\n  className?: string",
       "semantics": {
@@ -3047,6 +3147,7 @@
       "name": "bpm.promptInput",
       "description": "Champ de saisie pour prompt IA (auto-resize, Cmd+Enter, tokens).",
       "category": "IA & Spécialisés",
+      "status": "curated",
       "fullDescription": "Zone de saisie multi-lignes pour prompts IA avec auto-resize, compteur de tokens et envoi Ctrl+Enter.",
       "props": "  value*: string\n  onChange*: (value: string) => void\n  onSubmit*: (value: string) => void\n  placeholder?: string\n  isLoading?: boolean\n  disabled?: boolean  — Désactive la zone de saisie et l’envoi (ex. chat désactivé).\n  maxLength?: number\n  showTokenCount?: boolean\n  minRows?: number\n  maxRows?: number\n  className?: string",
       "example": "bpm.promptInput({ value: prompt, onChange: setPrompt, onSubmit: handleSend, placeholder: \"Posez votre question...\", isLoading: false })",
@@ -3081,6 +3182,7 @@
       "name": "bpm.streamingText",
       "description": "Affichage de texte en flux (curseur, option Markdown).",
       "category": "IA & Spécialisés",
+      "status": "curated",
       "fullDescription": "Affichage de texte en streaming avec curseur clignotant et rendu Markdown optionnel.",
       "props": "  content*: string  — Texte courant (s'allonge au fil du stream).\n  isStreaming?: boolean  — Affiche le curseur clignotant quand true.\n  renderMarkdown?: boolean  — Passe le contenu dans bpm.markdown (défaut true).\n  className?: string",
       "example": "bpm.streamingText({ content: partialText, isStreaming: true, renderMarkdown: true })",
@@ -3115,6 +3217,7 @@
       "name": "bpm.diffViewer",
       "description": "Visualisation de diff texte/code (split ou unified).",
       "category": "IA & Spécialisés",
+      "status": "curated",
       "fullDescription": "Visualisation de diff texte/code (split ou unified).",
       "props": "  original*: string\n  modified*: string\n  language?: string\n  mode?: \"split\" | \"unified\"\n  title?: { original?: string\n  className?: string",
       "semantics": {
@@ -3142,6 +3245,7 @@
       "name": "bpm.modelSelector",
       "description": "Sélecteur de modèle IA (par fournisseur, capacités).",
       "category": "IA & Spécialisés",
+      "status": "curated",
       "fullDescription": "Sélecteur de modèle IA avec dropdown groupé par fournisseur et affichage des capacités.",
       "props": "  models*: ModelOption[]\n  selected*: string\n  onChange*: (modelId: string) => void\n  showCapabilities?: boolean\n  className?: string",
       "example": "bpm.modelSelector({ models: [{ id: \"gpt-4\", label: \"GPT-4\", provider: \"OpenAI\" }], selected: \"gpt-4\", onChange: setModel })",
@@ -3171,6 +3275,649 @@
         "status": "proposed"
       },
       "_haystack": "bpm.modelselector modelselector sélecteur de modèle ia (par fournisseur, capacités). ia & spécialisés sélecteur de modèle ia avec dropdown groupé par fournisseur et affichage des capacités.   models*: modeloption[]\n  selected*: string\n  onchange*: (modelid: string) => void\n  showcapabilities?: boolean\n  classname?: string bpm.modelselector({ models: [{ id: \"gpt-4\", label: \"gpt-4\", provider: \"openai\" }], selected: \"gpt-4\", onchange: setmodel }) bpm.chatinterface bpm.promptinput saisie ai choisir le modèle ia (par fournisseur, capacités) qui exécutera la requête. bpm.chatinterface bpm.promptinput énumération métier quelconque (bpm.selectbox). liste de modèles avec capacités ; le choix conditionne coût/latence/qualité de l'aifeature."
+    },
+    {
+      "slug": "addressinput",
+      "name": "bpm.addressInput",
+      "description": "Champ de saisie d'adresse avec autocomplétion.",
+      "category": "Interaction",
+      "status": "uncurated",
+      "fullDescription": "Champ de saisie d'adresse avec autocomplétion.",
+      "props": "  mode?: AddressInputMode\n  value?: {\n  line1?: string\n  line2?: string\n  city?: string\n  postal?: string\n  onChange?: (v: { line1: string\n  className?: string",
+      "_haystack": "bpm.addressinput addressinput champ de saisie d'adresse avec autocomplétion. interaction champ de saisie d'adresse avec autocomplétion.   mode?: addressinputmode\n  value?: {\n  line1?: string\n  line2?: string\n  city?: string\n  postal?: string\n  onchange?: (v: { line1: string\n  classname?: string"
+    },
+    {
+      "slug": "aiquerybar",
+      "name": "bpm.aiQueryBar",
+      "description": "Barre de requête IA (langage naturel → résultat structuré).",
+      "category": "IA & Spécialisés",
+      "status": "uncurated",
+      "fullDescription": "Barre de requête IA (langage naturel → résultat structuré).",
+      "props": "  onQuery*: (question: string) => Promise<string>\n  placeholder?: string\n  suggestions?: string[]\n  loading?: boolean\n  className?: string",
+      "_haystack": "bpm.aiquerybar aiquerybar barre de requête ia (langage naturel → résultat structuré). ia & spécialisés barre de requête ia (langage naturel → résultat structuré).   onquery*: (question: string) => promise<string>\n  placeholder?: string\n  suggestions?: string[]\n  loading?: boolean\n  classname?: string"
+    },
+    {
+      "slug": "alarmpanel",
+      "name": "bpm.alarmPanel",
+      "description": "Panneau d'alarmes industrielles (active, accusée, résolue).",
+      "category": "Feedback",
+      "status": "uncurated",
+      "fullDescription": "Panneau d'alarmes industrielles (active, accusée, résolue).",
+      "props": "  alarms*: Alarm[]\n  onAcknowledge?: (id: string) => void\n  onDismiss?: (id: string) => void\n  className?: string",
+      "_haystack": "bpm.alarmpanel alarmpanel panneau d'alarmes industrielles (active, accusée, résolue). feedback panneau d'alarmes industrielles (active, accusée, résolue).   alarms*: alarm[]\n  onacknowledge?: (id: string) => void\n  ondismiss?: (id: string) => void\n  classname?: string"
+    },
+    {
+      "slug": "assistantpanel",
+      "name": "bpm.assistantPanel",
+      "description": "Panneau assistant IA (chips, saisie, réponses).",
+      "category": "IA & Spécialisés",
+      "status": "uncurated",
+      "fullDescription": "Panneau assistant IA (chips, saisie, réponses).",
+      "props": "  demoAnswers?: Record<string, string>  — Si fourni, les chips affichent les réponses statiques (démo publique, pas d'appel API).\n  title?: string  — Titre du panneau\n  demo?: boolean  — Utilise demoAnswers si fourni ; le panneau s'ouvre toujours en volet droit (drawer).\n  className?: string",
+      "_haystack": "bpm.assistantpanel assistantpanel panneau assistant ia (chips, saisie, réponses). ia & spécialisés panneau assistant ia (chips, saisie, réponses).   demoanswers?: record<string, string>  — si fourni, les chips affichent les réponses statiques (démo publique, pas d'appel api).\n  title?: string  — titre du panneau\n  demo?: boolean  — utilise demoanswers si fourni ; le panneau s'ouvre toujours en volet droit (drawer).\n  classname?: string"
+    },
+    {
+      "slug": "breadcrumbs",
+      "name": "bpm.breadcrumbs",
+      "description": "Fil d'Ariane avec items cliquables.",
+      "category": "Navigation",
+      "status": "uncurated",
+      "fullDescription": "Fil d'Ariane avec items cliquables.",
+      "props": "  items*: BreadcrumbsItem[]\n  separator?: React.ReactNode\n  maxItems?: number\n  className?: string",
+      "_haystack": "bpm.breadcrumbs breadcrumbs fil d'ariane avec items cliquables. navigation fil d'ariane avec items cliquables.   items*: breadcrumbsitem[]\n  separator?: react.reactnode\n  maxitems?: number\n  classname?: string"
+    },
+    {
+      "slug": "changelog",
+      "name": "bpm.changelog",
+      "description": "Journal des modifications avec catégories et versions.",
+      "category": "Affichage de données",
+      "status": "uncurated",
+      "fullDescription": "Journal des modifications avec catégories et versions.",
+      "props": "  changes*: ChangelogEntry[]\n  groupByDate?: boolean\n  maxItems?: number\n  className?: string",
+      "_haystack": "bpm.changelog changelog journal des modifications avec catégories et versions. affichage de données journal des modifications avec catégories et versions.   changes*: changelogentry[]\n  groupbydate?: boolean\n  maxitems?: number\n  classname?: string"
+    },
+    {
+      "slug": "chat",
+      "name": "bpm.chat",
+      "description": "Chat Ollama local (démo).",
+      "category": "IA & Spécialisés",
+      "status": "uncurated",
+      "props": "  model?: string\n  placeholder?: string",
+      "_haystack": "bpm.chat chat chat ollama local (démo). ia & spécialisés   model?: string\n  placeholder?: string"
+    },
+    {
+      "slug": "commentthread",
+      "name": "bpm.commentThread",
+      "description": "Fil de commentaires avec réponses et avatars.",
+      "category": "Affichage de données",
+      "status": "uncurated",
+      "fullDescription": "Fil de commentaires avec réponses et avatars.",
+      "props": "  comments*: Comment[]\n  onPost*: (content: string, parentId?: string) => void | Promise<void>\n  currentUser*: { id: string\n  maxDepth?: number\n  className?: string",
+      "_haystack": "bpm.commentthread commentthread fil de commentaires avec réponses et avatars. affichage de données fil de commentaires avec réponses et avatars.   comments*: comment[]\n  onpost*: (content: string, parentid?: string) => void | promise<void>\n  currentuser*: { id: string\n  maxdepth?: number\n  classname?: string"
+    },
+    {
+      "slug": "comparison",
+      "name": "bpm.comparison",
+      "description": "Tableau de comparaison multi-items.",
+      "category": "Affichage de données",
+      "status": "uncurated",
+      "fullDescription": "Tableau de comparaison multi-items.",
+      "props": "  items*: Record<string, unknown>[]\n  dimensions*: string[]\n  labels?: Record<string, string>\n  highlightBest?: boolean\n  className?: string\n  contexts?: Record<string, InterpretContext>  — Contextes de jugement PAR DIMENSION { dim: { reference, direction } } : chaque cellule de la dimension est jugée par interpret — valeur colorée par le verdict, écart au repère en title, data-judgment par cellule. Additif : sans contexts, rendu inchangé.",
+      "_haystack": "bpm.comparison comparison tableau de comparaison multi-items. affichage de données tableau de comparaison multi-items.   items*: record<string, unknown>[]\n  dimensions*: string[]\n  labels?: record<string, string>\n  highlightbest?: boolean\n  classname?: string\n  contexts?: record<string, interpretcontext>  — contextes de jugement par dimension { dim: { reference, direction } } : chaque cellule de la dimension est jugée par interpret — valeur colorée par le verdict, écart au repère en title, data-judgment par cellule. additif : sans contexts, rendu inchangé."
+    },
+    {
+      "slug": "contextmenu",
+      "name": "bpm.contextMenu",
+      "description": "Menu contextuel (clic droit ou clic bouton).",
+      "category": "Interaction",
+      "status": "uncurated",
+      "fullDescription": "Menu contextuel (clic droit ou clic bouton).",
+      "props": "  items*: ContextMenuItem[]\n  trigger*: React.ReactNode\n  triggerOn?: \"contextmenu\" | \"click\"\n  className?: string",
+      "_haystack": "bpm.contextmenu contextmenu menu contextuel (clic droit ou clic bouton). interaction menu contextuel (clic droit ou clic bouton).   items*: contextmenuitem[]\n  trigger*: react.reactnode\n  triggeron?: \"contextmenu\" | \"click\"\n  classname?: string"
+    },
+    {
+      "slug": "decisiontree",
+      "name": "bpm.decisionTree",
+      "description": "Arbre de décision interactif (questions, actions, résultats).",
+      "category": "Affichage de données",
+      "status": "uncurated",
+      "fullDescription": "Arbre de décision interactif (questions, actions, résultats).",
+      "props": "  rootId*: string\n  nodes*: DecisionNode[]\n  currentNodeId?: string\n  onNodeClick*: (nodeId: string, branch?: { label: string",
+      "_haystack": "bpm.decisiontree decisiontree arbre de décision interactif (questions, actions, résultats). affichage de données arbre de décision interactif (questions, actions, résultats).   rootid*: string\n  nodes*: decisionnode[]\n  currentnodeid?: string\n  onnodeclick*: (nodeid: string, branch?: { label: string"
+    },
+    {
+      "slug": "drilldown",
+      "name": "bpm.drillDown",
+      "description": "Navigation drill-down multi-niveaux dans des données hiérarchiques.",
+      "category": "Affichage de données",
+      "status": "uncurated",
+      "fullDescription": "Navigation drill-down multi-niveaux dans des données hiérarchiques.",
+      "props": "  levels*: DrillDownLevel<T>[]\n  currentLevel*: number\n  onDrill*: (item: T, nextLevel: number) => void\n  onBack*: () => void\n  breadcrumbs?: boolean",
+      "_haystack": "bpm.drilldown drilldown navigation drill-down multi-niveaux dans des données hiérarchiques. affichage de données navigation drill-down multi-niveaux dans des données hiérarchiques.   levels*: drilldownlevel<t>[]\n  currentlevel*: number\n  ondrill*: (item: t, nextlevel: number) => void\n  onback*: () => void\n  breadcrumbs?: boolean"
+    },
+    {
+      "slug": "emailcomposer",
+      "name": "bpm.emailComposer",
+      "description": "Composeur d'email (To, CC, objet, corps riche).",
+      "category": "Interaction",
+      "status": "uncurated",
+      "fullDescription": "Composeur d'email (To, CC, objet, corps riche).",
+      "props": "  to?: string\n  subject?: string\n  body?: string\n  templates?: EmailTemplate[]\n  useRichText?: boolean\n  onSend?: (payload: { to: string\n  onCancel?: () => void\n  className?: string",
+      "_haystack": "bpm.emailcomposer emailcomposer composeur d'email (to, cc, objet, corps riche). interaction composeur d'email (to, cc, objet, corps riche).   to?: string\n  subject?: string\n  body?: string\n  templates?: emailtemplate[]\n  userichtext?: boolean\n  onsend?: (payload: { to: string\n  oncancel?: () => void\n  classname?: string"
+    },
+    {
+      "slug": "exportbutton",
+      "name": "bpm.exportButton",
+      "description": "Bouton d'export de données (CSV, JSON, Excel).",
+      "category": "Interaction",
+      "status": "uncurated",
+      "fullDescription": "Bouton d'export de données (CSV, JSON, Excel).",
+      "props": "  data*: T[] | (() => T[])\n  filename*: string\n  formats?: (\"csv\" | \"json\")[]\n  columns?: ExportColumn<T>[]\n  csvDelimiter?: \"\n  csvBOM?: boolean\n  className?: string",
+      "_haystack": "bpm.exportbutton exportbutton bouton d'export de données (csv, json, excel). interaction bouton d'export de données (csv, json, excel).   data*: t[] | (() => t[])\n  filename*: string\n  formats?: (\"csv\" | \"json\")[]\n  columns?: exportcolumn<t>[]\n  csvdelimiter?: \"\n  csvbom?: boolean\n  classname?: string"
+    },
+    {
+      "slug": "funnelchart",
+      "name": "bpm.funnelChart",
+      "description": "Graphique en entonnoir (tunnel de conversion).",
+      "category": "Graphiques",
+      "status": "uncurated",
+      "fullDescription": "Graphique en entonnoir (tunnel de conversion).",
+      "props": "  stages*: FunnelStage[]\n  showPercentage?: boolean\n  horizontal?: boolean\n  className?: string",
+      "_haystack": "bpm.funnelchart funnelchart graphique en entonnoir (tunnel de conversion). graphiques graphique en entonnoir (tunnel de conversion).   stages*: funnelstage[]\n  showpercentage?: boolean\n  horizontal?: boolean\n  classname?: string"
+    },
+    {
+      "slug": "gantt",
+      "name": "bpm.gantt",
+      "description": "Diagramme de Gantt (tâches, jalons, dépendances).",
+      "category": "Affichage de données",
+      "status": "uncurated",
+      "fullDescription": "Diagramme de Gantt (tâches, jalons, dépendances).",
+      "props": "  tasks*: GanttTask[]\n  viewMode*: \"day\" | \"week\" | \"month\"\n  onTaskClick*: (task: GanttTask) => void\n  showDependencies?: boolean\n  todayLine?: boolean",
+      "_haystack": "bpm.gantt gantt diagramme de gantt (tâches, jalons, dépendances). affichage de données diagramme de gantt (tâches, jalons, dépendances).   tasks*: gantttask[]\n  viewmode*: \"day\" | \"week\" | \"month\"\n  ontaskclick*: (task: gantttask) => void\n  showdependencies?: boolean\n  todayline?: boolean"
+    },
+    {
+      "slug": "geofence",
+      "name": "bpm.geofence",
+      "description": "Carte interactive avec zones géographiques (geofences).",
+      "category": "Média",
+      "status": "uncurated",
+      "fullDescription": "Carte interactive avec zones géographiques (geofences).",
+      "props": "  zones*: GeofenceZone[]\n  onZonesChange?: (next: GeofenceZone[]) => void\n  center*: [number, number]\n  zoom?: number\n  height?: number | string\n  className?: string",
+      "_haystack": "bpm.geofence geofence carte interactive avec zones géographiques (geofences). média carte interactive avec zones géographiques (geofences).   zones*: geofencezone[]\n  onzoneschange?: (next: geofencezone[]) => void\n  center*: [number, number]\n  zoom?: number\n  height?: number | string\n  classname?: string"
+    },
+    {
+      "slug": "groupedlist",
+      "name": "bpm.groupedList",
+      "description": "Liste groupée par clé avec en-têtes de groupe.",
+      "category": "Affichage de données",
+      "status": "uncurated",
+      "fullDescription": "Liste groupée par clé avec en-têtes de groupe.",
+      "props": "  items*: T[]\n  groupBy*: keyof T\n  renderItem*: (item: T, index: number) => React.ReactNode\n  renderGroupHeader?: (key: string, count: number) => React.ReactNode\n  sortGroups?: \"asc\" | \"desc\"\n  collapsible?: boolean\n  defaultCollapsed?: boolean",
+      "_haystack": "bpm.groupedlist groupedlist liste groupée par clé avec en-têtes de groupe. affichage de données liste groupée par clé avec en-têtes de groupe.   items*: t[]\n  groupby*: keyof t\n  renderitem*: (item: t, index: number) => react.reactnode\n  rendergroupheader?: (key: string, count: number) => react.reactnode\n  sortgroups?: \"asc\" | \"desc\"\n  collapsible?: boolean\n  defaultcollapsed?: boolean"
+    },
+    {
+      "slug": "heatmap",
+      "name": "bpm.heatmap",
+      "description": "Grille de valeurs numériques avec dégradé de couleur, infobulle au survol et clic optionnel sur cellule.",
+      "category": "Graphiques",
+      "status": "uncurated",
+      "fullDescription": "Grille de valeurs numériques avec dégradé de couleur, infobulle au survol et clic optionnel sur cellule.",
+      "props": "  data*: number[][]\n  xLabels*: string[]\n  yLabels*: string[]\n  colorScale*: { min: string\n  valueMin?: number\n  valueMax?: number\n  showValues?: boolean\n  onCellClick?: (row: number, col: number, value: number) => void\n  className?: string\n  context?: InterpretContext  — Contexte de jugement { reference, direction, comparisonFrame? } : chaque cellule est jugée par interpret — liseré coloré par verdict (hors zone neutre), data-judgment par cellule, infobulle enrichie. Anomalie >2σ évaluée contre comparisonFrame ou, à défaut, la matrice entière. Additif : sans context, rendu inchangé.",
+      "example": "bpm.heatmap({ data: [[1,2],[3,4]], xLabels: [\"A\",\"B\"], yLabels: [\"X\",\"Y\"], colorScale: { min: \"#fff\", max: \"#f00\" } })",
+      "_haystack": "bpm.heatmap heatmap grille de valeurs numériques avec dégradé de couleur, infobulle au survol et clic optionnel sur cellule. graphiques grille de valeurs numériques avec dégradé de couleur, infobulle au survol et clic optionnel sur cellule.   data*: number[][]\n  xlabels*: string[]\n  ylabels*: string[]\n  colorscale*: { min: string\n  valuemin?: number\n  valuemax?: number\n  showvalues?: boolean\n  oncellclick?: (row: number, col: number, value: number) => void\n  classname?: string\n  context?: interpretcontext  — contexte de jugement { reference, direction, comparisonframe? } : chaque cellule est jugée par interpret — liseré coloré par verdict (hors zone neutre), data-judgment par cellule, infobulle enrichie. anomalie >2σ évaluée contre comparisonframe ou, à défaut, la matrice entière. additif : sans context, rendu inchangé. bpm.heatmap({ data: [[1,2],[3,4]], xlabels: [\"a\",\"b\"], ylabels: [\"x\",\"y\"], colorscale: { min: \"#fff\", max: \"#f00\" } })"
+    },
+    {
+      "slug": "inlineedit",
+      "name": "bpm.inlineEdit",
+      "description": "Champ éditable au clic : texte, nombre ou select.",
+      "category": "Interaction",
+      "status": "uncurated",
+      "fullDescription": "Champ éditable au clic : texte, nombre ou select. Validation par Entrée/blur, annulation par Échap.",
+      "props": "  value*: string | number\n  onSave*: (next: string | number) => void | Promise<void>\n  type?: InlineEditType\n  options?: { value: string\n  placeholder?: string\n  disabled?: boolean\n  className?: string",
+      "example": "bpm.inlineEdit({ value: \"Mon texte\", onSave: (v) => console.log(v), type: \"text\" })",
+      "associated": [
+        "bpm.table",
+        "bpm.labelValue"
+      ],
+      "_haystack": "bpm.inlineedit inlineedit champ éditable au clic : texte, nombre ou select. interaction champ éditable au clic : texte, nombre ou select. validation par entrée/blur, annulation par échap.   value*: string | number\n  onsave*: (next: string | number) => void | promise<void>\n  type?: inlineedittype\n  options?: { value: string\n  placeholder?: string\n  disabled?: boolean\n  classname?: string bpm.inlineedit({ value: \"mon texte\", onsave: (v) => console.log(v), type: \"text\" }) bpm.table bpm.labelvalue"
+    },
+    {
+      "slug": "invoicetemplate",
+      "name": "bpm.invoiceTemplate",
+      "description": "Modèle de facture A4 prêt pour impression avec lignes, TVA et totaux calculés automatiquement.",
+      "category": "Utilitaires",
+      "status": "uncurated",
+      "fullDescription": "Modèle de facture A4 prêt pour impression avec lignes, TVA et totaux calculés automatiquement.",
+      "props": "  title?: string\n  issuer*: string\n  client*: string\n  lines*: InvoiceLine[]\n  taxRate?: number\n  invoiceNo?: string\n  date?: string\n  className?: string",
+      "example": "bpm.invoiceTemplate({ issuer: \"Ma Société\", client: \"Client SA\", lines: [{ label: \"Service\", qty: 2, unitPrice: 100 }] })",
+      "associated": [
+        "bpm.printLayout"
+      ],
+      "_haystack": "bpm.invoicetemplate invoicetemplate modèle de facture a4 prêt pour impression avec lignes, tva et totaux calculés automatiquement. utilitaires modèle de facture a4 prêt pour impression avec lignes, tva et totaux calculés automatiquement.   title?: string\n  issuer*: string\n  client*: string\n  lines*: invoiceline[]\n  taxrate?: number\n  invoiceno?: string\n  date?: string\n  classname?: string bpm.invoicetemplate({ issuer: \"ma société\", client: \"client sa\", lines: [{ label: \"service\", qty: 2, unitprice: 100 }] }) bpm.printlayout"
+    },
+    {
+      "slug": "livechart",
+      "name": "bpm.liveChart",
+      "description": "Graphique temps réel avec fenêtre glissante, seuils en pointillés et rafraîchissement automatique.",
+      "category": "Graphiques",
+      "status": "uncurated",
+      "fullDescription": "Graphique temps réel avec fenêtre glissante, seuils en pointillés et rafraîchissement automatique.",
+      "props": "  data*: LiveChartDatum[]\n  bufferDuration?: number\n  thresholds?: { value: number\n  refreshInterval?: number\n  width?: number\n  height?: number\n  className?: string\n  context?: InterpretContext  — Contexte de jugement { reference, direction, comparisonFrame? } : la fenêtre courante est jugée par interpret (couleur de courbe selon le verdict, repère pointillé, verdict écart/tendance sous le graphique). Additif : sans context, rendu inchangé.",
+      "example": "bpm.liveChart({ data: [{ timestamp: Date.now(), value: 42 }], bufferDuration: 60, refreshInterval: 1000 })",
+      "associated": [
+        "bpm.liveGauge",
+        "bpm.lineChart",
+        "bpm.sparkline"
+      ],
+      "_haystack": "bpm.livechart livechart graphique temps réel avec fenêtre glissante, seuils en pointillés et rafraîchissement automatique. graphiques graphique temps réel avec fenêtre glissante, seuils en pointillés et rafraîchissement automatique.   data*: livechartdatum[]\n  bufferduration?: number\n  thresholds?: { value: number\n  refreshinterval?: number\n  width?: number\n  height?: number\n  classname?: string\n  context?: interpretcontext  — contexte de jugement { reference, direction, comparisonframe? } : la fenêtre courante est jugée par interpret (couleur de courbe selon le verdict, repère pointillé, verdict écart/tendance sous le graphique). additif : sans context, rendu inchangé. bpm.livechart({ data: [{ timestamp: date.now(), value: 42 }], bufferduration: 60, refreshinterval: 1000 }) bpm.livegauge bpm.linechart bpm.sparkline"
+    },
+    {
+      "slug": "machinestatus",
+      "name": "bpm.machineStatus",
+      "description": "Carte d'état machine avec indicateur LED animé (clignotement en production ou défaut).",
+      "category": "IA & Spécialisés",
+      "status": "uncurated",
+      "fullDescription": "Carte d'état machine avec indicateur LED animé (clignotement en production ou défaut).",
+      "props": "  title*: string\n  state*: MachineStatusState\n  detail?: string\n  className?: string\n  value?: number | TrajectoryPoint[]  — Mesure de production associée (cadence, TRS… ; scalaire ou trajectoire v(t) [{t,v}]) — jugée via interpret si context est fourni.\n  context?: InterpretContext  — Contexte de jugement { reference, direction, comparisonFrame? } : un verdict écart/tendance/anomalie est révélé sous l'état (role=status) et la bordure gauche prend la couleur du jugement. Additif : sans context, rendu inchangé.",
+      "example": "bpm.machineStatus({ title: \"Machine A\", state: \"running\", detail: \"Lot #1234\" })",
+      "associated": [
+        "bpm.sensorGrid",
+        "bpm.liveGauge",
+        "bpm.statusBox"
+      ],
+      "_haystack": "bpm.machinestatus machinestatus carte d'état machine avec indicateur led animé (clignotement en production ou défaut). ia & spécialisés carte d'état machine avec indicateur led animé (clignotement en production ou défaut).   title*: string\n  state*: machinestatusstate\n  detail?: string\n  classname?: string\n  value?: number | trajectorypoint[]  — mesure de production associée (cadence, trs… ; scalaire ou trajectoire v(t) [{t,v}]) — jugée via interpret si context est fourni.\n  context?: interpretcontext  — contexte de jugement { reference, direction, comparisonframe? } : un verdict écart/tendance/anomalie est révélé sous l'état (role=status) et la bordure gauche prend la couleur du jugement. additif : sans context, rendu inchangé. bpm.machinestatus({ title: \"machine a\", state: \"running\", detail: \"lot #1234\" }) bpm.sensorgrid bpm.livegauge bpm.statusbox"
+    },
+    {
+      "slug": "mapview",
+      "name": "bpm.mapView",
+      "description": "Carte Leaflet interactive avec marqueurs, polylignes, polygones et gestion des clics.",
+      "category": "Média",
+      "status": "uncurated",
+      "fullDescription": "Carte Leaflet interactive avec marqueurs, polylignes, polygones et gestion des clics.",
+      "props": "  center*: [number, number]\n  zoom?: number\n  height?: number | string\n  markers?: MapMarker[]\n  onMarkerClick?: (index: number, marker: MapMarker) => void\n  tileUrl?: string\n  tileAttribution?: string\n  polylines?: [number, number][][]\n  polylineColor?: string\n  polygons?: MapPolygonSpec[]\n  onMapClick?: (latlng: [number, number]) => void\n  className?: string",
+      "example": "bpm.mapView({ center: [48.8566, 2.3522], zoom: 13, markers: [{ position: [48.8566, 2.3522], label: \"Paris\" }] })",
+      "associated": [
+        "bpm.map",
+        "bpm.routePlanner",
+        "bpm.gps"
+      ],
+      "_haystack": "bpm.mapview mapview carte leaflet interactive avec marqueurs, polylignes, polygones et gestion des clics. média carte leaflet interactive avec marqueurs, polylignes, polygones et gestion des clics.   center*: [number, number]\n  zoom?: number\n  height?: number | string\n  markers?: mapmarker[]\n  onmarkerclick?: (index: number, marker: mapmarker) => void\n  tileurl?: string\n  tileattribution?: string\n  polylines?: [number, number][][]\n  polylinecolor?: string\n  polygons?: mappolygonspec[]\n  onmapclick?: (latlng: [number, number]) => void\n  classname?: string bpm.mapview({ center: [48.8566, 2.3522], zoom: 13, markers: [{ position: [48.8566, 2.3522], label: \"paris\" }] }) bpm.map bpm.routeplanner bpm.gps"
+    },
+    {
+      "slug": "metricrow",
+      "name": "bpm.metricRow",
+      "description": "Ligne de métriques (conteneur pour plusieurs bpm.metric).",
+      "category": "Affichage de données",
+      "status": "uncurated",
+      "fullDescription": "Ligne de métriques (conteneur pour plusieurs bpm.metric).",
+      "props": "  children*: React.ReactNode\n  className?: string",
+      "_haystack": "bpm.metricrow metricrow ligne de métriques (conteneur pour plusieurs bpm.metric). affichage de données ligne de métriques (conteneur pour plusieurs bpm.metric).   children*: react.reactnode\n  classname?: string"
+    },
+    {
+      "slug": "offlineindicator",
+      "name": "bpm.offlineIndicator",
+      "description": "Indicateur de statut hors ligne avec compteur de requêtes en attente et bouton de synchronisation.",
+      "category": "Feedback",
+      "status": "uncurated",
+      "fullDescription": "Indicateur de statut hors ligne avec compteur de requêtes en attente et bouton de synchronisation.",
+      "props": "  demo?: boolean  — Affiche le composant même sans file (pour démo / page composants).",
+      "example": "bpm.offlineIndicator({ demo: false })",
+      "associated": [
+        "bpm.toast",
+        "bpm.statusBox"
+      ],
+      "_haystack": "bpm.offlineindicator offlineindicator indicateur de statut hors ligne avec compteur de requêtes en attente et bouton de synchronisation. feedback indicateur de statut hors ligne avec compteur de requêtes en attente et bouton de synchronisation.   demo?: boolean  — affiche le composant même sans file (pour démo / page composants). bpm.offlineindicator({ demo: false }) bpm.toast bpm.statusbox"
+    },
+    {
+      "slug": "page",
+      "name": "bpm.page",
+      "description": "Conteneur page (core).",
+      "category": "Mise en page",
+      "status": "uncurated",
+      "props": "  children*: React.ReactNode",
+      "_haystack": "bpm.page page conteneur page (core). mise en page   children*: react.reactnode"
+    },
+    {
+      "slug": "pivottable",
+      "name": "bpm.pivotTable",
+      "description": "Tableau croisé dynamique avec agrégation (sum, avg, count, min, max), tri et heatmap.",
+      "category": "Affichage de données",
+      "status": "uncurated",
+      "fullDescription": "Tableau croisé dynamique avec agrégation (sum, avg, count, min, max), tri et heatmap.",
+      "props": "  data*: Record<string, unknown>[]\n  rowKey*: string\n  colKey*: string\n  valueKey*: string\n  agg?: PivotAgg\n  className?: string",
+      "example": "bpm.pivotTable({ data: rows, rowKey: \"region\", colKey: \"produit\", valueKey: \"ventes\", agg: \"sum\" })",
+      "associated": [
+        "bpm.table",
+        "bpm.dataExplorer",
+        "bpm.heatmap"
+      ],
+      "_haystack": "bpm.pivottable pivottable tableau croisé dynamique avec agrégation (sum, avg, count, min, max), tri et heatmap. affichage de données tableau croisé dynamique avec agrégation (sum, avg, count, min, max), tri et heatmap.   data*: record<string, unknown>[]\n  rowkey*: string\n  colkey*: string\n  valuekey*: string\n  agg?: pivotagg\n  classname?: string bpm.pivottable({ data: rows, rowkey: \"region\", colkey: \"produit\", valuekey: \"ventes\", agg: \"sum\" }) bpm.table bpm.dataexplorer bpm.heatmap"
+    },
+    {
+      "slug": "plcconnector",
+      "name": "bpm.plcConnector",
+      "description": "Formulaire de configuration de connexion automate industriel (Modbus, OPC UA, MQTT, EtherNet/IP).",
+      "category": "IA & Spécialisés",
+      "status": "uncurated",
+      "fullDescription": "Formulaire de configuration de connexion automate industriel (Modbus, OPC UA, MQTT, EtherNet/IP).",
+      "props": "  className?: string",
+      "example": "bpm.plcConnector({ className: \"my-class\" })",
+      "associated": [
+        "bpm.machineStatus",
+        "bpm.sensorGrid",
+        "bpm.liveChart"
+      ],
+      "_haystack": "bpm.plcconnector plcconnector formulaire de configuration de connexion automate industriel (modbus, opc ua, mqtt, ethernet/ip). ia & spécialisés formulaire de configuration de connexion automate industriel (modbus, opc ua, mqtt, ethernet/ip).   classname?: string bpm.plcconnector({ classname: \"my-class\" }) bpm.machinestatus bpm.sensorgrid bpm.livechart"
+    },
+    {
+      "slug": "predictivechart",
+      "name": "bpm.predictiveChart",
+      "description": "Graphique de prévision avec données historiques, prédictions et intervalle de confiance.",
+      "category": "Graphiques",
+      "status": "uncurated",
+      "fullDescription": "Graphique de prévision avec données historiques, prédictions et intervalle de confiance.",
+      "props": "  historical*: { x: number\n  predicted*: { x: number\n  confidenceUpper?: { x: number\n  confidenceLower?: { x: number\n  todayX?: number\n  width?: number\n  height?: number\n  className?: string\n  context?: InterpretContext  — Contexte de jugement { reference, direction } : la trajectoire prédite est jugée par interpret — la prévision (pointillés) prend la couleur du verdict, le repère est tracé, l'aria-label décrit le jugement. Additif : sans context, rendu inchangé.",
+      "example": "bpm.predictiveChart({ historical: [{x:1,y:10}], predicted: [{x:2,y:15}], confidenceUpper: [{x:2,y:18}], confidenceLower: [{x:2,y:12}], todayX: 1.5 })",
+      "associated": [
+        "bpm.lineChart",
+        "bpm.liveChart",
+        "bpm.metric"
+      ],
+      "_haystack": "bpm.predictivechart predictivechart graphique de prévision avec données historiques, prédictions et intervalle de confiance. graphiques graphique de prévision avec données historiques, prédictions et intervalle de confiance.   historical*: { x: number\n  predicted*: { x: number\n  confidenceupper?: { x: number\n  confidencelower?: { x: number\n  todayx?: number\n  width?: number\n  height?: number\n  classname?: string\n  context?: interpretcontext  — contexte de jugement { reference, direction } : la trajectoire prédite est jugée par interpret — la prévision (pointillés) prend la couleur du verdict, le repère est tracé, l'aria-label décrit le jugement. additif : sans context, rendu inchangé. bpm.predictivechart({ historical: [{x:1,y:10}], predicted: [{x:2,y:15}], confidenceupper: [{x:2,y:18}], confidencelower: [{x:2,y:12}], todayx: 1.5 }) bpm.linechart bpm.livechart bpm.metric"
+    },
+    {
+      "slug": "printlayout",
+      "name": "bpm.printLayout",
+      "description": "Mise en page optimisée pour l'impression A4 avec en-tête, pied de page et marges personnalisables.",
+      "category": "Mise en page",
+      "status": "uncurated",
+      "fullDescription": "Mise en page optimisée pour l'impression A4 avec en-tête, pied de page et marges personnalisables.",
+      "props": "  children*: React.ReactNode\n  orientation?: \"portrait\" | \"landscape\"\n  header?: React.ReactNode\n  footer?: React.ReactNode\n  marginsMm?: PrintLayoutMarginsMm\n  className?: string",
+      "example": "bpm.printLayout({ children: <Content />, orientation: \"portrait\", header: <Logo />, footer: \"Page 1\", marginsMm: { top: 20 } })",
+      "associated": [
+        "bpm.invoiceTemplate",
+        "bpm.reportPage"
+      ],
+      "_haystack": "bpm.printlayout printlayout mise en page optimisée pour l'impression a4 avec en-tête, pied de page et marges personnalisables. mise en page mise en page optimisée pour l'impression a4 avec en-tête, pied de page et marges personnalisables.   children*: react.reactnode\n  orientation?: \"portrait\" | \"landscape\"\n  header?: react.reactnode\n  footer?: react.reactnode\n  marginsmm?: printlayoutmarginsmm\n  classname?: string bpm.printlayout({ children: <content />, orientation: \"portrait\", header: <logo />, footer: \"page 1\", marginsmm: { top: 20 } }) bpm.invoicetemplate bpm.reportpage"
+    },
+    {
+      "slug": "progressring",
+      "name": "bpm.progressRing",
+      "description": "Anneau de progression circulaire SVG avec animation de transition.",
+      "category": "Feedback",
+      "status": "uncurated",
+      "fullDescription": "Anneau de progression circulaire SVG avec animation de transition.",
+      "props": "  value*: number | TrajectoryPoint[]  — Valeur actuelle, ou trajectoire v(t) [{t, v}] (le dernier point remplit l'anneau, la tendance est révélée au centre si context est fourni).\n  max?: number\n  size?: number\n  strokeWidth?: number\n  className?: string\n  context?: InterpretContext  — Contexte de jugement { reference, direction, comparisonFrame? } : l'anneau prend la couleur du jugement (favorable/neutre/défavorable) au lieu de l'accent. Additif : sans context, rendu inchangé.",
+      "example": "bpm.progressRing({ value: 75, max: 100, size: 80, strokeWidth: 8 })",
+      "associated": [
+        "bpm.progress",
+        "bpm.liveGauge",
+        "bpm.metric"
+      ],
+      "_haystack": "bpm.progressring progressring anneau de progression circulaire svg avec animation de transition. feedback anneau de progression circulaire svg avec animation de transition.   value*: number | trajectorypoint[]  — valeur actuelle, ou trajectoire v(t) [{t, v}] (le dernier point remplit l'anneau, la tendance est révélée au centre si context est fourni).\n  max?: number\n  size?: number\n  strokewidth?: number\n  classname?: string\n  context?: interpretcontext  — contexte de jugement { reference, direction, comparisonframe? } : l'anneau prend la couleur du jugement (favorable/neutre/défavorable) au lieu de l'accent. additif : sans context, rendu inchangé. bpm.progressring({ value: 75, max: 100, size: 80, strokewidth: 8 }) bpm.progress bpm.livegauge bpm.metric"
+    },
+    {
+      "slug": "radarchart",
+      "name": "bpm.radarChart",
+      "description": "Graphique radar SVG pour comparer des valeurs sur plusieurs axes.",
+      "category": "Graphiques",
+      "status": "uncurated",
+      "fullDescription": "Graphique radar SVG pour comparer des valeurs sur plusieurs axes.",
+      "props": "  axes*: string[]\n  values*: number[]\n  max?: number\n  width?: number\n  height?: number\n  className?: string\n  context?: InterpretContext  — Contexte de repère { reference, direction } : un anneau de repère pointillé est tracé au niveau de reference (même échelle que les axes). Pas de verdict agrégé : un polygone sur N axes hétérogènes n'a pas de couleur de jugement unique — la lecture se fait par axe vs l'anneau. Additif : sans context, rendu inchangé.",
+      "example": "bpm.radarChart({ axes: [\"Vitesse\", \"Force\", \"Endurance\"], values: [80, 60, 90], max: 100 })",
+      "associated": [
+        "bpm.plotlyChart",
+        "bpm.lineChart"
+      ],
+      "_haystack": "bpm.radarchart radarchart graphique radar svg pour comparer des valeurs sur plusieurs axes. graphiques graphique radar svg pour comparer des valeurs sur plusieurs axes.   axes*: string[]\n  values*: number[]\n  max?: number\n  width?: number\n  height?: number\n  classname?: string\n  context?: interpretcontext  — contexte de repère { reference, direction } : un anneau de repère pointillé est tracé au niveau de reference (même échelle que les axes). pas de verdict agrégé : un polygone sur n axes hétérogènes n'a pas de couleur de jugement unique — la lecture se fait par axe vs l'anneau. additif : sans context, rendu inchangé. bpm.radarchart({ axes: [\"vitesse\", \"force\", \"endurance\"], values: [80, 60, 90], max: 100 }) bpm.plotlychart bpm.linechart"
+    },
+    {
+      "slug": "relationgraph",
+      "name": "bpm.relationGraph",
+      "description": "Graphe relationnel SVG interactif avec layouts force/grille/circulaire, zoom, panoramique et drag-and-drop des nœuds.",
+      "category": "Affichage de données",
+      "status": "uncurated",
+      "fullDescription": "Graphe relationnel SVG interactif avec layouts force/grille/circulaire, zoom, panoramique et drag-and-drop des nœuds.",
+      "props": "  nodes*: GraphNode[]\n  edges*: GraphEdge[]\n  layout?: RelationGraphLayout\n  width?: number\n  height?: number\n  className?: string",
+      "example": "bpm.relationGraph({ nodes: [{ id: \"1\", label: \"A\" }], edges: [{ from: \"1\", to: \"2\" }], layout: \"force\" })",
+      "associated": [
+        "bpm.orgChart",
+        "bpm.treeview"
+      ],
+      "_haystack": "bpm.relationgraph relationgraph graphe relationnel svg interactif avec layouts force/grille/circulaire, zoom, panoramique et drag-and-drop des nœuds. affichage de données graphe relationnel svg interactif avec layouts force/grille/circulaire, zoom, panoramique et drag-and-drop des nœuds.   nodes*: graphnode[]\n  edges*: graphedge[]\n  layout?: relationgraphlayout\n  width?: number\n  height?: number\n  classname?: string bpm.relationgraph({ nodes: [{ id: \"1\", label: \"a\" }], edges: [{ from: \"1\", to: \"2\" }], layout: \"force\" }) bpm.orgchart bpm.treeview"
+    },
+    {
+      "slug": "reportpage",
+      "name": "bpm.reportPage",
+      "description": "Page de rapport structurée avec sections (titre, texte, tableau, graphique, KPI), impression PDF via window.print.",
+      "category": "Mise en page",
+      "status": "uncurated",
+      "fullDescription": "Page de rapport structurée avec sections (titre, texte, tableau, graphique, KPI), impression PDF via window.print.",
+      "props": "  title*: string\n  subtitle?: string\n  date?: string\n  logo?: React.ReactNode\n  sections*: ReportSection[]\n  exportable?: boolean\n  className?: string",
+      "example": "bpm.reportPage({ title: \"Rapport mensuel\", sections: [{ type: \"heading\", text: \"Résumé\" }, { type: \"kpi\", label: \"CA\", value: \"150k€\" }] })",
+      "associated": [
+        "bpm.printLayout",
+        "bpm.invoiceTemplate",
+        "bpm.lineChart"
+      ],
+      "_haystack": "bpm.reportpage reportpage page de rapport structurée avec sections (titre, texte, tableau, graphique, kpi), impression pdf via window.print. mise en page page de rapport structurée avec sections (titre, texte, tableau, graphique, kpi), impression pdf via window.print.   title*: string\n  subtitle?: string\n  date?: string\n  logo?: react.reactnode\n  sections*: reportsection[]\n  exportable?: boolean\n  classname?: string bpm.reportpage({ title: \"rapport mensuel\", sections: [{ type: \"heading\", text: \"résumé\" }, { type: \"kpi\", label: \"ca\", value: \"150k€\" }] }) bpm.printlayout bpm.invoicetemplate bpm.linechart"
+    },
+    {
+      "slug": "richtexteditor",
+      "name": "bpm.richTextEditor",
+      "description": "Éditeur WYSIWYG contentEditable avec barre d'outils (gras, italique, titres, listes, liens, images) et export HTML/Markdown.",
+      "category": "Interaction",
+      "status": "uncurated",
+      "fullDescription": "Éditeur WYSIWYG contentEditable avec barre d'outils (gras, italique, titres, listes, liens, images) et export HTML/Markdown.",
+      "props": "  defaultHtml?: string\n  value?: string\n  onChange?: (payload: { html: string\n  format?: RichTextExportFormat\n  minHeight?: number\n  maxHeight?: number\n  readOnly?: boolean\n  placeholder?: string\n  className?: string",
+      "example": "bpm.richTextEditor({ value: html, onChange: ({ html, markdown }) => save(html), placeholder: \"Rédigez ici...\" })",
+      "associated": [
+        "bpm.textarea",
+        "bpm.markdown",
+        "bpm.codeEditor"
+      ],
+      "_haystack": "bpm.richtexteditor richtexteditor éditeur wysiwyg contenteditable avec barre d'outils (gras, italique, titres, listes, liens, images) et export html/markdown. interaction éditeur wysiwyg contenteditable avec barre d'outils (gras, italique, titres, listes, liens, images) et export html/markdown.   defaulthtml?: string\n  value?: string\n  onchange?: (payload: { html: string\n  format?: richtextexportformat\n  minheight?: number\n  maxheight?: number\n  readonly?: boolean\n  placeholder?: string\n  classname?: string bpm.richtexteditor({ value: html, onchange: ({ html, markdown }) => save(html), placeholder: \"rédigez ici...\" }) bpm.textarea bpm.markdown bpm.codeeditor"
+    },
+    {
+      "slug": "routeplanner",
+      "name": "bpm.routePlanner",
+      "description": "Planificateur d'itinéraire avec liste de points réordonnables, carte Leaflet et calcul de distance orthodromique.",
+      "category": "Média",
+      "status": "uncurated",
+      "fullDescription": "Planificateur d'itinéraire avec liste de points réordonnables, carte Leaflet et calcul de distance orthodromique.",
+      "props": "  stops*: RouteStop[]\n  onReorder?: (next: RouteStop[]) => void\n  showDistance?: boolean\n  mapHeight?: number | string\n  className?: string",
+      "example": "bpm.routePlanner({ stops: [{ id: \"1\", label: \"Paris\", position: [48.85, 2.35] }], onReorder: setStops, showDistance: true })",
+      "associated": [
+        "bpm.mapView",
+        "bpm.gps",
+        "bpm.timeline"
+      ],
+      "_haystack": "bpm.routeplanner routeplanner planificateur d'itinéraire avec liste de points réordonnables, carte leaflet et calcul de distance orthodromique. média planificateur d'itinéraire avec liste de points réordonnables, carte leaflet et calcul de distance orthodromique.   stops*: routestop[]\n  onreorder?: (next: routestop[]) => void\n  showdistance?: boolean\n  mapheight?: number | string\n  classname?: string bpm.routeplanner({ stops: [{ id: \"1\", label: \"paris\", position: [48.85, 2.35] }], onreorder: setstops, showdistance: true }) bpm.mapview bpm.gps bpm.timeline"
+    },
+    {
+      "slug": "scheduler",
+      "name": "bpm.scheduler",
+      "description": "Calendrier/agenda avec vues jour, semaine et mois, gestion d'événements et de ressources.",
+      "category": "Affichage de données",
+      "status": "uncurated",
+      "fullDescription": "Calendrier/agenda avec vues jour, semaine et mois, gestion d'événements et de ressources.",
+      "props": "  view*: \"day\" | \"week\" | \"month\"\n  events*: SchedulerEvent[]\n  resources?: SchedulerResource[]\n  onEventClick*: (ev: SchedulerEvent) => void\n  onSlotClick*: (dayStart: Date, hour: number) => void\n  startHour?: number\n  endHour?: number",
+      "example": "bpm.scheduler({ view: \"week\", events: [{ id: \"1\", title: \"Réunion\", start: \"2024-01-15T10:00\", end: \"2024-01-15T11:00\" }], onEventClick: handleEvent, onSlotClick: handleSlot })",
+      "associated": [
+        "bpm.calendar",
+        "bpm.timeline"
+      ],
+      "_haystack": "bpm.scheduler scheduler calendrier/agenda avec vues jour, semaine et mois, gestion d'événements et de ressources. affichage de données calendrier/agenda avec vues jour, semaine et mois, gestion d'événements et de ressources.   view*: \"day\" | \"week\" | \"month\"\n  events*: schedulerevent[]\n  resources?: schedulerresource[]\n  oneventclick*: (ev: schedulerevent) => void\n  onslotclick*: (daystart: date, hour: number) => void\n  starthour?: number\n  endhour?: number bpm.scheduler({ view: \"week\", events: [{ id: \"1\", title: \"réunion\", start: \"2024-01-15t10:00\", end: \"2024-01-15t11:00\" }], oneventclick: handleevent, onslotclick: handleslot }) bpm.calendar bpm.timeline"
+    },
+    {
+      "slug": "sensorgrid",
+      "name": "bpm.sensorGrid",
+      "description": "Grille de cartes capteur avec valeur, unité, statut coloré et détail optionnel.",
+      "category": "IA & Spécialisés",
+      "status": "uncurated",
+      "fullDescription": "Grille de cartes capteur avec valeur, unité, statut coloré et détail optionnel.",
+      "props": "  sensors*: SensorReading[]\n  columns?: number\n  className?: string",
+      "example": "bpm.sensorGrid({ sensors: [{ id: \"1\", label: \"Température\", value: 24.5, unit: \"°C\", status: \"ok\" }], columns: 3 })",
+      "associated": [
+        "bpm.machineStatus",
+        "bpm.liveGauge",
+        "bpm.metric"
+      ],
+      "_haystack": "bpm.sensorgrid sensorgrid grille de cartes capteur avec valeur, unité, statut coloré et détail optionnel. ia & spécialisés grille de cartes capteur avec valeur, unité, statut coloré et détail optionnel.   sensors*: sensorreading[]\n  columns?: number\n  classname?: string bpm.sensorgrid({ sensors: [{ id: \"1\", label: \"température\", value: 24.5, unit: \"°c\", status: \"ok\" }], columns: 3 }) bpm.machinestatus bpm.livegauge bpm.metric"
+    },
+    {
+      "slug": "signaturepad",
+      "name": "bpm.signaturePad",
+      "description": "Zone de signature canvas avec export data URL PNG et boutons effacer/enregistrer.",
+      "category": "Interaction",
+      "status": "uncurated",
+      "fullDescription": "Zone de signature canvas avec export data URL PNG et boutons effacer/enregistrer.",
+      "props": "  width?: number\n  height?: number\n  lineColor?: string\n  className?: string\n  onChangeDataUrl?: (dataUrl: string | null) => void",
+      "example": "bpm.signaturePad({ width: 400, height: 160, onChangeDataUrl: setSignature })",
+      "associated": [
+        "bpm.fileUploader",
+        "bpm.image"
+      ],
+      "_haystack": "bpm.signaturepad signaturepad zone de signature canvas avec export data url png et boutons effacer/enregistrer. interaction zone de signature canvas avec export data url png et boutons effacer/enregistrer.   width?: number\n  height?: number\n  linecolor?: string\n  classname?: string\n  onchangedataurl?: (dataurl: string | null) => void bpm.signaturepad({ width: 400, height: 160, onchangedataurl: setsignature }) bpm.fileuploader bpm.image"
+    },
+    {
+      "slug": "sparkline",
+      "name": "bpm.sparkline",
+      "description": "Courbe SVG compacte pour afficher une tendance avec couleur selon la direction (up/down/flat).",
+      "category": "Graphiques",
+      "status": "uncurated",
+      "fullDescription": "Courbe SVG compacte pour afficher une tendance avec couleur selon la direction (up/down/flat).",
+      "props": "  values*: number[]  — Valeurs de la série (t implicite = index). Trajectoire v(t) explicite possible via points [{t, v}].\n  width?: number\n  height?: number\n  trend?: SparklineTrend\n  className?: string\n  points?: TrajectoryPoint[]  — Trajectoire v(t) explicite [{t, v}] — prioritaire sur values pour le jugement (les v sont aussi tracés).\n  context?: InterpretContext  — Contexte de jugement { reference, direction } : la couleur suit la tendance jugée (improving→succès, worsening→erreur) au lieu de la prop trend, et le repère est tracé en pointillé. Additif : sans context, rendu inchangé.",
+      "example": "bpm.sparkline({ values: [10, 15, 12, 18, 22], width: 120, height: 36, trend: \"up\" })",
+      "associated": [
+        "bpm.metric",
+        "bpm.lineChart",
+        "bpm.liveChart"
+      ],
+      "_haystack": "bpm.sparkline sparkline courbe svg compacte pour afficher une tendance avec couleur selon la direction (up/down/flat). graphiques courbe svg compacte pour afficher une tendance avec couleur selon la direction (up/down/flat).   values*: number[]  — valeurs de la série (t implicite = index). trajectoire v(t) explicite possible via points [{t, v}].\n  width?: number\n  height?: number\n  trend?: sparklinetrend\n  classname?: string\n  points?: trajectorypoint[]  — trajectoire v(t) explicite [{t, v}] — prioritaire sur values pour le jugement (les v sont aussi tracés).\n  context?: interpretcontext  — contexte de jugement { reference, direction } : la couleur suit la tendance jugée (improving→succès, worsening→erreur) au lieu de la prop trend, et le repère est tracé en pointillé. additif : sans context, rendu inchangé. bpm.sparkline({ values: [10, 15, 12, 18, 22], width: 120, height: 36, trend: \"up\" }) bpm.metric bpm.linechart bpm.livechart"
+    },
+    {
+      "slug": "splitview",
+      "name": "bpm.splitView",
+      "description": "Deux volets redimensionnables avec séparateur draggable.",
+      "category": "Mise en page",
+      "status": "uncurated",
+      "fullDescription": "Deux volets redimensionnables avec séparateur draggable. Empile verticalement sous 640px.",
+      "props": "  left*: React.ReactNode\n  right*: React.ReactNode\n  defaultSplit?: number\n  minLeft?: number\n  minRight?: number\n  direction?: \"horizontal\" | \"vertical\"\n  className?: string",
+      "example": "bpm.splitView({ left: <List />, right: <Detail />, defaultSplit: 30, direction: \"horizontal\" })",
+      "associated": [
+        "bpm.masterDetail",
+        "bpm.panel"
+      ],
+      "_haystack": "bpm.splitview splitview deux volets redimensionnables avec séparateur draggable. mise en page deux volets redimensionnables avec séparateur draggable. empile verticalement sous 640px.   left*: react.reactnode\n  right*: react.reactnode\n  defaultsplit?: number\n  minleft?: number\n  minright?: number\n  direction?: \"horizontal\" | \"vertical\"\n  classname?: string bpm.splitview({ left: <list />, right: <detail />, defaultsplit: 30, direction: \"horizontal\" }) bpm.masterdetail bpm.panel"
+    },
+    {
+      "slug": "statemachine",
+      "name": "bpm.stateMachine",
+      "description": "Visualisation d'une machine à états avec graphe circulaire, transitions cliquables et historique.",
+      "category": "Affichage de données",
+      "status": "uncurated",
+      "fullDescription": "Visualisation d'une machine à états avec graphe circulaire, transitions cliquables et historique.",
+      "props": "  states*: string[]\n  transitions*: StateTransition[]\n  currentState*: string\n  history?: string[]\n  onTransition?: (from: string, to: string) => void\n  width?: number\n  height?: number\n  className?: string",
+      "example": "bpm.stateMachine({ states: [\"A\", \"B\", \"C\"], transitions: [{ from: \"A\", to: \"B\" }], currentState: \"A\", onTransition: handleTransition })",
+      "associated": [
+        "bpm.stepper",
+        "bpm.timeline",
+        "bpm.relationGraph"
+      ],
+      "_haystack": "bpm.statemachine statemachine visualisation d'une machine à états avec graphe circulaire, transitions cliquables et historique. affichage de données visualisation d'une machine à états avec graphe circulaire, transitions cliquables et historique.   states*: string[]\n  transitions*: statetransition[]\n  currentstate*: string\n  history?: string[]\n  ontransition?: (from: string, to: string) => void\n  width?: number\n  height?: number\n  classname?: string bpm.statemachine({ states: [\"a\", \"b\", \"c\"], transitions: [{ from: \"a\", to: \"b\" }], currentstate: \"a\", ontransition: handletransition }) bpm.stepper bpm.timeline bpm.relationgraph"
+    },
+    {
+      "slug": "suggestioncard",
+      "name": "bpm.suggestionCard",
+      "description": "Carte de suggestion IA avec titre, description, barre de confiance et boutons d'action.",
+      "category": "IA & Spécialisés",
+      "status": "uncurated",
+      "fullDescription": "Carte de suggestion IA avec titre, description, barre de confiance et boutons d'action.",
+      "props": "  title*: string\n  description*: string\n  confidence?: number\n  icon?: string\n  actions*: { label: string\n  dismissable?: boolean\n  onDismiss?: () => void\n  className?: string",
+      "example": "bpm.suggestionCard({ title: \"Suggestion\", description: \"Détail...\", confidence: 85, actions: [{ label: \"Appliquer\", onClick: apply, variant: \"primary\" }] })",
+      "associated": [
+        "bpm.card",
+        "bpm.message"
+      ],
+      "_haystack": "bpm.suggestioncard suggestioncard carte de suggestion ia avec titre, description, barre de confiance et boutons d'action. ia & spécialisés carte de suggestion ia avec titre, description, barre de confiance et boutons d'action.   title*: string\n  description*: string\n  confidence?: number\n  icon?: string\n  actions*: { label: string\n  dismissable?: boolean\n  ondismiss?: () => void\n  classname?: string bpm.suggestioncard({ title: \"suggestion\", description: \"détail...\", confidence: 85, actions: [{ label: \"appliquer\", onclick: apply, variant: \"primary\" }] }) bpm.card bpm.message"
+    },
+    {
+      "slug": "title4",
+      "name": "bpm.title4",
+      "description": "Titre h1 minimal.",
+      "category": "Affichage de données",
+      "status": "uncurated",
+      "fullDescription": "Titre h1 minimal. — bpm.title4 : niveau 4 implicite, ne pas passer level.",
+      "props": "  children*: React.ReactNode\n  level?: 1 | 2 | 3 | 4\n  size?: string | null  — Taille de police (ex. \"1.5rem\", \"24px\"). Surcharge le défaut du niveau.\n  bold?: boolean | number | null  — Gras : true = 700, false = 400, ou nombre (ex. 600). Surcharge le défaut du niveau.\n  color?: string | null  — Couleur du texte (ex. \"var(--bpm-text-primary)\", \"#333\"). Surcharge la couleur par défaut.\n  bar?: boolean  — Barre verticale sombre à gauche du titre (comme en-tête de section).\n  barColor?: string | null  — Couleur de la barre gauche (hex, rgb ou nom CSS). Ignoré si bar=false.\n  inverted?: boolean  — Couleur inversée : fond sombre, texte blanc (style badge / scénario).\n  invertedBackground?: string | null  — Couleur de fond quand inverted=true (hex, rgb ou nom CSS). Par défaut : #1d1d1f.\n  logoUrl?: string | null  — Optional logo URL (e.g. from localStorage). Shown only when level === 1.\n  onLogoClick?: () => void",
+      "_haystack": "bpm.title4 title4 titre h1 minimal. affichage de données titre h1 minimal. — bpm.title4 : niveau 4 implicite, ne pas passer level.   children*: react.reactnode\n  level?: 1 | 2 | 3 | 4\n  size?: string | null  — taille de police (ex. \"1.5rem\", \"24px\"). surcharge le défaut du niveau.\n  bold?: boolean | number | null  — gras : true = 700, false = 400, ou nombre (ex. 600). surcharge le défaut du niveau.\n  color?: string | null  — couleur du texte (ex. \"var(--bpm-text-primary)\", \"#333\"). surcharge la couleur par défaut.\n  bar?: boolean  — barre verticale sombre à gauche du titre (comme en-tête de section).\n  barcolor?: string | null  — couleur de la barre gauche (hex, rgb ou nom css). ignoré si bar=false.\n  inverted?: boolean  — couleur inversée : fond sombre, texte blanc (style badge / scénario).\n  invertedbackground?: string | null  — couleur de fond quand inverted=true (hex, rgb ou nom css). par défaut : #1d1d1f.\n  logourl?: string | null  — optional logo url (e.g. from localstorage). shown only when level === 1.\n  onlogoclick?: () => void"
+    },
+    {
+      "slug": "toggle",
+      "name": "bpm.toggle",
+      "description": "Interrupteur on/off.",
+      "category": "Interaction",
+      "status": "uncurated",
+      "fullDescription": "Interrupteur on/off.",
+      "props": "  label?: React.ReactNode\n  value?: boolean\n  onChange?: (checked: boolean) => void\n  disabled?: boolean\n  className?: string",
+      "_haystack": "bpm.toggle toggle interrupteur on/off. interaction interrupteur on/off.   label?: react.reactnode\n  value?: boolean\n  onchange?: (checked: boolean) => void\n  disabled?: boolean\n  classname?: string"
+    },
+    {
+      "slug": "tour",
+      "name": "bpm.tour",
+      "description": "Visite guidée interactive avec overlay sombre et mise en surbrillance des éléments cibles étape par étape.",
+      "category": "Navigation",
+      "status": "uncurated",
+      "fullDescription": "Visite guidée interactive avec overlay sombre et mise en surbrillance des éléments cibles étape par étape.",
+      "props": "  steps*: TourStep[]\n  isActive*: boolean\n  onClose?: () => void\n  className?: string",
+      "example": "bpm.tour({ steps: [{ target: \"#btn\", title: \"Bienvenue\", content: \"Cliquez ici\" }], isActive: true, onClose: () => setActive(false) })",
+      "associated": [
+        "bpm.modal",
+        "bpm.stepper"
+      ],
+      "_haystack": "bpm.tour tour visite guidée interactive avec overlay sombre et mise en surbrillance des éléments cibles étape par étape. navigation visite guidée interactive avec overlay sombre et mise en surbrillance des éléments cibles étape par étape.   steps*: tourstep[]\n  isactive*: boolean\n  onclose?: () => void\n  classname?: string bpm.tour({ steps: [{ target: \"#btn\", title: \"bienvenue\", content: \"cliquez ici\" }], isactive: true, onclose: () => setactive(false) }) bpm.modal bpm.stepper"
+    },
+    {
+      "slug": "transition",
+      "name": "bpm.transition",
+      "description": "Animation de transition entre états.",
+      "category": "Mise en page",
+      "status": "uncurated",
+      "fullDescription": "Animation de transition entre états.",
+      "props": "  activeIndex*: number  — Index de la page / vue active (0-based).\n  variant?: TransitionVariant  — Variant de transition : fade (slide), shimmer, border, grid.\n  children*: ReactNode[]  — Enfants : tableau de nœuds (une « page » par entrée).\n  duration?: number  — Durée de la transition fade (ms). Défaut 380.\n  onTransitionEnd?: () => void  — Callback à la fin de la transition.\n  className?: string",
+      "_haystack": "bpm.transition transition animation de transition entre états. mise en page animation de transition entre états.   activeindex*: number  — index de la page / vue active (0-based).\n  variant?: transitionvariant  — variant de transition : fade (slide), shimmer, border, grid.\n  children*: reactnode[]  — enfants : tableau de nœuds (une « page » par entrée).\n  duration?: number  — durée de la transition fade (ms). défaut 380.\n  ontransitionend?: () => void  — callback à la fin de la transition.\n  classname?: string"
+    },
+    {
+      "slug": "treemap",
+      "name": "bpm.treemap",
+      "description": "Visualisation treemap (carte de chaleur hiérarchique) en SVG avec algorithme squarify.",
+      "category": "Graphiques",
+      "status": "uncurated",
+      "fullDescription": "Visualisation treemap (carte de chaleur hiérarchique) en SVG avec algorithme squarify.",
+      "props": "  data*: TreemapItem[]\n  width?: number\n  height?: number\n  className?: string\n  context?: InterpretContext  — Contexte de jugement { reference, direction } : chaque tuile est jugée individuellement par interpret vs le repère (contour coloré par le verdict hors zone neutre, data-judgment par tuile). Pas de verdict agrégé : un total de tuiles hétérogènes n'a pas de jugement unique. Additif : sans context, rendu inchangé.",
+      "example": "bpm.treemap({ data: [{ name: \"A\", value: 50 }, { name: \"B\", value: 30 }], width: 400, height: 300 })",
+      "associated": [
+        "bpm.heatmap",
+        "bpm.pieChart",
+        "bpm.sunburst"
+      ],
+      "_haystack": "bpm.treemap treemap visualisation treemap (carte de chaleur hiérarchique) en svg avec algorithme squarify. graphiques visualisation treemap (carte de chaleur hiérarchique) en svg avec algorithme squarify.   data*: treemapitem[]\n  width?: number\n  height?: number\n  classname?: string\n  context?: interpretcontext  — contexte de jugement { reference, direction } : chaque tuile est jugée individuellement par interpret vs le repère (contour coloré par le verdict hors zone neutre, data-judgment par tuile). pas de verdict agrégé : un total de tuiles hétérogènes n'a pas de jugement unique. additif : sans context, rendu inchangé. bpm.treemap({ data: [{ name: \"a\", value: 50 }, { name: \"b\", value: 30 }], width: 400, height: 300 }) bpm.heatmap bpm.piechart bpm.sunburst"
+    },
+    {
+      "slug": "waterfall",
+      "name": "bpm.waterfall",
+      "description": "Graphique en cascade (waterfall chart) montrant l'évolution cumulative de valeurs positives/négatives.",
+      "category": "Graphiques",
+      "status": "uncurated",
+      "fullDescription": "Graphique en cascade (waterfall chart) montrant l'évolution cumulative de valeurs positives/négatives.",
+      "props": "  data*: WaterfallDatum[]\n  width?: number\n  height?: number\n  className?: string\n  context?: InterpretContext  — Contexte de jugement { reference, direction } : le cumul FINAL de la cascade est jugé par interpret — verdict écart au repère révélé sous le graphique (role=status), data-judgment. Additif : sans context, rendu inchangé.",
+      "example": "bpm.waterfall({ data: [{ label: \"Début\", value: 100, type: \"start\" }, { label: \"+Ventes\", value: 50 }, { label: \"Total\", value: 150, type: \"total\" }] })",
+      "associated": [
+        "bpm.barChart",
+        "bpm.stackedBarChart",
+        "bpm.kpi"
+      ],
+      "_haystack": "bpm.waterfall waterfall graphique en cascade (waterfall chart) montrant l'évolution cumulative de valeurs positives/négatives. graphiques graphique en cascade (waterfall chart) montrant l'évolution cumulative de valeurs positives/négatives.   data*: waterfalldatum[]\n  width?: number\n  height?: number\n  classname?: string\n  context?: interpretcontext  — contexte de jugement { reference, direction } : le cumul final de la cascade est jugé par interpret — verdict écart au repère révélé sous le graphique (role=status), data-judgment. additif : sans context, rendu inchangé. bpm.waterfall({ data: [{ label: \"début\", value: 100, type: \"start\" }, { label: \"+ventes\", value: 50 }, { label: \"total\", value: 150, type: \"total\" }] }) bpm.barchart bpm.stackedbarchart bpm.kpi"
     }
   ]
 }
