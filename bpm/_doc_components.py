@@ -1,7 +1,23 @@
 """
-Registry of BPM components for documentation.
-Single source of truth: used to generate lib/generated/bpm-components.json for the Next.js app.
-Run: python scripts/generate-bpm-components-json.py
+Overlay de CURATION du catalogue BPM (catégorie + description courte).
+
+⚠️ CE FICHIER N'EST PLUS L'AUTORITÉ DU CATALOGUE.
+La liste des composants est désormais dérivée du barrel TypeScript
+(packages/core/src/bpm.tsx) par scripts/generate-bpm-components-json.py —
+exactement comme public/llms.txt. Un composant exporté sur bpm.* apparaît
+automatiquement au catalogue, même s'il est absent de ce fichier.
+
+Rôle restant : enrichissement curé, sans pouvoir de filtrage.
+  - COMPONENT_DOC    : taxonomie (catégorie parmi les 10 familles) + description
+      courte des composants historiques. Conservé verbatim et dans l'ordre
+      (définit la navigation prev/next des pages docs).
+  - EXTRA_CATEGORIES : catégorie des composants nouvellement exposés par le
+      barrel et qui n'ont pas (encore) d'entrée dans COMPONENT_DOC. Leur
+      description provient de llms.txt (déjà dérivée du TS). Un composant
+      absent des deux reçoit la catégorie de repli "Utilitaires".
+
+La couche sémantique (frame Ω, guidance) reste dans lib/semantics/.
+Run : python scripts/generate-bpm-components-json.py
 """
 from typing import TypedDict
 
@@ -133,3 +149,61 @@ COMPONENT_DOC: list[ComponentDoc] = [
     {"slug": "diffviewer", "name": "bpm.diffViewer", "description": "Visualisation de diff texte/code (split ou unified).", "category": "IA & Spécialisés"},
     {"slug": "modelselector", "name": "bpm.modelSelector", "description": "Sélecteur de modèle IA (par fournisseur, capacités).", "category": "IA & Spécialisés"},
 ]
+
+
+# Catégorie (parmi les 10 familles existantes) des composants exposés par le
+# barrel mais absents de COMPONENT_DOC. Pure taxonomie : ne filtre rien, ne
+# gate pas la liste. Clé = slug (nom bpm.* en minuscules). Un slug absent ici
+# ET de COMPONENT_DOC reçoit la catégorie de repli "Utilitaires".
+EXTRA_CATEGORIES: dict[str, str] = {
+    "addressinput":     "Interaction",
+    "aiquerybar":       "IA & Spécialisés",
+    "alarmpanel":       "Feedback",
+    "assistantpanel":   "IA & Spécialisés",
+    "breadcrumbs":      "Navigation",
+    "changelog":        "Affichage de données",
+    "chat":             "IA & Spécialisés",
+    "commentthread":    "Affichage de données",
+    "comparison":       "Affichage de données",
+    "contextmenu":      "Interaction",
+    "decisiontree":     "Affichage de données",
+    "drilldown":        "Affichage de données",
+    "emailcomposer":    "Interaction",
+    "exportbutton":     "Interaction",
+    "funnelchart":      "Graphiques",
+    "gantt":            "Affichage de données",
+    "geofence":         "Média",
+    "groupedlist":      "Affichage de données",
+    "heatmap":          "Graphiques",
+    "inlineedit":       "Interaction",
+    "invoicetemplate":  "Utilitaires",
+    "livechart":        "Graphiques",
+    "machinestatus":    "IA & Spécialisés",
+    "mapview":          "Média",
+    "metricrow":        "Affichage de données",
+    "offlineindicator": "Feedback",
+    "page":             "Mise en page",
+    "pivottable":       "Affichage de données",
+    "plcconnector":     "IA & Spécialisés",
+    "predictivechart":  "Graphiques",
+    "printlayout":      "Mise en page",
+    "progressring":     "Feedback",
+    "radarchart":       "Graphiques",
+    "relationgraph":    "Affichage de données",
+    "reportpage":       "Mise en page",
+    "richtexteditor":   "Interaction",
+    "routeplanner":     "Média",
+    "scheduler":        "Affichage de données",
+    "sensorgrid":       "IA & Spécialisés",
+    "signaturepad":     "Interaction",
+    "sparkline":        "Graphiques",
+    "splitview":        "Mise en page",
+    "statemachine":     "Affichage de données",
+    "suggestioncard":   "IA & Spécialisés",
+    "title4":           "Affichage de données",
+    "toggle":           "Interaction",
+    "tour":             "Navigation",
+    "transition":       "Mise en page",
+    "treemap":          "Graphiques",
+    "waterfall":        "Graphiques",
+}
