@@ -179,8 +179,13 @@ export async function fetchCuratedApps(): Promise<CuratedApp[]> {
 
     const res = await fetch(url, {
       headers,
-      // Cache court : la galerie n'a pas besoin d'être temps réel.
-      next: { revalidate: 300 },
+      // Revalidation courte et bornée (30 s). Le filtrage « pouce vert » étant
+      // fait côté Maker, une app dé-validée doit disparaître de /galerie sans
+      // délai perceptible : 30 s borne la fraîcheur (vs 300 s qui servait une
+      // version périmée jusqu'à ~5 min). On ne passe PAS en `no-store` : avec
+      // revalidate, le Maker reçoit au plus 1 appel/30 s par instance quel que
+      // soit le trafic, là où no-store ferait 1 appel par vue de page.
+      next: { revalidate: 30 },
     });
     if (!res.ok) return [];
     const data: unknown = await res.json();
