@@ -14,6 +14,27 @@ divergence entre la doc et le composant.
 - 🐍 Surface Python (PyPI) : [`blueprint-modular`](https://pypi.org/project/blueprint-modular/)
 - 📦 Ce paquet (npm) : [`@blueprint-modular/core`](https://www.npmjs.com/package/@blueprint-modular/core)
 
+## Quick start
+
+```bash
+npm install @blueprint-modular/core
+```
+
+```tsx
+import { bpm } from '@blueprint-modular/core';
+
+export default function Dashboard() {
+  return (
+    <bpm.metric
+      label="Chiffre d'affaires"
+      value={125000}
+      delta="+12%"
+      currency="EUR"
+    />
+  );
+}
+```
+
 ## Installation
 
 ```bash

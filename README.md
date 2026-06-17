@@ -22,6 +22,20 @@ dont une classe porte la primitive de jugement partagée
 `interpret(value, context)` — écart au repère, tendance, anomalie, sévérité.
 La sémantique est unique, pure, et vérifiée par le convergence gate.
 
+## Quick start
+
+```bash
+pip install blueprint-modular
+```
+
+```python
+import bpm
+
+bpm.metric(label="Chiffre d'affaires", value=125000, delta="+12%")
+```
+
+Blueprint Modular expose une surface Python de composants `bpm.*` (metric, table, badge, live_gauge…), miroir fonctionnel de la surface React. Documentation : https://blueprint-modular.com
+
 ## Vivant
 
 - **Vitrine** — <https://blueprint-modular.com>
