@@ -541,8 +541,6 @@ def main() -> None:
     build_parser = sub.add_parser("build", help="Builder le frontend React (bpm/frontend/)")
     init_parser = sub.add_parser("init", help="Scaffolder une app vide")
     init_parser.add_argument("--name", default="mon-app", help="Nom du projet (défaut: mon-app)")
-    setup_parser = sub.add_parser("setup", help="Installer et configurer Ollama (IA locale)")
-    setup_parser.add_argument("--model", default=None, help="Modèle Ollama (défaut: BPM_DEFAULT_MODEL ou llama3.2)")
     args = parser.parse_args()
     if args.command == "run":
         from bpm.server import run as server_run
@@ -556,10 +554,6 @@ def main() -> None:
         print("✅ Frontend buildé dans bpm/static/")
     elif args.command == "init":
         init(args.name)
-    elif args.command == "setup":
-        from bpm.setup import run_setup
-        from bpm import ollama
-        run_setup(model=args.model or ollama.DEFAULT_MODEL)
     else:
         parser.print_help()
 
