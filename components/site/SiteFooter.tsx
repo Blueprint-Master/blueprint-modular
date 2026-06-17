@@ -5,7 +5,7 @@ import { useI18n } from "@/lib/i18n/LocaleProvider";
 import { PYTHON_VERSION, CORE_VERSION } from "@/lib/version";
 
 export function SiteFooter() {
-  const { dict } = useI18n();
+  const { locale, dict } = useI18n();
 
   return (
     <footer className="site-footer">
@@ -24,6 +24,16 @@ export function SiteFooter() {
           <Link href="/modules">{dict.footer.modules}</Link>
           <Link href="/composants">{dict.footer.catalog}</Link>
           <Link href="/docs/changelog">{dict.footer.changelog}</Link>
+          {/* Produit frère de l'écosystème (.Maker, moteur de génération) :
+              lien externe locale-aware — /fr ou /en dérivé de la locale courante
+              de la vitrine, jamais figé. */}
+          <a
+            href={`https://blueprint-maker.com/${locale}`}
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            {dict.footer.maker}
+          </a>
         </nav>
 
         <nav className="site-footer-col" aria-label={dict.footer.resources}>

@@ -36,6 +36,7 @@ const en: Dictionary = {
     gallery: "Component gallery",
     modules: "Business modules",
     catalog: "Catalog",
+    maker: ".Maker",
     gettingStarted: "Getting started",
     changelog: "Changelog",
     docs: "Documentation",
