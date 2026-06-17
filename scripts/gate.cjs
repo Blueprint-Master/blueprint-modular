@@ -108,9 +108,13 @@ run("node scripts/check-connector-secrets.mjs", {
 // ── Step g: Tests du pilier Connecteurs (schéma + mapping) ────────────────────
 // Tests racine, isolés à tests/connectors-* (n'entraînent pas prisma/next).
 // On installe vitest + zod à la racine comme le gate le fait déjà pour React.
+// vitest est ÉPINGLÉ sur ^2 (même major que packages/core) : vitest >=3 tire
+// rolldown, dont le binding natif optionnel (@rolldown/binding-*) n'est pas
+// installé de façon fiable par npm (bug npm/cli#4828) → « Cannot find native
+// binding » en CI. vitest 2 n'a pas cette dépendance et suffit à ces tests.
 step("Step g — Tests connecteurs (schéma + mapping)");
 run(
-  "npm install --no-save --ignore-scripts vitest zod",
+  "npm install --no-save --ignore-scripts vitest@^2 zod",
   { cwd: REPO_ROOT, label: "install vitest + zod (tests connecteurs)" }
 );
 run("npx vitest run tests/connectors-*.test.ts", {
