@@ -93,7 +93,13 @@ else
     # Obligatoire en mode standalone : CSS et assets (sans ça, le CSS n'est pas servi)
     cp -r .next/static .next/standalone/blueprint-modular/.next/static
     cp -r .next/server .next/standalone/blueprint-modular/.next/
-    cp -r public .next/standalone/blueprint-modular/public
+    # Le build standalone crée déjà .next/standalone/blueprint-modular/public/
+    # (ex. llms.txt). Un « cp -r public DEST/public » copierait alors le dossier
+    # public DANS ce dossier existant → DEST/public/public/ (assets servis en 404).
+    # On copie donc le CONTENU de public/ (dotfiles inclus) dans le public/ existant
+    # pour que les assets atterrissent bien à la racine servie.
+    mkdir -p .next/standalone/blueprint-modular/public
+    cp -r public/. .next/standalone/blueprint-modular/public/
     # Config domaines Gestion de parc (getDomainConfig lit depuis process.cwd()/lib/asset-manager/config)
     mkdir -p .next/standalone/blueprint-modular/lib
     cp -r lib/asset-manager .next/standalone/blueprint-modular/lib/
