@@ -35,7 +35,7 @@ export async function generateMetadata(): Promise<Metadata> {
 }
 
 export default async function GaleriePage() {
-  const { dict } = await getDict();
+  const { locale, dict } = await getDict();
   const g = dict.galleryPage;
   const apps = await fetchCuratedApps();
 
@@ -61,7 +61,20 @@ export default async function GaleriePage() {
         <div className="site-container">
           <span className="site-eyebrow">{g.eyebrow}</span>
           <h1>{g.title}</h1>
-          <p className="site-lead">{g.lead}</p>
+          {/* Sous-titre i18n découpé (préfixe + lien + suffixe) : « .Maker » pointe
+              vers l'app Maker dans la locale courante de la vitrine, dérivée du
+              cookie via getDict() — jamais figée à /fr ou /en. */}
+          <p className="site-lead">
+            {g.leadBefore}
+            <a
+              href={`https://blueprint-maker.com/${locale}`}
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              {g.leadMakerLink}
+            </a>
+            {g.leadAfter}
+          </p>
         </div>
       </section>
 
