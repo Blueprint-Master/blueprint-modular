@@ -8,6 +8,7 @@
  *   b. vite build (build packages/core/dist + style.css)
  *   c. Doc sync check (llms.txt + bpm-components.json vs. committed)
  *   c ter. Catalogue convergence (catalogue MCP ≡ barrel bpm.* − internes)
+ *   c quater. Couche sémantique — forme valide (bloquant) ; backlog curation (informatif)
  *   d. Smoke render tests (vitest — each bpm.* renders without throw)
  *   e. Prop-surface snapshot (vitest — prop names frozen vs. snapshot)
  */
@@ -90,6 +91,13 @@ runPython("gate-docs-sync.py");
 // Empêche mécaniquement la désync 104↔154 corrigée en PR1 de se reproduire.
 step("Step c ter — Catalogue convergence (catalogue ⊆ barrel TS)");
 runPython("gate-catalogue-convergence.py");
+
+// ── Step c quater: Forme de la couche sémantique ──────────────────────────────
+// Valide la FORME des sémantiques présentes sur les 154 composants (rôle/frame/
+// indicator/guidance/relations/status/câblage). BLOQUE sur forme invalide ;
+// le backlog de curation (composants non curés) est exposé mais NON bloquant.
+step("Step c quater — Couche sémantique (forme valide ; backlog visible)");
+runPython("validate-semantics.py");
 
 // ── Step c bis: Version consistency ──────────────────────────────────────────
 // lib/generated/versions.json doit refléter pyproject.toml / core package.json / package.json.

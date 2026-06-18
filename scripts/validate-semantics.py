@@ -3,13 +3,23 @@
 Validateur de la couche sémantique des composants bpm.*.
 
 Source de vérité :
+  - lib/generated/bpm-components.json  → LISTE CANONIQUE du catalogue (dérivée du
+                                         barrel bpm.tsx en PR1). C'est elle qui dit
+                                         quels composants existent — PAS bpm/_doc_components.py.
   - lib/semantics/bpm-semantics.json   → couche sémantique curée (valeurs proposées par la boucle)
   - lib/semantics/types.ts             → schéma typé (les énums ci-dessous le reflètent)
-  - bpm/_doc_components.py             → liste canonique des 101 composants
   - public/llms.txt                    → noms bpm.* valides pour pairWith/relations
   - lib/generated/mcp-registry.json    → câblage MCP (la couche doit y être présente)
 
-Checks par composant :
+PRINCIPE (CAT-4) : on valide la FORME des sémantiques présentes sur les 154
+composants, et on LISTE le backlog de curation (composants sans sémantique) de
+façon visible mais NON bloquante. On distingue donc deux choses :
+  - « forme invalide » (status=malformed) → BLOQUANT : une sémantique existe mais
+    viole le schéma (rôle/frame/indicator/guidance/relations/hints/status/câblage).
+  - « pas encore curé » (status=uncurated) → INFORMATIF : aucun bloc sémantique.
+    C'est du backlog honnête, pas une erreur. On le compte, on ne le force pas.
+
+Checks par composant (uniquement si une sémantique est présente) :
   1. present       — entrée présente dans bpm-semantics.json
   2. role          — semanticRole dans l'énum
   3. frame         — frame Ω dans l'énum (instance du seed AppSpec)
@@ -21,15 +31,23 @@ Checks par composant :
   8. status        — proposed | needs-curation | curated ; curationQuestion SSI needs-curation
   9. wired         — la couche est présente dans mcp-registry.json (régénéré)
 
-Statut ledger par composant :
-  - pending         : au moins un check structurel KO
-  - proposed        : schéma valide, valeurs proposées en attente de curation
-  - needs-curation  : schéma valide, question posée au curateur
-  - done            : schéma valide et valeurs curées par l'humain (status "curated")
+Statut par composant :
+  - uncurated       : aucune sémantique (backlog) — informatif, NON bloquant
+  - malformed       : sémantique présente mais un check structurel échoue — BLOQUANT
+  - proposed        : forme valide, valeurs proposées en attente de curation
+  - needs-curation  : forme valide, question posée au curateur
+  - done            : forme valide et valeurs curées par l'humain (status "curated")
+
+Exit code :
+  - défaut          : exit 1 SSI au moins un composant est `malformed` (forme invalide)
+                      ou une sémantique est orpheline (slug hors catalogue). Le backlog
+                      `uncurated` ne bloque JAMAIS. → utilisable tel quel dans le gate.
+  - --strict        : en plus, exit 1 s'il reste des `uncurated` (exige une couverture
+                      complète). OPT-IN, non utilisé par le gate.
 
 Usage :
-  python3 scripts/validate-semantics.py                  # rapport console
-  python3 scripts/validate-semantics.py --strict          # exit 1 si un check structurel échoue
+  python3 scripts/validate-semantics.py                  # rapport + exit 1 si forme invalide
+  python3 scripts/validate-semantics.py --strict          # + exit 1 si backlog non vide
   python3 scripts/validate-semantics.py --write-ledger    # écrit docs/automation/semantique.json
   python3 scripts/validate-semantics.py --write-curation  # écrit docs/automation/semantique-curation.md
 """
@@ -40,14 +58,12 @@ import sys
 from pathlib import Path
 
 REPO = Path(__file__).parent.parent
+CATALOGUE = REPO / "lib" / "generated" / "bpm-components.json"
 SEMANTICS = REPO / "lib" / "semantics" / "bpm-semantics.json"
 REGISTRY = REPO / "lib" / "generated" / "mcp-registry.json"
 LLMS = REPO / "public" / "llms.txt"
 LEDGER = REPO / "docs" / "automation" / "semantique.json"
 CURATION = REPO / "docs" / "automation" / "semantique-curation.md"
-
-sys.path.insert(0, str(REPO))
-from bpm._doc_components import COMPONENT_DOC  # noqa: E402
 
 # Énums — miroir de lib/semantics/types.ts (le schéma TS reste la référence).
 ROLES = {"indicateur", "affichage", "saisie", "action", "conteneur", "navigation", "feedback", "composite"}
@@ -59,10 +75,22 @@ TEMPORALITIES = {"instantane", "cumule", "serie", "periode-sur-periode", "contex
 RELATION_TYPES = {"compose-dans", "derive-de", "contraste-avec"}
 STATUSES = {"proposed", "needs-curation", "curated"}
 
+# Statuts NON curés / invalides (vs. statuts de forme valide).
+BACKLOG = "uncurated"   # aucune sémantique — informatif
+MALFORMED = "malformed"  # sémantique présente mais forme invalide — bloquant
+CHECK_KEYS = ["present", "role", "frame", "indicator", "guidance", "relations", "hints", "status", "wired"]
 
-def known_bpm_names() -> set:
-    """Noms bpm.* valides : catalogue canonique + sections de llms.txt (extras du barrel)."""
-    names = {c["name"].lower() for c in COMPONENT_DOC}
+
+def load_catalogue() -> list[dict]:
+    """Liste canonique du catalogue (154) — dérivée du barrel en PR1. Source de
+    vérité de « quels composants existent ». bpm/_doc_components.py n'intervient plus."""
+    return json.loads(CATALOGUE.read_text(encoding="utf-8"))["components"]
+
+
+def known_bpm_names(catalogue: list[dict]) -> set:
+    """Noms bpm.* valides pour pairWith/relations : catalogue (154) + sections de
+    llms.txt (inclut les sous-composants internes documentés)."""
+    names = {c["name"].lower() for c in catalogue}
     if LLMS.exists():
         for m in re.finditer(r"^## (bpm\.\w+)\s*$", LLMS.read_text(encoding="utf-8", errors="ignore"), re.M):
             names.add(m.group(1).lower())
@@ -74,13 +102,13 @@ def check_component(slug: str, name: str, sem: dict | None, known: set,
     checks = {}
     notes = []
 
-    # 1. present
+    # 1. present — absence de sémantique = backlog (uncurated), PAS une erreur de forme.
     checks["present"] = sem is not None
     if sem is None:
-        for k in ("role", "frame", "indicator", "guidance", "relations", "hints", "status", "wired"):
-            checks[k] = False
-        return {"slug": slug, "bpm": name, "checks": checks, "status": "pending",
-                "gap": "entrée absente de bpm-semantics.json"}
+        for k in CHECK_KEYS[1:]:
+            checks[k] = None  # non applicable : rien à valider tant que non curé
+        return {"slug": slug, "bpm": name, "checks": checks, "status": BACKLOG,
+                "gap": "pas encore curé (aucune sémantique)", "curationQuestion": ""}
 
     # 2. role / 3. frame
     role = sem.get("semanticRole")
@@ -158,9 +186,10 @@ def check_component(slug: str, name: str, sem: dict | None, known: set,
     if not checks["wired"]:
         notes.append("couche absente de mcp-registry.json (régénérer: npm run generate:mcp-registry)")
 
-    structural = all(checks.values())
-    if not structural:
-        ledger_status = "pending"
+    # Forme valide ? (tous les checks applicables passent)
+    form_ok = all(v for v in checks.values() if v is not None)
+    if not form_ok:
+        ledger_status = MALFORMED
     elif status == "curated":
         ledger_status = "done"
     elif status == "needs-curation":
@@ -195,9 +224,18 @@ def write_curation(results: list[dict], sem_map: dict):
             lines.append(f"- **{r['bpm']}** — {r['curationQuestion']}")
     else:
         lines.append("_Aucune question ouverte._")
+
+    # Backlog de curation : composants sans sémantique, listés pour visibilité.
+    backlog = [r for r in results if r["status"] == BACKLOG]
+    lines += ["", f"## Backlog de curation — {len(backlog)} composants sans sémantique", ""]
+    if backlog:
+        lines.append(", ".join(r["bpm"] for r in backlog))
+    else:
+        lines.append("_Couverture complète._")
+
     lines += [
         "",
-        "## Valeurs proposées par composant",
+        "## Valeurs proposées par composant (sémantique présente)",
         "",
         "| Composant | Rôle | Frame Ω | Type d'indicateur | Direction | Temporalité | Relations d'indicateurs | Statut |",
         "|---|---|---|---|---|---|---|---|",
@@ -205,7 +243,6 @@ def write_curation(results: list[dict], sem_map: dict):
     for r in results:
         sem = sem_map.get(r["slug"])
         if not sem:
-            lines.append(f"| {r['bpm']} | — | — | — | — | — | — | absent |")
             continue
         ind = sem.get("indicator") or {}
         types = ", ".join(ind.get("indicatorType", [])) or "—"
@@ -236,54 +273,80 @@ def write_curation(results: list[dict], sem_map: dict):
 
 def main():
     ap = argparse.ArgumentParser()
-    ap.add_argument("--strict", action="store_true")
+    ap.add_argument("--strict", action="store_true",
+                    help="exit 1 aussi si le backlog (uncurated) n'est pas vide (couverture complète)")
     ap.add_argument("--json", action="store_true")
     ap.add_argument("--write-ledger", action="store_true")
     ap.add_argument("--write-curation", action="store_true")
     args = ap.parse_args()
 
+    catalogue = load_catalogue()
     sem_map = json.loads(SEMANTICS.read_text(encoding="utf-8"))["components"]
-    known = known_bpm_names()
+    known = known_bpm_names(catalogue)
     indicator_names = {s for s, v in sem_map.items() if v.get("semanticRole") == "indicateur"}
     registry_sem = set()
     if REGISTRY.exists():
         reg = json.loads(REGISTRY.read_text(encoding="utf-8"))
         registry_sem = {c["slug"] for c in reg.get("components", []) if c.get("semantics")}
 
+    # Itération sur le catalogue CANONIQUE (154), pas sur _doc_components.py.
     results = [
         check_component(c["slug"], c["name"], sem_map.get(c["slug"]), known, indicator_names, registry_sem)
-        for c in COMPONENT_DOC
+        for c in catalogue
     ]
-    orphans = [s for s in sem_map if s not in {c["slug"] for c in COMPONENT_DOC}]
+
+    # Sémantiques orphelines : un bloc existe pour un slug hors catalogue → forme
+    # invalide (câblage cassé), bloquant. Doit être vide post-PR1.
+    catalogue_slugs = {c["slug"] for c in catalogue}
+    orphans = sorted(s for s in sem_map if s not in catalogue_slugs)
+    for s in orphans:
+        results.append({"slug": s, "bpm": f"bpm.{s}", "checks": {k: None for k in CHECK_KEYS},
+                        "status": MALFORMED, "gap": "sémantique orpheline (slug hors catalogue)",
+                        "curationQuestion": ""})
 
     tally = {}
     for r in results:
         tally[r["status"]] = tally.get(r["status"], 0) + 1
 
+    malformed = [r for r in results if r["status"] == MALFORMED]
+    backlog = [r for r in results if r["status"] == BACKLOG]
+    valid_form = len(results) - len(malformed) - len(backlog)  # done + proposed + needs-curation
+
     if args.json:
         print(json.dumps(results, ensure_ascii=False, indent=2))
     else:
-        print("=== Validateur couche sémantique — 9 checks ===")
-        print(f"Total canonique : {len(results)}")
-        for k in ("done", "proposed", "needs-curation", "pending"):
-            print(f"  {k:15s}: {tally.get(k, 0)}")
-        keys = ["present", "role", "frame", "indicator", "guidance", "relations", "hints", "status", "wired"]
-        print("\nTaux par check :")
-        for k in keys:
-            n = sum(1 for r in results if r["checks"].get(k))
-            print(f"  {k:10s} {n:3d}/{len(results)}")
-        bad = [r for r in results if r["status"] == "pending"]
-        if bad:
-            print("\n--- pending (check structurel KO) ---")
-            for r in bad:
+        print("=== Validateur couche sémantique — forme + backlog ===")
+        print(f"Catalogue canonique (lib/generated/bpm-components.json) : {len(catalogue)}")
+        for k in ("done", "proposed", "needs-curation"):
+            print(f"  {k:16s}: {tally.get(k, 0)}")
+        print(f"  {'uncurated':16s}: {tally.get(BACKLOG, 0)}   (backlog — informatif, non bloquant)")
+        print(f"  {'malformed':16s}: {tally.get(MALFORMED, 0)}   (forme invalide — BLOQUANT)")
+        print(f"Couverture sémantique : {valid_form}/{len(catalogue)} "
+              f"({100 * valid_form // max(1, len(catalogue))}%)")
+
+        # Taux par check sur les composants QUI ONT une sémantique (qualité de forme).
+        with_sem = [r for r in results if r["checks"].get("present")]
+        print(f"\nTaux par check (sur {len(with_sem)} composants avec sémantique) :")
+        for k in CHECK_KEYS:
+            n = sum(1 for r in with_sem if r["checks"].get(k))
+            print(f"  {k:10s} {n:3d}/{len(with_sem)}")
+
+        if malformed:
+            print("\n--- FORME INVALIDE (bloquant) ---")
+            for r in malformed:
                 print(f"  {r['bpm']:24s} {r['gap']}")
-        if orphans:
-            print(f"\nEntrées orphelines (hors catalogue) : {orphans}")
+
+        # Backlog visible mais non bloquant.
+        print(f"\n--- Backlog curation (uncurated, non bloquant) : {len(backlog)} composants ---")
+        if backlog:
+            names = [r["bpm"] for r in backlog]
+            head = ", ".join(names[:20])
+            print(f"  {head}{' …' if len(names) > 20 else ''}")
 
     if args.write_ledger:
         ledger = {
             "mission": "couche-semantique",
-            "standard": "9 checks (cf. scripts/validate-semantics.py) ; valeurs proposed/needs-curation/curated",
+            "standard": "9 checks (cf. scripts/validate-semantics.py) ; forme bloquante, backlog informatif",
             "generated_by": "scripts/validate-semantics.py --write-ledger",
             "totals": {"components": {"total": len(results), **tally}},
             "needsCuration": [
@@ -300,8 +363,16 @@ def main():
     if args.write_curation:
         write_curation(results, sem_map)
 
-    if args.strict and (any(r["status"] == "pending" for r in results) or orphans):
+    # Exit : la FORME bloque (malformed/orphelins) ; le backlog ne bloque pas
+    # (sauf --strict, opt-in pour exiger une couverture complète).
+    fail = len(malformed) > 0 or (args.strict and len(backlog) > 0)
+    if fail:
+        if malformed:
+            print(f"\n❌ {len(malformed)} sémantique(s) de forme invalide — corriger avant merge.")
+        if args.strict and backlog:
+            print(f"\n❌ --strict : {len(backlog)} composant(s) non curés (couverture incomplète).")
         sys.exit(1)
+    print(f"\n✅ Forme valide ({valid_form} sémantiques) ; backlog de curation : {len(backlog)} (non bloquant).")
 
 
 if __name__ == "__main__":
