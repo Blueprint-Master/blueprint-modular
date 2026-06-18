@@ -623,6 +623,306 @@
       "name": "bpm.modelSelector",
       "description": "Sélecteur de modèle IA (par fournisseur, capacités).",
       "category": "IA & Spécialisés"
+    },
+    {
+      "slug": "addressinput",
+      "name": "bpm.addressInput",
+      "description": "Champ de saisie d'adresse avec autocomplétion.",
+      "category": "Interaction"
+    },
+    {
+      "slug": "aiquerybar",
+      "name": "bpm.aiQueryBar",
+      "description": "Barre de requête IA (langage naturel → résultat structuré).",
+      "category": "IA & Spécialisés"
+    },
+    {
+      "slug": "alarmpanel",
+      "name": "bpm.alarmPanel",
+      "description": "Panneau d'alarmes industrielles (active, accusée, résolue).",
+      "category": "Feedback"
+    },
+    {
+      "slug": "assistantpanel",
+      "name": "bpm.assistantPanel",
+      "description": "Panneau assistant IA (chips, saisie, réponses).",
+      "category": "IA & Spécialisés"
+    },
+    {
+      "slug": "breadcrumbs",
+      "name": "bpm.breadcrumbs",
+      "description": "Fil d'Ariane avec items cliquables.",
+      "category": "Navigation"
+    },
+    {
+      "slug": "changelog",
+      "name": "bpm.changelog",
+      "description": "Journal des modifications avec catégories et versions.",
+      "category": "Affichage de données"
+    },
+    {
+      "slug": "chat",
+      "name": "bpm.chat",
+      "description": "Chat Ollama local (démo).",
+      "category": "IA & Spécialisés"
+    },
+    {
+      "slug": "commentthread",
+      "name": "bpm.commentThread",
+      "description": "Fil de commentaires avec réponses et avatars.",
+      "category": "Affichage de données"
+    },
+    {
+      "slug": "comparison",
+      "name": "bpm.comparison",
+      "description": "Tableau de comparaison multi-items.",
+      "category": "Affichage de données"
+    },
+    {
+      "slug": "contextmenu",
+      "name": "bpm.contextMenu",
+      "description": "Menu contextuel (clic droit ou clic bouton).",
+      "category": "Interaction"
+    },
+    {
+      "slug": "decisiontree",
+      "name": "bpm.decisionTree",
+      "description": "Arbre de décision interactif (questions, actions, résultats).",
+      "category": "Affichage de données"
+    },
+    {
+      "slug": "drilldown",
+      "name": "bpm.drillDown",
+      "description": "Navigation drill-down multi-niveaux dans des données hiérarchiques.",
+      "category": "Affichage de données"
+    },
+    {
+      "slug": "emailcomposer",
+      "name": "bpm.emailComposer",
+      "description": "Composeur d'email (To, CC, objet, corps riche).",
+      "category": "Interaction"
+    },
+    {
+      "slug": "exportbutton",
+      "name": "bpm.exportButton",
+      "description": "Bouton d'export de données (CSV, JSON, Excel).",
+      "category": "Interaction"
+    },
+    {
+      "slug": "funnelchart",
+      "name": "bpm.funnelChart",
+      "description": "Graphique en entonnoir (tunnel de conversion).",
+      "category": "Graphiques"
+    },
+    {
+      "slug": "gantt",
+      "name": "bpm.gantt",
+      "description": "Diagramme de Gantt (tâches, jalons, dépendances).",
+      "category": "Affichage de données"
+    },
+    {
+      "slug": "geofence",
+      "name": "bpm.geofence",
+      "description": "Carte interactive avec zones géographiques (geofences).",
+      "category": "Média"
+    },
+    {
+      "slug": "groupedlist",
+      "name": "bpm.groupedList",
+      "description": "Liste groupée par clé avec en-têtes de groupe.",
+      "category": "Affichage de données"
+    },
+    {
+      "slug": "heatmap",
+      "name": "bpm.heatmap",
+      "description": "Grille de valeurs numériques avec dégradé de couleur, infobulle au survol et clic optionnel sur cellule.",
+      "category": "Graphiques"
+    },
+    {
+      "slug": "inlineedit",
+      "name": "bpm.inlineEdit",
+      "description": "Champ éditable au clic : texte, nombre ou select.",
+      "category": "Interaction"
+    },
+    {
+      "slug": "invoicetemplate",
+      "name": "bpm.invoiceTemplate",
+      "description": "Modèle de facture A4 prêt pour impression avec lignes, TVA et totaux calculés automatiquement.",
+      "category": "Utilitaires"
+    },
+    {
+      "slug": "livechart",
+      "name": "bpm.liveChart",
+      "description": "Graphique temps réel avec fenêtre glissante, seuils en pointillés et rafraîchissement automatique.",
+      "category": "Graphiques"
+    },
+    {
+      "slug": "machinestatus",
+      "name": "bpm.machineStatus",
+      "description": "Carte d'état machine avec indicateur LED animé (clignotement en production ou défaut).",
+      "category": "IA & Spécialisés"
+    },
+    {
+      "slug": "mapview",
+      "name": "bpm.mapView",
+      "description": "Carte Leaflet interactive avec marqueurs, polylignes, polygones et gestion des clics.",
+      "category": "Média"
+    },
+    {
+      "slug": "metricrow",
+      "name": "bpm.metricRow",
+      "description": "Ligne de métriques (conteneur pour plusieurs bpm.metric).",
+      "category": "Affichage de données"
+    },
+    {
+      "slug": "offlineindicator",
+      "name": "bpm.offlineIndicator",
+      "description": "Indicateur de statut hors ligne avec compteur de requêtes en attente et bouton de synchronisation.",
+      "category": "Feedback"
+    },
+    {
+      "slug": "page",
+      "name": "bpm.page",
+      "description": "Conteneur page (core).",
+      "category": "Mise en page"
+    },
+    {
+      "slug": "pivottable",
+      "name": "bpm.pivotTable",
+      "description": "Tableau croisé dynamique avec agrégation (sum, avg, count, min, max), tri et heatmap.",
+      "category": "Affichage de données"
+    },
+    {
+      "slug": "plcconnector",
+      "name": "bpm.plcConnector",
+      "description": "Formulaire de configuration de connexion automate industriel (Modbus, OPC UA, MQTT, EtherNet/IP).",
+      "category": "IA & Spécialisés"
+    },
+    {
+      "slug": "predictivechart",
+      "name": "bpm.predictiveChart",
+      "description": "Graphique de prévision avec données historiques, prédictions et intervalle de confiance.",
+      "category": "Graphiques"
+    },
+    {
+      "slug": "printlayout",
+      "name": "bpm.printLayout",
+      "description": "Mise en page optimisée pour l'impression A4 avec en-tête, pied de page et marges personnalisables.",
+      "category": "Mise en page"
+    },
+    {
+      "slug": "progressring",
+      "name": "bpm.progressRing",
+      "description": "Anneau de progression circulaire SVG avec animation de transition.",
+      "category": "Feedback"
+    },
+    {
+      "slug": "radarchart",
+      "name": "bpm.radarChart",
+      "description": "Graphique radar SVG pour comparer des valeurs sur plusieurs axes.",
+      "category": "Graphiques"
+    },
+    {
+      "slug": "relationgraph",
+      "name": "bpm.relationGraph",
+      "description": "Graphe relationnel SVG interactif avec layouts force/grille/circulaire, zoom, panoramique et drag-and-drop des nœuds.",
+      "category": "Affichage de données"
+    },
+    {
+      "slug": "reportpage",
+      "name": "bpm.reportPage",
+      "description": "Page de rapport structurée avec sections (titre, texte, tableau, graphique, KPI), impression PDF via window.print.",
+      "category": "Mise en page"
+    },
+    {
+      "slug": "richtexteditor",
+      "name": "bpm.richTextEditor",
+      "description": "Éditeur WYSIWYG contentEditable avec barre d'outils (gras, italique, titres, listes, liens, images) et export HTML/Markdown.",
+      "category": "Interaction"
+    },
+    {
+      "slug": "routeplanner",
+      "name": "bpm.routePlanner",
+      "description": "Planificateur d'itinéraire avec liste de points réordonnables, carte Leaflet et calcul de distance orthodromique.",
+      "category": "Média"
+    },
+    {
+      "slug": "scheduler",
+      "name": "bpm.scheduler",
+      "description": "Calendrier/agenda avec vues jour, semaine et mois, gestion d'événements et de ressources.",
+      "category": "Affichage de données"
+    },
+    {
+      "slug": "sensorgrid",
+      "name": "bpm.sensorGrid",
+      "description": "Grille de cartes capteur avec valeur, unité, statut coloré et détail optionnel.",
+      "category": "IA & Spécialisés"
+    },
+    {
+      "slug": "signaturepad",
+      "name": "bpm.signaturePad",
+      "description": "Zone de signature canvas avec export data URL PNG et boutons effacer/enregistrer.",
+      "category": "Interaction"
+    },
+    {
+      "slug": "sparkline",
+      "name": "bpm.sparkline",
+      "description": "Courbe SVG compacte pour afficher une tendance avec couleur selon la direction (up/down/flat).",
+      "category": "Graphiques"
+    },
+    {
+      "slug": "splitview",
+      "name": "bpm.splitView",
+      "description": "Deux volets redimensionnables avec séparateur draggable.",
+      "category": "Mise en page"
+    },
+    {
+      "slug": "statemachine",
+      "name": "bpm.stateMachine",
+      "description": "Visualisation d'une machine à états avec graphe circulaire, transitions cliquables et historique.",
+      "category": "Affichage de données"
+    },
+    {
+      "slug": "suggestioncard",
+      "name": "bpm.suggestionCard",
+      "description": "Carte de suggestion IA avec titre, description, barre de confiance et boutons d'action.",
+      "category": "IA & Spécialisés"
+    },
+    {
+      "slug": "title4",
+      "name": "bpm.title4",
+      "description": "Titre h1 minimal.",
+      "category": "Affichage de données"
+    },
+    {
+      "slug": "toggle",
+      "name": "bpm.toggle",
+      "description": "Interrupteur on/off.",
+      "category": "Interaction"
+    },
+    {
+      "slug": "tour",
+      "name": "bpm.tour",
+      "description": "Visite guidée interactive avec overlay sombre et mise en surbrillance des éléments cibles étape par étape.",
+      "category": "Navigation"
+    },
+    {
+      "slug": "transition",
+      "name": "bpm.transition",
+      "description": "Animation de transition entre états.",
+      "category": "Mise en page"
+    },
+    {
+      "slug": "treemap",
+      "name": "bpm.treemap",
+      "description": "Visualisation treemap (carte de chaleur hiérarchique) en SVG avec algorithme squarify.",
+      "category": "Graphiques"
+    },
+    {
+      "slug": "waterfall",
+      "name": "bpm.waterfall",
+      "description": "Graphique en cascade (waterfall chart) montrant l'évolution cumulative de valeurs positives/négatives.",
+      "category": "Graphiques"
     }
   ]
 }
