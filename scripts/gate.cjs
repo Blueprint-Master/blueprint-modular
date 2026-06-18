@@ -7,6 +7,7 @@
  *   a. tsc --noEmit (type check packages/core/src)
  *   b. vite build (build packages/core/dist + style.css)
  *   c. Doc sync check (llms.txt + bpm-components.json vs. committed)
+ *   c ter. Catalogue convergence (catalogue MCP ≡ barrel bpm.* − internes)
  *   d. Smoke render tests (vitest — each bpm.* renders without throw)
  *   e. Prop-surface snapshot (vitest — prop names frozen vs. snapshot)
  */
@@ -83,6 +84,12 @@ const buildOk = run("npm run build", { cwd: CORE_DIR, label: "vite build" });
 // ── Step c: Doc sync ──────────────────────────────────────────────────────────
 step("Step c — Doc sync check");
 runPython("gate-docs-sync.py");
+
+// ── Step c ter: Catalogue convergence ─────────────────────────────────────────
+// Échoue si le catalogue MCP diverge de sa source TS (barrel bpm.tsx − internes).
+// Empêche mécaniquement la désync 104↔154 corrigée en PR1 de se reproduire.
+step("Step c ter — Catalogue convergence (catalogue ⊆ barrel TS)");
+runPython("gate-catalogue-convergence.py");
 
 // ── Step c bis: Version consistency ──────────────────────────────────────────
 // lib/generated/versions.json doit refléter pyproject.toml / core package.json / package.json.
