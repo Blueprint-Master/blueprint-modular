@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-06-17T20:00:35.677Z",
+  "generatedAt": "2026-06-18T19:54:01.613Z",
   "source": "lib/generated/bpm-components.json + public/llms.txt + lib/semantics/bpm-semantics.json",
   "total": 154,
   "categories": [
@@ -3420,20 +3420,70 @@
       "name": "bpm.funnelChart",
       "description": "Graphique en entonnoir (tunnel de conversion).",
       "category": "Graphiques",
-      "status": "uncurated",
+      "status": "curated",
       "fullDescription": "Graphique en entonnoir (tunnel de conversion).",
       "props": "  stages*: FunnelStage[]\n  showPercentage?: boolean\n  horizontal?: boolean\n  className?: string",
-      "_haystack": "bpm.funnelchart funnelchart graphique en entonnoir (tunnel de conversion). graphiques graphique en entonnoir (tunnel de conversion).   stages*: funnelstage[]\n  showpercentage?: boolean\n  horizontal?: boolean\n  classname?: string"
+      "semantics": {
+        "semanticRole": "indicateur",
+        "frame": "kpi",
+        "indicator": {
+          "indicatorType": [
+            "taux",
+            "compte"
+          ],
+          "directionality": "hausse=bon",
+          "temporality": "instantane"
+        },
+        "agentGuidance": {
+          "use": "Conversion étape par étape d'un tunnel : volume restant et taux de passage entre phases (acquisition, activation, achat).",
+          "pairWith": [
+            "bpm.metric",
+            "bpm.statusTracker",
+            "bpm.caption"
+          ],
+          "avoid": "Étapes d'un parcours sans déperdition mesurée (bpm.stepper) ou comparaison catégorielle simple (bpm.barChart)."
+        },
+        "indicatorRelations": [
+          {
+            "type": "contraste-avec",
+            "target": "bpm.statusTracker",
+            "note": "déperdition mesurée entre étapes vs position dans des étapes normées"
+          }
+        ],
+        "contextHints": [
+          "Étapes ordonnées d'un même parcours à effectif décroissant ; chaque étape ⊆ la précédente."
+        ],
+        "status": "proposed"
+      },
+      "_haystack": "bpm.funnelchart funnelchart graphique en entonnoir (tunnel de conversion). graphiques graphique en entonnoir (tunnel de conversion).   stages*: funnelstage[]\n  showpercentage?: boolean\n  horizontal?: boolean\n  classname?: string indicateur kpi taux compte hausse=bon instantane conversion étape par étape d'un tunnel : volume restant et taux de passage entre phases (acquisition, activation, achat). bpm.metric bpm.statustracker bpm.caption étapes d'un parcours sans déperdition mesurée (bpm.stepper) ou comparaison catégorielle simple (bpm.barchart). étapes ordonnées d'un même parcours à effectif décroissant ; chaque étape ⊆ la précédente. contraste-avec bpm.statustracker déperdition mesurée entre étapes vs position dans des étapes normées"
     },
     {
       "slug": "gantt",
       "name": "bpm.gantt",
       "description": "Diagramme de Gantt (tâches, jalons, dépendances).",
       "category": "Affichage de données",
-      "status": "uncurated",
+      "status": "curated",
       "fullDescription": "Diagramme de Gantt (tâches, jalons, dépendances).",
       "props": "  tasks*: GanttTask[]\n  viewMode*: \"day\" | \"week\" | \"month\"\n  onTaskClick*: (task: GanttTask) => void\n  showDependencies?: boolean\n  todayLine?: boolean",
-      "_haystack": "bpm.gantt gantt diagramme de gantt (tâches, jalons, dépendances). affichage de données diagramme de gantt (tâches, jalons, dépendances).   tasks*: gantttask[]\n  viewmode*: \"day\" | \"week\" | \"month\"\n  ontaskclick*: (task: gantttask) => void\n  showdependencies?: boolean\n  todayline?: boolean"
+      "semantics": {
+        "semanticRole": "affichage",
+        "frame": "workflow",
+        "agentGuidance": {
+          "use": "Planifier et suivre des tâches datées avec dépendances et jalons sur un axe temporel : qui fait quoi, quand, dans quel ordre.",
+          "pairWith": [
+            "bpm.statusTracker",
+            "bpm.timeline",
+            "bpm.badge"
+          ],
+          "avoid": "Historique d'événements passés en lecture seule (bpm.timeline) ou agenda d'événements ponctuels (bpm.scheduler)."
+        },
+        "contextHints": [
+          "Tâches avec start/end et dépendances, arrangées sur un axe temporel ; la todayLine situe l'avancement réel."
+        ],
+        "status": "needs-curation",
+        "curationQuestion": "gantt : simple affichage d'un planning ou indicateur de respect d'échéance (retard/avance vs jalons) ? Si indicateur, porter un bloc indicator (statut/progression, temporality série) et trancher le frame — workflow vs un frame 'planning' aujourd'hui absent de Ω."
+      },
+      "_haystack": "bpm.gantt gantt diagramme de gantt (tâches, jalons, dépendances). affichage de données diagramme de gantt (tâches, jalons, dépendances).   tasks*: gantttask[]\n  viewmode*: \"day\" | \"week\" | \"month\"\n  ontaskclick*: (task: gantttask) => void\n  showdependencies?: boolean\n  todayline?: boolean affichage workflow planifier et suivre des tâches datées avec dépendances et jalons sur un axe temporel : qui fait quoi, quand, dans quel ordre. bpm.statustracker bpm.timeline bpm.badge historique d'événements passés en lecture seule (bpm.timeline) ou agenda d'événements ponctuels (bpm.scheduler). tâches avec start/end et dépendances, arrangées sur un axe temporel ; la todayline situe l'avancement réel."
     },
     {
       "slug": "geofence",
@@ -3460,11 +3510,43 @@
       "name": "bpm.heatmap",
       "description": "Grille de valeurs numériques avec dégradé de couleur, infobulle au survol et clic optionnel sur cellule.",
       "category": "Graphiques",
-      "status": "uncurated",
+      "status": "curated",
       "fullDescription": "Grille de valeurs numériques avec dégradé de couleur, infobulle au survol et clic optionnel sur cellule.",
       "props": "  data*: number[][]\n  xLabels*: string[]\n  yLabels*: string[]\n  colorScale*: { min: string\n  valueMin?: number\n  valueMax?: number\n  showValues?: boolean\n  onCellClick?: (row: number, col: number, value: number) => void\n  className?: string\n  context?: InterpretContext  — Contexte de jugement { reference, direction, comparisonFrame? } : chaque cellule est jugée par interpret — liseré coloré par verdict (hors zone neutre), data-judgment par cellule, infobulle enrichie. Anomalie >2σ évaluée contre comparisonFrame ou, à défaut, la matrice entière. Additif : sans context, rendu inchangé.",
       "example": "bpm.heatmap({ data: [[1,2],[3,4]], xLabels: [\"A\",\"B\"], yLabels: [\"X\",\"Y\"], colorScale: { min: \"#fff\", max: \"#f00\" } })",
-      "_haystack": "bpm.heatmap heatmap grille de valeurs numériques avec dégradé de couleur, infobulle au survol et clic optionnel sur cellule. graphiques grille de valeurs numériques avec dégradé de couleur, infobulle au survol et clic optionnel sur cellule.   data*: number[][]\n  xlabels*: string[]\n  ylabels*: string[]\n  colorscale*: { min: string\n  valuemin?: number\n  valuemax?: number\n  showvalues?: boolean\n  oncellclick?: (row: number, col: number, value: number) => void\n  classname?: string\n  context?: interpretcontext  — contexte de jugement { reference, direction, comparisonframe? } : chaque cellule est jugée par interpret — liseré coloré par verdict (hors zone neutre), data-judgment par cellule, infobulle enrichie. anomalie >2σ évaluée contre comparisonframe ou, à défaut, la matrice entière. additif : sans context, rendu inchangé. bpm.heatmap({ data: [[1,2],[3,4]], xlabels: [\"a\",\"b\"], ylabels: [\"x\",\"y\"], colorscale: { min: \"#fff\", max: \"#f00\" } })"
+      "semantics": {
+        "semanticRole": "indicateur",
+        "frame": "kpi",
+        "indicator": {
+          "indicatorType": [
+            "distribution",
+            "compte"
+          ],
+          "directionality": "contextuel",
+          "temporality": "instantane"
+        },
+        "agentGuidance": {
+          "use": "Intensité d'une mesure sur deux dimensions catégorielles : repérer concentrations, creux et points chauds dans une matrice.",
+          "pairWith": [
+            "bpm.metric",
+            "bpm.caption",
+            "bpm.filterPanel"
+          ],
+          "avoid": "Comparaison sur une seule dimension (bpm.barChart) ou évolution temporelle continue (bpm.lineChart)."
+        },
+        "indicatorRelations": [
+          {
+            "type": "contraste-avec",
+            "target": "bpm.barChart",
+            "note": "intensité sur deux axes catégoriels vs comparaison sur un seul axe"
+          }
+        ],
+        "contextHints": [
+          "Matrice 2D de valeurs de même unité (xLabels × yLabels) ; l'échelle de couleur porte le jugement."
+        ],
+        "status": "proposed"
+      },
+      "_haystack": "bpm.heatmap heatmap grille de valeurs numériques avec dégradé de couleur, infobulle au survol et clic optionnel sur cellule. graphiques grille de valeurs numériques avec dégradé de couleur, infobulle au survol et clic optionnel sur cellule.   data*: number[][]\n  xlabels*: string[]\n  ylabels*: string[]\n  colorscale*: { min: string\n  valuemin?: number\n  valuemax?: number\n  showvalues?: boolean\n  oncellclick?: (row: number, col: number, value: number) => void\n  classname?: string\n  context?: interpretcontext  — contexte de jugement { reference, direction, comparisonframe? } : chaque cellule est jugée par interpret — liseré coloré par verdict (hors zone neutre), data-judgment par cellule, infobulle enrichie. anomalie >2σ évaluée contre comparisonframe ou, à défaut, la matrice entière. additif : sans context, rendu inchangé. bpm.heatmap({ data: [[1,2],[3,4]], xlabels: [\"a\",\"b\"], ylabels: [\"x\",\"y\"], colorscale: { min: \"#fff\", max: \"#f00\" } }) indicateur kpi distribution compte contextuel instantane intensité d'une mesure sur deux dimensions catégorielles : repérer concentrations, creux et points chauds dans une matrice. bpm.metric bpm.caption bpm.filterpanel comparaison sur une seule dimension (bpm.barchart) ou évolution temporelle continue (bpm.linechart). matrice 2d de valeurs de même unité (xlabels × ylabels) ; l'échelle de couleur porte le jugement. contraste-avec bpm.barchart intensité sur deux axes catégoriels vs comparaison sur un seul axe"
     },
     {
       "slug": "inlineedit",
@@ -3548,10 +3630,27 @@
       "name": "bpm.metricRow",
       "description": "Ligne de métriques (conteneur pour plusieurs bpm.metric).",
       "category": "Affichage de données",
-      "status": "uncurated",
+      "status": "curated",
       "fullDescription": "Ligne de métriques (conteneur pour plusieurs bpm.metric).",
       "props": "  children*: React.ReactNode\n  className?: string",
-      "_haystack": "bpm.metricrow metricrow ligne de métriques (conteneur pour plusieurs bpm.metric). affichage de données ligne de métriques (conteneur pour plusieurs bpm.metric).   children*: react.reactnode\n  classname?: string"
+      "semantics": {
+        "semanticRole": "conteneur",
+        "frame": "section",
+        "agentGuidance": {
+          "use": "Aligner plusieurs KPI scalaires de même rang en tête de tableau de bord : une rangée de bpm.metric lus ensemble.",
+          "pairWith": [
+            "bpm.metric",
+            "bpm.lineChart",
+            "bpm.card"
+          ],
+          "avoid": "Une seule mesure (bpm.metric seul) ou des éléments hétérogènes de poids visuel inégal (bpm.grid, bpm.column)."
+        },
+        "contextHints": [
+          "Contient des bpm.metric de même nature et échelle de lecture ; 2 à 5 par rangée pour rester scannable."
+        ],
+        "status": "proposed"
+      },
+      "_haystack": "bpm.metricrow metricrow ligne de métriques (conteneur pour plusieurs bpm.metric). affichage de données ligne de métriques (conteneur pour plusieurs bpm.metric).   children*: react.reactnode\n  classname?: string conteneur section aligner plusieurs kpi scalaires de même rang en tête de tableau de bord : une rangée de bpm.metric lus ensemble. bpm.metric bpm.linechart bpm.card une seule mesure (bpm.metric seul) ou des éléments hétérogènes de poids visuel inégal (bpm.grid, bpm.column). contient des bpm.metric de même nature et échelle de lecture ; 2 à 5 par rangée pour rester scannable."
     },
     {
       "slug": "offlineindicator",
@@ -3582,7 +3681,7 @@
       "name": "bpm.pivotTable",
       "description": "Tableau croisé dynamique avec agrégation (sum, avg, count, min, max), tri et heatmap.",
       "category": "Affichage de données",
-      "status": "uncurated",
+      "status": "curated",
       "fullDescription": "Tableau croisé dynamique avec agrégation (sum, avg, count, min, max), tri et heatmap.",
       "props": "  data*: Record<string, unknown>[]\n  rowKey*: string\n  colKey*: string\n  valueKey*: string\n  agg?: PivotAgg\n  className?: string",
       "example": "bpm.pivotTable({ data: rows, rowKey: \"region\", colKey: \"produit\", valueKey: \"ventes\", agg: \"sum\" })",
@@ -3591,7 +3690,39 @@
         "bpm.dataExplorer",
         "bpm.heatmap"
       ],
-      "_haystack": "bpm.pivottable pivottable tableau croisé dynamique avec agrégation (sum, avg, count, min, max), tri et heatmap. affichage de données tableau croisé dynamique avec agrégation (sum, avg, count, min, max), tri et heatmap.   data*: record<string, unknown>[]\n  rowkey*: string\n  colkey*: string\n  valuekey*: string\n  agg?: pivotagg\n  classname?: string bpm.pivottable({ data: rows, rowkey: \"region\", colkey: \"produit\", valuekey: \"ventes\", agg: \"sum\" }) bpm.table bpm.dataexplorer bpm.heatmap"
+      "semantics": {
+        "semanticRole": "indicateur",
+        "frame": "kpi",
+        "indicator": {
+          "indicatorType": [
+            "distribution",
+            "compte"
+          ],
+          "directionality": "contextuel",
+          "temporality": "instantane"
+        },
+        "agentGuidance": {
+          "use": "Croiser une mesure agrégée selon deux dimensions (somme/moyenne/compte par ligne × colonne) : analyse multidimensionnelle, totaux par segment.",
+          "pairWith": [
+            "bpm.metric",
+            "bpm.heatmap",
+            "bpm.exportButton"
+          ],
+          "avoid": "Liste d'entités non agrégées (bpm.table) ou exploration libre tri/recherche/export (bpm.dataExplorer)."
+        },
+        "indicatorRelations": [
+          {
+            "type": "contraste-avec",
+            "target": "bpm.barChart",
+            "note": "agrégation croisée sur deux dimensions vs comparaison sur une seule dimension"
+          }
+        ],
+        "contextHints": [
+          "Données détaillées + une mesure agrégeable + 2 dimensions de regroupement ; l'agrégation porte le sens, pas les lignes brutes."
+        ],
+        "status": "proposed"
+      },
+      "_haystack": "bpm.pivottable pivottable tableau croisé dynamique avec agrégation (sum, avg, count, min, max), tri et heatmap. affichage de données tableau croisé dynamique avec agrégation (sum, avg, count, min, max), tri et heatmap.   data*: record<string, unknown>[]\n  rowkey*: string\n  colkey*: string\n  valuekey*: string\n  agg?: pivotagg\n  classname?: string bpm.pivottable({ data: rows, rowkey: \"region\", colkey: \"produit\", valuekey: \"ventes\", agg: \"sum\" }) bpm.table bpm.dataexplorer bpm.heatmap indicateur kpi distribution compte contextuel instantane croiser une mesure agrégée selon deux dimensions (somme/moyenne/compte par ligne × colonne) : analyse multidimensionnelle, totaux par segment. bpm.metric bpm.heatmap bpm.exportbutton liste d'entités non agrégées (bpm.table) ou exploration libre tri/recherche/export (bpm.dataexplorer). données détaillées + une mesure agrégeable + 2 dimensions de regroupement ; l'agrégation porte le sens, pas les lignes brutes. contraste-avec bpm.barchart agrégation croisée sur deux dimensions vs comparaison sur une seule dimension"
     },
     {
       "slug": "plcconnector",
@@ -3661,7 +3792,7 @@
       "name": "bpm.radarChart",
       "description": "Graphique radar SVG pour comparer des valeurs sur plusieurs axes.",
       "category": "Graphiques",
-      "status": "uncurated",
+      "status": "curated",
       "fullDescription": "Graphique radar SVG pour comparer des valeurs sur plusieurs axes.",
       "props": "  axes*: string[]\n  values*: number[]\n  max?: number\n  width?: number\n  height?: number\n  className?: string\n  context?: InterpretContext  — Contexte de repère { reference, direction } : un anneau de repère pointillé est tracé au niveau de reference (même échelle que les axes). Pas de verdict agrégé : un polygone sur N axes hétérogènes n'a pas de couleur de jugement unique — la lecture se fait par axe vs l'anneau. Additif : sans context, rendu inchangé.",
       "example": "bpm.radarChart({ axes: [\"Vitesse\", \"Force\", \"Endurance\"], values: [80, 60, 90], max: 100 })",
@@ -3669,7 +3800,38 @@
         "bpm.plotlyChart",
         "bpm.lineChart"
       ],
-      "_haystack": "bpm.radarchart radarchart graphique radar svg pour comparer des valeurs sur plusieurs axes. graphiques graphique radar svg pour comparer des valeurs sur plusieurs axes.   axes*: string[]\n  values*: number[]\n  max?: number\n  width?: number\n  height?: number\n  classname?: string\n  context?: interpretcontext  — contexte de repère { reference, direction } : un anneau de repère pointillé est tracé au niveau de reference (même échelle que les axes). pas de verdict agrégé : un polygone sur n axes hétérogènes n'a pas de couleur de jugement unique — la lecture se fait par axe vs l'anneau. additif : sans context, rendu inchangé. bpm.radarchart({ axes: [\"vitesse\", \"force\", \"endurance\"], values: [80, 60, 90], max: 100 }) bpm.plotlychart bpm.linechart"
+      "semantics": {
+        "semanticRole": "indicateur",
+        "frame": "kpi",
+        "indicator": {
+          "indicatorType": [
+            "distribution"
+          ],
+          "directionality": "contextuel",
+          "temporality": "instantane"
+        },
+        "agentGuidance": {
+          "use": "Comparer un même sujet sur plusieurs axes normés (profil multi-critères) : forces et faiblesses d'un coup d'œil.",
+          "pairWith": [
+            "bpm.metric",
+            "bpm.comparison",
+            "bpm.caption"
+          ],
+          "avoid": "Comparaison sur un seul axe (bpm.barChart) ou évolution temporelle (bpm.lineChart)."
+        },
+        "indicatorRelations": [
+          {
+            "type": "contraste-avec",
+            "target": "bpm.barChart",
+            "note": "profil multi-axes d'un sujet vs comparaison d'une mesure entre catégories"
+          }
+        ],
+        "contextHints": [
+          "3+ axes de même échelle normalisée pour un ou quelques sujets comparés ; au-delà de ~8 axes la lecture se dégrade."
+        ],
+        "status": "proposed"
+      },
+      "_haystack": "bpm.radarchart radarchart graphique radar svg pour comparer des valeurs sur plusieurs axes. graphiques graphique radar svg pour comparer des valeurs sur plusieurs axes.   axes*: string[]\n  values*: number[]\n  max?: number\n  width?: number\n  height?: number\n  classname?: string\n  context?: interpretcontext  — contexte de repère { reference, direction } : un anneau de repère pointillé est tracé au niveau de reference (même échelle que les axes). pas de verdict agrégé : un polygone sur n axes hétérogènes n'a pas de couleur de jugement unique — la lecture se fait par axe vs l'anneau. additif : sans context, rendu inchangé. bpm.radarchart({ axes: [\"vitesse\", \"force\", \"endurance\"], values: [80, 60, 90], max: 100 }) bpm.plotlychart bpm.linechart indicateur kpi distribution contextuel instantane comparer un même sujet sur plusieurs axes normés (profil multi-critères) : forces et faiblesses d'un coup d'œil. bpm.metric bpm.comparison bpm.caption comparaison sur un seul axe (bpm.barchart) ou évolution temporelle (bpm.linechart). 3+ axes de même échelle normalisée pour un ou quelques sujets comparés ; au-delà de ~8 axes la lecture se dégrade. contraste-avec bpm.barchart profil multi-axes d'un sujet vs comparaison d'une mesure entre catégories"
     },
     {
       "slug": "relationgraph",
@@ -3739,7 +3901,7 @@
       "name": "bpm.scheduler",
       "description": "Calendrier/agenda avec vues jour, semaine et mois, gestion d'événements et de ressources.",
       "category": "Affichage de données",
-      "status": "uncurated",
+      "status": "curated",
       "fullDescription": "Calendrier/agenda avec vues jour, semaine et mois, gestion d'événements et de ressources.",
       "props": "  view*: \"day\" | \"week\" | \"month\"\n  events*: SchedulerEvent[]\n  resources?: SchedulerResource[]\n  onEventClick*: (ev: SchedulerEvent) => void\n  onSlotClick*: (dayStart: Date, hour: number) => void\n  startHour?: number\n  endHour?: number",
       "example": "bpm.scheduler({ view: \"week\", events: [{ id: \"1\", title: \"Réunion\", start: \"2024-01-15T10:00\", end: \"2024-01-15T11:00\" }], onEventClick: handleEvent, onSlotClick: handleSlot })",
@@ -3747,7 +3909,24 @@
         "bpm.calendar",
         "bpm.timeline"
       ],
-      "_haystack": "bpm.scheduler scheduler calendrier/agenda avec vues jour, semaine et mois, gestion d'événements et de ressources. affichage de données calendrier/agenda avec vues jour, semaine et mois, gestion d'événements et de ressources.   view*: \"day\" | \"week\" | \"month\"\n  events*: schedulerevent[]\n  resources?: schedulerresource[]\n  oneventclick*: (ev: schedulerevent) => void\n  onslotclick*: (daystart: date, hour: number) => void\n  starthour?: number\n  endhour?: number bpm.scheduler({ view: \"week\", events: [{ id: \"1\", title: \"réunion\", start: \"2024-01-15t10:00\", end: \"2024-01-15t11:00\" }], oneventclick: handleevent, onslotclick: handleslot }) bpm.calendar bpm.timeline"
+      "semantics": {
+        "semanticRole": "composite",
+        "frame": "event",
+        "agentGuidance": {
+          "use": "Agenda autoporteur d'événements positionnés dans le temps (jour/semaine/mois) : afficher, créer au clic sur un créneau, répartir par ressource.",
+          "pairWith": [
+            "bpm.timeline",
+            "bpm.badge",
+            "bpm.drawer"
+          ],
+          "avoid": "Planning de tâches à dépendances (bpm.gantt) ou historique chronologique en lecture seule (bpm.timeline)."
+        },
+        "contextHints": [
+          "Événements datés (start/end, ressource optionnelle) projetés sur une grille calendaire ; le clic sur créneau ouvre la création."
+        ],
+        "status": "proposed"
+      },
+      "_haystack": "bpm.scheduler scheduler calendrier/agenda avec vues jour, semaine et mois, gestion d'événements et de ressources. affichage de données calendrier/agenda avec vues jour, semaine et mois, gestion d'événements et de ressources.   view*: \"day\" | \"week\" | \"month\"\n  events*: schedulerevent[]\n  resources?: schedulerresource[]\n  oneventclick*: (ev: schedulerevent) => void\n  onslotclick*: (daystart: date, hour: number) => void\n  starthour?: number\n  endhour?: number bpm.scheduler({ view: \"week\", events: [{ id: \"1\", title: \"réunion\", start: \"2024-01-15t10:00\", end: \"2024-01-15t11:00\" }], oneventclick: handleevent, onslotclick: handleslot }) bpm.calendar bpm.timeline composite event agenda autoporteur d'événements positionnés dans le temps (jour/semaine/mois) : afficher, créer au clic sur un créneau, répartir par ressource. bpm.timeline bpm.badge bpm.drawer planning de tâches à dépendances (bpm.gantt) ou historique chronologique en lecture seule (bpm.timeline). événements datés (start/end, ressource optionnelle) projetés sur une grille calendaire ; le clic sur créneau ouvre la création."
     },
     {
       "slug": "sensorgrid",
@@ -3857,10 +4036,27 @@
       "name": "bpm.toggle",
       "description": "Interrupteur on/off.",
       "category": "Interaction",
-      "status": "uncurated",
+      "status": "curated",
       "fullDescription": "Interrupteur on/off.",
       "props": "  label?: React.ReactNode\n  value?: boolean\n  onChange?: (checked: boolean) => void\n  disabled?: boolean\n  className?: string",
-      "_haystack": "bpm.toggle toggle interrupteur on/off. interaction interrupteur on/off.   label?: react.reactnode\n  value?: boolean\n  onchange?: (checked: boolean) => void\n  disabled?: boolean\n  classname?: string"
+      "semantics": {
+        "semanticRole": "saisie",
+        "frame": "entity",
+        "agentGuidance": {
+          "use": "Basculer immédiatement un état binaire on/off (activer un mode, une option de réglage) avec effet direct, sans étape de validation.",
+          "pairWith": [
+            "bpm.filterPanel",
+            "bpm.card",
+            "bpm.labelValue"
+          ],
+          "avoid": "Booléen confirmé dans un formulaire à valider (bpm.checkbox) ou choix exclusif entre plusieurs valeurs (bpm.radioGroup)."
+        },
+        "contextHints": [
+          "Field boolean dont le changement s'applique sans validation ; l'intitulé énonce l'état « activé »."
+        ],
+        "status": "proposed"
+      },
+      "_haystack": "bpm.toggle toggle interrupteur on/off. interaction interrupteur on/off.   label?: react.reactnode\n  value?: boolean\n  onchange?: (checked: boolean) => void\n  disabled?: boolean\n  classname?: string saisie entity basculer immédiatement un état binaire on/off (activer un mode, une option de réglage) avec effet direct, sans étape de validation. bpm.filterpanel bpm.card bpm.labelvalue booléen confirmé dans un formulaire à valider (bpm.checkbox) ou choix exclusif entre plusieurs valeurs (bpm.radiogroup). field boolean dont le changement s'applique sans validation ; l'intitulé énonce l'état « activé »."
     },
     {
       "slug": "tour",

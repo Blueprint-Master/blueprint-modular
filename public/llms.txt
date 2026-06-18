@@ -1,7 +1,7 @@
 # Blueprint Modular — Agent Context File
 # Version React (@blueprint-modular/core, npm) : 0.3.1
 # Version Python (blueprint-modular, PyPI)      : 0.1.54
-# Date    : 2026-06-17
+# Date    : 2026-06-18
 # URL canonique : https://blueprint-modular.com/llms.txt
 #
 # Ce fichier est la référence machine de @blueprint-modular/core.
@@ -700,6 +700,8 @@ Page CRUD générique : table + filtres + modal de création/édition/détail c�
 
 ## bpm.funnelChart
 @component bpm.funnelChart @description Graphique en entonnoir (tunnel de conversion).
+@semantic role=indicateur frame=kpi type=taux,compte direction=hausse=bon temporalite=instantane status=proposed
+@guidance Conversion étape par étape d'un tunnel : volume restant et taux de passage entre phases (acquisition, activation, achat). Associer : bpm.metric, bpm.statusTracker, bpm.caption. Éviter : Étapes d'un parcours sans déperdition mesurée (bpm.stepper) ou comparaison catégorielle simple (bpm.barChart).
 ```
   stages*: FunnelStage[]
   showPercentage?: boolean
@@ -709,6 +711,8 @@ Page CRUD générique : table + filtres + modal de création/édition/détail c�
 
 ## bpm.gantt
 @component bpm.gantt @description Diagramme de Gantt (tâches, jalons, dépendances).
+@semantic role=affichage frame=workflow status=needs-curation
+@guidance Planifier et suivre des tâches datées avec dépendances et jalons sur un axe temporel : qui fait quoi, quand, dans quel ordre. Associer : bpm.statusTracker, bpm.timeline, bpm.badge. Éviter : Historique d'événements passés en lecture seule (bpm.timeline) ou agenda d'événements ponctuels (bpm.scheduler).
 ```
   tasks*: GanttTask[]
   viewMode*: "day" | "week" | "month"
@@ -768,6 +772,8 @@ Carte Leaflet chargée côté client uniquement (évite erreurs SSR). */ const L
 
 ## bpm.heatmap
 @component bpm.heatmap @description Grille de valeurs numériques avec dégradé de couleur, infobulle au survol et clic optionnel sur cellule. @example bpm.heatmap({ data: [[1,2],[3,4]], xLabels: ["A","B"], yLabels: ["X","Y"], colorScale: { min: "#fff", max: "#f00" } }) @param {object} props @param {number[][]} props.data - Matrice 2D de valeurs numériques. Obligatoire. @param {string[]} props.xLabels - Libellés des colonnes. Obligatoire. @param {string[]} props.yLabels - Libellés des lignes. Obligatoire. @param {{ min: string; max: string }} props.colorScale - Couleurs min/max du dégradé. Obligatoire. @param {number} [props.valueMin] - Valeur minimale pour l'échelle. Optionnel, calculé automatiquement. @param {number} [props.valueMax] - Valeur maximale pour l'échelle. Optionnel, calculé automatiquement. @param {boolean} [props.showValues=false] - Affiche les valeurs dans les cellules. Optionnel. @param {function} [props.onCellClick] - Callback au clic sur une cellule (row, col, value). Optionnel. @param {string} [props.className=""] - Classes CSS additionnelles. Optionnel. @param {InterpretContext} [props.context] - Contexte de jugement : chaque cellule est jugée vs le repère (liseré coloré sur les écarts, anomalies >2σ — comparisonFrame ou matrice — soulignées, infobulle enrichie du verdict). Optionnel.
+@semantic role=indicateur frame=kpi type=distribution,compte direction=contextuel temporalite=instantane status=proposed
+@guidance Intensité d'une mesure sur deux dimensions catégorielles : repérer concentrations, creux et points chauds dans une matrice. Associer : bpm.metric, bpm.caption, bpm.filterPanel. Éviter : Comparaison sur une seule dimension (bpm.barChart) ou évolution temporelle continue (bpm.lineChart).
 ```
   data*: number[][]
   xLabels*: string[]
@@ -1055,6 +1061,8 @@ Locales courants pour le format nombre (ex. "fr-FR" → 1 000,50, "en-US" → 1,
 
 ## bpm.metricRow
 @component bpm.metricRow @description Ligne de métriques (conteneur pour plusieurs bpm.metric).
+@semantic role=conteneur frame=section status=proposed
+@guidance Aligner plusieurs KPI scalaires de même rang en tête de tableau de bord : une rangée de bpm.metric lus ensemble. Associer : bpm.metric, bpm.lineChart, bpm.card. Éviter : Une seule mesure (bpm.metric seul) ou des éléments hétérogènes de poids visuel inégal (bpm.grid, bpm.column).
 ```
   children*: React.ReactNode
   className?: string
@@ -1206,6 +1214,8 @@ Conteneur page (core) — props : children.
 
 ## bpm.pivotTable
 @component bpm.pivotTable @description Tableau croisé dynamique avec agrégation (sum, avg, count, min, max), tri et heatmap. @example bpm.pivotTable({ data: rows, rowKey: "region", colKey: "produit", valueKey: "ventes", agg: "sum" }) @param {object} props @param {Record<string, unknown>[]} props.data - Données source. Obligatoire. @param {string} props.rowKey - Clé pour les lignes. Obligatoire. @param {string} props.colKey - Clé pour les colonnes. Obligatoire. @param {string} props.valueKey - Clé pour les valeurs à agréger. Obligatoire. @param {"sum"|"avg"|"count"|"min"|"max"} [props.agg="sum"] - Fonction d'agrégation. Optionnel. @param {string} [props.className=""] - Classes CSS additionnelles. Optionnel. @associated bpm.table, bpm.dataExplorer, bpm.heatmap
+@semantic role=indicateur frame=kpi type=distribution,compte direction=contextuel temporalite=instantane status=proposed
+@guidance Croiser une mesure agrégée selon deux dimensions (somme/moyenne/compte par ligne × colonne) : analyse multidimensionnelle, totaux par segment. Associer : bpm.metric, bpm.heatmap, bpm.exportButton. Éviter : Liste d'entités non agrégées (bpm.table) ou exploration libre tri/recherche/export (bpm.dataExplorer).
 ```
   data*: Record<string, unknown>[]
   rowKey*: string
@@ -1327,6 +1337,8 @@ Conteneur page (core) — props : children.
 
 ## bpm.radarChart
 @component bpm.radarChart @description Graphique radar SVG pour comparer des valeurs sur plusieurs axes. @example bpm.radarChart({ axes: ["Vitesse", "Force", "Endurance"], values: [80, 60, 90], max: 100 }) @param {object} props @param {string[]} props.axes - Libellés des axes. Obligatoire. @param {number[]} props.values - Valeurs correspondantes aux axes. Obligatoire. @param {number} [props.max] - Valeur maximale de l'échelle. Optionnel, calculé auto. @param {number} [props.width=320] - Largeur du SVG. Optionnel. @param {number} [props.height=320] - Hauteur du SVG. Optionnel. @param {string} [props.className=""] - Classes CSS additionnelles. Optionnel. @associated bpm.plotlyChart, bpm.lineChart
+@semantic role=indicateur frame=kpi type=distribution direction=contextuel temporalite=instantane status=proposed
+@guidance Comparer un même sujet sur plusieurs axes normés (profil multi-critères) : forces et faiblesses d'un coup d'œil. Associer : bpm.metric, bpm.comparison, bpm.caption. Éviter : Comparaison sur un seul axe (bpm.barChart) ou évolution temporelle (bpm.lineChart).
 ```
   axes*: string[]
   values*: number[]
@@ -1429,6 +1441,8 @@ Conteneur page (core) — props : children.
 
 ## bpm.scheduler
 @component bpm.scheduler @description Calendrier/agenda avec vues jour, semaine et mois, gestion d'événements et de ressources. @example bpm.scheduler({ view: "week", events: [{ id: "1", title: "Réunion", start: "2024-01-15T10:00", end: "2024-01-15T11:00" }], onEventClick: handleEvent, onSlotClick: handleSlot }) @param {object} props @param {"day"|"week"|"month"} props.view - Vue active. Obligatoire. @param {SchedulerEvent[]} props.events - Liste des événements (id, title, start, end, resourceId?, color?). Obligatoire. @param {SchedulerResource[]} [props.resources] - Ressources associables (id, label). Optionnel. @param {function} props.onEventClick - Callback au clic sur un événement. Obligatoire. @param {function} props.onSlotClick - Callback au clic sur un créneau vide (dayStart, hour). Obligatoire. @param {number} [props.startHour=8] - Première heure affichée. Optionnel. @param {number} [props.endHour=20] - Dernière heure affichée. Optionnel. @associated bpm.calendar, bpm.timeline const DAY_MS = 24 * 60 * 60 * 1000; function parseMs(iso: string): number { const t = Date.parse(iso); return Number.isNaN(t) ? 0 : t; } function startOfLocalDay(d: Date): Date { return new Date(d.getFullYear(), d.getMonth(), d.getDate()); } function addDays(d: Date, n: number): Date { const x = new Date(d); x.setDate(x.getDate() + n); return x; } function startOfWeekMonday(d: Date): Date { const s = startOfLocalDay(d); const day = s.getDay(); const diff = day === 0 ? -6 : 1 - day; return addDays(s, diff); } function daysInMonth(y: number, m: number): number { return new Date(y, m + 1, 0).getDate(); } const WEEKDAY_LABELS = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"]; export type SchedulerEvent = { id: string; title: string; start: string; end: string; resourceId?: string; color?: string; }; export type SchedulerResource = { id: string; label: string; }; @component bpm.scheduler @description Planificateur / agenda (semaine, jour, mois).
+@semantic role=composite frame=event status=proposed
+@guidance Agenda autoporteur d'événements positionnés dans le temps (jour/semaine/mois) : afficher, créer au clic sur un créneau, répartir par ressource. Associer : bpm.timeline, bpm.badge, bpm.drawer. Éviter : Planning de tâches à dépendances (bpm.gantt) ou historique chronologique en lecture seule (bpm.timeline).
 ```
   view*: "day" | "week" | "month"
   events*: SchedulerEvent[]
@@ -1852,6 +1866,8 @@ Toast visuel ; en production préférer useToast().
 
 ## bpm.toggle
 @component bpm.toggle @description Interrupteur on/off.
+@semantic role=saisie frame=entity status=proposed
+@guidance Basculer immédiatement un état binaire on/off (activer un mode, une option de réglage) avec effet direct, sans étape de validation. Associer : bpm.filterPanel, bpm.card, bpm.labelValue. Éviter : Booléen confirmé dans un formulaire à valider (bpm.checkbox) ou choix exclusif entre plusieurs valeurs (bpm.radioGroup).
 ```
   label?: React.ReactNode
   value?: boolean
