@@ -4,7 +4,7 @@ import React, { useCallback, useEffect, useRef, useState } from "react";
 
 /**
  * @component bpm.splitView
- * @description Deux volets redimensionnables avec séparateur draggable. Empile verticalement sous 640px.
+ * @description Deux volets redimensionnables avec séparateur draggable. Empile verticalement sous 640px. Cycle de vie : les deux volets restent MONTÉS — leur état React est préservé.
  * @example
  * bpm.splitView({ left: <List />, right: <Detail />, defaultSplit: 30, direction: "horizontal" })
  *
