@@ -54,7 +54,7 @@ function rowText<T extends Record<string, unknown>>(item: T, columns: MasterDeta
 
 /**
  * @component bpm.masterDetail
- * @description Liste à gauche et détail à droite ; sur mobile, le détail s’ouvre en plein cadre avec retour.
+ * @description Liste à gauche et détail à droite ; sur mobile, le détail s’ouvre en plein cadre avec retour. Cycle de vie : liste et détail restent MONTÉS — l'état React est préservé.
  * @example
  * bpm.masterDetail({ items, columns: [{ key: "name", label: "Nom" }], renderDetail: (it) => <div>{it.name}</div>, onSelect: setSel })
  * @props

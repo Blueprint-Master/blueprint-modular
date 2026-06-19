@@ -16,7 +16,7 @@ export interface ToggleProps {
 
 /**
  * @component bpm.toggle
- * @description Interrupteur on/off pour activer ou désactiver une option (notifications, mode maintenance).
+ * @description Interrupteur on/off pour activer ou désactiver une option (notifications, mode maintenance). Prop contrôlée : `value` (boolean) — PAS `checked` ; `checked` est la prop de bpm.checkbox, ne pas confondre.
  * @example
  * bpm.toggle({ label: "Notifications email", value: true, onChange: (v) => setNotif(v) })
  * @props

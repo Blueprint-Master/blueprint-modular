@@ -26,7 +26,7 @@ export interface WizardFormProps {
 
 /**
  * @component bpm.wizardForm
- * @description Assistant multi-étapes avec stepper, validation et transition slide.
+ * @description Assistant multi-étapes avec stepper, validation et transition slide. Cycle de vie : seule l'étape COURANTE est rendue — les étapes inactives sont DÉMONTÉES, leur état n'est pas préservé. Persister les valeurs de chaque étape dans le parent.
  * @example
  * bpm.wizardForm({ steps: [{ title: "Profil", content: <>…</> }], onComplete: handleDone })
  * @props

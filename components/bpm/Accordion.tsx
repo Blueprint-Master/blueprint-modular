@@ -21,7 +21,7 @@ export interface AccordionProps {
 
 /**
  * @component bpm.accordion
- * @description Liste de sections repliables (FAQ, procedures) avec une ou plusieurs ouvertes.
+ * @description Liste de sections repliables (FAQ, procedures) avec une ou plusieurs ouvertes. Cycle de vie : le content des sections fermées reste MONTÉ (masqué en CSS) — l'état React est préservé à l'ouverture/fermeture (contrairement à bpm.tabs qui démonte).
  * @example
  * bpm.accordion({ sections: [{ title: "Livraison", content: "Delai 48h." }] })
  * @props

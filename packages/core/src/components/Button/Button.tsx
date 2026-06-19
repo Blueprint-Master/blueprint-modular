@@ -42,60 +42,63 @@ type VariantStyle = {
   active: React.CSSProperties;
 };
 
-/* Variants — styles inline hardcodés (aucune var() CSS) */
+/* Variants — couleurs de charte tokenisées : var(--bpm-*, <hex>) ; le fallback
+   préserve l'apparence actuelle tant que le token n'est pas défini, et permet la
+   thématisation (changer --bpm-accent rethématise les boutons). Les ombres rgba
+   restent structurelles (non thématiques). */
 const VARIANTS: Record<ButtonVariant, VariantStyle> = {
   primary: {
     base: {
-      background: "#2563eb",
-      color: "#ffffff",
-      border: "1px solid #1d4ed8",
+      background: "var(--bpm-accent, #2563eb)",
+      color: "var(--bpm-accent-contrast, #ffffff)",
+      border: "1px solid var(--bpm-accent-border, #1d4ed8)",
       boxShadow: "0 1px 2px rgba(0,0,0,0.08)",
     },
-    hover: { background: "#1d4ed8" },
-    active: { background: "#1e40af" },
+    hover: { background: "var(--bpm-accent-hover, #1d4ed8)" },
+    active: { background: "var(--bpm-accent-active, #1e40af)" },
   },
   secondary: {
     base: {
-      background: "#ffffff",
-      color: "#111827",
-      border: "1px solid #c8cdd6",
+      background: "var(--bpm-surface, #ffffff)",
+      color: "var(--bpm-text, #111827)",
+      border: "1px solid var(--bpm-border, #c8cdd6)",
       boxShadow: "0 1px 2px rgba(0,0,0,0.08)",
     },
-    hover: { background: "#f4f5f7" },
-    active: { background: "#e9ecef" },
+    hover: { background: "var(--bpm-surface-hover, #f4f5f7)" },
+    active: { background: "var(--bpm-surface-active, #e9ecef)" },
   },
   outline: {
     base: {
       background: "transparent",
-      color: "#2563eb",
-      border: "1px solid #93c5fd",
+      color: "var(--bpm-accent, #2563eb)",
+      border: "1px solid var(--bpm-accent-muted, #93c5fd)",
     },
-    hover: { background: "#eff6ff", borderColor: "#2563eb" },
-    active: { background: "#dbeafe" },
+    hover: { background: "var(--bpm-accent-subtle, #eff6ff)", borderColor: "var(--bpm-accent, #2563eb)" },
+    active: { background: "var(--bpm-accent-subtle-active, #dbeafe)" },
   },
   ghost: {
     base: {
       background: "transparent",
-      color: "#6b7280",
+      color: "var(--bpm-text-secondary, #6b7280)",
       border: "1px solid transparent",
     },
-    hover: { background: "#f4f5f7", color: "#111827" },
-    active: { background: "#e9ecef" },
+    hover: { background: "var(--bpm-surface-hover, #f4f5f7)", color: "var(--bpm-text, #111827)" },
+    active: { background: "var(--bpm-surface-active, #e9ecef)" },
   },
   destructive: {
     base: {
-      background: "#dc2626",
-      color: "#ffffff",
-      border: "1px solid #b91c1c",
+      background: "var(--bpm-error, #dc2626)",
+      color: "var(--bpm-error-contrast, #ffffff)",
+      border: "1px solid var(--bpm-error-border, #b91c1c)",
       boxShadow: "0 1px 2px rgba(0,0,0,0.08)",
     },
-    hover: { background: "#b91c1c" },
-    active: { background: "#991b1b" },
+    hover: { background: "var(--bpm-error-hover, #b91c1c)" },
+    active: { background: "var(--bpm-error-active, #991b1b)" },
   },
   link: {
     base: {
       background: "transparent",
-      color: "#2563eb",
+      color: "var(--bpm-accent, #2563eb)",
       border: "none",
       paddingLeft: 0,
       paddingRight: 0,
@@ -107,19 +110,19 @@ const VARIANTS: Record<ButtonVariant, VariantStyle> = {
   },
 };
 
-/** ghost-raised (toolbar) : hover surface + shadow — valeurs hardcodées */
+/** ghost-raised (toolbar) : hover surface + shadow — couleurs tokenisées (fallback = valeur actuelle) */
 const GHOST_RAISED: VariantStyle = {
   base: {
     background: "transparent",
-    color: "#6b7280",
+    color: "var(--bpm-text-secondary, #6b7280)",
     border: "1px solid transparent",
   },
   hover: {
-    background: "#ffffff",
-    color: "#111827",
+    background: "var(--bpm-surface, #ffffff)",
+    color: "var(--bpm-text, #111827)",
     boxShadow: "0 1px 2px rgba(0,0,0,0.1)",
   },
-  active: { background: "#f1f3f5" },
+  active: { background: "var(--bpm-surface-active, #f1f3f5)" },
 };
 
 function Spinner({ size = 14 }: { size: number }) {
@@ -259,6 +262,7 @@ export function Button({
       <style dangerouslySetInnerHTML={{ __html: SPINNER_STYLE }} />
       <button
         type={type}
+        className="bpm-button"
         style={baseStyle}
         disabled={disabled || loading}
         onClick={onClick}
