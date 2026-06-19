@@ -42,8 +42,10 @@ MCP_REGISTRY = REPO_ROOT / "lib" / "generated" / "mcp-registry.json"
 # Compteur de référence de curation (entrées "curated" du registre MCP).
 # Garde de NON-RÉGRESSION : warning si on descend en dessous, jamais d'échec.
 # À relever volontairement (avec la PR qui ajoute de la curation), jamais à
-# baisser pour masquer une perte. Référence posée après PR1.
-CURATED_BASELINE = 101
+# baisser pour masquer une perte. 101 après PR1 ; 109 après CAT-3 (curation des
+# 8 primitives : metricRow, toggle, gantt, scheduler, heatmap, funnelChart,
+# pivotTable, radarChart).
+CURATED_BASELINE = 109
 
 
 def load_generator():

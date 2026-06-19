@@ -1237,6 +1237,127 @@
       },
       "contextHints": ["Liste de modèles avec capacités ; le choix conditionne coût/latence/qualité de l'AIFeature."],
       "status": "proposed"
+    },
+    "metricrow": {
+      "semanticRole": "conteneur",
+      "frame": "section",
+      "agentGuidance": {
+        "use": "Aligner plusieurs KPI scalaires de même rang en tête de tableau de bord : une rangée de bpm.metric lus ensemble.",
+        "pairWith": ["bpm.metric", "bpm.lineChart", "bpm.card"],
+        "avoid": "Une seule mesure (bpm.metric seul) ou des éléments hétérogènes de poids visuel inégal (bpm.grid, bpm.column)."
+      },
+      "contextHints": ["Contient des bpm.metric de même nature et échelle de lecture ; 2 à 5 par rangée pour rester scannable."],
+      "status": "proposed"
+    },
+    "toggle": {
+      "semanticRole": "saisie",
+      "frame": "entity",
+      "agentGuidance": {
+        "use": "Basculer immédiatement un état binaire on/off (activer un mode, une option de réglage) avec effet direct, sans étape de validation.",
+        "pairWith": ["bpm.filterPanel", "bpm.card", "bpm.labelValue"],
+        "avoid": "Booléen confirmé dans un formulaire à valider (bpm.checkbox) ou choix exclusif entre plusieurs valeurs (bpm.radioGroup)."
+      },
+      "contextHints": ["Field boolean dont le changement s'applique sans validation ; l'intitulé énonce l'état « activé »."],
+      "status": "proposed"
+    },
+    "gantt": {
+      "semanticRole": "affichage",
+      "frame": "workflow",
+      "agentGuidance": {
+        "use": "Planifier et suivre des tâches datées avec dépendances et jalons sur un axe temporel : qui fait quoi, quand, dans quel ordre.",
+        "pairWith": ["bpm.statusTracker", "bpm.timeline", "bpm.badge"],
+        "avoid": "Historique d'événements passés en lecture seule (bpm.timeline) ou agenda d'événements ponctuels (bpm.scheduler)."
+      },
+      "contextHints": ["Tâches avec start/end et dépendances, arrangées sur un axe temporel ; la todayLine situe l'avancement réel."],
+      "status": "needs-curation",
+      "curationQuestion": "gantt : simple affichage d'un planning ou indicateur de respect d'échéance (retard/avance vs jalons) ? Si indicateur, porter un bloc indicator (statut/progression, temporality série) et trancher le frame — workflow vs un frame 'planning' aujourd'hui absent de Ω."
+    },
+    "scheduler": {
+      "semanticRole": "composite",
+      "frame": "event",
+      "agentGuidance": {
+        "use": "Agenda autoporteur d'événements positionnés dans le temps (jour/semaine/mois) : afficher, créer au clic sur un créneau, répartir par ressource.",
+        "pairWith": ["bpm.timeline", "bpm.badge", "bpm.drawer"],
+        "avoid": "Planning de tâches à dépendances (bpm.gantt) ou historique chronologique en lecture seule (bpm.timeline)."
+      },
+      "contextHints": ["Événements datés (start/end, ressource optionnelle) projetés sur une grille calendaire ; le clic sur créneau ouvre la création."],
+      "status": "proposed"
+    },
+    "heatmap": {
+      "semanticRole": "indicateur",
+      "frame": "kpi",
+      "indicator": {
+        "indicatorType": ["distribution", "compte"],
+        "directionality": "contextuel",
+        "temporality": "instantane"
+      },
+      "agentGuidance": {
+        "use": "Intensité d'une mesure sur deux dimensions catégorielles : repérer concentrations, creux et points chauds dans une matrice.",
+        "pairWith": ["bpm.metric", "bpm.caption", "bpm.filterPanel"],
+        "avoid": "Comparaison sur une seule dimension (bpm.barChart) ou évolution temporelle continue (bpm.lineChart)."
+      },
+      "indicatorRelations": [
+        { "type": "contraste-avec", "target": "bpm.barChart", "note": "intensité sur deux axes catégoriels vs comparaison sur un seul axe" }
+      ],
+      "contextHints": ["Matrice 2D de valeurs de même unité (xLabels × yLabels) ; l'échelle de couleur porte le jugement."],
+      "status": "proposed"
+    },
+    "funnelchart": {
+      "semanticRole": "indicateur",
+      "frame": "kpi",
+      "indicator": {
+        "indicatorType": ["taux", "compte"],
+        "directionality": "hausse=bon",
+        "temporality": "instantane"
+      },
+      "agentGuidance": {
+        "use": "Conversion étape par étape d'un tunnel : volume restant et taux de passage entre phases (acquisition, activation, achat).",
+        "pairWith": ["bpm.metric", "bpm.statusTracker", "bpm.caption"],
+        "avoid": "Étapes d'un parcours sans déperdition mesurée (bpm.stepper) ou comparaison catégorielle simple (bpm.barChart)."
+      },
+      "indicatorRelations": [
+        { "type": "contraste-avec", "target": "bpm.statusTracker", "note": "déperdition mesurée entre étapes vs position dans des étapes normées" }
+      ],
+      "contextHints": ["Étapes ordonnées d'un même parcours à effectif décroissant ; chaque étape ⊆ la précédente."],
+      "status": "proposed"
+    },
+    "pivottable": {
+      "semanticRole": "indicateur",
+      "frame": "kpi",
+      "indicator": {
+        "indicatorType": ["distribution", "compte"],
+        "directionality": "contextuel",
+        "temporality": "instantane"
+      },
+      "agentGuidance": {
+        "use": "Croiser une mesure agrégée selon deux dimensions (somme/moyenne/compte par ligne × colonne) : analyse multidimensionnelle, totaux par segment.",
+        "pairWith": ["bpm.metric", "bpm.heatmap", "bpm.exportButton"],
+        "avoid": "Liste d'entités non agrégées (bpm.table) ou exploration libre tri/recherche/export (bpm.dataExplorer)."
+      },
+      "indicatorRelations": [
+        { "type": "contraste-avec", "target": "bpm.barChart", "note": "agrégation croisée sur deux dimensions vs comparaison sur une seule dimension" }
+      ],
+      "contextHints": ["Données détaillées + une mesure agrégeable + 2 dimensions de regroupement ; l'agrégation porte le sens, pas les lignes brutes."],
+      "status": "proposed"
+    },
+    "radarchart": {
+      "semanticRole": "indicateur",
+      "frame": "kpi",
+      "indicator": {
+        "indicatorType": ["distribution"],
+        "directionality": "contextuel",
+        "temporality": "instantane"
+      },
+      "agentGuidance": {
+        "use": "Comparer un même sujet sur plusieurs axes normés (profil multi-critères) : forces et faiblesses d'un coup d'œil.",
+        "pairWith": ["bpm.metric", "bpm.comparison", "bpm.caption"],
+        "avoid": "Comparaison sur un seul axe (bpm.barChart) ou évolution temporelle (bpm.lineChart)."
+      },
+      "indicatorRelations": [
+        { "type": "contraste-avec", "target": "bpm.barChart", "note": "profil multi-axes d'un sujet vs comparaison d'une mesure entre catégories" }
+      ],
+      "contextHints": ["3+ axes de même échelle normalisée pour un ou quelques sujets comparés ; au-delà de ~8 axes la lecture se dégrade."],
+      "status": "proposed"
     }
   }
 }
