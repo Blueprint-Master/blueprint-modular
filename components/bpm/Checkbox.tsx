@@ -16,7 +16,7 @@ export interface CheckboxProps {
 
 /**
  * @component bpm.checkbox
- * @description Case a cocher pour choix binaire (acceptation CGU, option activée).
+ * @description Case a cocher pour choix binaire (acceptation CGU, option activée). Prop contrôlée : `checked` (boolean) — PAS `value` ; `value` est la prop de bpm.toggle, ne pas confondre.
  * @example
  * bpm.checkbox({ label: "J'accepte les conditions", checked: false, onChange: setAccepted })
  * @props

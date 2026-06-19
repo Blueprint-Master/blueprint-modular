@@ -627,37 +627,37 @@
     {
       "slug": "addressinput",
       "name": "bpm.addressInput",
-      "description": "Champ de saisie d'adresse avec autocomplétion.",
+      "description": "Champ de saisie d'adresse avec mode simple ou champs séparés (ligne 1, ligne 2, code postal, ville) et validation FR.",
       "category": "Interaction"
     },
     {
       "slug": "aiquerybar",
       "name": "bpm.aiQueryBar",
-      "description": "Barre de requête IA (langage naturel → résultat structuré).",
+      "description": "Barre de requête IA permettant à l'utilisateur de poser des questions sur ses données avec suggestions et historique.",
       "category": "IA & Spécialisés"
     },
     {
       "slug": "alarmpanel",
       "name": "bpm.alarmPanel",
-      "description": "Panneau d'alarmes industrielles (active, accusée, résolue).",
+      "description": "Liste d’alarmes triée par gravité avec accusé de réception, suppression et clignotement pour les alertes critiques.",
       "category": "Feedback"
     },
     {
       "slug": "assistantpanel",
       "name": "bpm.assistantPanel",
-      "description": "Panneau assistant IA (chips, saisie, réponses).",
+      "description": "Panneau d'assistant IA en drawer latéral avec questions pré-configurées et streaming de réponses.",
       "category": "IA & Spécialisés"
     },
     {
       "slug": "breadcrumbs",
       "name": "bpm.breadcrumbs",
-      "description": "Fil d'Ariane avec items cliquables.",
+      "description": "Fil d’Ariane avancé avec séparateur personnalisable et réduction automatique si trop d’entrées.",
       "category": "Navigation"
     },
     {
       "slug": "changelog",
       "name": "bpm.changelog",
-      "description": "Journal des modifications avec catégories et versions.",
+      "description": "Journal des modifications affichant avant/après avec acteur, date et regroupement optionnel par jour.",
       "category": "Affichage de données"
     },
     {
@@ -669,67 +669,67 @@
     {
       "slug": "commentthread",
       "name": "bpm.commentThread",
-      "description": "Fil de commentaires avec réponses et avatars.",
+      "description": "Fil de commentaires récursif avec réponses inline, dates relatives et profondeur configurable.",
       "category": "Affichage de données"
     },
     {
       "slug": "comparison",
       "name": "bpm.comparison",
-      "description": "Tableau de comparaison multi-items.",
+      "description": "Tableau de comparaison multi-critères avec mise en évidence optionnelle des meilleures valeurs.",
       "category": "Affichage de données"
     },
     {
       "slug": "contextmenu",
       "name": "bpm.contextMenu",
-      "description": "Menu contextuel (clic droit ou clic bouton).",
+      "description": "Menu contextuel positionné dynamiquement, déclenché par clic droit ou clic simple.",
       "category": "Interaction"
     },
     {
       "slug": "decisiontree",
       "name": "bpm.decisionTree",
-      "description": "Arbre de décision interactif (questions, actions, résultats).",
+      "description": "Arbre de décision interactif avec questions (losanges), actions et résultats navigables.",
       "category": "Affichage de données"
     },
     {
       "slug": "drilldown",
       "name": "bpm.drillDown",
-      "description": "Navigation drill-down multi-niveaux dans des données hiérarchiques.",
+      "description": "Navigation multi-niveaux avec fil d'Ariane pour explorer des données hiérarchiques par clic sur les lignes.",
       "category": "Affichage de données"
     },
     {
       "slug": "emailcomposer",
       "name": "bpm.emailComposer",
-      "description": "Composeur d'email (To, CC, objet, corps riche).",
+      "description": "Formulaire de composition d'email avec éditeur riche, modèles prédéfinis et envoi.",
       "category": "Interaction"
     },
     {
       "slug": "exportbutton",
       "name": "bpm.exportButton",
-      "description": "Bouton d'export de données (CSV, JSON, Excel).",
+      "description": "Bouton d'export avec menu déroulant pour télécharger en CSV ou JSON avec configuration BOM/délimiteur.",
       "category": "Interaction"
     },
     {
       "slug": "funnelchart",
       "name": "bpm.funnelChart",
-      "description": "Graphique en entonnoir (tunnel de conversion).",
+      "description": "Graphique en entonnoir pour visualiser les étapes d'un processus de conversion avec pourcentages.",
       "category": "Graphiques"
     },
     {
       "slug": "gantt",
       "name": "bpm.gantt",
-      "description": "Diagramme de Gantt (tâches, jalons, dépendances).",
+      "description": "Diagramme de Gantt avec tâches, dépendances, groupes et ligne du jour.",
       "category": "Affichage de données"
     },
     {
       "slug": "geofence",
       "name": "bpm.geofence",
-      "description": "Carte interactive avec zones géographiques (geofences).",
+      "description": "Éditeur de zones géographiques sur carte avec polygones cliquables pour définir des périmètres.",
       "category": "Média"
     },
     {
       "slug": "groupedlist",
       "name": "bpm.groupedList",
-      "description": "Liste groupée par clé avec en-têtes de groupe.",
+      "description": "Liste générique avec regroupement automatique par clé, en-têtes de groupe personnalisables et sections repliables.",
       "category": "Affichage de données"
     },
     {
@@ -771,7 +771,7 @@
     {
       "slug": "metricrow",
       "name": "bpm.metricRow",
-      "description": "Ligne de métriques (conteneur pour plusieurs bpm.metric).",
+      "description": "Ligne horizontale de KPIs (bpm.metric) pour tableaux de bord et résumés chiffrés.",
       "category": "Affichage de données"
     },
     {
@@ -891,13 +891,13 @@
     {
       "slug": "title4",
       "name": "bpm.title4",
-      "description": "Titre h1 minimal.",
+      "description": "Titre de page ou de section avec niveaux 1–4 pour structurer rapports et tableaux de bord.",
       "category": "Affichage de données"
     },
     {
       "slug": "toggle",
       "name": "bpm.toggle",
-      "description": "Interrupteur on/off.",
+      "description": "Interrupteur on/off pour activer ou désactiver une option (notifications, mode maintenance).",
       "category": "Interaction"
     },
     {
@@ -909,7 +909,7 @@
     {
       "slug": "transition",
       "name": "bpm.transition",
-      "description": "Animation de transition entre états.",
+      "description": "Conteneur de vues avec transition animée (fade, shimmer, border, grid) pour wizard ou carrousel.",
       "category": "Mise en page"
     },
     {
