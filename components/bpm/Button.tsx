@@ -2,11 +2,11 @@
 
 import React, { useState } from "react";
 
-/** Accent BPM aligné référence — valeurs hex pour styles 100% inline (pas de var()). */
-const ACCENT = "#00a3e2";
-const ACCENT_DARK = "#008bc4";
-const ACCENT_DARKER = "#007aa8";
-const ACCENT_LIGHT = "#b3e0f4";
+/** Accent BPM tokenisé : var(--bpm-*, <hex>) ; fallback = valeur actuelle (apparence préservée hors thème), thématisable quand le token est défini. */
+const ACCENT = "var(--bpm-accent, #00a3e2)";
+const ACCENT_DARK = "var(--bpm-accent-hover, #008bc4)";
+const ACCENT_DARKER = "var(--bpm-accent-active, #007aa8)";
+const ACCENT_LIGHT = "var(--bpm-accent-muted, #b3e0f4)";
 
 export type ButtonVariant =
   | "primary"
@@ -66,7 +66,7 @@ const VARIANTS: Record<ButtonVariant, VariantStyle> = {
   primary: {
     base: {
       background: ACCENT,
-      color: "#ffffff",
+      color: "var(--bpm-accent-contrast, #ffffff)",
       border: `1px solid ${ACCENT_DARK}`,
       boxShadow: "0 1px 2px rgba(0,0,0,0.08)",
     },
@@ -75,13 +75,13 @@ const VARIANTS: Record<ButtonVariant, VariantStyle> = {
   },
   secondary: {
     base: {
-      background: "#ffffff",
-      color: "#111827",
-      border: "1px solid #c8cdd6",
+      background: "var(--bpm-surface, #ffffff)",
+      color: "var(--bpm-text, #111827)",
+      border: "1px solid var(--bpm-border, #c8cdd6)",
       boxShadow: "0 1px 2px rgba(0,0,0,0.08)",
     },
-    hover: { background: "#f4f5f7" },
-    active: { background: "#e9ecef" },
+    hover: { background: "var(--bpm-surface-hover, #f4f5f7)" },
+    active: { background: "var(--bpm-surface-active, #e9ecef)" },
   },
   outline: {
     base: {
@@ -89,27 +89,27 @@ const VARIANTS: Record<ButtonVariant, VariantStyle> = {
       color: ACCENT,
       border: `1px solid ${ACCENT_LIGHT}`,
     },
-    hover: { background: "#e6f7fd", borderColor: ACCENT },
-    active: { background: "#cceff9" },
+    hover: { background: "var(--bpm-accent-subtle, #e6f7fd)", borderColor: ACCENT },
+    active: { background: "var(--bpm-accent-subtle-active, #cceff9)" },
   },
   ghost: {
     base: {
       background: "transparent",
-      color: "#6b7280",
+      color: "var(--bpm-text-secondary, #6b7280)",
       border: "1px solid transparent",
     },
-    hover: { background: "#f4f5f7", color: "#111827" },
-    active: { background: "#e9ecef" },
+    hover: { background: "var(--bpm-surface-hover, #f4f5f7)", color: "var(--bpm-text, #111827)" },
+    active: { background: "var(--bpm-surface-active, #e9ecef)" },
   },
   destructive: {
     base: {
-      background: "#dc2626",
-      color: "#ffffff",
-      border: "1px solid #b91c1c",
+      background: "var(--bpm-error, #dc2626)",
+      color: "var(--bpm-error-contrast, #ffffff)",
+      border: "1px solid var(--bpm-error-border, #b91c1c)",
       boxShadow: "0 1px 2px rgba(0,0,0,0.08)",
     },
-    hover: { background: "#b91c1c" },
-    active: { background: "#991b1b" },
+    hover: { background: "var(--bpm-error-hover, #b91c1c)" },
+    active: { background: "var(--bpm-error-active, #991b1b)" },
   },
   link: {
     base: {
@@ -127,9 +127,9 @@ const VARIANTS: Record<ButtonVariant, VariantStyle> = {
 };
 
 const GHOST_RAISED: VariantStyle = {
-  base: { background: "transparent", color: "#6b7280", border: "1px solid transparent" },
-  hover: { background: "#ffffff", color: "#111827", boxShadow: "0 1px 2px rgba(0,0,0,0.1)" },
-  active: { background: "#f1f3f5" },
+  base: { background: "transparent", color: "var(--bpm-text-secondary, #6b7280)", border: "1px solid transparent" },
+  hover: { background: "var(--bpm-surface, #ffffff)", color: "var(--bpm-text, #111827)", boxShadow: "0 1px 2px rgba(0,0,0,0.1)" },
+  active: { background: "var(--bpm-surface-active, #f1f3f5)" },
 };
 
 function Spinner({ size }: { size: number }) {
