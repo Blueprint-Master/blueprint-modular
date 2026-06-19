@@ -4,7 +4,7 @@ import React, { useState, useEffect } from "react";
 
 /**
  * @component bpm.tabs
- * @description Système d'onglets avec contenu associé, scroll horizontal si débordement.
+ * @description Système d'onglets avec contenu associé, scroll horizontal si débordement. Cycle de vie : seul l'onglet ACTIF est rendu — le content des onglets inactifs est DÉMONTÉ, son état React n'est pas préservé au changement d'onglet. Ne pas y placer d'état de saisie non persisté ; lever l'état dans le composant parent.
  * @example
  * bpm.tabs({ tabs: [{ label: "Aperçu", content: <Overview /> }, { label: "Détails", content: <Details /> }], defaultTab: 0 })
  *

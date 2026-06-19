@@ -15,7 +15,7 @@ export interface ExpanderProps {
 
 /**
  * @component bpm.expander
- * @description Bloc dépliable avec titre pour masquer/afficher du contenu (détails, annexes).
+ * @description Bloc dépliable avec titre pour masquer/afficher du contenu (détails, annexes). Cycle de vie : le content replié est DÉMONTÉ (rendu uniquement quand ouvert), son état n'est pas préservé à la fermeture.
  * @example
  * bpm.expander({ title: "Détails techniques", defaultExpanded: false, children: "..." })
  * @props

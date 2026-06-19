@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-06-19T12:58:52.240Z",
+  "generatedAt": "2026-06-19T13:01:32.514Z",
   "source": "lib/generated/bpm-components.json + public/llms.txt + lib/semantics/bpm-semantics.json",
   "total": 154,
   "categories": [
@@ -513,7 +513,7 @@
       "description": "Onglets pour organiser le contenu.",
       "category": "Mise en page",
       "status": "curated",
-      "fullDescription": "Système d'onglets avec contenu associé, scroll horizontal si débordement.",
+      "fullDescription": "Système d'onglets avec contenu associé, scroll horizontal si débordement. Cycle de vie : seul l'onglet ACTIF est rendu — le content des onglets inactifs est DÉMONTÉ, son état React n'est pas préservé au changement d'onglet. Ne pas y placer d'état de saisie non persisté ; lever l'état dans le composant parent.",
       "props": "  tabs?: TabsItems  — Onglets : tableau de { label, content } ou chaînes (label uniquement).\n  defaultTab?: number  — Index de l'onglet actif au montage. Default: 0.\n  onChange?: (index: number) => void\n  className?: string",
       "example": "bpm.tabs({ tabs: [{ label: \"Aperçu\", content: <Overview /> }, { label: \"Détails\", content: <Details /> }], defaultTab: 0 })",
       "associated": [
@@ -542,7 +542,7 @@
         ],
         "status": "proposed"
       },
-      "_haystack": "bpm.tabs tabs onglets pour organiser le contenu. mise en page système d'onglets avec contenu associé, scroll horizontal si débordement.   tabs?: tabsitems  — onglets : tableau de { label, content } ou chaînes (label uniquement).\n  defaulttab?: number  — index de l'onglet actif au montage. default: 0.\n  onchange?: (index: number) => void\n  classname?: string bpm.tabs({ tabs: [{ label: \"aperçu\", content: <overview /> }, { label: \"détails\", content: <details /> }], defaulttab: 0 }) bpm.table bpm.plotlychart bpm.metric conteneur section vues alternatives de même rang sur un même sujet : une seule visible à la fois. bpm.card bpm.table bpm.pagelayout étapes ordonnées d'un processus (bpm.stepper, bpm.wizardform) ou sections à lecture continue (bpm.accordion). 2 à 6 onglets ; les contenus sont indépendants et de même niveau hiérarchique."
+      "_haystack": "bpm.tabs tabs onglets pour organiser le contenu. mise en page système d'onglets avec contenu associé, scroll horizontal si débordement. cycle de vie : seul l'onglet actif est rendu — le content des onglets inactifs est démonté, son état react n'est pas préservé au changement d'onglet. ne pas y placer d'état de saisie non persisté ; lever l'état dans le composant parent.   tabs?: tabsitems  — onglets : tableau de { label, content } ou chaînes (label uniquement).\n  defaulttab?: number  — index de l'onglet actif au montage. default: 0.\n  onchange?: (index: number) => void\n  classname?: string bpm.tabs({ tabs: [{ label: \"aperçu\", content: <overview /> }, { label: \"détails\", content: <details /> }], defaulttab: 0 }) bpm.table bpm.plotlychart bpm.metric conteneur section vues alternatives de même rang sur un même sujet : une seule visible à la fois. bpm.card bpm.table bpm.pagelayout étapes ordonnées d'un processus (bpm.stepper, bpm.wizardform) ou sections à lecture continue (bpm.accordion). 2 à 6 onglets ; les contenus sont indépendants et de même niveau hiérarchique."
     },
     {
       "slug": "expander",
@@ -550,7 +550,7 @@
       "description": "Bloc repliable.",
       "category": "Mise en page",
       "status": "curated",
-      "fullDescription": "Bloc dépliable avec titre pour masquer/afficher du contenu (détails, annexes).",
+      "fullDescription": "Bloc dépliable avec titre pour masquer/afficher du contenu (détails, annexes). Cycle de vie : le content replié est DÉMONTÉ (rendu uniquement quand ouvert), son état n'est pas préservé à la fermeture.",
       "props": "  title*: React.ReactNode\n  children*: React.ReactNode\n  defaultExpanded?: boolean\n  className?: string",
       "example": "bpm.expander({ title: \"Détails techniques\", defaultExpanded: false, children: \"...\" })",
       "semantics": {
@@ -570,7 +570,7 @@
         ],
         "status": "proposed"
       },
-      "_haystack": "bpm.expander expander bloc repliable. mise en page bloc dépliable avec titre pour masquer/afficher du contenu (détails, annexes).   title*: react.reactnode\n  children*: react.reactnode\n  defaultexpanded?: boolean\n  classname?: string bpm.expander({ title: \"détails techniques\", defaultexpanded: false, children: \"...\" }) conteneur section détail secondaire masquable : l'utilisateur choisit d'approfondir. bpm.text bpm.jsonviewer bpm.table contenu essentiel à la décision (le laisser visible) ou séries de sections (bpm.accordion). le titre doit annoncer ce que l'ouverture révèle."
+      "_haystack": "bpm.expander expander bloc repliable. mise en page bloc dépliable avec titre pour masquer/afficher du contenu (détails, annexes). cycle de vie : le content replié est démonté (rendu uniquement quand ouvert), son état n'est pas préservé à la fermeture.   title*: react.reactnode\n  children*: react.reactnode\n  defaultexpanded?: boolean\n  classname?: string bpm.expander({ title: \"détails techniques\", defaultexpanded: false, children: \"...\" }) conteneur section détail secondaire masquable : l'utilisateur choisit d'approfondir. bpm.text bpm.jsonviewer bpm.table contenu essentiel à la décision (le laisser visible) ou séries de sections (bpm.accordion). le titre doit annoncer ce que l'ouverture révèle."
     },
     {
       "slug": "accordion",
@@ -578,7 +578,7 @@
       "description": "Accordéon (sections repliables).",
       "category": "Mise en page",
       "status": "curated",
-      "fullDescription": "Liste de sections repliables (FAQ, procedures) avec une ou plusieurs ouvertes.",
+      "fullDescription": "Liste de sections repliables (FAQ, procedures) avec une ou plusieurs ouvertes. Cycle de vie : le content des sections fermées reste MONTÉ (masqué en CSS) — l'état React est préservé à l'ouverture/fermeture (contrairement à bpm.tabs qui démonte).",
       "props": "  sections?: AccordionSection[]\n  allowMultiple?: boolean\n  defaultOpenIds?: string[]\n  className?: string",
       "example": "bpm.accordion({ sections: [{ title: \"Livraison\", content: \"Delai 48h.\" }] })",
       "semantics": {
@@ -597,7 +597,7 @@
         ],
         "status": "proposed"
       },
-      "_haystack": "bpm.accordion accordion accordéon (sections repliables). mise en page liste de sections repliables (faq, procedures) avec une ou plusieurs ouvertes.   sections?: accordionsection[]\n  allowmultiple?: boolean\n  defaultopenids?: string[]\n  classname?: string bpm.accordion({ sections: [{ title: \"livraison\", content: \"delai 48h.\" }] }) conteneur section série de sections repliables homogènes (faq, groupes de paramètres) dont une seule importe à la fois. bpm.text bpm.labelvalue vues alternatives de même rang (bpm.tabs) ou un seul bloc repliable (bpm.expander). sections de même nature ; titres scannables."
+      "_haystack": "bpm.accordion accordion accordéon (sections repliables). mise en page liste de sections repliables (faq, procedures) avec une ou plusieurs ouvertes. cycle de vie : le content des sections fermées reste monté (masqué en css) — l'état react est préservé à l'ouverture/fermeture (contrairement à bpm.tabs qui démonte).   sections?: accordionsection[]\n  allowmultiple?: boolean\n  defaultopenids?: string[]\n  classname?: string bpm.accordion({ sections: [{ title: \"livraison\", content: \"delai 48h.\" }] }) conteneur section série de sections repliables homogènes (faq, groupes de paramètres) dont une seule importe à la fois. bpm.text bpm.labelvalue vues alternatives de même rang (bpm.tabs) ou un seul bloc repliable (bpm.expander). sections de même nature ; titres scannables."
     },
     {
       "slug": "card",
@@ -2399,7 +2399,7 @@
       "description": "Vue liste + détail responsive (recherche, mobile).",
       "category": "Mise en page",
       "status": "curated",
-      "fullDescription": "Liste à gauche et détail à droite ; sur mobile, le détail s’ouvre en plein cadre avec retour.",
+      "fullDescription": "Liste à gauche et détail à droite ; sur mobile, le détail s’ouvre en plein cadre avec retour. Cycle de vie : liste et détail restent MONTÉS — l'état React est préservé.",
       "props": "  items*: T[]\n  columns*: MasterDetailColumn<T>[]\n  renderDetail*: (item: T) => React.ReactElement\n  selectedId?: string\n  onSelect*: (item: T) => void\n  idKey?: string\n  searchable?: boolean\n  emptyDetailMessage?: string\n  splitRatio?: number\n  className?: string",
       "example": "bpm.masterDetail({ items, columns: [{ key: \"name\", label: \"Nom\" }], renderDetail: (it) => <div>{it.name}</div>, onSelect: setSel })",
       "associated": [
@@ -2428,7 +2428,7 @@
         ],
         "status": "proposed"
       },
-      "_haystack": "bpm.masterdetail masterdetail vue liste + détail responsive (recherche, mobile). mise en page liste à gauche et détail à droite ; sur mobile, le détail s’ouvre en plein cadre avec retour.   items*: t[]\n  columns*: masterdetailcolumn<t>[]\n  renderdetail*: (item: t) => react.reactelement\n  selectedid?: string\n  onselect*: (item: t) => void\n  idkey?: string\n  searchable?: boolean\n  emptydetailmessage?: string\n  splitratio?: number\n  classname?: string bpm.masterdetail({ items, columns: [{ key: \"name\", label: \"nom\" }], renderdetail: (it) => <div>{it.name}</div>, onselect: setsel }) bpm.table bpm.drawer bpm.filterpanel conteneur entity parcourir une collection et consulter le détail de la sélection sans changer de page (liste + détail liés). bpm.table bpm.labelvalue bpm.badge colonnes indépendantes (bpm.column) ou gestion crud complète (bpm.crud). la sélection dans la liste pilote le détail ; correspond au couple layouttype crud-table + detail."
+      "_haystack": "bpm.masterdetail masterdetail vue liste + détail responsive (recherche, mobile). mise en page liste à gauche et détail à droite ; sur mobile, le détail s’ouvre en plein cadre avec retour. cycle de vie : liste et détail restent montés — l'état react est préservé.   items*: t[]\n  columns*: masterdetailcolumn<t>[]\n  renderdetail*: (item: t) => react.reactelement\n  selectedid?: string\n  onselect*: (item: t) => void\n  idkey?: string\n  searchable?: boolean\n  emptydetailmessage?: string\n  splitratio?: number\n  classname?: string bpm.masterdetail({ items, columns: [{ key: \"name\", label: \"nom\" }], renderdetail: (it) => <div>{it.name}</div>, onselect: setsel }) bpm.table bpm.drawer bpm.filterpanel conteneur entity parcourir une collection et consulter le détail de la sélection sans changer de page (liste + détail liés). bpm.table bpm.labelvalue bpm.badge colonnes indépendantes (bpm.column) ou gestion crud complète (bpm.crud). la sélection dans la liste pilote le détail ; correspond au couple layouttype crud-table + detail."
     },
     {
       "slug": "wizardform",
@@ -2436,7 +2436,7 @@
       "description": "Formulaire multi-étapes avec stepper et validation.",
       "category": "Interaction",
       "status": "curated",
-      "fullDescription": "Assistant multi-étapes avec stepper, validation et transition slide.",
+      "fullDescription": "Assistant multi-étapes avec stepper, validation et transition slide. Cycle de vie : seule l'étape COURANTE est rendue — les étapes inactives sont DÉMONTÉES, leur état n'est pas préservé. Persister les valeurs de chaque étape dans le parent.",
       "props": "  steps*: WizardStep[]\n  onComplete*: () => void\n  onCancel?: () => void\n  submitLabel?: string\n  showSummary?: boolean\n  className?: string",
       "example": "bpm.wizardForm({ steps: [{ title: \"Profil\", content: <>…</> }], onComplete: handleDone })",
       "associated": [
@@ -2467,7 +2467,7 @@
         ],
         "status": "proposed"
       },
-      "_haystack": "bpm.wizardform wizardform formulaire multi-étapes avec stepper et validation. interaction assistant multi-étapes avec stepper, validation et transition slide.   steps*: wizardstep[]\n  oncomplete*: () => void\n  oncancel?: () => void\n  submitlabel?: string\n  showsummary?: boolean\n  classname?: string bpm.wizardform({ steps: [{ title: \"profil\", content: <>…</> }], oncomplete: handledone }) bpm.stepper bpm.input bpm.button saisie entity création/édition guidée en plusieurs étapes validées : formulaire long découpé en séquence logique. bpm.stepper bpm.input bpm.selectbox bpm.confirmmodal formulaire court d'un seul tenant (bpm.modal + champs) ou suivi d'un processus métier (bpm.statustracker). étapes = groupes de fields cohérents ; validation par étape avant l'événement final de sauvegarde."
+      "_haystack": "bpm.wizardform wizardform formulaire multi-étapes avec stepper et validation. interaction assistant multi-étapes avec stepper, validation et transition slide. cycle de vie : seule l'étape courante est rendue — les étapes inactives sont démontées, leur état n'est pas préservé. persister les valeurs de chaque étape dans le parent.   steps*: wizardstep[]\n  oncomplete*: () => void\n  oncancel?: () => void\n  submitlabel?: string\n  showsummary?: boolean\n  classname?: string bpm.wizardform({ steps: [{ title: \"profil\", content: <>…</> }], oncomplete: handledone }) bpm.stepper bpm.input bpm.button saisie entity création/édition guidée en plusieurs étapes validées : formulaire long découpé en séquence logique. bpm.stepper bpm.input bpm.selectbox bpm.confirmmodal formulaire court d'un seul tenant (bpm.modal + champs) ou suivi d'un processus métier (bpm.statustracker). étapes = groupes de fields cohérents ; validation par étape avant l'événement final de sauvegarde."
     },
     {
       "slug": "commandpalette",
@@ -4491,14 +4491,14 @@
       "description": "Deux volets redimensionnables avec séparateur draggable.",
       "category": "Mise en page",
       "status": "uncurated",
-      "fullDescription": "Deux volets redimensionnables avec séparateur draggable. Empile verticalement sous 640px.",
+      "fullDescription": "Deux volets redimensionnables avec séparateur draggable. Empile verticalement sous 640px. Cycle de vie : les deux volets restent MONTÉS — leur état React est préservé.",
       "props": "  left*: React.ReactNode\n  right*: React.ReactNode\n  defaultSplit?: number\n  minLeft?: number\n  minRight?: number\n  direction?: \"horizontal\" | \"vertical\"\n  className?: string",
       "example": "bpm.splitView({ left: <List />, right: <Detail />, defaultSplit: 30, direction: \"horizontal\" })",
       "associated": [
         "bpm.masterDetail",
         "bpm.panel"
       ],
-      "_haystack": "bpm.splitview splitview deux volets redimensionnables avec séparateur draggable. mise en page deux volets redimensionnables avec séparateur draggable. empile verticalement sous 640px.   left*: react.reactnode\n  right*: react.reactnode\n  defaultsplit?: number\n  minleft?: number\n  minright?: number\n  direction?: \"horizontal\" | \"vertical\"\n  classname?: string bpm.splitview({ left: <list />, right: <detail />, defaultsplit: 30, direction: \"horizontal\" }) bpm.masterdetail bpm.panel"
+      "_haystack": "bpm.splitview splitview deux volets redimensionnables avec séparateur draggable. mise en page deux volets redimensionnables avec séparateur draggable. empile verticalement sous 640px. cycle de vie : les deux volets restent montés — leur état react est préservé.   left*: react.reactnode\n  right*: react.reactnode\n  defaultsplit?: number\n  minleft?: number\n  minright?: number\n  direction?: \"horizontal\" | \"vertical\"\n  classname?: string bpm.splitview({ left: <list />, right: <detail />, defaultsplit: 30, direction: \"horizontal\" }) bpm.masterdetail bpm.panel"
     },
     {
       "slug": "statemachine",
