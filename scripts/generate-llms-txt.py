@@ -226,10 +226,24 @@ def parse_component_file(path: Path) -> dict | None:
     # Nom du composant = fichier sans extension
     comp_name = path.stem
 
-    # Chercher JSDoc juste avant l'interface/type
-    before = source[:iface_m.start()]
-    jsdoc_m = re.search(r"/\*\*(.+?)\*/\s*$", before, re.DOTALL)
-    doc = parse_jsdoc(jsdoc_m.group(1)) if jsdoc_m else ""
+    # Choisir le bloc JSDoc le plus RICHE portant @component, où qu'il soit dans
+    # le fichier. Beaucoup de composants ont DEUX blocs @component : un court
+    # au-dessus de l'interface (sans @example) et le bloc complet au-dessus de la
+    # fonction (avec @example/@props/@usage). Prendre celui avant l'interface
+    # jetait l'exemple pour ~82 composants. On préfère donc le bloc qui contient
+    # @example (sinon le plus long), pour aligner tous les composants sur le format
+    # complet déjà servi par ceux dont le bloc complet précède l'interface.
+    all_blocks = re.findall(r"/\*\*(.+?)\*/", source, re.DOTALL)
+    component_blocks = [b for b in all_blocks if "@component" in b]
+    if component_blocks:
+        rich_blocks = [b for b in component_blocks if "@example" in b]
+        chosen = max(rich_blocks or component_blocks, key=len)
+        doc = parse_jsdoc(chosen)
+    else:
+        # Repli : ancien comportement (JSDoc juste avant l'interface).
+        before = source[:iface_m.start()]
+        jsdoc_m = re.search(r"/\*\*(.+?)\*/\s*$", before, re.DOTALL)
+        doc = parse_jsdoc(jsdoc_m.group(1)) if jsdoc_m else ""
 
     # Détecter si c'est un type alias (export type) ou une interface
     is_type_alias = bool(re.match(r"export\s+type\s+", source[iface_m.start():iface_m.end() + 20]))

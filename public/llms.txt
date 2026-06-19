@@ -1,7 +1,7 @@
 # Blueprint Modular — Agent Context File
 # Version React (@blueprint-modular/core, npm) : 0.3.1
 # Version Python (blueprint-modular, PyPI)      : 0.1.54
-# Date    : 2026-06-18
+# Date    : 2026-06-19
 # URL canonique : https://blueprint-modular.com/llms.txt
 #
 # Ce fichier est la référence machine de @blueprint-modular/core.
@@ -31,7 +31,7 @@ INTERDIT : import { bpm.modal } ou tout autre destructuring
 ## COMPOSANTS
 
 ## bpm.accordion
-@component bpm.accordion @description Accordéon (sections repliables).
+@component bpm.accordion @description Liste de sections repliables (FAQ, procedures) avec une ou plusieurs ouvertes. @example bpm.accordion({ sections: [{ title: "Livraison", content: "Delai 48h." }] }) @props - sections (AccordionSection[], optionnel) — title et content par section. Default: []. - allowMultiple (boolean, optionnel) — Plusieurs sections ouvertes. Default: false. - defaultOpenIds (string[], optionnel) — IDs sections ouvertes au montage. Default: []. - className (string, optionnel) — Classes CSS. @usage FAQ, procedures, aide par theme. @context PARENT: bpm.panel | bpm.tabs. ASSOCIATED: bpm.expander, bpm.markdown. FORBIDDEN: bpm.accordion imbriqué dans bpm.accordion.
 @semantic role=conteneur frame=section status=proposed
 @guidance Série de sections repliables homogènes (FAQ, groupes de paramètres) dont une seule importe à la fois. Associer : bpm.text, bpm.labelValue. Éviter : Vues alternatives de même rang (bpm.tabs) ou un seul bloc repliable (bpm.expander).
 ```
@@ -55,7 +55,7 @@ INTERDIT : import { bpm.modal } ou tout autre destructuring
 ```
 
 ## bpm.addressInput
-@component bpm.addressInput @description Champ de saisie d'adresse avec autocomplétion.
+@component bpm.addressInput @description Champ de saisie d'adresse avec mode simple ou champs séparés (ligne 1, ligne 2, code postal, ville) et validation FR. @example bpm.addressInput({ mode: "fields", onChange: (addr) => console.log(addr) }) @param {object} props @param {"single"|"fields"} [props.mode="fields"] - Mode de saisie : ligne unique ou champs séparés. Optionnel. @param {object} [props.value] - Valeur initiale { line1, line2, city, postal }. Optionnel. @param {function} [props.onChange] - Callback appelé à chaque modification. Optionnel. @param {string} [props.className=""] - Classes CSS additionnelles. Optionnel. @parent bpm.form @associated bpm.input, bpm.autocomplete
 ```
   mode?: AddressInputMode
   value?: {
@@ -68,7 +68,7 @@ INTERDIT : import { bpm.modal } ou tout autre destructuring
 ```
 
 ## bpm.aiQueryBar
-@component bpm.aiQueryBar @description Barre de requête IA (langage naturel → résultat structuré).
+@component bpm.aiQueryBar @description Barre de requête IA permettant à l'utilisateur de poser des questions sur ses données avec suggestions et historique. @example bpm.aiQueryBar({ onQuery: async (q) => await fetchAnswer(q), suggestions: ["Quel est le CA ?"] }) @param {object} props @param {function} props.onQuery - Fonction asynchrone appelée lors de l'envoi d'une question. Obligatoire. @param {string} [props.placeholder="Posez une question sur vos données..."] - Texte d'aide dans le champ. Optionnel. @param {string[]} [props.suggestions=[]] - Liste de suggestions cliquables. Optionnel. @param {boolean} [props.loading] - Force l'état de chargement. Optionnel. @param {string} [props.className=""] - Classes CSS additionnelles. Optionnel. @associated bpm.chatInterface, bpm.assistantPanel
 ```
   onQuery*: (question: string) => Promise<string>
   placeholder?: string
@@ -78,7 +78,7 @@ INTERDIT : import { bpm.modal } ou tout autre destructuring
 ```
 
 ## bpm.alarmPanel
-@component bpm.alarmPanel @description Panneau d'alarmes industrielles (active, accusée, résolue).
+@component bpm.alarmPanel @description Liste d’alarmes triée par gravité avec accusé de réception, suppression et clignotement pour les alertes critiques. @example bpm.alarmPanel({ alarms: [{ id: "1", title: "Température haute", severity: "critical", timestamp: Date.now() }] }) @param {object} props @param {Alarm[]} props.alarms - Liste des alarmes à afficher. Obligatoire. @param {function} [props.onAcknowledge] - Callback pour accuser réception d’une alarme. Optionnel. @param {function} [props.onDismiss] - Callback pour fermer une alarme. Optionnel. @param {string} [props.className=""] - Classes CSS additionnelles. Optionnel. @associated bpm.anomalyAlert, bpm.statusBox, bpm.panel
 ```
   alarms*: Alarm[]
   onAcknowledge?: (id: string) => void
@@ -87,7 +87,7 @@ INTERDIT : import { bpm.modal } ou tout autre destructuring
 ```
 
 ## bpm.altairChart
-@component bpm.altairChart @description Graphique Altair / Vega-Lite.
+@component bpm.altairChart @description Conteneur pour graphiques Vega-Lite / Altair via spécification JSON ou iframe externe. @example bpm.altairChart({ iframeSrc: "/charts/ventes.html", height: 400 }) @param {object} props @param {object} [props.spec] - Spécification Vega-Lite / Altair en JSON. Optionnel. @param {string} [props.iframeSrc] - URL d'un fichier JSON ou vue compilée. Optionnel. @param {number|string} [props.width="100%"] - Largeur du graphique. Optionnel. @param {number|string} [props.height=400] - Hauteur du graphique. Optionnel. @param {string} [props.className=""] - Classes CSS additionnelles. Optionnel. @associated bpm.plotlyChart, bpm.lineChart, bpm.barChart @parent bpm.card, bpm.grid @forbidden Graphique simple — utiliser bpm.lineChart/barChart
 @semantic role=indicateur frame=kpi type=tendance,distribution direction=contextuel temporalite=contextuel status=proposed
 @guidance Visualisation déclarative Vega-Lite : exploration de specs complexes (facettes, encodages multiples). Associer : bpm.dataExplorer, bpm.metric. Éviter : Graphiques standards des apps générées (bpm.plotlyChart, imposé par les règles).
 ```
@@ -99,7 +99,7 @@ INTERDIT : import { bpm.modal } ou tout autre destructuring
 ```
 
 ## bpm.anomalyAlert
-@component bpm.anomalyAlert @description Alerte d'anomalie avec valeur attendue vs réelle.
+@component bpm.anomalyAlert @description Alerte d'anomalie affichant l'écart entre valeur attendue et mesurée avec niveau de gravité. @example bpm.anomalyAlert({ expected: "100 kg", actual: "85 kg", severity: "warning" }) @param {object} props @param {string} [props.title="Anomalie détectée"] - Titre de l'alerte. Optionnel. @param {string|number} props.expected - Valeur attendue. Obligatoire. @param {string|number} props.actual - Valeur mesurée. Obligatoire. @param {"info"|"warning"|"critical"} [props.severity="warning"] - Niveau de gravité. Optionnel. @param {string} [props.className=""] - Classes CSS additionnelles. Optionnel. @param {function} [props.onDismiss] - Callback pour fermer l'alerte. Optionnel. @param {TrajectoryPoint[]} [props.history] - Historique v(t) de la mesure pour la tendance. Optionnel. @param {InterpretContext} [props.context] - Contexte de jugement : gravité auto-dérivée + verdict interpret révélé. Optionnel. @associated bpm.alarmPanel, bpm.statusBox, bpm.panel
 ```
   title?: string
   expected*: string | number
@@ -112,7 +112,7 @@ INTERDIT : import { bpm.modal } ou tout autre destructuring
 ```
 
 ## bpm.approvalFlow
-@component bpm.approvalFlow @description Flux de validation multi-étapes (approve/reject par étape).
+@component bpm.approvalFlow @description Circuit de validation multi-étapes avec approbateurs, statuts et possibilité d'approuver/rejeter avec commentaire. @example bpm.approvalFlow({ steps: [{ id: "1", approver: "Marie", status: "approved" }, { id: "2", approver: "Jean", status: "pending" }] }) @param {object} props @param {ApprovalStep[]} props.steps - Liste des étapes d'approbation. Obligatoire. @param {function} [props.onApprove] - Callback appelé lors de l'approbation (stepId, comment). Optionnel. @param {function} [props.onReject] - Callback appelé lors du rejet (stepId, comment). Optionnel. @param {"horizontal"|"vertical"} [props.direction] - Direction d'affichage. Auto si non spécifié. Optionnel. @param {boolean} [props.showCommentInput=true] - Affiche le champ commentaire. Optionnel. @param {string} [props.className=""] - Classes CSS additionnelles. Optionnel. @associated bpm.stepper, bpm.timeline, bpm.workflow
 ```
   steps*: ApprovalStep[]
   onApprove?: (stepId: string, comment?: string) => void
@@ -123,7 +123,7 @@ INTERDIT : import { bpm.modal } ou tout autre destructuring
 ```
 
 ## bpm.areaChart
-@component bpm.areaChart @description Graphique en aires.
+@component bpm.areaChart @description Graphique en aire SVG simple pour visualiser une série temporelle ou une distribution. @example bpm.areaChart({ data: [{ x: 1, y: 10 }, { x: 2, y: 25 }], color: "var(--bpm-success)" }) @param {object} props @param {AreaChartDatum[]} props.data - Données du graphique [{x, y}]. Obligatoire. @param {number} [props.width=400] - Largeur du graphique. Optionnel. @param {number} [props.height=200] - Hauteur du graphique. Optionnel. @param {string} [props.color="var(--bpm-accent)"] - Couleur de l'aire. Optionnel. @param {string} [props.className=""] - Classes CSS additionnelles. Optionnel. @param {InterpretContext} [props.context] - Contexte de jugement : repère pointillé, couleur d'aire jugée, aria-label descriptif. Optionnel. @associated bpm.lineChart, bpm.barChart, bpm.plotlyChart @parent bpm.card, bpm.grid, bpm.tableauxDeBord @forbidden Comparaison de catégories — utiliser bpm.barChart
 @semantic role=indicateur frame=kpi type=tendance direction=contextuel temporalite=cumule status=proposed
 @guidance Évolution où le volume sous la courbe a du sens : cumul, empilement de contributions. Associer : bpm.metric, bpm.dateRangePicker. Éviter : Comparaison fine de niveaux entre séries (bpm.lineChart, les aires se masquent). Règle apps générées : bpm.plotlyChart.
 ```
@@ -136,7 +136,7 @@ INTERDIT : import { bpm.modal } ou tout autre destructuring
 ```
 
 ## bpm.assistantPanel
-@component bpm.assistantPanel @description Panneau assistant IA (chips, saisie, réponses).
+@component bpm.assistantPanel @description Panneau d'assistant IA en drawer latéral avec questions pré-configurées et streaming de réponses. @example bpm.assistantPanel({ title: "Assistant Production", demo: true, demoAnswers: { "Question 1": "Réponse 1" } }) @param {object} props @param {Record<string, string>} [props.demoAnswers] - Réponses statiques pour mode démo. Optionnel. @param {string} [props.title="Assistant Production"] - Titre du panneau. Optionnel. @param {boolean} [props.demo=false] - Mode démo sans appel API. Optionnel. @param {string} [props.className=""] - Classes CSS additionnelles. Optionnel. @associated bpm.chatInterface, bpm.aiQueryBar, bpm.drawer
 ```
   demoAnswers?: Record<string, string>  — Si fourni, les chips affichent les réponses statiques (démo publique, pas d'appel API).
   title?: string  — Titre du panneau
@@ -145,7 +145,7 @@ INTERDIT : import { bpm.modal } ou tout autre destructuring
 ```
 
 ## bpm.audio
-@component bpm.audio @description Lecteur audio HTML5.
+@component bpm.audio @description Lecteur audio HTML5 avec contrôles natifs pour fichiers audio. @example bpm.audio({ src: "/audio/notification.mp3", controls: true }) @param {object} props @param {string} props.src - URL du fichier audio. Obligatoire. @param {boolean} [props.controls=true] - Affiche les contrôles de lecture. Optionnel. @param {boolean} [props.loop=false] - Active la lecture en boucle. Optionnel. @param {string} [props.className=""] - Classes CSS additionnelles. Optionnel. @associated bpm.video, bpm.filePreview @parent bpm.card, bpm.container, bpm.modal @forbidden aucun
 @semantic role=affichage frame=entity status=proposed
 @guidance Restituer un contenu audio attaché à une entité (enregistrement, message vocal). Associer : bpm.card, bpm.filePreview. Éviter : Fichier non audio (bpm.filePreview) ou vidéo (bpm.video).
 ```
@@ -156,7 +156,7 @@ INTERDIT : import { bpm.modal } ou tout autre destructuring
 ```
 
 ## bpm.autocomplete
-@component bpm.autocomplete @description Champ de saisie avec suggestions.
+@component bpm.autocomplete @description Champ de saisie avec autocomplétion filtrant les options selon la valeur entrée. @example bpm.autocomplete({ label: "Ville", options: [{ value: "paris", label: "Paris" }], onChange: (v) => console.log(v) }) @param {object} props @param {string} [props.label] - Libellé du champ. Optionnel. @param {string} [props.placeholder=""] - Texte d'aide. Optionnel. @param {string} [props.value=""] - Valeur courante. Optionnel. @param {function} [props.onChange] - Callback appelé à chaque modification. Optionnel. @param {AutocompleteOption[]} props.options - Liste des options {value, label}. Obligatoire. @param {string} [props.className=""] - Classes CSS additionnelles. Optionnel. @parent bpm.form @associated bpm.select, bpm.input, bpm.combobox @forbidden Liste figée courte — utiliser bpm.selectbox
 @semantic role=saisie frame=entity status=proposed
 @guidance Trouver une valeur par la frappe dans un grand référentiel : champ relation (Field relation) ou longue énumération. Associer : bpm.chip, bpm.wizardForm, bpm.input. Éviter : Petites listes fermées (bpm.selectbox, bpm.radioGroup) ou texte libre sans référentiel (bpm.input).
 ```
@@ -169,7 +169,7 @@ INTERDIT : import { bpm.modal } ou tout autre destructuring
 ```
 
 ## bpm.avatar
-@component bpm.avatar @description Avatar utilisateur (image, initiales ou icône).
+@component bpm.avatar @description Avatar utilisateur avec image ou initiales, mode sidebar optionnel (nom + sous-titre + déconnexion). @example bpm.avatar({ src: "/photo.jpg", size: "medium", name: "Jean Dupont", variant: "sidebar" }) @param {object} props @param {string} [props.src] - URL de l'image de l'avatar. Optionnel. @param {string} [props.alt] - Texte alternatif pour l'accessibilité. Optionnel. @param {string} [props.initials] - Initiales affichées si pas d'image. Optionnel. @param {"small"|"medium"|"large"} [props.size="medium"] - Taille de l'avatar. Optionnel. @param {string} [props.className=""] - Classes CSS additionnelles. Optionnel. @param {"default"|"sidebar"} [props.variant="default"] - Mode d'affichage. Optionnel. @param {string} [props.name] - Nom affiché (variant sidebar). Optionnel. @param {string} [props.subtitle] - Sous-titre sous le nom (variant sidebar). Optionnel. @param {function} [props.onLogout] - Callback déconnexion (variant sidebar). Optionnel. @param {string} [props.logoutLabel="Se déconnecter"] - Libellé du bouton déconnexion. Optionnel. @param {boolean} [props.editable=false] - Active le mode édition avec overlay. Optionnel. @param {function} [props.onImageChange] - Callback avec le fichier sélectionné. Optionnel. @parent bpm.sidebar, bpm.navbar @associated bpm.userMenu, bpm.badge @forbidden aucun
 @semantic role=affichage frame=entity status=needs-curation
 @guidance Représenter un acteur (utilisateur, contact) de façon compacte : initiales ou photo. Associer : bpm.activityFeed, bpm.commentThread, bpm.table. Éviter : Illustration générique (bpm.image) ou statut d'un acteur (bpm.badge).
 ```
@@ -188,7 +188,7 @@ INTERDIT : import { bpm.modal } ou tout autre destructuring
 ```
 
 ## bpm.badge
-@component bpm.badge @description Badge / étiquette (success, warning, etc.).
+@component bpm.badge @description Étiquette compacte pour afficher un statut, une catégorie ou un compteur avec variantes de couleur. @example bpm.badge({ children: "En cours", variant: "warning" }) @param {object} props @param {ReactNode} props.children - Contenu du badge. Obligatoire. @param {"default"|"primary"|"success"|"warning"|"error"} [props.variant="default"] - Style du badge. Optionnel. @param {string} [props.className=""] - Classes CSS additionnelles. Optionnel. @parent bpm.table, bpm.card, bpm.metric @associated bpm.chip, bpm.statusBox @forbidden Texte long >20 caractères — utiliser bpm.chip
 @semantic role=indicateur frame=workflow type=statut direction=neutre temporalite=instantane status=proposed
 @guidance Statut ponctuel d'une instance : valeur d'énumération (WorkflowState) dont la couleur porte la sémantique d'état. Associer : bpm.table, bpm.card, bpm.timeline. Éviter : Élément cliquable ou filtre (bpm.chip), message système (bpm.message), bloc de statut détaillé (bpm.statusBox).
 ```
@@ -199,7 +199,7 @@ INTERDIT : import { bpm.modal } ou tout autre destructuring
 ```
 
 ## bpm.barChart
-@component bpm.barChart @description Graphique en barres.
+@component bpm.barChart @description Graphique à barres verticales SVG simple pour comparaisons de valeurs. @example bpm.barChart({ data: [{ x: "Jan", y: 100 }, { x: "Fév", y: 150 }], color: "var(--bpm-accent)" }) @param {object} props @param {BarChartDatum[]} props.data - Données du graphique [{x, y}]. Obligatoire. @param {number} [props.width=400] - Largeur du graphique. Optionnel. @param {number} [props.height=200] - Hauteur du graphique. Optionnel. @param {string} [props.color="var(--bpm-accent)"] - Couleur des barres. Optionnel. @param {string} [props.className=""] - Classes CSS additionnelles. Optionnel. @param {InterpretContext} [props.context] - Contexte de jugement : barres colorées par écart individuel au repère + verdict global. Optionnel. @associated bpm.lineChart, bpm.areaChart, bpm.plotlyChart @parent bpm.card, bpm.grid, bpm.tableauxDeBord @forbidden Série temporelle continue — utiliser bpm.lineChart
 @semantic role=indicateur frame=kpi type=distribution,compte direction=contextuel temporalite=instantane status=proposed
 @guidance Comparer une mesure entre catégories discrètes : répartition, classement, volumes par segment. Associer : bpm.metric, bpm.filterPanel, bpm.caption. Éviter : Évolution temporelle continue (bpm.lineChart). Règle apps générées : bpm.plotlyChart.
 ```
@@ -212,7 +212,7 @@ INTERDIT : import { bpm.modal } ou tout autre destructuring
 ```
 
 ## bpm.barcode
-@component bpm.barcode @description Code-barres (EAN-13, Code 128).
+@component bpm.barcode @description Générateur de code-barres SVG avec valeur textuelle affichée dessous. @example bpm.barcode({ value: "ABC123456", format: "CODE128", height: 60 }) @param {object} props @param {string} props.value - Valeur à encoder en code-barres. Obligatoire. @param {"EAN13"|"CODE128"} [props.format="CODE128"] - Format du code-barres. Optionnel. @param {number} [props.height=60] - Hauteur des barres. Optionnel. @param {number} [props.width=2] - Largeur d'une barre unitaire. Optionnel. @param {string} [props.lineColor="var(--bpm-text-primary)"] - Couleur des barres. Optionnel. @param {string} [props.background="transparent"] - Couleur de fond. Optionnel. @param {string} [props.className=""] - Classes CSS additionnelles. Optionnel. @associated bpm.qrCode, bpm.labelValue @parent bpm.card, bpm.table, bpm.filePreview @forbidden URL ou vCard — utiliser bpm.qrCode
 @semantic role=affichage frame=connector status=needs-curation
 @guidance Matérialiser l'identifiant d'une entité en code-barres scannable (EAN-13, Code 128) : étiquette, traçabilité logistique. Associer : bpm.qrCode, bpm.labelValue, bpm.invoiceTemplate. Éviter : Lien ou contenu riche à encoder (bpm.qrCode) ou identifiant à lire par un humain (bpm.labelValue).
 ```
@@ -226,7 +226,7 @@ INTERDIT : import { bpm.modal } ou tout autre destructuring
 ```
 
 ## bpm.breadcrumb
-@component bpm.breadcrumb @description Fil d'Ariane simple.
+@component bpm.breadcrumb @description Fil d'Ariane pour navigation hiérarchique avec liens cliquables. @example bpm.breadcrumb({ items: [{ label: "Accueil", href: "/" }, { label: "Produits" }] }) @param {object} props @param {BreadcrumbItem[]} [props.items=[]] - Liste des éléments {label, href}. Optionnel. @param {string} [props.separator="›"] - Séparateur entre éléments. Optionnel. @param {string} [props.className=""] - Classes CSS additionnelles. Optionnel. @parent bpm.pageHeader, bpm.navbar @associated bpm.breadcrumbs, bpm.tabs @forbidden aucun
 @semantic role=navigation frame=section status=proposed
 @guidance Situer l'écran dans la hiérarchie (liste → détail → sous-détail) et permettre de remonter. Associer : bpm.pageLayout, bpm.topNav. Éviter : Navigation horizontale entre sections de même niveau (bpm.topNav, bpm.tabs).
 ```
@@ -236,7 +236,7 @@ INTERDIT : import { bpm.modal } ou tout autre destructuring
 ```
 
 ## bpm.breadcrumbs
-@component bpm.breadcrumbs @description Fil d'Ariane avec items cliquables.
+@component bpm.breadcrumbs @description Fil d’Ariane avancé avec séparateur personnalisable et réduction automatique si trop d’entrées. @example bpm.breadcrumbs({ items: [{ label: "Accueil", href: "/" }, { label: "Catégorie" }, { label: "Article" }], maxItems: 4 }) @param {object} props @param {BreadcrumbsItem[]} props.items - Liste des éléments {label, href?, onClick?}. Obligatoire. @param {ReactNode} [props.separator="/"] - Séparateur entre éléments. Optionnel. @param {number} [props.maxItems=8] - Nombre max d’éléments avant réduction. Optionnel. @param {string} [props.className=""] - Classes CSS additionnelles. Optionnel. @parent bpm.pageHeader, bpm.navbar @associated bpm.breadcrumb, bpm.tabs
 ```
   items*: BreadcrumbsItem[]
   separator?: React.ReactNode
@@ -245,7 +245,7 @@ INTERDIT : import { bpm.modal } ou tout autre destructuring
 ```
 
 ## bpm.button
-Accent BPM aligné référence — valeurs hex pour styles 100% inline (pas de var()). */ const ACCENT = "#00a3e2"; const ACCENT_DARK = "#008bc4"; const ACCENT_DARKER = "#007aa8"; const ACCENT_LIGHT = "#b3e0f4"; export type ButtonVariant = | "primary" | "secondary" | "outline" | "ghost" | "destructive" | "link"; export type ButtonSize = "small" | "medium" | "large" | "sm" | "md" | "lg"; @component bpm.button @description Bouton d'action (primary, secondary, outline, ghost, destructive).
+@component bpm.button @description Bouton d'action avec variantes (primary, secondary, outline, ghost, destructive, link), tailles et icônes. @example bpm.button({ children: "Enregistrer", variant: "primary", icon: "check", onClick: () => save() }) @param {object} props @param {ReactNode} [props.children] - Contenu textuel du bouton. Optionnel. @param {function} [props.onClick] - Callback au clic. Optionnel. @param {"primary"|"secondary"|"outline"|"ghost"|"destructive"|"link"} [props.variant="primary"] - Style du bouton. Optionnel. @param {"small"|"medium"|"large"|"sm"|"md"|"lg"} [props.size="medium"] - Taille du bouton. Optionnel. @param {boolean} [props.raised=false] - Mode toolbar avec ombre au survol. Optionnel. @param {string} [props.icon] - Nom de l'icône à gauche. Optionnel. @param {string} [props.iconRight] - Nom de l'icône à droite. Optionnel. @param {boolean} [props.loading=false] - Affiche un spinner. Optionnel. @param {boolean} [props.disabled=false] - Désactive le bouton. Optionnel. @param {boolean} [props.fullWidth=false] - Occupe toute la largeur. Optionnel. @param {"button"|"submit"|"reset"} [props.type="button"] - Type HTML du bouton. Optionnel. @param {string} [props.className] - Classes CSS additionnelles. Optionnel. @associated bpm.fab, bpm.iconButton, bpm.buttonGroup @parent bpm.modal, bpm.card, bpm.panel, bpm.topNav @forbidden Navigation entre pages — utiliser un lien
 @semantic role=action frame=event status=proposed
 @guidance Déclencher un événement de domaine ou une transition : créer, valider, lancer. La variante reflète la priorité de l'action. Associer : bpm.confirmModal, bpm.modal, bpm.toast. Éviter : Navigation entre pages (lien/bpm.topNav) ou bascule d'état persistante (bpm.checkbox, toggle).
 ```
@@ -265,7 +265,7 @@ Accent BPM aligné référence — valeurs hex pour styles 100% inline (pas de v
 ```
 
 ## bpm.caption
-@component bpm.caption @description Légende ou texte secondaire.
+@component bpm.caption @description Légende ou texte secondaire sous un bloc (graphique, carte, champ) pour contexte métier. @example bpm.caption({ children: "Données CA 2024 — source DGFiP." }) @props - children (ReactNode) — Texte de la légende. - className (string, optionnel) — Classes CSS. - style (object, optionnel) — Styles inline. @usage Légendes de graphiques, sources de données, hints sous champs. @context PARENT: bpm.panel | bpm.card | bpm.plotlyChart. ASSOCIATED: bpm.plotlyChart, bpm.table, bpm.image. FORBIDDEN: aucun.
 @semantic role=affichage frame=section status=proposed
 @guidance Texte secondaire : légende sous un indicateur, un média ou un champ ; précision de source ou d'unité. Associer : bpm.metric, bpm.image, bpm.lineChart. Éviter : Contenu principal (bpm.text) ou information critique qui doit rester lisible.
 ```
@@ -275,7 +275,7 @@ Accent BPM aligné référence — valeurs hex pour styles 100% inline (pas de v
 ```
 
 ## bpm.card
-@component bpm.card @description Carte avec titre et contenu.
+@component bpm.card @description Carte de contenu avec titre, image optionnelle et zone d'actions pour fiches produit ou résumés. @example bpm.card({ title: "Contrat Premium", subtitle: "Renouvellement mars 2025", children: "..." }) @props - title (ReactNode, optionnel) — Titre de la carte. - subtitle (ReactNode, optionnel) — Sous-titre. - image (string, optionnel) — URL image en en-tête. - imageAlt (string, optionnel) — Texte alternatif image. - children (ReactNode, optionnel) — Contenu principal. - actions (ReactNode, optionnel) — Boutons ou liens en pied. - variant ('default' | 'elevated' | 'outlined', optionnel) — Style. Default: 'default'. - inverted (boolean, optionnel) — Fond sombre. Default: false. - className (string, optionnel) — Classes CSS. @usage Fiches produit, résumés contrat, cartes dashboard. @context PARENT: bpm.grid | bpm.tabs (contenu onglet) | page directe. ASSOCIATED: bpm.metric, bpm.button, bpm.badge. FORBIDDEN: bpm.card imbriqué trop profond (max 2 niveaux).
 @semantic role=conteneur frame=section status=proposed
 @guidance Unité de contenu autonome : regrouper ce qui se lit ensemble (un indicateur et sa légende, une entité et ses actions). Associer : bpm.grid, bpm.metric, bpm.button. Éviter : Simple espacement (bpm.container) ou mise en avant éditoriale structurée (bpm.highlightBox).
 ```
@@ -291,7 +291,7 @@ Accent BPM aligné référence — valeurs hex pour styles 100% inline (pas de v
 ```
 
 ## bpm.changelog
-@component bpm.changelog @description Journal des modifications avec catégories et versions.
+@component bpm.changelog @description Journal des modifications affichant avant/après avec acteur, date et regroupement optionnel par jour. @example bpm.changelog({ changes: [{ field: "prix", before: 100, after: 120, actor: "Marie", date: "2024-01-15T10:00:00Z" }] }) @param {object} props @param {ChangelogEntry[]} props.changes - Liste des modifications à afficher. Obligatoire. @param {boolean} [props.groupByDate=false] - Regroupe par jour (Aujourd'hui, Hier, date). Optionnel. @param {number} [props.maxItems] - Limite le nombre d'entrées affichées. Optionnel. @param {string} [props.className=""] - Classes CSS additionnelles. Optionnel. @associated bpm.activityFeed, bpm.timeline, bpm.diffViewer
 ```
   changes*: ChangelogEntry[]
   groupByDate?: boolean
@@ -307,7 +307,7 @@ Chat Ollama local (démo).
 ```
 
 ## bpm.chatInterface
-ISO ou texte libre, ou Date (affichage localisé court). */ timestamp?: string | Date; } @component bpm.chatInterface @description Interface de chat (messages, saisie, streaming).
+@component bpm.chatInterface @description Interface de chat complète avec messages utilisateur/assistant, indicateur de frappe et champ de saisie. @example bpm.chatInterface({ messages: [{ id: "1", role: "user", content: "Bonjour" }], onSend: (msg) => sendMessage(msg) }) @param {object} props @param {ChatMessage[]} props.messages - Liste des messages {id, role, content, timestamp?}. Obligatoire. @param {function} props.onSend - Callback appelé avec le contenu du message envoyé. Obligatoire. @param {boolean} [props.isLoading=false] - Indicateur de chargement (deprecated, utiliser typing). Optionnel. @param {boolean} [props.typing] - Indicateur de frappe côté assistant. Optionnel. @param {string} [props.placeholder="Écrivez votre message..."] - Texte d'aide du champ. Optionnel. @param {string} [props.systemContext] - Contexte système affiché en haut. Optionnel. @param {string} [props.title] - Titre dans l'en-tête. Optionnel. @param {boolean} [props.disabled=false] - Désactive l'envoi. Optionnel. @param {string} [props.height="100%"] - Hauteur du conteneur. Optionnel. @param {string} [props.className=""] - Classes CSS additionnelles. Optionnel. @associated bpm.assistantPanel, bpm.aiQueryBar, bpm.promptInput @parent bpm.page, bpm.card, bpm.drawer @forbidden aucun
 @semantic role=composite frame=ai status=proposed
 @guidance Dialogue avec un assistant IA : messages, saisie, streaming (AIFeature uiComponent chatInterface). Associer : bpm.promptInput, bpm.streamingText, bpm.modelSelector, bpm.spinnerDot. Éviter : Question unique sans conversation (bpm.promptInput + bpm.streamingText) ou commentaire entre humains.
 ```
@@ -324,7 +324,7 @@ ISO ou texte libre, ou Date (affichage localisé court). */ timestamp?: string |
 ```
 
 ## bpm.checkbox
-@component bpm.checkbox @description Case à cocher.
+@component bpm.checkbox @description Case a cocher pour choix binaire (acceptation CGU, option activée). Prop contrôlée : `checked` (boolean) — PAS `value` ; `value` est la prop de bpm.toggle, ne pas confondre. @example bpm.checkbox({ label: "J'accepte les conditions", checked: false, onChange: setAccepted }) @props - label (ReactNode, optionnel) — Libelle a cote de la case. - checked (boolean, optionnel) — Etat coché. Default: false. - onChange (function, optionnel) — Callback (checked: boolean). - disabled (boolean, optionnel) — Default: false. - className (string, optionnel) — Classes CSS. @usage CGU, options formulaire, filtres liste. @context PARENT: bpm.modal | bpm.panel | bpm.card. ASSOCIATED: bpm.input, bpm.button. FORBIDDEN: aucun.
 @semantic role=saisie frame=entity status=proposed
 @guidance Saisir un booléen (Field boolean) : consentement, option, inclusion dans une sélection multiple. Associer : bpm.wizardForm, bpm.filterPanel. Éviter : Choix exclusif entre valeurs (bpm.radioGroup) ou action immédiate (bpm.button).
 ```
@@ -336,7 +336,7 @@ ISO ou texte libre, ou Date (affichage localisé court). */ timestamp?: string |
 ```
 
 ## bpm.chip
-@component bpm.chip @description Pastille / chip (tag supprimable ou non).
+@component bpm.chip @description Étiquette interactive avec label et bouton de suppression optionnel pour tags ou filtres actifs. @example bpm.chip({ label: "React", variant: "primary", onDelete: () => removeTag("React") }) @param {object} props @param {ReactNode} props.label - Texte ou contenu du chip. Obligatoire. @param {function} [props.onDelete] - Callback pour supprimer le chip. Optionnel. @param {function} [props.onClick] - Callback au clic sur le chip. Optionnel. @param {"default"|"primary"|"outline"} [props.variant="default"] - Style du chip. Optionnel. @param {boolean} [props.disabled=false] - Désactive les interactions. Optionnel. @param {string} [props.className=""] - Classes CSS additionnelles. Optionnel. @parent bpm.filterPanel, bpm.form @associated bpm.badge, bpm.tag @forbidden Statut court figé — utiliser bpm.badge
 @semantic role=affichage frame=entity status=proposed
 @guidance Pastille interactive : tag, filtre actif révocable, sélection multiple visible. Associer : bpm.filterPanel, bpm.autocomplete, bpm.input. Éviter : Statut de workflow non interactif (bpm.badge).
 ```
@@ -349,7 +349,7 @@ ISO ou texte libre, ou Date (affichage localisé court). */ timestamp?: string |
 ```
 
 ## bpm.codeBlock
-@component bpm.codeBlock @description Bloc de code avec syntaxe colorée et bouton Copier.
+@component bpm.codeBlock @description Affiche un bloc de code avec coloration syntaxique et bouton Copier pour documentation technique ou procédures. @example bpm.codeBlock({ code: "npm install @blueprint-modular/core", language: "bash" }) @props - code (string) — Contenu du bloc de code. - language (string, optionnel) — Langage pour coloration (bash, json, typescript…). Default: 'text'. - className (string, optionnel) — Classes CSS. @usage Documentation API, procédures d'installation, exemples de requêtes. @context PARENT: bpm.panel | bpm.card. ASSOCIATED: bpm.markdown, bpm.title. FORBIDDEN: aucun.
 @semantic role=affichage frame=section status=proposed
 @guidance Montrer du code ou une commande à copier : extrait figé, exemple d'intégration. Associer : bpm.markdown, bpm.tabs. Éviter : Code à modifier (bpm.codeEditor) ou données JSON à inspecter (bpm.jsonViewer).
 ```
@@ -359,7 +359,7 @@ ISO ou texte libre, ou Date (affichage localisé court). */ timestamp?: string |
 ```
 
 ## bpm.codeEditor
-@component bpm.codeEditor @description Éditeur de code (textarea avec valeur, onChange, readOnly).
+@component bpm.codeEditor @description Éditeur de code simple (textarea monospace) pour saisie ou modification de code. @example bpm.codeEditor({ value: code, onChange: setCode, language: "json", height: 400 }) @param {object} props @param {string} props.value - Contenu du code. Obligatoire. @param {function} props.onChange - Callback appelé à chaque modification. Obligatoire. @param {string} [props.language] - Langage (pour référence, pas de coloration). Optionnel. @param {boolean} [props.readOnly=false] - Mode lecture seule. Optionnel. @param {string|number} [props.height=300] - Hauteur de l'éditeur. Optionnel. @param {string} [props.placeholder=""] - Texte d'aide. Optionnel. @param {string} [props.className=""] - Classes CSS additionnelles. Optionnel. @associated bpm.codeBlock, bpm.jsonEditor @parent bpm.card, bpm.modal, bpm.tabs @forbidden Affichage en lecture seule — utiliser bpm.codeBlock
 @semantic role=saisie frame=entity status=proposed
 @guidance Saisir ou modifier du code/texte technique (script, template, expression). Associer : bpm.codeBlock, bpm.diffViewer, bpm.button. Éviter : Lecture seule (bpm.codeBlock), JSON structuré validé (bpm.jsonEditor), prose (bpm.textarea).
 ```
@@ -373,7 +373,7 @@ ISO ou texte libre, ou Date (affichage localisé court). */ timestamp?: string |
 ```
 
 ## bpm.colorPicker
-@component bpm.colorPicker @description Sélecteur de couleur.
+@component bpm.colorPicker @description Sélecteur de couleur avec aperçu et affichage du code hexadécimal. @example bpm.colorPicker({ label: "Couleur principale", value: "#00a3e2", onChange: setColor }) @param {object} props @param {string} [props.label] - Libellé du champ. Optionnel. @param {string} [props.value="#000000"] - Valeur couleur hexadécimale. Optionnel. @param {function} [props.onChange] - Callback appelé avec la nouvelle couleur. Optionnel. @param {string} [props.help] - Texte d'aide affiché en tooltip. Optionnel. @param {boolean} [props.disabled=false] - Désactive le sélecteur. Optionnel. @parent bpm.form @associated bpm.input, bpm.select @forbidden aucun
 @semantic role=saisie frame=meta status=proposed
 @guidance Choisir une couleur : branding, catégorisation visuelle d'une entité (étiquette, calendrier). Associer : bpm.chip, bpm.badge. Éviter : Choix dans une palette fermée imposée (bpm.selectbox d'EnumValues colorées).
 ```
@@ -385,7 +385,7 @@ ISO ou texte libre, ou Date (affichage localisé court). */ timestamp?: string |
 ```
 
 ## bpm.column
-@component bpm.column @description Mise en page multi-colonnes responsive.
+@component bpm.column @description Conteneur en grille pour organiser le contenu en colonnes avec espacement configurable. @example bpm.column({ columns: 3, gap: "1rem", children: [<Card />, <Card />, <Card />] }) @param {object} props @param {number} [props.columns=2] - Nombre de colonnes (1 à 12). Optionnel. @param {number|string} [props.gap="1rem"] - Espacement entre colonnes. Optionnel. @param {string} [props.className=""] - Classes CSS additionnelles. Optionnel. @param {ReactNode} [props.children] - Contenu des colonnes. Optionnel. @associated bpm.grid, bpm.container, bpm.row @parent bpm.page, bpm.container @forbidden Layout pleine largeur d'un seul bloc — inutile
 @semantic role=conteneur frame=section status=proposed
 @guidance Diviser l'écran en colonnes de contenus hétérogènes (formulaire + aide, liste + résumé). Associer : bpm.card, bpm.container. Éviter : Grille d'éléments homogènes (bpm.grid) ou vue liste/détail liée (bpm.masterDetail).
 ```
@@ -396,7 +396,7 @@ ISO ou texte libre, ou Date (affichage localisé court). */ timestamp?: string |
 ```
 
 ## bpm.commandPalette
-@component bpm.commandPalette @description Palette de commandes modale (fuzzy search, clavier, Cmd+K).
+@component bpm.commandPalette @description Palette de commandes modale avec recherche floue, navigation clavier et raccourcis (Cmd/Ctrl+K). @example bpm.commandPalette({ commands: [{ id: "save", label: "Enregistrer", action: save }], onClose: () => setOpen(false) }) @param {object} props @param {Command[]} props.commands - Liste des commandes {id, label, description?, icon?, shortcut?, category?, action}. Obligatoire. @param {boolean} [props.isOpen] - Mode contrôlé : état d'ouverture. Optionnel. @param {function} props.onClose - Callback de fermeture. Obligatoire. @param {function} [props.onRequestOpen] - Callback sur Cmd/Ctrl+K (mode contrôlé). Optionnel. @param {string} [props.placeholder="Rechercher une action..."] - Texte d'aide. Optionnel. @param {string} [props.className=""] - Classes CSS additionnelles. Optionnel. @associated bpm.searchModal, bpm.autocomplete @parent bpm.page, bpm.pageLayout @forbidden Navigation permanente — utiliser bpm.topNav ou bpm.sidebar
 @semantic role=navigation frame=section status=proposed
 @guidance Accès clavier universel (Cmd+K) aux commandes et destinations : recherche floue sur tout ce que l'app sait faire. Associer : bpm.topNav, bpm.pageLayout. Éviter : Navigation primaire visible (bpm.topNav) — la palette complète, elle ne remplace pas.
 ```
@@ -409,7 +409,7 @@ ISO ou texte libre, ou Date (affichage localisé court). */ timestamp?: string |
 ```
 
 ## bpm.commentThread
-@component bpm.commentThread @description Fil de commentaires avec réponses et avatars.
+@component bpm.commentThread @description Fil de commentaires récursif avec réponses inline, dates relatives et profondeur configurable. @example bpm.commentThread({ comments: [...], onPost: (content, parentId) => addComment(content, parentId), currentUser: { id: "1", name: "Marie" } }) @param {object} props @param {Comment[]} props.comments - Liste des commentaires avec replies optionnelles. Obligatoire. @param {function} props.onPost - Callback pour publier (content, parentId?). Obligatoire. @param {object} props.currentUser - Utilisateur connecté {id, name}. Obligatoire. @param {number} [props.maxDepth=2] - Profondeur maximale des réponses. Optionnel. @param {string} [props.className=""] - Classes CSS additionnelles. Optionnel. @associated bpm.activityFeed, bpm.chatInterface
 ```
   comments*: Comment[]
   onPost*: (content: string, parentId?: string) => void | Promise<void>
@@ -419,7 +419,7 @@ ISO ou texte libre, ou Date (affichage localisé court). */ timestamp?: string |
 ```
 
 ## bpm.comparison
-@component bpm.comparison @description Tableau de comparaison multi-items.
+@component bpm.comparison @description Tableau de comparaison multi-critères avec mise en évidence optionnelle des meilleures valeurs. @example bpm.comparison({ items: [{ prix: 100 }, { prix: 80 }], dimensions: ["prix"], highlightBest: true }) @param {object} props @param {Record<string, unknown>[]} props.items - Objets à comparer. Obligatoire. @param {string[]} props.dimensions - Clés des critères de comparaison. Obligatoire. @param {Record<string, string>} [props.labels] - Labels personnalisés pour les dimensions. Optionnel. @param {boolean} [props.highlightBest=true] - Met en évidence les meilleures valeurs. Optionnel. @param {string} [props.className=""] - Classes CSS additionnelles. Optionnel. @param {Record<string, InterpretContext>} [props.contexts] - Contextes de jugement par dimension : cellules jugées vs repère. Optionnel. @associated bpm.table, bpm.metric
 ```
   items*: Record<string, unknown>[]
   dimensions*: string[]
@@ -430,7 +430,7 @@ ISO ou texte libre, ou Date (affichage localisé court). */ timestamp?: string |
 ```
 
 ## bpm.confirmModal
-@component bpm.confirmModal @description Modal de confirmation pour actions destructives (danger, warning, info).
+@component bpm.confirmModal @description Modale de confirmation pour actions critiques (suppression, validation) avec variantes danger/warning/info. @example bpm.confirmModal({ isOpen: true, title: "Supprimer ?", message: "Cette action est irréversible.", onConfirm: delete, onCancel: close, variant: "danger" }) @param {object} props @param {boolean} props.isOpen - État d'ouverture de la modale. Obligatoire. @param {function} props.onConfirm - Callback de confirmation. Obligatoire. @param {function} props.onCancel - Callback d'annulation. Obligatoire. @param {string} props.title - Titre de la modale. Obligatoire. @param {string} props.message - Message explicatif. Obligatoire. @param {string} [props.confirmLabel="Confirmer"] - Texte du bouton confirmer. Optionnel. @param {string} [props.cancelLabel="Annuler"] - Texte du bouton annuler. Optionnel. @param {"danger"|"warning"|"info"} [props.variant="info"] - Style visuel. Optionnel. @param {boolean} [props.isLoading=false] - État de chargement. Optionnel. @associated bpm.modal, bpm.button @parent bpm.page, bpm.card @forbidden Information non bloquante — utiliser bpm.toast
 @semantic role=feedback frame=rule status=proposed
 @guidance Garde avant action irréversible ou coûteuse : exiger une confirmation explicite (danger, warning, info). Associer : bpm.button, bpm.toast, bpm.crud. Éviter : Actions réversibles banales (friction inutile) ou saisie complémentaire (bpm.modal).
 ```
@@ -446,7 +446,7 @@ ISO ou texte libre, ou Date (affichage localisé court). */ timestamp?: string |
 ```
 
 ## bpm.container
-@component bpm.container @description Conteneur avec titre optionnel.
+@component bpm.container @description Conteneur de mise en page pour centrer et limiter la largeur du contenu (pages, formulaires). @example bpm.container({ children: "..." }) @props - children (ReactNode) — Contenu. - className (string, optionnel) — Classes CSS. - style (object, optionnel) — Styles inline. @usage Wrapper de page, zone principale formulaire. @context PARENT: page directe | layout. ASSOCIATED: bpm.panel, bpm.grid, bpm.title. FORBIDDEN: aucun.
 @semantic role=conteneur frame=section status=proposed
 @guidance Regrouper un bloc de contenu, avec titre optionnel, sans la matérialité d'une carte. Associer : bpm.title3, bpm.text, bpm.table. Éviter : Unité autonome détachée du fond (bpm.card) ou zone défilante (bpm.scrollContainer).
 ```
@@ -456,7 +456,7 @@ ISO ou texte libre, ou Date (affichage localisé court). */ timestamp?: string |
 ```
 
 ## bpm.contextMenu
-@component bpm.contextMenu @description Menu contextuel (clic droit ou clic bouton).
+@component bpm.contextMenu @description Menu contextuel positionné dynamiquement, déclenché par clic droit ou clic simple. @example bpm.contextMenu({ items: [{ id: "copy", label: "Copier", onSelect: copy }], trigger: <Button>...</Button>, triggerOn: "contextmenu" }) @param {object} props @param {ContextMenuItem[]} props.items - Liste des éléments du menu {id, label, disabled?, onSelect?}. Obligatoire. @param {ReactNode} props.trigger - Élément déclencheur du menu. Obligatoire. @param {"contextmenu"|"click"} [props.triggerOn="contextmenu"] - Mode de déclenchement. Optionnel. @param {string} [props.className=""] - Classes CSS additionnelles. Optionnel. @associated bpm.dropdown, bpm.popover
 ```
   items*: ContextMenuItem[]
   trigger*: React.ReactNode
@@ -465,7 +465,7 @@ ISO ou texte libre, ou Date (affichage localisé court). */ timestamp?: string |
 ```
 
 ## bpm.crud
-Page CRUD générique : table + filtres + modal de création/édition/détail câblés sur un endpoint REST (GET/POST/PUT/DELETE). Utilise idKey pour les routes par identifiant.
+@component bpm.crudPage @description Page CRUD complète avec table paginée, recherche, modales création/édition/suppression et appels API. @example bpm.crudPage({ title: "Clients", endpoint: "/api/clients", columns: [...], fields: [...] }) @param {object} props @param {string} props.title - Titre de la page. Obligatoire. @param {string} props.endpoint - URL de l'API CRUD. Obligatoire. @param {CrudColumn[]} props.columns - Colonnes du tableau {key, label, type?, sortable?}. Obligatoire. @param {CrudField[]} props.fields - Champs du formulaire {key, label, type, required?, options?}. Obligatoire. @param {string} [props.domain] - Domaine métier. Optionnel. @param {string} [props.semantic] - Sémantique du contenu. Optionnel. @param {string} [props.idKey="id"] - Clé d'identifiant pour les opérations. Optionnel. @associated bpm.table, bpm.modal, bpm.form @parent bpm.page, bpm.pageLayout @forbidden aucun
 @semantic role=composite frame=entity status=proposed
 @guidance Gestion complète d'une Entity en un composant : liste, formulaire, colonnes, champs, endpoint (LayoutType crud-table). Associer : bpm.confirmModal, bpm.toast, bpm.filterPanel. Éviter : Écrans sur mesure où la composition fine est requise (bpm.table + bpm.modal + champs) ou exploration analytique (bpm.dataExplorer).
 ```
@@ -479,14 +479,14 @@ Page CRUD générique : table + filtres + modal de création/édition/détail c�
 ```
 
 ## bpm.dataExplorer
-@component bpm.dataExplorer @description Explorateur de données unifié (classique ou analytics).
+@component bpm.dataExplorer @description Explorateur de données unifié supportant le mode classique (table) ou analytics (filtres + graphiques). @example bpm.dataExplorer({ mode: "analytics", data: [...], columns: [...], chartConfig: { type: "bar", xKey: "mois", yKey: "ventes" } }) @param {object} props @param {"classic"|"analytics"} [props.mode] - Mode d'affichage. Optionnel (défaut: classic). @param {Record<string, unknown>[]} props.data - Données à explorer. Obligatoire. @param {ColumnDef[]|ExplorerAnalyticsColumn[]} props.columns - Définition des colonnes. Obligatoire. @associated bpm.table, bpm.filterPanel, bpm.barChart @parent bpm.page, bpm.pageLayout, bpm.card @forbidden Petite liste statique — utiliser bpm.table
 @semantic role=composite frame=entity status=proposed
 @guidance Exploration autonome d'une collection : table + recherche + tri + pagination + export CSV en un composant. Associer : bpm.metric, bpm.filterPanel, bpm.plotlyChart. Éviter : Affichage simple sans outillage (bpm.table) ou gestion avec écriture (bpm.crud).
 ```
 ```
 
 ## bpm.dateInput
-@component bpm.dateInput @description Sélecteur de date.
+@component bpm.dateInput @description Champ de saisie de date avec calendrier popover et format FR (JJ/MM/AAAA). @example bpm.dateInput({ label: "Date de livraison", value: new Date(), onChange: setDate }) @param {object} props @param {string} [props.label] - Libellé du champ. Optionnel. @param {Date|string|null} [props.value] - Valeur de la date. Optionnel. @param {function} [props.onChange] - Callback avec la date sélectionnée. Optionnel. @param {boolean} [props.disabled=false] - Désactive le champ. Optionnel. @param {string} [props.help] - Texte d'aide en tooltip. Optionnel. @param {Date|string|null} [props.min] - Date minimale autorisée. Optionnel. @param {Date|string|null} [props.max] - Date maximale autorisée. Optionnel. @parent bpm.form @associated bpm.dateRangePicker, bpm.datePickerPopover @forbidden Plage de dates — utiliser bpm.dateRangePicker
 @semantic role=saisie frame=entity status=proposed
 @guidance Saisir une date ponctuelle (Field date/datetime) : échéance, date d'événement. Associer : bpm.wizardForm, bpm.timeInput. Éviter : Période ou intervalle (bpm.dateRangePicker), heure seule (bpm.timeInput).
 ```
@@ -500,7 +500,7 @@ Page CRUD générique : table + filtres + modal de création/édition/détail c�
 ```
 
 ## bpm.dateRangePicker
-@component bpm.dateRangePicker @description Sélecteur de plage de dates.
+@component bpm.dateRangePicker @description Sélecteur de plage de dates avec deux champs (début/fin) et calendriers popover coordonnés. @example bpm.dateRangePicker({ label: "Période", start: startDate, end: endDate, onChange: (s, e) => setRange(s, e) }) @param {object} props @param {string} [props.label] - Libellé du champ. Optionnel. @param {Date|string|null} [props.start] - Date de début. Optionnel. @param {Date|string|null} [props.end] - Date de fin. Optionnel. @param {function} [props.onChange] - Callback (start, end). Optionnel. @param {boolean} [props.disabled=false] - Désactive le sélecteur. Optionnel. @param {Date|string|null} [props.min] - Date minimale. Optionnel. @param {Date|string|null} [props.max] - Date maximale. Optionnel. @parent bpm.filterPanel, bpm.form @associated bpm.dateInput, bpm.datePickerPopover @forbidden Date unique — utiliser bpm.dateInput
 @semantic role=saisie frame=entity status=proposed
 @guidance Saisir une période (début/fin) : filtre temporel d'une série, plage de validité. Associer : bpm.lineChart, bpm.filterPanel, bpm.dataExplorer. Éviter : Date unique (bpm.dateInput).
 ```
@@ -514,7 +514,7 @@ Page CRUD générique : table + filtres + modal de création/édition/détail c�
 ```
 
 ## bpm.decisionTree
-@component bpm.decisionTree @description Arbre de décision interactif (questions, actions, résultats).
+@component bpm.decisionTree @description Arbre de décision interactif avec questions (losanges), actions et résultats navigables. @example bpm.decisionTree({ rootId: "q1", nodes: [...], currentNodeId: "q1", onNodeClick: handleClick }) @param {object} props @param {string} props.rootId - ID du nœud racine. Obligatoire. @param {DecisionNode[]} props.nodes - Liste des nœuds {id, kind, label, branches?}. Obligatoire. @param {string} [props.currentNodeId] - ID du nœud actif. Optionnel. @param {function} props.onNodeClick - Callback (nodeId, branch?). Obligatoire. @associated bpm.flowDiagram, bpm.stepper
 ```
   rootId*: string
   nodes*: DecisionNode[]
@@ -523,7 +523,7 @@ Page CRUD générique : table + filtres + modal de création/édition/détail c�
 ```
 
 ## bpm.diffViewer
-@component bpm.diffViewer @description Visualisation de diff texte/code (split ou unified).
+@component bpm.diffViewer @description Visualiseur de différences textuelles entre deux versions (mode split ou unified). @example bpm.diffViewer({ original: "ancien", modified: "nouveau", mode: "split" }) @param {object} props @param {string} props.original - Texte original. Obligatoire. @param {string} props.modified - Texte modifié. Obligatoire. @param {string} [props.language] - Langage pour référence. Optionnel. @param {"split"|"unified"} [props.mode="split"] - Mode d'affichage. Optionnel. @param {object} [props.title] - Titres des colonnes {original?, modified?}. Optionnel. @param {string} [props.className=""] - Classes CSS additionnelles. Optionnel. @associated bpm.changelog, bpm.codeBlock @parent bpm.card, bpm.modal, bpm.tabs @forbidden Code sans comparaison — utiliser bpm.codeBlock
 @semantic role=affichage frame=ai status=needs-curation
 @guidance Comparer deux versions d'un texte/code (split ou unified) : relecture d'une proposition IA, audit de modification. Associer : bpm.codeEditor, bpm.button, bpm.confirmModal. Éviter : Affichage d'une seule version (bpm.codeBlock) ou comparaison de données tabulaires (bpm.table).
 ```
@@ -536,7 +536,7 @@ Page CRUD générique : table + filtres + modal de création/édition/détail c�
 ```
 
 ## bpm.divider
-@component bpm.divider @description Séparateur horizontal avec label optionnel.
+@component bpm.divider @description Ligne de separation horizontale ou verticale (optionnellement avec libelle) entre blocs. @example bpm.divider({ label: "ou", orientation: "horizontal" }) @props - label (string, optionnel) — Texte centre sur la ligne. - orientation ('horizontal' | 'vertical', optionnel) — Sens. Default: 'horizontal'. - thickness (number, optionnel) — Epaisseur en px. Default: 1. - color (string, optionnel) — Couleur CSS. Default: var(--bpm-border). - className (string, optionnel) — Classes CSS. @usage Separation de sections, separateur ou dans formulaire. @context PARENT: bpm.panel | bpm.card | page. ASSOCIATED: bpm.input, bpm.button. FORBIDDEN: aucun.
 @semantic role=affichage frame=section status=proposed
 @guidance Marquer une rupture thématique entre deux blocs de même niveau. Associer : bpm.title2, bpm.container. Éviter : Compenser un manque de hiérarchie (préférer bpm.title2/title3) ou espacer (marges).
 ```
@@ -548,7 +548,7 @@ Page CRUD générique : table + filtres + modal de création/édition/détail c�
 ```
 
 ## bpm.drawer
-@component bpm.drawer @description Tiroir / panneau latéral (détail, formulaire, filtres).
+@component bpm.drawer @description Panneau latéral glissant (gauche ou droite) avec overlay et fermeture par Escape ou clic extérieur. @example bpm.drawer({ open: true, onClose: close, title: "Détails", side: "right", children: <Content /> }) @param {object} props @param {ReactNode} props.children - Contenu du drawer. Obligatoire. @param {boolean} props.open - État d'ouverture. Obligatoire. @param {function} props.onClose - Callback de fermeture. Obligatoire. @param {ReactNode} [props.title] - Titre dans l'en-tête. Optionnel. @param {"left"|"right"} [props.side="right"] - Côté d'apparition. Optionnel. @param {number|string} [props.width=360] - Largeur du drawer. Optionnel. @param {string} [props.className=""] - Classes CSS additionnelles. Optionnel. @associated bpm.modal, bpm.panel, bpm.sidebar @parent bpm.page, bpm.pageLayout @forbidden Confirmation courte — utiliser bpm.modal/confirmModal
 @semantic role=conteneur frame=section status=proposed
 @guidance Panneau latéral de travail : détail, formulaire ou filtres consultés en parallèle du contenu principal. Associer : bpm.labelValue, bpm.filterPanel, bpm.button. Éviter : Décision bloquante (bpm.modal, bpm.confirmModal) ou contenu ancré ponctuel (bpm.popover).
 ```
@@ -562,7 +562,7 @@ Page CRUD générique : table + filtres + modal de création/édition/détail c�
 ```
 
 ## bpm.drillDown
-@component bpm.drillDown @description Navigation drill-down multi-niveaux dans des données hiérarchiques.
+@component bpm.drillDown @description Navigation multi-niveaux avec fil d'Ariane pour explorer des données hiérarchiques par clic sur les lignes. @example bpm.drillDown({ levels: [...], currentLevel: 0, onDrill: (item, lvl) => setLevel(lvl), onBack: () => setLevel(lvl-1) }) @param {object} props @param {DrillDownLevel[]} props.levels - Niveaux de navigation {key, label, columns, items}. Obligatoire. @param {number} props.currentLevel - Index du niveau actuel. Obligatoire. @param {function} props.onDrill - Callback (item, nextLevel) pour navigation descendante. Obligatoire. @param {function} props.onBack - Callback pour remonter d'un niveau. Obligatoire. @param {boolean} [props.breadcrumbs=true] - Affiche le fil d'Ariane. Optionnel. @associated bpm.table, bpm.breadcrumbs
 ```
   levels*: DrillDownLevel<T>[]
   currentLevel*: number
@@ -572,7 +572,7 @@ Page CRUD générique : table + filtres + modal de création/édition/détail c�
 ```
 
 ## bpm.emailComposer
-@component bpm.emailComposer @description Composeur d'email (To, CC, objet, corps riche).
+@component bpm.emailComposer @description Formulaire de composition d'email avec éditeur riche, modèles prédéfinis et envoi. @example bpm.emailComposer({ to: "client@exemple.fr", templates: [...], onSend: sendEmail, useRichText: true }) @param {object} props @param {string} [props.to=""] - Destinataire initial. Optionnel. @param {string} [props.subject=""] - Objet initial. Optionnel. @param {string} [props.body=""] - Corps initial. Optionnel. @param {EmailTemplate[]} [props.templates=[]] - Modèles d'email {id, label, subject, bodyHtml}. Optionnel. @param {boolean} [props.useRichText=true] - Utilise l'éditeur riche. Optionnel. @param {function} [props.onSend] - Callback d'envoi (payload). Optionnel. @param {function} [props.onCancel] - Callback d'annulation. Optionnel. @param {string} [props.className=""] - Classes CSS additionnelles. Optionnel. @associated bpm.richTextEditor, bpm.form
 ```
   to?: string
   subject?: string
@@ -585,7 +585,7 @@ Page CRUD générique : table + filtres + modal de création/édition/détail c�
 ```
 
 ## bpm.empty
-@component bpm.empty @description État vide minimal (icône + message).
+@component bpm.empty @description Conteneur vide minimal servant de placeholder ou espaceur dans une grille/layout. @example bpm.empty({ children: "Texte optionnel" }) @param {object} props @param {ReactNode} [props.children] - Contenu optionnel. Optionnel. @param {string} [props.className=""] - Classes CSS additionnelles. Optionnel. @param {object} [props.style={}] - Styles inline. Optionnel. @associated bpm.column, bpm.grid @parent bpm.card, bpm.table, bpm.container @forbidden aucun
 @semantic role=feedback frame=entity status=proposed
 @guidance Absence de données minimale (icône + message) dans un espace restreint : cellule, panneau, widget. Associer : bpm.card, bpm.drawer. Éviter : État vide pleine page avec action de création (bpm.emptyState).
 ```
@@ -595,7 +595,7 @@ Page CRUD générique : table + filtres + modal de création/édition/détail c�
 ```
 
 ## bpm.emptyState
-@component bpm.emptyState @description État vide illustré (titre, description, action).
+@component bpm.emptyState @description État vide centré avec titre, description et action (bouton) quand une liste ou recherche n'a aucun résultat. @example bpm.emptyState({ title: "Aucune commande", description: "Créez votre première commande.", action: <Button>Nouvelle commande</Button> }) @props - title (string, optionnel) — Titre. Default: 'Aucune donnée'. - description (ReactNode, optionnel) — Texte explicatif. - icon (ReactNode, optionnel) — Icône au-dessus du titre. - action (ReactNode, optionnel) — Bouton ou lien d'action. - className (string, optionnel) — Classes CSS. @usage Liste vide, recherche sans résultat, premier usage. @context PARENT: bpm.panel | bpm.card | bpm.table (contenu vide). ASSOCIATED: bpm.button, bpm.input. FORBIDDEN: aucun.
 @semantic role=feedback frame=entity status=proposed
 @guidance Collection vide : expliquer l'absence de données et proposer l'action qui la comble (créer, importer). Associer : bpm.button, bpm.table, bpm.crud. Éviter : Chargement en cours (bpm.skeleton) ou absence ponctuelle minime (bpm.empty).
 ```
@@ -607,7 +607,7 @@ Page CRUD générique : table + filtres + modal de création/édition/détail c�
 ```
 
 ## bpm.expander
-@component bpm.expander @description Bloc repliable avec titre.
+@component bpm.expander @description Bloc dépliable avec titre pour masquer/afficher du contenu (détails, annexes). @example bpm.expander({ title: "Détails techniques", defaultExpanded: false, children: "..." }) @props - title (ReactNode) — Titre du bloc (visible quand replié). - children (ReactNode) — Contenu dépliable. - defaultExpanded (boolean, optionnel) — Ouvert au montage. Default: false. - className (string, optionnel) — Classes CSS. @usage Détails commande, annexes contrat, section technique. @context PARENT: bpm.panel | bpm.card. ASSOCIATED: bpm.accordion, bpm.table. FORBIDDEN: aucun.
 @semantic role=conteneur frame=section status=proposed
 @guidance Détail secondaire masquable : l'utilisateur choisit d'approfondir. Associer : bpm.text, bpm.jsonViewer, bpm.table. Éviter : Contenu essentiel à la décision (le laisser visible) ou séries de sections (bpm.accordion).
 ```
@@ -618,7 +618,7 @@ Page CRUD générique : table + filtres + modal de création/édition/détail c�
 ```
 
 ## bpm.exportButton
-@component bpm.exportButton @description Bouton d'export de données (CSV, JSON, Excel).
+@component bpm.exportButton @description Bouton d'export avec menu déroulant pour télécharger en CSV ou JSON avec configuration BOM/délimiteur. @example bpm.exportButton({ data: rows, filename: "export", formats: ["csv", "json"], csvDelimiter: ";" }) @param {object} props @param {T[]|function} props.data - Données à exporter ou fonction retournant les données. Obligatoire. @param {string} props.filename - Nom du fichier sans extension. Obligatoire. @param {("csv"|"json")[]} [props.formats=["csv","json"]] - Formats proposés. Optionnel. @param {ExportColumn[]} [props.columns] - Colonnes à exporter {key, header}. Optionnel. @param {";"|","} [props.csvDelimiter=";"] - Délimiteur CSV. Optionnel. @param {boolean} [props.csvBOM=true] - Ajoute le BOM UTF-8. Optionnel. @param {string} [props.className=""] - Classes CSS additionnelles. Optionnel. @associated bpm.table, bpm.dataExplorer
 ```
   data*: T[] | (() => T[])
   filename*: string
@@ -630,7 +630,7 @@ Page CRUD générique : table + filtres + modal de création/édition/détail c�
 ```
 
 ## bpm.fab
-@component bpm.fab @description Bouton d'action flottant (FAB).
+@component bpm.fab @description Bouton d'action flottant (Floating Action Button) positionné en coin d'écran pour action principale. @example bpm.fab({ icon: <PlusIcon />, label: "Nouveau", onClick: create, position: "bottom-right" }) @param {object} props @param {ReactNode} [props.icon] - Icône affichée (défaut: +). Optionnel. @param {string} [props.label] - Texte pour titre/aria-label. Optionnel. @param {function} [props.onClick] - Callback au clic. Optionnel. @param {"bottom-right"|"bottom-left"|"top-right"|"top-left"} [props.position="bottom-right"] - Position. Optionnel. @param {string} [props.className=""] - Classes CSS additionnelles. Optionnel. @associated bpm.button, bpm.iconButton @parent bpm.page, bpm.pageLayout @forbidden Plus d'une action principale — utiliser bpm.button dans une barre
 @semantic role=action frame=event status=proposed
 @guidance Action primaire unique et récurrente d'un écran, accessible en permanence (créer, ajouter). Associer : bpm.modal, bpm.crud, bpm.toast. Éviter : Actions secondaires ou multiples (bpm.button) ; écrans sans action dominante.
 ```
@@ -642,7 +642,7 @@ Page CRUD générique : table + filtres + modal de création/édition/détail c�
 ```
 
 ## bpm.filePreview
-@component bpm.filePreview @description Aperçu de fichier (image, PDF, texte/code).
+@component bpm.filePreview @description Prévisualiseur de fichiers (images, PDF, texte/code) avec inférence MIME et bouton téléchargement. @example bpm.filePreview({ url: "/files/doc.pdf", filename: "doc.pdf", showDownload: true }) @param {object} props @param {string} props.url - URL du fichier. Obligatoire. @param {string} props.filename - Nom du fichier. Obligatoire. @param {string} [props.mimeType] - Type MIME (auto-inféré si absent). Optionnel. @param {string|number} [props.height=400] - Hauteur de la prévisualisation. Optionnel. @param {boolean} [props.showDownload=true] - Affiche le lien de téléchargement. Optionnel. @param {string} [props.className=""] - Classes CSS additionnelles. Optionnel. @props - url (string, obligatoire) — URL du fichier à prévisualiser. - filename (string, obligatoire) — Nom du fichier affiché. - mimeType (string, optionnel) — Type MIME (auto-inféré depuis l'extension sinon). - height (string|number, optionnel) — Hauteur de l'aperçu. Default: 400. - showDownload (boolean, optionnel) — Affiche le bouton de téléchargement. Default: true. - className (string, optionnel) — Classes CSS additionnelles. - file_url / file_name / mime_type / show_download / class_name — Alias snake_case (API Python), normalisés en interne. @associated bpm.fileUploader, bpm.codeBlock @parent bpm.card, bpm.modal, bpm.masterDetail @forbidden aucun
 @semantic role=affichage frame=entity status=proposed
 @guidance Aperçu adaptatif d'un fichier selon son type (image, PDF, texte/code) : vérification avant/après upload. Associer : bpm.fileUploader, bpm.drawer, bpm.labelValue. Éviter : Type connu et unique (bpm.image, bpm.pdfViewer, bpm.codeBlock directement).
 ```
@@ -660,7 +660,7 @@ Page CRUD générique : table + filtres + modal de création/édition/détail c�
 ```
 
 ## bpm.fileUploader
-@component bpm.fileUploader @description Upload de fichier(s) par glisser-déposer ou sélection.
+@component bpm.fileUploader @description Bouton de téléversement de fichiers avec filtrage par type MIME et taille maximale. @example bpm.fileUploader({ accept: "image/*", multiple: true, maxSizeBytes: 5000000, onFiles: handleFiles }) @param {object} props @param {string} [props.accept] - Types MIME acceptés (ex: "image/*", ".pdf"). Optionnel. @param {boolean} [props.multiple=false] - Autorise la sélection multiple. Optionnel. @param {number} [props.maxSizeBytes] - Taille maximale par fichier en octets. Optionnel. @param {function} [props.onFiles] - Callback avec les fichiers sélectionnés. Optionnel. @param {boolean} [props.disabled=false] - Désactive le bouton. Optionnel. @param {string} [props.label="Choisir un fichier"] - Texte du bouton. Optionnel. @parent bpm.form @associated bpm.filePreview, bpm.button @forbidden aucun
 @semantic role=saisie frame=entity status=proposed
 @guidance Joindre un ou plusieurs fichiers à une entité (pièce jointe, justificatif, import). Associer : bpm.filePreview, bpm.wizardForm. Éviter : Saisie de texte structuré (bpm.jsonEditor) ; prévisualisation (bpm.filePreview).
 ```
@@ -673,7 +673,7 @@ Page CRUD générique : table + filtres + modal de création/édition/détail c�
 ```
 
 ## bpm.filterPanel
-@component bpm.filterPanel @description Panneau de filtres (select, multiselect, daterange, text, toggle).
+@component bpm.filterPanel @description Panneau de filtres dynamiques (select, multiselect, daterange, text, toggle) avec réinitialisation. @example bpm.filterPanel({ filters: [...], values: { status: "active" }, onChange: handleChange, onReset: reset }) @param {object} props @param {FilterConfig[]} props.filters - Configuration des filtres {key, label, type, options?}. Obligatoire. @param {Record<string, unknown>} [props.values={}] - Valeurs courantes des filtres. Optionnel. @param {function} props.onChange - Callback (key, value). Obligatoire. @param {function} props.onReset - Callback de réinitialisation. Obligatoire. @param {"horizontal"|"vertical"} [props.orientation="horizontal"] - Disposition. Optionnel. @param {boolean} [props.collapsible=false] - Panneau repliable avec badge. Optionnel. @associated bpm.table, bpm.dataExplorer, bpm.chip @parent bpm.drawer, bpm.card, bpm.dataExplorer @forbidden aucun
 @semantic role=saisie frame=section status=proposed
 @guidance Restreindre une collection selon plusieurs critères typés (select, multiselect, daterange, text, toggle). Associer : bpm.table, bpm.dataExplorer, bpm.chip, bpm.pagination. Éviter : Critère unique (un bpm.selectbox suffit) ou recherche plein-texte seule (bpm.input).
 ```
@@ -686,7 +686,7 @@ Page CRUD générique : table + filtres + modal de création/édition/détail c�
 ```
 
 ## bpm.flowDiagram
-@component bpm.flowDiagram @description Diagramme d'états et transitions interactif (SVG).
+@component bpm.flowDiagram @description Diagramme d'états et transitions SVG avec états colorés et arcs cliquables depuis l'état courant. @example bpm.flowDiagram({ states: [...], transitions: [...], currentState: "pending", onTransition: handleTransition }) @param {object} props @param {FlowDiagramState[]} props.states - Liste des états {value, label, color?, terminal?}. Obligatoire. @param {FlowDiagramTransition[]} props.transitions - Transitions {from, to, label}. Obligatoire. @param {string} [props.currentState] - État actif (surligné). Optionnel. @param {function} [props.onTransition] - Callback (from, to). Optionnel. @param {"horizontal"|"vertical"} [props.direction="horizontal"] - Direction du diagramme. Optionnel. @param {string} [props.className=""] - Classes CSS additionnelles. Optionnel. @associated bpm.decisionTree, bpm.stepper, bpm.timeline @parent bpm.card, bpm.container @forbidden Étapes linéaires — utiliser bpm.stepper
 @semantic role=affichage frame=workflow status=proposed
 @guidance Visualiser un processus : états et transitions (miroir du Workflow Ω), avec état courant éventuel. Associer : bpm.statusTracker, bpm.badge, bpm.card. Éviter : Progression personnelle dans un parcours (bpm.stepper) ou hiérarchie (bpm.orgChart, bpm.treeview).
 ```
@@ -699,7 +699,7 @@ Page CRUD générique : table + filtres + modal de création/édition/détail c�
 ```
 
 ## bpm.funnelChart
-@component bpm.funnelChart @description Graphique en entonnoir (tunnel de conversion).
+@component bpm.funnelChart @description Graphique en entonnoir pour visualiser les étapes d'un processus de conversion avec pourcentages. @example bpm.funnelChart({ stages: [{ label: "Visiteurs", value: 1000 }, { label: "Leads", value: 200 }], showPercentage: true }) @param {object} props @param {FunnelStage[]} props.stages - Étapes {label, value}. Obligatoire. @param {boolean} [props.showPercentage=false] - Affiche les pourcentages. Optionnel. @param {boolean} [props.horizontal=false] - Orientation horizontale. Optionnel. @param {string} [props.className=""] - Classes CSS additionnelles. Optionnel. @associated bpm.barChart, bpm.metric
 @semantic role=indicateur frame=kpi type=taux,compte direction=hausse=bon temporalite=instantane status=proposed
 @guidance Conversion étape par étape d'un tunnel : volume restant et taux de passage entre phases (acquisition, activation, achat). Associer : bpm.metric, bpm.statusTracker, bpm.caption. Éviter : Étapes d'un parcours sans déperdition mesurée (bpm.stepper) ou comparaison catégorielle simple (bpm.barChart).
 ```
@@ -710,7 +710,7 @@ Page CRUD générique : table + filtres + modal de création/édition/détail c�
 ```
 
 ## bpm.gantt
-@component bpm.gantt @description Diagramme de Gantt (tâches, jalons, dépendances).
+@component bpm.gantt @description Diagramme de Gantt avec tâches, dépendances, groupes et ligne du jour. @example bpm.gantt({ tasks: [...], viewMode: "week", onTaskClick: handleClick, showDependencies: true }) @param {object} props @param {GanttTask[]} props.tasks - Tâches {id, label, start, end, progress?, color?, dependencies?, group?}. Obligatoire. @param {"day"|"week"|"month"} props.viewMode - Mode d'affichage temporel. Obligatoire. @param {function} props.onTaskClick - Callback au clic sur une tâche. Obligatoire. @param {boolean} [props.showDependencies=true] - Affiche les flèches de dépendance. Optionnel. @param {boolean} [props.todayLine=true] - Affiche la ligne du jour. Optionnel. @associated bpm.timeline, bpm.table
 @semantic role=affichage frame=workflow status=needs-curation
 @guidance Planifier et suivre des tâches datées avec dépendances et jalons sur un axe temporel : qui fait quoi, quand, dans quel ordre. Associer : bpm.statusTracker, bpm.timeline, bpm.badge. Éviter : Historique d'événements passés en lecture seule (bpm.timeline) ou agenda d'événements ponctuels (bpm.scheduler).
 ```
@@ -722,7 +722,7 @@ Page CRUD générique : table + filtres + modal de création/édition/détail c�
 ```
 
 ## bpm.geofence
-@component bpm.geofence @description Carte interactive avec zones géographiques (geofences).
+@component bpm.geofence @description Éditeur de zones géographiques sur carte avec polygones cliquables pour définir des périmètres. @example bpm.geofence({ zones: [...], center: [48.85, 2.35], onZonesChange: setZones }) @param {object} props @param {GeofenceZone[]} props.zones - Liste des zones {id, name?, positions, color?}. Obligatoire. @param {function} [props.onZonesChange] - Callback avec les zones modifiées. Optionnel. @param {[number, number]} props.center - Centre de la carte [lat, lng]. Obligatoire. @param {number} [props.zoom=14] - Niveau de zoom initial. Optionnel. @param {number|string} [props.height=400] - Hauteur de la carte. Optionnel. @param {string} [props.className=""] - Classes CSS additionnelles. Optionnel. @associated bpm.mapView, bpm.gps @parent bpm.card, bpm.modal, bpm.container @forbidden aucun
 ```
   zones*: GeofenceZone[]
   onZonesChange?: (next: GeofenceZone[]) => void
@@ -733,7 +733,7 @@ Page CRUD générique : table + filtres + modal de création/édition/détail c�
 ```
 
 ## bpm.gps
-Carte Leaflet chargée côté client uniquement (évite erreurs SSR). */ const LeafletMap = dynamic( () => import("./GpsMap").then((m) => m.GpsMap), { ssr: false } ); État du cycle de vie de la géolocalisation. */ export type GpsStatus = "idle" | "loading" | "success" | "error"; @component bpm.gps @description Affichage ou sélection de position GPS.
+@component bpm.gps @description Composant de géolocalisation avec carte Leaflet : affiche la position courante de l'utilisateur (mode `display`) ou permet de sélectionner un point sur la carte (mode `picker`). @example // Mode display : récupération et affichage de la position du navigateur bpm.gps({ label: "Ma position", onLocation: ({ lat, lng, accuracy }) => console.log(lat, lng, accuracy), }) @example // Mode picker : sélection contrôlée d'un point sur la carte const [point, setPoint] = useState<{ lat: number; lng: number } | null>(null); bpm.gps({ mode: "picker", value: point, onChange: setPoint, height: 400, }) @param {object} props @param {string} [props.label] - Titre affiché au-dessus du bloc. Optionnel. @param {boolean} [props.showMap=true] - Affiche la carte Leaflet sous les contrôles. Optionnel. @param {function} [props.onLocation] - Callback appelé en mode `display` quand la position du navigateur est obtenue. Reçoit `{ lat, lng, accuracy }`. Optionnel. @param {number} [props.height=300] - Hauteur de la carte en pixels. Optionnel. @param {string} [props.className=""] - Classes CSS additionnelles appliquées au conteneur racine. Optionnel. @param {"display"|"picker"} [props.mode="display"] - Mode du composant : `display` pour afficher la position courante, `picker` pour sélectionner un point. Optionnel. @param {{lat:number,lng:number}|null} [props.value=null] - Position courante en mode `picker` (composant contrôlé). Optionnel. @param {function} [props.onChange] - Callback appelé en mode `picker` à chaque clic sur la carte ou déplacement du marqueur. Reçoit `{ lat, lng }`. Optionnel. @note SSR-safe : la carte Leaflet est chargée dynamiquement avec `ssr: false`. L'accès à `navigator.geolocation` est encapsulé dans un handler utilisateur, jamais exécuté pendant le rendu. @note Permission requise : le navigateur demande l'autorisation à l'utilisateur lors du premier clic sur « Localiser ». En cas de refus (code 1), le statut passe à `error` avec le message « Autorisation refusée ». @parent bpm.card, bpm.panel, bpm.modal @associated bpm.mapView, bpm.geofence, bpm.routePlanner, bpm.addressInput
 @semantic role=saisie frame=entity status=proposed
 @guidance Saisir ou afficher une position GPS (carte + picker) : géolocalisation d'une entité, pointage terrain. Associer : bpm.map, bpm.labelValue, bpm.wizardForm. Éviter : Pure consultation cartographique multi-points (bpm.map).
 ```
@@ -748,7 +748,7 @@ Carte Leaflet chargée côté client uniquement (évite erreurs SSR). */ const L
 ```
 
 ## bpm.grid
-@component bpm.grid @description Grille responsive avec espacement configurable.
+@component bpm.grid @description Grille responsive pour aligner des cartes, métriques ou champs (layout dashboard). @example bpm.grid({ cols: 3, gap: 16, children: <> ... </> }) @props - cols (number | object, optionnel) — Nombre de colonnes ou breakpoints. Default: 1. - gap (number | string, optionnel) — Espacement entre cellules. Default: '1rem'. - children (ReactNode, optionnel) — Contenu des cellules. - className (string, optionnel) — Classes CSS. @usage Dashboard KPIs, grille de cartes produit, formulaire multi-colonnes. @context PARENT: bpm.panel | bpm.tabs (contenu onglet) | page directe. ASSOCIATED: bpm.metric, bpm.card, bpm.column. FORBIDDEN: aucun.
 @semantic role=conteneur frame=section status=proposed
 @guidance Disposer des éléments homogènes en grille responsive (cartes, métriques, vignettes). Associer : bpm.card, bpm.metric, bpm.image. Éviter : Colonnes de contenus hétérogènes (bpm.column) ou données tabulaires (bpm.table).
 ```
@@ -759,7 +759,7 @@ Carte Leaflet chargée côté client uniquement (évite erreurs SSR). */ const L
 ```
 
 ## bpm.groupedList
-@component bpm.groupedList @description Liste groupée par clé avec en-têtes de groupe.
+@component bpm.groupedList @description Liste générique avec regroupement automatique par clé, en-têtes de groupe personnalisables et sections repliables. @example bpm.groupedList({ items: users, groupBy: "department", renderItem: (u) => <span>{u.name}</span>, collapsible: true }) @param {object} props @param {T[]} props.items - Tableau d'éléments à grouper. Obligatoire. @param {keyof T} props.groupBy - Clé de regroupement. Obligatoire. @param {function} props.renderItem - Fonction de rendu pour chaque élément. Obligatoire. @param {function} [props.renderGroupHeader] - Rendu personnalisé de l'en-tête de groupe. Optionnel. @param {"asc"|"desc"} [props.sortGroups="asc"] - Ordre de tri des groupes. Optionnel. @param {boolean} [props.collapsible=false] - Permet de replier les groupes. Optionnel. @param {boolean} [props.defaultCollapsed=false] - Groupes repliés par défaut. Optionnel. @associated bpm.list, bpm.accordion, bpm.dataList
 ```
   items*: T[]
   groupBy*: keyof T
@@ -853,7 +853,7 @@ Carte Leaflet chargée côté client uniquement (évite erreurs SSR). */ const L
 ```
 
 ## bpm.invoiceTemplate
-@component bpm.invoiceTemplate @description Modèle de facture A4 prêt pour impression avec lignes, TVA et totaux calculés automatiquement. @example bpm.invoiceTemplate({ issuer: "Ma Société", client: "Client SA", lines: [{ label: "Service", qty: 2, unitPrice: 100 }] }) @param {object} props @param {string} [props.title="Facture"] - Titre du document. Optionnel. @param {string} props.issuer - Informations de l'émetteur. Obligatoire. @param {string} props.client - Informations du client. Obligatoire. @param {InvoiceLine[]} props.lines - Lignes de facturation (label, qty, unitPrice). Obligatoire. @param {number} [props.taxRate=0.2] - Taux de TVA (0.2 = 20%). Optionnel. @param {string} [props.invoiceNo="—"] - Numéro de facture. Optionnel. @param {string} [props.date] - Date de la facture (YYYY-MM-DD). Optionnel, défaut aujourd'hui. @param {string} [props.className=""] - Classes CSS additionnelles. Optionnel. @associated bpm.printLayout export interface InvoiceLine { label: string; qty: number; unitPrice: number; } @component bpm.invoiceTemplate @description Modèle de facture (émetteur, client, lignes, total).
+@component bpm.invoiceTemplate @description Modèle de facture A4 prêt pour impression avec lignes, TVA et totaux calculés automatiquement. @example bpm.invoiceTemplate({ issuer: "Ma Société", client: "Client SA", lines: [{ label: "Service", qty: 2, unitPrice: 100 }] }) @param {object} props @param {string} [props.title="Facture"] - Titre du document. Optionnel. @param {string} props.issuer - Informations de l'émetteur. Obligatoire. @param {string} props.client - Informations du client. Obligatoire. @param {InvoiceLine[]} props.lines - Lignes de facturation (label, qty, unitPrice). Obligatoire. @param {number} [props.taxRate=0.2] - Taux de TVA (0.2 = 20%). Optionnel. @param {string} [props.invoiceNo="—"] - Numéro de facture. Optionnel. @param {string} [props.date] - Date de la facture (YYYY-MM-DD). Optionnel, défaut aujourd'hui. @param {string} [props.className=""] - Classes CSS additionnelles. Optionnel. @associated bpm.printLayout
 ```
   title?: string
   issuer*: string
@@ -879,7 +879,7 @@ Carte Leaflet chargée côté client uniquement (évite erreurs SSR). */ const L
 ```
 
 ## bpm.jsonViewer
-@component bpm.jsonViewer @description Affichage JSON formaté et repliable.
+@component bpm.jsonViewer @description Affiche un objet JSON de façon repliable et lisible pour debug ou inspection de réponses API. @example bpm.jsonViewer({ data: { contrat: "Premium", ca: 125000 }, defaultExpandedLevel: 1 }) @props - data (unknown) — Objet ou chaîne JSON à afficher. - defaultExpandedLevel (number, optionnel) — Niveaux ouverts par défaut (0 = tout replié). Default: 1. - maxHeight (number, optionnel) — Hauteur max en px avec scroll. Default: 400. - className (string, optionnel) — Classes CSS. @usage Inspection de payload API, logs structurés, configuration. @context PARENT: bpm.panel | bpm.modal. ASSOCIATED: bpm.codeBlock, bpm.message. FORBIDDEN: aucun.
 @semantic role=affichage frame=entity status=proposed
 @guidance Inspection en lecture d'une structure de données brute (payload, configuration, réponse d'API). Associer : bpm.expander, bpm.codeBlock, bpm.drawer. Éviter : Édition de JSON (bpm.jsonEditor) ou restitution métier mise en forme (bpm.table, bpm.labelValue).
 ```
@@ -906,7 +906,7 @@ Carte Leaflet chargée côté client uniquement (évite erreurs SSR). */ const L
 ```
 
 ## bpm.lineChart
-@component bpm.lineChart @description Graphique en ligne SVG simple et responsive pour afficher une série de données. @example bpm.lineChart({ data: [{ x: 0, y: 10 }, { x: 1, y: 25 }], color: "#3b82f6" }) @param {object} props @param {LineChartDatum[]} props.data - Tableau de points { x, y }. Obligatoire. @param {number} [props.width=400] - Largeur du SVG. Optionnel. @param {number} [props.height=200] - Hauteur du SVG. Optionnel. @param {string} [props.color="var(--bpm-accent)"] - Couleur de la ligne. Optionnel. @param {string} [props.className=""] - Classes CSS additionnelles. Optionnel. @param {InterpretContext} [props.context] - Contexte de jugement : ligne de repère pointillée, couleur de série jugée, aria-label descriptif. Optionnel. @associated bpm.areaChart, bpm.barChart, bpm.scatterChart @parent bpm.card, bpm.grid, bpm.tableauxDeBord @forbidden Catégories discrètes — utiliser bpm.barChart export interface LineChartDatum { x: number | string; y: number; }/** @component bpm.lineChart @description Graphique en courbes.
+@component bpm.lineChart @description Graphique en ligne SVG simple et responsive pour afficher une série de données. @example bpm.lineChart({ data: [{ x: 0, y: 10 }, { x: 1, y: 25 }], color: "#3b82f6" }) @param {object} props @param {LineChartDatum[]} props.data - Tableau de points { x, y }. Obligatoire. @param {number} [props.width=400] - Largeur du SVG. Optionnel. @param {number} [props.height=200] - Hauteur du SVG. Optionnel. @param {string} [props.color="var(--bpm-accent)"] - Couleur de la ligne. Optionnel. @param {string} [props.className=""] - Classes CSS additionnelles. Optionnel. @param {InterpretContext} [props.context] - Contexte de jugement : ligne de repère pointillée, couleur de série jugée, aria-label descriptif. Optionnel. @associated bpm.areaChart, bpm.barChart, bpm.scatterChart @parent bpm.card, bpm.grid, bpm.tableauxDeBord @forbidden Catégories discrètes — utiliser bpm.barChart
 @semantic role=indicateur frame=kpi type=tendance direction=contextuel temporalite=serie status=proposed
 @guidance Évolution continue d'une mesure dans le temps : tendance, saisonnalité, rupture. Associer : bpm.metric, bpm.dateRangePicker, bpm.caption. Éviter : Comparaison de catégories sans ordre (bpm.barChart) ou corrélation entre deux mesures (bpm.scatterChart). Règle apps générées : bpm.plotlyChart.
 ```
@@ -919,7 +919,7 @@ Carte Leaflet chargée côté client uniquement (évite erreurs SSR). */ const L
 ```
 
 ## bpm.liveChart
-@component bpm.liveChart @description Graphique temps réel avec fenêtre glissante, seuils en pointillés et rafraîchissement automatique. @example bpm.liveChart({ data: [{ timestamp: Date.now(), value: 42 }], bufferDuration: 60, refreshInterval: 1000 }) @param {object} props @param {LiveChartDatum[]} props.data - Points { timestamp, value }. Obligatoire. @param {number} [props.bufferDuration=120] - Durée de la fenêtre en secondes. Optionnel. @param {{ value: number; label?: string }[]} [props.thresholds=[]] - Lignes de seuil horizontales. Optionnel. @param {number} [props.refreshInterval] - Intervalle de rafraîchissement en ms. Optionnel. @param {number} [props.width=400] - Largeur du graphique. Optionnel. @param {number} [props.height=180] - Hauteur du graphique. Optionnel. @param {string} [props.className=""] - Classes CSS additionnelles. Optionnel. @param {InterpretContext} [props.context] - Contexte de jugement : courbe colorée par le verdict, repère pointillé, verdict sous le graphique. Optionnel. @associated bpm.liveGauge, bpm.lineChart, bpm.sparkline export interface LiveChartDatum { timestamp: number; value: number; } @component bpm.liveChart @description Graphique en temps réel (mise à jour continue).
+@component bpm.liveChart @description Graphique temps réel avec fenêtre glissante, seuils en pointillés et rafraîchissement automatique. @example bpm.liveChart({ data: [{ timestamp: Date.now(), value: 42 }], bufferDuration: 60, refreshInterval: 1000 }) @param {object} props @param {LiveChartDatum[]} props.data - Points { timestamp, value }. Obligatoire. @param {number} [props.bufferDuration=120] - Durée de la fenêtre en secondes. Optionnel. @param {{ value: number; label?: string }[]} [props.thresholds=[]] - Lignes de seuil horizontales. Optionnel. @param {number} [props.refreshInterval] - Intervalle de rafraîchissement en ms. Optionnel. @param {number} [props.width=400] - Largeur du graphique. Optionnel. @param {number} [props.height=180] - Hauteur du graphique. Optionnel. @param {string} [props.className=""] - Classes CSS additionnelles. Optionnel. @param {InterpretContext} [props.context] - Contexte de jugement : courbe colorée par le verdict, repère pointillé, verdict sous le graphique. Optionnel. @associated bpm.liveGauge, bpm.lineChart, bpm.sparkline
 ```
   data*: LiveChartDatum[]
   bufferDuration?: number
@@ -946,7 +946,7 @@ Carte Leaflet chargée côté client uniquement (évite erreurs SSR). */ const L
 ```
 
 ## bpm.loadingBar
-@component bpm.loadingBar @description Barre de chargement (sweep, blocks, iso, stacked, arc, dots).
+@component bpm.loadingBar @description Barre de progression horizontale (déterminée ou indéterminée) pour chargement de tâches. @example bpm.loadingBar({ variant: "sweep", value: 65, size: "default" }) @props - variant (string, optionnel) — Style (sweep, blocks, iso…). Default: 'sweep'. - value (number, optionnel) — 0–100 pour barre déterminée. Omit = indéterminé. - size ('thin' | 'default' | 'thick', optionnel) — Hauteur. Default: 'default'. - animated (boolean, optionnel) — Animation. Default: true. - className (string, optionnel) — Classes CSS. - aria-label (string, optionnel) — Accessibilité. @usage Import en cours, génération de rapport, upload fichier. @context PARENT: bpm.panel | page directe. ASSOCIATED: bpm.spinner, bpm.progress. FORBIDDEN: aucun.
 @semantic role=feedback frame=section status=proposed
 @guidance Chargement global de page ou de zone, avec variantes visuelles (sweep, blocks, iso…). Associer : bpm.pageLayout, bpm.skeleton. Éviter : Progression mesurable vers une borne (bpm.progress) ou attente locale (bpm.spinner).
 ```
@@ -999,7 +999,7 @@ Carte Leaflet chargée côté client uniquement (évite erreurs SSR). */ const L
 ```
 
 ## bpm.markdown
-@component bpm.markdown @description Rendu Markdown sécurisé.
+@component bpm.markdown @description Affiche du contenu formaté en Markdown (titres, listes, gras, code) pour notices et documentation métier. @example bpm.markdown({ text: "## Procédure\n\n1. Valider le devis\n2. Envoyer au client." }) @props - text (string) — Contenu Markdown (utiliser `---` pour une ligne horizontale). - className (string, optionnel) — Classes CSS. @usage Notices, FAQ, procédures, documentation produit. @context PARENT: bpm.panel | bpm.card | bpm.tabs. ASSOCIATED: bpm.title, bpm.codeBlock. FORBIDDEN: aucun.
 @semantic role=affichage frame=section status=proposed
 @guidance Restituer un contenu riche rédigé (listes, liens, titres) de source maîtrisée : doc, note, réponse IA formatée. Associer : bpm.streamingText, bpm.card, bpm.codeBlock. Éviter : Texte brut court (bpm.text) ou HTML arbitraire (bpm.html).
 ```
@@ -1008,7 +1008,7 @@ Carte Leaflet chargée côté client uniquement (évite erreurs SSR). */ const L
 ```
 
 ## bpm.masterDetail
-@component bpm.masterDetail @description Vue liste + détail responsive (recherche, mobile).
+@component bpm.masterDetail @description Liste à gauche et détail à droite ; sur mobile, le détail s’ouvre en plein cadre avec retour. @example bpm.masterDetail({ items, columns: [{ key: "name", label: "Nom" }], renderDetail: (it) => <div>{it.name}</div>, onSelect: setSel }) @props - items (T[], obligatoire) — Données de la liste. - columns (MasterDetailColumn[], obligatoire) — Colonnes de la liste de gauche. - renderDetail (function, obligatoire) — (item) => ReactElement, panneau de détail. - onSelect (function, obligatoire) — Callback (item) à la sélection. - selectedId (string, optionnel) — Id sélectionné (mode contrôlé). - idKey (string, optionnel) — Clé d’identité des items. Default: "id". - searchable (boolean, optionnel) — Active la barre de recherche. - emptyDetailMessage (string, optionnel) — Message quand rien n’est sélectionné. - splitRatio (number, optionnel) — Ratio largeur liste/détail. - className (string, optionnel) — Classes CSS additionnelles. @parent bpm.page, bpm.pageLayout @associated bpm.table, bpm.drawer, bpm.filterPanel @forbidden Détail ponctuel — utiliser bpm.modal/drawer
 @semantic role=conteneur frame=entity status=proposed
 @guidance Parcourir une collection et consulter le détail de la sélection sans changer de page (liste + détail liés). Associer : bpm.table, bpm.labelValue, bpm.badge. Éviter : Colonnes indépendantes (bpm.column) ou gestion CRUD complète (bpm.crud).
 ```
@@ -1025,7 +1025,7 @@ Carte Leaflet chargée côté client uniquement (évite erreurs SSR). */ const L
 ```
 
 ## bpm.message
-@component bpm.message @description Bandeau info/success/warning/error.
+@component bpm.message @description Bandeau de message contextuel (succès, avertissement, erreur) pour retours utilisateur après action. @example bpm.message({ type: "success", children: "Devis enregistré et envoyé au client." }) @props - type ('info' | 'success' | 'warning' | 'error', optionnel) — Type de message. Default: 'info'. - children (ReactNode) — Texte du message. - className (string, optionnel) — Classes CSS. @usage Retour après enregistrement, validation formulaire, erreur API. @context PARENT: bpm.panel | bpm.modal | page directe. ASSOCIATED: bpm.button, bpm.input. FORBIDDEN: aucun.
 @semantic role=feedback frame=event status=proposed
 @guidance Réaction inline à une action ou un état : bandeau info/success/warning/error dans le flux de la page. Associer : bpm.button, bpm.wizardForm. Éviter : Notification éphémère hors flux (bpm.toast) ou encart durable (bpm.panel).
 ```
@@ -1035,7 +1035,7 @@ Carte Leaflet chargée côté client uniquement (évite erreurs SSR). */ const L
 ```
 
 ## bpm.metric
-Locales courants pour le format nombre (ex. "fr-FR" → 1 000,50, "en-US" → 1,000.50). */ export type MetricValueLocale = "fr-FR" | "en-US" | "de-DE" | string; @component bpm.metric @description Affiche une métrique chiffrée avec label, valeur, variation delta et options de formatage (devise, locale). @example bpm.metric({ label: "Chiffre d'affaires", value: 125000, delta: "+12%", currency: "EUR" }) @param {object} props @param {string} props.label - Libellé de la métrique. Obligatoire. @param {string|number} props.value - Valeur principale. Obligatoire. @param {number|string} [props.delta] - Variation affichée (ex: "+12%"). Optionnel. @param {string} [props.name] - Nom pour référencer dans le chat IA. Optionnel. @param {"aucun"|"normal"|"inverse"} [props.deltaType="normal"] - Coloration du delta. Optionnel. @param {string} [props.help] - Texte d'aide au survol. Optionnel. @param {number} [props.deltaDecimals=0] - Décimales pour le delta. Optionnel. @param {string} [props.currency="EUR"] - Devise pour l'affichage. Optionnel. @param {string} [props.valueLocale] - Locale pour formatage (fr-FR, en-US). Optionnel. @param {number} [props.valueDecimals=0] - Décimales pour la valeur. Optionnel. @param {boolean} [props.valueGrouping=true] - Séparateur de milliers. Optionnel. @param {boolean} [props.border=true] - Affiche la bordure. Optionnel. @param {React.ReactNode} [props.icon] - Icône à gauche du label. Optionnel. @param {string} [props.subtext] - Texte contextuel sous la valeur. Optionnel. @param {string} [props.accentColor] - Couleur d'accent. Optionnel. @param {boolean} [props.compact=false] - Mode compact réduit. Optionnel. @param {boolean} [props.trackContext=false] - Expose au contexte IA. Optionnel. @param {InterpretContext} [props.context] - Contexte de jugement { reference, direction, comparisonFrame? } : révèle écart/tendance/anomalie via interpret. Optionnel. @parent bpm.metricRow, bpm.grid, bpm.card @associated bpm.badge, bpm.plotlyChart
+@component bpm.metric @description Affiche une métrique chiffrée avec label, valeur, variation delta et options de formatage (devise, locale). @example bpm.metric({ label: "Chiffre d'affaires", value: 125000, delta: "+12%", currency: "EUR" }) @param {object} props @param {string} props.label - Libellé de la métrique. Obligatoire. @param {string|number} props.value - Valeur principale. Obligatoire. @param {number|string} [props.delta] - Variation affichée (ex: "+12%"). Optionnel. @param {string} [props.name] - Nom pour référencer dans le chat IA. Optionnel. @param {"aucun"|"normal"|"inverse"} [props.deltaType="normal"] - Coloration du delta. Optionnel. @param {string} [props.help] - Texte d'aide au survol. Optionnel. @param {number} [props.deltaDecimals=0] - Décimales pour le delta. Optionnel. @param {string} [props.currency="EUR"] - Devise pour l'affichage. Optionnel. @param {string} [props.valueLocale] - Locale pour formatage (fr-FR, en-US). Optionnel. @param {number} [props.valueDecimals=0] - Décimales pour la valeur. Optionnel. @param {boolean} [props.valueGrouping=true] - Séparateur de milliers. Optionnel. @param {boolean} [props.border=true] - Affiche la bordure. Optionnel. @param {React.ReactNode} [props.icon] - Icône à gauche du label. Optionnel. @param {string} [props.subtext] - Texte contextuel sous la valeur. Optionnel. @param {string} [props.accentColor] - Couleur d'accent. Optionnel. @param {boolean} [props.compact=false] - Mode compact réduit. Optionnel. @param {boolean} [props.trackContext=false] - Expose au contexte IA. Optionnel. @param {InterpretContext} [props.context] - Contexte de jugement { reference, direction, comparisonFrame? } : révèle écart/tendance/anomalie via interpret. Optionnel. @parent bpm.metricRow, bpm.grid, bpm.card @associated bpm.badge, bpm.plotlyChart
 @semantic role=indicateur frame=kpi type=scalaire-kpi,monetaire,compte,taux direction=contextuel temporalite=instantane status=proposed
 @guidance KPI scalaire en tête de dashboard : une valeur qui porte un jugement (delta, repère via context, tendance via trajectoire). Associer : bpm.metricRow, bpm.lineChart, bpm.badge. Éviter : Valeur descriptive sans jugement (bpm.labelValue) ou liste de faits (bpm.table).
 ```
@@ -1060,7 +1060,7 @@ Locales courants pour le format nombre (ex. "fr-FR" → 1 000,50, "en-US" → 1,
 ```
 
 ## bpm.metricRow
-@component bpm.metricRow @description Ligne de métriques (conteneur pour plusieurs bpm.metric).
+@component bpm.metricRow @description Ligne horizontale de KPIs (bpm.metric) pour tableaux de bord et résumés chiffrés. @example bpm.metricRow({ children: <> {bpm.metric({ label: "CA", value: "142 500 €" })} {bpm.metric({ label: "Marge", value: "28%" })} </> }) @props - children (ReactNode) — Un ou plusieurs bpm.metric. - className (string, optionnel) — Classes CSS. @usage Dashboard, résumé commande, indicateurs ligne de production. @context PARENT: bpm.panel | bpm.tabs | page directe. ASSOCIATED: bpm.metric, bpm.grid. FORBIDDEN: div custom comme parent.
 @semantic role=conteneur frame=section status=proposed
 @guidance Aligner plusieurs KPI scalaires de même rang en tête de tableau de bord : une rangée de bpm.metric lus ensemble. Associer : bpm.metric, bpm.lineChart, bpm.card. Éviter : Une seule mesure (bpm.metric seul) ou des éléments hétérogènes de poids visuel inégal (bpm.grid, bpm.column).
 ```
@@ -1069,7 +1069,7 @@ Locales courants pour le format nombre (ex. "fr-FR" → 1 000,50, "en-US" → 1,
 ```
 
 ## bpm.modal
-@component bpm.modal @description Fenêtre modale avec backdrop, fermeture Échap/clic extérieur. Pattern: {isOpen && bpm.modal({...})} @example bpm.modal({ isOpen: true, onClose: () => setOpen(false), title: "Confirmation", children: <p>Contenu</p> }) @param {object} props @param {boolean} props.isOpen - Contrôle l'affichage. Obligatoire. @param {function} props.onClose - Callback de fermeture. Obligatoire. @param {React.ReactNode} [props.title] - Titre de la modale. Optionnel. @param {React.ReactNode} props.children - Contenu. Obligatoire. @param {"small"|"medium"|"large"} [props.size="medium"] - Taille (400/600/800px). Optionnel. @param {boolean} [props.showCloseButton=true] - Affiche le bouton fermer. Optionnel. @associated bpm.button, bpm.input, bpm.selectbox, bpm.confirmModal @forbidden bpm.modal (pas d'imbrication) Modal dialog. PATTERN : {isOpen && bpm.modal({ isOpen:true, onClose, title, children })} — TOUJOURS dans return(), jamais après.
+@component bpm.modal @description Fenêtre modale avec backdrop, fermeture Échap/clic extérieur. Pattern: {isOpen && bpm.modal({...})} @example bpm.modal({ isOpen: true, onClose: () => setOpen(false), title: "Confirmation", children: <p>Contenu</p> }) @param {object} props @param {boolean} props.isOpen - Contrôle l'affichage. Obligatoire. @param {function} props.onClose - Callback de fermeture. Obligatoire. @param {React.ReactNode} [props.title] - Titre de la modale. Optionnel. @param {React.ReactNode} props.children - Contenu. Obligatoire. @param {"small"|"medium"|"large"} [props.size="medium"] - Taille (400/600/800px). Optionnel. @param {boolean} [props.showCloseButton=true] - Affiche le bouton fermer. Optionnel. @associated bpm.button, bpm.input, bpm.selectbox, bpm.confirmModal @forbidden bpm.modal (pas d'imbrication)
 @semantic role=conteneur frame=section status=proposed
 @guidance Tâche focale qui interrompt le flux : création/édition courte, décision requise avant de continuer. Associer : bpm.input, bpm.button, bpm.wizardForm. Éviter : Confirmation destructive (bpm.confirmModal), consultation parallèle (bpm.drawer), contenu ancré (bpm.popover).
 ```
@@ -1082,7 +1082,7 @@ Locales courants pour le format nombre (ex. "fr-FR" → 1 000,50, "en-US" → 1,
 ```
 
 ## bpm.modelSelector
-@component bpm.modelSelector @description Sélecteur de modèle IA avec dropdown groupé par fournisseur et affichage des capacités. @example bpm.modelSelector({ models: [{ id: "gpt-4", label: "GPT-4", provider: "OpenAI" }], selected: "gpt-4", onChange: setModel }) @param {object} props @param {ModelOption[]} props.models - Liste des modèles disponibles. Obligatoire. @param {string} props.selected - ID du modèle sélectionné. Obligatoire. @param {function} props.onChange - Callback au changement de sélection. Obligatoire. @param {boolean} [props.showCapabilities=true] - Affiche les capacités et fenêtre de contexte. Optionnel. @param {string} [props.className=""] - Classes CSS additionnelles. Optionnel. @associated bpm.chatInterface, bpm.promptInput @parent bpm.promptInput, bpm.chatInterface, bpm.card @forbidden Sélection générique — utiliser bpm.selectbox export interface ModelOption { id: string; label: string; provider: string; capabilities?: string[]; contextWindow?: number; } @component bpm.modelSelector @description Sélecteur de modèle IA (par fournisseur, capacités).
+@component bpm.modelSelector @description Sélecteur de modèle IA avec dropdown groupé par fournisseur et affichage des capacités. @example bpm.modelSelector({ models: [{ id: "gpt-4", label: "GPT-4", provider: "OpenAI" }], selected: "gpt-4", onChange: setModel }) @param {object} props @param {ModelOption[]} props.models - Liste des modèles disponibles. Obligatoire. @param {string} props.selected - ID du modèle sélectionné. Obligatoire. @param {function} props.onChange - Callback au changement de sélection. Obligatoire. @param {boolean} [props.showCapabilities=true] - Affiche les capacités et fenêtre de contexte. Optionnel. @param {string} [props.className=""] - Classes CSS additionnelles. Optionnel. @associated bpm.chatInterface, bpm.promptInput @parent bpm.promptInput, bpm.chatInterface, bpm.card @forbidden Sélection générique — utiliser bpm.selectbox
 @semantic role=saisie frame=ai status=proposed
 @guidance Choisir le modèle IA (par fournisseur, capacités) qui exécutera la requête. Associer : bpm.chatInterface, bpm.promptInput. Éviter : Énumération métier quelconque (bpm.selectbox).
 ```
@@ -1104,7 +1104,7 @@ Locales courants pour le format nombre (ex. "fr-FR" → 1 000,50, "en-US" → 1,
 ```
 
 ## bpm.notificationCenter
-@component bpm.notificationCenter @description Centre de notifications (liste, marquage, suppression).
+@component bpm.notificationCenter @description Liste de notifications groupées (non lues / lues), actions lecture et suppression. @example bpm.notificationCenter({ notifications, onMarkRead: markRead, onDismiss: dismiss }) @props - notifications (NotificationItem[], obligatoire) — { id, title, message?, read, date }. - onMarkRead (function, obligatoire) — Callback (id) marque comme lu. - onMarkAllRead (function, optionnel) — Marque toutes les notifications comme lues. - onDismiss (function, optionnel) — Callback (id) supprime une notification. - maxVisible (number, optionnel) — Nombre maximum affiché. - emptyMessage (string, optionnel) — Message liste vide. - className (string, optionnel) — Classes CSS additionnelles. @parent bpm.topNav, bpm.drawer, bpm.page @associated bpm.activityFeed, bpm.toast, bpm.badge @forbidden Message éphémère unique — utiliser bpm.toast
 @semantic role=affichage frame=event status=proposed
 @guidance Centre de notifications persistant : lu/non-lu, marquage, suppression — la mémoire des EventEffects notify. Associer : bpm.toast, bpm.topNav, bpm.activityFeed. Éviter : Confirmation immédiate d'action (bpm.toast) ou flux d'activité d'équipe (bpm.activityFeed).
 ```
@@ -1140,7 +1140,7 @@ Locales courants pour le format nombre (ex. "fr-FR" → 1 000,50, "en-US" → 1,
 ```
 
 ## bpm.orgChart
-@component bpm.orgChart @description Organigramme hiérarchique HTML/CSS (repliable).
+@component bpm.orgChart @description Organigramme hiérarchique HTML/CSS, repliable. @example bpm.orgChart({ nodes: [{ id: "1", label: "CEO" }, { id: "2", label: "CTO", parentId: "1" }], expandable: true }) @props - nodes (OrgChartNode[], obligatoire) — Nœuds { id, label, parentId?, ... }. - direction ("vertical"|"horizontal", optionnel) — Sens de l’arbre. Default: "vertical". - onNodeClick (function, optionnel) — Callback (node) au clic sur un nœud. - expandable (boolean, optionnel) — Nœuds repliables. Default: false. - rootId (string, optionnel) — Id du nœud racine. - className (string, optionnel) — Classes CSS additionnelles. @parent bpm.card, bpm.container, bpm.page @associated bpm.treeview, bpm.flowDiagram @forbidden Arbre de données/fichiers — utiliser bpm.treeview
 @semantic role=affichage frame=entity status=needs-curation
 @guidance Hiérarchie d'acteurs ou d'unités (organigramme) repliable. Associer : bpm.avatar, bpm.drawer. Éviter : Arborescence de données génériques (bpm.treeview) ou processus (bpm.flowDiagram).
 ```
@@ -1159,7 +1159,7 @@ Conteneur page (core) — props : children.
 ```
 
 ## bpm.pageLayout
-@component bpm.pageLayout @description Layout d'application avec sidebar rétractable, navigation par icônes Material et switch de thème. @example bpm.pageLayout({ title: "Mon App", items: [{ key: "home", label: "Accueil", icon: "home" }], currentItem: "home", onNavigate: setPage, children: <Content /> }) @param {object} props @param {string} props.title - Titre affiché dans la sidebar. Obligatoire. @param {SidebarItem[]} props.items - Éléments de navigation (key, label, icon). Obligatoire. @param {string} props.currentItem - Clé de l'élément actif. Obligatoire. @param {function} props.onNavigate - Callback au clic sur un item (key). Obligatoire. @param {React.ReactNode} props.children - Contenu principal. Obligatoire. @param {boolean} [props.defaultCollapsed=false] - Sidebar rétractée par défaut. Optionnel. @param {"light"|"dark"} [props.theme] - Thème actuel. Optionnel. @param {function} [props.onThemeChange] - Callback changement de thème. Optionnel. @associated bpm.topNav, bpm.sidebar @parent bpm.page @forbidden aucun export interface SidebarItem { Clé unique de l’entrée. */ key: string; Libellé affiché (mode expanded). */ label: string; Nom de l’icône Material Symbol (snake_case), ex: "dashboard", "inventory_2", "widgets". Voir https://fonts.google.com/icons (weight 200). */ icon: string; } @component bpm.pageLayout @description Layout avec sidebar repliable, titre et zone de contenu.
+@component bpm.pageLayout @description Layout d'application avec sidebar rétractable, navigation par icônes Material et switch de thème. @example bpm.pageLayout({ title: "Mon App", items: [{ key: "home", label: "Accueil", icon: "home" }], currentItem: "home", onNavigate: setPage, children: <Content /> }) @param {object} props @param {string} props.title - Titre affiché dans la sidebar. Obligatoire. @param {SidebarItem[]} props.items - Éléments de navigation (key, label, icon). Obligatoire. @param {string} props.currentItem - Clé de l'élément actif. Obligatoire. @param {function} props.onNavigate - Callback au clic sur un item (key). Obligatoire. @param {React.ReactNode} props.children - Contenu principal. Obligatoire. @param {boolean} [props.defaultCollapsed=false] - Sidebar rétractée par défaut. Optionnel. @param {"light"|"dark"} [props.theme] - Thème actuel. Optionnel. @param {function} [props.onThemeChange] - Callback changement de thème. Optionnel. @associated bpm.topNav, bpm.sidebar @parent bpm.page @forbidden aucun
 @semantic role=conteneur frame=section status=proposed
 @guidance Ossature d'écran applicatif : sidebar de navigation repliable, titre, zone de contenu. Associer : bpm.topNav, bpm.breadcrumb, bpm.container. Éviter : Pages sans navigation latérale (bpm.topNav seul) ou sous-zones (bpm.container).
 ```
@@ -1188,7 +1188,7 @@ Conteneur page (core) — props : children.
 ```
 
 ## bpm.panel
-@component bpm.panel @description Panneau informatif (info, success, warning, error).
+@component bpm.panel @description Bloc d'information, alerte ou résumé encadré (type notice ou executive summary) pour mettre en avant un message métier. @example bpm.panel({ variant: "warning", title: "TRS sous seuil", children: "Ligne FORM-1 : 68,4%." }) @props - variant ('info' | 'success' | 'warning' | 'error', optionnel) — Type visuel. Default: 'info'. - title (ReactNode, optionnel) — Titre du panneau. - icon (string | false, optionnel) — Icône ou false pour masquer. - inverted (boolean, optionnel) — Fond sombre. Default: false. - children (ReactNode, optionnel) — Contenu. - className (string, optionnel) — Classes CSS. @usage Alertes production, notices légales, résumés chiffrés. @context PARENT: page directe | bpm.grid | bpm.tabs (contenu onglet). ASSOCIATED: bpm.title, bpm.metric, bpm.table, bpm.plotlyChart. FORBIDDEN: bpm.panel imbriqué trop profond (max 2 niveaux).
 @semantic role=feedback frame=section status=proposed
 @guidance Encart informatif persistant avec sévérité (info, success, warning, error) qui qualifie un contenu de page. Associer : bpm.text, bpm.button, bpm.card. Éviter : Notification transitoire (bpm.toast), réaction à une action (bpm.message), statut d'instance (bpm.statusBox).
 ```
@@ -1271,7 +1271,7 @@ Conteneur page (core) — props : children.
 ```
 
 ## bpm.printLayout
-@component bpm.printLayout @description Mise en page optimisée pour l'impression A4 avec en-tête, pied de page et marges personnalisables. @example bpm.printLayout({ children: <Content />, orientation: "portrait", header: <Logo />, footer: "Page 1", marginsMm: { top: 20 } }) @param {object} props @param {React.ReactNode} props.children - Contenu principal. Obligatoire. @param {"portrait"|"landscape"} [props.orientation="portrait"] - Orientation de la page. Optionnel. @param {React.ReactNode} [props.header] - En-tête affiché en haut. Optionnel. @param {React.ReactNode} [props.footer] - Pied de page. Optionnel. @param {PrintLayoutMarginsMm} [props.marginsMm] - Marges en mm (top, right, bottom, left). Optionnel. @param {string} [props.className=""] - Classes CSS additionnelles. Optionnel. @associated bpm.invoiceTemplate, bpm.reportPage export interface PrintLayoutMarginsMm { top?: number; right?: number; bottom?: number; left?: number; } @component bpm.printLayout @description Mise en page optimisée pour l'impression.
+@component bpm.printLayout @description Mise en page optimisée pour l'impression A4 avec en-tête, pied de page et marges personnalisables. @example bpm.printLayout({ children: <Content />, orientation: "portrait", header: <Logo />, footer: "Page 1", marginsMm: { top: 20 } }) @param {object} props @param {React.ReactNode} props.children - Contenu principal. Obligatoire. @param {"portrait"|"landscape"} [props.orientation="portrait"] - Orientation de la page. Optionnel. @param {React.ReactNode} [props.header] - En-tête affiché en haut. Optionnel. @param {React.ReactNode} [props.footer] - Pied de page. Optionnel. @param {PrintLayoutMarginsMm} [props.marginsMm] - Marges en mm (top, right, bottom, left). Optionnel. @param {string} [props.className=""] - Classes CSS additionnelles. Optionnel. @associated bpm.invoiceTemplate, bpm.reportPage
 ```
   children*: React.ReactNode
   orientation?: "portrait" | "landscape"
@@ -1282,7 +1282,7 @@ Conteneur page (core) — props : children.
 ```
 
 ## bpm.progress
-@component bpm.progress @description Barre de progression.
+@component bpm.progress @description Barre de progression (value/max) pour avancement de tâche ou objectif (ex. TRS cible). @example bpm.progress({ value: 74, max: 100, label: "TRS cible 80%", showValue: true }) @props - value (number, optionnel) — Valeur actuelle. Default: 0. - max (number, optionnel) — Valeur max. Default: 1. - label (string, optionnel) — Libelle au-dessus. - showValue (boolean, optionnel) — Afficher le pourcentage. Default: true. - className (string, optionnel) — Classes CSS. - context (InterpretContext, optionnel) — Contexte de jugement { reference, direction } : couleur + ligne écart/tendance via interpret. @usage Avancement commande, TRS ligne, objectif commercial. @context PARENT: bpm.panel | bpm.card | bpm.tabs. ASSOCIATED: bpm.metric, bpm.slider. FORBIDDEN: aucun.
 @semantic role=indicateur frame=kpi type=progression,taux direction=borne-cible temporalite=cumule status=proposed
 @guidance Avancement vers une borne connue : complétion d'une tâche, consommation d'un quota, remplissage d'un objectif. Associer : bpm.card, bpm.statusTracker, bpm.labelValue. Éviter : Valeur sans borne ni cible (bpm.metric) ou attente système indéterminée (bpm.spinner, bpm.loadingBar).
 ```
@@ -1379,7 +1379,7 @@ Conteneur page (core) — props : children.
 ```
 
 ## bpm.relationGraph
-@component bpm.relationGraph @description Graphe relationnel SVG interactif avec layouts force/grille/circulaire, zoom, panoramique et drag-and-drop des nœuds. @example bpm.relationGraph({ nodes: [{ id: "1", label: "A" }], edges: [{ from: "1", to: "2" }], layout: "force" }) @param {object} props @param {GraphNode[]} props.nodes - Liste des nœuds (id, label, width?, height?). Obligatoire. @param {GraphEdge[]} props.edges - Liste des arêtes (from, to). Obligatoire. @param {"force"|"grid"|"circular"} [props.layout="force"] - Algorithme de placement. Optionnel. @param {number} [props.width=640] - Largeur du SVG. Optionnel. @param {number} [props.height=420] - Hauteur du SVG. Optionnel. @param {string} [props.className=""] - Classes CSS additionnelles. Optionnel. @associated bpm.orgChart, bpm.treeview export interface GraphNode { id: string; label: string; width?: number; height?: number; } export interface GraphEdge { from: string; to: string; } export type RelationGraphLayout = "force" | "grid" | "circular"; @component bpm.relationGraph @description Graphe de relations interactif (nœuds et arêtes).
+@component bpm.relationGraph @description Graphe relationnel SVG interactif avec layouts force/grille/circulaire, zoom, panoramique et drag-and-drop des nœuds. @example bpm.relationGraph({ nodes: [{ id: "1", label: "A" }], edges: [{ from: "1", to: "2" }], layout: "force" }) @param {object} props @param {GraphNode[]} props.nodes - Liste des nœuds (id, label, width?, height?). Obligatoire. @param {GraphEdge[]} props.edges - Liste des arêtes (from, to). Obligatoire. @param {"force"|"grid"|"circular"} [props.layout="force"] - Algorithme de placement. Optionnel. @param {number} [props.width=640] - Largeur du SVG. Optionnel. @param {number} [props.height=420] - Hauteur du SVG. Optionnel. @param {string} [props.className=""] - Classes CSS additionnelles. Optionnel. @associated bpm.orgChart, bpm.treeview
 ```
   nodes*: GraphNode[]
   edges*: GraphEdge[]
@@ -1390,7 +1390,7 @@ Conteneur page (core) — props : children.
 ```
 
 ## bpm.reportPage
-@component bpm.reportPage @description Page de rapport structurée avec sections (titre, texte, tableau, graphique, KPI), impression PDF via window.print. @example bpm.reportPage({ title: "Rapport mensuel", sections: [{ type: "heading", text: "Résumé" }, { type: "kpi", label: "CA", value: "150k€" }] }) @param {object} props @param {string} props.title - Titre principal du rapport. Obligatoire. @param {string} [props.subtitle] - Sous-titre. Optionnel. @param {string} [props.date] - Date du rapport. Optionnel. @param {React.ReactNode} [props.logo] - Logo affiché en haut à droite. Optionnel. @param {ReportSection[]} props.sections - Sections du rapport (heading, text, table, chart, kpi, divider). Obligatoire. @param {boolean} [props.exportable=true] - Affiche le bouton Imprimer/PDF. Optionnel. @param {string} [props.className=""] - Classes CSS additionnelles. Optionnel. @associated bpm.printLayout, bpm.invoiceTemplate, bpm.lineChart export type ReportSection = | { type: "heading"; text: string; level?: 1 | 2 | 3 } | { type: "text"; content: string } | { type: "table"; headers: string[]; rows: string[][] } | { type: "chart"; title?: string; data: { timestamp: number; value: number }[] } | { type: "kpi"; label: string; value: string; hint?: string } | { type: "divider" }; @component bpm.reportPage @description Page de rapport structuré (titre, sections, contenu).
+@component bpm.reportPage @description Page de rapport structurée avec sections (titre, texte, tableau, graphique, KPI), impression PDF via window.print. @example bpm.reportPage({ title: "Rapport mensuel", sections: [{ type: "heading", text: "Résumé" }, { type: "kpi", label: "CA", value: "150k€" }] }) @param {object} props @param {string} props.title - Titre principal du rapport. Obligatoire. @param {string} [props.subtitle] - Sous-titre. Optionnel. @param {string} [props.date] - Date du rapport. Optionnel. @param {React.ReactNode} [props.logo] - Logo affiché en haut à droite. Optionnel. @param {ReportSection[]} props.sections - Sections du rapport (heading, text, table, chart, kpi, divider). Obligatoire. @param {boolean} [props.exportable=true] - Affiche le bouton Imprimer/PDF. Optionnel. @param {string} [props.className=""] - Classes CSS additionnelles. Optionnel. @associated bpm.printLayout, bpm.invoiceTemplate, bpm.lineChart
 ```
   title*: string
   subtitle?: string
@@ -1416,7 +1416,7 @@ Conteneur page (core) — props : children.
 ```
 
 ## bpm.routePlanner
-@component bpm.routePlanner @description Planificateur d'itinéraire avec liste de points réordonnables, carte Leaflet et calcul de distance orthodromique. @example bpm.routePlanner({ stops: [{ id: "1", label: "Paris", position: [48.85, 2.35] }], onReorder: setStops, showDistance: true }) @param {object} props @param {RouteStop[]} props.stops - Points de l'itinéraire (id, label, position [lat, lng]). Obligatoire. @param {function} [props.onReorder] - Callback à la réorganisation. Optionnel. @param {boolean} [props.showDistance=true] - Affiche la distance totale. Optionnel. @param {number|string} [props.mapHeight=360] - Hauteur de la carte. Optionnel. @param {string} [props.className=""] - Classes CSS additionnelles. Optionnel. @associated bpm.mapView, bpm.gps, bpm.timeline export interface RouteStop { id: string; label?: string; position: [number, number]; } function haversineKm(a: [number, number], b: [number, number]): number { const R = 6371; const toRad = (x: number) => (x * Math.PI) / 180; const dLat = toRad(b[0] - a[0]); const dLon = toRad(b[1] - a[1]); const lat1 = toRad(a[0]); const lat2 = toRad(b[0]); const h = Math.sin(dLat / 2) ** 2 + Math.cos(lat1) * Math.cos(lat2) * Math.sin(dLon / 2) ** 2; return 2 * R * Math.asin(Math.min(1, Math.sqrt(h))); } @component bpm.routePlanner @description Planificateur d'itinéraire (arrêts, distances).
+@component bpm.routePlanner @description Planificateur d'itinéraire avec liste de points réordonnables, carte Leaflet et calcul de distance orthodromique. @example bpm.routePlanner({ stops: [{ id: "1", label: "Paris", position: [48.85, 2.35] }], onReorder: setStops, showDistance: true }) @param {object} props @param {RouteStop[]} props.stops - Points de l'itinéraire (id, label, position [lat, lng]). Obligatoire. @param {function} [props.onReorder] - Callback à la réorganisation. Optionnel. @param {boolean} [props.showDistance=true] - Affiche la distance totale. Optionnel. @param {number|string} [props.mapHeight=360] - Hauteur de la carte. Optionnel. @param {string} [props.className=""] - Classes CSS additionnelles. Optionnel. @associated bpm.mapView, bpm.gps, bpm.timeline
 ```
   stops*: RouteStop[]
   onReorder?: (next: RouteStop[]) => void
@@ -1426,7 +1426,7 @@ Conteneur page (core) — props : children.
 ```
 
 ## bpm.scatterChart
-@component bpm.scatterChart @description Graphique de dispersion (nuage de points) SVG simple et responsive. @example bpm.scatterChart({ data: [{ x: 1, y: 10 }, { x: 2, y: 25 }], color: "#3b82f6", radius: 5 }) @param {object} props @param {ScatterChartDatum[]} props.data - Points { x, y }. Obligatoire. @param {number} [props.width=400] - Largeur du SVG. Optionnel. @param {number} [props.height=200] - Hauteur du SVG. Optionnel. @param {string} [props.color="var(--bpm-accent)"] - Couleur des points. Optionnel. @param {number} [props.radius=4] - Rayon des cercles. Optionnel. @param {string} [props.className=""] - Classes CSS additionnelles. Optionnel. @param {InterpretContext} [props.context] - Contexte de jugement : points colorés par écart individuel, anomalies (>2σ du nuage) cerclées, repère pointillé, verdict global. Optionnel. @associated bpm.lineChart, bpm.areaChart, bpm.plotlyChart @parent bpm.card, bpm.grid @forbidden Évolution temporelle — utiliser bpm.lineChart export interface ScatterChartDatum { x: number; y: number; } @component bpm.scatterChart @description Graphique en nuage de points.
+@component bpm.scatterChart @description Graphique de dispersion (nuage de points) SVG simple et responsive. @example bpm.scatterChart({ data: [{ x: 1, y: 10 }, { x: 2, y: 25 }], color: "#3b82f6", radius: 5 }) @param {object} props @param {ScatterChartDatum[]} props.data - Points { x, y }. Obligatoire. @param {number} [props.width=400] - Largeur du SVG. Optionnel. @param {number} [props.height=200] - Hauteur du SVG. Optionnel. @param {string} [props.color="var(--bpm-accent)"] - Couleur des points. Optionnel. @param {number} [props.radius=4] - Rayon des cercles. Optionnel. @param {string} [props.className=""] - Classes CSS additionnelles. Optionnel. @param {InterpretContext} [props.context] - Contexte de jugement : points colorés par écart individuel, anomalies (>2σ du nuage) cerclées, repère pointillé, verdict global. Optionnel. @associated bpm.lineChart, bpm.areaChart, bpm.plotlyChart @parent bpm.card, bpm.grid @forbidden Évolution temporelle — utiliser bpm.lineChart
 @semantic role=indicateur frame=kpi type=distribution direction=neutre temporalite=instantane status=proposed
 @guidance Relation entre deux mesures : corrélation, dispersion, valeurs atypiques. Associer : bpm.metric, bpm.caption. Éviter : Évolution d'une seule mesure (bpm.lineChart). Règle apps générées : bpm.plotlyChart.
 ```
@@ -1440,7 +1440,7 @@ Conteneur page (core) — props : children.
 ```
 
 ## bpm.scheduler
-@component bpm.scheduler @description Calendrier/agenda avec vues jour, semaine et mois, gestion d'événements et de ressources. @example bpm.scheduler({ view: "week", events: [{ id: "1", title: "Réunion", start: "2024-01-15T10:00", end: "2024-01-15T11:00" }], onEventClick: handleEvent, onSlotClick: handleSlot }) @param {object} props @param {"day"|"week"|"month"} props.view - Vue active. Obligatoire. @param {SchedulerEvent[]} props.events - Liste des événements (id, title, start, end, resourceId?, color?). Obligatoire. @param {SchedulerResource[]} [props.resources] - Ressources associables (id, label). Optionnel. @param {function} props.onEventClick - Callback au clic sur un événement. Obligatoire. @param {function} props.onSlotClick - Callback au clic sur un créneau vide (dayStart, hour). Obligatoire. @param {number} [props.startHour=8] - Première heure affichée. Optionnel. @param {number} [props.endHour=20] - Dernière heure affichée. Optionnel. @associated bpm.calendar, bpm.timeline const DAY_MS = 24 * 60 * 60 * 1000; function parseMs(iso: string): number { const t = Date.parse(iso); return Number.isNaN(t) ? 0 : t; } function startOfLocalDay(d: Date): Date { return new Date(d.getFullYear(), d.getMonth(), d.getDate()); } function addDays(d: Date, n: number): Date { const x = new Date(d); x.setDate(x.getDate() + n); return x; } function startOfWeekMonday(d: Date): Date { const s = startOfLocalDay(d); const day = s.getDay(); const diff = day === 0 ? -6 : 1 - day; return addDays(s, diff); } function daysInMonth(y: number, m: number): number { return new Date(y, m + 1, 0).getDate(); } const WEEKDAY_LABELS = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"]; export type SchedulerEvent = { id: string; title: string; start: string; end: string; resourceId?: string; color?: string; }; export type SchedulerResource = { id: string; label: string; }; @component bpm.scheduler @description Planificateur / agenda (semaine, jour, mois).
+@component bpm.scheduler @description Calendrier/agenda avec vues jour, semaine et mois, gestion d'événements et de ressources. @example bpm.scheduler({ view: "week", events: [{ id: "1", title: "Réunion", start: "2024-01-15T10:00", end: "2024-01-15T11:00" }], onEventClick: handleEvent, onSlotClick: handleSlot }) @param {object} props @param {"day"|"week"|"month"} props.view - Vue active. Obligatoire. @param {SchedulerEvent[]} props.events - Liste des événements (id, title, start, end, resourceId?, color?). Obligatoire. @param {SchedulerResource[]} [props.resources] - Ressources associables (id, label). Optionnel. @param {function} props.onEventClick - Callback au clic sur un événement. Obligatoire. @param {function} props.onSlotClick - Callback au clic sur un créneau vide (dayStart, hour). Obligatoire. @param {number} [props.startHour=8] - Première heure affichée. Optionnel. @param {number} [props.endHour=20] - Dernière heure affichée. Optionnel. @associated bpm.calendar, bpm.timeline
 @semantic role=composite frame=event status=proposed
 @guidance Agenda autoporteur d'événements positionnés dans le temps (jour/semaine/mois) : afficher, créer au clic sur un créneau, répartir par ressource. Associer : bpm.timeline, bpm.badge, bpm.drawer. Éviter : Planning de tâches à dépendances (bpm.gantt) ou historique chronologique en lecture seule (bpm.timeline).
 ```
@@ -1483,7 +1483,7 @@ Conteneur page (core) — props : children.
 ```
 
 ## bpm.sensorGrid
-@component bpm.sensorGrid @description Grille de cartes capteur avec valeur, unité, statut coloré et détail optionnel. @example bpm.sensorGrid({ sensors: [{ id: "1", label: "Température", value: 24.5, unit: "°C", status: "ok" }], columns: 3 }) @param {object} props @param {SensorReading[]} props.sensors - Liste des capteurs (id, label, value, unit?, status, detail?). Obligatoire. @param {number} [props.columns=3] - Nombre de colonnes de la grille. Optionnel. @param {string} [props.className=""] - Classes CSS additionnelles. Optionnel. @associated bpm.machineStatus, bpm.liveGauge, bpm.metric export interface SensorReading { id: string; label: string; value: string | number; unit?: string; status: SensorStatus; detail?: string; Historique v(t) [{t, v}] du capteur — révèle la tendance si context est fourni. */ history?: TrajectoryPoint[]; Contexte de jugement propre au capteur { reference, direction, comparisonFrame? } : la carte est jugée par interpret (bordure colorée par le verdict, ligne écart/tendance). Additif : sans context, rendu inchangé. */ context?: InterpretContext; } @component bpm.sensorGrid @description Grille de capteurs industriels (valeur, seuil, état).
+@component bpm.sensorGrid @description Grille de cartes capteur avec valeur, unité, statut coloré et détail optionnel. @example bpm.sensorGrid({ sensors: [{ id: "1", label: "Température", value: 24.5, unit: "°C", status: "ok" }], columns: 3 }) @param {object} props @param {SensorReading[]} props.sensors - Liste des capteurs (id, label, value, unit?, status, detail?). Obligatoire. @param {number} [props.columns=3] - Nombre de colonnes de la grille. Optionnel. @param {string} [props.className=""] - Classes CSS additionnelles. Optionnel. @associated bpm.machineStatus, bpm.liveGauge, bpm.metric
 ```
   sensors*: SensorReading[]
   columns?: number
@@ -1501,7 +1501,7 @@ Conteneur page (core) — props : children.
 ```
 
 ## bpm.skeleton
-@component bpm.skeleton @description Placeholder de chargement (skeleton screen).
+@component bpm.skeleton @description Placeholder anime (rectangles, cercles) pendant le chargement de contenu pour eviter layout shift. @example bpm.skeleton({ width: 200, height: 20, variant: "text" }) @props - variant ('rectangular' | 'circular' | 'text', optionnel) — Forme. Default: 'rectangular'. - width (number | string, optionnel) — Largeur. - height (number | string, optionnel) — Hauteur. - className (string, optionnel) — Classes CSS. - animated (boolean, optionnel) — Animation pulse. Default: true. - shimmer (boolean, optionnel) — Animation shimmer. Default: false. - rounded ('sm' | 'md' | 'lg' | 'full', optionnel) — Bords arrondis. Default: 'md'. - lines (number, optionnel) — Nombre de lignes empilées. Default: 1. @usage Chargement liste, fiche produit, tableau. @context PARENT: bpm.panel | bpm.card. ASSOCIATED: bpm.spinner, bpm.table. FORBIDDEN: aucun.
 @semantic role=feedback frame=section status=proposed
 @guidance Attente de contenu dont la forme est connue : préfigure la mise en page pendant le chargement. Associer : bpm.card, bpm.table, bpm.grid. Éviter : Attente sans forme prévisible (bpm.spinner) ou absence réelle de données (bpm.emptyState).
 ```
@@ -1516,7 +1516,7 @@ Conteneur page (core) — props : children.
 ```
 
 ## bpm.slider
-@component bpm.slider @description Curseur min/max/step.
+@component bpm.slider @description Curseur de saisie numerique (min-max) pour volume, pourcentage, seuil. @example bpm.slider({ label: "Volume", value: 70, min: 0, max: 100, onChange: setVolume }) @props - value (number, optionnel) — Valeur courante. - min (number, optionnel) — Minimum. Default: 0. - max (number, optionnel) — Maximum. Default: 100. - step (number, optionnel) — Pas. Default: 1. - onChange (function, optionnel) — Callback (value: number). - label (string, optionnel) — Libelle au-dessus. - disabled (boolean, optionnel) — Default: false. - className (string, optionnel) — Classes CSS. @usage Parametres volume, seuil TRS, pourcentage objectif. @context PARENT: bpm.panel | bpm.modal | bpm.card. ASSOCIATED: bpm.input, bpm.progress. FORBIDDEN: aucun.
 @semantic role=saisie frame=entity status=proposed
 @guidance Valeur approximative dans une plage bornée où la position relative compte plus que le chiffre exact. Associer : bpm.labelValue, bpm.numberInput. Éviter : Valeur précise à saisir (bpm.numberInput) ou plage non bornée.
 ```
@@ -1543,7 +1543,7 @@ Conteneur page (core) — props : children.
 ```
 
 ## bpm.spinner
-@component bpm.spinner @description Indicateur de chargement (roue).
+@component bpm.spinner @description Indicateur de chargement (cercle, points, barres…) pendant une requête ou traitement asynchrone. @example bpm.spinner({ text: "Chargement des commandes...", size: "medium" }) @props - text (string, optionnel) — Texte sous le spinner. Default: 'Chargement...'. - size ('small' | 'medium' | 'large', optionnel) — Taille. Default: 'medium'. - variant (string, optionnel) — Style d'animation (circle, dot, wheel…). Default: 'circle'. - neutral (boolean, optionnel) — Couleur grise au lieu de l'accent. Default: false. - className (string, optionnel) — Classes CSS. @usage Chargement de données, soumission formulaire, synchronisation. @context PARENT: partout — composant universel. ASSOCIATED: bpm.statusBox, bpm.loadingBar, bpm.message. FORBIDDEN: aucun.
 @semantic role=feedback frame=section status=proposed
 @guidance Attente courte et indéterminée d'une opération locale. Associer : bpm.button, bpm.card. Éviter : Contenu à forme prévisible (bpm.skeleton) ou progression mesurable (bpm.progress).
 ```
@@ -1576,7 +1576,7 @@ Conteneur page (core) — props : children.
 ```
 
 ## bpm.stateMachine
-@component bpm.stateMachine @description Visualisation d'une machine à états avec graphe circulaire, transitions cliquables et historique. @example bpm.stateMachine({ states: ["A", "B", "C"], transitions: [{ from: "A", to: "B" }], currentState: "A", onTransition: handleTransition }) @param {object} props @param {string[]} props.states - Liste des états. Obligatoire. @param {StateTransition[]} props.transitions - Liste des transitions (from, to, label?). Obligatoire. @param {string} props.currentState - État actuel. Obligatoire. @param {string[]} [props.history=[]] - Historique des états traversés. Optionnel. @param {function} [props.onTransition] - Callback (from, to) au clic sur une transition. Optionnel. @param {number} [props.width=420] - Largeur du SVG. Optionnel. @param {number} [props.height=420] - Hauteur du SVG. Optionnel. @param {string} [props.className=""] - Classes CSS additionnelles. Optionnel. @associated bpm.stepper, bpm.timeline, bpm.relationGraph export interface StateTransition { from: string; to: string; label?: string; } @component bpm.stateMachine @description Visualiseur de machine à états finis.
+@component bpm.stateMachine @description Visualisation d'une machine à états avec graphe circulaire, transitions cliquables et historique. @example bpm.stateMachine({ states: ["A", "B", "C"], transitions: [{ from: "A", to: "B" }], currentState: "A", onTransition: handleTransition }) @param {object} props @param {string[]} props.states - Liste des états. Obligatoire. @param {StateTransition[]} props.transitions - Liste des transitions (from, to, label?). Obligatoire. @param {string} props.currentState - État actuel. Obligatoire. @param {string[]} [props.history=[]] - Historique des états traversés. Optionnel. @param {function} [props.onTransition] - Callback (from, to) au clic sur une transition. Optionnel. @param {number} [props.width=420] - Largeur du SVG. Optionnel. @param {number} [props.height=420] - Hauteur du SVG. Optionnel. @param {string} [props.className=""] - Classes CSS additionnelles. Optionnel. @associated bpm.stepper, bpm.timeline, bpm.relationGraph
 ```
   states*: string[]
   transitions*: StateTransition[]
@@ -1589,7 +1589,7 @@ Conteneur page (core) — props : children.
 ```
 
 ## bpm.statusBox
-@component bpm.statusBox @description Boîte de statut (success, warning, error, info).
+@component bpm.statusBox @description Affiche le statut d'une opération ou d'un service (en cours, terminé, erreur) avec zone dépliable pour détails. @example bpm.statusBox({ label: "Synchronisation CRM", state: "complete", defaultExpanded: false }) @props - label (string) — Libellé du statut affiché (ex. "Connecté", "Synchronisation en cours"). - state ('running' | 'complete' | 'error', optionnel) — État affiché. Default: 'running'. - children (ReactNode, optionnel) — Contenu dépliable sous le bandeau. - defaultExpanded (boolean, optionnel) — Ouvrir la zone dépliable au montage. Default: true. - compact (boolean, optionnel) — Réduit le padding. Default: false. - className (string, optionnel) — Classes CSS additionnelles. - value (number | TrajectoryPoint[], optionnel) — Valeur mesurée associée, jugée si context fourni. - context (InterpretContext, optionnel) — Contexte de jugement : verdict interpret révélé (écart, tendance, anomalie). @usage Indicateur de statut pour tableaux de bord, synchronisation données, connexion API. @context PARENT: bpm.panel | bpm.card | page directe. ASSOCIATED: bpm.metric, bpm.badge, bpm.spinner. FORBIDDEN: aucun.
 @semantic role=indicateur frame=workflow type=statut direction=neutre temporalite=instantane status=proposed
 @guidance Statut détaillé d'un objet ou d'un système : l'état (success/warning/error/info) accompagné de son explication. Associer : bpm.card, bpm.labelValue, bpm.timeline. Éviter : Statut compact en liste (bpm.badge) ou réaction à une action (bpm.message).
 ```
@@ -1604,7 +1604,7 @@ Conteneur page (core) — props : children.
 ```
 
 ## bpm.statusTracker
-@component bpm.statusTracker @description Suivi de statut en étapes (completed/current/pending/error).
+@component bpm.statusTracker @description Historique réel d'un objet : étapes completed / current / pending / error. @example bpm.statusTracker({ stages: [{ label: "Reçu", state: "completed" }, { label: "En cours", state: "current" }, { label: "Livré", state: "pending" }] }) @props - stages (StatusTrackerStage[], obligatoire) — Étapes { label, state: completed|current|pending|error }. - direction ("horizontal"|"vertical", optionnel) — Orientation. Default: "horizontal". - compact (boolean, optionnel) — Affichage condensé. Default: false. - className (string, optionnel) — Classes CSS additionnelles. @parent bpm.card, bpm.masterDetail, bpm.page @associated bpm.stepper, bpm.timeline, bpm.badge @forbidden Saisie multi-étapes — utiliser bpm.stepper/wizardForm
 @semantic role=indicateur frame=workflow type=progression,statut direction=borne-cible temporalite=instantane status=proposed
 @guidance Position réelle d'une instance dans un processus à étapes normées (commande, dossier) : completed/current/pending/error. Associer : bpm.timeline, bpm.badge, bpm.card. Éviter : Parcours de saisie piloté par l'utilisateur (bpm.stepper) ou pourcentage continu (bpm.progress).
 ```
@@ -1615,7 +1615,7 @@ Conteneur page (core) — props : children.
 ```
 
 ## bpm.stepper
-@component bpm.stepper @description Progression multi-étapes (horizontal/vertical).
+@component bpm.stepper @description Progression multi-étapes horizontale ou verticale, complété / courant / à venir. @example bpm.stepper({ steps: [{ label: "Panier" }, { label: "Livraison" }, { label: "Paiement" }], currentStep: 1 }) @props - steps (StepperStep[], optionnel) — Étapes { label, description?, icon?, optional? }. - currentStep (number, optionnel) — Index de l’étape courante (0-based). Default: 0. - direction ("horizontal"|"vertical", optionnel) — Orientation. Default: "horizontal". - onStepClick (function, optionnel) — Callback (stepIndex) au clic sur une étape. - size ("sm"|"md"|"lg", optionnel) — Taille des pastilles. Default: "md". - className (string, optionnel) — Classes CSS additionnelles. @parent bpm.wizardForm, bpm.card, bpm.page @associated bpm.statusTracker, bpm.button @forbidden Suivi d'état d'un objet — utiliser bpm.statusTracker
 @semantic role=navigation frame=workflow status=proposed
 @guidance Situer l'utilisateur dans un parcours linéaire à étapes (assistant, onboarding) et matérialiser l'étape courante. Associer : bpm.wizardForm, bpm.button. Éviter : Suivi du statut métier réel d'une instance (bpm.statusTracker) ou vues non ordonnées (bpm.tabs).
 ```
@@ -1652,7 +1652,7 @@ Conteneur page (core) — props : children.
 ```
 
 ## bpm.table
-@component bpm.table @description Tableau de données triable avec colonnes personnalisables, formatage numérique et scroll horizontal. @example bpm.table({ columns: [{ key: "nom", label: "Nom" }, { key: "montant", label: "Montant", align: "right" }], data: rows, striped: true, hover: true }) @param {object} props @param {TableColumn[]} props.columns - Définition des colonnes (key, label, align?, render?, decimals?). Obligatoire. @param {Record<string, unknown>[]} props.data - Tableau de données. Obligatoire. @param {boolean} [props.striped=true] - Lignes alternées. Optionnel. @param {boolean} [props.hover=true] - Surbrillance au survol. Optionnel. @param {function} [props.onRowClick] - Callback au clic sur une ligne. Optionnel. @param {string} [props.defaultSortColumn] - Colonne triée par défaut. Optionnel. @param {"asc"|"desc"} [props.defaultSortDirection="asc"] - Direction de tri par défaut. Optionnel. @param {string} [props.name] - Nom pour référence IA. Optionnel. @param {string} [props.keyColumn] - Colonne d'ID unique. Optionnel. @param {string} [props.className=""] - Classes CSS additionnelles. Optionnel. @param {string} [props.valueLocale="fr-FR"] - Locale pour formatage. Optionnel. @param {number} [props.valueDecimals=0] - Décimales par défaut. Optionnel. @param {boolean} [props.valueGrouping=true] - Séparateur de milliers. Optionnel. @param {number} [props.minWidth] - Largeur minimale en pixels. Optionnel. @param {boolean} [props.trackContext=false] - Expose au contexte IA. Optionnel. @param {string} [props.emptyMessage="Aucune donnée disponible"] - Message si vide. Optionnel. @props - columns (TableColumn[], obligatoire) — Colonnes (key, label, align?, render?, decimals?). - data (Record<string,unknown>[], obligatoire) — Lignes ; jamais de JSX dans data[] (utiliser render). - striped / hover (boolean, optionnel) — Lignes alternées / surbrillance au survol. - onRowClick (function, optionnel) — Callback (row) au clic sur une ligne. - defaultSortColumn / defaultSortDirection (optionnel) — Tri initial. - name / keyColumn (string, optionnel) — Identifiant IA du tableau / colonne-clé React. - valueLocale / valueDecimals / valueGrouping (optionnel) — Formatage numérique des cellules. - minWidth (number, optionnel) — Largeur minimale en px (déclenche le scroll horizontal). - trackContext (boolean, optionnel) — Expose le tableau au contexte IA. - emptyMessage (string, optionnel) — Message affiché quand data est vide. - className (string, optionnel) — Classes CSS additionnelles. @parent bpm.panel, bpm.container @associated bpm.pagination, bpm.input, bpm.badge, bpm.button @forbidden bpm.card (overflow caché) export interface TableColumn { key: string; label: React.ReactNode; align?: "left" | "center" | "right"; className?: string; Renderer personnalisé (valeur + ligne). Seule prop supportée — pas renderCell. */ render?: (value: unknown, row: Record<string, unknown>) => React.ReactNode; Décimales pour cette colonne (surcharge valueDecimals du tableau). */ decimals?: number; Si true, l'en-tête de colonne ne passe pas à la ligne (whitespace-nowrap). */ noWrap?: boolean; Contexte de jugement de la colonne { reference, direction, comparisonFrame? } : chaque cellule numérique est jugée par interpret — valeur colorée par le verdict, écart en title, data-judgment. Ignoré si render est fourni. Additif : sans context, rendu inchangé. */ context?: InterpretContext; } @component bpm.table @description Tableau triable avec colonnes configurables.
+@component bpm.table @description Tableau de données triable avec colonnes personnalisables, formatage numérique et scroll horizontal. @example bpm.table({ columns: [{ key: "nom", label: "Nom" }, { key: "montant", label: "Montant", align: "right" }], data: rows, striped: true, hover: true }) @param {object} props @param {TableColumn[]} props.columns - Définition des colonnes (key, label, align?, render?, decimals?). Obligatoire. @param {Record<string, unknown>[]} props.data - Tableau de données. Obligatoire. @param {boolean} [props.striped=true] - Lignes alternées. Optionnel. @param {boolean} [props.hover=true] - Surbrillance au survol. Optionnel. @param {function} [props.onRowClick] - Callback au clic sur une ligne. Optionnel. @param {string} [props.defaultSortColumn] - Colonne triée par défaut. Optionnel. @param {"asc"|"desc"} [props.defaultSortDirection="asc"] - Direction de tri par défaut. Optionnel. @param {string} [props.name] - Nom pour référence IA. Optionnel. @param {string} [props.keyColumn] - Colonne d'ID unique. Optionnel. @param {string} [props.className=""] - Classes CSS additionnelles. Optionnel. @param {string} [props.valueLocale="fr-FR"] - Locale pour formatage. Optionnel. @param {number} [props.valueDecimals=0] - Décimales par défaut. Optionnel. @param {boolean} [props.valueGrouping=true] - Séparateur de milliers. Optionnel. @param {number} [props.minWidth] - Largeur minimale en pixels. Optionnel. @param {boolean} [props.trackContext=false] - Expose au contexte IA. Optionnel. @param {string} [props.emptyMessage="Aucune donnée disponible"] - Message si vide. Optionnel. @props - columns (TableColumn[], obligatoire) — Colonnes (key, label, align?, render?, decimals?). - data (Record<string,unknown>[], obligatoire) — Lignes ; jamais de JSX dans data[] (utiliser render). - striped / hover (boolean, optionnel) — Lignes alternées / surbrillance au survol. - onRowClick (function, optionnel) — Callback (row) au clic sur une ligne. - defaultSortColumn / defaultSortDirection (optionnel) — Tri initial. - name / keyColumn (string, optionnel) — Identifiant IA du tableau / colonne-clé React. - valueLocale / valueDecimals / valueGrouping (optionnel) — Formatage numérique des cellules. - minWidth (number, optionnel) — Largeur minimale en px (déclenche le scroll horizontal). - trackContext (boolean, optionnel) — Expose le tableau au contexte IA. - emptyMessage (string, optionnel) — Message affiché quand data est vide. - className (string, optionnel) — Classes CSS additionnelles. @parent bpm.panel, bpm.container @associated bpm.pagination, bpm.input, bpm.badge, bpm.button @forbidden bpm.card (overflow caché)
 @semantic role=affichage frame=entity status=proposed
 @guidance Collection homogène d'entités à comparer ligne à ligne : chaque ligne est une instance, chaque colonne un champ. Associer : bpm.pagination, bpm.filterPanel, bpm.badge, bpm.exportButton. Éviter : Mesures agrégées (bpm.metric) ou exploration libre avec tri/recherche/export intégrés (bpm.dataExplorer).
 ```
@@ -1680,7 +1680,7 @@ INTERDIT : - data (Record<string,unknown>[], obligatoire) — Lignes ; jamais de
 INTERDIT : Tableau de données — obligatoire. INTERDIT : JSX dans data[], utiliser render dans TableColumn. */
 
 ## bpm.tabs
-@component bpm.tabs @description Système d'onglets avec contenu associé, scroll horizontal si débordement. @example bpm.tabs({ tabs: [{ label: "Aperçu", content: <Overview /> }, { label: "Détails", content: <Details /> }], defaultTab: 0 }) @param {object} props @param {TabsItems} [props.tabs=[]] - Onglets (string[] ou { label, content, key? }[]). Optionnel. @param {number} [props.defaultTab=0] - Index de l'onglet actif au montage. Optionnel. @param {function} [props.onChange] - Callback au changement d'onglet (index). Optionnel. @param {string} [props.className=""] - Classes CSS additionnelles. Optionnel. @parent bpm.panel, bpm.container @associated bpm.table, bpm.plotlyChart, bpm.metric @forbidden bpm.tabs (pas d'imbrication) export interface TabItem { label: string; content: React.ReactNode | null; key?: string | number; } export type TabsItems = (string | TabItem)[]; @component bpm.tabs @description Onglets pour organiser le contenu.
+@component bpm.tabs @description Système d'onglets avec contenu associé, scroll horizontal si débordement. @example bpm.tabs({ tabs: [{ label: "Aperçu", content: <Overview /> }, { label: "Détails", content: <Details /> }], defaultTab: 0 }) @param {object} props @param {TabsItems} [props.tabs=[]] - Onglets (string[] ou { label, content, key? }[]). Optionnel. @param {number} [props.defaultTab=0] - Index de l'onglet actif au montage. Optionnel. @param {function} [props.onChange] - Callback au changement d'onglet (index). Optionnel. @param {string} [props.className=""] - Classes CSS additionnelles. Optionnel. @parent bpm.panel, bpm.container @associated bpm.table, bpm.plotlyChart, bpm.metric @forbidden bpm.tabs (pas d'imbrication)
 @semantic role=conteneur frame=section status=proposed
 @guidance Vues alternatives de même rang sur un même sujet : une seule visible à la fois. Associer : bpm.card, bpm.table, bpm.pageLayout. Éviter : Étapes ordonnées d'un processus (bpm.stepper, bpm.wizardForm) ou sections à lecture continue (bpm.accordion).
 ```
@@ -1691,7 +1691,7 @@ INTERDIT : Tableau de données — obligatoire. INTERDIT : JSX dans data[], util
 ```
 
 ## bpm.text
-@component bpm.text @description Texte simple (niveau corps).
+@component bpm.text @description Affiche un paragraphe ou bloc de texte dans une page ou un formulaire (équivalent st.write / st.text). @example bpm.text({ children: "Chiffre d'affaires Q3 : 1,2 M€." }) @props - children (ReactNode) — Contenu texte à afficher. - mono (boolean, optionnel) — Police monospace. Default: false. - className (string, optionnel) — Classes CSS. - style (object, optionnel) — Styles inline. @usage Corps de texte dans rapports, fiches produit, messages d'aide. @context PARENT: bpm.panel | bpm.card | bpm.modal. ASSOCIATED: bpm.caption, bpm.markdown, bpm.title. FORBIDDEN: aucun.
 @semantic role=affichage frame=section status=proposed
 @guidance Texte courant : explication, description, contenu rédactionnel. Associer : bpm.title, bpm.caption, bpm.markdown. Éviter : Texte secondaire atténué (bpm.caption) ou contenu riche structuré (bpm.markdown).
 ```
@@ -1702,7 +1702,7 @@ INTERDIT : Tableau de données — obligatoire. INTERDIT : JSX dans data[], util
 ```
 
 ## bpm.textarea
-@component bpm.textarea @description Zone de texte multiligne.
+@component bpm.textarea @description Champ de saisie multiligne pour commentaires, description, notes métier. @example bpm.textarea({ label: "Commentaire", value: comment, onChange: setComment, rows: 4 }) @props - label (string, optionnel) — Libellé au-dessus du champ. - value (string, optionnel) — Valeur contrôlée. - onChange (function, optionnel) — Callback (value: string). - placeholder (string, optionnel) — Texte indicatif. - rows (number, optionnel) — Nombre de lignes visibles. Default: 4. - disabled (boolean, optionnel) — Désactive le champ. Default: false. - inverted (boolean, optionnel) — Fond sombre. Default: false. - className (string, optionnel) — Classes CSS. @usage Commentaire de commande, description produit, notes internes. @context PARENT: bpm.modal | bpm.panel | bpm.card. ASSOCIATED: bpm.input, bpm.button. FORBIDDEN: onChange absent si value contrôlé.
 @semantic role=saisie frame=entity status=proposed
 @guidance Saisir un texte long multiligne : description, commentaire, note. Associer : bpm.wizardForm, bpm.markdown. Éviter : Champ court (bpm.input), code (bpm.codeEditor), prompt IA (bpm.promptInput).
 ```
@@ -1742,7 +1742,7 @@ INTERDIT : Tableau de données — obligatoire. INTERDIT : JSX dans data[], util
 ```
 
 ## bpm.timeline
-@deprecated Utilisez TimelineEvent avec la prop `events`. Conservé pour rétrocompatibilité. */ export interface TimelineItem { id?: string; title: React.ReactNode; description?: React.ReactNode; date?: string; status?: "done" | "current" | "upcoming"; } export interface TimelineEvent { date: string; title: string; description?: string; actor?: string; icon?: string; color?: "default" | "info" | "success" | "warning" | "error"; metadata?: Record<string, string>; } @component bpm.timeline @description Frise chronologique (événements ISO, groupement par date).
+@component bpm.timeline @description Frise chronologique verticale (événements ou ancienne prop items). @example bpm.timeline({ events: [{ date: "2026-06-01", title: "Création", description: "Dossier ouvert" }] }) @props - events (TimelineEvent[], optionnel) — Événements { date, title, description?, icon? } (API recommandée). - items (TimelineItem[], optionnel) — Ancienne API, conservée pour compatibilité. - maxItems (number, optionnel) — Limite d’éléments affichés. - sortOrder ("asc"|"desc", optionnel) — Ordre chronologique. Default: "desc". - groupByDate (boolean, optionnel) — Regroupe les événements par date. - className (string, optionnel) — Classes CSS additionnelles. @parent bpm.card, bpm.drawer, bpm.page @associated bpm.activityFeed, bpm.statusTracker @forbidden Flux non daté en continu — utiliser bpm.activityFeed
 @semantic role=affichage frame=event status=needs-curation
 @guidance Historique ordonné d'événements datés : audit d'une instance, jalons d'un dossier. Associer : bpm.badge, bpm.card, bpm.statusTracker. Éviter : Flux social avec acteurs (bpm.activityFeed) ou suivi d'étapes normées (bpm.statusTracker).
 ```
@@ -1763,7 +1763,7 @@ Titre h1 minimal (core) — children uniquement. Pour titres hiérarchiques : bp
 ```
 
 ## bpm.title1
-@component bpm.title @description Titre h1 minimal. — bpm.title1 : niveau 1 implicite, ne pas passer level.
+@component bpm.title @description Titre de page ou de section avec niveaux 1–4 pour structurer rapports et tableaux de bord. @example bpm.title({ children: "Dashboard Production", level: 1 }) @props - children (ReactNode) — Texte du titre. - level (1 | 2 | 3 | 4, optionnel) — Niveau hiérarchique. Default: 1. - size (string, optionnel) — Surcharge taille (ex. "1.5rem"). - bold (boolean | number, optionnel) — Gras. - color (string, optionnel) — Couleur texte. - bar (boolean, optionnel) — Barre verticale à gauche. Default: false. - barColor (string, optionnel) — Couleur de la barre. - inverted (boolean, optionnel) — Fond sombre. Default: false. - logoUrl (string, optionnel) — URL logo (level 1). - onLogoClick (function, optionnel) — Clic sur le logo. - className, style (optionnel) — Reste des props. @usage En-têtes de page, titres de section, rapports. @context PARENT: page directe | bpm.panel | bpm.tabs. ASSOCIATED: bpm.metric, bpm.table. FORBIDDEN: aucun. — bpm.title1 : niveau 1 implicite, ne pas passer level.
 @semantic role=affichage frame=section status=proposed
 @guidance Titre de page (niveau 1) : nomme l'écran, une seule occurrence par page. Associer : bpm.title2, bpm.text. Éviter : Titres de sous-sections (bpm.title2/title3) ou valeurs de données.
 ```
@@ -1781,7 +1781,7 @@ Titre h1 minimal (core) — children uniquement. Pour titres hiérarchiques : bp
 ```
 
 ## bpm.title2
-@component bpm.title @description Titre h1 minimal. — bpm.title2 : niveau 2 implicite, ne pas passer level.
+@component bpm.title @description Titre de page ou de section avec niveaux 1–4 pour structurer rapports et tableaux de bord. @example bpm.title({ children: "Dashboard Production", level: 1 }) @props - children (ReactNode) — Texte du titre. - level (1 | 2 | 3 | 4, optionnel) — Niveau hiérarchique. Default: 1. - size (string, optionnel) — Surcharge taille (ex. "1.5rem"). - bold (boolean | number, optionnel) — Gras. - color (string, optionnel) — Couleur texte. - bar (boolean, optionnel) — Barre verticale à gauche. Default: false. - barColor (string, optionnel) — Couleur de la barre. - inverted (boolean, optionnel) — Fond sombre. Default: false. - logoUrl (string, optionnel) — URL logo (level 1). - onLogoClick (function, optionnel) — Clic sur le logo. - className, style (optionnel) — Reste des props. @usage En-têtes de page, titres de section, rapports. @context PARENT: page directe | bpm.panel | bpm.tabs. ASSOCIATED: bpm.metric, bpm.table. FORBIDDEN: aucun. — bpm.title2 : niveau 2 implicite, ne pas passer level.
 @semantic role=affichage frame=section status=proposed
 @guidance Titre de section (niveau 2) sous un title1. Associer : bpm.title1, bpm.title3, bpm.divider. Éviter : Titre de page (bpm.title1) ou emphase dans un paragraphe (bpm.text stylé).
 ```
@@ -1799,7 +1799,7 @@ Titre h1 minimal (core) — children uniquement. Pour titres hiérarchiques : bp
 ```
 
 ## bpm.title3
-@component bpm.title @description Titre h1 minimal. — bpm.title3 : niveau 3 implicite, ne pas passer level.
+@component bpm.title @description Titre de page ou de section avec niveaux 1–4 pour structurer rapports et tableaux de bord. @example bpm.title({ children: "Dashboard Production", level: 1 }) @props - children (ReactNode) — Texte du titre. - level (1 | 2 | 3 | 4, optionnel) — Niveau hiérarchique. Default: 1. - size (string, optionnel) — Surcharge taille (ex. "1.5rem"). - bold (boolean | number, optionnel) — Gras. - color (string, optionnel) — Couleur texte. - bar (boolean, optionnel) — Barre verticale à gauche. Default: false. - barColor (string, optionnel) — Couleur de la barre. - inverted (boolean, optionnel) — Fond sombre. Default: false. - logoUrl (string, optionnel) — URL logo (level 1). - onLogoClick (function, optionnel) — Clic sur le logo. - className, style (optionnel) — Reste des props. @usage En-têtes de page, titres de section, rapports. @context PARENT: page directe | bpm.panel | bpm.tabs. ASSOCIATED: bpm.metric, bpm.table. FORBIDDEN: aucun. — bpm.title3 : niveau 3 implicite, ne pas passer level.
 @semantic role=affichage frame=section status=proposed
 @guidance Titre de sous-section (niveau 3) sous un title2. Associer : bpm.title2, bpm.text. Éviter : Sauter des niveaux de hiérarchie (title1 → title3 sans title2).
 ```
@@ -1817,7 +1817,7 @@ Titre h1 minimal (core) — children uniquement. Pour titres hiérarchiques : bp
 ```
 
 ## bpm.title4
-@component bpm.title @description Titre h1 minimal. — bpm.title4 : niveau 4 implicite, ne pas passer level.
+@component bpm.title @description Titre de page ou de section avec niveaux 1–4 pour structurer rapports et tableaux de bord. @example bpm.title({ children: "Dashboard Production", level: 1 }) @props - children (ReactNode) — Texte du titre. - level (1 | 2 | 3 | 4, optionnel) — Niveau hiérarchique. Default: 1. - size (string, optionnel) — Surcharge taille (ex. "1.5rem"). - bold (boolean | number, optionnel) — Gras. - color (string, optionnel) — Couleur texte. - bar (boolean, optionnel) — Barre verticale à gauche. Default: false. - barColor (string, optionnel) — Couleur de la barre. - inverted (boolean, optionnel) — Fond sombre. Default: false. - logoUrl (string, optionnel) — URL logo (level 1). - onLogoClick (function, optionnel) — Clic sur le logo. - className, style (optionnel) — Reste des props. @usage En-têtes de page, titres de section, rapports. @context PARENT: page directe | bpm.panel | bpm.tabs. ASSOCIATED: bpm.metric, bpm.table. FORBIDDEN: aucun. — bpm.title4 : niveau 4 implicite, ne pas passer level.
 ```
   children*: React.ReactNode
   level?: 1 | 2 | 3 | 4
@@ -1833,7 +1833,7 @@ Titre h1 minimal (core) — children uniquement. Pour titres hiérarchiques : bp
 ```
 
 ## bpm.titleBpm
-@component bpm.title @description Titre h1 minimal.
+@component bpm.title @description Titre de page ou de section avec niveaux 1–4 pour structurer rapports et tableaux de bord. @example bpm.title({ children: "Dashboard Production", level: 1 }) @props - children (ReactNode) — Texte du titre. - level (1 | 2 | 3 | 4, optionnel) — Niveau hiérarchique. Default: 1. - size (string, optionnel) — Surcharge taille (ex. "1.5rem"). - bold (boolean | number, optionnel) — Gras. - color (string, optionnel) — Couleur texte. - bar (boolean, optionnel) — Barre verticale à gauche. Default: false. - barColor (string, optionnel) — Couleur de la barre. - inverted (boolean, optionnel) — Fond sombre. Default: false. - logoUrl (string, optionnel) — URL logo (level 1). - onLogoClick (function, optionnel) — Clic sur le logo. - className, style (optionnel) — Reste des props. @usage En-têtes de page, titres de section, rapports. @context PARENT: page directe | bpm.panel | bpm.tabs. ASSOCIATED: bpm.metric, bpm.table. FORBIDDEN: aucun.
 @semantic role=affichage frame=section status=proposed
 @guidance Alias de bpm.title (niveaux 1 à 4) : hiérarchiser la page quand title est masqué par un import local. Associer : bpm.text, bpm.divider. Éviter : Usage par défaut — préférer bpm.title ou bpm.title1…title4.
 ```
@@ -1865,7 +1865,7 @@ Toast visuel ; en production préférer useToast().
 ```
 
 ## bpm.toggle
-@component bpm.toggle @description Interrupteur on/off.
+@component bpm.toggle @description Interrupteur on/off pour activer ou désactiver une option (notifications, mode maintenance). Prop contrôlée : `value` (boolean) — PAS `checked` ; `checked` est la prop de bpm.checkbox, ne pas confondre. @example bpm.toggle({ label: "Notifications email", value: true, onChange: (v) => setNotif(v) }) @props - label (ReactNode, optionnel) — Libellé à côté du toggle. - value (boolean, optionnel) — État coché. Default: false. - onChange (function, optionnel) — Callback (checked: boolean). - disabled (boolean, optionnel) — Désactive le toggle. Default: false. - className (string, optionnel) — Classes CSS. @usage Paramètres utilisateur, options de module, activation de fonctionnalité. @context PARENT: bpm.panel | bpm.modal | bpm.card. ASSOCIATED: bpm.input, bpm.button. FORBIDDEN: aucun.
 @semantic role=saisie frame=entity status=proposed
 @guidance Basculer immédiatement un état binaire on/off (activer un mode, une option de réglage) avec effet direct, sans étape de validation. Associer : bpm.filterPanel, bpm.card, bpm.labelValue. Éviter : Booléen confirmé dans un formulaire à valider (bpm.checkbox) ou choix exclusif entre plusieurs valeurs (bpm.radioGroup).
 ```
@@ -1877,7 +1877,7 @@ Toast visuel ; en production préférer useToast().
 ```
 
 ## bpm.tooltip
-@component bpm.tooltip @description Info-bulle au survol.
+@component bpm.tooltip @description Info-bulle au survol d'un élément (bouton, icône) pour aide contextuelle. @example bpm.tooltip({ text: "Exporter en PDF", children: <button>Export</button> }) @props - text (string) — Texte du tooltip. - children (ReactNode) — Élément déclencheur (bouton, icône). - position (string, optionnel) — Placement (top, bottom, left, right…). Default: 'top'. - backgroundColor (string, optionnel) — Fond du tooltip. - textColor (string, optionnel) — Couleur du texte. @usage Aide sur boutons, explication de champs, raccourcis. @context PARENT: partout. ASSOCIATED: bpm.button, bpm.input. FORBIDDEN: aucun.
 @semantic role=feedback frame=section status=proposed
 @guidance Aide contextuelle d'un mot ou d'une icône au survol : définition, unité, raccourci. Associer : bpm.button, bpm.metric, bpm.badge. Éviter : Contenu indispensable (le rendre visible) ou contenu riche (bpm.popover).
 ```
@@ -1889,7 +1889,7 @@ Toast visuel ; en production préférer useToast().
 ```
 
 ## bpm.topNav
-@component bpm.topNav @description Barre de navigation horizontale avec titre/logo et liens/boutons. @example bpm.topNav({ title: "Mon App", titleHref: "/", items: [{ label: "Accueil", href: "/" }, { label: "Aide", onClick: showHelp }] }) @param {object} props @param {React.ReactNode} [props.title] - Titre ou logo. Optionnel. @param {string} [props.titleHref="#"] - Lien du titre. Optionnel. @param {TopNavItem[]} [props.items=[]] - Éléments de navigation (label, href?, onClick?). Optionnel. @param {string} [props.className=""] - Classes CSS additionnelles. Optionnel. @associated bpm.pageLayout, bpm.sidebar, bpm.breadcrumb @parent bpm.page, bpm.pageLayout @forbidden Navigation latérale dense — utiliser bpm.sidebar export interface TopNavItem { label: string; href?: string; onClick?: () => void; } @component bpm.topNav @description Barre de navigation supérieure (titre + liens).
+@component bpm.topNav @description Barre de navigation horizontale avec titre/logo et liens/boutons. @example bpm.topNav({ title: "Mon App", titleHref: "/", items: [{ label: "Accueil", href: "/" }, { label: "Aide", onClick: showHelp }] }) @param {object} props @param {React.ReactNode} [props.title] - Titre ou logo. Optionnel. @param {string} [props.titleHref="#"] - Lien du titre. Optionnel. @param {TopNavItem[]} [props.items=[]] - Éléments de navigation (label, href?, onClick?). Optionnel. @param {string} [props.className=""] - Classes CSS additionnelles. Optionnel. @associated bpm.pageLayout, bpm.sidebar, bpm.breadcrumb @parent bpm.page, bpm.pageLayout @forbidden Navigation latérale dense — utiliser bpm.sidebar
 @semantic role=navigation frame=section status=proposed
 @guidance Navigation principale horizontale entre les sections de premier niveau de l'application. Associer : bpm.pageLayout, bpm.theme, bpm.avatar. Éviter : Hiérarchie profonde (bpm.breadcrumb) ou navigation lourde multi-niveaux (sidebar de bpm.pageLayout).
 ```
@@ -1900,7 +1900,7 @@ Toast visuel ; en production préférer useToast().
 ```
 
 ## bpm.tour
-@component bpm.tour @description Visite guidée interactive avec overlay sombre et mise en surbrillance des éléments cibles étape par étape. @example bpm.tour({ steps: [{ target: "#btn", title: "Bienvenue", content: "Cliquez ici" }], isActive: true, onClose: () => setActive(false) }) @param {object} props @param {TourStep[]} props.steps - Liste des étapes (target sélecteur CSS, title, content). Obligatoire. @param {boolean} props.isActive - Active/désactive la visite. Obligatoire. @param {function} [props.onClose] - Callback à la fermeture. Optionnel. @param {string} [props.className=""] - Classes CSS additionnelles. Optionnel. @associated bpm.modal, bpm.stepper export interface TourStep { target: string; title: string; content: string; } @component bpm.tour @description Visite guidée interactive (étapes et popups).
+@component bpm.tour @description Visite guidée interactive avec overlay sombre et mise en surbrillance des éléments cibles étape par étape. @example bpm.tour({ steps: [{ target: "#btn", title: "Bienvenue", content: "Cliquez ici" }], isActive: true, onClose: () => setActive(false) }) @param {object} props @param {TourStep[]} props.steps - Liste des étapes (target sélecteur CSS, title, content). Obligatoire. @param {boolean} props.isActive - Active/désactive la visite. Obligatoire. @param {function} [props.onClose] - Callback à la fermeture. Optionnel. @param {string} [props.className=""] - Classes CSS additionnelles. Optionnel. @associated bpm.modal, bpm.stepper
 ```
   steps*: TourStep[]
   isActive*: boolean
@@ -1909,7 +1909,7 @@ Toast visuel ; en production préférer useToast().
 ```
 
 ## bpm.transition
-@component bpm.transition @description Animation de transition entre états.
+@component bpm.transition @description Conteneur de vues avec transition animée (fade, shimmer, border, grid) pour wizard ou carrousel. @example bpm.transition({ activeIndex: 0, variant: "fade", children: [<Vue1 />, <Vue2 />] }) @props - activeIndex (number) — Index de la vue affichée (0-based). - variant ('fade' | 'shimmer' | 'border' | 'grid', optionnel) — Type de transition. Default: 'fade'. - children (ReactNode[]) — Une entrée par vue. - duration (number, optionnel) — Durée transition ms. Default: 380. - onTransitionEnd (function, optionnel) — Callback fin de transition. - className (string, optionnel) — Classes CSS. @usage Wizard de saisie, carrousel d'étapes, changement de vue. @context PARENT: bpm.panel | bpm.modal. ASSOCIATED: bpm.stepper, bpm.button. FORBIDDEN: aucun.
 ```
   activeIndex*: number  — Index de la page / vue active (0-based).
   variant?: TransitionVariant  — Variant de transition : fade (slide), shimmer, border, grid.
@@ -1920,7 +1920,7 @@ Toast visuel ; en production préférer useToast().
 ```
 
 ## bpm.treemap
-@component bpm.treemap @description Visualisation treemap (carte de chaleur hiérarchique) en SVG avec algorithme squarify. @example bpm.treemap({ data: [{ name: "A", value: 50 }, { name: "B", value: 30 }], width: 400, height: 300 }) @param {object} props @param {TreemapItem[]} props.data - Données à afficher (name, value, fill optionnel). Obligatoire. @param {number} [props.width=400] - Largeur du SVG en pixels. Optionnel. @param {number} [props.height=280] - Hauteur du SVG en pixels. Optionnel. @param {string} [props.className=""] - Classes CSS additionnelles. Optionnel. @param {InterpretContext} [props.context] - Contexte de jugement par tuile : chaque cellule est jugée vs le repère (contour coloré par le verdict hors zone neutre, data-judgment par tuile). Optionnel. @associated bpm.heatmap, bpm.pieChart, bpm.sunburst export interface TreemapItem { name: string; value: number; fill?: string; } @component bpm.treemap @description Carte arborescente (treemap) pour données hiérarchiques.
+@component bpm.treemap @description Visualisation treemap (carte de chaleur hiérarchique) en SVG avec algorithme squarify. @example bpm.treemap({ data: [{ name: "A", value: 50 }, { name: "B", value: 30 }], width: 400, height: 300 }) @param {object} props @param {TreemapItem[]} props.data - Données à afficher (name, value, fill optionnel). Obligatoire. @param {number} [props.width=400] - Largeur du SVG en pixels. Optionnel. @param {number} [props.height=280] - Hauteur du SVG en pixels. Optionnel. @param {string} [props.className=""] - Classes CSS additionnelles. Optionnel. @param {InterpretContext} [props.context] - Contexte de jugement par tuile : chaque cellule est jugée vs le repère (contour coloré par le verdict hors zone neutre, data-judgment par tuile). Optionnel. @associated bpm.heatmap, bpm.pieChart, bpm.sunburst
 ```
   data*: TreemapItem[]
   width?: number
@@ -1930,7 +1930,7 @@ Toast visuel ; en production préférer useToast().
 ```
 
 ## bpm.treeview
-@component bpm.treeview @description Arborescence hiérarchique dépliable avec sélection de nœud. @example bpm.treeview({ nodes: [{ id: "1", label: "Parent", children: [{ id: "1.1", label: "Enfant" }] }], onSelect: handleSelect }) @param {object} props @param {TreeviewNode[]} [props.nodes=[]] - Liste des nœuds racines (id, label, children, defaultOpen). Optionnel. @param {function} [props.onSelect] - Callback à la sélection d'un nœud (node). Optionnel. @param {string|null} [props.selectedId=null] - ID du nœud sélectionné. Optionnel. @param {string} [props.className=""] - Classes CSS additionnelles. Optionnel. @associated bpm.sidebar, bpm.accordion, bpm.menu @parent bpm.card, bpm.drawer, bpm.masterDetail @forbidden Hiérarchie d'organisation — utiliser bpm.orgChart export interface TreeviewNode { id: string; label: React.ReactNode; children?: TreeviewNode[]; defaultOpen?: boolean; } @component bpm.treeview @description Arbre de nœuds repliables et sélectionnables.
+@component bpm.treeview @description Arborescence hiérarchique dépliable avec sélection de nœud. @example bpm.treeview({ nodes: [{ id: "1", label: "Parent", children: [{ id: "1.1", label: "Enfant" }] }], onSelect: handleSelect }) @param {object} props @param {TreeviewNode[]} [props.nodes=[]] - Liste des nœuds racines (id, label, children, defaultOpen). Optionnel. @param {function} [props.onSelect] - Callback à la sélection d'un nœud (node). Optionnel. @param {string|null} [props.selectedId=null] - ID du nœud sélectionné. Optionnel. @param {string} [props.className=""] - Classes CSS additionnelles. Optionnel. @associated bpm.sidebar, bpm.accordion, bpm.menu @parent bpm.card, bpm.drawer, bpm.masterDetail @forbidden Hiérarchie d'organisation — utiliser bpm.orgChart
 @semantic role=affichage frame=entity status=proposed
 @guidance Hiérarchie de nœuds explorables (arborescence de dossiers, taxonomie, relations parent-enfant). Associer : bpm.masterDetail, bpm.drawer, bpm.labelValue. Éviter : Hiérarchie d'acteurs (bpm.orgChart) ou liste plate (bpm.table).
 ```
@@ -1955,7 +1955,7 @@ Toast visuel ; en production préférer useToast().
 ```
 
 ## bpm.waterfall
-@component bpm.waterfall @description Graphique en cascade (waterfall chart) montrant l'évolution cumulative de valeurs positives/négatives. @example bpm.waterfall({ data: [{ label: "Début", value: 100, type: "start" }, { label: "+Ventes", value: 50 }, { label: "Total", value: 150, type: "total" }] }) @param {object} props @param {WaterfallDatum[]} props.data - Données (label, value, type optionnel: "start"|"delta"|"total"). Obligatoire. @param {number} [props.width=480] - Largeur du SVG en pixels. Optionnel. @param {number} [props.height=260] - Hauteur du SVG en pixels. Optionnel. @param {string} [props.className=""] - Classes CSS additionnelles. Optionnel. @param {InterpretContext} [props.context] - Contexte de jugement : le cumul final de la cascade est jugé vs le repère, verdict révélé sous le graphique. Optionnel. @associated bpm.barChart, bpm.stackedBarChart, bpm.kpi export interface WaterfallDatum { label: string; value: number; type?: "start" | "delta" | "total"; } @component bpm.waterfall @description Graphique en cascade (waterfall).
+@component bpm.waterfall @description Graphique en cascade (waterfall chart) montrant l'évolution cumulative de valeurs positives/négatives. @example bpm.waterfall({ data: [{ label: "Début", value: 100, type: "start" }, { label: "+Ventes", value: 50 }, { label: "Total", value: 150, type: "total" }] }) @param {object} props @param {WaterfallDatum[]} props.data - Données (label, value, type optionnel: "start"|"delta"|"total"). Obligatoire. @param {number} [props.width=480] - Largeur du SVG en pixels. Optionnel. @param {number} [props.height=260] - Hauteur du SVG en pixels. Optionnel. @param {string} [props.className=""] - Classes CSS additionnelles. Optionnel. @param {InterpretContext} [props.context] - Contexte de jugement : le cumul final de la cascade est jugé vs le repère, verdict révélé sous le graphique. Optionnel. @associated bpm.barChart, bpm.stackedBarChart, bpm.kpi
 ```
   data*: WaterfallDatum[]
   width?: number
@@ -1965,7 +1965,7 @@ Toast visuel ; en production préférer useToast().
 ```
 
 ## bpm.wizardForm
-@component bpm.wizardForm @description Formulaire multi-étapes avec stepper et validation.
+@component bpm.wizardForm @description Assistant multi-étapes avec stepper, validation et transition slide. @example bpm.wizardForm({ steps: [{ title: "Profil", content: <>…</> }], onComplete: handleDone }) @props - steps (WizardStep[], obligatoire) — Étapes { title, content, validate? }. - onComplete (function, obligatoire) — Callback à la dernière étape validée. - onCancel (function, optionnel) — Callback d’annulation. - submitLabel (string, optionnel) — Libellé du bouton final. Default: "Terminer". - showSummary (boolean, optionnel) — Affiche un récapitulatif final. - className (string, optionnel) — Classes CSS additionnelles. @parent bpm.modal, bpm.page, bpm.card @associated bpm.stepper, bpm.input, bpm.button @forbidden Formulaire court d'un seul tenant — utiliser bpm.modal
 @semantic role=saisie frame=entity status=proposed
 @guidance Création/édition guidée en plusieurs étapes validées : formulaire long découpé en séquence logique. Associer : bpm.stepper, bpm.input, bpm.selectbox, bpm.confirmModal. Éviter : Formulaire court d'un seul tenant (bpm.modal + champs) ou suivi d'un processus métier (bpm.statusTracker).
 ```
@@ -1978,6 +1978,7 @@ Toast visuel ; en production préférer useToast().
 ```
 
 ## bpm.dataExplorerAnalytics
+@component bpm.dataExplorerAnalytics @description Explorateur de données mode analytics avec filtres dynamiques, graphiques et tableau des résultats. @example bpm.dataExplorerAnalytics({ data: [...], columns: [...], chartConfig: { type: "bar", xKey: "categorie", yKey: "montant" } }) @param {object} props @param {Record<string, unknown>[]} props.data - Données à analyser. Obligatoire. @param {ExplorerAnalyticsColumn[]} props.columns - Colonnes avec type (string/number/date/enum). Obligatoire. @param {object} [props.chartConfig] - Configuration du graphique {type, xKey, yKey}. Optionnel. @param {function} [props.onFilter] - Callback avec les données filtrées. Optionnel. @param {string} [props.className=""] - Classes CSS additionnelles. Optionnel. @associated bpm.filterPanel, bpm.barChart, bpm.table
 ```
   mode*: "analytics"
   data*: Record<string, unknown>[]
@@ -1988,6 +1989,7 @@ Toast visuel ; en production préférer useToast().
 ```
 
 ## bpm.dataExplorerClassic
+@component bpm.dataExplorerClassic @description Explorateur de données classique avec table triable, recherche, pagination et export CSV. @example bpm.dataExplorerClassic({ data: [...], columns: [...], searchable: true, exportable: true }) @param {object} props @param {Record<string, unknown>[]} props.data - Données à afficher. Obligatoire. @param {ColumnDef[]} [props.columns] - Définition des colonnes (auto-inféré si absent). Optionnel. @param {string} [props.title] - Titre de l'explorateur. Optionnel. @param {boolean} [props.searchable=true] - Active la recherche. Optionnel. @param {boolean} [props.exportable=false] - Active l'export CSV. Optionnel. @param {number} [props.pageSize=20] - Nombre d'éléments par page. Optionnel. @param {string} [props.className=""] - Classes CSS additionnelles. Optionnel. @associated bpm.table, bpm.pagination, bpm.input
 ```
   data*: Record<string, unknown>[]
   columns?: ColumnDef[]
@@ -1999,6 +2001,7 @@ Toast visuel ; en production préférer useToast().
 ```
 
 ## bpm.datePickerPopover
+@component bpm.datePickerPopover @description Calendrier popover pour sélection de date avec navigation mois/année et contraintes min/max. @example bpm.datePickerPopover({ anchorRef: ref, value: new Date(), onSelect: setDate, onClose: close }) @param {object} props @param {React.RefObject} props.anchorRef - Référence de l'élément déclencheur pour le positionnement. Obligatoire. @param {Date|null} props.value - Date actuellement sélectionnée. Obligatoire. @param {Date|null} [props.min] - Date minimale sélectionnable. Optionnel. @param {Date|null} [props.max] - Date maximale sélectionnable. Optionnel. @param {function} props.onSelect - Callback appelé avec la date choisie. Obligatoire. @param {function} props.onClose - Callback de fermeture. Obligatoire. @associated bpm.dateInput, bpm.dateRangePicker
 ```
   anchorRef*: React.RefObject<HTMLElement | null>
   value*: Date | null
@@ -2009,6 +2012,7 @@ Toast visuel ; en production préférer useToast().
 ```
 
 ## bpm.gpsMap
+@component bpm.gpsMap @description Carte Leaflet avec marqueur GPS (mode affichage ou picker) et gestion des clics. @example bpm.gpsMap({ mode: "picker", center: { lat: 48.85, lng: 2.35 }, markerPosition: pos, onMapClick: setPos, height: 300 }) @param {object} props @param {"display"|"picker"} props.mode - Mode affichage ou sélection. Obligatoire. @param {object} props.center - Centre initial {lat, lng}. Obligatoire. @param {object|null} props.markerPosition - Position du marqueur {lat, lng} ou null. Obligatoire. @param {function} [props.onMarkerChange] - Callback au déplacement du marqueur (mode picker). Optionnel. @param {function} [props.onMapClick] - Callback au clic sur la carte (mode picker). Optionnel. @param {number} props.height - Hauteur de la carte en pixels. Obligatoire. @associated bpm.gps, bpm.mapView, bpm.geofence
 ```
   mode*: "display" | "picker"
   center*: { lat: number
@@ -2019,6 +2023,7 @@ Toast visuel ; en production préférer useToast().
 ```
 
 ## bpm.mapViewLeaflet
+@component bpm.mapViewLeaflet @description Composant interne Leaflet utilisé par MapView après chargement dynamique des dépendances. @example // Usage interne uniquement - utiliser bpm.mapView à la place @param {object} props @param {typeof import("react-leaflet")} props.rl - Module react-leaflet. Obligatoire. @param {typeof import("leaflet")} props.L - Module leaflet. Obligatoire. @param {[number, number]} props.center - Centre de la carte. Obligatoire. @param {number} props.zoom - Niveau de zoom. Obligatoire. @param {number|string} props.height - Hauteur. Obligatoire. @param {MapMarker[]} props.markers - Marqueurs. Obligatoire. @param {function} [props.onMarkerClick] - Callback clic marqueur. Optionnel. @param {string} props.tileUrl - URL des tuiles. Obligatoire. @param {string} [props.tileAttribution] - Attribution. Optionnel. @param {[number, number][][]} [props.polylines] - Polylignes. Optionnel. @param {string} [props.polylineColor] - Couleur polylignes. Optionnel. @param {MapPolygonSpec[]} [props.polygons] - Polygones. Optionnel. @param {function} [props.onMapClick] - Callback clic carte. Optionnel. @param {string} [props.className=""] - Classes CSS. Optionnel. @parent bpm.mapView
 ```
   rl*: typeof import("react-leaflet")
   L*: typeof import("leaflet")
