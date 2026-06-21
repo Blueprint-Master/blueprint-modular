@@ -14,5 +14,9 @@ export default defineConfig({
   },
   resolve: {
     alias: { "@": resolve(__dirname, "../..") },
+    // Prevent double-React instance when qrcode.react (and similar peers)
+    // resolve React from the root node_modules while react-dom resolves locally.
+    // In a generated app all packages are hoisted to one root — no conflict.
+    dedupe: ["react", "react-dom", "react/jsx-runtime", "react/jsx-dev-runtime"],
   },
 });
