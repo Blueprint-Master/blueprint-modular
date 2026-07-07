@@ -20,6 +20,8 @@ export { Markdown } from "./Markdown";
 export type { MarkdownProps } from "./Markdown";
 export { Table } from "./Table";
 export type { TableProps, TableColumn } from "./Table";
+export { FreeZone } from "./FreeZone";
+export type { FreeZoneProps } from "./FreeZone";
 export { JsonViewer } from "./JsonViewer";
 export type { JsonViewerProps } from "./JsonViewer";
 export { Tabs } from "./Tabs";
