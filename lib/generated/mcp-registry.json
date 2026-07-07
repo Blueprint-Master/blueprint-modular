@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-07-07T12:19:07.459Z",
+  "generatedAt": "2026-07-07T12:23:15.561Z",
   "source": "lib/generated/bpm-components.json + public/llms.txt + lib/semantics/bpm-semantics.json",
   "total": 155,
   "categories": [
@@ -3901,10 +3901,11 @@
     {
       "slug": "free",
       "name": "bpm.free",
-      "description": "",
+      "description": "Composant bpm.free — voir @blueprint-modular/core ou BPM_API.md.",
       "category": "Utilitaires",
       "status": "uncurated",
-      "_haystack": "bpm.free free utilitaires"
+      "props": "",
+      "_haystack": "bpm.free free composant bpm.free — voir @blueprint-modular/core ou bpm_api.md. utilitaires"
     },
     {
       "slug": "funnelchart",

@@ -711,7 +711,7 @@
     {
       "slug": "free",
       "name": "bpm.free",
-      "description": "",
+      "description": "Composant bpm.free — voir @blueprint-modular/core ou BPM_API.md.",
       "category": "Utilitaires"
     },
     {
