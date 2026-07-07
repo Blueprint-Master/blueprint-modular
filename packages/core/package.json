@@ -1,6 +1,6 @@
 {
   "name": "@blueprint-modular/core",
-  "version": "0.3.2",
+  "version": "0.3.3",
   "description": "Blueprint Modular — composants React pour apps de données",
   "main": "./dist/index.js",
   "module": "./dist/index.mjs",
@@ -41,8 +41,12 @@
     "react-leaflet": ">=4.0.0"
   },
   "peerDependenciesMeta": {
-    "leaflet": { "optional": true },
-    "react-leaflet": { "optional": true }
+    "leaflet": {
+      "optional": true
+    },
+    "react-leaflet": {
+      "optional": true
+    }
   },
   "devDependencies": {
     "@testing-library/jest-dom": "^6.6.3",

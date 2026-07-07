@@ -234,6 +234,18 @@ export function Table({
     });
   }, [data, sortColumn, sortDirection]);
 
+  /* UN SEUL CADRE (fix 07/07 — « bordures non fermées aux angles ») : le
+     wrapper porte l'unique bordure extérieure (+ radius) ; les cellules ne
+     dessinent QUE les séparateurs internes (droite sauf dernière colonne,
+     bas sauf dernière ligne). L'ancien double cadre (wrapper + `border`
+     4 côtés par cellule) laissait des jointures ouvertes aux angles,
+     surtout en radius 0. */
+  const cellBorder = (colIdx: number, isLastRow: boolean): React.CSSProperties => ({
+    borderStyle: "solid",
+    borderColor: "var(--bpm-border, #e5e7eb)",
+    borderWidth: `0 ${colIdx === columns.length - 1 ? "0" : "1px"} ${isLastRow ? "0" : "1px"} 0`,
+  });
+
   const tableMinWidthStyle =
     !isMobile && minWidth != null ? { minWidth: `${minWidth}px` } : undefined;
 
@@ -273,7 +285,7 @@ export function Table({
                         : "descending"
                       : undefined
                   }
-                  className={`bpm-table-th ${density === "compact" ? "px-2 py-1" : "px-3 py-2"} text-sm font-medium border ${col.noWrap ? "bpm-table-th--nowrap" : ""} ${
+                  className={`bpm-table-th ${density === "compact" ? "px-2 py-1" : "px-3 py-2"} text-sm font-medium ${col.noWrap ? "bpm-table-th--nowrap" : ""} ${
                     sortColumn === col.key
                       ? `bpm-table-sorted bpm-table-sorted-${sortDirection}`
                       : ""
@@ -282,7 +294,7 @@ export function Table({
                     textAlign: getColumnAlign(col, data),
                     cursor: col.key ? "pointer" : "default",
                     backgroundColor: "var(--bpm-bg-secondary, #f8fafc)",
-                    borderColor: "var(--bpm-border, #e5e7eb)",
+                    ...cellBorder(idx, false),
                     color: "var(--bpm-text-secondary, #64748b)",
                   }}
                   onClick={() => col.key && handleSort(col.key)}
@@ -317,9 +329,9 @@ export function Table({
               </tr>
             ) : loading ? (
               Array.from({ length: 3 }, (_, i) => (
-                <tr key={`skeleton-${i}`} className="bpm-table-tr border" style={{ borderColor: "var(--bpm-border, #e5e7eb)" }}>
+                <tr key={`skeleton-${i}`} className="bpm-table-tr">
                   {columns.map((col, colIdx) => (
-                    <td key={col.key || colIdx} className={`${density === "compact" ? "px-2 py-1" : "px-3 py-2"} border`} style={{ borderColor: "var(--bpm-border, #e5e7eb)" }}>
+                    <td key={col.key || colIdx} className={`${density === "compact" ? "px-2 py-1" : "px-3 py-2"}`} style={cellBorder(colIdx, i === 2)}>
                       <span
                         className="inline-block w-full rounded animate-pulse"
                         style={{ height: 14, background: "var(--bpm-bg-secondary, #f1f5f9)" }}
@@ -348,20 +360,19 @@ export function Table({
               <tr
                 key={keyColumn && row[keyColumn] != null ? String(row[keyColumn]) : rowIdx}
                 onClick={() => onRowClick?.(row)}
-                className="bpm-table-tr border"
+                className="bpm-table-tr"
                 style={{
                   cursor: onRowClick ? "pointer" : "default",
-                  borderColor: "var(--bpm-border, #e5e7eb)",
                   color: "var(--bpm-text-primary, #111827)",
                 }}
               >
                 {columns.map((col, colIdx) => (
                   <td
                     key={col.key || colIdx}
-                    className={`${density === "compact" ? "px-2 py-1" : "px-3 py-2"} text-sm border ${col.className ?? ""}`}
+                    className={`${density === "compact" ? "px-2 py-1" : "px-3 py-2"} text-sm ${col.className ?? ""}`}
                     style={{
                       textAlign: getColumnAlign(col, data),
-                      borderColor: "var(--bpm-border, #e5e7eb)",
+                      ...cellBorder(colIdx, rowIdx === sortedData.length - 1),
                     }}
                   >
                     {col.render

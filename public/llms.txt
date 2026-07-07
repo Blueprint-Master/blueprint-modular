@@ -1,7 +1,7 @@
 # Blueprint Modular — Agent Context File
-# Version React (@blueprint-modular/core, npm) : 0.3.2
+# Version React (@blueprint-modular/core, npm) : 0.3.3
 # Version Python (blueprint-modular, PyPI)      : 0.1.54
-# Date    : 2026-06-21
+# Date    : 2026-07-07
 # URL canonique : https://blueprint-modular.com/llms.txt
 #
 # Ce fichier est la référence machine de @blueprint-modular/core.
@@ -696,6 +696,11 @@ Chat Ollama local (démo).
   onTransition?: (from: string, to: string) => void
   direction?: "horizontal" | "vertical"
   className?: string
+```
+
+## bpm.free
+Composant bpm.free — voir @blueprint-modular/core ou BPM_API.md.
+```
 ```
 
 ## bpm.funnelChart

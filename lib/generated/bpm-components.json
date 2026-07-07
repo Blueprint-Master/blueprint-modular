@@ -709,6 +709,12 @@
       "category": "Interaction"
     },
     {
+      "slug": "free",
+      "name": "bpm.free",
+      "description": "Composant bpm.free — voir @blueprint-modular/core ou BPM_API.md.",
+      "category": "Utilitaires"
+    },
+    {
       "slug": "funnelchart",
       "name": "bpm.funnelChart",
       "description": "Graphique en entonnoir pour visualiser les étapes d'un processus de conversion avec pourcentages.",

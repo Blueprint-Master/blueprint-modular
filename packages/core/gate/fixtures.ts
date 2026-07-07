@@ -81,6 +81,7 @@ export const FIXTURES: Record<string, Record<string, unknown>> = {
   badge: { children: "Status" },
   caption: { children: "Caption text" },
   container: { children: "content" },
+  free: { name: "GateZone", children: "zone libre" },
   drawer: { children: "drawer content", open: false, onClose: () => {} },
   expander: { title: "Section", children: "section content" },
   message: { children: "A message" },

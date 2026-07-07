@@ -1,7 +1,7 @@
 {
-  "generatedAt": "2026-06-19T13:01:32.514Z",
+  "generatedAt": "2026-07-07T12:23:15.561Z",
   "source": "lib/generated/bpm-components.json + public/llms.txt + lib/semantics/bpm-semantics.json",
-  "total": 154,
+  "total": 155,
   "categories": [
     "Affichage de données",
     "Feedback",
@@ -3897,6 +3897,15 @@
         "bpm.dataExplorer"
       ],
       "_haystack": "bpm.exportbutton exportbutton bouton d'export avec menu déroulant pour télécharger en csv ou json avec configuration bom/délimiteur. interaction bouton d'export avec menu déroulant pour télécharger en csv ou json avec configuration bom/délimiteur.   data*: t[] | (() => t[])\n  filename*: string\n  formats?: (\"csv\" | \"json\")[]\n  columns?: exportcolumn<t>[]\n  csvdelimiter?: \"\n  csvbom?: boolean\n  classname?: string bpm.exportbutton({ data: rows, filename: \"export\", formats: [\"csv\", \"json\"], csvdelimiter: \";\" }) bpm.table bpm.dataexplorer"
+    },
+    {
+      "slug": "free",
+      "name": "bpm.free",
+      "description": "Composant bpm.free — voir @blueprint-modular/core ou BPM_API.md.",
+      "category": "Utilitaires",
+      "status": "uncurated",
+      "props": "",
+      "_haystack": "bpm.free free composant bpm.free — voir @blueprint-modular/core ou bpm_api.md. utilitaires"
     },
     {
       "slug": "funnelchart",
