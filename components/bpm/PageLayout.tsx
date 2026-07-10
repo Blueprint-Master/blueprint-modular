@@ -17,6 +17,10 @@ import React, { useState } from "react";
  * @param {boolean} [props.defaultCollapsed=false] - Sidebar rétractée par défaut. Optionnel.
  * @param {"light"|"dark"} [props.theme] - Thème actuel. Optionnel.
  * @param {function} [props.onThemeChange] - Callback changement de thème. Optionnel.
+ * @param {React.ReactNode} [props.brandLogo] - Pastille de marque rendue à gauche du titre (ex. logo). Centrée en mode replié. Optionnel.
+ * @param {string} [props.brandEyebrow] - Sur-étiquette au-dessus du titre (petites capitales espacées). Masquée en mode replié. Optionnel.
+ * @param {"soft"|"solid"} [props.activeItemStyle="soft"] - Rendu de l'item actif : teinte translucide (défaut) ou aplat plein accent. Optionnel.
+ * @param {React.ReactNode} [props.footer] - Pied de sidebar (compte, déconnexion…) au-dessus du bouton thème. Optionnel.
  *
  * @associated bpm.topNav, bpm.sidebar
  * @parent bpm.page
@@ -46,6 +50,30 @@ export interface PageLayoutProps {
   theme?: "light" | "dark";
   /** Callback changement de thème (clair ↔ sombre). Affiche le bouton thème en bas si défini. */
   onThemeChange?: (theme: "light" | "dark") => void;
+  /**
+   * Pastille de marque rendue à gauche du titre dans l'en-tête (ex.
+   * `<img src="/logo.svg" />`). Centrée en mode replié — tient alors lieu de
+   * marque compacte. Absente : l'en-tête garde son titre seul (comportement
+   * historique).
+   */
+  brandLogo?: React.ReactNode;
+  /**
+   * Sur-étiquette affichée au-dessus du titre en petites capitales espacées
+   * (ex. « MAISON »). Masquée en mode replié. Absente : titre seul.
+   */
+  brandEyebrow?: string;
+  /**
+   * Rendu de l'item actif. `"soft"` (défaut) : teinte translucide de l'accent
+   * — comportement historique, inchangé pour tous les consommateurs existants.
+   * `"solid"` : aplat plein accent + texte contrasté (`--bpm-accent-contrast`).
+   */
+  activeItemStyle?: "soft" | "solid";
+  /**
+   * Zone de pied de sidebar (compte connecté, déconnexion…), rendue au-dessus
+   * du bouton thème et séparée par un filet. Contenu opaque fourni par
+   * l'appelant. Absente : seul le bouton thème occupe le pied (si défini).
+   */
+  footer?: React.ReactNode;
 }
 
 const CHEVRON_LEFT = "chevron_left";
@@ -99,6 +127,10 @@ export function PageLayout({
   defaultCollapsed = false,
   theme,
   onThemeChange,
+  brandLogo,
+  brandEyebrow,
+  activeItemStyle = "soft",
+  footer,
 }: PageLayoutProps) {
   const [isCollapsed, setIsCollapsed] = useState(defaultCollapsed);
   const [sidebarHovered, setSidebarHovered] = useState(false);
@@ -166,22 +198,64 @@ export function PageLayout({
             flexShrink: 0,
           }}
         >
+          {brandLogo != null && (
+            <span
+              style={{
+                flexShrink: 0,
+                display: "inline-flex",
+                alignItems: "center",
+                justifyContent: "center",
+              }}
+              aria-hidden
+            >
+              {brandLogo}
+            </span>
+          )}
           <span
             style={{
-              fontSize: "var(--bpm-font-size-lg)",
-              fontWeight: 600,
-              color: "var(--bpm-text)",
-              paddingLeft: isCollapsed ? 0 : 12,
+              display: "flex",
+              flexDirection: "column",
+              justifyContent: "center",
+              // Le logo remplace le retrait gauche historique du titre.
+              paddingLeft: isCollapsed || brandLogo != null ? 0 : 12,
               flex: isCollapsed ? 0 : 1,
               minWidth: 0,
               overflow: "hidden",
-              whiteSpace: "nowrap",
-              textOverflow: "ellipsis",
               opacity: isCollapsed ? 0 : 1,
               transition: "opacity 0.15s ease",
             }}
           >
-            {title}
+            {brandEyebrow != null && brandEyebrow !== "" && (
+              <span
+                style={{
+                  fontSize: "0.625rem",
+                  fontWeight: 600,
+                  letterSpacing: "0.12em",
+                  textTransform: "uppercase",
+                  color: "var(--bpm-text-secondary)",
+                  whiteSpace: "nowrap",
+                  overflow: "hidden",
+                  textOverflow: "ellipsis",
+                  lineHeight: 1.4,
+                }}
+              >
+                {brandEyebrow}
+              </span>
+            )}
+            <span
+              style={{
+                fontSize: "var(--bpm-font-size-lg)",
+                fontWeight: 600,
+                color: "var(--bpm-text)",
+                minWidth: 0,
+                overflow: "hidden",
+                whiteSpace: "nowrap",
+                textOverflow: "ellipsis",
+                lineHeight: 1.2,
+              }}
+            >
+              {title}
+            </span>
           </span>
           <button
             type="button"
@@ -229,6 +303,7 @@ export function PageLayout({
         >
           {items.map((item) => {
             const isActive = currentItem === item.key;
+            const isSolidActive = isActive && activeItemStyle === "solid";
             return (
               <div
                 key={item.key}
@@ -238,6 +313,8 @@ export function PageLayout({
                   width: isCollapsed ? 32 : "100%",
                   minWidth: isCollapsed ? 32 : undefined,
                   borderRadius: "var(--bpm-radius)",
+                  // Barre (2px) + bouton fondus en un pavé arrondi net.
+                  overflow: "hidden",
                 }}
               >
                 {!isCollapsed && (
@@ -264,8 +341,16 @@ export function PageLayout({
                     minWidth: 0,
                     height: 32,
                     border: "none",
-                    background: isActive ? "var(--bpm-bg-secondary)" : "transparent",
-                    color: isActive ? "var(--bpm-accent)" : "var(--bpm-text-secondary)",
+                    background: isActive
+                      ? isSolidActive
+                        ? "var(--bpm-accent)"
+                        : "var(--bpm-bg-secondary)"
+                      : "transparent",
+                    color: isActive
+                      ? isSolidActive
+                        ? "var(--bpm-accent-contrast, #ffffff)"
+                        : "var(--bpm-accent)"
+                      : "var(--bpm-text-secondary)",
                     cursor: "pointer",
                     font: "inherit",
                     fontSize: "var(--bpm-font-size-base)",
@@ -303,17 +388,26 @@ export function PageLayout({
           })}
         </nav>
 
-        {/* Footer : thème clair/sombre (aligné .Maker) */}
-        {onThemeChange != null && (
+        {/* Pied de sidebar : slot appelant (compte…) + bouton thème (aligné .Maker) */}
+        {(footer != null || onThemeChange != null) && (
           <div
             style={{
               flexShrink: 0,
               paddingTop: 8,
               borderTop: "1px solid var(--bpm-border)",
               display: "flex",
-              justifyContent: isCollapsed ? "center" : "flex-start",
+              flexDirection: "column",
+              gap: 4,
             }}
           >
+            {footer != null && <div style={{ minWidth: 0 }}>{footer}</div>}
+            {onThemeChange != null && (
+              <div
+                style={{
+                  display: "flex",
+                  justifyContent: isCollapsed ? "center" : "flex-start",
+                }}
+              >
             <button
               type="button"
               onClick={() => onThemeChange(theme === "dark" ? "light" : "dark")}
@@ -364,6 +458,8 @@ export function PageLayout({
                 Thème
               </span>
             </button>
+              </div>
+            )}
           </div>
         )}
       </aside>
