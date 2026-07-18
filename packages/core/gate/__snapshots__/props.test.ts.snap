@@ -703,6 +703,10 @@ exports[`bpm prop surface snapshot > prop names match committed snapshot (additi
     "defaultCollapsed",
     "theme",
     "onThemeChange",
+    "brandLogo",
+    "brandEyebrow",
+    "activeItemStyle",
+    "footer",
   ],
   "pagination": [
     "page",

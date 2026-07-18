@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-07-07T12:23:15.561Z",
+  "generatedAt": "2026-07-10T19:46:30.443Z",
   "source": "lib/generated/bpm-components.json + public/llms.txt + lib/semantics/bpm-semantics.json",
   "total": 155,
   "categories": [
@@ -3046,7 +3046,7 @@
       "category": "Mise en page",
       "status": "curated",
       "fullDescription": "Layout d'application avec sidebar rétractable, navigation par icônes Material et switch de thème.",
-      "props": "  title*: string\n  items*: SidebarItem[]\n  currentItem*: string\n  onNavigate*: (key: string) => void\n  children*: React.ReactNode\n  defaultCollapsed?: boolean\n  theme?: \"light\" | \"dark\"  — Thème courant (optionnel). Si fourni avec onThemeChange, affiche le bouton thème en bas de la sidebar (aligné .Maker).\n  onThemeChange?: (theme: \"light\" | \"dark\") => void  — Callback changement de thème (clair ↔ sombre). Affiche le bouton thème en bas si défini.",
+      "props": "  title*: string\n  items*: SidebarItem[]\n  currentItem*: string\n  onNavigate*: (key: string) => void\n  children*: React.ReactNode\n  defaultCollapsed?: boolean\n  theme?: \"light\" | \"dark\"  — Thème courant (optionnel). Si fourni avec onThemeChange, affiche le bouton thème en bas de la sidebar (aligné .Maker).\n  onThemeChange?: (theme: \"light\" | \"dark\") => void  — Callback changement de thème (clair ↔ sombre). Affiche le bouton thème en bas si défini.\n  brandLogo?: React.ReactNode\n  brandEyebrow?: string\n  activeItemStyle?: \"soft\" | \"solid\"\n  footer?: React.ReactNode",
       "example": "bpm.pageLayout({ title: \"Mon App\", items: [{ key: \"home\", label: \"Accueil\", icon: \"home\" }], currentItem: \"home\", onNavigate: setPage, children: <Content /> })",
       "associated": [
         "bpm.topNav",
@@ -3072,7 +3072,7 @@
         ],
         "status": "proposed"
       },
-      "_haystack": "bpm.pagelayout pagelayout layout avec sidebar repliable, titre et zone de contenu. mise en page layout d'application avec sidebar rétractable, navigation par icônes material et switch de thème.   title*: string\n  items*: sidebaritem[]\n  currentitem*: string\n  onnavigate*: (key: string) => void\n  children*: react.reactnode\n  defaultcollapsed?: boolean\n  theme?: \"light\" | \"dark\"  — thème courant (optionnel). si fourni avec onthemechange, affiche le bouton thème en bas de la sidebar (aligné .maker).\n  onthemechange?: (theme: \"light\" | \"dark\") => void  — callback changement de thème (clair ↔ sombre). affiche le bouton thème en bas si défini. bpm.pagelayout({ title: \"mon app\", items: [{ key: \"home\", label: \"accueil\", icon: \"home\" }], currentitem: \"home\", onnavigate: setpage, children: <content /> }) bpm.topnav bpm.sidebar conteneur section ossature d'écran applicatif : sidebar de navigation repliable, titre, zone de contenu. bpm.topnav bpm.breadcrumb bpm.container pages sans navigation latérale (bpm.topnav seul) ou sous-zones (bpm.container). la sidebar liste les sections ω ; un seul pagelayout par écran."
+      "_haystack": "bpm.pagelayout pagelayout layout avec sidebar repliable, titre et zone de contenu. mise en page layout d'application avec sidebar rétractable, navigation par icônes material et switch de thème.   title*: string\n  items*: sidebaritem[]\n  currentitem*: string\n  onnavigate*: (key: string) => void\n  children*: react.reactnode\n  defaultcollapsed?: boolean\n  theme?: \"light\" | \"dark\"  — thème courant (optionnel). si fourni avec onthemechange, affiche le bouton thème en bas de la sidebar (aligné .maker).\n  onthemechange?: (theme: \"light\" | \"dark\") => void  — callback changement de thème (clair ↔ sombre). affiche le bouton thème en bas si défini.\n  brandlogo?: react.reactnode\n  brandeyebrow?: string\n  activeitemstyle?: \"soft\" | \"solid\"\n  footer?: react.reactnode bpm.pagelayout({ title: \"mon app\", items: [{ key: \"home\", label: \"accueil\", icon: \"home\" }], currentitem: \"home\", onnavigate: setpage, children: <content /> }) bpm.topnav bpm.sidebar conteneur section ossature d'écran applicatif : sidebar de navigation repliable, titre, zone de contenu. bpm.topnav bpm.breadcrumb bpm.container pages sans navigation latérale (bpm.topnav seul) ou sous-zones (bpm.container). la sidebar liste les sections ω ; un seul pagelayout par écran."
     },
     {
       "slug": "scrollcontainer",

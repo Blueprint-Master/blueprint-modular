@@ -1,7 +1,7 @@
 # Blueprint Modular — Agent Context File
-# Version React (@blueprint-modular/core, npm) : 0.3.3
+# Version React (@blueprint-modular/core, npm) : 0.3.4
 # Version Python (blueprint-modular, PyPI)      : 0.1.54
-# Date    : 2026-07-07
+# Date    : 2026-07-10
 # URL canonique : https://blueprint-modular.com/llms.txt
 #
 # Ce fichier est la référence machine de @blueprint-modular/core.
@@ -1164,7 +1164,7 @@ Conteneur page (core) — props : children.
 ```
 
 ## bpm.pageLayout
-@component bpm.pageLayout @description Layout d'application avec sidebar rétractable, navigation par icônes Material et switch de thème. @example bpm.pageLayout({ title: "Mon App", items: [{ key: "home", label: "Accueil", icon: "home" }], currentItem: "home", onNavigate: setPage, children: <Content /> }) @param {object} props @param {string} props.title - Titre affiché dans la sidebar. Obligatoire. @param {SidebarItem[]} props.items - Éléments de navigation (key, label, icon). Obligatoire. @param {string} props.currentItem - Clé de l'élément actif. Obligatoire. @param {function} props.onNavigate - Callback au clic sur un item (key). Obligatoire. @param {React.ReactNode} props.children - Contenu principal. Obligatoire. @param {boolean} [props.defaultCollapsed=false] - Sidebar rétractée par défaut. Optionnel. @param {"light"|"dark"} [props.theme] - Thème actuel. Optionnel. @param {function} [props.onThemeChange] - Callback changement de thème. Optionnel. @associated bpm.topNav, bpm.sidebar @parent bpm.page @forbidden aucun
+@component bpm.pageLayout @description Layout d'application avec sidebar rétractable, navigation par icônes Material et switch de thème. @example bpm.pageLayout({ title: "Mon App", items: [{ key: "home", label: "Accueil", icon: "home" }], currentItem: "home", onNavigate: setPage, children: <Content /> }) @param {object} props @param {string} props.title - Titre affiché dans la sidebar. Obligatoire. @param {SidebarItem[]} props.items - Éléments de navigation (key, label, icon). Obligatoire. @param {string} props.currentItem - Clé de l'élément actif. Obligatoire. @param {function} props.onNavigate - Callback au clic sur un item (key). Obligatoire. @param {React.ReactNode} props.children - Contenu principal. Obligatoire. @param {boolean} [props.defaultCollapsed=false] - Sidebar rétractée par défaut. Optionnel. @param {"light"|"dark"} [props.theme] - Thème actuel. Optionnel. @param {function} [props.onThemeChange] - Callback changement de thème. Optionnel. @param {React.ReactNode} [props.brandLogo] - Pastille de marque rendue à gauche du titre (ex. logo). Centrée en mode replié. Optionnel. @param {string} [props.brandEyebrow] - Sur-étiquette au-dessus du titre (petites capitales espacées). Masquée en mode replié. Optionnel. @param {"soft"|"solid"} [props.activeItemStyle="soft"] - Rendu de l'item actif : teinte translucide (défaut) ou aplat plein accent. Optionnel. @param {React.ReactNode} [props.footer] - Pied de sidebar (compte, déconnexion…) au-dessus du bouton thème. Optionnel. @associated bpm.topNav, bpm.sidebar @parent bpm.page @forbidden aucun
 @semantic role=conteneur frame=section status=proposed
 @guidance Ossature d'écran applicatif : sidebar de navigation repliable, titre, zone de contenu. Associer : bpm.topNav, bpm.breadcrumb, bpm.container. Éviter : Pages sans navigation latérale (bpm.topNav seul) ou sous-zones (bpm.container).
 ```
@@ -1176,6 +1176,10 @@ Conteneur page (core) — props : children.
   defaultCollapsed?: boolean
   theme?: "light" | "dark"  — Thème courant (optionnel). Si fourni avec onThemeChange, affiche le bouton thème en bas de la sidebar (aligné .Maker).
   onThemeChange?: (theme: "light" | "dark") => void  — Callback changement de thème (clair ↔ sombre). Affiche le bouton thème en bas si défini.
+  brandLogo?: React.ReactNode
+  brandEyebrow?: string
+  activeItemStyle?: "soft" | "solid"
+  footer?: React.ReactNode
 ```
 
 ## bpm.pagination
