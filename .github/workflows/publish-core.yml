@@ -1,0 +1,41 @@
+# Publication npm de @blueprint-modular/core (le paquet JS consommé par
+# blueprint-maker et les apps générées).
+#
+# Même mécanisme que manual-deploy.yml : AUCUNE connexion distante — le job
+# s'exécute sur le runner self-hosted installé sur bpm-prod (`runs-on:
+# [self-hosted, bpm-prod]`), qui EST le serveur. On y suppose npm authentifié
+# pour publier (npm login / ~/.npmrc présent sur la machine) — aucun token
+# n'est stocké dans le dépôt (BPM-SEC : jamais de secret committé).
+#
+# Déclenchement : onglet « Actions » → « Publish core to npm » → « Run
+# workflow » (tappable depuis mobile). Publie la version telle qu'elle est
+# dans packages/core/package.json ; npm REFUSE de republier une version déjà
+# existante — c'est le garde-fou : bumper packages/core/package.json AVANT.
+#
+# Séquence identique au script local `npm run publish:core`
+# (cd packages/core && npm install && npm run build && npm publish).
+
+name: Publish core to npm
+
+on:
+  workflow_dispatch:
+
+jobs:
+  publish:
+    name: Publish @blueprint-modular/core
+    runs-on: [self-hosted, bpm-prod]
+    steps:
+      - name: Publish
+        run: |
+          cd ~/blueprint-modular
+          git fetch origin
+          git reset --hard origin/master  # prod reflète origin/master exactement (cf. manual-deploy)
+          VERSION="$(node -p "require('./packages/core/package.json').version")"
+          echo "→ Publication de @blueprint-modular/core@${VERSION}"
+          if npm view "@blueprint-modular/core@${VERSION}" version >/dev/null 2>&1; then
+            echo "✖ La version ${VERSION} est DÉJÀ publiée sur npm — rien à faire."
+            echo "  Bumpe packages/core/package.json puis relance ce workflow."
+            exit 1
+          fi
+          npm run publish:core
+          echo "✅ @blueprint-modular/core@${VERSION} publié."
