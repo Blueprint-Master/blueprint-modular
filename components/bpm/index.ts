@@ -274,6 +274,9 @@ export type { GeofenceProps, GeofenceZone } from "./Geofence";
 // —— I ——
 export { InvoiceTemplate } from "./InvoiceTemplate";
 export type { InvoiceLine, InvoiceTemplateProps } from "./InvoiceTemplate";
+// —— L ——
+export { LocationField } from "./LocationField";
+export type { LocationFieldProps, LocationValue } from "./LocationField";
 // —— M ——
 export { MachineStatus } from "./MachineStatus";
 export type { MachineStatusProps, MachineStatusState } from "./MachineStatus";
