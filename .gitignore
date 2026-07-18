@@ -48,3 +48,7 @@ doc-app/
 blueprint-modular/
 
 .vercel
+
+# temporary i18n fragment staging (merged into i18n/{fr,en}.json, not committed)
+frontend/static/i18n/_fragments/
+frontend/static/i18n/_frag2/
