@@ -1,6 +1,36 @@
 "use client";
 
 import { useState, useRef, useCallback } from "react";
+import { useI18n } from "@/lib/i18n/LocaleProvider";
+
+const CONTENT = {
+  fr: {
+    dictate: "Dicter",
+    stop: "Arrêter",
+    transcribing: "Transcription…",
+    transcribingInProgress: "Transcription en cours",
+    emptyTranscription: "Transcription vide — réessayez en parlant plus clairement.",
+    micError: "Impossible d'accéder au microphone. Vérifiez les permissions du navigateur.",
+    stopRecording: "Arrêter l'enregistrement",
+    dictateWhisper: "Dicter (Whisper)",
+    invalidResponse: "Réponse invalide",
+    transcriptionError: "Erreur transcription",
+    errorPrefix: "Erreur",
+  },
+  en: {
+    dictate: "Dictate",
+    stop: "Stop",
+    transcribing: "Transcribing…",
+    transcribingInProgress: "Transcription in progress",
+    emptyTranscription: "Empty transcription — try again, speaking more clearly.",
+    micError: "Unable to access the microphone. Check your browser permissions.",
+    stopRecording: "Stop recording",
+    dictateWhisper: "Dictate (Whisper)",
+    invalidResponse: "Invalid response",
+    transcriptionError: "Transcription error",
+    errorPrefix: "Error",
+  },
+} as const;
 
 export type VoiceRecorderState = "idle" | "recording" | "transcribing";
 
@@ -18,11 +48,14 @@ interface VoiceRecorderProps {
 export function VoiceRecorder({
   onTranscription,
   onError,
-  label = "Dicter",
+  label,
   disabled = false,
   iconOnly = false,
   className,
 }: VoiceRecorderProps) {
+  const { locale } = useI18n();
+  const t = CONTENT[locale];
+  const effectiveLabel = label ?? t.dictate;
   const [state, setState] = useState<VoiceRecorderState>("idle");
   const mediaRecorderRef = useRef<MediaRecorder | null>(null);
   const audioChunksRef = useRef<Blob[]>([]);
@@ -45,24 +78,24 @@ export function VoiceRecorder({
           const text = await res.text();
           data = text ? (JSON.parse(text) as { transcription?: string; error?: string }) : {};
         } catch {
-          data = { error: !res.ok ? `Erreur ${res.status}` : "Réponse invalide" };
+          data = { error: !res.ok ? `${t.errorPrefix} ${res.status}` : t.invalidResponse };
         }
 
         if (!res.ok || data.error) {
-          throw new Error(data.error ?? `Erreur ${res.status}`);
+          throw new Error(data.error ?? `${t.errorPrefix} ${res.status}`);
         }
         if (!data.transcription?.trim()) {
-          throw new Error("Transcription vide — réessayez en parlant plus clairement.");
+          throw new Error(t.emptyTranscription);
         }
 
         onTranscription(data.transcription);
       } catch (err) {
-        onError?.(err instanceof Error ? err.message : "Erreur transcription");
+        onError?.(err instanceof Error ? err.message : t.transcriptionError);
       } finally {
         setState("idle");
       }
     },
-    [onTranscription, onError]
+    [onTranscription, onError, t]
   );
 
   const startRecording = useCallback(async () => {
@@ -85,9 +118,9 @@ export function VoiceRecorder({
       mediaRecorderRef.current = mediaRecorder;
       setState("recording");
     } catch {
-      onError?.("Impossible d'accéder au microphone. Vérifiez les permissions du navigateur.");
+      onError?.(t.micError);
     }
-  }, [onError, sendForTranscription]);
+  }, [onError, sendForTranscription, t]);
 
   const stopRecording = useCallback(() => {
     mediaRecorderRef.current?.stop();
@@ -109,9 +142,9 @@ export function VoiceRecorder({
     state === "idle"
       ? null
       : state === "recording"
-        ? "Arrêter"
-        : "Transcription…";
-  const buttonText = iconOnly ? (state === "transcribing" ? "…" : null) : (state === "idle" ? label : buttonLabel);
+        ? t.stop
+        : t.transcribing;
+  const buttonText = iconOnly ? (state === "transcribing" ? "…" : null) : (state === "idle" ? effectiveLabel : buttonLabel);
 
   const useClassBackground = Boolean(className);
   const buttonStyle: React.CSSProperties = {
@@ -153,13 +186,13 @@ export function VoiceRecorder({
       className={className}
       style={buttonStyle}
       data-recording={state === "recording" ? "true" : undefined}
-      aria-label={state === "idle" ? (label || "Dicter") : state === "recording" ? "Arrêter l'enregistrement" : "Transcription en cours"}
-      title={state === "idle" ? "Dicter (Whisper)" : state === "recording" ? "Arrêter" : "Transcription…"}
+      aria-label={state === "idle" ? effectiveLabel : state === "recording" ? t.stopRecording : t.transcribingInProgress}
+      title={state === "idle" ? t.dictateWhisper : state === "recording" ? t.stop : t.transcribing}
     >
       {(state === "idle" || state === "recording") && <MicIcon />}
-      {state === "transcribing" && (iconOnly ? "…" : "Transcription…")}
-      {state === "idle" && !iconOnly && label}
-      {state === "recording" && !iconOnly && "Arrêter"}
+      {state === "transcribing" && (iconOnly ? "…" : t.transcribing)}
+      {state === "idle" && !iconOnly && effectiveLabel}
+      {state === "recording" && !iconOnly && t.stop}
     </button>
   );
 }
