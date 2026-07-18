@@ -2,10 +2,35 @@
 
 import { useState, useCallback } from "react";
 import Link from "next/link";
+import { useI18n } from "@/lib/i18n/LocaleProvider";
 
 const COMMAND = "pip install blueprint-modular";
 
+/** Chaînes bilingues locales — portée : StartBuildingBlock uniquement. */
+const CONTENT = {
+  fr: {
+    heading: "Commencer à construire votre application avec",
+    copied: "Copié",
+    copy: "Copier",
+    copyCommand: "Copier la commande",
+    pasteBefore: "Collez la commande dans votre terminal, ou consultez la ",
+    docLink: "documentation",
+    pasteAfter: ".",
+  },
+  en: {
+    heading: "Start building your application with",
+    copied: "Copied",
+    copy: "Copy",
+    copyCommand: "Copy the command",
+    pasteBefore: "Paste the command into your terminal, or check the ",
+    docLink: "documentation",
+    pasteAfter: ".",
+  },
+} as const;
+
 export function StartBuildingBlock() {
+  const { locale } = useI18n();
+  const t = CONTENT[locale];
   const [copied, setCopied] = useState(false);
 
   const handleCopy = useCallback(async () => {
@@ -37,7 +62,7 @@ export function StartBuildingBlock() {
       }}
     >
       <h2 className="font-bold mt-[6.5rem] md:mt-[6rem]" style={{ color: "var(--bpm-text-primary)", fontSize: "3rem", lineHeight: "3rem", marginBottom: "2rem" }}>
-        Commencer à construire votre application avec <code className="px-2.5 py-1.5 rounded align-middle text-xl font-medium" style={{ background: "var(--bpm-bg-secondary)" }}>bpm.*</code>
+        {t.heading} <code className="px-2.5 py-1.5 rounded align-middle text-xl font-medium" style={{ background: "var(--bpm-bg-secondary)" }}>bpm.*</code>
       </h2>
       <div
         className="group flex items-center justify-center gap-3 rounded-lg px-4 py-3 font-mono text-sm mx-auto max-w-md"
@@ -57,8 +82,8 @@ export function StartBuildingBlock() {
             background: copied ? "var(--bpm-accent)" : "transparent",
             color: copied ? "#fff" : "var(--bpm-text-secondary)",
           }}
-          title={copied ? "Copié" : "Copier"}
-          aria-label={copied ? "Copié" : "Copier la commande"}
+          title={copied ? t.copied : t.copy}
+          aria-label={copied ? t.copied : t.copyCommand}
         >
           {copied ? (
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -73,11 +98,11 @@ export function StartBuildingBlock() {
         </button>
       </div>
       <p className="text-sm mt-3" style={{ color: "var(--bpm-text-secondary)" }}>
-        Collez la commande dans votre terminal, ou consultez la{" "}
+        {t.pasteBefore}
         <Link href="/docs/getting-started" className="underline" style={{ color: "var(--bpm-accent-cyan)" }}>
-          documentation
+          {t.docLink}
         </Link>
-        .
+        {t.pasteAfter}
       </p>
     </div>
   );

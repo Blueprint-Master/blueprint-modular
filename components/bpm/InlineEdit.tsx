@@ -2,6 +2,12 @@
 
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import { Spinner } from "./Spinner";
+import { useBpmLocale } from "./i18n";
+
+const STRINGS = {
+  fr: { edit: "Modifier" },
+  en: { edit: "Edit" },
+} as const;
 
 export type InlineEditType = "text" | "number" | "select";
 
@@ -44,6 +50,8 @@ export function InlineEdit({
   disabled = false,
   className = "",
 }: InlineEditProps) {
+  const bpmLocale = useBpmLocale();
+  const t = STRINGS[bpmLocale];
   const [editing, setEditing] = useState(false);
   const [draft, setDraft] = useState(String(value));
   const [loading, setLoading] = useState(false);
@@ -182,7 +190,7 @@ export function InlineEdit({
             textAlign: "left",
           }}
           className="bpm-inline-edit-trigger"
-          title="Modifier"
+          title={t.edit}
         >
           <span>{display || placeholder || "—"}</span>
           <span className="bpm-inline-edit-pencil" aria-hidden style={{ fontSize: 12 }}>

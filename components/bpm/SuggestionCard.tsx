@@ -1,6 +1,12 @@
 "use client";
 
 import React from "react";
+import { useBpmLocale } from "./i18n";
+
+const STRINGS = {
+  fr: { close: "Fermer", confidenceSuffix: "confiance" },
+  en: { close: "Close", confidenceSuffix: "confidence" },
+} as const;
 
 /**
  * @component bpm.suggestionCard
@@ -41,6 +47,8 @@ export function SuggestionCard({
   onDismiss,
   className = "",
 }: SuggestionCardProps) {
+  const bpmLocale = useBpmLocale();
+  const t = STRINGS[bpmLocale];
   return (
     <div
       className={`bpm-suggestion-card ${className}`.trim()}
@@ -57,7 +65,7 @@ export function SuggestionCard({
       {dismissable && onDismiss && (
         <button
           type="button"
-          aria-label="Fermer"
+          aria-label={t.close}
           onClick={onDismiss}
           style={{
             position: "absolute",
@@ -87,7 +95,7 @@ export function SuggestionCard({
               <div style={{ height: 4, borderRadius: 2, background: "var(--bpm-border)", overflow: "hidden" }}>
                 <div style={{ width: `${Math.min(100, Math.max(0, confidence))}%`, height: "100%", background: "var(--bpm-accent)" }} />
               </div>
-              <span style={{ fontSize: 11, color: "var(--bpm-text-secondary)" }}>{confidence}% confiance</span>
+              <span style={{ fontSize: 11, color: "var(--bpm-text-secondary)" }}>{confidence}% {t.confidenceSuffix}</span>
             </div>
           )}
         </div>

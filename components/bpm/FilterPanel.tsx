@@ -2,6 +2,26 @@
 
 import React, { useState } from "react";
 import { Selectbox } from "./Selectbox";
+import { useBpmLocale } from "./i18n";
+
+const STRINGS = {
+  fr: {
+    all: "Tous",
+    searchPlaceholder: "Rechercher...",
+    reset: "Réinitialiser",
+    showFilters: "Afficher les filtres",
+    hideFilters: "Masquer les filtres",
+    filters: "Filtres",
+  },
+  en: {
+    all: "All",
+    searchPlaceholder: "Search...",
+    reset: "Reset",
+    showFilters: "Show filters",
+    hideFilters: "Hide filters",
+    filters: "Filters",
+  },
+} as const;
 
 export interface FilterOption {
   label: string;
@@ -75,6 +95,8 @@ export function FilterPanel({
   orientation = "horizontal",
   collapsible = false,
 }: FilterPanelProps) {
+  const bpmLocale = useBpmLocale();
+  const t = STRINGS[bpmLocale];
   const [collapsed, setCollapsed] = useState(false);
   const activeCount = getActiveCount(filters, values);
   const hasActive = activeCount > 0;
@@ -139,7 +161,7 @@ export function FilterPanel({
     if (f.type === "select") {
       const opts = f.options ?? [];
       const selectOptions: { value: string; label: string }[] = [
-        { value: "", label: "Tous" },
+        { value: "", label: t.all },
         ...opts.map((o) => ({ value: o.value, label: o.label })),
       ];
       return (
@@ -149,7 +171,7 @@ export function FilterPanel({
             options={selectOptions}
             value={(v as string) ?? ""}
             onChange={(val) => onChange(f.key, val || null)}
-            placeholder="Tous"
+            placeholder={t.all}
             triggerHeight={FILTER_FIELD_HEIGHT}
           />
         </div>
@@ -227,7 +249,7 @@ export function FilterPanel({
               e.target.style.borderColor = "var(--bpm-border)";
               e.target.style.boxShadow = "none";
             }}
-            placeholder="Rechercher..."
+            placeholder={t.searchPlaceholder}
           />
         </div>
       );
@@ -256,7 +278,7 @@ export function FilterPanel({
       {filters.map(renderFilter)}
       {hasActive && (
         <button type="button" style={buttonDangerStyle} onClick={onReset}>
-          Réinitialiser
+          {t.reset}
         </button>
       )}
     </>
@@ -270,9 +292,9 @@ export function FilterPanel({
             type="button"
             style={buttonStyle}
             onClick={() => setCollapsed((c) => !c)}
-            title={collapsed ? "Afficher les filtres" : "Masquer les filtres"}
+            title={collapsed ? t.showFilters : t.hideFilters}
           >
-            {collapsed ? "Filtres" : "Filtres"}
+            {collapsed ? t.filters : t.filters}
             {activeCount > 0 && (
               <span style={{ marginLeft: 8, background: "var(--bpm-accent)", color: "var(--bpm-accent-contrast)", padding: "2px 8px", borderRadius: "var(--bpm-radius-sm)", fontSize: "var(--bpm-font-size-sm)" }}>
                 {activeCount}

@@ -12,6 +12,7 @@ import { APP_VERSION } from "@/lib/version";
 import { AIHeaderProvider, useAIHeader } from "@/contexts/AIHeaderContext";
 import { SidebarProvider, useSidebar } from "@/contexts/SidebarContext";
 import { useI18n } from "@/lib/i18n/LocaleProvider";
+import { BpmI18nProvider } from "@/components/bpm/i18n";
 import type { Locale } from "@/lib/i18n";
 import { BRAND_MARK_SRC } from "@/lib/brandMark";
 
@@ -199,12 +200,28 @@ function AppLayoutInner({ children }: { children: React.ReactNode }) {
   );
 }
 
+/**
+ * Branche la locale de l'app (cookie bpm-locale via `useI18n`) sur le contexte
+ * i18n interne des composants bpm.* — leurs libellés par défaut suivent ainsi
+ * FR/EN comme le reste du shell (hors provider, ils resteraient en français).
+ */
+function BpmLocaleBridge({ children }: { children: React.ReactNode }) {
+  const { locale } = useI18n();
+  return (
+    <BpmI18nProvider locale={locale === "en" ? "en" : "fr"}>
+      {children}
+    </BpmI18nProvider>
+  );
+}
+
 export function AppLayoutClient({ children }: { children: React.ReactNode }) {
   return (
-    <AIHeaderProvider>
-      <SidebarProvider>
-        <AppLayoutInner>{children}</AppLayoutInner>
-      </SidebarProvider>
-    </AIHeaderProvider>
+    <BpmLocaleBridge>
+      <AIHeaderProvider>
+        <SidebarProvider>
+          <AppLayoutInner>{children}</AppLayoutInner>
+        </SidebarProvider>
+      </AIHeaderProvider>
+    </BpmLocaleBridge>
   );
 }

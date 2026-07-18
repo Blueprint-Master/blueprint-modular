@@ -1,6 +1,7 @@
 "use client";
 
 import React from "react";
+import { useBpmLocale } from "./i18n";
 
 export interface ActivityItem {
   id: string;
@@ -53,20 +54,47 @@ export interface ActivityFeedProps {
   className?: string;
 }
 
-function formatActivityTime(iso: string): string {
+const STRINGS = {
+  fr: {
+    emptyDefault: "Aucune activité récente.",
+    feedLabel: "Fil d'activité",
+    loadMore: "Charger plus",
+    justNow: "à l'instant",
+    minAgo: (n: number) => `il y a ${n} min`,
+    hAgo: (n: number) => `il y a ${n} h`,
+    yesterday: "hier",
+    daysAgo: (n: number) => `il y a ${n} j`,
+    dateLocale: "fr-FR",
+  },
+  en: {
+    emptyDefault: "No recent activity.",
+    feedLabel: "Activity feed",
+    loadMore: "Load more",
+    justNow: "just now",
+    minAgo: (n: number) => `${n} min ago`,
+    hAgo: (n: number) => `${n} h ago`,
+    yesterday: "yesterday",
+    daysAgo: (n: number) => `${n} d ago`,
+    dateLocale: "en-US",
+  },
+} as const;
+
+type ActivityStrings = (typeof STRINGS)[keyof typeof STRINGS];
+
+function formatActivityTime(iso: string, t: ActivityStrings): string {
   const d = new Date(iso);
   if (Number.isNaN(d.getTime())) return iso;
   const diffMs = Date.now() - d.getTime();
   const sec = Math.floor(diffMs / 1000);
-  if (sec < 60) return "à l'instant";
+  if (sec < 60) return t.justNow;
   const min = Math.floor(sec / 60);
-  if (min < 60) return `il y a ${min} min`;
+  if (min < 60) return t.minAgo(min);
   const h = Math.floor(min / 60);
-  if (h < 24) return `il y a ${h} h`;
+  if (h < 24) return t.hAgo(h);
   const days = Math.floor(h / 24);
-  if (days === 1) return "hier";
-  if (days < 7) return `il y a ${days} j`;
-  return d.toLocaleDateString("fr-FR", { day: "numeric", month: "short" });
+  if (days === 1) return t.yesterday;
+  if (days < 7) return t.daysAgo(days);
+  return d.toLocaleDateString(t.dateLocale, { day: "numeric", month: "short" });
 }
 
 function colorFor(color: ActivityItem["color"]): string {
@@ -93,10 +121,13 @@ export function ActivityFeed({
   activities,
   maxItems,
   onLoadMore,
-  emptyMessage = "Aucune activité récente.",
+  emptyMessage,
   compact = false,
   className = "",
 }: ActivityFeedProps) {
+  const bpmLocale = useBpmLocale();
+  const t = STRINGS[bpmLocale];
+  const effEmptyMessage = emptyMessage ?? t.emptyDefault;
   const limit = maxItems ?? activities.length;
   const visible = activities.slice(0, limit);
   const hasMore = maxItems != null && activities.length > maxItems;
@@ -119,13 +150,13 @@ export function ActivityFeed({
         <span className="material-symbols-outlined" aria-hidden style={{ fontSize: 36, opacity: 0.5, display: "block", marginBottom: 8 }}>
           history
         </span>
-        {emptyMessage}
+        {effEmptyMessage}
       </div>
     );
   }
 
   return (
-    <div className={`bpm-activity-feed ${className}`.trim()} role="feed" aria-label="Fil d'activité">
+    <div className={`bpm-activity-feed ${className}`.trim()} role="feed" aria-label={t.feedLabel}>
       <ul style={{ listStyle: "none", margin: 0, padding: 0 }}>
         {visible.map((a) => (
           <li key={a.id}>
@@ -166,7 +197,7 @@ export function ActivityFeed({
               </div>
               <p style={{ margin: 0, flex: 1, color: "var(--bpm-text-primary)", lineHeight: 1.4 }}>
                 <strong>{a.actor}</strong> {a.action} {a.target}{" "}
-                <span style={{ color: "var(--bpm-text-secondary)" }}>· {formatActivityTime(a.timestamp)}</span>
+                <span style={{ color: "var(--bpm-text-secondary)" }}>· {formatActivityTime(a.timestamp, t)}</span>
               </p>
               {a.icon && (
                 <span
@@ -201,7 +232,7 @@ export function ActivityFeed({
             cursor: "pointer",
           }}
         >
-          Charger plus
+          {t.loadMore}
         </button>
       )}
     </div>

@@ -12,6 +12,48 @@ import {
 import { moduleRegistry } from "@/lib/ai/module-registry";
 import { useAssistant } from "@/lib/ai/assistant-context";
 import { VoiceRecorder } from "@/components/ai/VoiceRecorder";
+import { useI18n } from "@/lib/i18n/LocaleProvider";
+
+const CONTENT = {
+  fr: {
+    openAssistant: "Ouvrir l'assistant IA",
+    assistantTitle: "Assistant IA",
+    close: "Fermer",
+    contextModules: "Contexte (modules à inclure)",
+    documentAdded: "Contrat / document ajouté au contexte pour cette conversation.",
+    noModules:
+      "Aucun module enregistré. Les modules Wiki et Documents s'enregistrent automatiquement.",
+    emptyHint: "Posez une question. Exemple : « Quels modules sont disponibles ? »",
+    you: "Vous",
+    ai: "IA",
+    thinking: "Réflexion…",
+    inputPlaceholder: "Votre question… (Cmd+Enter pour envoyer)",
+    dictate: "Dicter",
+    sending: "Envoi…",
+    send: "Envoyer",
+    errorPrefix: "Erreur",
+    networkError: "Réseau",
+  },
+  en: {
+    openAssistant: "Open the AI assistant",
+    assistantTitle: "AI assistant",
+    close: "Close",
+    contextModules: "Context (modules to include)",
+    documentAdded: "Contract / document added to the context for this conversation.",
+    noModules:
+      "No module registered. The Wiki and Documents modules register automatically.",
+    emptyHint: "Ask a question. Example: “Which modules are available?”",
+    you: "You",
+    ai: "AI",
+    thinking: "Thinking…",
+    inputPlaceholder: "Your question… (Cmd+Enter to send)",
+    dictate: "Dictate",
+    sending: "Sending…",
+    send: "Send",
+    errorPrefix: "Error",
+    networkError: "Network",
+  },
+} as const;
 
 type MessageRole = "user" | "assistant";
 type ChatMessage = { role: MessageRole; content: string };
@@ -25,6 +67,8 @@ interface HealthState {
 
 export function AIAssistant() {
   const { data: session, status } = useSession();
+  const { locale } = useI18n();
+  const t = CONTENT[locale];
   const assistantCtx = useAssistant();
   const open = assistantCtx?.open ?? false;
   const setOpen = assistantCtx?.setOpen ?? (() => {});
@@ -88,7 +132,7 @@ export function AIAssistant() {
         }),
       });
       if (!res.ok) {
-        setStreamingContent(`Erreur: ${res.status}`);
+        setStreamingContent(`${t.errorPrefix}: ${res.status}`);
         setStreaming(false);
         return;
       }
@@ -110,7 +154,7 @@ export function AIAssistant() {
                   setStreamingContent(full);
                 }
                 if (data.type === "error") {
-                  setStreamingContent((prev) => prev + `\n[Erreur: ${data.message}]`);
+                  setStreamingContent((prev) => prev + `\n[${t.errorPrefix}: ${data.message}]`);
                 }
               } catch {
                 // ignore
@@ -122,7 +166,7 @@ export function AIAssistant() {
       setMessages((prev) => [...prev, { role: "assistant", content: full || streamingContent }]);
       setStreamingContent("");
     } catch (err) {
-      setStreamingContent(`Erreur: ${err instanceof Error ? err.message : "Réseau"}`);
+      setStreamingContent(`${t.errorPrefix}: ${err instanceof Error ? err.message : t.networkError}`);
     } finally {
       setStreaming(false);
     }
@@ -146,7 +190,7 @@ export function AIAssistant() {
           background: "var(--bpm-accent-cyan)",
           color: "#fff",
         }}
-        aria-label="Ouvrir l'assistant IA"
+        aria-label={t.openAssistant}
       >
         <span className="text-xl">✦</span>
       </button>
@@ -172,7 +216,7 @@ export function AIAssistant() {
                   }}
                 />
                 <span className="text-sm font-medium" style={{ color: "var(--bpm-text-primary)" }}>
-                  Assistant IA
+                  {t.assistantTitle}
                 </span>
                 {health?.model && (
                   <span className="text-xs" style={{ color: "var(--bpm-text-secondary)" }}>
@@ -181,7 +225,7 @@ export function AIAssistant() {
                 )}
               </div>
               <Button variant="outline" onClick={() => setIsOpen(false)}>
-                Fermer
+                {t.close}
               </Button>
             </div>
 
@@ -190,16 +234,16 @@ export function AIAssistant() {
               style={{ borderColor: "var(--bpm-border)" }}
             >
               <div className="text-xs font-medium mb-2" style={{ color: "var(--bpm-text-secondary)" }}>
-                Contexte (modules à inclure)
+                {t.contextModules}
               </div>
               {extraContext && (
                 <p className="text-xs mb-2 rounded px-2 py-1" style={{ background: "var(--bpm-bg-secondary)", color: "var(--bpm-accent-cyan)" }}>
-                  Contrat / document ajouté au contexte pour cette conversation.
+                  {t.documentAdded}
                 </p>
               )}
               {modules.length === 0 ? (
                 <p className="text-xs" style={{ color: "var(--bpm-text-secondary)" }}>
-                  Aucun module enregistré. Les modules Wiki et Documents s&apos;enregistrent automatiquement.
+                  {t.noModules}
                 </p>
               ) : (
                 <div className="flex flex-wrap gap-2">
@@ -220,7 +264,7 @@ export function AIAssistant() {
             <div className="flex-1 overflow-y-auto p-4 space-y-4 min-h-0">
               {messages.length === 0 && !streamingContent && (
                 <p className="text-sm" style={{ color: "var(--bpm-text-secondary)" }}>
-                  Posez une question. Exemple : &quot;Quels modules sont disponibles ?&quot;
+                  {t.emptyHint}
                 </p>
               )}
               {messages.map((m, i) => (
@@ -231,7 +275,7 @@ export function AIAssistant() {
                       color: m.role === "user" ? "var(--bpm-accent)" : "var(--bpm-accent-mint)",
                     }}
                   >
-                    {m.role === "user" ? "Vous" : "IA"}
+                    {m.role === "user" ? t.you : t.ai}
                   </div>
                   {m.role === "assistant" ? (
                     <div className="text-sm prose prose-sm max-w-none" style={{ color: "var(--bpm-text-primary)" }}>
@@ -247,7 +291,7 @@ export function AIAssistant() {
               {streamingContent && (
                 <div className="space-y-1">
                   <div className="text-xs font-medium" style={{ color: "var(--bpm-accent-mint)" }}>
-                    IA
+                    {t.ai}
                   </div>
                   <div className="text-sm prose prose-sm max-w-none" style={{ color: "var(--bpm-text-primary)" }}>
                     <Markdown text={streamingContent} />
@@ -258,7 +302,7 @@ export function AIAssistant() {
                 <div className="flex items-center gap-2">
                   <Spinner size="small" />
                   <span className="text-sm" style={{ color: "var(--bpm-text-secondary)" }}>
-                    Réflexion…
+                    {t.thinking}
                   </span>
                 </div>
               )}
@@ -282,7 +326,7 @@ export function AIAssistant() {
                     send();
                   }
                 }}
-                placeholder="Votre question… (Cmd+Enter pour envoyer)"
+                placeholder={t.inputPlaceholder}
                 rows={2}
                 className="w-full rounded border px-3 py-2 text-sm resize-none mb-2"
                 style={{
@@ -298,7 +342,7 @@ export function AIAssistant() {
                     setVoiceError(null);
                   }}
                   onError={setVoiceError}
-                  label="Dicter"
+                  label={t.dictate}
                   disabled={streaming}
                 />
                 {voiceError && (
@@ -308,7 +352,7 @@ export function AIAssistant() {
                 )}
               </div>
               <Button type="submit" disabled={streaming || !input.trim()}>
-                {streaming ? "Envoi…" : "Envoyer"}
+                {streaming ? t.sending : t.send}
               </Button>
             </form>
           </div>

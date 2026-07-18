@@ -3,86 +3,87 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Intégration (modules et composants) — Blueprint Modular</title>
+  <title data-i18n="pages.getStarted.integration.metaTitle">Intégration (modules et composants) — Blueprint Modular</title>
   <link rel="icon" href="../favicon.ico" />
   <link rel="icon" type="image/png" href="../img/logo-bpm.png" />
   <link rel="stylesheet" href="../doc.css" />
   <link rel="manifest" href="../manifest.json" />
   <meta name="theme-color" content="#2563eb" />
-  <meta name="description" content="Référence pour intégrer tous les modules et composants BPM dans une autre application (copie/sync, API, PyPI)." />
+  <meta name="description" data-i18n-content="pages.getStarted.integration.metaDesc" content="Référence pour intégrer tous les modules et composants BPM dans une autre application (copie/sync, API, PyPI)." />
+  <script src="../js/i18n.js" data-i18n-base="../" defer></script>
 </head>
 <body>
   <nav class="doc-nav">
     <a href="https://blueprint-modular.com/" class="brand"><img src="../img/logo-bpm-nom.jpg" alt="" class="brand-logo" /><span class="word-blueprint">Blueprint</span> <span class="word-modular">Modular</span></a>
-    <a href="../get-started/why-bpm.html">Pourquoi BPM</a>
-    <a href="../get-started/installation.html">Installation</a>
-    <a href="../components.html">Composants</a>
-    <a href="../api-reference/text.html">Référence API</a>
-    <a href="../deploy/concepts.html">Déployer</a>
-    <a href="https://blueprint-modular.com/modules.html">Modules</a>
-    <a href="../get-started/integration.html">Intégration</a>
-    <a href="../cheat-sheet.html">Aide-mémoire</a>
-    <a href="https://app.blueprint-modular.com/dashboard" class="doc-nav-app" target="_blank" rel="noopener">Ouvrir l'app</a>
-    <button class="nav-burger" aria-label="Menu" id="nav-burger-btn"><span></span><span></span><span></span></button>
+    <a href="../get-started/why-bpm.html" data-i18n="pages.getStarted.integration.navWhy">Pourquoi BPM</a>
+    <a href="../get-started/installation.html" data-i18n="pages.getStarted.integration.navInstallation">Installation</a>
+    <a href="../components.html" data-i18n="pages.getStarted.integration.navComponents">Composants</a>
+    <a href="../api-reference/text.html" data-i18n="pages.getStarted.integration.navApiRef">Référence API</a>
+    <a href="../deploy/concepts.html" data-i18n="pages.getStarted.integration.navDeploy">Déployer</a>
+    <a href="https://blueprint-modular.com/modules.html" data-i18n="pages.getStarted.integration.navModules">Modules</a>
+    <a href="../get-started/integration.html" data-i18n="pages.getStarted.integration.navIntegration">Intégration</a>
+    <a href="../cheat-sheet.html" data-i18n="pages.getStarted.integration.navCheatSheet">Aide-mémoire</a>
+    <a href="https://app.blueprint-modular.com/dashboard" class="doc-nav-app" target="_blank" rel="noopener" data-i18n="pages.getStarted.integration.navOpenApp">Ouvrir l'app</a>
+    <button class="nav-burger" aria-label="Menu" id="nav-burger-btn" data-i18n-attr="aria-label:pages.getStarted.integration.burgerAria"><span></span><span></span><span></span></button>
   </nav>
   <div class="doc-layout">
     <aside class="doc-sidebar">
-      <h3>Accueil</h3>
-      <a href="../index.html">Accueil</a>
-      <h3>Démarrage</h3>
-      <a href="why-bpm.html">Pourquoi BPM</a>
-      <a href="installation.html">Installation</a>
-      <a href="fundamentals.html">Fondamentaux</a>
-      <a href="first-app.html">Première app</a>
-      <a href="integration.html" class="active">Intégration (modules & composants)</a>
-      <a href="integration.html#utiliser-modules">→ Utiliser les modules</a>
-      <a href="integration.html#propriete-intellectuelle">→ Propriété intellectuelle</a>
-      <h3>Composants</h3>
-      <a href="../components.html">Catalogue des composants</a>
-      <a href="../api-reference/text.html">Texte</a>
-      <a href="../api-reference/data.html">Données</a>
-      <a href="../api-reference/metrics.html">Métriques</a>
-      <a href="../api-reference/charts.html">Graphiques</a>
-      <a href="../api-reference/inputs.html">Saisie</a>
-      <a href="../api-reference/layout.html">Mise en page</a>
-      <a href="../api-reference/panels.html">Panneaux</a>
-      <a href="../api-reference/media.html">Médias</a>
-      <a href="../api-reference/status.html">Statut</a>
-      <a href="../api-reference/chat.html">Chat</a>
-      <a href="../api-reference/config.html">Config</a>
-      <a href="../api-reference/connection.html">Connexion aux données</a>
-      <h3>Modules</h3>
-      <a href="https://blueprint-modular.com/modules.html">Catalogue des modules</a>
-      <a href="../modules/wiki.html">Module Wiki</a>
-      <a href="../modules/ia.html">Module IA</a>
-      <a href="../modules/veille.html">Module Veille</a>
-      <a href="../modules/ibkr.html">Module IBKR</a>
-      <a href="../modules/analyse-document.html">Module Documents</a>
-      <h3>Déployer</h3>
-      <a href="../deploy/concepts.html">Concepts</a>
-      <a href="../deploy/platforms.html">Plateformes</a>
-      <h3>Connaissances</h3>
-      <a href="../knowledge-base/faq.html">FAQ</a>
-      <a href="../knowledge-base/troubleshooting.html">Dépannage</a>
-      <a href="../knowledge-base/reste-a-faire.html">Ce qu'il reste à faire</a>
-      <h3>Ressources</h3>
-      <a href="../cheat-sheet.html">Aide-mémoire</a>
-      <a href="../versions.html">Versions</a>
+      <h3 data-i18n="pages.getStarted.integration.sbHome">Accueil</h3>
+      <a href="../index.html" data-i18n="pages.getStarted.integration.sbHomeLink">Accueil</a>
+      <h3 data-i18n="pages.getStarted.integration.sbGettingStarted">Démarrage</h3>
+      <a href="why-bpm.html" data-i18n="pages.getStarted.integration.sbWhy">Pourquoi BPM</a>
+      <a href="installation.html" data-i18n="pages.getStarted.integration.sbInstallation">Installation</a>
+      <a href="fundamentals.html" data-i18n="pages.getStarted.integration.sbFundamentals">Fondamentaux</a>
+      <a href="first-app.html" data-i18n="pages.getStarted.integration.sbFirstApp">Première app</a>
+      <a href="integration.html" class="active" data-i18n="pages.getStarted.integration.sbIntegration">Intégration (modules & composants)</a>
+      <a href="integration.html#utiliser-modules" data-i18n="pages.getStarted.integration.sbIntegrationUse">→ Utiliser les modules</a>
+      <a href="integration.html#propriete-intellectuelle" data-i18n="pages.getStarted.integration.sbIntegrationIp">→ Propriété intellectuelle</a>
+      <h3 data-i18n="pages.getStarted.integration.sbComponents">Composants</h3>
+      <a href="../components.html" data-i18n="pages.getStarted.integration.sbCatalog">Catalogue des composants</a>
+      <a href="../api-reference/text.html" data-i18n="pages.getStarted.integration.sbText">Texte</a>
+      <a href="../api-reference/data.html" data-i18n="pages.getStarted.integration.sbData">Données</a>
+      <a href="../api-reference/metrics.html" data-i18n="pages.getStarted.integration.sbMetrics">Métriques</a>
+      <a href="../api-reference/charts.html" data-i18n="pages.getStarted.integration.sbCharts">Graphiques</a>
+      <a href="../api-reference/inputs.html" data-i18n="pages.getStarted.integration.sbInputs">Saisie</a>
+      <a href="../api-reference/layout.html" data-i18n="pages.getStarted.integration.sbLayout">Mise en page</a>
+      <a href="../api-reference/panels.html" data-i18n="pages.getStarted.integration.sbPanels">Panneaux</a>
+      <a href="../api-reference/media.html" data-i18n="pages.getStarted.integration.sbMedia">Médias</a>
+      <a href="../api-reference/status.html" data-i18n="pages.getStarted.integration.sbStatus">Statut</a>
+      <a href="../api-reference/chat.html" data-i18n="pages.getStarted.integration.sbChat">Chat</a>
+      <a href="../api-reference/config.html" data-i18n="pages.getStarted.integration.sbConfig">Config</a>
+      <a href="../api-reference/connection.html" data-i18n="pages.getStarted.integration.sbConnection">Connexion aux données</a>
+      <h3 data-i18n="pages.getStarted.integration.sbModules">Modules</h3>
+      <a href="https://blueprint-modular.com/modules.html" data-i18n="pages.getStarted.integration.sbModulesCatalog">Catalogue des modules</a>
+      <a href="../modules/wiki.html" data-i18n="pages.getStarted.integration.sbModuleWiki">Module Wiki</a>
+      <a href="../modules/ia.html" data-i18n="pages.getStarted.integration.sbModuleIa">Module IA</a>
+      <a href="../modules/veille.html" data-i18n="pages.getStarted.integration.sbModuleVeille">Module Veille</a>
+      <a href="../modules/ibkr.html" data-i18n="pages.getStarted.integration.sbModuleIbkr">Module IBKR</a>
+      <a href="../modules/analyse-document.html" data-i18n="pages.getStarted.integration.sbModuleDocs">Module Documents</a>
+      <h3 data-i18n="pages.getStarted.integration.sbDeploy">Déployer</h3>
+      <a href="../deploy/concepts.html" data-i18n="pages.getStarted.integration.sbConcepts">Concepts</a>
+      <a href="../deploy/platforms.html" data-i18n="pages.getStarted.integration.sbPlatforms">Plateformes</a>
+      <h3 data-i18n="pages.getStarted.integration.sbKnowledge">Connaissances</h3>
+      <a href="../knowledge-base/faq.html" data-i18n="pages.getStarted.integration.sbFaq">FAQ</a>
+      <a href="../knowledge-base/troubleshooting.html" data-i18n="pages.getStarted.integration.sbTroubleshooting">Dépannage</a>
+      <a href="../knowledge-base/reste-a-faire.html" data-i18n="pages.getStarted.integration.sbTodo">Ce qu'il reste à faire</a>
+      <h3 data-i18n="pages.getStarted.integration.sbResources">Ressources</h3>
+      <a href="../cheat-sheet.html" data-i18n="pages.getStarted.integration.sbCheatSheet">Aide-mémoire</a>
+      <a href="../versions.html" data-i18n="pages.getStarted.integration.sbVersions">Versions</a>
     </aside>
     <main class="doc-main">
-      <nav class="breadcrumb">
+      <nav class="breadcrumb" data-i18n="pages.getStarted.integration.crumb">
         <a href="../index.html">Accueil</a> › <a href="integration.html">Démarrage</a> › Intégration
       </nav>
 
-      <h1>Intégration : modules et composants</h1>
-      <p class="lead">Cette page est la <strong>référence publique</strong> pour intégrer les <strong>modules métier</strong> et les <strong>composants BPM</strong> de Blueprint Modular dans une autre application, sans accès au dépôt Git.</p>
+      <h1 data-i18n="pages.getStarted.integration.h1">Intégration : modules et composants</h1>
+      <p class="lead" data-i18n="pages.getStarted.integration.lead">Cette page est la <strong>référence publique</strong> pour intégrer les <strong>modules métier</strong> et les <strong>composants BPM</strong> de Blueprint Modular dans une autre application, sans accès au dépôt Git.</p>
 
-      <h2 id="utiliser-modules">Ce qu’il faut faire pour utiliser les modules</h2>
-      <p>En tant que développeur ou utilisateur, voici les étapes pour intégrer les modules Blueprint Modular dans votre propre application :</p>
+      <h2 id="utiliser-modules" data-i18n="pages.getStarted.integration.h2Use">Ce qu’il faut faire pour utiliser les modules</h2>
+      <p data-i18n="pages.getStarted.integration.pUse">En tant que développeur ou utilisateur, voici les étapes pour intégrer les modules Blueprint Modular dans votre propre application :</p>
       <ol class="doc-steps">
-        <li><strong>Télécharger le bundle</strong> — Récupérez l’archive officielle : <a href="../downloads/blueprint-modules-latest.zip">blueprint-modules-latest.zip</a> (ou une version figée <code>blueprint-modules-vX.Y.Z.zip</code> depuis <a href="../versions.html">versions.html</a>). Aucun compte ni accès Git requis.</li>
-        <li><strong>Décompresser</strong> — Ouvrez le zip dans un répertoire temporaire. Vous obtenez les dossiers <code>modules/</code>, <code>components/bpm/</code>, <code>lib/</code>, <code>prisma/</code> et le <code>README-BUNDLE.md</code>.</li>
-        <li><strong>Copier dans votre projet</strong> — Collez les dossiers dans votre application Next.js (ou équivalent) :
+        <li data-i18n="pages.getStarted.integration.stepDownload"><strong>Télécharger le bundle</strong> — Récupérez l’archive officielle : <a href="../downloads/blueprint-modules-latest.zip">blueprint-modules-latest.zip</a> (ou une version figée <code>blueprint-modules-vX.Y.Z.zip</code> depuis <a href="../versions.html">versions.html</a>). Aucun compte ni accès Git requis.</li>
+        <li data-i18n="pages.getStarted.integration.stepUnzip"><strong>Décompresser</strong> — Ouvrez le zip dans un répertoire temporaire. Vous obtenez les dossiers <code>modules/</code>, <code>components/bpm/</code>, <code>lib/</code>, <code>prisma/</code> et le <code>README-BUNDLE.md</code>.</li>
+        <li data-i18n="pages.getStarted.integration.stepCopy"><strong>Copier dans votre projet</strong> — Collez les dossiers dans votre application Next.js (ou équivalent) :
           <ul>
             <li><code>modules/*</code> → par ex. <code>app/(app)/modules/blueprint/</code> (ou votre structure de routes)</li>
             <li><code>components/bpm/</code> → <code>components/bpm/</code></li>
@@ -90,133 +91,133 @@
             <li>Extraits de <code>prisma/schema.prisma</code> → fusionnez les modèles dans votre <code>schema.prisma</code> (voir <a href="#api">API</a> et doc BDD).</li>
           </ul>
         </li>
-        <li><strong>Configurer l’environnement</strong> — Définissez au minimum <code>DATABASE_URL</code>, <code>NEXTAUTH_SECRET</code>, <code>NEXTAUTH_URL</code>. Selon les modules : config domaines (Gestion de parc), <code>AI_SERVER_URL</code> (module IA), etc. Voir la doc de chaque module et <code>.env.example</code> dans le dépôt source.</li>
-        <li><strong>Base de données</strong> — Exécutez <code>npx prisma generate</code>, puis <code>npx prisma migrate deploy</code> (ou fusionnez les migrations selon votre stratégie). Les tables utilisées par chaque module sont décrites dans la documentation déployée (DATABASE.md dans le dépôt).</li>
-        <li><strong>Styles</strong> — Copiez les parties utiles de <code>app/globals.css</code> (variables <code>--bpm-*</code>, classes <code>.bpm-*</code>, éventuellement <code>.asset-manager-page</code> si vous utilisez la Gestion de parc).</li>
-        <li><strong>Navigation</strong> — Adaptez votre menu ou layout pour pointer vers les routes des modules copiés (ex. <code>/modules/asset-manager/...</code>, <code>/modules/wiki</code>).</li>
+        <li data-i18n="pages.getStarted.integration.stepEnv"><strong>Configurer l’environnement</strong> — Définissez au minimum <code>DATABASE_URL</code>, <code>NEXTAUTH_SECRET</code>, <code>NEXTAUTH_URL</code>. Selon les modules : config domaines (Gestion de parc), <code>AI_SERVER_URL</code> (module IA), etc. Voir la doc de chaque module et <code>.env.example</code> dans le dépôt source.</li>
+        <li data-i18n="pages.getStarted.integration.stepDb"><strong>Base de données</strong> — Exécutez <code>npx prisma generate</code>, puis <code>npx prisma migrate deploy</code> (ou fusionnez les migrations selon votre stratégie). Les tables utilisées par chaque module sont décrites dans la documentation déployée (DATABASE.md dans le dépôt).</li>
+        <li data-i18n="pages.getStarted.integration.stepStyles"><strong>Styles</strong> — Copiez les parties utiles de <code>app/globals.css</code> (variables <code>--bpm-*</code>, classes <code>.bpm-*</code>, éventuellement <code>.asset-manager-page</code> si vous utilisez la Gestion de parc).</li>
+        <li data-i18n="pages.getStarted.integration.stepNav"><strong>Navigation</strong> — Adaptez votre menu ou layout pour pointer vers les routes des modules copiés (ex. <code>/modules/asset-manager/...</code>, <code>/modules/wiki</code>).</li>
       </ol>
-      <p>Pour une liste détaillée des modules et des routes API, voir les sections <a href="#modules">Tous les modules (UI)</a> et <a href="#api">API (routes backend)</a> ci-dessous.</p>
+      <p data-i18n="pages.getStarted.integration.pUseEnd">Pour une liste détaillée des modules et des routes API, voir les sections <a href="#modules">Tous les modules (UI)</a> et <a href="#api">API (routes backend)</a> ci-dessous.</p>
 
-      <h2 id="propriete-intellectuelle">Propriété intellectuelle et licence</h2>
-      <p>Blueprint Modular (code des modules, composants BPM, librairies livrées dans le bundle ou le package PyPI) est distribué sous <strong>licence MIT</strong>. En utilisant les modules vous acceptez les termes de cette licence.</p>
+      <h2 id="propriete-intellectuelle" data-i18n="pages.getStarted.integration.h2Ip">Propriété intellectuelle et licence</h2>
+      <p data-i18n="pages.getStarted.integration.pIp">Blueprint Modular (code des modules, composants BPM, librairies livrées dans le bundle ou le package PyPI) est distribué sous <strong>licence MIT</strong>. En utilisant les modules vous acceptez les termes de cette licence.</p>
       <ul>
-        <li><strong>Ce que vous pouvez faire</strong> : utiliser, modifier, fusionner, publier et distribuer le code Blueprint Modular dans vos propres projets (y compris commerciaux). Vous restez propriétaire du code que vous écrivez ; l’intégration de nos modules dans votre application ne transfère pas la propriété de votre code à Blueprint Modular.</li>
-        <li><strong>Ce que vous devez faire</strong> : conserver la notice de licence et le copyright Blueprint Modular sur les fichiers que vous réutilisez tels quels (ou sur les parties dérivées, selon la MIT). Une mention dans votre documentation ou un fichier NOTICE est recommandée (ex. « Ce projet inclut des modules Blueprint Modular, licence MIT »).</li>
-        <li><strong>Pas de garantie</strong> : le logiciel est fourni « tel quel », sans garantie d’aucune sorte. Utilisation sous votre responsabilité.</li>
+        <li data-i18n="pages.getStarted.integration.ipCan"><strong>Ce que vous pouvez faire</strong> : utiliser, modifier, fusionner, publier et distribuer le code Blueprint Modular dans vos propres projets (y compris commerciaux). Vous restez propriétaire du code que vous écrivez ; l’intégration de nos modules dans votre application ne transfère pas la propriété de votre code à Blueprint Modular.</li>
+        <li data-i18n="pages.getStarted.integration.ipMust"><strong>Ce que vous devez faire</strong> : conserver la notice de licence et le copyright Blueprint Modular sur les fichiers que vous réutilisez tels quels (ou sur les parties dérivées, selon la MIT). Une mention dans votre documentation ou un fichier NOTICE est recommandée (ex. « Ce projet inclut des modules Blueprint Modular, licence MIT »).</li>
+        <li data-i18n="pages.getStarted.integration.ipNoWarranty"><strong>Pas de garantie</strong> : le logiciel est fourni « tel quel », sans garantie d’aucune sorte. Utilisation sous votre responsabilité.</li>
       </ul>
-      <p>Pour les textes complets de la licence MIT, consultez le fichier <code>LICENSE</code> à la racine du dépôt source ou du package PyPI. En cas de doute sur un usage commercial ou la propriété intellectuelle, adressez-vous au mainteneur du projet (voir la doc ou le dépôt).</p>
+      <p data-i18n="pages.getStarted.integration.pIpEnd">Pour les textes complets de la licence MIT, consultez le fichier <code>LICENSE</code> à la racine du dépôt source ou du package PyPI. En cas de doute sur un usage commercial ou la propriété intellectuelle, adressez-vous au mainteneur du projet (voir la doc ou le dépôt).</p>
 
-      <h2 id="sans-git">Sans accès Git : télécharger le bundle</h2>
-      <p>Tout développeur peut récupérer les modules et composants <strong>sans avoir accès au dépôt</strong> en téléchargeant le zip officiel :</p>
+      <h2 id="sans-git" data-i18n="pages.getStarted.integration.h2NoGit">Sans accès Git : télécharger le bundle</h2>
+      <p data-i18n="pages.getStarted.integration.pNoGit">Tout développeur peut récupérer les modules et composants <strong>sans avoir accès au dépôt</strong> en téléchargeant le zip officiel :</p>
       <ul>
-        <li><strong>Dernière version :</strong> <a href="../downloads/blueprint-modules-latest.zip">blueprint-modules-latest.zip</a></li>
-        <li><strong>Version spécifique :</strong> <code>../downloads/blueprint-modules-vX.Y.Z.zip</code> (voir <a href="../versions.html">versions.html</a> pour la version actuelle)</li>
+        <li data-i18n="pages.getStarted.integration.noGitLatest"><strong>Dernière version :</strong> <a href="../downloads/blueprint-modules-latest.zip">blueprint-modules-latest.zip</a></li>
+        <li data-i18n="pages.getStarted.integration.noGitSpecific"><strong>Version spécifique :</strong> <code>../downloads/blueprint-modules-vX.Y.Z.zip</code> (voir <a href="../versions.html">versions.html</a> pour la version actuelle)</li>
       </ul>
-      <p>Le zip contient : <code>modules/</code> (tous les modules UI), <code>components/bpm/</code> (design system), <code>lib/</code>, <code>prisma/</code> (schéma et migrations), et un <code>README-BUNDLE.md</code> avec les instructions de copie dans votre projet. Aucun clone Git nécessaire.</p>
-      <p>Dans votre script de sync (ou manuellement) : téléchargez le zip depuis l’URL ci-dessus, décompressez, puis copiez les dossiers dans votre application comme indiqué dans le README du bundle.</p>
+      <p data-i18n="pages.getStarted.integration.pNoGitZip">Le zip contient : <code>modules/</code> (tous les modules UI), <code>components/bpm/</code> (design system), <code>lib/</code>, <code>prisma/</code> (schéma et migrations), et un <code>README-BUNDLE.md</code> avec les instructions de copie dans votre projet. Aucun clone Git nécessaire.</p>
+      <p data-i18n="pages.getStarted.integration.pNoGitSync">Dans votre script de sync (ou manuellement) : téléchargez le zip depuis l’URL ci-dessus, décompressez, puis copiez les dossiers dans votre application comme indiqué dans le README du bundle.</p>
 
-      <h2>Pour les utilisateurs du package PyPI</h2>
-      <p>Si vous avez installé <code>pip install blueprint-modular</code>, un fichier de référence est inclus dans le package. En Python :</p>
+      <h2 data-i18n="pages.getStarted.integration.h2Pypi">Pour les utilisateurs du package PyPI</h2>
+      <p data-i18n="pages.getStarted.integration.pPypi">Si vous avez installé <code>pip install blueprint-modular</code>, un fichier de référence est inclus dans le package. En Python :</p>
       <pre><code class="language-python">import bpm
 # Chemin du fichier de référence (après installation)
 # import bpm; print(bpm.__path__[0])  → répertoire du package
 # Fichiers : integration-reference.md et manifest.json</code></pre>
-      <p>Le <code>manifest.json</code> contient l’URL de cette page et la liste des modules/composants. Voir aussi <a href="../versions.html">Versions</a>.</p>
+      <p data-i18n="pages.getStarted.integration.pPypiEnd">Le <code>manifest.json</code> contient l’URL de cette page et la liste des modules/composants. Voir aussi <a href="../versions.html">Versions</a>.</p>
 
-      <h2 id="modules">Tous les modules (UI)</h2>
-      <p>Chaque module est une section sous <code>app/(app)/modules/&lt;nom&gt;/</code> dans le dépôt source. Liste des modules disponibles :</p>
+      <h2 id="modules" data-i18n="pages.getStarted.integration.h2Modules">Tous les modules (UI)</h2>
+      <p data-i18n="pages.getStarted.integration.pModules">Chaque module est une section sous <code>app/(app)/modules/&lt;nom&gt;/</code> dans le dépôt source. Liste des modules disponibles :</p>
       <table class="doc-table">
         <thead>
-          <tr><th>Module</th><th>Description / sous-routes</th></tr>
+          <tr><th data-i18n="pages.getStarted.integration.thMod">Module</th><th data-i18n="pages.getStarted.integration.thDesc">Description / sous-routes</th></tr>
         </thead>
         <tbody>
-          <tr><td><strong>asset-manager</strong></td><td>Gestion de parc : tableau de bord, actifs, tickets, MAD, contrats, connaissances, changements, CMDB, audit.</td></tr>
-          <tr><td><strong>auth</strong></td><td>Authentification.</td></tr>
-          <tr><td><strong>wiki</strong></td><td>Wiki : articles, révisions, commentaires, backlinks.</td></tr>
-          <tr><td><strong>documents</strong></td><td>Upload et analyse de documents.</td></tr>
-          <tr><td><strong>contracts</strong></td><td>Base contractuelle (contrats, CGV).</td></tr>
-          <tr><td><strong>newsletter</strong></td><td>Newsletter : paramètres, articles.</td></tr>
-          <tr><td><strong>ia</strong></td><td>Module IA (chat, conversations).</td></tr>
-          <tr><td><strong>monitor</strong></td><td>Monitor.</td></tr>
-          <tr><td><strong>commentaires</strong></td><td>Commentaires.</td></tr>
-          <tr><td><strong>calendrier</strong></td><td>Calendrier.</td></tr>
-          <tr><td><strong>tableau-blanc</strong></td><td>Tableau blanc.</td></tr>
-          <tr><td><strong>keep-screen-on</strong></td><td>Keep screen on.</td></tr>
-          <tr><td><strong>skeleton</strong></td><td>Skeleton.</td></tr>
-          <tr><td><strong>templates</strong></td><td>Templates.</td></tr>
-          <tr><td><strong>workflow</strong></td><td>Workflow.</td></tr>
-          <tr><td><strong>themes</strong></td><td>Thèmes.</td></tr>
-          <tr><td><strong>webhooks</strong></td><td>Webhooks.</td></tr>
-          <tr><td><strong>tableaux-de-bord</strong></td><td>Tableaux de bord.</td></tr>
-          <tr><td><strong>referentiels</strong></td><td>Référentiels.</td></tr>
-          <tr><td><strong>rapports</strong></td><td>Rapports.</td></tr>
-          <tr><td><strong>reservation-creneaux</strong></td><td>Réservation de créneaux.</td></tr>
-          <tr><td><strong>veille</strong></td><td>Veille.</td></tr>
-          <tr><td><strong>taches</strong></td><td>Tâches.</td></tr>
-          <tr><td><strong>formulaire-dynamique</strong></td><td>Formulaire dynamique.</td></tr>
-          <tr><td><strong>notification</strong></td><td>Notification.</td></tr>
-          <tr><td><strong>notifications-ciblees</strong></td><td>Notifications ciblées.</td></tr>
-          <tr><td><strong>connecteurs</strong></td><td>Connecteurs.</td></tr>
-          <tr><td><strong>devis-facturation</strong></td><td>Devis &amp; facturation.</td></tr>
-          <tr><td><strong>export-planifie</strong></td><td>Export planifié.</td></tr>
-          <tr><td><strong>multi-langue</strong></td><td>Multi-langue.</td></tr>
-          <tr><td><strong>catalogue-produits</strong></td><td>Catalogue produits.</td></tr>
-          <tr><td><strong>audit-log</strong></td><td>Journal d’audit.</td></tr>
+          <tr><td><strong>asset-manager</strong></td><td data-i18n="pages.getStarted.integration.modAssetManager">Gestion de parc : tableau de bord, actifs, tickets, MAD, contrats, connaissances, changements, CMDB, audit.</td></tr>
+          <tr><td><strong>auth</strong></td><td data-i18n="pages.getStarted.integration.modAuth">Authentification.</td></tr>
+          <tr><td><strong>wiki</strong></td><td data-i18n="pages.getStarted.integration.modWiki">Wiki : articles, révisions, commentaires, backlinks.</td></tr>
+          <tr><td><strong>documents</strong></td><td data-i18n="pages.getStarted.integration.modDocuments">Upload et analyse de documents.</td></tr>
+          <tr><td><strong>contracts</strong></td><td data-i18n="pages.getStarted.integration.modContracts">Base contractuelle (contrats, CGV).</td></tr>
+          <tr><td><strong>newsletter</strong></td><td data-i18n="pages.getStarted.integration.modNewsletter">Newsletter : paramètres, articles.</td></tr>
+          <tr><td><strong>ia</strong></td><td data-i18n="pages.getStarted.integration.modIa">Module IA (chat, conversations).</td></tr>
+          <tr><td><strong>monitor</strong></td><td data-i18n="pages.getStarted.integration.modMonitor">Monitor.</td></tr>
+          <tr><td><strong>commentaires</strong></td><td data-i18n="pages.getStarted.integration.modCommentaires">Commentaires.</td></tr>
+          <tr><td><strong>calendrier</strong></td><td data-i18n="pages.getStarted.integration.modCalendrier">Calendrier.</td></tr>
+          <tr><td><strong>tableau-blanc</strong></td><td data-i18n="pages.getStarted.integration.modTableauBlanc">Tableau blanc.</td></tr>
+          <tr><td><strong>keep-screen-on</strong></td><td data-i18n="pages.getStarted.integration.modKeepScreenOn">Keep screen on.</td></tr>
+          <tr><td><strong>skeleton</strong></td><td data-i18n="pages.getStarted.integration.modSkeleton">Skeleton.</td></tr>
+          <tr><td><strong>templates</strong></td><td data-i18n="pages.getStarted.integration.modTemplates">Templates.</td></tr>
+          <tr><td><strong>workflow</strong></td><td data-i18n="pages.getStarted.integration.modWorkflow">Workflow.</td></tr>
+          <tr><td><strong>themes</strong></td><td data-i18n="pages.getStarted.integration.modThemes">Thèmes.</td></tr>
+          <tr><td><strong>webhooks</strong></td><td data-i18n="pages.getStarted.integration.modWebhooks">Webhooks.</td></tr>
+          <tr><td><strong>tableaux-de-bord</strong></td><td data-i18n="pages.getStarted.integration.modTableauxDeBord">Tableaux de bord.</td></tr>
+          <tr><td><strong>referentiels</strong></td><td data-i18n="pages.getStarted.integration.modReferentiels">Référentiels.</td></tr>
+          <tr><td><strong>rapports</strong></td><td data-i18n="pages.getStarted.integration.modRapports">Rapports.</td></tr>
+          <tr><td><strong>reservation-creneaux</strong></td><td data-i18n="pages.getStarted.integration.modReservationCreneaux">Réservation de créneaux.</td></tr>
+          <tr><td><strong>veille</strong></td><td data-i18n="pages.getStarted.integration.modVeille">Veille.</td></tr>
+          <tr><td><strong>taches</strong></td><td data-i18n="pages.getStarted.integration.modTaches">Tâches.</td></tr>
+          <tr><td><strong>formulaire-dynamique</strong></td><td data-i18n="pages.getStarted.integration.modFormulaireDynamique">Formulaire dynamique.</td></tr>
+          <tr><td><strong>notification</strong></td><td data-i18n="pages.getStarted.integration.modNotification">Notification.</td></tr>
+          <tr><td><strong>notifications-ciblees</strong></td><td data-i18n="pages.getStarted.integration.modNotificationsCiblees">Notifications ciblées.</td></tr>
+          <tr><td><strong>connecteurs</strong></td><td data-i18n="pages.getStarted.integration.modConnecteurs">Connecteurs.</td></tr>
+          <tr><td><strong>devis-facturation</strong></td><td data-i18n="pages.getStarted.integration.modDevisFacturation">Devis &amp; facturation.</td></tr>
+          <tr><td><strong>export-planifie</strong></td><td data-i18n="pages.getStarted.integration.modExportPlanifie">Export planifié.</td></tr>
+          <tr><td><strong>multi-langue</strong></td><td data-i18n="pages.getStarted.integration.modMultiLangue">Multi-langue.</td></tr>
+          <tr><td><strong>catalogue-produits</strong></td><td data-i18n="pages.getStarted.integration.modCatalogueProduits">Catalogue produits.</td></tr>
+          <tr><td><strong>audit-log</strong></td><td data-i18n="pages.getStarted.integration.modAuditLog">Journal d’audit.</td></tr>
         </tbody>
       </table>
 
-      <h2 id="api">API (routes backend)</h2>
-      <p>Les routes API sont exposées sous <code>app/api/</code>. Préfixes principaux :</p>
+      <h2 id="api" data-i18n="pages.getStarted.integration.h2Api">API (routes backend)</h2>
+      <p data-i18n="pages.getStarted.integration.pApi">Les routes API sont exposées sous <code>app/api/</code>. Préfixes principaux :</p>
       <table class="doc-table">
         <thead>
-          <tr><th>Préfixe</th><th>Rôle</th></tr>
+          <tr><th data-i18n="pages.getStarted.integration.thPrefix">Préfixe</th><th data-i18n="pages.getStarted.integration.thRole">Rôle</th></tr>
         </thead>
         <tbody>
-          <tr><td><code>auth/</code></td><td>NextAuth, register.</td></tr>
-          <tr><td><code>wiki/</code></td><td>Articles, révisions, commentaires, backlinks, export, semantic-search, tags.</td></tr>
-          <tr><td><code>documents/</code></td><td>Documents (CRUD, analyse).</td></tr>
-          <tr><td><code>contracts/</code></td><td>Base contractuelle (CRUD, search, reanalyze).</td></tr>
-          <tr><td><code>newsletter/</code></td><td>Settings, articles, archive.</td></tr>
-          <tr><td><code>ai/</code></td><td>Chat, conversations, messages, providers, health.</td></tr>
-          <tr><td><code>asset-manager/</code></td><td>Config, domains, assets, tickets, assignments, contracts, knowledge, changes, ci-relations, movements, audit-log, etc.</td></tr>
-          <tr><td><code>settings/</code></td><td>API keys.</td></tr>
-          <tr><td><code>sandbox/</code></td><td>Sandbox generate.</td></tr>
-          <tr><td><code>health/</code></td><td>Health check.</td></tr>
+          <tr><td><code>auth/</code></td><td data-i18n="pages.getStarted.integration.apiAuth">NextAuth, register.</td></tr>
+          <tr><td><code>wiki/</code></td><td data-i18n="pages.getStarted.integration.apiWiki">Articles, révisions, commentaires, backlinks, export, semantic-search, tags.</td></tr>
+          <tr><td><code>documents/</code></td><td data-i18n="pages.getStarted.integration.apiDocuments">Documents (CRUD, analyse).</td></tr>
+          <tr><td><code>contracts/</code></td><td data-i18n="pages.getStarted.integration.apiContracts">Base contractuelle (CRUD, search, reanalyze).</td></tr>
+          <tr><td><code>newsletter/</code></td><td data-i18n="pages.getStarted.integration.apiNewsletter">Settings, articles, archive.</td></tr>
+          <tr><td><code>ai/</code></td><td data-i18n="pages.getStarted.integration.apiAi">Chat, conversations, messages, providers, health.</td></tr>
+          <tr><td><code>asset-manager/</code></td><td data-i18n="pages.getStarted.integration.apiAssetManager">Config, domains, assets, tickets, assignments, contracts, knowledge, changes, ci-relations, movements, audit-log, etc.</td></tr>
+          <tr><td><code>settings/</code></td><td data-i18n="pages.getStarted.integration.apiSettings">API keys.</td></tr>
+          <tr><td><code>sandbox/</code></td><td data-i18n="pages.getStarted.integration.apiSandbox">Sandbox generate.</td></tr>
+          <tr><td><code>health/</code></td><td data-i18n="pages.getStarted.integration.apiHealth">Health check.</td></tr>
         </tbody>
       </table>
 
-      <h2 id="composants">Composants BPM (design system)</h2>
-      <p>Les composants sont dans <code>components/bpm/</code>. Exports principaux (liste non exhaustive) :</p>
+      <h2 id="composants" data-i18n="pages.getStarted.integration.h2Components">Composants BPM (design system)</h2>
+      <p data-i18n="pages.getStarted.integration.pComponents">Les composants sont dans <code>components/bpm/</code>. Exports principaux (liste non exhaustive) :</p>
       <p>Accordion, AreaChart, Audio, Autocomplete, Avatar, Badge, BarChart, Barcode, Breadcrumb, Button, Card, Checkbox, Chip, CodeBlock, ColorPicker, Column, Container, DateInput, DateRangePicker, Divider, Drawer, Empty, EmptyState, Expander, FAB, FileUploader, Grid, HighlightBox, Html, Image, Input, JsonViewer, LineChart, LoadingBar, Map, Markdown, Message, Metric, Modal, NumberInput, NfcBadge, Pagination, Panel, PdfViewer, PlotlyChart, Popover, Progress, QRCode, RadioGroup, Rating, ScatterChart, Selectbox, Skeleton, Slider, Spinner, SpinnerDot, StatusBox, Stepper, Table, Tabs, Text, Textarea, Timeline, Title (Title1–4), Toast, Toggle, Tooltip, TopNav, Treeview, Video, Theme.</p>
-      <p>Point d’entrée dans le dépôt : <code>components/bpm/index.ts</code>. Styles : <code>app/globals.css</code> (variables <code>--bpm-*</code>, classes <code>.bpm-*</code>).</p>
+      <p data-i18n="pages.getStarted.integration.pComponentsEntry">Point d’entrée dans le dépôt : <code>components/bpm/index.ts</code>. Styles : <code>app/globals.css</code> (variables <code>--bpm-*</code>, classes <code>.bpm-*</code>).</p>
 
-      <h2 id="copie-sync">Intégration par copie/sync</h2>
-      <p>Pour intégrer les modules et composants dans une autre application <strong>sans accès au dépôt</strong>, vous pouvez :</p>
+      <h2 id="copie-sync" data-i18n="pages.getStarted.integration.h2CopySync">Intégration par copie/sync</h2>
+      <p data-i18n="pages.getStarted.integration.pCopySync">Pour intégrer les modules et composants dans une autre application <strong>sans accès au dépôt</strong>, vous pouvez :</p>
       <ul>
-        <li><strong>Appeler l’API</strong> d’une instance Blueprint Modular déployée (voir <a href="../deploy/platforms.html">Déployer</a>). Votre app envoie des requêtes HTTP vers les routes listées ci-dessus.</li>
-        <li><strong>Récupérer le code</strong> si vous avez accès au dépôt (clone, sous-module) : copier <code>app/(app)/modules/</code>, <code>app/api/</code>, <code>components/bpm/</code>, <code>lib/</code> (selon besoins), <code>prisma/schema.prisma</code> et migrations, et les parties de <code>app/globals.css</code> liées à BPM. Détails complets dans le fichier <code>INTEGRATION.md</code> à la racine du dépôt (visible uniquement avec accès au repo).</li>
+        <li data-i18n="pages.getStarted.integration.copyApi"><strong>Appeler l’API</strong> d’une instance Blueprint Modular déployée (voir <a href="../deploy/platforms.html">Déployer</a>). Votre app envoie des requêtes HTTP vers les routes listées ci-dessus.</li>
+        <li data-i18n="pages.getStarted.integration.copyCode"><strong>Récupérer le code</strong> si vous avez accès au dépôt (clone, sous-module) : copier <code>app/(app)/modules/</code>, <code>app/api/</code>, <code>components/bpm/</code>, <code>lib/</code> (selon besoins), <code>prisma/schema.prisma</code> et migrations, et les parties de <code>app/globals.css</code> liées à BPM. Détails complets dans le fichier <code>INTEGRATION.md</code> à la racine du dépôt (visible uniquement avec accès au repo).</li>
       </ul>
-      <p>Prérequis communs : base PostgreSQL (Prisma), variables d’environnement (<code>DATABASE_URL</code>, <code>NEXTAUTH_SECRET</code>, <code>NEXTAUTH_URL</code>), et selon les modules : config (ex. fichiers domaines pour la gestion de parc), voir la doc déployée et <code>docs/DATABASE.md</code> dans le dépôt.</p>
+      <p data-i18n="pages.getStarted.integration.pCopySyncEnd">Prérequis communs : base PostgreSQL (Prisma), variables d’environnement (<code>DATABASE_URL</code>, <code>NEXTAUTH_SECRET</code>, <code>NEXTAUTH_URL</code>), et selon les modules : config (ex. fichiers domaines pour la gestion de parc), voir la doc déployée et <code>docs/DATABASE.md</code> dans le dépôt.</p>
 
       <nav class="doc-pagination">
-        <a class="prev" href="first-app.html">Précédent : Première app</a>
-        <a class="next" href="../components.html">Suivant : Composants</a>
+        <a class="prev" href="first-app.html" data-i18n="pages.getStarted.integration.pagPrev">Précédent : Première app</a>
+        <a class="next" href="../components.html" data-i18n="pages.getStarted.integration.pagNext">Suivant : Composants</a>
       </nav>
 
       <section class="help-cta">
-        <p>Une question ? Consultez la <a href="../knowledge-base/faq.html">FAQ</a> et la <a href="../knowledge-base/reste-a-faire.html">Ce qu'il reste à faire</a>.</p>
+        <p data-i18n="pages.getStarted.integration.helpCta">Une question ? Consultez la <a href="../knowledge-base/faq.html">FAQ</a> et la <a href="../knowledge-base/reste-a-faire.html">Ce qu'il reste à faire</a>.</p>
       </section>
 
       <footer class="site-footer" style="margin-top:2rem;">
         <div class="footer-links">
-          <a href="../index.html">Accueil</a>
-          <a href="../components.html">Composants</a>
-          <a href="https://blueprint-modular.com/modules.html">Modules</a>
-          <a href="../cheat-sheet.html">Aide-mémoire</a>
-          <a href="../versions.html">Versions</a>
-          <a href="../knowledge-base/faq.html">FAQ</a>
+          <a href="../index.html" data-i18n="pages.getStarted.integration.footHome">Accueil</a>
+          <a href="../components.html" data-i18n="pages.getStarted.integration.footComponents">Composants</a>
+          <a href="https://blueprint-modular.com/modules.html" data-i18n="pages.getStarted.integration.footModules">Modules</a>
+          <a href="../cheat-sheet.html" data-i18n="pages.getStarted.integration.footCheatSheet">Aide-mémoire</a>
+          <a href="../versions.html" data-i18n="pages.getStarted.integration.footVersions">Versions</a>
+          <a href="../knowledge-base/faq.html" data-i18n="pages.getStarted.integration.footFaq">FAQ</a>
         </div>
-        <div class="footer-meta">Blueprint Modular v0.1.52</div>
+        <div class="footer-meta" data-i18n="pages.getStarted.integration.footMeta">Blueprint Modular v0.1.52</div>
       </footer>
     </main>
   </div>

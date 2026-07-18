@@ -5,6 +5,12 @@ import { useIsMobile } from "@/hooks/useIsMobile";
 import { useBPMContext } from "@/lib/ai/context";
 import type { MetricValueLocale } from "./Metric";
 import { interpret, judgmentColor, type InterpretContext } from "./interpret";
+import { useBpmLocale } from "./i18n";
+
+const STRINGS = {
+  fr: { emptyMessage: "Aucune donnée disponible" },
+  en: { emptyMessage: "No data available" },
+} as const;
 
 /**
  * @component bpm.table
@@ -150,11 +156,14 @@ export function Table({
   valueGrouping = true,
   minWidth,
   trackContext = false,
-  emptyMessage = "Aucune donnée disponible",
+  emptyMessage,
   loading = false,
   error = null,
   density = "normal",
 }: TableProps) {
+  const bpmLocale = useBpmLocale();
+  const t = STRINGS[bpmLocale];
+  const effEmptyMessage = emptyMessage ?? t.emptyMessage;
   const isMobile = useIsMobile(768);
 
   useBPMContext(
@@ -353,7 +362,7 @@ export function Table({
                   }}
                 >
                   <span style={{ display: "inline-block", marginBottom: 8, fontSize: "var(--bpm-font-size-lg, 1.125rem)" }} aria-hidden>—</span>
-                  <div>{emptyMessage}</div>
+                  <div>{effEmptyMessage}</div>
                 </td>
               </tr>
             ) : sortedData.map((row, rowIdx) => (

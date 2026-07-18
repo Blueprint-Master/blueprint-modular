@@ -1,110 +1,112 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="fr">
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Texte  —  API Reference  —  Blueprint Modular</title>
+  <meta name="description" content="Composants d'affichage de texte de Blueprint Modular : write, markdown, text, title, header, subheader, caption, code, latex, badge, html." data-i18n-content="pages.text.metaDesc" />
+  <title data-i18n="pages.text.metaTitle">Texte  —  API Reference  —  Blueprint Modular</title>
   <link rel="icon" href="../favicon.ico" />
   <link rel="icon" type="image/png" href="../img/logo-bpm.png" />
   <link rel="stylesheet" href="../doc.css" />
+  <script src="../js/i18n.js" data-i18n-base="../" defer></script>
 </head>
 <body>
   <nav class="doc-nav">
     <a href="https://blueprint-modular.com/" class="brand"><img src="../img/logo-bpm-nom.jpg" alt="" class="brand-logo" /><span class="word-blueprint">Blueprint</span> <span class="word-modular">Modular</span></a>
-    <a href="../get-started/why-bpm.html">Pourquoi BPM</a>
-    <a href="../get-started/installation.html">Installation</a>
-    <a href="../components.html">Composants</a>
-    <a href="text.html">Référence API</a>
-    <a href="../deploy/concepts.html">Déployer</a>
-    <a href="https://blueprint-modular.com/modules.html">Modules</a>
-    <a href="../cheat-sheet.html">Aide-mémoire</a>
-    <a href="https://app.blueprint-modular.com/dashboard" class="doc-nav-app" target="_blank" rel="noopener">Ouvrir l'app</a>
-    <button class="nav-burger" aria-label="Menu" id="nav-burger-btn"><span></span><span></span><span></span></button>
+    <a href="../get-started/why-bpm.html" data-i18n="pages.text.navWhyBpm">Pourquoi BPM</a>
+    <a href="../get-started/installation.html" data-i18n="pages.text.navInstallation">Installation</a>
+    <a href="../components.html" data-i18n="pages.text.navComponents">Composants</a>
+    <a href="text.html" data-i18n="pages.text.navApiRef">Référence API</a>
+    <a href="../deploy/concepts.html" data-i18n="pages.text.navDeploy">Déployer</a>
+    <a href="https://blueprint-modular.com/modules.html" data-i18n="pages.text.navModules">Modules</a>
+    <a href="../cheat-sheet.html" data-i18n="pages.text.navCheatSheet">Aide-mémoire</a>
+    <a href="https://app.blueprint-modular.com/dashboard" class="doc-nav-app" target="_blank" rel="noopener" data-i18n="pages.text.navOpenApp">Ouvrir l'app</a>
+    <button class="nav-burger" aria-label="Menu" id="nav-burger-btn" data-i18n-attr="aria-label:pages.text.navMenu"><span></span><span></span><span></span></button>
   </nav>
   <div class="doc-layout">
     <aside class="doc-sidebar">
-      <h3>Accueil</h3>
-      <a href="../index.html">Accueil</a>
-      <h3>Démarrage</h3>
-      <a href="../get-started/why-bpm.html">Pourquoi BPM</a>
-      <a href="../get-started/installation.html">Installation</a>
-      <a href="../get-started/fundamentals.html">Fondamentaux</a>
-      <a href="../get-started/first-app.html">Première app</a>
-      <h3>Composants</h3>
-      <a href="../components.html">Catalogue des composants</a>
-      <a href="text.html" class="active">Texte</a>
-      <a href="write.html">write</a>
-      <a href="markdown.html">markdown</a>
-      <a href="text-fn.html">text</a>
-      <a href="title.html">title</a>
-      <a href="header.html">header</a>
-      <a href="subheader.html">subheader</a>
-      <a href="caption.html">caption</a>
-      <a href="code.html">code</a>
-      <a href="latex.html">latex</a>
-      <a href="badge.html">badge</a>
-      <a href="html.html">html</a>
-      <a href="data.html">Données</a>
-      <a href="metrics.html">Métriques</a>
-      <a href="charts.html">Graphiques</a>
-      <a href="inputs.html">Saisie</a>
-      <a href="layout.html">Mise en page</a>
-      <a href="panels.html">Panneaux</a>
-      <a href="media.html">Médias</a>
-      <a href="status.html">Statut</a>
-      <a href="chat.html">Chat</a>
-      <a href="config.html">Config</a>
-      <a href="connection.html">Connexion aux données</a>
-      <h3>Modules</h3>
-      <a href="https://blueprint-modular.com/modules.html">Catalogue des modules</a>
-      <a href="../modules/wiki.html">Module Wiki</a>
-      <a href="../modules/ia.html">Module IA</a>
-      <a href="../modules/veille.html">Module Veille</a>
-      <a href="../modules/ibkr.html">Module IBKR</a>
-      <a href="../modules/analyse-document.html">Module Documents</a>
-      <h3>Déployer</h3>
-      <a href="../deploy/concepts.html">Concepts</a>
-      <a href="../deploy/platforms.html">Plateformes</a>
-      <h3>Connaissances</h3>
-      <a href="../knowledge-base/faq.html">FAQ</a>
-      <a href="../knowledge-base/troubleshooting.html">Dépannage</a>
-      <a href="../knowledge-base/reste-a-faire.html">Ce qu'il reste à faire</a>
-      <h3>Ressources</h3>
-      <a href="../cheat-sheet.html">Aide-mémoire</a>
-      <a href="../versions.html">Versions</a>
+      <h3 data-i18n="pages.text.sbHomeH">Accueil</h3>
+      <a href="../index.html" data-i18n="pages.text.sbHome">Accueil</a>
+      <h3 data-i18n="pages.text.sbStartH">Démarrage</h3>
+      <a href="../get-started/why-bpm.html" data-i18n="pages.text.sbWhyBpm">Pourquoi BPM</a>
+      <a href="../get-started/installation.html" data-i18n="pages.text.sbInstallation">Installation</a>
+      <a href="../get-started/fundamentals.html" data-i18n="pages.text.sbFundamentals">Fondamentaux</a>
+      <a href="../get-started/first-app.html" data-i18n="pages.text.sbFirstApp">Première app</a>
+      <h3 data-i18n="pages.text.sbComponentsH">Composants</h3>
+      <a href="../components.html" data-i18n="pages.text.sbComponentCatalog">Catalogue des composants</a>
+      <a href="text.html" class="active" data-i18n="pages.text.sbText">Texte</a>
+      <a href="write.html" data-i18n="pages.text.sbWrite">write</a>
+      <a href="markdown.html" data-i18n="pages.text.sbMarkdown">markdown</a>
+      <a href="text-fn.html" data-i18n="pages.text.sbTextFn">text</a>
+      <a href="title.html" data-i18n="pages.text.sbTitle">title</a>
+      <a href="header.html" data-i18n="pages.text.sbHeader">header</a>
+      <a href="subheader.html" data-i18n="pages.text.sbSubheader">subheader</a>
+      <a href="caption.html" data-i18n="pages.text.sbCaption">caption</a>
+      <a href="code.html" data-i18n="pages.text.sbCode">code</a>
+      <a href="latex.html" data-i18n="pages.text.sbLatex">latex</a>
+      <a href="badge.html" data-i18n="pages.text.sbBadge">badge</a>
+      <a href="html.html" data-i18n="pages.text.sbHtml">html</a>
+      <a href="data.html" data-i18n="pages.text.sbData">Données</a>
+      <a href="metrics.html" data-i18n="pages.text.sbMetrics">Métriques</a>
+      <a href="charts.html" data-i18n="pages.text.sbCharts">Graphiques</a>
+      <a href="inputs.html" data-i18n="pages.text.sbInputs">Saisie</a>
+      <a href="layout.html" data-i18n="pages.text.sbLayout">Mise en page</a>
+      <a href="panels.html" data-i18n="pages.text.sbPanels">Panneaux</a>
+      <a href="media.html" data-i18n="pages.text.sbMedia">Médias</a>
+      <a href="status.html" data-i18n="pages.text.sbStatus">Statut</a>
+      <a href="chat.html" data-i18n="pages.text.sbChat">Chat</a>
+      <a href="config.html" data-i18n="pages.text.sbConfig">Config</a>
+      <a href="connection.html" data-i18n="pages.text.sbConnection">Connexion aux données</a>
+      <h3 data-i18n="pages.text.sbModulesH">Modules</h3>
+      <a href="https://blueprint-modular.com/modules.html" data-i18n="pages.text.sbModuleCatalog">Catalogue des modules</a>
+      <a href="../modules/wiki.html" data-i18n="pages.text.sbModuleWiki">Module Wiki</a>
+      <a href="../modules/ia.html" data-i18n="pages.text.sbModuleIa">Module IA</a>
+      <a href="../modules/veille.html" data-i18n="pages.text.sbModuleVeille">Module Veille</a>
+      <a href="../modules/ibkr.html" data-i18n="pages.text.sbModuleIbkr">Module IBKR</a>
+      <a href="../modules/analyse-document.html" data-i18n="pages.text.sbModuleDocuments">Module Documents</a>
+      <h3 data-i18n="pages.text.sbDeployH">Déployer</h3>
+      <a href="../deploy/concepts.html" data-i18n="pages.text.sbConcepts">Concepts</a>
+      <a href="../deploy/platforms.html" data-i18n="pages.text.sbPlatforms">Plateformes</a>
+      <h3 data-i18n="pages.text.sbKnowledgeH">Connaissances</h3>
+      <a href="../knowledge-base/faq.html" data-i18n="pages.text.sbFaq">FAQ</a>
+      <a href="../knowledge-base/troubleshooting.html" data-i18n="pages.text.sbTroubleshooting">Dépannage</a>
+      <a href="../knowledge-base/reste-a-faire.html" data-i18n="pages.text.sbTodo">Ce qu'il reste à faire</a>
+      <h3 data-i18n="pages.text.sbResourcesH">Ressources</h3>
+      <a href="../cheat-sheet.html" data-i18n="pages.text.sbCheatSheet">Aide-mémoire</a>
+      <a href="../versions.html" data-i18n="pages.text.sbVersions">Versions</a>
     </aside>
     <main class="doc-main">
-      <nav class="breadcrumb"><a href="../index.html">Accueil</a> › <a href="text.html">Référence API</a> › Texte</nav>
-      <h1>Texte</h1>
-      <p class="lead">Composants d'affichage de texte. Une page par composant :</p>
-      <h2>Référence API</h2>
+      <nav class="breadcrumb" data-i18n="pages.text.breadcrumb"><a href="../index.html">Accueil</a> › <a href="text.html">Référence API</a> › Texte</nav>
+      <h1 data-i18n="pages.text.h1">Texte</h1>
+      <p class="lead" data-i18n="pages.text.lead">Composants d'affichage de texte. Une page par composant :</p>
+      <h2 data-i18n="pages.text.apiH">Référence API</h2>
       <ul>
-        <li><a href="write.html">write</a>  —  texte brut ou objet Python</li>
-        <li><a href="markdown.html">markdown</a>  —  contenu Markdown</li>
-        <li><a href="text-fn.html">text</a>  —  texte simple</li>
-        <li><a href="title.html">title</a>  —  titre (niveaux 1 à 4)</li>
-        <li><a href="header.html">header</a>  —  en-tête de section</li>
-        <li><a href="subheader.html">subheader</a>  —  sous-titre</li>
-        <li><a href="caption.html">caption</a>  —  légende</li>
-        <li><a href="code.html">code</a>  —  bloc de code</li>
-        <li><a href="latex.html">latex</a>  —  formules LaTeX</li>
-        <li><a href="badge.html">badge</a>  —  badge / étiquette</li>
-        <li><a href="html.html">html</a>  —  HTML brut</li>
+        <li data-i18n="pages.text.liWrite"><a href="write.html">write</a>  —  texte brut ou objet Python</li>
+        <li data-i18n="pages.text.liMarkdown"><a href="markdown.html">markdown</a>  —  contenu Markdown</li>
+        <li data-i18n="pages.text.liText"><a href="text-fn.html">text</a>  —  texte simple</li>
+        <li data-i18n="pages.text.liTitle"><a href="title.html">title</a>  —  titre (niveaux 1 à 4)</li>
+        <li data-i18n="pages.text.liHeader"><a href="header.html">header</a>  —  en-tête de section</li>
+        <li data-i18n="pages.text.liSubheader"><a href="subheader.html">subheader</a>  —  sous-titre</li>
+        <li data-i18n="pages.text.liCaption"><a href="caption.html">caption</a>  —  légende</li>
+        <li data-i18n="pages.text.liCode"><a href="code.html">code</a>  —  bloc de code</li>
+        <li data-i18n="pages.text.liLatex"><a href="latex.html">latex</a>  —  formules LaTeX</li>
+        <li data-i18n="pages.text.liBadge"><a href="badge.html">badge</a>  —  badge / étiquette</li>
+        <li data-i18n="pages.text.liHtml"><a href="html.html">html</a>  —  HTML brut</li>
       </ul>
-      <p><a href="../components.html">Voir le catalogue des composants</a> (texte, titre, markdown, code).</p>
-      <p class="doc-footer"><small>Variables CSS : <code>--bpm-font-family</code>, <code>--bpm-color-text</code>, <code>--bpm-color-muted</code>.</small></p>
-      <section class="help-cta"><p>Une question ? Consultez la <a href="../knowledge-base/faq.html">FAQ</a> et la <a href="../knowledge-base/reste-a-faire.html">Ce qu'il reste à faire</a>.</p></section>
+      <p data-i18n="pages.text.catalogLine"><a href="../components.html">Voir le catalogue des composants</a> (texte, titre, markdown, code).</p>
+      <p class="doc-footer" data-i18n="pages.text.cssVars"><small>Variables CSS : <code>--bpm-font-family</code>, <code>--bpm-color-text</code>, <code>--bpm-color-muted</code>.</small></p>
+      <section class="help-cta"><p data-i18n="pages.text.helpCta">Une question ? Consultez la <a href="../knowledge-base/faq.html">FAQ</a> et la <a href="../knowledge-base/reste-a-faire.html">Ce qu'il reste à faire</a>.</p></section>
       <footer class="site-footer" style="margin-top:2rem;">
         <div class="footer-links">
-          <a href="../index.html">Accueil</a>
-          <a href="../components.html">Composants</a>
-          <a href="https://blueprint-modular.com/modules.html">Modules</a>
-          <a href="../cheat-sheet.html">Aide-mémoire</a>
-          <a href="../versions.html">Versions</a>
-          <a href="../knowledge-base/faq.html">FAQ</a>
-          <a href="../knowledge-base/reste-a-faire.html">Ce qu'il reste à faire</a>
+          <a href="../index.html" data-i18n="pages.text.footerHome">Accueil</a>
+          <a href="../components.html" data-i18n="pages.text.footerComponents">Composants</a>
+          <a href="https://blueprint-modular.com/modules.html" data-i18n="pages.text.footerModules">Modules</a>
+          <a href="../cheat-sheet.html" data-i18n="pages.text.footerCheatSheet">Aide-mémoire</a>
+          <a href="../versions.html" data-i18n="pages.text.footerVersions">Versions</a>
+          <a href="../knowledge-base/faq.html" data-i18n="pages.text.footerFaq">FAQ</a>
+          <a href="../knowledge-base/reste-a-faire.html" data-i18n="pages.text.footerTodo">Ce qu'il reste à faire</a>
         </div>
-        <div class="footer-meta">Blueprint Modular v0.1.52</div>
+        <div class="footer-meta" data-i18n="pages.text.footerMeta">Blueprint Modular v0.1.52</div>
       </footer>
     </main>
   </div>

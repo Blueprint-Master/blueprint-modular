@@ -2,6 +2,20 @@
 
 import React, { useState, useRef, useEffect } from "react";
 import { createPortal } from "react-dom";
+import { useBpmLocale } from "./i18n";
+
+const STRINGS = {
+  fr: {
+    selectModel: "Sélectionner un modèle",
+    contextWindowTitle:
+      "Fenêtre de contexte : nombre de tokens que le modèle peut traiter en une fois",
+  },
+  en: {
+    selectModel: "Select a model",
+    contextWindowTitle:
+      "Context window: number of tokens the model can process at once",
+  },
+} as const;
 
 /**
  * @component bpm.modelSelector
@@ -47,6 +61,8 @@ export function ModelSelector({
   showCapabilities = true,
   className = "",
 }: ModelSelectorProps) {
+  const bpmLocale = useBpmLocale();
+  const t = STRINGS[bpmLocale];
   const [open, setOpen] = useState(false);
   const [dropdownStyle, setDropdownStyle] = useState<React.CSSProperties>({});
   const triggerRef = useRef<HTMLDivElement>(null);
@@ -177,7 +193,7 @@ export function ModelSelector({
                         ))}
                         {m.contextWindow != null && (
                           <span
-                            title="Fenêtre de contexte : nombre de tokens que le modèle peut traiter en une fois"
+                            title={t.contextWindowTitle}
                             style={{
                               padding: "2px 6px",
                               borderRadius: "var(--bpm-radius-sm)",
@@ -222,7 +238,7 @@ export function ModelSelector({
         }}
       >
         <span style={{ flex: 1, textAlign: "left" }}>
-          {selectedModel ? selectedModel.label : "Sélectionner un modèle"}
+          {selectedModel ? selectedModel.label : t.selectModel}
         </span>
         <span style={{ color: "var(--bpm-text-muted)", fontSize: 10, lineHeight: 1 }} aria-hidden>
           {open ? "▲" : "▼"}

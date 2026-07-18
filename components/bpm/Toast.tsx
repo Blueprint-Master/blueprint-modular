@@ -3,7 +3,13 @@
 import React, { useState, createContext, useContext, useEffect } from "react";
 import { useNotificationHistory } from "@/contexts/NotificationHistoryContext";
 import { getNotificationLevel } from "@/lib/notificationLevels";
+import { useBpmLocale } from "./i18n";
 import "./Toast.css";
+
+const STRINGS = {
+  fr: { close: "Fermer" },
+  en: { close: "Close" },
+} as const;
 
 /**
  * @component bpm.toast
@@ -134,6 +140,8 @@ function Toast({
   pageIcon,
   onClose,
 }: ToastItem & { onClose: () => void }) {
+  const bpmLocale = useBpmLocale();
+  const t = STRINGS[bpmLocale];
   return (
     <div className={`bpm-toast bpm-toast-${type}`}>
       <div className="bpm-toast-content">
@@ -156,7 +164,7 @@ function Toast({
         type="button"
         className="bpm-toast-close"
         onClick={onClose}
-        aria-label="Fermer"
+        aria-label={t.close}
         style={{ display: "flex", alignItems: "center", justifyContent: "center", lineHeight: "1" }}
       >
         ×

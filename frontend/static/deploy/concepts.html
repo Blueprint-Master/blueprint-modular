@@ -1,135 +1,137 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="fr">
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Deploy  —  Concepts  —  Blueprint Modular</title>
+  <title data-i18n="pages.deploy.concepts.metaTitle">Deploy  —  Concepts  —  Blueprint Modular</title>
+  <meta name="description" data-i18n-content="pages.deploy.concepts.metaDesc" content="Comment BPM sert votre app et quelles options de déploiement choisir : VPS + Nginx, Docker, architecture type." />
   <link rel="icon" href="../favicon.ico" />
   <link rel="icon" type="image/png" href="../img/logo-bpm.png" />
   <link rel="stylesheet" href="../doc.css" />
+  <script src="../js/i18n.js" data-i18n-base="../" defer></script>
 </head>
 <body>
   <nav class="doc-nav">
     <a href="https://blueprint-modular.com/" class="brand"><img src="../img/logo-bpm-nom.jpg" alt="" class="brand-logo" /><span class="word-blueprint">Blueprint</span> <span class="word-modular">Modular</span></a>
-    <a href="../get-started/why-bpm.html">Pourquoi BPM</a>
-    <a href="../get-started/installation.html">Installation</a>
-    <a href="../components.html">Composants</a>
-    <a href="../api-reference/text.html">Référence API</a>
-    <a href="concepts.html">Déployer</a>
-    <a href="https://blueprint-modular.com/modules.html">Modules</a>
-    <a href="../cheat-sheet.html">Aide-mémoire</a>
-    <a href="https://app.blueprint-modular.com/dashboard" class="doc-nav-app" target="_blank" rel="noopener">Ouvrir l'app</a>
-    <button class="nav-burger" aria-label="Menu" id="nav-burger-btn"><span></span><span></span><span></span></button>
+    <a href="../get-started/why-bpm.html" data-i18n="pages.deploy.concepts.navWhy">Pourquoi BPM</a>
+    <a href="../get-started/installation.html" data-i18n="pages.deploy.concepts.navInstallation">Installation</a>
+    <a href="../components.html" data-i18n="pages.deploy.concepts.navComponents">Composants</a>
+    <a href="../api-reference/text.html" data-i18n="pages.deploy.concepts.navApiRef">Référence API</a>
+    <a href="concepts.html" data-i18n="pages.deploy.concepts.navDeploy">Déployer</a>
+    <a href="https://blueprint-modular.com/modules.html" data-i18n="pages.deploy.concepts.navModules">Modules</a>
+    <a href="../cheat-sheet.html" data-i18n="pages.deploy.concepts.navCheatSheet">Aide-mémoire</a>
+    <a href="https://app.blueprint-modular.com/dashboard" class="doc-nav-app" target="_blank" rel="noopener" data-i18n="pages.deploy.concepts.navOpenApp">Ouvrir l'app</a>
+    <button class="nav-burger" aria-label="Menu" id="nav-burger-btn" data-i18n-attr="aria-label:pages.deploy.concepts.burgerAria"><span></span><span></span><span></span></button>
   </nav>
   <div class="doc-layout">
     <aside class="doc-sidebar">
-      <h3>Accueil</h3>
-      <a href="../index.html">Accueil</a>
-      <h3>Démarrage</h3>
-      <a href="../get-started/why-bpm.html">Pourquoi BPM</a>
-      <a href="../get-started/installation.html">Installation</a>
-      <a href="../get-started/fundamentals.html">Fondamentaux</a>
-      <a href="../get-started/first-app.html">Première app</a>
-      <h3>Composants</h3>
-      <a href="../components.html">Catalogue des composants</a>
-      <a href="../api-reference/text.html">Texte</a>
-      <a href="../api-reference/data.html">Données</a>
-      <a href="../api-reference/metrics.html">Métriques</a>
-      <a href="../api-reference/charts.html">Graphiques</a>
-      <a href="../api-reference/inputs.html">Saisie</a>
-      <a href="../api-reference/layout.html">Mise en page</a>
-      <a href="../api-reference/panels.html">Panneaux</a>
-      <a href="../api-reference/media.html">Médias</a>
-      <a href="../api-reference/status.html">Statut</a>
-      <a href="../api-reference/chat.html">Chat</a>
-      <a href="../api-reference/config.html">Config</a>
-      <a href="../api-reference/connection.html">Connexion aux données</a>
-      <h3>Modules</h3>
-      <a href="https://blueprint-modular.com/modules.html">Catalogue des modules</a>
-      <a href="../modules/wiki.html">Module Wiki</a>
-      <a href="../modules/ia.html">Module IA</a>
-      <a href="../modules/veille.html">Module Veille</a>
-      <a href="../modules/ibkr.html">Module IBKR</a>
-      <a href="../modules/analyse-document.html">Module Documents</a>
-      <h3>Déployer</h3>
-      <a href="concepts.html" class="active">Concepts</a>
-      <a href="platforms.html">Plateformes</a>
-      <h3>Connaissances</h3>
-      <a href="../knowledge-base/faq.html">FAQ</a>
-      <a href="../knowledge-base/troubleshooting.html">Dépannage</a>
-      <a href="../knowledge-base/reste-a-faire.html">Ce qu'il reste à faire</a>
-      <h3>Ressources</h3>
-      <a href="../cheat-sheet.html">Aide-mémoire</a>
-      <a href="../versions.html">Versions</a>
+      <h3 data-i18n="pages.deploy.concepts.sbHome">Accueil</h3>
+      <a href="../index.html" data-i18n="pages.deploy.concepts.sbHomeLink">Accueil</a>
+      <h3 data-i18n="pages.deploy.concepts.sbGettingStarted">Démarrage</h3>
+      <a href="../get-started/why-bpm.html" data-i18n="pages.deploy.concepts.sbWhy">Pourquoi BPM</a>
+      <a href="../get-started/installation.html" data-i18n="pages.deploy.concepts.sbInstallation">Installation</a>
+      <a href="../get-started/fundamentals.html" data-i18n="pages.deploy.concepts.sbFundamentals">Fondamentaux</a>
+      <a href="../get-started/first-app.html" data-i18n="pages.deploy.concepts.sbFirstApp">Première app</a>
+      <h3 data-i18n="pages.deploy.concepts.sbComponents">Composants</h3>
+      <a href="../components.html" data-i18n="pages.deploy.concepts.sbCatalog">Catalogue des composants</a>
+      <a href="../api-reference/text.html" data-i18n="pages.deploy.concepts.sbText">Texte</a>
+      <a href="../api-reference/data.html" data-i18n="pages.deploy.concepts.sbData">Données</a>
+      <a href="../api-reference/metrics.html" data-i18n="pages.deploy.concepts.sbMetrics">Métriques</a>
+      <a href="../api-reference/charts.html" data-i18n="pages.deploy.concepts.sbCharts">Graphiques</a>
+      <a href="../api-reference/inputs.html" data-i18n="pages.deploy.concepts.sbInputs">Saisie</a>
+      <a href="../api-reference/layout.html" data-i18n="pages.deploy.concepts.sbLayout">Mise en page</a>
+      <a href="../api-reference/panels.html" data-i18n="pages.deploy.concepts.sbPanels">Panneaux</a>
+      <a href="../api-reference/media.html" data-i18n="pages.deploy.concepts.sbMedia">Médias</a>
+      <a href="../api-reference/status.html" data-i18n="pages.deploy.concepts.sbStatus">Statut</a>
+      <a href="../api-reference/chat.html" data-i18n="pages.deploy.concepts.sbChat">Chat</a>
+      <a href="../api-reference/config.html" data-i18n="pages.deploy.concepts.sbConfig">Config</a>
+      <a href="../api-reference/connection.html" data-i18n="pages.deploy.concepts.sbConnection">Connexion aux données</a>
+      <h3 data-i18n="pages.deploy.concepts.sbModules">Modules</h3>
+      <a href="https://blueprint-modular.com/modules.html" data-i18n="pages.deploy.concepts.sbModulesCatalog">Catalogue des modules</a>
+      <a href="../modules/wiki.html" data-i18n="pages.deploy.concepts.sbModuleWiki">Module Wiki</a>
+      <a href="../modules/ia.html" data-i18n="pages.deploy.concepts.sbModuleIa">Module IA</a>
+      <a href="../modules/veille.html" data-i18n="pages.deploy.concepts.sbModuleVeille">Module Veille</a>
+      <a href="../modules/ibkr.html" data-i18n="pages.deploy.concepts.sbModuleIbkr">Module IBKR</a>
+      <a href="../modules/analyse-document.html" data-i18n="pages.deploy.concepts.sbModuleDocs">Module Documents</a>
+      <h3 data-i18n="pages.deploy.concepts.sbDeploy">Déployer</h3>
+      <a href="concepts.html" class="active" data-i18n="pages.deploy.concepts.sbConcepts">Concepts</a>
+      <a href="platforms.html" data-i18n="pages.deploy.concepts.sbPlatforms">Plateformes</a>
+      <h3 data-i18n="pages.deploy.concepts.sbKnowledge">Connaissances</h3>
+      <a href="../knowledge-base/faq.html" data-i18n="pages.deploy.concepts.sbFaq">FAQ</a>
+      <a href="../knowledge-base/troubleshooting.html" data-i18n="pages.deploy.concepts.sbTroubleshooting">Dépannage</a>
+      <a href="../knowledge-base/reste-a-faire.html" data-i18n="pages.deploy.concepts.sbTodo">Ce qu'il reste à faire</a>
+      <h3 data-i18n="pages.deploy.concepts.sbResources">Ressources</h3>
+      <a href="../cheat-sheet.html" data-i18n="pages.deploy.concepts.sbCheatSheet">Aide-mémoire</a>
+      <a href="../versions.html" data-i18n="pages.deploy.concepts.sbVersions">Versions</a>
     </aside>
     <main class="doc-main">
-      <nav class="breadcrumb"><a href="../index.html">Accueil</a> › <a href="concepts.html">Déployer</a> › Concepts</nav>
-      <h1>Concepts de déploiement</h1>
-      <p class="lead">Comment BPM sert votre app et quelles options de déploiement choisir.</p>
+      <nav class="breadcrumb" data-i18n="pages.deploy.concepts.crumb"><a href="../index.html">Accueil</a> › <a href="concepts.html">Déployer</a> › Concepts</nav>
+      <h1 data-i18n="pages.deploy.concepts.h1">Concepts de déploiement</h1>
+      <p class="lead" data-i18n="pages.deploy.concepts.lead">Comment BPM sert votre app et quelles options de déploiement choisir.</p>
 
-      <h2>Comment BPM sert votre app</h2>
-      <p><code>bpm run app.py</code> démarre un serveur HTTP local. En production, ce serveur tourne en arrière-plan (systemd ou Docker).</p>
+      <h2 data-i18n="pages.deploy.concepts.h2Serve">Comment BPM sert votre app</h2>
+      <p data-i18n="pages.deploy.concepts.pServe"><code>bpm run app.py</code> démarre un serveur HTTP local. En production, ce serveur tourne en arrière-plan (systemd ou Docker).</p>
 
-      <h2>Options de déploiement</h2>
+      <h2 data-i18n="pages.deploy.concepts.h2Options">Options de déploiement</h2>
       <div class="platform-grid">
         <a class="platform-card" href="platforms.html#vps">
           <span class="platform-card-icon" aria-hidden="true">
             <img src="../img/nginx.svg" alt="" width="32" height="32" />
           </span>
-          <h3>VPS + Nginx</h3>
-          <p>Contrôle total, recommandé pour la production.</p>
+          <h3 data-i18n="pages.deploy.concepts.cardVpsTitle">VPS + Nginx</h3>
+          <p data-i18n="pages.deploy.concepts.cardVpsDesc">Contrôle total, recommandé pour la production.</p>
         </a>
         <a class="platform-card" href="platforms.html#docker">
           <span class="platform-card-icon" aria-hidden="true">
             <img src="../img/docker.svg" alt="" width="32" height="32" />
           </span>
-          <h3>Docker</h3>
-          <p>Isolation et portabilité. Idéal pour les équipes.</p>
+          <h3 data-i18n="pages.deploy.concepts.cardDockerTitle">Docker</h3>
+          <p data-i18n="pages.deploy.concepts.cardDockerDesc">Isolation et portabilité. Idéal pour les équipes.</p>
         </a>
-        <p style="margin-top:0.5rem;font-size:0.9rem;color:var(--muted);">Déploiement direct (sans proxy) : dev/test uniquement.</p>
+        <p style="margin-top:0.5rem;font-size:0.9rem;color:var(--muted);" data-i18n="pages.deploy.concepts.gridNote">Déploiement direct (sans proxy) : dev/test uniquement.</p>
       </div>
 
-      <h2>Architecture type</h2>
+      <h2 data-i18n="pages.deploy.concepts.h2Arch">Architecture type</h2>
       <pre><code>Browser → Nginx (reverse proxy, SSL) → bpm server (port 8501) → app.py</code></pre>
-      <p>En production, une app BPM repose sur :</p>
+      <p data-i18n="pages.deploy.concepts.pArch">En production, une app BPM repose sur :</p>
       <ul>
-        <li><strong>Processus Python</strong>  —  exécute votre script (<code>bpm run app.py</code> via systemd ou Docker).</li>
-        <li><strong>Serveur HTTP</strong>  —  BPM sert l'UI (HTML/JS) et gère les requêtes (clics, re-run).</li>
-        <li><strong>Reverse proxy</strong>  —  Nginx (ou autre) pour SSL, domaine, load balancing.</li>
+        <li data-i18n="pages.deploy.concepts.liPython"><strong>Processus Python</strong>  —  exécute votre script (<code>bpm run app.py</code> via systemd ou Docker).</li>
+        <li data-i18n="pages.deploy.concepts.liHttp"><strong>Serveur HTTP</strong>  —  BPM sert l'UI (HTML/JS) et gère les requêtes (clics, re-run).</li>
+        <li data-i18n="pages.deploy.concepts.liProxy"><strong>Reverse proxy</strong>  —  Nginx (ou autre) pour SSL, domaine, load balancing.</li>
       </ul>
 
-      <h2>Prérequis communs</h2>
+      <h2 data-i18n="pages.deploy.concepts.h2Prereq">Prérequis communs</h2>
       <ul>
-        <li>Python 3.9+ installé sur le serveur</li>
-        <li>Git (pour déployer depuis le repo)</li>
-        <li>Domaine pointant vers le VPS (pour SSL)</li>
+        <li data-i18n="pages.deploy.concepts.liPy">Python 3.9+ installé sur le serveur</li>
+        <li data-i18n="pages.deploy.concepts.liGit">Git (pour déployer depuis le repo)</li>
+        <li data-i18n="pages.deploy.concepts.liDomain">Domaine pointant vers le VPS (pour SSL)</li>
       </ul>
 
       <nav class="doc-pagination">
         <span></span>
-        <a class="next" href="platforms.html">Suivant : Plateformes ?</a>
+        <a class="next" href="platforms.html" data-i18n="pages.deploy.concepts.pagNext">Suivant : Plateformes ?</a>
       </nav>
       <section class="whats-next">
-        <h2>Et maintenant ?</h2>
+        <h2 data-i18n="pages.deploy.concepts.whatsNext">Et maintenant ?</h2>
         <ul>
-          <li><a href="platforms.html#vps">VPS + Nginx</a>  —  Étapes détaillées</li>
-          <li><a href="platforms.html#docker">Docker</a>  —  Dockerfile et docker-compose</li>
+          <li data-i18n="pages.deploy.concepts.wnVps"><a href="platforms.html#vps">VPS + Nginx</a>  —  Étapes détaillées</li>
+          <li data-i18n="pages.deploy.concepts.wnDocker"><a href="platforms.html#docker">Docker</a>  —  Dockerfile et docker-compose</li>
         </ul>
       </section>
       <section class="help-cta">
-        <p>Une question ? Consultez la <a href="../knowledge-base/faq.html">FAQ</a> et la <a href="../knowledge-base/reste-a-faire.html">Ce qu'il reste à faire</a>.</p>
+        <p data-i18n="pages.deploy.concepts.helpCta">Une question ? Consultez la <a href="../knowledge-base/faq.html">FAQ</a> et la <a href="../knowledge-base/reste-a-faire.html">Ce qu'il reste à faire</a>.</p>
       </section>
       <footer class="site-footer" style="margin-top:2rem;">
         <div class="footer-links">
-          <a href="../index.html">Accueil</a>
-          <a href="../components.html">Composants</a>
-          <a href="https://blueprint-modular.com/modules.html">Modules</a>
-          <a href="../cheat-sheet.html">Aide-mémoire</a>
-          <a href="../versions.html">Versions</a>
-          <a href="../knowledge-base/faq.html">FAQ</a>
-          <a href="../knowledge-base/reste-a-faire.html">Ce qu'il reste à faire</a>
+          <a href="../index.html" data-i18n="pages.deploy.concepts.footHome">Accueil</a>
+          <a href="../components.html" data-i18n="pages.deploy.concepts.footComponents">Composants</a>
+          <a href="https://blueprint-modular.com/modules.html" data-i18n="pages.deploy.concepts.footModules">Modules</a>
+          <a href="../cheat-sheet.html" data-i18n="pages.deploy.concepts.footCheatSheet">Aide-mémoire</a>
+          <a href="../versions.html" data-i18n="pages.deploy.concepts.footVersions">Versions</a>
+          <a href="../knowledge-base/faq.html" data-i18n="pages.deploy.concepts.footFaq">FAQ</a>
+          <a href="../knowledge-base/reste-a-faire.html" data-i18n="pages.deploy.concepts.footTodo">Ce qu'il reste à faire</a>
         </div>
-        <div class="footer-meta">Blueprint Modular v0.1.52</div>
+        <div class="footer-meta" data-i18n="pages.deploy.concepts.footMeta">Blueprint Modular v0.1.52</div>
       </footer>
     </main>
   </div>

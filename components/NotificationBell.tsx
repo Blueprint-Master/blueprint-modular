@@ -5,24 +5,60 @@ import { createPortal } from "react-dom";
 import { useNotificationHistory } from "@/contexts/NotificationHistoryContext";
 import type { StoredNotification } from "@/contexts/NotificationHistoryContext";
 import { Tooltip } from "@/components/bpm/Tooltip";
+import { useI18n } from "@/lib/i18n/LocaleProvider";
+import type { Locale } from "@/lib/i18n";
 import "./NotificationBell.css";
+
+/** Chaînes bilingues locales — portée : NotificationBell uniquement (pas de churn du dict central). */
+const CONTENT = {
+  fr: {
+    justNow: "À l'instant",
+    minAgo: (n: number) => `Il y a ${n} min`,
+    hoursAgo: (n: number) => `Il y a ${n}h`,
+    daysAgo: (n: number) => `Il y a ${n}j`,
+    notifications: "Notifications",
+    clearHistory: "Effacer l'historique",
+    clearConfirm: "Voulez-vous effacer tout l'historique des notifications ?",
+    clear: "Effacer",
+    empty: "Aucune notification",
+    showLess: "Afficher moins",
+    showMore: "Afficher plus",
+    dateLocale: "fr-FR",
+  },
+  en: {
+    justNow: "Just now",
+    minAgo: (n: number) => `${n} min ago`,
+    hoursAgo: (n: number) => `${n}h ago`,
+    daysAgo: (n: number) => `${n}d ago`,
+    notifications: "Notifications",
+    clearHistory: "Clear history",
+    clearConfirm: "Do you want to clear the entire notification history?",
+    clear: "Clear",
+    empty: "No notifications",
+    showLess: "Show less",
+    showMore: "Show more",
+    dateLocale: "en-US",
+  },
+} as const;
+
+type NotificationStrings = (typeof CONTENT)[Locale];
 
 function getDisplayNotification(notification: StoredNotification): StoredNotification {
   return notification;
 }
 
-function formatTime(timestamp: string): string {
+function formatTime(timestamp: string, t: NotificationStrings): string {
   const date = new Date(timestamp);
   const now = new Date();
   const diffMs = now.getTime() - date.getTime();
   const diffMins = Math.floor(diffMs / 60000);
   const diffHours = Math.floor(diffMs / 3600000);
   const diffDays = Math.floor(diffMs / 86400000);
-  if (diffMins < 1) return "À l'instant";
-  if (diffMins < 60) return `Il y a ${diffMins} min`;
-  if (diffHours < 24) return `Il y a ${diffHours}h`;
-  if (diffDays < 7) return `Il y a ${diffDays}j`;
-  return date.toLocaleDateString("fr-FR", {
+  if (diffMins < 1) return t.justNow;
+  if (diffMins < 60) return t.minAgo(diffMins);
+  if (diffHours < 24) return t.hoursAgo(diffHours);
+  if (diffDays < 7) return t.daysAgo(diffDays);
+  return date.toLocaleDateString(t.dateLocale, {
     day: "2-digit",
     month: "2-digit",
     year: "numeric",
@@ -45,6 +81,8 @@ const BellSvg = () => (
 
 export function NotificationBell() {
   const { notifications, clearHistory } = useNotificationHistory();
+  const { locale } = useI18n();
+  const t = CONTENT[locale];
   const [isOpen, setIsOpen] = useState(false);
   const [isClosing, setIsClosing] = useState(false);
   const [animActive, setAnimActive] = useState(false);
@@ -210,19 +248,19 @@ export function NotificationBell() {
   const panelContent = (
     <>
       <div className="notification-popup-header">
-        <h3>Notifications</h3>
+        <h3>{t.notifications}</h3>
         {count > 0 && (
-          <Tooltip text="Effacer l'historique" position="bottom">
+          <Tooltip text={t.clearHistory} position="bottom">
             <button
               type="button"
               className="notification-clear-button"
               onClick={() => {
-                if (window.confirm("Voulez-vous effacer tout l'historique des notifications ?")) {
+                if (window.confirm(t.clearConfirm)) {
                   clearHistory();
                 }
               }}
             >
-              Effacer
+              {t.clear}
             </button>
           </Tooltip>
         )}
@@ -230,7 +268,7 @@ export function NotificationBell() {
       <div className="notification-popup-content">
         {recentNotifications.length === 0 ? (
           <div className="notification-empty">
-            <p>Aucune notification</p>
+            <p>{t.empty}</p>
           </div>
         ) : (
           <>
@@ -275,7 +313,7 @@ export function NotificationBell() {
                       )}
                       {display.title && <div className="notification-item-title">{display.title}</div>}
                       <div className="notification-item-message">{display.message}</div>
-                      <div className="notification-item-time">{formatTime(notification.timestamp)}</div>
+                      <div className="notification-item-time">{formatTime(notification.timestamp, t)}</div>
                     </div>
                   </div>
                 );
@@ -288,7 +326,7 @@ export function NotificationBell() {
                   className={showAll ? "notification-show-less-button" : "notification-show-more-button"}
                   onClick={() => setShowAll(!showAll)}
                 >
-                  {showAll ? "Afficher moins" : "Afficher plus"}
+                  {showAll ? t.showLess : t.showMore}
                 </button>
               </div>
             )}
@@ -315,7 +353,7 @@ export function NotificationBell() {
         <div
           className="notification-overlay notification-overlay-portal"
           role="dialog"
-          aria-label="Notifications"
+          aria-label={t.notifications}
           onClick={(e) => {
             if (e.target === e.currentTarget) requestClose();
           }}
@@ -337,7 +375,7 @@ export function NotificationBell() {
           type="button"
           className="dashboard-header-icon-btn notification-bell-mobile-btn"
           onClick={handleMobileBellClick}
-          aria-label="Notifications"
+          aria-label={t.notifications}
         >
           <BellSvg />
           {badge}
@@ -353,8 +391,8 @@ export function NotificationBell() {
       className="notification-bell-button"
       onClick={toggle}
       onPointerDown={(e) => e.preventDefault()}
-      aria-label="Notifications"
-      title="Notifications"
+      aria-label={t.notifications}
+      title={t.notifications}
     >
       <BellSvg />
       {badge}

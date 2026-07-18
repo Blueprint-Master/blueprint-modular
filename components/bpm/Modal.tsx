@@ -2,6 +2,12 @@
 
 import React, { useEffect, useState } from "react";
 import { createPortal } from "react-dom";
+import { useBpmLocale } from "./i18n";
+
+const STRINGS = {
+  fr: { close: "Fermer" },
+  en: { close: "Close" },
+} as const;
 
 const MODAL_PORTAL_ZINDEX = 100000;
 
@@ -53,6 +59,8 @@ export function Modal({
   size = "medium",
   showCloseButton = true,
 }: ModalProps) {
+  const bpmLocale = useBpmLocale();
+  const t = STRINGS[bpmLocale];
   const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
@@ -128,7 +136,7 @@ export function Modal({
               type="button"
               className="bpm-modal-close w-8 h-8 flex items-center justify-center text-2xl leading-none rounded transition-colors hover:opacity-80"
               onClick={handleCloseClick}
-              aria-label="Fermer"
+              aria-label={t.close}
               style={{ color: "var(--bpm-text)", background: "transparent", border: "none" }}
             >
               ×

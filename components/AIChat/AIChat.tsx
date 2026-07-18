@@ -9,7 +9,83 @@ import { getDollarSuggestions } from "./ai-suggestions";
 import { moduleRegistry } from "@/lib/ai/module-registry";
 import { VoiceRecorder } from "@/components/ai/VoiceRecorder";
 import { Button, Badge } from "@/components/bpm";
+import { useI18n } from "@/lib/i18n/LocaleProvider";
 import "./AIChat.css";
+
+/**
+ * Self-contained bilingual strings for the shared AIChat component.
+ * Read via useI18n() (defaults to "fr" when rendered outside LocaleProvider).
+ */
+const CONTENT = {
+  fr: {
+    timeLocale: "fr-FR",
+    error: "Erreur",
+    retry: "Réessayer",
+    showTime: "Cliquer pour afficher l'heure",
+    loading: "Chargement…",
+    historyTitle: "Historique des échanges",
+    historyAria: (name: string) => `Historique des échanges avec ${name}`,
+    clearAllConfirm: (name: string) => `Effacer tout l'historique des échanges avec ${name} ?`,
+    clear: "Effacer",
+    empty: "Aucun échange enregistré.",
+    backToList: "← Liste",
+    messageCount: (n: number) => `${n} message${n > 1 ? "s" : ""}`,
+    editTitlePrompt: "Modifier le titre de la conversation",
+    editTitle: "Modifier le titre",
+    deleteConfirm: "Supprimer cette discussion de l'historique ?",
+    delete: "Supprimer",
+    chatWith: (name: string) => `Discuter avec ${name}…`,
+    replyTo: (name: string) => `Répondre à ${name}…`,
+    dataLabel: "Données",
+    filtersLabel: "Filtres",
+    filterSigned: "#Signé",
+    thinking: "Réflexion en cours",
+    removeFile: (name: string) => `Retirer ${name}`,
+    inputAria: "Zone de saisie de l'assistant",
+    attachAria: "Joindre un fichier (PJ)",
+    attachTitle: "Pièce jointe",
+    send: "Envoyer",
+    serviceResponded: (status: number) => `Le service a répondu ${status}`,
+    modelCallError: "Erreur lors de l'appel au modèle.",
+    networkError:
+      "Impossible de joindre le service IA. Vérifiez votre connexion et qu'Ollama est démarré (ex. http://localhost:11434), ou définissez AI_MOCK=true pour le mode démo.",
+    errorPrefix: (msg: string) => `*Erreur :* ${msg}`,
+  },
+  en: {
+    timeLocale: "en-US",
+    error: "Error",
+    retry: "Retry",
+    showTime: "Click to show the time",
+    loading: "Loading…",
+    historyTitle: "Conversation history",
+    historyAria: (name: string) => `Conversation history with ${name}`,
+    clearAllConfirm: (name: string) => `Clear all conversation history with ${name}?`,
+    clear: "Clear",
+    empty: "No conversations saved.",
+    backToList: "← List",
+    messageCount: (n: number) => `${n} message${n > 1 ? "s" : ""}`,
+    editTitlePrompt: "Edit the conversation title",
+    editTitle: "Edit title",
+    deleteConfirm: "Delete this conversation from history?",
+    delete: "Delete",
+    chatWith: (name: string) => `Chat with ${name}…`,
+    replyTo: (name: string) => `Reply to ${name}…`,
+    dataLabel: "Data",
+    filtersLabel: "Filters",
+    filterSigned: "#Signed",
+    thinking: "Thinking…",
+    removeFile: (name: string) => `Remove ${name}`,
+    inputAria: "Assistant input area",
+    attachAria: "Attach a file",
+    attachTitle: "Attachment",
+    send: "Send",
+    serviceResponded: (status: number) => `The service responded ${status}`,
+    modelCallError: "Error while calling the model.",
+    networkError:
+      "Unable to reach the AI service. Check your connection and that Ollama is running (e.g. http://localhost:11434), or set AI_MOCK=true for demo mode.",
+    errorPrefix: (msg: string) => `*Error:* ${msg}`,
+  },
+} as const;
 
 const PROVIDER_ALIAS: Record<string, string> = {
   claude: "claude",
@@ -87,9 +163,11 @@ function MessageBubble({
   isExpanded?: boolean;
   onToggle?: () => void;
 }) {
+  const { locale } = useI18n();
+  const t = CONTENT[locale];
   const timeStr =
     message.createdAt != null
-      ? new Date(message.createdAt).toLocaleTimeString("fr-FR", { hour: "2-digit", minute: "2-digit" })
+      ? new Date(message.createdAt).toLocaleTimeString(t.timeLocale, { hour: "2-digit", minute: "2-digit" })
       : null;
   const showTime = timeStr && (onToggle === undefined ? true : isExpanded);
   const handleBubbleClick = onToggle
@@ -108,7 +186,7 @@ function MessageBubble({
         role={onToggle ? "button" : undefined}
         tabIndex={onToggle ? 0 : undefined}
         onKeyDown={onToggle ? (e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); onToggle(); } } : undefined}
-        aria-label={onToggle && timeStr ? "Cliquer pour afficher l'heure" : undefined}
+        aria-label={onToggle && timeStr ? t.showTime : undefined}
       >
         <div className="bpm-ai-message-header">
           <span className="bpm-ai-message-provider" style={{ color: "var(--bpm-accent)" }}>
@@ -116,11 +194,11 @@ function MessageBubble({
           </span>
           {isError && (
             <span className="bpm-ai-message-actions">
-              <Badge variant="error" className="bpm-ai-message-error-badge">Erreur</Badge>
+              <Badge variant="error" className="bpm-ai-message-error-badge">{t.error}</Badge>
               {onRetry && previousUserContent && (
                 <span onClick={(e) => e.stopPropagation()}>
                   <Button variant="secondary" size="small" onClick={() => onRetry(previousUserContent)}>
-                    ↺ Réessayer
+                    ↺ {t.retry}
                   </Button>
                 </span>
               )}
@@ -181,6 +259,8 @@ export function AIChat({
   newDiscussionTrigger = 0,
   assistantName = "Assistant",
 }: AIChatProps) {
+  const { locale } = useI18n();
+  const t = CONTENT[locale];
   const { data: session, status } = useSession();
   const [messages, setMessages] = useState<ChatMsg[]>([]);
   const [inputText, setInputText] = useState("");
@@ -385,7 +465,7 @@ export function AIChat({
         }
         if (!res.ok) {
           const errBody = await res.text();
-          let errMsg = `Le service a répondu ${res.status}`;
+          let errMsg = t.serviceResponded(res.status);
           try {
             const j = JSON.parse(errBody);
             if (typeof j?.error === "string") errMsg = j.error;
@@ -395,7 +475,7 @@ export function AIChat({
           setMessages((prev) => {
             const next = [...prev];
             const last = next[next.length - 1];
-            if (last?.role === "assistant") next[next.length - 1] = { ...last, content: `*Erreur :* ${errMsg}`, error: true };
+            if (last?.role === "assistant") next[next.length - 1] = { ...last, content: t.errorPrefix(errMsg), error: true };
             return next;
           });
           break;
@@ -429,14 +509,14 @@ export function AIChat({
                 }
                 if (data.type === "done" && data.discussion_id) setCurrentDiscussionId(data.discussion_id);
                 if (data.type === "error") {
-                  let errMsg = typeof data.message === "string" ? data.message : "Erreur lors de l'appel au modèle.";
+                  let errMsg = typeof data.message === "string" ? data.message : t.modelCallError;
                   if (/network error|failed to fetch|fetch failed|econnrefused|econnreset/i.test(errMsg)) {
-                    errMsg = "Impossible de joindre le service IA. Vérifiez votre connexion et qu'Ollama est démarré (ex. http://localhost:11434), ou définissez AI_MOCK=true pour le mode démo.";
+                    errMsg = t.networkError;
                   }
                   setMessages((prev) => {
                     const next = [...prev];
                     const last = next[next.length - 1];
-                    if (last?.role === "assistant") next[next.length - 1] = { ...last, content: `*Erreur :* ${errMsg}`, error: true };
+                    if (last?.role === "assistant") next[next.length - 1] = { ...last, content: t.errorPrefix(errMsg), error: true };
                     return next;
                   });
                 }
@@ -468,13 +548,11 @@ export function AIChat({
           continue;
         }
         const raw = err instanceof Error ? err.message : String(err);
-        const errMsg = isNetwork
-          ? "Impossible de joindre le service IA. Vérifiez votre connexion et qu'Ollama est démarré (ex. http://localhost:11434), ou définissez AI_MOCK=true pour le mode démo."
-          : raw;
+        const errMsg = isNetwork ? t.networkError : raw;
         setMessages((prev) => {
           const next = [...prev];
           const last = next[next.length - 1];
-          if (last?.role === "assistant") next[next.length - 1] = { ...last, content: `*Erreur :* ${errMsg}`, error: true };
+          if (last?.role === "assistant") next[next.length - 1] = { ...last, content: t.errorPrefix(errMsg), error: true };
           return next;
         });
         break;
@@ -483,7 +561,7 @@ export function AIChat({
     setStreamProgress(null);
     setIsStreaming(false);
     abortRef.current = null;
-  }, [activeProvider, configuredProviders, currentDiscussionId, selectedContextModuleIds]);
+  }, [activeProvider, configuredProviders, currentDiscussionId, selectedContextModuleIds, t]);
 
   const handleRetry = useCallback((userContent: string) => {
     if (isStreaming) return;
@@ -506,7 +584,7 @@ export function AIChat({
   if (status === "loading") {
     return (
       <div className="p-4" style={{ color: "var(--bpm-text-secondary)" }}>
-        Chargement…
+        {t.loading}
       </div>
     );
   }
@@ -518,7 +596,7 @@ export function AIChat({
         <div
           className="bpm-ai-history-overlay"
           role="dialog"
-          aria-label={`Historique des échanges avec ${assistantName}`}
+          aria-label={t.historyAria(assistantName)}
           onClick={(e) => {
             if (e.target === e.currentTarget) requestCloseHistory();
           }}
@@ -529,13 +607,13 @@ export function AIChat({
             onAnimationEnd={handleHistoryPanelAnimationEnd}
           >
             <div className="bpm-ai-history-header">
-              <h2 className="bpm-ai-history-title">Historique des échanges</h2>
+              <h2 className="bpm-ai-history-title">{t.historyTitle}</h2>
               {historyConversations.length > 0 && (
                 <button
                   type="button"
                   className="bpm-ai-history-clear-button"
                   onClick={() => {
-                    if (!window.confirm(`Effacer tout l'historique des échanges avec ${assistantName} ?`)) return;
+                    if (!window.confirm(t.clearAllConfirm(assistantName))) return;
                     Promise.all(
                       historyConversations.map((d) =>
                         fetch(`/api/ai/conversations/${encodeURIComponent(d.id)}`, { method: "DELETE", credentials: "include" })
@@ -547,19 +625,19 @@ export function AIChat({
                     });
                   }}
                 >
-                  Effacer
+                  {t.clear}
                 </button>
               )}
             </div>
             <div className="bpm-ai-history-body">
               {historyLoading ? (
-                <p className="bpm-ai-history-loading">Chargement…</p>
+                <p className="bpm-ai-history-loading">{t.loading}</p>
               ) : historyConversations.length === 0 ? (
-                <p className="bpm-ai-history-empty">Aucun échange enregistré.</p>
+                <p className="bpm-ai-history-empty">{t.empty}</p>
               ) : selectedConversation ? (
                 <>
                   <button type="button" className="bpm-ai-history-back" onClick={() => setSelectedHistoryId(null)}>
-                    ← Liste
+                    {t.backToList}
                   </button>
                   <div className="bpm-ai-history-detail">
                     {(selectedConversation.messages || []).map((msg, idx) => (
@@ -585,7 +663,7 @@ export function AIChat({
                   {historyConversations.map((d) => {
                     const date = d.updated_at ? new Date(d.updated_at) : (d.createdAt ? new Date(d.createdAt) : null);
                     const dateStr = date
-                      ? date.toLocaleDateString("fr-FR", {
+                      ? date.toLocaleDateString(t.timeLocale, {
                           day: "2-digit",
                           month: "short",
                           year: "numeric",
@@ -630,7 +708,7 @@ export function AIChat({
                             )}
                             {msgCount > 0 && (
                               <span className="bpm-ai-history-item-count">
-                                {msgCount} message{msgCount > 1 ? "s" : ""}
+                                {t.messageCount(msgCount)}
                               </span>
                             )}
                             {msgCount > 0 && " · "}
@@ -647,7 +725,7 @@ export function AIChat({
                             e.stopPropagation();
                             const current =
                               customTitles[d.id] !== undefined && customTitles[d.id] !== "" ? customTitles[d.id] : d.preview ?? "";
-                            const value = window.prompt("Modifier le titre de la conversation", current);
+                            const value = window.prompt(t.editTitlePrompt, current);
                             if (value !== null) {
                               const next = { ...customTitles, [d.id]: value.trim() };
                               setCustomTitles(next);
@@ -656,7 +734,7 @@ export function AIChat({
                               } catch {}
                             }
                           }}
-                          aria-label="Modifier le titre"
+                          aria-label={t.editTitle}
                         >
                           <svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 -960 960 960" width="24" fill="currentColor">
                             <path d="M200-200h43.92l427.93-427.92-43.93-43.93L200-243.92V-200Zm-40 40v-100.77l527.23-527.77q6.15-5.48 13.57-8.47 7.43-2.99 15.49-2.99t15.62 2.54q7.55 2.54 13.94 9.15l42.69 42.93q6.61 6.38 9.04 14 2.42 7.63 2.42 15.25 0 8.13-2.74 15.56-2.74 7.42-8.72 13.57L260.77-160H160Z" />
@@ -667,7 +745,7 @@ export function AIChat({
                           className="bpm-ai-history-delete"
                           onClick={(e) => {
                             e.stopPropagation();
-                            if (!window.confirm("Supprimer cette discussion de l'historique ?")) return;
+                            if (!window.confirm(t.deleteConfirm)) return;
                             fetch(`/api/ai/conversations/${encodeURIComponent(d.id)}`, { method: "DELETE", credentials: "include" }).then((res) => {
                               if (res.status === 204 || res.ok) {
                                 setHistoryConversations((prev) => prev.filter((c) => c.id !== d.id));
@@ -686,7 +764,7 @@ export function AIChat({
                               }
                             });
                           }}
-                          aria-label="Supprimer"
+                          aria-label={t.delete}
                         >
                           <svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 -960 960 960" width="24" fill="currentColor">
                             <path d="M304.62-160q-26.85 0-45.74-18.88Q240-197.77 240-224.62V-720h-40v-40h160v-30.77h240V-760h160v40h-40v495.38q0 27.62-18.5 46.12Q683-160 655.38-160H304.62ZM680-720H280v495.38q0 10.77 6.92 17.7 6.93 6.92 17.7 6.92h350.76q9.24 0 16.93-7.69 7.69-7.69 7.69-16.93V-720Z" />
@@ -706,13 +784,13 @@ export function AIChat({
         {messages.length === 0 && (
           <div className="bpm-ai-chat-welcome">
             <p>
-              <strong>Discuter avec {assistantName}…</strong>
+              <strong>{t.chatWith(assistantName)}</strong>
             </p>
             <p>
-              <code>$</code> Données : <code>$wiki</code>, <code>$doc</code>, <code>$metric</code>, <code>$table</code>, <code>$chart</code>.
+              <code>$</code> {t.dataLabel} : <code>$wiki</code>, <code>$doc</code>, <code>$metric</code>, <code>$table</code>, <code>$chart</code>.
             </p>
             <p>
-              <code>#</code> Filtres : <code>#Carrefour</code>, <code>#Signé</code>…
+              <code>#</code> {t.filtersLabel} : <code>#Carrefour</code>, <code>{t.filterSigned}</code>…
             </p>
           </div>
         )}
@@ -720,7 +798,7 @@ export function AIChat({
           const isLastEmpty = isStreaming && i === messages.length - 1 && msg.role === "assistant" && !(msg.content || "").trim();
           if (isLastEmpty) {
             return (
-              <div key={i} className="bpm-ai-typing" aria-label="Réflexion en cours">
+              <div key={i} className="bpm-ai-typing" aria-label={t.thinking}>
                 <span className="bpm-ai-typing-dot" />
                 <span className="bpm-ai-typing-dot" />
                 <span className="bpm-ai-typing-dot" />
@@ -756,7 +834,7 @@ export function AIChat({
                   type="button"
                   className="bpm-ai-chat-attached-file-remove"
                   onClick={() => setAttachedFiles((prev) => prev.filter((_, i) => i !== idx))}
-                  aria-label={`Retirer ${f.name}`}
+                  aria-label={t.removeFile(f.name)}
                 >
                   ×
                 </button>
@@ -775,11 +853,11 @@ export function AIChat({
               <textarea
                 ref={inputRef}
                 className={`bpm-ai-chat-input${inputText ? " bpm-ai-chat-input--highlight" : ""}`}
-                aria-label="Zone de saisie de l'assistant"
+                aria-label={t.inputAria}
                 placeholder={
                   messages.length === 0
-                    ? `Discuter avec ${assistantName}…`
-                    : `Répondre à ${assistantName}…`
+                    ? t.chatWith(assistantName)
+                    : t.replyTo(assistantName)
                 }
                 value={inputText}
                 onChange={handleInputChange}
@@ -816,8 +894,8 @@ export function AIChat({
                   className="bpm-ai-chat-pj-button"
                   onClick={() => fileInputRef.current?.click()}
                   disabled={isStreaming}
-                  aria-label="Joindre un fichier (PJ)"
-                  title="Pièce jointe"
+                  aria-label={t.attachAria}
+                  title={t.attachTitle}
                 >
                   {/* Icône Plus (Material) */}
                   <svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24" fill="currentColor">
@@ -839,8 +917,8 @@ export function AIChat({
                     if (!isStreaming && inputText.trim()) handleSend();
                   }}
                   disabled={isStreaming || !inputText.trim()}
-                  aria-label="Envoyer"
-                  title="Envoyer"
+                  aria-label={t.send}
+                  title={t.send}
                 >
                   {/* Flèche d'envoi (avion / send) */}
                   <svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24" fill="currentColor">

@@ -2,6 +2,12 @@
 
 import React, { useState, useRef, useEffect } from "react";
 import { createPortal } from "react-dom";
+import { useBpmLocale } from "./i18n";
+
+const STRINGS = {
+  fr: { placeholderDefault: "Sélectionner...", noOptions: "Aucune option disponible" },
+  en: { placeholderDefault: "Select...", noOptions: "No option available" },
+} as const;
 
 export type SelectboxOption = string | { value: string; label: string };
 
@@ -57,10 +63,13 @@ export function Selectbox({
   onChange,
   disabled = false,
   help = null,
-  placeholder = "Sélectionner...",
+  placeholder,
   required = false,
   triggerHeight,
 }: SelectboxProps) {
+  const bpmLocale = useBpmLocale();
+  const t = STRINGS[bpmLocale];
+  const effPlaceholder = placeholder ?? t.placeholderDefault;
   const [isOpen, setIsOpen] = useState(false);
   const [dropdownStyle, setDropdownStyle] = useState<React.CSSProperties>({});
   const containerRef = useRef<HTMLDivElement>(null);
@@ -142,8 +151,8 @@ export function Selectbox({
   const selectedOption = options.find((o) => getOptionValue(o) === value);
   const displayValue = selectedOption
     ? getOptionLabel(selectedOption)
-    : placeholder && !required
-      ? placeholder
+    : effPlaceholder && !required
+      ? effPlaceholder
       : "";
 
   const handleToggle = (e: React.MouseEvent) => {
@@ -210,7 +219,7 @@ export function Selectbox({
         })
       ) : (
         <div style={{ padding: "8px 12px", fontSize: "var(--bpm-font-size-base)", color: "var(--bpm-text-muted)" }}>
-          Aucune option disponible
+          {t.noOptions}
         </div>
       )}
     </div>
@@ -237,7 +246,7 @@ export function Selectbox({
           style={{
             borderColor: "var(--bpm-border)",
             background: "var(--bpm-bg-primary)",
-            color: displayValue && displayValue !== placeholder ? "var(--bpm-text-primary)" : "var(--bpm-text-secondary)",
+            color: displayValue && displayValue !== effPlaceholder ? "var(--bpm-text-primary)" : "var(--bpm-text-secondary)",
             minHeight: triggerHeight ?? 40,
             height: triggerHeight ?? 40,
             boxSizing: "border-box",

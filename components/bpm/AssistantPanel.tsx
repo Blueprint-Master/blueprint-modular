@@ -3,6 +3,7 @@
 import { useState, useRef, useEffect } from "react";
 import { Panel, Markdown, Spinner } from "@/components/bpm";
 import { bpmComponentRegistry } from "@/lib/ai/context";
+import { useBpmLocale } from "./i18n";
 
 function useDrawerBodyLock(open: boolean, onClose: () => void) {
   useEffect(() => {
@@ -17,12 +18,42 @@ function useDrawerBodyLock(open: boolean, onClose: () => void) {
   }, [open, onClose]);
 }
 
-const PRODUCTION_QUESTIONS = [
-  "Pourquoi mon TRS est-il en baisse cette semaine ?",
-  "Quelle ligne a le plus mauvais TRS ?",
-  "Mes pertes matière sont-elles normales ?",
-  "Que me recommandes-tu pour améliorer la performance ?",
-] as const;
+const STRINGS = {
+  fr: {
+    questions: [
+      "Pourquoi mon TRS est-il en baisse cette semaine ?",
+      "Quelle ligne a le plus mauvais TRS ?",
+      "Mes pertes matière sont-elles normales ?",
+      "Que me recommandes-tu pour améliorer la performance ?",
+    ],
+    titleDefault: "Assistant Production",
+    errorStatus: (s: number) => `Erreur ${s}`,
+    networkError: "Erreur réseau",
+    closeAssistant: "Fermer l'assistant",
+    openAssistant: "Ouvrir l'assistant Production",
+    close: "Fermer",
+    preconfiguredQuestions: "Questions pré-configurées",
+    errorTitle: "Erreur",
+    thinking: "Réflexion…",
+  },
+  en: {
+    questions: [
+      "Why is my OEE dropping this week?",
+      "Which line has the worst OEE?",
+      "Are my material losses normal?",
+      "What do you recommend to improve performance?",
+    ],
+    titleDefault: "Production Assistant",
+    errorStatus: (s: number) => `Error ${s}`,
+    networkError: "Network error",
+    closeAssistant: "Close the assistant",
+    openAssistant: "Open the Production assistant",
+    close: "Close",
+    preconfiguredQuestions: "Pre-configured questions",
+    errorTitle: "Error",
+    thinking: "Thinking…",
+  },
+} as const;
 
 /**
  * @component bpm.assistantPanel
@@ -54,10 +85,13 @@ export interface AssistantPanelProps {
  */
 export function AssistantPanel({
   demoAnswers,
-  title = "Assistant Production",
+  title,
   demo = false,
   className = "",
 }: AssistantPanelProps) {
+  const bpmLocale = useBpmLocale();
+  const t = STRINGS[bpmLocale];
+  const effTitle = title ?? t.titleDefault;
   const [open, setOpen] = useState(demo);
   const [selectedQuestion, setSelectedQuestion] = useState<string | null>(null);
   const [answer, setAnswer] = useState("");
@@ -96,7 +130,7 @@ export function AssistantPanel({
       });
       if (!res.ok) {
         const errBody = await res.text();
-        let msg = `Erreur ${res.status}`;
+        let msg = t.errorStatus(res.status);
         try {
           const data = JSON.parse(errBody) as { error?: string };
           if (data.error) msg = data.error;
@@ -131,7 +165,7 @@ export function AssistantPanel({
       }
       setAnswer(full);
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Erreur réseau");
+      setError(err instanceof Error ? err.message : t.networkError);
     } finally {
       setStreaming(false);
     }
@@ -147,7 +181,7 @@ export function AssistantPanel({
           background: "var(--bpm-accent)",
           color: "var(--bpm-accent-contrast)",
         }}
-        aria-label={open ? "Fermer l'assistant" : "Ouvrir l'assistant Production"}
+        aria-label={open ? t.closeAssistant : t.openAssistant}
       >
         <span className="text-xl">✦</span>
       </button>
@@ -183,7 +217,7 @@ export function AssistantPanel({
               style={{ borderColor: "var(--bpm-border)" }}
             >
               <span className="text-sm font-medium" style={{ color: "var(--bpm-text-primary)" }}>
-                {title}
+                {effTitle}
               </span>
               <button
                 type="button"
@@ -191,16 +225,16 @@ export function AssistantPanel({
                 className="text-sm underline"
                 style={{ color: "var(--bpm-accent)" }}
               >
-                Fermer
+                {t.close}
               </button>
             </div>
 
             <div className="flex-1 overflow-y-auto p-4 space-y-4 min-h-0">
             <p className="text-xs font-medium" style={{ color: "var(--bpm-text-secondary)" }}>
-              Questions pré-configurées
+              {t.preconfiguredQuestions}
             </p>
             <div className="flex flex-wrap gap-2">
-              {PRODUCTION_QUESTIONS.map((q) => (
+              {t.questions.map((q) => (
                 <button
                   key={q}
                   type="button"
@@ -219,7 +253,7 @@ export function AssistantPanel({
             </div>
 
             {error && (
-              <Panel variant="error" title="Erreur">
+              <Panel variant="error" title={t.errorTitle}>
                 {error}
               </Panel>
             )}
@@ -228,7 +262,7 @@ export function AssistantPanel({
               <div className="flex items-center gap-2">
                 <Spinner size="small" />
                 <span className="text-sm" style={{ color: "var(--bpm-text-secondary)" }}>
-                  Réflexion…
+                  {t.thinking}
                 </span>
               </div>
             )}

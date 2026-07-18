@@ -1,6 +1,12 @@
 "use client";
 
 import React, { useEffect } from "react";
+import { useBpmLocale } from "./i18n";
+
+const STRINGS = {
+  fr: { close: "Fermer" },
+  en: { close: "Close" },
+} as const;
 
 /**
  * @component bpm.drawer
@@ -36,6 +42,8 @@ export interface DrawerProps {
  * @forbidden Confirmation courte — utiliser bpm.modal/confirmModal
  */
 export function Drawer({ children, open, onClose, title, side = "right", width = 360, className = "" }: DrawerProps) {
+  const bpmLocale = useBpmLocale();
+  const t = STRINGS[bpmLocale];
   useEffect(() => {
     if (open) {
       const onEscape = (e: KeyboardEvent) => e.key === "Escape" && onClose();
@@ -78,7 +86,7 @@ export function Drawer({ children, open, onClose, title, side = "right", width =
       >
         <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "16px 20px", borderBottom: "1px solid var(--bpm-border)", flexShrink: 0, fontWeight: 600, fontSize: "var(--bpm-font-size-lg)", color: "var(--bpm-text)" }}>
           {title != null ? (typeof title === "string" ? <span style={{ fontWeight: 600, fontSize: "var(--bpm-font-size-lg)", color: "var(--bpm-text)" }}>{title}</span> : title) : <span />}
-          <button type="button" onClick={onClose} aria-label="Fermer" style={{ background: "none", border: "none", cursor: "pointer", color: "var(--bpm-text-secondary)", padding: 4 }}>
+          <button type="button" onClick={onClose} aria-label={t.close} style={{ background: "none", border: "none", cursor: "pointer", color: "var(--bpm-text-secondary)", padding: 4 }}>
             <svg width={20} height={20} viewBox="0 0 24 24" fill="currentColor"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z" /></svg>
           </button>
         </div>

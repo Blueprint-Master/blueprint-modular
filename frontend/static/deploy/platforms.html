@@ -3,95 +3,97 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Déployer  —  Plateformes  —  Blueprint Modular</title>
+  <title data-i18n="pages.deploy.platforms.metaTitle">Déployer  —  Plateformes  —  Blueprint Modular</title>
+  <meta name="description" data-i18n-content="pages.deploy.platforms.metaDesc" content="Guides de déploiement d'une app BPM : VPS Ubuntu + Nginx + systemd (principal) et Docker." />
   <link rel="icon" href="../favicon.ico" />
   <link rel="icon" type="image/png" href="../img/logo-bpm.png" />
   <link rel="stylesheet" href="../doc.css" />
+  <script src="../js/i18n.js" data-i18n-base="../" defer></script>
 </head>
 <body>
   <nav class="doc-nav">
     <a href="https://blueprint-modular.com/" class="brand"><img src="../img/logo-bpm-nom.jpg" alt="" class="brand-logo" /><span class="word-blueprint">Blueprint</span> <span class="word-modular">Modular</span></a>
-    <a href="../get-started/why-bpm.html">Pourquoi BPM</a>
-    <a href="../get-started/installation.html">Installation</a>
-    <a href="../components.html">Composants</a>
-    <a href="../api-reference/text.html">Référence API</a>
-    <a href="concepts.html">Déployer</a>
-    <a href="https://blueprint-modular.com/modules.html">Modules</a>
-    <a href="../cheat-sheet.html">Aide-mémoire</a>
-    <a href="https://app.blueprint-modular.com/dashboard" class="doc-nav-app" target="_blank" rel="noopener">Ouvrir l'app</a>
-    <button class="nav-burger" aria-label="Menu" id="nav-burger-btn"><span></span><span></span><span></span></button>
+    <a href="../get-started/why-bpm.html" data-i18n="pages.deploy.platforms.navWhy">Pourquoi BPM</a>
+    <a href="../get-started/installation.html" data-i18n="pages.deploy.platforms.navInstallation">Installation</a>
+    <a href="../components.html" data-i18n="pages.deploy.platforms.navComponents">Composants</a>
+    <a href="../api-reference/text.html" data-i18n="pages.deploy.platforms.navApiRef">Référence API</a>
+    <a href="concepts.html" data-i18n="pages.deploy.platforms.navDeploy">Déployer</a>
+    <a href="https://blueprint-modular.com/modules.html" data-i18n="pages.deploy.platforms.navModules">Modules</a>
+    <a href="../cheat-sheet.html" data-i18n="pages.deploy.platforms.navCheatSheet">Aide-mémoire</a>
+    <a href="https://app.blueprint-modular.com/dashboard" class="doc-nav-app" target="_blank" rel="noopener" data-i18n="pages.deploy.platforms.navOpenApp">Ouvrir l'app</a>
+    <button class="nav-burger" aria-label="Menu" id="nav-burger-btn" data-i18n-attr="aria-label:pages.deploy.platforms.burgerAria"><span></span><span></span><span></span></button>
   </nav>
   <div class="doc-layout">
     <aside class="doc-sidebar">
-      <h3>Accueil</h3>
-      <a href="../index.html">Accueil</a>
-      <h3>Démarrage</h3>
-      <a href="../get-started/why-bpm.html">Pourquoi BPM</a>
-      <a href="../get-started/installation.html">Installation</a>
-      <a href="../get-started/fundamentals.html">Fondamentaux</a>
-      <a href="../get-started/first-app.html">Première app</a>
-      <h3>Composants</h3>
-      <a href="../components.html">Catalogue des composants</a>
-      <a href="../api-reference/text.html">Texte</a>
-      <a href="../api-reference/data.html">Données</a>
-      <a href="../api-reference/metrics.html">Métriques</a>
-      <a href="../api-reference/charts.html">Graphiques</a>
-      <a href="../api-reference/inputs.html">Saisie</a>
-      <a href="../api-reference/layout.html">Mise en page</a>
-      <a href="../api-reference/panels.html">Panneaux</a>
-      <a href="../api-reference/media.html">Médias</a>
-      <a href="../api-reference/status.html">Statut</a>
-      <a href="../api-reference/chat.html">Chat</a>
-      <a href="../api-reference/config.html">Config</a>
-      <a href="../api-reference/connection.html">Connexion aux données</a>
-      <h3>Modules</h3>
-      <a href="https://blueprint-modular.com/modules.html">Catalogue des modules</a>
-      <a href="../modules/wiki.html">Module Wiki</a>
-      <a href="../modules/ia.html">Module IA</a>
-      <a href="../modules/veille.html">Module Veille</a>
-      <a href="../modules/ibkr.html">Module IBKR</a>
-      <a href="../modules/analyse-document.html">Module Documents</a>
-      <h3>Déployer</h3>
-      <a href="concepts.html">Concepts</a>
-      <a href="platforms.html" class="active">Plateformes</a>
-      <h3>Connaissances</h3>
-      <a href="../knowledge-base/faq.html">FAQ</a>
-      <a href="../knowledge-base/troubleshooting.html">Dépannage</a>
-      <a href="../knowledge-base/reste-a-faire.html">Ce qu'il reste à faire</a>
-      <h3>Ressources</h3>
-      <a href="../cheat-sheet.html">Aide-mémoire</a>
-      <a href="../versions.html">Versions</a>
+      <h3 data-i18n="pages.deploy.platforms.sbHome">Accueil</h3>
+      <a href="../index.html" data-i18n="pages.deploy.platforms.sbHomeLink">Accueil</a>
+      <h3 data-i18n="pages.deploy.platforms.sbGettingStarted">Démarrage</h3>
+      <a href="../get-started/why-bpm.html" data-i18n="pages.deploy.platforms.sbWhy">Pourquoi BPM</a>
+      <a href="../get-started/installation.html" data-i18n="pages.deploy.platforms.sbInstallation">Installation</a>
+      <a href="../get-started/fundamentals.html" data-i18n="pages.deploy.platforms.sbFundamentals">Fondamentaux</a>
+      <a href="../get-started/first-app.html" data-i18n="pages.deploy.platforms.sbFirstApp">Première app</a>
+      <h3 data-i18n="pages.deploy.platforms.sbComponents">Composants</h3>
+      <a href="../components.html" data-i18n="pages.deploy.platforms.sbCatalog">Catalogue des composants</a>
+      <a href="../api-reference/text.html" data-i18n="pages.deploy.platforms.sbText">Texte</a>
+      <a href="../api-reference/data.html" data-i18n="pages.deploy.platforms.sbData">Données</a>
+      <a href="../api-reference/metrics.html" data-i18n="pages.deploy.platforms.sbMetrics">Métriques</a>
+      <a href="../api-reference/charts.html" data-i18n="pages.deploy.platforms.sbCharts">Graphiques</a>
+      <a href="../api-reference/inputs.html" data-i18n="pages.deploy.platforms.sbInputs">Saisie</a>
+      <a href="../api-reference/layout.html" data-i18n="pages.deploy.platforms.sbLayout">Mise en page</a>
+      <a href="../api-reference/panels.html" data-i18n="pages.deploy.platforms.sbPanels">Panneaux</a>
+      <a href="../api-reference/media.html" data-i18n="pages.deploy.platforms.sbMedia">Médias</a>
+      <a href="../api-reference/status.html" data-i18n="pages.deploy.platforms.sbStatus">Statut</a>
+      <a href="../api-reference/chat.html" data-i18n="pages.deploy.platforms.sbChat">Chat</a>
+      <a href="../api-reference/config.html" data-i18n="pages.deploy.platforms.sbConfig">Config</a>
+      <a href="../api-reference/connection.html" data-i18n="pages.deploy.platforms.sbConnection">Connexion aux données</a>
+      <h3 data-i18n="pages.deploy.platforms.sbModules">Modules</h3>
+      <a href="https://blueprint-modular.com/modules.html" data-i18n="pages.deploy.platforms.sbModulesCatalog">Catalogue des modules</a>
+      <a href="../modules/wiki.html" data-i18n="pages.deploy.platforms.sbModuleWiki">Module Wiki</a>
+      <a href="../modules/ia.html" data-i18n="pages.deploy.platforms.sbModuleIa">Module IA</a>
+      <a href="../modules/veille.html" data-i18n="pages.deploy.platforms.sbModuleVeille">Module Veille</a>
+      <a href="../modules/ibkr.html" data-i18n="pages.deploy.platforms.sbModuleIbkr">Module IBKR</a>
+      <a href="../modules/analyse-document.html" data-i18n="pages.deploy.platforms.sbModuleDocs">Module Documents</a>
+      <h3 data-i18n="pages.deploy.platforms.sbDeploy">Déployer</h3>
+      <a href="concepts.html" data-i18n="pages.deploy.platforms.sbConcepts">Concepts</a>
+      <a href="platforms.html" class="active" data-i18n="pages.deploy.platforms.sbPlatforms">Plateformes</a>
+      <h3 data-i18n="pages.deploy.platforms.sbKnowledge">Connaissances</h3>
+      <a href="../knowledge-base/faq.html" data-i18n="pages.deploy.platforms.sbFaq">FAQ</a>
+      <a href="../knowledge-base/troubleshooting.html" data-i18n="pages.deploy.platforms.sbTroubleshooting">Dépannage</a>
+      <a href="../knowledge-base/reste-a-faire.html" data-i18n="pages.deploy.platforms.sbTodo">Ce qu'il reste à faire</a>
+      <h3 data-i18n="pages.deploy.platforms.sbResources">Ressources</h3>
+      <a href="../cheat-sheet.html" data-i18n="pages.deploy.platforms.sbCheatSheet">Aide-mémoire</a>
+      <a href="../versions.html" data-i18n="pages.deploy.platforms.sbVersions">Versions</a>
     </aside>
     <main class="doc-main">
-      <nav class="breadcrumb"><a href="../index.html">Accueil</a> › <a href="concepts.html">Déployer</a> › Plateformes</nav>
-      <h1>Plateformes</h1>
-      <p class="lead">Guides de déploiement : VPS Ubuntu + Nginx + systemd (principal), Docker.</p>
+      <nav class="breadcrumb" data-i18n="pages.deploy.platforms.crumb"><a href="../index.html">Accueil</a> › <a href="concepts.html">Déployer</a> › Plateformes</nav>
+      <h1 data-i18n="pages.deploy.platforms.h1">Plateformes</h1>
+      <p class="lead" data-i18n="pages.deploy.platforms.lead">Guides de déploiement : VPS Ubuntu + Nginx + systemd (principal), Docker.</p>
       <div class="platform-grid">
         <a class="platform-card" href="#vps">
           <span class="platform-card-icon" aria-hidden="true">
             <img src="../img/nginx.svg" alt="" width="32" height="32" />
           </span>
-          <h3>VPS + Nginx</h3>
-          <p>Contrôle total, recommandé pour la production.</p>
+          <h3 data-i18n="pages.deploy.platforms.cardVpsTitle">VPS + Nginx</h3>
+          <p data-i18n="pages.deploy.platforms.cardVpsDesc">Contrôle total, recommandé pour la production.</p>
         </a>
         <a class="platform-card" href="#docker">
           <span class="platform-card-icon" aria-hidden="true">
             <img src="../img/docker.svg" alt="" width="32" height="32" />
           </span>
-          <h3>Docker</h3>
-          <p>Isolation et portabilité. Idéal pour les équipes.</p>
+          <h3 data-i18n="pages.deploy.platforms.cardDockerTitle">Docker</h3>
+          <p data-i18n="pages.deploy.platforms.cardDockerDesc">Isolation et portabilité. Idéal pour les équipes.</p>
         </a>
       </div>
-      <h2 id="vps">VPS Ubuntu + Nginx + systemd</h2>
-      <p><strong>Recommandé</strong> pour héberger une app BPM sur un serveur dédié.</p>
-      <h3>Étape 1  —  Installer BPM sur le serveur</h3>
-      <p>Le dépôt est open source (<a href="https://github.com/Blueprint-Modular/blueprint-modular">Blueprint-Modular/blueprint-modular</a>). Utilisez <code>pip install blueprint-modular</code> (PyPI) pour installer BPM sur le serveur. Pour contribuer : cloner le dépôt puis <code>pip install -e .</code>.</p>
+      <h2 id="vps" data-i18n="pages.deploy.platforms.h2Vps">VPS Ubuntu + Nginx + systemd</h2>
+      <p data-i18n="pages.deploy.platforms.pVps"><strong>Recommandé</strong> pour héberger une app BPM sur un serveur dédié.</p>
+      <h3 data-i18n="pages.deploy.platforms.h3Step1">Étape 1  —  Installer BPM sur le serveur</h3>
+      <p data-i18n="pages.deploy.platforms.pStep1">Le dépôt est open source (<a href="https://github.com/Blueprint-Modular/blueprint-modular">Blueprint-Modular/blueprint-modular</a>). Utilisez <code>pip install blueprint-modular</code> (PyPI) pour installer BPM sur le serveur. Pour contribuer : cloner le dépôt puis <code>pip install -e .</code>.</p>
       <pre><code>python3 -m venv .venv
 source .venv/bin/activate
 pip install blueprint-modular</code></pre>
-      <p>Créez ensuite un <code>app.py</code> (ou utilisez <code>bpm init</code>) dans un répertoire de déploiement, par ex. <code>/var/www/blueprint-modular</code>, et pointez <code>WorkingDirectory</code> vers ce dossier (voir Étape 2).</p>
-      <h3>Étape 2  —  Configurer systemd</h3>
-      <p>Créer <code>/etc/systemd/system/blueprint-modular.service</code> :</p>
+      <p data-i18n="pages.deploy.platforms.pStep1b">Créez ensuite un <code>app.py</code> (ou utilisez <code>bpm init</code>) dans un répertoire de déploiement, par ex. <code>/var/www/blueprint-modular</code>, et pointez <code>WorkingDirectory</code> vers ce dossier (voir Étape 2).</p>
+      <h3 data-i18n="pages.deploy.platforms.h3Step2">Étape 2  —  Configurer systemd</h3>
+      <p data-i18n="pages.deploy.platforms.pStep2">Créer <code>/etc/systemd/system/blueprint-modular.service</code> :</p>
       <pre><code>[Unit]
 Description=Blueprint Modular  —  app BPM
 After=network.target
@@ -106,16 +108,16 @@ RestartSec=5
 
 [Install]
 WantedBy=multi-user.target</code></pre>
-      <p>Puis : <code>systemctl daemon-reload</code>, <code>systemctl enable blueprint-modular</code>, <code>systemctl start blueprint-modular</code>.</p>
-      <h3>Étape 3  —  Configurer Nginx (reverse proxy)</h3>
-      <p>Vhost Nginx qui proxy vers <code>http://127.0.0.1:8501</code>. Voir <code>deploy/nginx.conf</code> ou exemples dans le repo.</p>
-      <h3>Étape 4  —  SSL avec Certbot</h3>
-      <p><code>certbot --nginx -d votre-domaine.com</code></p>
-      <h3>Étape 5  —  Déployer les mises à jour</h3>
-      <p>Avec PyPI : <code>source .venv/bin/activate && pip install --upgrade blueprint-modular && systemctl restart blueprint-modular</code>. Si vous déployez depuis le dépôt (accès requis) : <code>git pull</code> puis redémarrage, ou <code>deploy/deploy-from-git.sh</code>.</p>
+      <p data-i18n="pages.deploy.platforms.pStep2b">Puis : <code>systemctl daemon-reload</code>, <code>systemctl enable blueprint-modular</code>, <code>systemctl start blueprint-modular</code>.</p>
+      <h3 data-i18n="pages.deploy.platforms.h3Step3">Étape 3  —  Configurer Nginx (reverse proxy)</h3>
+      <p data-i18n="pages.deploy.platforms.pStep3">Vhost Nginx qui proxy vers <code>http://127.0.0.1:8501</code>. Voir <code>deploy/nginx.conf</code> ou exemples dans le repo.</p>
+      <h3 data-i18n="pages.deploy.platforms.h3Step4">Étape 4  —  SSL avec Certbot</h3>
+      <p data-i18n="pages.deploy.platforms.pStep4"><code>certbot --nginx -d votre-domaine.com</code></p>
+      <h3 data-i18n="pages.deploy.platforms.h3Step5">Étape 5  —  Déployer les mises à jour</h3>
+      <p data-i18n="pages.deploy.platforms.pStep5">Avec PyPI : <code>source .venv/bin/activate && pip install --upgrade blueprint-modular && systemctl restart blueprint-modular</code>. Si vous déployez depuis le dépôt (accès requis) : <code>git pull</code> puis redémarrage, ou <code>deploy/deploy-from-git.sh</code>.</p>
 
-      <h2 id="docker">Docker</h2>
-      <p><strong>Dockerfile</strong> minimal :</p>
+      <h2 id="docker" data-i18n="pages.deploy.platforms.h2Docker">Docker</h2>
+      <p data-i18n="pages.deploy.platforms.pDocker"><strong>Dockerfile</strong> minimal :</p>
       <pre><code>FROM python:3.11-slim
 WORKDIR /app
 COPY requirements.txt .
@@ -123,35 +125,35 @@ RUN pip install -r requirements.txt
 COPY . .
 EXPOSE 8501
 CMD ["python", "-m", "bpm.cli", "run", "app.py", "--port", "8501", "--host", "0.0.0.0"]</code></pre>
-      <p><strong>docker-compose.yml</strong> avec Nginx (optionnel) : reverse proxy + SSL. Voir exemples dans le repo.</p>
-      <p><strong>Commandes</strong> : <code>docker build -t bpm-app .</code>, <code>docker run -p 8501:8501 bpm-app</code>.</p>
-      <p><small>Il n'existe pas de plateforme « BPM Cloud » pour l'instant.</small></p>
+      <p data-i18n="pages.deploy.platforms.pDockerCompose"><strong>docker-compose.yml</strong> avec Nginx (optionnel) : reverse proxy + SSL. Voir exemples dans le repo.</p>
+      <p data-i18n="pages.deploy.platforms.pDockerCmds"><strong>Commandes</strong> : <code>docker build -t bpm-app .</code>, <code>docker run -p 8501:8501 bpm-app</code>.</p>
+      <p data-i18n="pages.deploy.platforms.pDockerCloud"><small>Il n'existe pas de plateforme « BPM Cloud » pour l'instant.</small></p>
 
       <nav class="doc-pagination">
-        <a class="prev" href="concepts.html">← Précédent : Concepts</a>
+        <a class="prev" href="concepts.html" data-i18n="pages.deploy.platforms.pagPrev">← Précédent : Concepts</a>
         <span></span>
       </nav>
       <section class="whats-next">
-        <h2>Et maintenant ?</h2>
+        <h2 data-i18n="pages.deploy.platforms.whatsNext">Et maintenant ?</h2>
         <ul>
-          <li><a href="../knowledge-base/troubleshooting.html">Dépannage</a>  —  Erreurs courantes</li>
-          <li><a href="../get-started/installation.html">Installation</a>  —  Rappel des commandes</li>
+          <li data-i18n="pages.deploy.platforms.wnTroubleshooting"><a href="../knowledge-base/troubleshooting.html">Dépannage</a>  —  Erreurs courantes</li>
+          <li data-i18n="pages.deploy.platforms.wnInstallation"><a href="../get-started/installation.html">Installation</a>  —  Rappel des commandes</li>
         </ul>
       </section>
       <section class="help-cta">
-        <p>Une question ? Consultez la <a href="../knowledge-base/faq.html">FAQ</a> et la <a href="../knowledge-base/reste-a-faire.html">Ce qu'il reste à faire</a>.</p>
+        <p data-i18n="pages.deploy.platforms.helpCta">Une question ? Consultez la <a href="../knowledge-base/faq.html">FAQ</a> et la <a href="../knowledge-base/reste-a-faire.html">Ce qu'il reste à faire</a>.</p>
       </section>
       <footer class="site-footer" style="margin-top:2rem;">
         <div class="footer-links">
-          <a href="../index.html">Accueil</a>
-          <a href="../components.html">Composants</a>
-          <a href="https://blueprint-modular.com/modules.html">Modules</a>
-          <a href="../cheat-sheet.html">Aide-mémoire</a>
-          <a href="../versions.html">Versions</a>
-          <a href="../knowledge-base/faq.html">FAQ</a>
-          <a href="../knowledge-base/reste-a-faire.html">Ce qu'il reste à faire</a>
+          <a href="../index.html" data-i18n="pages.deploy.platforms.footHome">Accueil</a>
+          <a href="../components.html" data-i18n="pages.deploy.platforms.footComponents">Composants</a>
+          <a href="https://blueprint-modular.com/modules.html" data-i18n="pages.deploy.platforms.footModules">Modules</a>
+          <a href="../cheat-sheet.html" data-i18n="pages.deploy.platforms.footCheatSheet">Aide-mémoire</a>
+          <a href="../versions.html" data-i18n="pages.deploy.platforms.footVersions">Versions</a>
+          <a href="../knowledge-base/faq.html" data-i18n="pages.deploy.platforms.footFaq">FAQ</a>
+          <a href="../knowledge-base/reste-a-faire.html" data-i18n="pages.deploy.platforms.footTodo">Ce qu'il reste à faire</a>
         </div>
-        <div class="footer-meta">Blueprint Modular v0.1.52</div>
+        <div class="footer-meta" data-i18n="pages.deploy.platforms.footMeta">Blueprint Modular v0.1.52</div>
       </footer>
     </main>
   </div>

@@ -1,6 +1,24 @@
 "use client";
 
 import React, { useEffect, useMemo, useState } from "react";
+import { useBpmLocale } from "./i18n";
+
+const STRINGS = {
+  fr: {
+    emptyDetail: "Sélectionnez un élément dans la liste.",
+    searchPlaceholder: "Rechercher…",
+    searchAria: "Rechercher dans la liste",
+    listAria: "Liste",
+    backToList: "← Retour à la liste",
+  },
+  en: {
+    emptyDetail: "Select an item from the list.",
+    searchPlaceholder: "Search…",
+    searchAria: "Search the list",
+    listAria: "List",
+    backToList: "← Back to list",
+  },
+} as const;
 
 export interface MasterDetailColumn<T> {
   key: string;
@@ -80,10 +98,13 @@ export function MasterDetail<T extends Record<string, unknown>>({
   onSelect,
   idKey = "id",
   searchable = false,
-  emptyDetailMessage = "Sélectionnez un élément dans la liste.",
+  emptyDetailMessage,
   splitRatio = 40,
   className = "",
 }: MasterDetailProps<T>) {
+  const bpmLocale = useBpmLocale();
+  const t = STRINGS[bpmLocale];
+  const effEmptyDetailMessage = emptyDetailMessage ?? t.emptyDetail;
   const isMobile = useNarrowMobile();
   const [mobileDetailOpen, setMobileDetailOpen] = useState(false);
   const [query, setQuery] = useState("");
@@ -124,8 +145,8 @@ export function MasterDetail<T extends Record<string, unknown>>({
             type="search"
             value={query}
             onChange={(e) => setQuery(e.target.value)}
-            placeholder="Rechercher…"
-            aria-label="Rechercher dans la liste"
+            placeholder={t.searchPlaceholder}
+            aria-label={t.searchAria}
             style={{
               width: "100%",
               padding: "8px 10px",
@@ -138,7 +159,7 @@ export function MasterDetail<T extends Record<string, unknown>>({
           />
         </div>
       )}
-      <ul role="listbox" aria-label="Liste" style={{ listStyle: "none", margin: 0, padding: 0, overflowY: "auto", flex: 1 }}>
+      <ul role="listbox" aria-label={t.listAria} style={{ listStyle: "none", margin: 0, padding: 0, overflowY: "auto", flex: 1 }}>
         {filtered.map((item) => {
           const id = getId(item, idKey);
           const isSel = id === selectedId;
@@ -198,7 +219,7 @@ export function MasterDetail<T extends Record<string, unknown>>({
             color: "var(--bpm-text-primary)",
           }}
         >
-          ← Retour à la liste
+          {t.backToList}
         </button>
       )}
       {selected ? (
@@ -220,7 +241,7 @@ export function MasterDetail<T extends Record<string, unknown>>({
           <span className="material-symbols-outlined" aria-hidden style={{ fontSize: 40, opacity: 0.45, marginBottom: 8 }}>
             touch_app
           </span>
-          {emptyDetailMessage}
+          {effEmptyDetailMessage}
         </div>
       )}
     </div>

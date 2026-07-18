@@ -43,6 +43,25 @@
       var val = getNested(t, key);
       if (val != null && typeof val === 'string') node.setAttribute('placeholder', val);
     });
+    // Attribut `content` (ex. <meta name="description" data-i18n-content="...">) —
+    // permet un titre/description PAR PAGE plutôt qu'une clé globale unique.
+    var contents = scope.querySelectorAll('[data-i18n-content]');
+    contents.forEach(function(node) {
+      var key = node.getAttribute('data-i18n-content');
+      var val = getNested(t, key);
+      if (val != null && typeof val === 'string') node.setAttribute('content', val);
+    });
+    // Attributs génériques : data-i18n-attr="aria-label:key;title:key2"
+    var attrs = scope.querySelectorAll('[data-i18n-attr]');
+    attrs.forEach(function(node) {
+      var spec = node.getAttribute('data-i18n-attr');
+      spec.split(';').forEach(function(pair) {
+        var kv = pair.split(':');
+        if (kv.length !== 2) return;
+        var val = getNested(t, kv[1].trim());
+        if (val != null && typeof val === 'string') node.setAttribute(kv[0].trim(), val);
+      });
+    });
   }
 
   function run() {
@@ -60,10 +79,17 @@
       return JSON.parse(decoder.decode(buffer));
     }).then(function(t) {
       applyTranslations(t);
-      if (t.page && t.page.title) document.title = t.page.title;
-      if (t.page && t.page.description) {
-        var meta = document.querySelector('meta[name="description"]');
-        if (meta) meta.setAttribute('content', t.page.description);
+      // Titre/description globaux : appliqués UNIQUEMENT si la page ne les porte pas
+      // elle-même (via <title data-i18n> / <meta data-i18n-content>). Sur un site
+      // multi-pages, chaque page fournit sa propre clé ; la clé globale `page.*`
+      // (page d'accueil) ne doit pas écraser les titres des sous-pages.
+      var titleEl = document.querySelector('title');
+      if (t.page && t.page.title && (!titleEl || !titleEl.hasAttribute('data-i18n'))) {
+        document.title = t.page.title;
+      }
+      var descEl = document.querySelector('meta[name="description"]');
+      if (t.page && t.page.description && (!descEl || !descEl.hasAttribute('data-i18n-content'))) {
+        if (descEl) descEl.setAttribute('content', t.page.description);
       }
       var switcher = document.getElementById('i18n-switcher');
       if (switcher) {
