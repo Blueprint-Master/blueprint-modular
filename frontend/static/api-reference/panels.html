@@ -1,9 +1,10 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="fr">
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Panels  —  API Reference  —  Blueprint Modular</title>
+  <meta name="description" content="Blocs d'information bpm.panel : variantes info, warning, error, success. Signature, exemples et variables CSS." data-i18n-content="pages.panels.metaDesc" />
+  <title data-i18n="pages.panels.metaTitle">Panels  —  API Reference  —  Blueprint Modular</title>
   <link rel="icon" href="../favicon.ico" />
   <link rel="icon" type="image/png" href="../img/logo-bpm.png" />
   <link rel="stylesheet" href="../doc.css" />
@@ -16,85 +17,86 @@
     .sandbox-panel.warning { background: #fffbeb; border-color: #fde68a; color: #92400e; }
     .sandbox-panel.error { background: #fef2f2; border-color: #fecaca; color: #991b1b; }
   </style>
+  <script src="../js/i18n.js" data-i18n-base="../" defer></script>
 </head>
 <body>
   <nav class="doc-nav">
     <a href="https://blueprint-modular.com/" class="brand"><img src="../img/logo-bpm-nom.jpg" alt="" class="brand-logo" /><span class="word-blueprint">Blueprint</span> <span class="word-modular">Modular</span></a>
-    <a href="../get-started/why-bpm.html">Pourquoi BPM</a>
-    <a href="../get-started/installation.html">Installation</a>
-    <a href="../components.html">Composants</a>
-    <a href="text.html">Référence API</a>
-    <a href="../deploy/concepts.html">Déployer</a>
-    <a href="https://blueprint-modular.com/modules.html">Modules</a>
-    <a href="../cheat-sheet.html">Aide-mémoire</a>
-    <a href="https://app.blueprint-modular.com/dashboard" class="doc-nav-app" target="_blank" rel="noopener">Ouvrir l'app</a>
-    <button class="nav-burger" aria-label="Menu" id="nav-burger-btn"><span></span><span></span><span></span></button>
+    <a href="../get-started/why-bpm.html" data-i18n="pages.panels.navWhyBpm">Pourquoi BPM</a>
+    <a href="../get-started/installation.html" data-i18n="pages.panels.navInstallation">Installation</a>
+    <a href="../components.html" data-i18n="pages.panels.navComponents">Composants</a>
+    <a href="text.html" data-i18n="pages.panels.navApiRef">Référence API</a>
+    <a href="../deploy/concepts.html" data-i18n="pages.panels.navDeploy">Déployer</a>
+    <a href="https://blueprint-modular.com/modules.html" data-i18n="pages.panels.navModules">Modules</a>
+    <a href="../cheat-sheet.html" data-i18n="pages.panels.navCheatSheet">Aide-mémoire</a>
+    <a href="https://app.blueprint-modular.com/dashboard" class="doc-nav-app" target="_blank" rel="noopener" data-i18n="pages.panels.navOpenApp">Ouvrir l'app</a>
+    <button class="nav-burger" aria-label="Menu" id="nav-burger-btn" data-i18n-attr="aria-label:pages.panels.navMenu"><span></span><span></span><span></span></button>
   </nav>
   <div class="doc-layout">
     <aside class="doc-sidebar">
-      <h3>Accueil</h3>
-      <a href="../index.html">Accueil</a>
-      <h3>Démarrage</h3>
-      <a href="../get-started/why-bpm.html">Pourquoi BPM</a>
-      <a href="../get-started/installation.html">Installation</a>
-      <a href="../get-started/fundamentals.html">Fondamentaux</a>
-      <a href="../get-started/first-app.html">Première app</a>
-      <h3>Composants</h3>
-      <a href="../components.html">Catalogue des composants</a>
-      <a href="text.html">Texte</a>
-      <a href="write.html">write</a>
-      <a href="markdown.html">markdown</a>
-      <a href="text-fn.html">text</a>
-      <a href="title.html">title</a>
-      <a href="header.html">header</a>
-      <a href="subheader.html">subheader</a>
-      <a href="caption.html">caption</a>
-      <a href="code.html">code</a>
-      <a href="latex.html">latex</a>
-      <a href="badge.html">badge</a>
-      <a href="html.html">html</a>
-      <a href="data.html">Données</a>
-      <a href="metrics.html">Métriques</a>
-      <a href="charts.html">Graphiques</a>
-      <a href="inputs.html">Saisie</a>
-      <a href="layout.html">Mise en page</a>
-      <a href="panels.html" class="active">Panneaux</a>
-      <a href="media.html">Médias</a>
-      <a href="status.html">Statut</a>
-      <a href="chat.html">Chat</a>
-      <a href="config.html">Config</a>
-      <a href="connection.html">Connexion aux données</a>
-      <h3>Modules</h3>
-      <a href="https://blueprint-modular.com/modules.html">Catalogue des modules</a>
-      <a href="../modules/wiki.html">Module Wiki</a>
-      <a href="../modules/ia.html">Module IA</a>
-      <a href="../modules/veille.html">Module Veille</a>
-      <a href="../modules/ibkr.html">Module IBKR</a>
-      <a href="../modules/analyse-document.html">Module Documents</a>
-      <h3>Déployer</h3>
-      <a href="../deploy/concepts.html">Concepts</a>
-      <a href="../deploy/platforms.html">Plateformes</a>
-      <h3>Connaissances</h3>
-      <a href="../knowledge-base/faq.html">FAQ</a>
-      <a href="../knowledge-base/troubleshooting.html">Dépannage</a>
-      <a href="../knowledge-base/reste-a-faire.html">Ce qu'il reste à faire</a>
-      <h3>Ressources</h3>
-      <a href="../cheat-sheet.html">Aide-mémoire</a>
-      <a href="../versions.html">Versions</a>
+      <h3 data-i18n="pages.panels.sbHomeH">Accueil</h3>
+      <a href="../index.html" data-i18n="pages.panels.sbHome">Accueil</a>
+      <h3 data-i18n="pages.panels.sbStartH">Démarrage</h3>
+      <a href="../get-started/why-bpm.html" data-i18n="pages.panels.sbWhyBpm">Pourquoi BPM</a>
+      <a href="../get-started/installation.html" data-i18n="pages.panels.sbInstallation">Installation</a>
+      <a href="../get-started/fundamentals.html" data-i18n="pages.panels.sbFundamentals">Fondamentaux</a>
+      <a href="../get-started/first-app.html" data-i18n="pages.panels.sbFirstApp">Première app</a>
+      <h3 data-i18n="pages.panels.sbComponentsH">Composants</h3>
+      <a href="../components.html" data-i18n="pages.panels.sbComponentCatalog">Catalogue des composants</a>
+      <a href="text.html" data-i18n="pages.panels.sbText">Texte</a>
+      <a href="write.html" data-i18n="pages.panels.sbWrite">write</a>
+      <a href="markdown.html" data-i18n="pages.panels.sbMarkdown">markdown</a>
+      <a href="text-fn.html" data-i18n="pages.panels.sbTextFn">text</a>
+      <a href="title.html" data-i18n="pages.panels.sbTitle">title</a>
+      <a href="header.html" data-i18n="pages.panels.sbHeader">header</a>
+      <a href="subheader.html" data-i18n="pages.panels.sbSubheader">subheader</a>
+      <a href="caption.html" data-i18n="pages.panels.sbCaption">caption</a>
+      <a href="code.html" data-i18n="pages.panels.sbCode">code</a>
+      <a href="latex.html" data-i18n="pages.panels.sbLatex">latex</a>
+      <a href="badge.html" data-i18n="pages.panels.sbBadge">badge</a>
+      <a href="html.html" data-i18n="pages.panels.sbHtml">html</a>
+      <a href="data.html" data-i18n="pages.panels.sbData">Données</a>
+      <a href="metrics.html" data-i18n="pages.panels.sbMetrics">Métriques</a>
+      <a href="charts.html" data-i18n="pages.panels.sbCharts">Graphiques</a>
+      <a href="inputs.html" data-i18n="pages.panels.sbInputs">Saisie</a>
+      <a href="layout.html" data-i18n="pages.panels.sbLayout">Mise en page</a>
+      <a href="panels.html" class="active" data-i18n="pages.panels.sbPanels">Panneaux</a>
+      <a href="media.html" data-i18n="pages.panels.sbMedia">Médias</a>
+      <a href="status.html" data-i18n="pages.panels.sbStatus">Statut</a>
+      <a href="chat.html" data-i18n="pages.panels.sbChat">Chat</a>
+      <a href="config.html" data-i18n="pages.panels.sbConfig">Config</a>
+      <a href="connection.html" data-i18n="pages.panels.sbConnection">Connexion aux données</a>
+      <h3 data-i18n="pages.panels.sbModulesH">Modules</h3>
+      <a href="https://blueprint-modular.com/modules.html" data-i18n="pages.panels.sbModuleCatalog">Catalogue des modules</a>
+      <a href="../modules/wiki.html" data-i18n="pages.panels.sbModuleWiki">Module Wiki</a>
+      <a href="../modules/ia.html" data-i18n="pages.panels.sbModuleIa">Module IA</a>
+      <a href="../modules/veille.html" data-i18n="pages.panels.sbModuleVeille">Module Veille</a>
+      <a href="../modules/ibkr.html" data-i18n="pages.panels.sbModuleIbkr">Module IBKR</a>
+      <a href="../modules/analyse-document.html" data-i18n="pages.panels.sbModuleDocuments">Module Documents</a>
+      <h3 data-i18n="pages.panels.sbDeployH">Déployer</h3>
+      <a href="../deploy/concepts.html" data-i18n="pages.panels.sbConcepts">Concepts</a>
+      <a href="../deploy/platforms.html" data-i18n="pages.panels.sbPlatforms">Plateformes</a>
+      <h3 data-i18n="pages.panels.sbKnowledgeH">Connaissances</h3>
+      <a href="../knowledge-base/faq.html" data-i18n="pages.panels.sbFaq">FAQ</a>
+      <a href="../knowledge-base/troubleshooting.html" data-i18n="pages.panels.sbTroubleshooting">Dépannage</a>
+      <a href="../knowledge-base/reste-a-faire.html" data-i18n="pages.panels.sbTodo">Ce qu'il reste à faire</a>
+      <h3 data-i18n="pages.panels.sbResourcesH">Ressources</h3>
+      <a href="../cheat-sheet.html" data-i18n="pages.panels.sbCheatSheet">Aide-mémoire</a>
+      <a href="../versions.html" data-i18n="pages.panels.sbVersions">Versions</a>
     </aside>
     <main class="doc-main">
-      <nav class="breadcrumb"><a href="../index.html">Accueil</a> › <a href="text.html">Référence API</a> › Panneaux</nav>
-      <h1>Panels</h1>
-      <p class="lead">Blocs d'information : <code>bpm.panel</code> avec variantes <strong>info</strong>, <strong>warning</strong>, <strong>error</strong>, <strong>success</strong>. </p>
+      <nav class="breadcrumb" data-i18n="pages.panels.breadcrumb"><a href="../index.html">Accueil</a> › <a href="text.html">Référence API</a> › Panneaux</nav>
+      <h1 data-i18n="pages.panels.h1">Panels</h1>
+      <p class="lead" data-i18n="pages.panels.lead">Blocs d'information : <code>bpm.panel</code> avec variantes <strong>info</strong>, <strong>warning</strong>, <strong>error</strong>, <strong>success</strong>. </p>
       <section class="doc-sandbox-embed">
-        <h2>Tester en direct</h2>
-        <p>Modifiez variant et titre en direct sur l'app :</p>
-        <iframe src="https://app.blueprint-modular.com/docs/components/panel" title="Sandbox bpm.panel" class="doc-sandbox-iframe" allow="fullscreen"></iframe>
-        <p><a href="https://app.blueprint-modular.com/docs/components/panel" target="_blank" rel="noopener" class="doc-cta">Visuel live et sandbox (modifier variant, title) sur l'app »</a></p>
+        <h2 data-i18n="pages.panels.sandboxH">Tester en direct</h2>
+        <p data-i18n="pages.panels.sandboxDesc">Modifiez variant et titre en direct sur l'app :</p>
+        <iframe src="https://app.blueprint-modular.com/docs/components/panel" title="Sandbox bpm.panel" class="doc-sandbox-iframe" allow="fullscreen" data-i18n-attr="title:pages.panels.iframeTitle"></iframe>
+        <p><a href="https://app.blueprint-modular.com/docs/components/panel" target="_blank" rel="noopener" class="doc-cta" data-i18n="pages.panels.sandboxCta">Visuel live et sandbox (modifier variant, title) sur l'app »</a></p>
       </section>
-      <h2>Signature</h2>
+      <h2 data-i18n="pages.panels.sigH">Signature</h2>
       <pre><code>bpm.panel(body, variant='info', title=None, icon=True)</code></pre>
-      <h2>Exemples</h2>
+      <h2 data-i18n="pages.panels.examplesH">Exemples</h2>
       <pre><code>import bpm
 
 bpm.panel("Message informatif.", variant="info")
@@ -102,40 +104,40 @@ bpm.panel("Attention à cette action.", variant="warning")
 bpm.panel("Une erreur s'est produite.", variant="error")
 bpm.panel("Opération réussie.", variant="success")
 bpm.panel("Détails ici.", variant="info", title="À savoir")</code></pre>
-      <h2>Sandbox</h2>
-      <p>Aperçu des variantes <code>bpm.panel</code> :</p>
+      <h2 data-i18n="pages.panels.sandbox2H">Sandbox</h2>
+      <p data-i18n="pages.panels.sandboxPreview">Aperçu des variantes <code>bpm.panel</code> :</p>
       <div class="sandbox-panels">
         <div class="sandbox-panel info">
-          <div class="panel-header"><span aria-hidden="true">i</span><span class="panel-title">Info</span></div>
-          <div class="panel-body">Message informatif.</div>
+          <div class="panel-header"><span aria-hidden="true">i</span><span class="panel-title" data-i18n="pages.panels.pInfoTitle">Info</span></div>
+          <div class="panel-body" data-i18n="pages.panels.pInfoBody">Message informatif.</div>
         </div>
         <div class="sandbox-panel success">
-          <div class="panel-header"><span aria-hidden="true">+</span><span class="panel-title">Success</span></div>
-          <div class="panel-body">Opération réussie.</div>
+          <div class="panel-header"><span aria-hidden="true">+</span><span class="panel-title" data-i18n="pages.panels.pSuccessTitle">Success</span></div>
+          <div class="panel-body" data-i18n="pages.panels.pSuccessBody">Opération réussie.</div>
         </div>
         <div class="sandbox-panel warning">
-          <div class="panel-header"><span aria-hidden="true">!</span><span class="panel-title">Warning</span></div>
-          <div class="panel-body">Attention à cette action.</div>
+          <div class="panel-header"><span aria-hidden="true">!</span><span class="panel-title" data-i18n="pages.panels.pWarningTitle">Warning</span></div>
+          <div class="panel-body" data-i18n="pages.panels.pWarningBody">Attention à cette action.</div>
         </div>
         <div class="sandbox-panel error">
-          <div class="panel-header"><span aria-hidden="true">!</span><span class="panel-title">Error</span></div>
-          <div class="panel-body">Une erreur s'est produite.</div>
+          <div class="panel-header"><span aria-hidden="true">!</span><span class="panel-title" data-i18n="pages.panels.pErrorTitle">Error</span></div>
+          <div class="panel-body" data-i18n="pages.panels.pErrorBody">Une erreur s'est produite.</div>
         </div>
       </div>
-      <p><a href="../components.html">Catalogue des composants</a>  —  Panel, Message, Modal.</p>
-      <p><small>Variables CSS : <code>--bpm-panel-info-bg</code>, <code>--bpm-panel-warning-border</code>, etc.</small></p>
-      <section class="help-cta"><p>Une question ? Consultez la <a href="../knowledge-base/faq.html">FAQ</a> et la <a href="../knowledge-base/reste-a-faire.html">Ce qu'il reste à faire</a>.</p></section>
+      <p data-i18n="pages.panels.catalogLine"><a href="../components.html">Catalogue des composants</a>  —  Panel, Message, Modal.</p>
+      <p data-i18n="pages.panels.cssVars"><small>Variables CSS : <code>--bpm-panel-info-bg</code>, <code>--bpm-panel-warning-border</code>, etc.</small></p>
+      <section class="help-cta"><p data-i18n="pages.panels.helpCta">Une question ? Consultez la <a href="../knowledge-base/faq.html">FAQ</a> et la <a href="../knowledge-base/reste-a-faire.html">Ce qu'il reste à faire</a>.</p></section>
       <footer class="site-footer" style="margin-top:2rem;">
         <div class="footer-links">
-          <a href="../index.html">Accueil</a>
-          <a href="../components.html">Composants</a>
-          <a href="https://blueprint-modular.com/modules.html">Modules</a>
-          <a href="../cheat-sheet.html">Aide-mémoire</a>
-          <a href="../versions.html">Versions</a>
-          <a href="../knowledge-base/faq.html">FAQ</a>
-          <a href="../knowledge-base/reste-a-faire.html">Ce qu'il reste à faire</a>
+          <a href="../index.html" data-i18n="pages.panels.footerHome">Accueil</a>
+          <a href="../components.html" data-i18n="pages.panels.footerComponents">Composants</a>
+          <a href="https://blueprint-modular.com/modules.html" data-i18n="pages.panels.footerModules">Modules</a>
+          <a href="../cheat-sheet.html" data-i18n="pages.panels.footerCheatSheet">Aide-mémoire</a>
+          <a href="../versions.html" data-i18n="pages.panels.footerVersions">Versions</a>
+          <a href="../knowledge-base/faq.html" data-i18n="pages.panels.footerFaq">FAQ</a>
+          <a href="../knowledge-base/reste-a-faire.html" data-i18n="pages.panels.footerTodo">Ce qu'il reste à faire</a>
         </div>
-        <div class="footer-meta">Blueprint Modular v0.1.52</div>
+        <div class="footer-meta" data-i18n="pages.panels.footerMeta">Blueprint Modular v0.1.52</div>
       </footer>
     </main>
   </div>

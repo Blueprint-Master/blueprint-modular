@@ -3,161 +3,163 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Installation  —  Blueprint Modular</title>
+  <title data-i18n="pages.getStarted.installation.metaTitle">Installation  —  Blueprint Modular</title>
+  <meta name="description" data-i18n-content="pages.getStarted.installation.metaDesc" content="Installer le package Python et le runtime BPM (bpm run), configurer l'IA locale (Ollama) et lancer une app." />
   <link rel="icon" href="../favicon.ico" />
   <link rel="icon" type="image/png" href="../img/logo-bpm.png" />
   <link rel="stylesheet" href="../doc.css" />
   <link rel="manifest" href="../manifest.json" />
   <meta name="theme-color" content="#2563eb" />
+  <script src="../js/i18n.js" data-i18n-base="../" defer></script>
 </head>
 <body>
   <nav class="doc-nav">
     <a href="https://blueprint-modular.com/" class="brand"><img src="../img/logo-bpm-nom.jpg" alt="" class="brand-logo" /><span class="word-blueprint">Blueprint</span> <span class="word-modular">Modular</span></a>
-    <a href="../get-started/why-bpm.html">Pourquoi BPM</a>
-    <a href="../get-started/installation.html">Installation</a>
-    <a href="../components.html">Composants</a>
-    <a href="../api-reference/text.html">Référence API</a>
-    <a href="../deploy/concepts.html">Déployer</a>
-    <a href="https://blueprint-modular.com/modules.html">Modules</a>
-    <a href="../cheat-sheet.html">Aide-mémoire</a>
-    <a href="https://app.blueprint-modular.com/dashboard" class="doc-nav-app" target="_blank" rel="noopener">Ouvrir l'app</a>
-    <button class="nav-burger" aria-label="Menu" id="nav-burger-btn"><span></span><span></span><span></span></button>
+    <a href="../get-started/why-bpm.html" data-i18n="pages.getStarted.installation.navWhy">Pourquoi BPM</a>
+    <a href="../get-started/installation.html" data-i18n="pages.getStarted.installation.navInstallation">Installation</a>
+    <a href="../components.html" data-i18n="pages.getStarted.installation.navComponents">Composants</a>
+    <a href="../api-reference/text.html" data-i18n="pages.getStarted.installation.navApiRef">Référence API</a>
+    <a href="../deploy/concepts.html" data-i18n="pages.getStarted.installation.navDeploy">Déployer</a>
+    <a href="https://blueprint-modular.com/modules.html" data-i18n="pages.getStarted.installation.navModules">Modules</a>
+    <a href="../cheat-sheet.html" data-i18n="pages.getStarted.installation.navCheatSheet">Aide-mémoire</a>
+    <a href="https://app.blueprint-modular.com/dashboard" class="doc-nav-app" target="_blank" rel="noopener" data-i18n="pages.getStarted.installation.navOpenApp">Ouvrir l'app</a>
+    <button class="nav-burger" aria-label="Menu" id="nav-burger-btn" data-i18n-attr="aria-label:pages.getStarted.installation.burgerAria"><span></span><span></span><span></span></button>
   </nav>
   <div class="doc-layout">
     <aside class="doc-sidebar">
-      <h3>Accueil</h3>
-      <a href="../index.html">Accueil</a>
-      <h3>Démarrage</h3>
-      <a href="why-bpm.html">Pourquoi BPM</a>
-      <a href="installation.html" class="active">Installation</a>
-      <a href="fundamentals.html">Fondamentaux</a>
-      <a href="first-app.html">Première app</a>
-      <a href="integration.html">Intégration (modules & composants)</a>
-      <h3>Composants</h3>
-      <a href="../components.html">Catalogue des composants</a>
-      <a href="../api-reference/text.html">Texte</a>
-      <a href="../api-reference/data.html">Données</a>
-      <a href="../api-reference/metrics.html">Métriques</a>
-      <a href="../api-reference/charts.html">Graphiques</a>
-      <a href="../api-reference/inputs.html">Saisie</a>
-      <a href="../api-reference/layout.html">Mise en page</a>
-      <a href="../api-reference/panels.html">Panneaux</a>
-      <a href="../api-reference/media.html">Médias</a>
-      <a href="../api-reference/status.html">Statut</a>
-      <a href="../api-reference/chat.html">Chat</a>
-      <a href="../api-reference/config.html">Config</a>
-      <a href="../api-reference/connection.html">Connexion aux données</a>
-      <h3>Modules</h3>
-      <a href="https://blueprint-modular.com/modules.html">Catalogue des modules</a>
-      <a href="../modules/wiki.html">Module Wiki</a>
-      <a href="../modules/ia.html">Module IA</a>
-      <a href="../modules/veille.html">Module Veille</a>
-      <a href="../modules/ibkr.html">Module IBKR</a>
-      <a href="../modules/analyse-document.html">Module Documents</a>
-      <h3>Déployer</h3>
-      <a href="../deploy/concepts.html">Concepts</a>
-      <a href="../deploy/platforms.html">Plateformes</a>
-      <h3>Connaissances</h3>
-      <a href="../knowledge-base/faq.html">FAQ</a>
-      <a href="../knowledge-base/troubleshooting.html">Dépannage</a>
-      <a href="../knowledge-base/reste-a-faire.html">Ce qu'il reste à faire</a>
-      <h3>Ressources</h3>
-      <a href="../cheat-sheet.html">Aide-mémoire</a>
-      <a href="../versions.html">Versions</a>
+      <h3 data-i18n="pages.getStarted.installation.sbHome">Accueil</h3>
+      <a href="../index.html" data-i18n="pages.getStarted.installation.sbHomeLink">Accueil</a>
+      <h3 data-i18n="pages.getStarted.installation.sbGettingStarted">Démarrage</h3>
+      <a href="why-bpm.html" data-i18n="pages.getStarted.installation.sbWhy">Pourquoi BPM</a>
+      <a href="installation.html" class="active" data-i18n="pages.getStarted.installation.sbInstallation">Installation</a>
+      <a href="fundamentals.html" data-i18n="pages.getStarted.installation.sbFundamentals">Fondamentaux</a>
+      <a href="first-app.html" data-i18n="pages.getStarted.installation.sbFirstApp">Première app</a>
+      <a href="integration.html" data-i18n="pages.getStarted.installation.sbIntegration">Intégration (modules & composants)</a>
+      <h3 data-i18n="pages.getStarted.installation.sbComponents">Composants</h3>
+      <a href="../components.html" data-i18n="pages.getStarted.installation.sbCatalog">Catalogue des composants</a>
+      <a href="../api-reference/text.html" data-i18n="pages.getStarted.installation.sbText">Texte</a>
+      <a href="../api-reference/data.html" data-i18n="pages.getStarted.installation.sbData">Données</a>
+      <a href="../api-reference/metrics.html" data-i18n="pages.getStarted.installation.sbMetrics">Métriques</a>
+      <a href="../api-reference/charts.html" data-i18n="pages.getStarted.installation.sbCharts">Graphiques</a>
+      <a href="../api-reference/inputs.html" data-i18n="pages.getStarted.installation.sbInputs">Saisie</a>
+      <a href="../api-reference/layout.html" data-i18n="pages.getStarted.installation.sbLayout">Mise en page</a>
+      <a href="../api-reference/panels.html" data-i18n="pages.getStarted.installation.sbPanels">Panneaux</a>
+      <a href="../api-reference/media.html" data-i18n="pages.getStarted.installation.sbMedia">Médias</a>
+      <a href="../api-reference/status.html" data-i18n="pages.getStarted.installation.sbStatus">Statut</a>
+      <a href="../api-reference/chat.html" data-i18n="pages.getStarted.installation.sbChat">Chat</a>
+      <a href="../api-reference/config.html" data-i18n="pages.getStarted.installation.sbConfig">Config</a>
+      <a href="../api-reference/connection.html" data-i18n="pages.getStarted.installation.sbConnection">Connexion aux données</a>
+      <h3 data-i18n="pages.getStarted.installation.sbModules">Modules</h3>
+      <a href="https://blueprint-modular.com/modules.html" data-i18n="pages.getStarted.installation.sbModulesCatalog">Catalogue des modules</a>
+      <a href="../modules/wiki.html" data-i18n="pages.getStarted.installation.sbModuleWiki">Module Wiki</a>
+      <a href="../modules/ia.html" data-i18n="pages.getStarted.installation.sbModuleIa">Module IA</a>
+      <a href="../modules/veille.html" data-i18n="pages.getStarted.installation.sbModuleVeille">Module Veille</a>
+      <a href="../modules/ibkr.html" data-i18n="pages.getStarted.installation.sbModuleIbkr">Module IBKR</a>
+      <a href="../modules/analyse-document.html" data-i18n="pages.getStarted.installation.sbModuleDocs">Module Documents</a>
+      <h3 data-i18n="pages.getStarted.installation.sbDeploy">Déployer</h3>
+      <a href="../deploy/concepts.html" data-i18n="pages.getStarted.installation.sbConcepts">Concepts</a>
+      <a href="../deploy/platforms.html" data-i18n="pages.getStarted.installation.sbPlatforms">Plateformes</a>
+      <h3 data-i18n="pages.getStarted.installation.sbKnowledge">Connaissances</h3>
+      <a href="../knowledge-base/faq.html" data-i18n="pages.getStarted.installation.sbFaq">FAQ</a>
+      <a href="../knowledge-base/troubleshooting.html" data-i18n="pages.getStarted.installation.sbTroubleshooting">Dépannage</a>
+      <a href="../knowledge-base/reste-a-faire.html" data-i18n="pages.getStarted.installation.sbTodo">Ce qu'il reste à faire</a>
+      <h3 data-i18n="pages.getStarted.installation.sbResources">Ressources</h3>
+      <a href="../cheat-sheet.html" data-i18n="pages.getStarted.installation.sbCheatSheet">Aide-mémoire</a>
+      <a href="../versions.html" data-i18n="pages.getStarted.installation.sbVersions">Versions</a>
     </aside>
     <main class="doc-main">
-      <nav class="breadcrumb">
+      <nav class="breadcrumb" data-i18n="pages.getStarted.installation.crumb">
         <a href="../index.html">Accueil</a> › <a href="installation.html">Démarrage</a> › Installation
       </nav>
 
-      <h1>Installation</h1>
-      <p class="lead">Installation du <strong>package Python</strong> et du runtime BPM (<code>bpm run</code>). Pour l'app de démo (Next.js), voir <a href="../deploy/platforms.html">Déployer</a>.</p>
+      <h1 data-i18n="pages.getStarted.installation.h1">Installation</h1>
+      <p class="lead" data-i18n="pages.getStarted.installation.lead">Installation du <strong>package Python</strong> et du runtime BPM (<code>bpm run</code>). Pour l'app de démo (Next.js), voir <a href="../deploy/platforms.html">Déployer</a>.</p>
 
-      <h2>Tout ce qui doit être installé</h2>
-      <p>Selon ce que vous utilisez :</p>
+      <h2 data-i18n="pages.getStarted.installation.h2All">Tout ce qui doit être installé</h2>
+      <p data-i18n="pages.getStarted.installation.pAll">Selon ce que vous utilisez :</p>
       <ul>
-        <li><strong>Runtime Python</strong> (<code>bpm run</code>) : Python 3.9+, pip, puis <code>pip install blueprint-modular</code>.</li>
-        <li><strong>Application dashboard</strong> (Next.js, modules Wiki, IA, Documents, Gestion de parc, etc.) : Node.js, npm, PostgreSQL, Prisma (via <code>npm install</code> et <code>npx prisma migrate deploy</code>). Voir <a href="https://github.com/Blueprint-Modular/blueprint-modular/blob/master/docs/DATABASE.md">docs/DATABASE.md</a> et <a href="../deploy/platforms.html">Déployer</a>.</li>
-        <li><strong>IA locale dans le runtime Python</strong> (<code>bpm.ask</code>, <code>bpm.chat</code>, etc.) : <code>bpm setup</code> installe Ollama et le modèle par défaut. Voir <a href="#modeles-ia">Modèles d’IA</a> <a href="#workflow">Workflow de démarrage</a>.</li>
+        <li data-i18n="pages.getStarted.installation.liRuntime"><strong>Runtime Python</strong> (<code>bpm run</code>) : Python 3.9+, pip, puis <code>pip install blueprint-modular</code>.</li>
+        <li data-i18n="pages.getStarted.installation.liApp"><strong>Application dashboard</strong> (Next.js, modules Wiki, IA, Documents, Gestion de parc, etc.) : Node.js, npm, PostgreSQL, Prisma (via <code>npm install</code> et <code>npx prisma migrate deploy</code>). Voir <a href="https://github.com/Blueprint-Modular/blueprint-modular/blob/master/docs/DATABASE.md">docs/DATABASE.md</a> et <a href="../deploy/platforms.html">Déployer</a>.</li>
+        <li data-i18n="pages.getStarted.installation.liAiLocal"><strong>IA locale dans le runtime Python</strong> (<code>bpm.ask</code>, <code>bpm.chat</code>, etc.) : <code>bpm setup</code> installe Ollama et le modèle par défaut. Voir <a href="#modeles-ia">Modèles d’IA</a> <a href="#workflow">Workflow de démarrage</a>.</li>
       </ul>
 
-      <h2 id="workflow">Workflow de démarrage (recommandé)</h2>
-      <p>Pour créer et lancer une app BPM avec IA locale en quelques commandes :</p>
+      <h2 id="workflow" data-i18n="pages.getStarted.installation.h2Workflow">Workflow de démarrage (recommandé)</h2>
+      <p data-i18n="pages.getStarted.installation.pWorkflow">Pour créer et lancer une app BPM avec IA locale en quelques commandes :</p>
       <pre><code class="language-bash">pip install blueprint-modular
 bpm setup
 bpm init --name mon-app
 cd mon-app
 bpm run app.py</code></pre>
-      <p><code>bpm setup</code> installe Ollama si besoin, démarre le service et télécharge le modèle par défaut (ex. <code>llama3.2</code>). Ensuite vous pouvez utiliser <code>bpm.ask()</code>, <code>bpm.chat()</code>, <code>bpm.summarize()</code> et <code>bpm.analyze()</code> dans votre <code>app.py</code>.</p>
+      <p data-i18n="pages.getStarted.installation.pWorkflowEnd"><code>bpm setup</code> installe Ollama si besoin, démarre le service et télécharge le modèle par défaut (ex. <code>llama3.2</code>). Ensuite vous pouvez utiliser <code>bpm.ask()</code>, <code>bpm.chat()</code>, <code>bpm.summarize()</code> et <code>bpm.analyze()</code> dans votre <code>app.py</code>.</p>
 
-      <h2 id="modeles-ia">Modèles d’IA (Ollama)</h2>
-      <p>Pour le module IA, l’analyse de documents et le sandbox « Par IA », l’application utilise par défaut <strong>Ollama</strong> en local. Il faut installer Ollama puis télécharger au moins un modèle.</p>
+      <h2 id="modeles-ia" data-i18n="pages.getStarted.installation.h2Models">Modèles d’IA (Ollama)</h2>
+      <p data-i18n="pages.getStarted.installation.pModels">Pour le module IA, l’analyse de documents et le sandbox « Par IA », l’application utilise par défaut <strong>Ollama</strong> en local. Il faut installer Ollama puis télécharger au moins un modèle.</p>
       <ol>
-        <li>Installer Ollama : <a href="https://ollama.com" target="_blank" rel="noopener">ollama.com</a> (Linux, macOS, Windows).</li>
-        <li>Lancer le service Ollama (souvent automatique après installation).</li>
-        <li>Télécharger un modèle recommandé (un seul suffit pour démarrer) :
+        <li data-i18n="pages.getStarted.installation.olInstall">Installer Ollama : <a href="https://ollama.com" target="_blank" rel="noopener">ollama.com</a> (Linux, macOS, Windows).</li>
+        <li data-i18n="pages.getStarted.installation.olService">Lancer le service Ollama (souvent automatique après installation).</li>
+        <li><span data-i18n="pages.getStarted.installation.olPullIntro">Télécharger un modèle recommandé (un seul suffit pour démarrer) :</span>
           <pre><code class="language-bash">ollama pull qwen3:8b</code></pre>
-          Autres modèles possibles : <code>ollama pull qwen2.5:7b</code>, <code>ollama pull mistral:7b-instruct</code>, <code>ollama pull llama3.2:3b</code>.
+          <span data-i18n="pages.getStarted.installation.olPullMore">Autres modèles possibles : <code>ollama pull qwen2.5:7b</code>, <code>ollama pull mistral:7b-instruct</code>, <code>ollama pull llama3.2:3b</code>.</span>
         </li>
-        <li>Configurer l’app : dans <code>.env.local</code>, définir <code>AI_SERVER_URL=http://localhost:11434</code> (ou l’URL de votre serveur Ollama) et optionnellement <code>AI_MODEL=qwen3:8b</code>. En développement sans Ollama : <code>AI_MOCK=true</code>.</li>
+        <li data-i18n="pages.getStarted.installation.olConfig">Configurer l’app : dans <code>.env.local</code>, définir <code>AI_SERVER_URL=http://localhost:11434</code> (ou l’URL de votre serveur Ollama) et optionnellement <code>AI_MODEL=qwen3:8b</code>. En développement sans Ollama : <code>AI_MOCK=true</code>.</li>
       </ol>
-      <p>Détails et alternatives (Claude, OpenAI) : <a href="../modules/ia.html">Module IA</a> et documentation dans l’app (<code>/modules/ia/documentation</code>).</p>
+      <p data-i18n="pages.getStarted.installation.pModelsEnd">Détails et alternatives (Claude, OpenAI) : <a href="../modules/ia.html">Module IA</a> et documentation dans l’app (<code>/modules/ia/documentation</code>).</p>
 
-      <h2>Prérequis (runtime Python)</h2>
+      <h2 data-i18n="pages.getStarted.installation.h2Prereq">Prérequis (runtime Python)</h2>
       <ul>
-        <li><strong>Python 3.9+</strong></li>
-        <li>pip à jour : <code>pip install --upgrade pip</code></li>
-        <li>Optionnel : environnement virtuel recommandé (<code>python -m venv .venv</code>)</li>
+        <li data-i18n="pages.getStarted.installation.liPy"><strong>Python 3.9+</strong></li>
+        <li data-i18n="pages.getStarted.installation.liPip">pip à jour : <code>pip install --upgrade pip</code></li>
+        <li data-i18n="pages.getStarted.installation.liVenv">Optionnel : environnement virtuel recommandé (<code>python -m venv .venv</code>)</li>
       </ul>
 
-      <h2>Installation via pip</h2>
-      <p>Le package est publié sur <a href="https://pypi.org/project/blueprint-modular/">PyPI</a>.</p>
+      <h2 data-i18n="pages.getStarted.installation.h2Pip">Installation via pip</h2>
+      <p data-i18n="pages.getStarted.installation.pPip">Le package est publié sur <a href="https://pypi.org/project/blueprint-modular/">PyPI</a>.</p>
       <pre><code class="language-bash">pip install blueprint-modular</code></pre>
 
-      <h2>Installation depuis les sources</h2>
-      <p>Le dépôt est <strong>open source</strong> : <a href="https://github.com/Blueprint-Modular/blueprint-modular">github.com/Blueprint-Modular/blueprint-modular</a>. Pour la plupart des usages, <code>pip install blueprint-modular</code> suffit. Pour contribuer ou développer le package : <code>git clone https://github.com/Blueprint-Modular/blueprint-modular.git</code>, puis <code>cd blueprint-modular</code> et <code>pip install -e .</code> (venv recommandé).</p>
+      <h2 data-i18n="pages.getStarted.installation.h2Sources">Installation depuis les sources</h2>
+      <p data-i18n="pages.getStarted.installation.pSources">Le dépôt est <strong>open source</strong> : <a href="https://github.com/Blueprint-Modular/blueprint-modular">github.com/Blueprint-Modular/blueprint-modular</a>. Pour la plupart des usages, <code>pip install blueprint-modular</code> suffit. Pour contribuer ou développer le package : <code>git clone https://github.com/Blueprint-Modular/blueprint-modular.git</code>, puis <code>cd blueprint-modular</code> et <code>pip install -e .</code> (venv recommandé).</p>
 
-      <h2>Lancer une app</h2>
+      <h2 data-i18n="pages.getStarted.installation.h2Launch">Lancer une app</h2>
       <pre><code class="language-bash">bpm run app.py</code></pre>
-      <p>L'app est servie sur <code>http://localhost:8501</code> (port par défaut 8501, host et port configurables avec <code>--port</code> et <code>--host</code>).</p>
+      <p data-i18n="pages.getStarted.installation.pLaunch">L'app est servie sur <code>http://localhost:8501</code> (port par défaut 8501, host et port configurables avec <code>--port</code> et <code>--host</code>).</p>
 
-      <h2>Scaffolder une app vide</h2>
+      <h2 data-i18n="pages.getStarted.installation.h2Scaffold">Scaffolder une app vide</h2>
       <pre><code class="language-bash">bpm init --name mon-app</code></pre>
-      <p>Génère le dossier <code>mon-app</code> avec <code>app.py</code>, <code>requirements.txt</code> et <code>README.md</code>. Puis <code>cd mon-app</code> et <code>bpm run app.py</code>.</p>
+      <p data-i18n="pages.getStarted.installation.pScaffold">Génère le dossier <code>mon-app</code> avec <code>app.py</code>, <code>requirements.txt</code> et <code>README.md</code>. Puis <code>cd mon-app</code> et <code>bpm run app.py</code>.</p>
 
-      <h2>Vérifier l'installation</h2>
+      <h2 data-i18n="pages.getStarted.installation.h2Verify">Vérifier l'installation</h2>
       <pre><code class="language-bash">bpm --version</code></pre>
 
       <nav class="doc-pagination">
         <span></span>
-        <a class="next" href="fundamentals.html">Suivant : Fondamentaux</a>
+        <a class="next" href="fundamentals.html" data-i18n="pages.getStarted.installation.pagNext">Suivant : Fondamentaux</a>
       </nav>
 
       <section class="whats-next">
-        <h2>Et maintenant ?</h2>
+        <h2 data-i18n="pages.getStarted.installation.whatsNext">Et maintenant ?</h2>
         <ul>
-          <li><a href="fundamentals.html">Fondamentaux</a>  —  Le modèle mental BPM, refs, décorateurs</li>
-          <li><a href="first-app.html">Première app</a>  —  Créer un dashboard pas à pas</li>
-          <li><a href="../modules/ia.html">Module IA</a>  —  Chat, modèles Ollama (Qwen, Mistral), configuration</li>
-          <li><a href="../components.html">Catalogue des composants</a></li>
+          <li data-i18n="pages.getStarted.installation.wnFundamentals"><a href="fundamentals.html">Fondamentaux</a>  —  Le modèle mental BPM, refs, décorateurs</li>
+          <li data-i18n="pages.getStarted.installation.wnFirstApp"><a href="first-app.html">Première app</a>  —  Créer un dashboard pas à pas</li>
+          <li data-i18n="pages.getStarted.installation.wnIa"><a href="../modules/ia.html">Module IA</a>  —  Chat, modèles Ollama (Qwen, Mistral), configuration</li>
+          <li data-i18n="pages.getStarted.installation.wnCatalog"><a href="../components.html">Catalogue des composants</a></li>
         </ul>
       </section>
 
       <section class="help-cta">
-        <p>Une question ? Consultez la <a href="../knowledge-base/faq.html">FAQ</a> et la <a href="../knowledge-base/reste-a-faire.html">Ce qu'il reste à faire</a>.</p>
+        <p data-i18n="pages.getStarted.installation.helpCta">Une question ? Consultez la <a href="../knowledge-base/faq.html">FAQ</a> et la <a href="../knowledge-base/reste-a-faire.html">Ce qu'il reste à faire</a>.</p>
       </section>
 
       <footer class="site-footer" style="margin-top:2rem;">
         <div class="footer-links">
-          <a href="../index.html">Accueil</a>
-          <a href="../components.html">Composants</a>
-          <a href="https://blueprint-modular.com/modules.html">Modules</a>
-          <a href="../cheat-sheet.html">Aide-mémoire</a>
-          <a href="../versions.html">Versions</a>
-          <a href="../knowledge-base/faq.html">FAQ</a>
-          <a href="../knowledge-base/reste-a-faire.html">Ce qu'il reste à faire</a>
+          <a href="../index.html" data-i18n="pages.getStarted.installation.footHome">Accueil</a>
+          <a href="../components.html" data-i18n="pages.getStarted.installation.footComponents">Composants</a>
+          <a href="https://blueprint-modular.com/modules.html" data-i18n="pages.getStarted.installation.footModules">Modules</a>
+          <a href="../cheat-sheet.html" data-i18n="pages.getStarted.installation.footCheatSheet">Aide-mémoire</a>
+          <a href="../versions.html" data-i18n="pages.getStarted.installation.footVersions">Versions</a>
+          <a href="../knowledge-base/faq.html" data-i18n="pages.getStarted.installation.footFaq">FAQ</a>
+          <a href="../knowledge-base/reste-a-faire.html" data-i18n="pages.getStarted.installation.footTodo">Ce qu'il reste à faire</a>
         </div>
-        <div class="footer-meta">Blueprint Modular v0.1.52</div>
+        <div class="footer-meta" data-i18n="pages.getStarted.installation.footMeta">Blueprint Modular v0.1.52</div>
       </footer>
     </main>
   </div>

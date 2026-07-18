@@ -3,95 +3,97 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Première app  —  Blueprint Modular</title>
+  <title data-i18n="pages.getStarted.firstApp.metaTitle">Première app  —  Blueprint Modular</title>
+  <meta name="description" data-i18n-content="pages.getStarted.firstApp.metaDesc" content="Tutoriel pas à pas : créer une app BPM (dashboard de ventes) et la lancer avec IA locale." />
   <link rel="icon" href="../favicon.ico" />
   <link rel="icon" type="image/png" href="../img/logo-bpm.png" />
   <link rel="stylesheet" href="../doc.css" />
   <link rel="manifest" href="../manifest.json" />
   <meta name="theme-color" content="#2563eb" />
+  <script src="../js/i18n.js" data-i18n-base="../" defer></script>
 </head>
 <body>
   <nav class="doc-nav">
     <a href="https://blueprint-modular.com/" class="brand"><img src="../img/logo-bpm-nom.jpg" alt="" class="brand-logo" /><span class="word-blueprint">Blueprint</span> <span class="word-modular">Modular</span></a>
-    <a href="../get-started/why-bpm.html">Pourquoi BPM</a>
-    <a href="../get-started/installation.html">Installation</a>
-    <a href="../components.html">Composants</a>
-    <a href="../api-reference/text.html">Référence API</a>
-    <a href="../deploy/concepts.html">Déployer</a>
-    <a href="https://blueprint-modular.com/modules.html">Modules</a>
-    <a href="../get-started/integration.html">Intégration</a>
-    <a href="../cheat-sheet.html">Aide-mémoire</a>
-    <a href="https://app.blueprint-modular.com/dashboard" class="doc-nav-app" target="_blank" rel="noopener">Ouvrir l'app</a>
-    <button class="nav-burger" aria-label="Menu" id="nav-burger-btn"><span></span><span></span><span></span></button>
+    <a href="../get-started/why-bpm.html" data-i18n="pages.getStarted.firstApp.navWhy">Pourquoi BPM</a>
+    <a href="../get-started/installation.html" data-i18n="pages.getStarted.firstApp.navInstallation">Installation</a>
+    <a href="../components.html" data-i18n="pages.getStarted.firstApp.navComponents">Composants</a>
+    <a href="../api-reference/text.html" data-i18n="pages.getStarted.firstApp.navApiRef">Référence API</a>
+    <a href="../deploy/concepts.html" data-i18n="pages.getStarted.firstApp.navDeploy">Déployer</a>
+    <a href="https://blueprint-modular.com/modules.html" data-i18n="pages.getStarted.firstApp.navModules">Modules</a>
+    <a href="../get-started/integration.html" data-i18n="pages.getStarted.firstApp.navIntegration">Intégration</a>
+    <a href="../cheat-sheet.html" data-i18n="pages.getStarted.firstApp.navCheatSheet">Aide-mémoire</a>
+    <a href="https://app.blueprint-modular.com/dashboard" class="doc-nav-app" target="_blank" rel="noopener" data-i18n="pages.getStarted.firstApp.navOpenApp">Ouvrir l'app</a>
+    <button class="nav-burger" aria-label="Menu" id="nav-burger-btn" data-i18n-attr="aria-label:pages.getStarted.firstApp.burgerAria"><span></span><span></span><span></span></button>
   </nav>
   <div class="doc-layout">
     <aside class="doc-sidebar">
-      <h3>Accueil</h3>
-      <a href="../index.html">Accueil</a>
-      <h3>Démarrage</h3>
-      <a href="why-bpm.html">Pourquoi BPM</a>
-      <a href="installation.html">Installation</a>
-      <a href="fundamentals.html">Fondamentaux</a>
-      <a href="first-app.html" class="active">Première app</a>
-      <a href="integration.html">Intégration (modules & composants)</a>
-      <h3>Composants</h3>
-      <a href="../components.html">Catalogue des composants</a>
-      <a href="../api-reference/text.html">Texte</a>
-      <a href="../api-reference/data.html">Données</a>
-      <a href="../api-reference/metrics.html">Métriques</a>
-      <a href="../api-reference/charts.html">Graphiques</a>
-      <a href="../api-reference/inputs.html">Saisie</a>
-      <a href="../api-reference/layout.html">Mise en page</a>
-      <a href="../api-reference/panels.html">Panneaux</a>
-      <a href="../api-reference/media.html">Médias</a>
-      <a href="../api-reference/status.html">Statut</a>
-      <a href="../api-reference/chat.html">Chat</a>
-      <a href="../api-reference/config.html">Config</a>
-      <a href="../api-reference/connection.html">Connexion aux données</a>
-      <h3>Modules</h3>
-      <a href="https://blueprint-modular.com/modules.html">Catalogue des modules</a>
-      <a href="../modules/wiki.html">Module Wiki</a>
-      <a href="../modules/ia.html">Module IA</a>
-      <a href="../modules/veille.html">Module Veille</a>
-      <a href="../modules/ibkr.html">Module IBKR</a>
-      <a href="../modules/analyse-document.html">Module Documents</a>
-      <h3>Déployer</h3>
-      <a href="../deploy/concepts.html">Concepts</a>
-      <a href="../deploy/platforms.html">Plateformes</a>
-      <h3>Connaissances</h3>
-      <a href="../knowledge-base/faq.html">FAQ</a>
-      <a href="../knowledge-base/troubleshooting.html">Dépannage</a>
-      <a href="../knowledge-base/reste-a-faire.html">Ce qu'il reste à faire</a>
-      <h3>Ressources</h3>
-      <a href="../cheat-sheet.html">Aide-mémoire</a>
-      <a href="../versions.html">Versions</a>
+      <h3 data-i18n="pages.getStarted.firstApp.sbHome">Accueil</h3>
+      <a href="../index.html" data-i18n="pages.getStarted.firstApp.sbHomeLink">Accueil</a>
+      <h3 data-i18n="pages.getStarted.firstApp.sbGettingStarted">Démarrage</h3>
+      <a href="why-bpm.html" data-i18n="pages.getStarted.firstApp.sbWhy">Pourquoi BPM</a>
+      <a href="installation.html" data-i18n="pages.getStarted.firstApp.sbInstallation">Installation</a>
+      <a href="fundamentals.html" data-i18n="pages.getStarted.firstApp.sbFundamentals">Fondamentaux</a>
+      <a href="first-app.html" class="active" data-i18n="pages.getStarted.firstApp.sbFirstApp">Première app</a>
+      <a href="integration.html" data-i18n="pages.getStarted.firstApp.sbIntegration">Intégration (modules & composants)</a>
+      <h3 data-i18n="pages.getStarted.firstApp.sbComponents">Composants</h3>
+      <a href="../components.html" data-i18n="pages.getStarted.firstApp.sbCatalog">Catalogue des composants</a>
+      <a href="../api-reference/text.html" data-i18n="pages.getStarted.firstApp.sbText">Texte</a>
+      <a href="../api-reference/data.html" data-i18n="pages.getStarted.firstApp.sbData">Données</a>
+      <a href="../api-reference/metrics.html" data-i18n="pages.getStarted.firstApp.sbMetrics">Métriques</a>
+      <a href="../api-reference/charts.html" data-i18n="pages.getStarted.firstApp.sbCharts">Graphiques</a>
+      <a href="../api-reference/inputs.html" data-i18n="pages.getStarted.firstApp.sbInputs">Saisie</a>
+      <a href="../api-reference/layout.html" data-i18n="pages.getStarted.firstApp.sbLayout">Mise en page</a>
+      <a href="../api-reference/panels.html" data-i18n="pages.getStarted.firstApp.sbPanels">Panneaux</a>
+      <a href="../api-reference/media.html" data-i18n="pages.getStarted.firstApp.sbMedia">Médias</a>
+      <a href="../api-reference/status.html" data-i18n="pages.getStarted.firstApp.sbStatus">Statut</a>
+      <a href="../api-reference/chat.html" data-i18n="pages.getStarted.firstApp.sbChat">Chat</a>
+      <a href="../api-reference/config.html" data-i18n="pages.getStarted.firstApp.sbConfig">Config</a>
+      <a href="../api-reference/connection.html" data-i18n="pages.getStarted.firstApp.sbConnection">Connexion aux données</a>
+      <h3 data-i18n="pages.getStarted.firstApp.sbModules">Modules</h3>
+      <a href="https://blueprint-modular.com/modules.html" data-i18n="pages.getStarted.firstApp.sbModulesCatalog">Catalogue des modules</a>
+      <a href="../modules/wiki.html" data-i18n="pages.getStarted.firstApp.sbModuleWiki">Module Wiki</a>
+      <a href="../modules/ia.html" data-i18n="pages.getStarted.firstApp.sbModuleIa">Module IA</a>
+      <a href="../modules/veille.html" data-i18n="pages.getStarted.firstApp.sbModuleVeille">Module Veille</a>
+      <a href="../modules/ibkr.html" data-i18n="pages.getStarted.firstApp.sbModuleIbkr">Module IBKR</a>
+      <a href="../modules/analyse-document.html" data-i18n="pages.getStarted.firstApp.sbModuleDocs">Module Documents</a>
+      <h3 data-i18n="pages.getStarted.firstApp.sbDeploy">Déployer</h3>
+      <a href="../deploy/concepts.html" data-i18n="pages.getStarted.firstApp.sbConcepts">Concepts</a>
+      <a href="../deploy/platforms.html" data-i18n="pages.getStarted.firstApp.sbPlatforms">Plateformes</a>
+      <h3 data-i18n="pages.getStarted.firstApp.sbKnowledge">Connaissances</h3>
+      <a href="../knowledge-base/faq.html" data-i18n="pages.getStarted.firstApp.sbFaq">FAQ</a>
+      <a href="../knowledge-base/troubleshooting.html" data-i18n="pages.getStarted.firstApp.sbTroubleshooting">Dépannage</a>
+      <a href="../knowledge-base/reste-a-faire.html" data-i18n="pages.getStarted.firstApp.sbTodo">Ce qu'il reste à faire</a>
+      <h3 data-i18n="pages.getStarted.firstApp.sbResources">Ressources</h3>
+      <a href="../cheat-sheet.html" data-i18n="pages.getStarted.firstApp.sbCheatSheet">Aide-mémoire</a>
+      <a href="../versions.html" data-i18n="pages.getStarted.firstApp.sbVersions">Versions</a>
     </aside>
     <main class="doc-main">
-      <nav class="breadcrumb">
+      <nav class="breadcrumb" data-i18n="pages.getStarted.firstApp.crumb">
         <a href="../index.html">Accueil</a> › <a href="installation.html">Démarrage</a> › Première app
       </nav>
 
-      <h1>Première app</h1>
-      <p class="lead">Tutoriel pas à pas : créer une app BPM et la lancer avec IA locale.</p>
+      <h1 data-i18n="pages.getStarted.firstApp.h1">Première app</h1>
+      <p class="lead" data-i18n="pages.getStarted.firstApp.lead">Tutoriel pas à pas : créer une app BPM et la lancer avec IA locale.</p>
 
-      <h2>Démarrage rapide (workflow complet)</h2>
-      <p>Après <a href="installation.html">installation</a>, le flux recommandé est :</p>
+      <h2 data-i18n="pages.getStarted.firstApp.h2Quickstart">Démarrage rapide (workflow complet)</h2>
+      <p data-i18n="pages.getStarted.firstApp.pQuickstart">Après <a href="installation.html">installation</a>, le flux recommandé est :</p>
       <pre><code class="language-bash">pip install blueprint-modular
 bpm setup
 bpm init --name mon-app
 cd mon-app
 bpm run app.py</code></pre>
-      <p>Ouvrez <code>http://localhost:8501</code>. Vous pouvez ensuite ajouter <code>bpm.ask()</code>, <code>bpm.chat()</code>, <code>bpm.summarize()</code> ou <code>bpm.analyze()</code> dans <code>app.py</code> (Ollama est prêt après <code>bpm setup</code>).</p>
+      <p data-i18n="pages.getStarted.firstApp.pOpen">Ouvrez <code>http://localhost:8501</code>. Vous pouvez ensuite ajouter <code>bpm.ask()</code>, <code>bpm.chat()</code>, <code>bpm.summarize()</code> ou <code>bpm.analyze()</code> dans <code>app.py</code> (Ollama est prêt après <code>bpm setup</code>).</p>
 
-      <h2>Ce que vous allez créer</h2>
-      <p>Un dashboard de ventes avec 3 métriques, un tableau et un graphique d'évolution du CA.</p>
-      <div class="preview-placeholder" style="min-height:280px;">[ Screenshot résultat final : dashboard ventes ]</div>
+      <h2 data-i18n="pages.getStarted.firstApp.h2Create">Ce que vous allez créer</h2>
+      <p data-i18n="pages.getStarted.firstApp.pCreate">Un dashboard de ventes avec 3 métriques, un tableau et un graphique d'évolution du CA.</p>
+      <div class="preview-placeholder" style="min-height:280px;" data-i18n="pages.getStarted.firstApp.previewFinal">[ Screenshot résultat final : dashboard ventes ]</div>
 
-      <h2>Étape 1  —  Créer le fichier</h2>
+      <h2 data-i18n="pages.getStarted.firstApp.h2Step1">Étape 1  —  Créer le fichier</h2>
       <pre><code class="language-bash">mkdir mon-dashboard &amp;&amp; cd mon-dashboard
 touch app.py</code></pre>
 
-      <h2>Étape 2  —  Écrire l'app</h2>
+      <h2 data-i18n="pages.getStarted.firstApp.h2Step2">Étape 2  —  Écrire l'app</h2>
       <pre><code class="language-python">import bpm
 import pandas as pd
 
@@ -120,45 +122,45 @@ bpm.subheader("Détail par mois")
 bpm.table(df)</code></pre>
       <div class="alert alert-info">
         <span class="alert-icon"></span>
-        <div class="alert-body"><strong>Note</strong>  —  <code>bpm.columns</code> et <code>bpm.chart.line</code> sont prévus dans l'API ; l'implémentation actuelle propose <code>bpm.metric</code>, <code>bpm.table</code>, <code>bpm.title</code>, <code>bpm.write</code>, <code>bpm.button</code>, <code>bpm.panel</code>. Voir <a href="../knowledge-base/reste-a-faire.html">Ce qu'il reste à faire</a>.</div>
+        <div class="alert-body" data-i18n="pages.getStarted.firstApp.noteApp"><strong>Note</strong>  —  <code>bpm.columns</code> et <code>bpm.chart.line</code> sont prévus dans l'API ; l'implémentation actuelle propose <code>bpm.metric</code>, <code>bpm.table</code>, <code>bpm.title</code>, <code>bpm.write</code>, <code>bpm.button</code>, <code>bpm.panel</code>. Voir <a href="../knowledge-base/reste-a-faire.html">Ce qu'il reste à faire</a>.</div>
       </div>
 
-      <h2>Étape 3  —  Lancer</h2>
+      <h2 data-i18n="pages.getStarted.firstApp.h2Step3">Étape 3  —  Lancer</h2>
       <pre><code class="language-bash">bpm run app.py</code></pre>
-      <p>Ouvrez <code>http://localhost:8501</code> dans votre navigateur.</p>
+      <p data-i18n="pages.getStarted.firstApp.pStep3">Ouvrez <code>http://localhost:8501</code> dans votre navigateur.</p>
 
-      <h2>Résultat attendu</h2>
-      <div class="preview-placeholder" style="min-height:200px;">[ Screenshot : titre, 3 métriques, graphique, tableau ]</div>
+      <h2 data-i18n="pages.getStarted.firstApp.h2Result">Résultat attendu</h2>
+      <div class="preview-placeholder" style="min-height:200px;" data-i18n="pages.getStarted.firstApp.previewResult">[ Screenshot : titre, 3 métriques, graphique, tableau ]</div>
 
       <nav class="doc-pagination">
-        <a class="prev" href="fundamentals.html">← Précédent : Fondamentaux</a>
-        <a class="next" href="../components.html">Suivant : Catalogue des composants ?</a>
+        <a class="prev" href="fundamentals.html" data-i18n="pages.getStarted.firstApp.pagPrev">← Précédent : Fondamentaux</a>
+        <a class="next" href="../components.html" data-i18n="pages.getStarted.firstApp.pagNext">Suivant : Catalogue des composants ?</a>
       </nav>
 
       <section class="whats-next">
-        <h2>Et maintenant ?</h2>
+        <h2 data-i18n="pages.getStarted.firstApp.whatsNext">Et maintenant ?</h2>
         <ul>
-          <li><a href="../components.html">Catalogue des composants</a>  —  Découvrir tous les widgets</li>
-          <li><a href="../api-reference/metrics.html">API Reference  —  Metrics</a></li>
-          <li><a href="../deploy/concepts.html">Déployer</a>  —  Mettre en production</li>
+          <li data-i18n="pages.getStarted.firstApp.wnCatalog"><a href="../components.html">Catalogue des composants</a>  —  Découvrir tous les widgets</li>
+          <li data-i18n="pages.getStarted.firstApp.wnMetrics"><a href="../api-reference/metrics.html">API Reference  —  Metrics</a></li>
+          <li data-i18n="pages.getStarted.firstApp.wnDeploy"><a href="../deploy/concepts.html">Déployer</a>  —  Mettre en production</li>
         </ul>
       </section>
 
       <section class="help-cta">
-        <p>Une question ? Consultez la <a href="../knowledge-base/faq.html">FAQ</a> et la <a href="../knowledge-base/reste-a-faire.html">Ce qu'il reste à faire</a>.</p>
+        <p data-i18n="pages.getStarted.firstApp.helpCta">Une question ? Consultez la <a href="../knowledge-base/faq.html">FAQ</a> et la <a href="../knowledge-base/reste-a-faire.html">Ce qu'il reste à faire</a>.</p>
       </section>
 
       <footer class="site-footer" style="margin-top:2rem;">
         <div class="footer-links">
-          <a href="../index.html">Accueil</a>
-          <a href="../components.html">Composants</a>
-          <a href="https://blueprint-modular.com/modules.html">Modules</a>
-          <a href="../cheat-sheet.html">Aide-mémoire</a>
-          <a href="../versions.html">Versions</a>
-          <a href="../knowledge-base/faq.html">FAQ</a>
-          <a href="../knowledge-base/reste-a-faire.html">Ce qu'il reste à faire</a>
+          <a href="../index.html" data-i18n="pages.getStarted.firstApp.footHome">Accueil</a>
+          <a href="../components.html" data-i18n="pages.getStarted.firstApp.footComponents">Composants</a>
+          <a href="https://blueprint-modular.com/modules.html" data-i18n="pages.getStarted.firstApp.footModules">Modules</a>
+          <a href="../cheat-sheet.html" data-i18n="pages.getStarted.firstApp.footCheatSheet">Aide-mémoire</a>
+          <a href="../versions.html" data-i18n="pages.getStarted.firstApp.footVersions">Versions</a>
+          <a href="../knowledge-base/faq.html" data-i18n="pages.getStarted.firstApp.footFaq">FAQ</a>
+          <a href="../knowledge-base/reste-a-faire.html" data-i18n="pages.getStarted.firstApp.footTodo">Ce qu'il reste à faire</a>
         </div>
-        <div class="footer-meta">Blueprint Modular v0.1.52</div>
+        <div class="footer-meta" data-i18n="pages.getStarted.firstApp.footMeta">Blueprint Modular v0.1.52</div>
       </footer>
     </main>
   </div>

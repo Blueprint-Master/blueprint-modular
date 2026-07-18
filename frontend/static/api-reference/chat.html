@@ -3,89 +3,93 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Chat  —  API Reference  —  Blueprint Modular</title>
+  <meta name="description" content="Référence API des composants de chat bpm.chat de Blueprint Modular : message, input, write_stream." data-i18n-content="pages.apiReference.chat.metaDesc" />
+  <meta name="description" content="Référence API des composants de chat bpm.chat de Blueprint Modular : message, input, write_stream." data-i18n-content="pages.apiReference.chat.metaDesc" />
+  <title data-i18n="pages.apiReference.chat.metaTitle">Chat  —  API Reference  —  Blueprint Modular</title>
   <link rel="icon" href="../favicon.ico" />
   <link rel="icon" type="image/png" href="../img/logo-bpm.png" />
   <link rel="stylesheet" href="../doc.css" />
+  <script src="../js/i18n.js" data-i18n-base="../" defer></script>
+  <script src="../js/i18n.js" data-i18n-base="../" defer></script>
 </head>
 <body>
-  <nav class="doc-nav">
-    <a href="https://blueprint-modular.com/" class="brand"><img src="../img/logo-bpm-nom.jpg" alt="" class="brand-logo" /><span class="word-blueprint">Blueprint</span> <span class="word-modular">Modular</span></a>
-    <a href="../get-started/why-bpm.html">Pourquoi BPM</a>
-    <a href="../get-started/installation.html">Installation</a>
-    <a href="../components.html">Composants</a>
-    <a href="text.html">Référence API</a>
-    <a href="../deploy/concepts.html">Déployer</a>
-    <a href="https://blueprint-modular.com/modules.html">Modules</a>
-    <a href="../cheat-sheet.html">Aide-mémoire</a>
-    <a href="https://app.blueprint-modular.com/dashboard" class="doc-nav-app" target="_blank" rel="noopener">Ouvrir l'app</a>
-    <button class="nav-burger" aria-label="Menu" id="nav-burger-btn"><span></span><span></span><span></span></button>
+  <nav class="doc-nav" data-i18n="pages.apiReference.chat.navWhy">
+    <a href="https://blueprint-modular.com/" class="brand" data-i18n="pages.apiReference.chat.navInstall"><img src="../img/logo-bpm-nom.jpg" alt="" class="brand-logo" /><span class="word-blueprint" data-i18n="pages.apiReference.chat.brandBlueprint">Blueprint</span> <span class="word-modular" data-i18n="pages.apiReference.chat.brandModular">Modular</span></a>
+    <a href="../get-started/why-bpm.html" data-i18n="pages.apiReference.chat.navWhy" data-i18n="pages.apiReference.chat.navComponents">Pourquoi BPM</a>
+    <a href="../get-started/installation.html" data-i18n="pages.apiReference.chat.navInstall" data-i18n="pages.apiReference.chat.navApiRef">Installation</a>
+    <a href="../components.html" data-i18n="pages.apiReference.chat.navComponents" data-i18n="pages.apiReference.chat.navDeploy">Composants</a>
+    <a href="text.html" data-i18n="pages.apiReference.chat.navApiRef" data-i18n="pages.apiReference.chat.navModules">Référence API</a>
+    <a href="../deploy/concepts.html" data-i18n="pages.apiReference.chat.navDeploy" data-i18n="pages.apiReference.chat.navCheatSheet">Déployer</a>
+    <a href="https://blueprint-modular.com/modules.html" data-i18n="pages.apiReference.chat.navModules" data-i18n="pages.apiReference.chat.navOpenApp">Modules</a>
+    <a href="../cheat-sheet.html" data-i18n="pages.apiReference.chat.navCheatSheet" data-i18n-attr="aria-label:pages.apiReference.chat.burgerAria">Aide-mémoire</a>
+    <a href="https://app.blueprint-modular.com/dashboard" class="doc-nav-app" target="_blank" rel="noopener" data-i18n="pages.apiReference.chat.navOpenApp">Ouvrir l'app</a>
+    <button class="nav-burger" aria-label="Menu" id="nav-burger-btn" data-i18n-attr="aria-label:pages.apiReference.chat.burgerAria"><span></span><span></span><span></span></button>
   </nav>
-  <div class="doc-layout">
-    <aside class="doc-sidebar">
-      <h3>Accueil</h3>
-      <a href="../index.html">Accueil</a>
-      <h3>Démarrage</h3>
-      <a href="../get-started/why-bpm.html">Pourquoi BPM</a>
-      <a href="../get-started/installation.html">Installation</a>
-      <a href="../get-started/fundamentals.html">Fondamentaux</a>
-      <a href="../get-started/first-app.html">Première app</a>
-      <h3>Composants</h3>
-      <a href="../components.html">Catalogue des composants</a>
-      <a href="text.html">Texte</a>
-      <a href="write.html">write</a>
-      <a href="markdown.html">markdown</a>
-      <a href="text-fn.html">text</a>
-      <a href="title.html">title</a>
-      <a href="header.html">header</a>
-      <a href="subheader.html">subheader</a>
-      <a href="caption.html">caption</a>
-      <a href="code.html">code</a>
-      <a href="latex.html">latex</a>
-      <a href="badge.html">badge</a>
-      <a href="html.html">html</a>
-      <a href="data.html">Données</a>
-      <a href="metrics.html">Métriques</a>
-      <a href="charts.html">Graphiques</a>
-      <a href="inputs.html">Saisie</a>
-      <a href="layout.html">Mise en page</a>
-      <a href="panels.html">Panneaux</a>
-      <a href="media.html">Médias</a>
-      <a href="status.html">Statut</a>
-      <a href="chat.html" class="active">Chat</a>
-      <a href="config.html">Config</a>
-      <a href="connection.html">Connexion aux données</a>
-      <h3>Modules</h3>
-      <a href="https://blueprint-modular.com/modules.html">Catalogue des modules</a>
-      <a href="../modules/wiki.html">Module Wiki</a>
-      <a href="../modules/ia.html">Module IA</a>
-      <a href="../modules/veille.html">Module Veille</a>
-      <a href="../modules/ibkr.html">Module IBKR</a>
-      <a href="../modules/analyse-document.html">Module Documents</a>
-      <h3>Déployer</h3>
-      <a href="../deploy/concepts.html">Concepts</a>
-      <a href="../deploy/platforms.html">Plateformes</a>
-      <h3>Connaissances</h3>
-      <a href="../knowledge-base/faq.html">FAQ</a>
-      <a href="../knowledge-base/troubleshooting.html">Dépannage</a>
-      <a href="../knowledge-base/reste-a-faire.html">Ce qu'il reste à faire</a>
-      <h3>Ressources</h3>
-      <a href="../cheat-sheet.html">Aide-mémoire</a>
-      <a href="../versions.html">Versions</a>
+  <div class="doc-layout" data-i18n="pages.apiReference.chat.sideHomeH">
+    <aside class="doc-sidebar" data-i18n="pages.apiReference.chat.sideHome">
+      <h3 data-i18n="pages.apiReference.chat.sideHomeH" data-i18n="pages.apiReference.chat.sideStartH">Accueil</h3>
+      <a href="../index.html" data-i18n="pages.apiReference.chat.sideHome" data-i18n="pages.apiReference.chat.sideWhy">Accueil</a>
+      <h3 data-i18n="pages.apiReference.chat.sideStartH" data-i18n="pages.apiReference.chat.sideInstall">Démarrage</h3>
+      <a href="../get-started/why-bpm.html" data-i18n="pages.apiReference.chat.sideWhy" data-i18n="pages.apiReference.chat.sideFundamentals">Pourquoi BPM</a>
+      <a href="../get-started/installation.html" data-i18n="pages.apiReference.chat.sideInstall" data-i18n="pages.apiReference.chat.sideFirstApp">Installation</a>
+      <a href="../get-started/fundamentals.html" data-i18n="pages.apiReference.chat.sideFundamentals" data-i18n="pages.apiReference.chat.sideComponentsH">Fondamentaux</a>
+      <a href="../get-started/first-app.html" data-i18n="pages.apiReference.chat.sideFirstApp" data-i18n="pages.apiReference.chat.sideCatalog">Première app</a>
+      <h3 data-i18n="pages.apiReference.chat.sideComponentsH" data-i18n="pages.apiReference.chat.sideText">Composants</h3>
+      <a href="../components.html" data-i18n="pages.apiReference.chat.sideCatalog" data-i18n="pages.apiReference.chat.sideWrite">Catalogue des composants</a>
+      <a href="text.html" data-i18n="pages.apiReference.chat.sideText" data-i18n="pages.apiReference.chat.sideMarkdown">Texte</a>
+      <a href="write.html" data-i18n="pages.apiReference.chat.sideWrite" data-i18n="pages.apiReference.chat.sideTextFn">write</a>
+      <a href="markdown.html" data-i18n="pages.apiReference.chat.sideMarkdown" data-i18n="pages.apiReference.chat.sideTitle">markdown</a>
+      <a href="text-fn.html" data-i18n="pages.apiReference.chat.sideTextFn" data-i18n="pages.apiReference.chat.sideHeader">text</a>
+      <a href="title.html" data-i18n="pages.apiReference.chat.sideTitle" data-i18n="pages.apiReference.chat.sideSubheader">title</a>
+      <a href="header.html" data-i18n="pages.apiReference.chat.sideHeader" data-i18n="pages.apiReference.chat.sideCaption">header</a>
+      <a href="subheader.html" data-i18n="pages.apiReference.chat.sideSubheader" data-i18n="pages.apiReference.chat.sideCode">subheader</a>
+      <a href="caption.html" data-i18n="pages.apiReference.chat.sideCaption" data-i18n="pages.apiReference.chat.sideLatex">caption</a>
+      <a href="code.html" data-i18n="pages.apiReference.chat.sideCode" data-i18n="pages.apiReference.chat.sideBadge">code</a>
+      <a href="latex.html" data-i18n="pages.apiReference.chat.sideLatex" data-i18n="pages.apiReference.chat.sideHtml">latex</a>
+      <a href="badge.html" data-i18n="pages.apiReference.chat.sideBadge" data-i18n="pages.apiReference.chat.sideData">badge</a>
+      <a href="html.html" data-i18n="pages.apiReference.chat.sideHtml" data-i18n="pages.apiReference.chat.sideMetrics">html</a>
+      <a href="data.html" data-i18n="pages.apiReference.chat.sideData" data-i18n="pages.apiReference.chat.sideCharts">Données</a>
+      <a href="metrics.html" data-i18n="pages.apiReference.chat.sideMetrics" data-i18n="pages.apiReference.chat.sideInputs">Métriques</a>
+      <a href="charts.html" data-i18n="pages.apiReference.chat.sideCharts" data-i18n="pages.apiReference.chat.sideLayout">Graphiques</a>
+      <a href="inputs.html" data-i18n="pages.apiReference.chat.sideInputs" data-i18n="pages.apiReference.chat.sidePanels">Saisie</a>
+      <a href="layout.html" data-i18n="pages.apiReference.chat.sideLayout" data-i18n="pages.apiReference.chat.sideMedia">Mise en page</a>
+      <a href="panels.html" data-i18n="pages.apiReference.chat.sidePanels" data-i18n="pages.apiReference.chat.sideStatus">Panneaux</a>
+      <a href="media.html" data-i18n="pages.apiReference.chat.sideMedia" data-i18n="pages.apiReference.chat.sideChat">Médias</a>
+      <a href="status.html" data-i18n="pages.apiReference.chat.sideStatus" data-i18n="pages.apiReference.chat.sideConfig">Statut</a>
+      <a href="chat.html" class="active" data-i18n="pages.apiReference.chat.sideChat" data-i18n="pages.apiReference.chat.sideConnection">Chat</a>
+      <a href="config.html" data-i18n="pages.apiReference.chat.sideConfig" data-i18n="pages.apiReference.chat.sideModulesH">Config</a>
+      <a href="connection.html" data-i18n="pages.apiReference.chat.sideConnection" data-i18n="pages.apiReference.chat.sideModulesCatalog">Connexion aux données</a>
+      <h3 data-i18n="pages.apiReference.chat.sideModulesH" data-i18n="pages.apiReference.chat.sideModWiki">Modules</h3>
+      <a href="https://blueprint-modular.com/modules.html" data-i18n="pages.apiReference.chat.sideModulesCatalog" data-i18n="pages.apiReference.chat.sideModIa">Catalogue des modules</a>
+      <a href="../modules/wiki.html" data-i18n="pages.apiReference.chat.sideModWiki" data-i18n="pages.apiReference.chat.sideModVeille">Module Wiki</a>
+      <a href="../modules/ia.html" data-i18n="pages.apiReference.chat.sideModIa" data-i18n="pages.apiReference.chat.sideModIbkr">Module IA</a>
+      <a href="../modules/veille.html" data-i18n="pages.apiReference.chat.sideModVeille" data-i18n="pages.apiReference.chat.sideModDocs">Module Veille</a>
+      <a href="../modules/ibkr.html" data-i18n="pages.apiReference.chat.sideModIbkr" data-i18n="pages.apiReference.chat.sideDeployH">Module IBKR</a>
+      <a href="../modules/analyse-document.html" data-i18n="pages.apiReference.chat.sideModDocs" data-i18n="pages.apiReference.chat.sideConcepts">Module Documents</a>
+      <h3 data-i18n="pages.apiReference.chat.sideDeployH" data-i18n="pages.apiReference.chat.sidePlatforms">Déployer</h3>
+      <a href="../deploy/concepts.html" data-i18n="pages.apiReference.chat.sideConcepts" data-i18n="pages.apiReference.chat.sideKnowledgeH">Concepts</a>
+      <a href="../deploy/platforms.html" data-i18n="pages.apiReference.chat.sidePlatforms" data-i18n="pages.apiReference.chat.sideFaq">Plateformes</a>
+      <h3 data-i18n="pages.apiReference.chat.sideKnowledgeH" data-i18n="pages.apiReference.chat.sideTroubleshooting">Connaissances</h3>
+      <a href="../knowledge-base/faq.html" data-i18n="pages.apiReference.chat.sideFaq" data-i18n="pages.apiReference.chat.sideTodo">FAQ</a>
+      <a href="../knowledge-base/troubleshooting.html" data-i18n="pages.apiReference.chat.sideTroubleshooting" data-i18n="pages.apiReference.chat.sideResourcesH">Dépannage</a>
+      <a href="../knowledge-base/reste-a-faire.html" data-i18n="pages.apiReference.chat.sideTodo" data-i18n="pages.apiReference.chat.sideCheatSheet">Ce qu'il reste à faire</a>
+      <h3 data-i18n="pages.apiReference.chat.sideResourcesH" data-i18n="pages.apiReference.chat.sideVersions">Ressources</h3>
+      <a href="../cheat-sheet.html" data-i18n="pages.apiReference.chat.sideCheatSheet">Aide-mémoire</a>
+      <a href="../versions.html" data-i18n="pages.apiReference.chat.sideVersions">Versions</a>
     </aside>
     <main class="doc-main">
-      <nav class="breadcrumb"><a href="../index.html">Accueil</a> › <a href="text.html">Référence API</a> › Chat</nav>
-      <h1>Chat</h1>
-      <p class="lead">Composants de chat (Oliver) : <code>bpm.chat.message</code>, <code>bpm.chat.input</code>, <code>bpm.write_stream</code>.</p>
-      <h2>Référence API</h2>
-      <table><thead><tr><th>Fonction</th><th>BPM</th></tr></thead>
+      <nav class="breadcrumb" data-i18n="pages.apiReference.chat.breadcrumb"><a href="../index.html">Accueil</a> › <a href="text.html">Référence API</a> › Chat</nav>
+      <h1 data-i18n="pages.apiReference.chat.h1">Chat</h1>
+      <p class="lead" data-i18n="pages.apiReference.chat.lead">Composants de chat (Oliver) : <code>bpm.chat.message</code>, <code>bpm.chat.input</code>, <code>bpm.write_stream</code>.</p>
+      <h2 data-i18n="pages.apiReference.chat.h2Api">Référence API</h2>
+      <table><thead><tr><th data-i18n="pages.apiReference.chat.thFonction">Fonction</th><th data-i18n="pages.apiReference.chat.thBpm">BPM</th></tr></thead>
         <tbody>
           <tr><td>chat_message()</td><td>bpm.chat.message()</td></tr>
           <tr><td>chat_input()</td><td>bpm.chat.input()</td></tr>
           <tr><td>write_stream()</td><td>bpm.write_stream()</td></tr>
         </tbody>
       </table>
-      <h2>Exemples</h2>
+      <h2 data-i18n="pages.apiReference.chat.h2Examples">Exemples</h2>
       <pre><code>import bpm
 
 with bpm.chat.message("user"):
@@ -98,19 +102,19 @@ user_input = bpm.chat.input("Votre message")
 if user_input:
     with bpm.chat.message("assistant"):
         bpm.write_stream(generate_response(user_input))</code></pre>
-      <p><a href="../components.html">Catalogue des composants</a>  —  composants conversationnels.</p>
-      <section class="help-cta"><p>Une question ? Consultez la <a href="../knowledge-base/faq.html">FAQ</a> et la <a href="../knowledge-base/reste-a-faire.html">Ce qu'il reste à faire</a>.</p></section>
+      <p data-i18n="pages.apiReference.chat.catalogLink"><a href="../components.html">Catalogue des composants</a>  —  composants conversationnels.</p>
+      <section class="help-cta"><p data-i18n="pages.apiReference.chat.helpCta">Une question ? Consultez la <a href="../knowledge-base/faq.html">FAQ</a> et la <a href="../knowledge-base/reste-a-faire.html">Ce qu'il reste à faire</a>.</p></section>
       <footer class="site-footer" style="margin-top:2rem;">
         <div class="footer-links">
-          <a href="../index.html">Accueil</a>
-          <a href="../components.html">Composants</a>
-          <a href="https://blueprint-modular.com/modules.html">Modules</a>
-          <a href="../cheat-sheet.html">Aide-mémoire</a>
-          <a href="../versions.html">Versions</a>
-          <a href="../knowledge-base/faq.html">FAQ</a>
-          <a href="../knowledge-base/reste-a-faire.html">Ce qu'il reste à faire</a>
+          <a href="../index.html" data-i18n="pages.apiReference.chat.footHome">Accueil</a>
+          <a href="../components.html" data-i18n="pages.apiReference.chat.footComponents">Composants</a>
+          <a href="https://blueprint-modular.com/modules.html" data-i18n="pages.apiReference.chat.footModules">Modules</a>
+          <a href="../cheat-sheet.html" data-i18n="pages.apiReference.chat.footCheatSheet">Aide-mémoire</a>
+          <a href="../versions.html" data-i18n="pages.apiReference.chat.footVersions">Versions</a>
+          <a href="../knowledge-base/faq.html" data-i18n="pages.apiReference.chat.footFaq">FAQ</a>
+          <a href="../knowledge-base/reste-a-faire.html" data-i18n="pages.apiReference.chat.footTodo">Ce qu'il reste à faire</a>
         </div>
-        <div class="footer-meta">Blueprint Modular v0.1.52</div>
+        <div class="footer-meta" data-i18n="pages.apiReference.chat.footMeta">Blueprint Modular v0.1.52</div>
       </footer>
     </main>
   </div>
