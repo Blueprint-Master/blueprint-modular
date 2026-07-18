@@ -1,7 +1,7 @@
 # Blueprint Modular — Agent Context File
 # Version React (@blueprint-modular/core, npm) : 0.3.4
 # Version Python (blueprint-modular, PyPI)      : 0.1.54
-# Date    : 2026-07-10
+# Date    : 2026-07-18
 # URL canonique : https://blueprint-modular.com/llms.txt
 #
 # Ce fichier est la référence machine de @blueprint-modular/core.
@@ -959,6 +959,17 @@ Composant bpm.free — voir @blueprint-modular/core ou BPM_API.md.
   value?: number  — Pour les barres déterminées (ex. iso) : 0–100. Non fourni = indéterminé.
   size?: "thin" | "default" | "thick"  — Hauteur : thin (6px), default (8px), thick (12px).
   animated?: boolean  — Désactive l'animation (utile pour screenshots ou prefers-reduced-motion).
+  className?: string
+```
+
+## bpm.locationField
+@component bpm.locationField @description Champ de saisie d'un LIEU : recherche par adresse (géocodage Nominatim), tracé du contour sur la carte au clic, surface (ha) calculée automatiquement. Remplace toute saisie de latitude/longitude à la main. @example bpm.locationField({ value, onChange: setValue }) @param {object} props @param {LocationValue} [props.value] - Valeur contrôlée {address, lat, lng, polygon, surfaceHa}. Optionnel. @param {function} [props.onChange] - Callback à chaque modification. Optionnel. @param {[number, number]} [props.defaultCenter=[46.6,2.4]] - Centre initial si vide. Optionnel. @param {number|string} [props.height=360] - Hauteur de la carte. Optionnel. @param {string} [props.countryCodes="fr"] - Restriction pays du géocodage. Optionnel. @param {string} [props.className=""] - Classes CSS additionnelles. Optionnel. @associated bpm.mapView, bpm.geofence @parent bpm.form, bpm.card, bpm.modal, bpm.container
+```
+  value?: LocationValue
+  onChange?: (next: LocationValue) => void
+  defaultCenter?: [number, number]
+  height?: number | string
+  countryCodes?: string
   className?: string
 ```
 

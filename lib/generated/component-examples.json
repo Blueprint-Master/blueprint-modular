@@ -73,6 +73,7 @@
   "livechart": "bpm.liveChart({ data: [{ timestamp: Date.now(), value: 42 }], bufferDuration: 60, refreshInterval: 1000 })",
   "livegauge": "bpm.liveGauge({ value: 75, min: 0, max: 100, warningAbove: 70, criticalAbove: 90, label: \"CPU\" })",
   "loadingbar": "bpm.loadingBar({ variant: \"sweep\", value: 65, size: \"default\" })",
+  "locationfield": "bpm.locationField({ value, onChange: setValue })",
   "machinestatus": "bpm.machineStatus({ title: \"Machine A\", state: \"running\", detail: \"Lot #1234\" })",
   "map": "bpm.map({ lat: 48.8566, lng: 2.3522, height: 300 })",
   "mapview": "bpm.mapView({ center: [48.8566, 2.3522], zoom: 13, markers: [{ position: [48.8566, 2.3522], label: \"Paris\" }] })",

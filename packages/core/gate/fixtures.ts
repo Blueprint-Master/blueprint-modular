@@ -157,6 +157,7 @@ export const FIXTURES: Record<string, Record<string, unknown>> = {
   lineChart: { data: [] },
   liveChart: { data: [] },
   liveGauge: { value: 75 },
+  locationField: {},
   machineStatus: { title: "Machine A", state: "running" },
   mapView: {},
   markdown: { text: "# Hello\nWorld" },

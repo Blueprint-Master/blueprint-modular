@@ -763,6 +763,12 @@
       "category": "Graphiques"
     },
     {
+      "slug": "locationfield",
+      "name": "bpm.locationField",
+      "description": "Champ de saisie d'un LIEU : recherche par adresse (géocodage Nominatim), tracé du contour sur la carte au clic, surface (ha) calculée automatiquement.",
+      "category": "Utilitaires"
+    },
+    {
       "slug": "machinestatus",
       "name": "bpm.machineStatus",
       "description": "Carte d'état machine avec indicateur LED animé (clignotement en production ou défaut).",
