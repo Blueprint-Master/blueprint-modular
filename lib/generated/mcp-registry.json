@@ -1,7 +1,7 @@
 {
-  "generatedAt": "2026-07-10T19:46:30.443Z",
+  "generatedAt": "2026-07-18T20:56:34.092Z",
   "source": "lib/generated/bpm-components.json + public/llms.txt + lib/semantics/bpm-semantics.json",
-  "total": 155,
+  "total": 156,
   "categories": [
     "Affichage de données",
     "Feedback",
@@ -4110,6 +4110,27 @@
         "bpm.sparkline"
       ],
       "_haystack": "bpm.livechart livechart graphique temps réel avec fenêtre glissante, seuils en pointillés et rafraîchissement automatique. graphiques graphique temps réel avec fenêtre glissante, seuils en pointillés et rafraîchissement automatique.   data*: livechartdatum[]\n  bufferduration?: number\n  thresholds?: { value: number\n  refreshinterval?: number\n  width?: number\n  height?: number\n  classname?: string\n  context?: interpretcontext  — contexte de jugement { reference, direction, comparisonframe? } : la fenêtre courante est jugée par interpret (couleur de courbe selon le verdict, repère pointillé, verdict écart/tendance sous le graphique). additif : sans context, rendu inchangé. bpm.livechart({ data: [{ timestamp: date.now(), value: 42 }], bufferduration: 60, refreshinterval: 1000 }) bpm.livegauge bpm.linechart bpm.sparkline"
+    },
+    {
+      "slug": "locationfield",
+      "name": "bpm.locationField",
+      "description": "Champ de saisie d'un LIEU : recherche par adresse (géocodage Nominatim), tracé du contour sur la carte au clic, surface (ha) calculée automatiquement.",
+      "category": "Utilitaires",
+      "status": "uncurated",
+      "fullDescription": "Champ de saisie d'un LIEU : recherche par adresse (géocodage Nominatim), tracé du contour sur la carte au clic, surface (ha) calculée automatiquement. Remplace toute saisie de latitude/longitude à la main.",
+      "props": "  value?: LocationValue\n  onChange?: (next: LocationValue) => void\n  defaultCenter?: [number, number]\n  height?: number | string\n  countryCodes?: string\n  className?: string",
+      "example": "bpm.locationField({ value, onChange: setValue })",
+      "associated": [
+        "bpm.mapView",
+        "bpm.geofence"
+      ],
+      "parent": [
+        "bpm.form",
+        "bpm.card",
+        "bpm.modal",
+        "bpm.container"
+      ],
+      "_haystack": "bpm.locationfield locationfield champ de saisie d'un lieu : recherche par adresse (géocodage nominatim), tracé du contour sur la carte au clic, surface (ha) calculée automatiquement. utilitaires champ de saisie d'un lieu : recherche par adresse (géocodage nominatim), tracé du contour sur la carte au clic, surface (ha) calculée automatiquement. remplace toute saisie de latitude/longitude à la main.   value?: locationvalue\n  onchange?: (next: locationvalue) => void\n  defaultcenter?: [number, number]\n  height?: number | string\n  countrycodes?: string\n  classname?: string bpm.locationfield({ value, onchange: setvalue }) bpm.mapview bpm.geofence"
     },
     {
       "slug": "machinestatus",
