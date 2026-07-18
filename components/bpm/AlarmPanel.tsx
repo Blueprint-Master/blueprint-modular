@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useMemo } from "react";
+import { useBpmLocale } from "./i18n";
 
 export type AlarmSeverity = "critical" | "high" | "medium" | "low" | "info";
 
@@ -54,7 +55,24 @@ const sevColor: Record<AlarmSeverity, string> = {
  *
  * @associated bpm.anomalyAlert, bpm.statusBox, bpm.panel
  */
+const STRINGS = {
+  fr: {
+    empty: "Aucune alarme",
+    acknowledge: "Accuser",
+    dismiss: "Fermer",
+    acknowledged: "Accusée",
+  },
+  en: {
+    empty: "No alarms",
+    acknowledge: "Acknowledge",
+    dismiss: "Dismiss",
+    acknowledged: "Acknowledged",
+  },
+} as const;
+
 export function AlarmPanel({ alarms, onAcknowledge, onDismiss, className = "" }: AlarmPanelProps) {
+  const bpmLocale = useBpmLocale();
+  const t = STRINGS[bpmLocale];
   const sorted = useMemo(
     () => [...alarms].sort((a, b) => order[a.severity] - order[b.severity] || b.timestamp - a.timestamp),
     [alarms]
@@ -72,7 +90,7 @@ export function AlarmPanel({ alarms, onAcknowledge, onDismiss, className = "" }:
         }
       `}</style>
       {sorted.length === 0 ? (
-        <div style={{ padding: 16, color: "var(--bpm-text-secondary)", fontSize: 13 }}>Aucune alarme</div>
+        <div style={{ padding: 16, color: "var(--bpm-text-secondary)", fontSize: 13 }}>{t.empty}</div>
       ) : (
         sorted.map((a) => (
           <div
@@ -92,7 +110,7 @@ export function AlarmPanel({ alarms, onAcknowledge, onDismiss, className = "" }:
                 {a.message ? <div style={{ fontSize: 12, color: "var(--bpm-text-secondary)", marginTop: 4 }}>{a.message}</div> : null}
                 <div style={{ fontSize: 11, color: "var(--bpm-text-secondary)", marginTop: 6 }}>
                   {a.severity} · {new Date(a.timestamp).toLocaleString()}
-                  {a.acknowledged ? " · Accusée" : ""}
+                  {a.acknowledged ? ` · ${t.acknowledged}` : ""}
                 </div>
               </div>
               <div style={{ display: "flex", flexDirection: "column", gap: 4, flexShrink: 0 }}>
@@ -110,7 +128,7 @@ export function AlarmPanel({ alarms, onAcknowledge, onDismiss, className = "" }:
                       cursor: "pointer",
                     }}
                   >
-                    Accuser
+                    {t.acknowledge}
                   </button>
                 ) : null}
                 {onDismiss ? (
@@ -127,7 +145,7 @@ export function AlarmPanel({ alarms, onAcknowledge, onDismiss, className = "" }:
                       cursor: "pointer",
                     }}
                   >
-                    Fermer
+                    {t.dismiss}
                   </button>
                 ) : null}
               </div>

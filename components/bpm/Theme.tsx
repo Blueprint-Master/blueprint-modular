@@ -3,6 +3,12 @@
 import React, { useEffect, useState, useCallback } from "react";
 import { Toggle } from "./Toggle";
 import { useTheme } from "@/components/ThemeProvider";
+import { useBpmLocale } from "./i18n";
+
+const STRINGS = {
+  fr: { lightLabel: "Clair", darkLabel: "Sombre", chooseTheme: "Choisir le thème" },
+  en: { lightLabel: "Light", darkLabel: "Dark", chooseTheme: "Choose theme" },
+} as const;
 
 const STORAGE_KEY = "bpm-theme";
 type ThemeValue = "light" | "dark";
@@ -60,10 +66,14 @@ function applyTheme(value: ThemeValue) {
 export function Theme({
   variant = "toggle",
   label,
-  lightLabel = "Clair",
-  darkLabel = "Sombre",
+  lightLabel,
+  darkLabel,
   className = "",
 }: ThemeProps) {
+  const bpmLocale = useBpmLocale();
+  const t = STRINGS[bpmLocale];
+  const effLightLabel = lightLabel ?? t.lightLabel;
+  const effDarkLabel = darkLabel ?? t.darkLabel;
   const { theme: contextTheme, toggleTheme, hasProvider } = useTheme();
   const [standaloneTheme, setStandaloneTheme] = useState<ThemeValue>("light");
 
@@ -111,10 +121,10 @@ export function Theme({
             color: "var(--bpm-text-primary)",
             borderColor: "var(--bpm-border)",
           }}
-          aria-label="Choisir le thème"
+          aria-label={t.chooseTheme}
         >
-          <option value="light">{lightLabel}</option>
-          <option value="dark">{darkLabel}</option>
+          <option value="light">{effLightLabel}</option>
+          <option value="dark">{effDarkLabel}</option>
         </select>
       </div>
     );
@@ -125,7 +135,7 @@ export function Theme({
       <Toggle
         value={isDark}
         onChange={handleToggle}
-        label={label != null ? label : (isDark ? darkLabel : lightLabel)}
+        label={label != null ? label : (isDark ? effDarkLabel : effLightLabel)}
       />
     </div>
   );

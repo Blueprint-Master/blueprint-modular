@@ -2,9 +2,28 @@
 
 import React, { useState, useRef, useEffect } from "react";
 import { createPortal } from "react-dom";
+import { useBpmLocale } from "./i18n";
 
-const WEEKDAYS = ["Lun", "Mar", "Mer", "Jeu", "Ven", "Sam", "Dim"];
-const MONTHS = "Janvier Février Mars Avril Mai Juin Juillet Août Septembre Octobre Novembre Décembre".split(" ");
+const STRINGS = {
+  fr: {
+    weekdays: ["Lun", "Mar", "Mer", "Jeu", "Ven", "Sam", "Dim"],
+    months: [
+      "Janvier", "Février", "Mars", "Avril", "Mai", "Juin",
+      "Juillet", "Août", "Septembre", "Octobre", "Novembre", "Décembre",
+    ],
+    prevMonth: "Mois précédent",
+    nextMonth: "Mois suivant",
+  },
+  en: {
+    weekdays: ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"],
+    months: [
+      "January", "February", "March", "April", "May", "June",
+      "July", "August", "September", "October", "November", "December",
+    ],
+    prevMonth: "Previous month",
+    nextMonth: "Next month",
+  },
+} as const;
 
 function toYMD(d: Date): string {
   return d.getFullYear() + "-" + String(d.getMonth() + 1).padStart(2, "0") + "-" + String(d.getDate()).padStart(2, "0");
@@ -36,6 +55,8 @@ export interface DatePickerPopoverProps {
  * @associated bpm.dateInput, bpm.dateRangePicker
  */
 export function DatePickerPopover({ anchorRef, value, min, max, onSelect, onClose }: DatePickerPopoverProps) {
+  const bpmLocale = useBpmLocale();
+  const t = STRINGS[bpmLocale];
   const [viewMonth, setViewMonth] = useState(() => {
     const d = value ? new Date(value) : new Date();
     return new Date(d.getFullYear(), d.getMonth(), 1);
@@ -128,7 +149,7 @@ export function DatePickerPopover({ anchorRef, value, min, max, onSelect, onClos
         <button
           type="button"
           onClick={prevMonth}
-          aria-label="Mois précédent"
+          aria-label={t.prevMonth}
           style={{
             padding: "4px 8px",
             border: "none",
@@ -141,12 +162,12 @@ export function DatePickerPopover({ anchorRef, value, min, max, onSelect, onClos
           ‹
         </button>
         <span style={{ fontSize: 14, fontWeight: 600, color: "var(--bpm-text)" }}>
-          {MONTHS[month]} {year}
+          {t.months[month]} {year}
         </span>
         <button
           type="button"
           onClick={nextMonth}
-          aria-label="Mois suivant"
+          aria-label={t.nextMonth}
           style={{
             padding: "4px 8px",
             border: "none",
@@ -160,7 +181,7 @@ export function DatePickerPopover({ anchorRef, value, min, max, onSelect, onClos
         </button>
       </div>
       <div style={{ display: "grid", gridTemplateColumns: "repeat(7, 1fr)", gap: 2, textAlign: "center" }}>
-        {WEEKDAYS.map((w) => (
+        {t.weekdays.map((w) => (
           <div key={w} style={{ fontSize: 11, fontWeight: 600, color: "var(--bpm-text-muted)", padding: "4px 0" }}>
             {w}
           </div>

@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { useBpmLocale } from "./i18n";
 
 export interface Command {
   id: string;
@@ -59,14 +60,30 @@ function commandHaystack(c: Command): string {
  * @parent bpm.page, bpm.pageLayout
  * @forbidden Navigation permanente — utiliser bpm.topNav ou bpm.sidebar
  */
+const STRINGS = {
+  fr: {
+    placeholderDefault: "Rechercher une action...",
+    dialogLabel: "Palette de commandes",
+    noCommand: "Aucune commande",
+  },
+  en: {
+    placeholderDefault: "Search for an action...",
+    dialogLabel: "Command palette",
+    noCommand: "No command",
+  },
+} as const;
+
 export function CommandPalette({
   commands,
   isOpen: isOpenProp,
   onClose,
   onRequestOpen,
-  placeholder = "Rechercher une action...",
+  placeholder,
   className = "",
 }: CommandPaletteProps) {
+  const bpmLocale = useBpmLocale();
+  const t = STRINGS[bpmLocale];
+  const effPlaceholder = placeholder ?? t.placeholderDefault;
   const [internalOpen, setInternalOpen] = useState(false);
   const controlled = typeof isOpenProp === "boolean";
   const open = controlled ? isOpenProp : internalOpen;
@@ -165,7 +182,7 @@ export function CommandPalette({
       className={`bpm-command-palette ${className}`.trim()}
       role="dialog"
       aria-modal="true"
-      aria-label="Palette de commandes"
+      aria-label={t.dialogLabel}
       style={{
         position: "fixed",
         inset: 0,
@@ -213,8 +230,8 @@ export function CommandPalette({
             type="text"
             value={query}
             onChange={(e) => setQuery(e.target.value)}
-            placeholder={placeholder}
-            aria-label={placeholder}
+            placeholder={effPlaceholder}
+            aria-label={effPlaceholder}
             style={{
               flex: 1,
               border: "none",
@@ -303,7 +320,7 @@ export function CommandPalette({
             ));
           })()}
           {filtered.length === 0 && (
-            <div style={{ padding: 24, textAlign: "center", color: "var(--bpm-text-secondary)", fontSize: 14 }}>Aucune commande</div>
+            <div style={{ padding: 24, textAlign: "center", color: "var(--bpm-text-secondary)", fontSize: 14 }}>{t.noCommand}</div>
           )}
         </div>
       </div>

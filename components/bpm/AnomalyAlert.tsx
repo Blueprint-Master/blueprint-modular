@@ -7,6 +7,7 @@ import {
   type InterpretContext,
   type TrajectoryPoint,
 } from "./interpret";
+import { useBpmLocale } from "./i18n";
 
 export type AnomalySeverity = "info" | "warning" | "critical";
 
@@ -64,8 +65,25 @@ const SEV_TEXT: Record<AnomalySeverity, string> = {
  *
  * @associated bpm.alarmPanel, bpm.statusBox, bpm.panel
  */
+const STRINGS = {
+  fr: {
+    titleDefault: "Anomalie détectée",
+    expected: "Attendu :",
+    measured: "Mesuré :",
+    severity: "sévérité",
+    close: "Fermer",
+  },
+  en: {
+    titleDefault: "Anomaly detected",
+    expected: "Expected:",
+    measured: "Measured:",
+    severity: "severity",
+    close: "Close",
+  },
+} as const;
+
 export function AnomalyAlert({
-  title = "Anomalie détectée",
+  title,
   expected,
   actual,
   severity,
@@ -74,6 +92,9 @@ export function AnomalyAlert({
   history,
   context,
 }: AnomalyAlertProps) {
+  const bpmLocale = useBpmLocale();
+  const t = STRINGS[bpmLocale];
+  const effTitle = title ?? t.titleDefault;
   const numericActual =
     typeof actual === "number"
       ? actual
@@ -109,17 +130,17 @@ export function AnomalyAlert({
       }}
     >
       <div style={{ flex: 1 }}>
-        <div style={{ fontWeight: 700, marginBottom: 6 }}>{title}</div>
+        <div style={{ fontWeight: 700, marginBottom: 6 }}>{effTitle}</div>
         <div style={{ fontSize: 14, lineHeight: 1.5 }}>
-          <span style={{ opacity: 0.9 }}>Attendu :</span>{" "}
+          <span style={{ opacity: 0.9 }}>{t.expected}</span>{" "}
           <strong>{expected}</strong>
           <span style={{ margin: "0 8px", opacity: 0.6 }}>·</span>
-          <span style={{ opacity: 0.9 }}>Mesuré :</span>{" "}
+          <span style={{ opacity: 0.9 }}>{t.measured}</span>{" "}
           <strong>{actual}</strong>
         </div>
         {judged && (
           <div role="status" style={{ fontSize: 12, marginTop: 4, opacity: 0.95 }}>
-            {judgmentLabel(judged)} · sévérité {(judged.severity * 100).toFixed(0)} %
+            {judgmentLabel(judged)} · {t.severity} {(judged.severity * 100).toFixed(0)} %
           </div>
         )}
       </div>
@@ -127,7 +148,7 @@ export function AnomalyAlert({
         <button
           type="button"
           onClick={onDismiss}
-          aria-label="Fermer"
+          aria-label={t.close}
           style={{
             border: "none",
             background: "transparent",

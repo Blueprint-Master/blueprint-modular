@@ -3,6 +3,30 @@
 import React, { useState } from "react";
 import { Stepper } from "./Stepper";
 import type { StepperStep } from "./Stepper";
+import { useBpmLocale } from "./i18n";
+
+const STRINGS = {
+  fr: {
+    submitDefault: "Terminer",
+    validationImpossible: "Validation impossible.",
+    fixFields: "Veuillez corriger les champs.",
+    summary: "Récapitulatif",
+    cancel: "Annuler",
+    previous: "Précédent",
+    next: "Suivant",
+    stepOf: (current: number, total: number) => `Étape ${current} sur ${total}`,
+  },
+  en: {
+    submitDefault: "Finish",
+    validationImpossible: "Validation failed.",
+    fixFields: "Please correct the fields.",
+    summary: "Summary",
+    cancel: "Cancel",
+    previous: "Previous",
+    next: "Next",
+    stepOf: (current: number, total: number) => `Step ${current} of ${total}`,
+  },
+} as const;
 
 export interface WizardStep {
   title: string;
@@ -44,10 +68,13 @@ export function WizardForm({
   steps,
   onComplete,
   onCancel,
-  submitLabel = "Terminer",
+  submitLabel,
   showSummary = false,
   className = "",
 }: WizardFormProps) {
+  const bpmLocale = useBpmLocale();
+  const t = STRINGS[bpmLocale];
+  const effSubmitLabel = submitLabel ?? t.submitDefault;
   const [stepIndex, setStepIndex] = useState(0);
   const [error, setError] = useState<string | null>(null);
 
@@ -63,7 +90,7 @@ export function WizardForm({
     if (onSummaryStep) {
       const v = steps[lastIndex]?.validate?.();
       if (v === false || (typeof v === "string" && v)) {
-        setError(typeof v === "string" && v ? v : "Validation impossible.");
+        setError(typeof v === "string" && v ? v : t.validationImpossible);
         return;
       }
       setError(null);
@@ -74,7 +101,7 @@ export function WizardForm({
     if (!step) return;
     const v = step.validate?.();
     if (v === false || (typeof v === "string" && v)) {
-      setError(typeof v === "string" && v ? v : "Veuillez corriger les champs.");
+      setError(typeof v === "string" && v ? v : t.fixFields);
       return;
     }
     setError(null);
@@ -100,7 +127,7 @@ export function WizardForm({
         background: "var(--bpm-surface)",
       }}
     >
-      <div style={{ fontWeight: 600, marginBottom: 12 }}>Récapitulatif</div>
+      <div style={{ fontWeight: 600, marginBottom: 12 }}>{t.summary}</div>
       <ol style={{ margin: 0, paddingLeft: 18, color: "var(--bpm-text-secondary)", fontSize: 14 }}>
         {steps.slice(0, -1).map((s, i) => (
           <li key={i} style={{ marginBottom: 8 }}>
@@ -119,7 +146,7 @@ export function WizardForm({
     <div className={`bpm-wizard-form ${className}`.trim()} style={{ maxWidth: 640, margin: "0 auto" }}>
       <Stepper steps={stepperSteps} currentStep={stepIndex} direction="horizontal" size="sm" />
       <p style={{ fontSize: 13, color: "var(--bpm-text-secondary)", marginTop: 12, marginBottom: 8 }}>
-        Étape {stepIndex + 1} sur {steps.length}
+        {t.stepOf(stepIndex + 1, steps.length)}
       </p>
       <style>{`
         @keyframes bpm-wizard-slide-in {
@@ -153,7 +180,7 @@ export function WizardForm({
                 color: "var(--bpm-text-primary)",
               }}
             >
-              Annuler
+              {t.cancel}
             </button>
           )}
           <button
@@ -170,7 +197,7 @@ export function WizardForm({
               color: "var(--bpm-text-primary)",
             }}
           >
-            Précédent
+            {t.previous}
           </button>
         </div>
         <button
@@ -186,7 +213,7 @@ export function WizardForm({
             cursor: "pointer",
           }}
         >
-          {stepIndex >= lastIndex ? submitLabel : "Suivant"}
+          {stepIndex >= lastIndex ? effSubmitLabel : t.next}
         </button>
       </div>
     </div>

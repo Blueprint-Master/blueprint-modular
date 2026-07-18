@@ -1,6 +1,22 @@
 "use client";
 
 import React from "react";
+import { useBpmLocale } from "./i18n";
+
+const STRINGS = {
+  fr: {
+    prevPage: "Page précédente",
+    nextPage: "Page suivante",
+    pageOf: (page: number, total: number) => `Page ${page} sur ${total}`,
+    itemCount: (n: number) => `${n} élément${n > 1 ? "s" : ""}`,
+  },
+  en: {
+    prevPage: "Previous page",
+    nextPage: "Next page",
+    pageOf: (page: number, total: number) => `Page ${page} of ${total}`,
+    itemCount: (n: number) => `${n} item${n > 1 ? "s" : ""}`,
+  },
+} as const;
 
 /**
  * @component bpm.pagination
@@ -49,6 +65,8 @@ export function Pagination({
   label,
   className = "",
 }: PaginationProps) {
+  const bpmLocale = useBpmLocale();
+  const t = STRINGS[bpmLocale];
   const hasPrev = page > 1;
   const hasNext = page < totalPages;
 
@@ -74,7 +92,7 @@ export function Pagination({
         type="button"
         onClick={() => onPageChange(page - 1)}
         disabled={!hasPrev}
-        aria-label="Page précédente"
+        aria-label={t.prevPage}
         style={{
           width: rowHeight,
           height: rowHeight,
@@ -105,13 +123,13 @@ export function Pagination({
           lineHeight: 1,
         }}
       >
-        Page {page} sur {totalPages}
+        {t.pageOf(page, totalPages)}
       </span>
       <button
         type="button"
         onClick={() => onPageChange(page + 1)}
         disabled={!hasNext}
-        aria-label="Page suivante"
+        aria-label={t.nextPage}
         style={{
           width: rowHeight,
           height: rowHeight,
@@ -134,7 +152,7 @@ export function Pagination({
       </button>
       {(pageSize != null && totalItems != null) && (
         <span className="text-sm" style={{ color: "var(--bpm-text-secondary)", marginLeft: 8, display: "inline-flex", alignItems: "center", minHeight: rowHeight }}>
-          {totalItems} élément{totalItems > 1 ? "s" : ""}
+          {t.itemCount(totalItems)}
         </span>
       )}
     </nav>

@@ -2,6 +2,12 @@
 
 import React from "react";
 import "./Spinner.css";
+import { useBpmLocale } from "./i18n";
+
+const STRINGS = {
+  fr: { loading: "Chargement..." },
+  en: { loading: "Loading..." },
+} as const;
 
 export type SpinnerSize = "small" | "medium" | "large";
 export type SpinnerVariant =
@@ -54,17 +60,20 @@ const accentColor = (neutral: boolean) =>
  * FORBIDDEN: aucun.
  */
 export function Spinner({
-  text = "Chargement...",
+  text,
   size = "medium",
   variant = "circle",
   neutral = false,
   className = "",
 }: SpinnerProps) {
+  const bpmLocale = useBpmLocale();
+  const t = STRINGS[bpmLocale];
+  const effText = text ?? t.loading;
   const content = (
     <>
-      {text && (
+      {effText && (
         <span className="bpm-spinner-text text-sm" style={{ color: "var(--bpm-text-secondary)" }}>
-          {text}
+          {effText}
         </span>
       )}
     </>

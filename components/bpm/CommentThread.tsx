@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useCallback, useEffect, useState } from "react";
+import { useBpmLocale } from "./i18n";
 
 export interface Comment {
   id: string;
@@ -23,15 +24,46 @@ export interface CommentThreadProps {
   className?: string;
 }
 
-function formatRelative(ts: number, now: number): string {
+const STRINGS = {
+  fr: {
+    justNow: "à l’instant",
+    minAgo: (n: number) => `il y a ${n} min`,
+    hAgo: (n: number) => `il y a ${n} h`,
+    daysAgo: (n: number) => `il y a ${n} j`,
+    reply: "Répondre",
+    replyPlaceholder: "Votre réponse…",
+    publish: "Publier",
+    cancel: "Annuler",
+    newComment: "Nouveau commentaire",
+    commentPlaceholder: "Écrire un commentaire…",
+    loggedInAs: "Connecté en tant que",
+  },
+  en: {
+    justNow: "just now",
+    minAgo: (n: number) => `${n} min ago`,
+    hAgo: (n: number) => `${n} h ago`,
+    daysAgo: (n: number) => `${n} d ago`,
+    reply: "Reply",
+    replyPlaceholder: "Your reply…",
+    publish: "Post",
+    cancel: "Cancel",
+    newComment: "New comment",
+    commentPlaceholder: "Write a comment…",
+    loggedInAs: "Logged in as",
+  },
+} as const;
+
+type CommentStrings = (typeof STRINGS)[keyof typeof STRINGS];
+
+function formatRelative(ts: number, now: number, t: CommentStrings): string {
   const sec = Math.round((now - ts) / 1000);
-  if (sec < 60) return "à l’instant";
+  if (sec < 60) return t.justNow;
   const min = Math.floor(sec / 60);
-  if (min < 60) return `il y a ${min} min`;
+  if (min < 60) return t.minAgo(min);
   const h = Math.floor(min / 60);
-  if (h < 24) return `il y a ${h} h`;
+  if (h < 24) return t.hAgo(h);
   const d = Math.floor(h / 24);
-  if (d < 7) return `il y a ${d} j`;
+  if (d < 7) return t.daysAgo(d);
   return new Date(ts).toLocaleDateString();
 }
 
@@ -50,6 +82,8 @@ function CommentBlock({
   onReply: (parentId: string, text: string) => void;
   posting: boolean;
 }) {
+  const bpmLocale = useBpmLocale();
+  const t = STRINGS[bpmLocale];
   const [open, setOpen] = useState(false);
   const [draft, setDraft] = useState("");
   const canReply = depth < maxDepth;
@@ -82,7 +116,7 @@ function CommentBlock({
         <div style={{ display: "flex", justifyContent: "space-between", gap: 8, marginBottom: 6 }}>
           <span style={{ fontWeight: 600, color: "var(--bpm-text-primary)", fontSize: 13 }}>{c.authorName}</span>
           <time dateTime={new Date(c.createdAt).toISOString()} style={{ fontSize: 11, color: "var(--bpm-text-secondary)" }}>
-            {formatRelative(c.createdAt, now)}
+            {formatRelative(c.createdAt, now, t)}
           </time>
         </div>
         <p style={{ margin: 0, whiteSpace: "pre-wrap", color: "var(--bpm-text-primary)", fontSize: 14 }}>{c.content}</p>
@@ -102,14 +136,14 @@ function CommentBlock({
                   cursor: "pointer",
                 }}
               >
-                Répondre
+                {t.reply}
               </button>
             ) : (
               <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
                 <textarea
                   value={draft}
                   onChange={(e) => setDraft(e.target.value)}
-                  placeholder="Votre réponse…"
+                  placeholder={t.replyPlaceholder}
                   rows={3}
                   disabled={posting}
                   style={{
@@ -137,7 +171,7 @@ function CommentBlock({
                       cursor: posting ? "wait" : "pointer",
                     }}
                   >
-                    Publier
+                    {t.publish}
                   </button>
                   <button
                     type="button"
@@ -155,7 +189,7 @@ function CommentBlock({
                       cursor: "pointer",
                     }}
                   >
-                    Annuler
+                    {t.cancel}
                   </button>
                 </div>
               </div>
@@ -192,6 +226,8 @@ export function CommentThread({
   maxDepth = 2,
   className = "",
 }: CommentThreadProps) {
+  const bpmLocale = useBpmLocale();
+  const t = STRINGS[bpmLocale];
   const [rootDraft, setRootDraft] = useState("");
   const [posting, setPosting] = useState(false);
   const [now, setNow] = useState(() => Date.now());
@@ -228,7 +264,7 @@ export function CommentThread({
   return (
     <div className={className} style={{ display: "flex", flexDirection: "column", gap: 12 }}>
       <div style={{ fontSize: 12, color: "var(--bpm-text-secondary)" }}>
-        Connecté en tant que <strong style={{ color: "var(--bpm-text-primary)" }}>{currentUser.name}</strong>
+        {t.loggedInAs} <strong style={{ color: "var(--bpm-text-primary)" }}>{currentUser.name}</strong>
       </div>
       {comments.map((c) => (
         <CommentBlock key={c.id} c={c} depth={0} maxDepth={maxDepth} now={now} onReply={handleReply} posting={posting} />
@@ -240,11 +276,11 @@ export function CommentThread({
           borderTop: "1px solid var(--bpm-border)",
         }}
       >
-        <label style={{ display: "block", fontSize: 12, color: "var(--bpm-text-secondary)", marginBottom: 6 }}>Nouveau commentaire</label>
+        <label style={{ display: "block", fontSize: 12, color: "var(--bpm-text-secondary)", marginBottom: 6 }}>{t.newComment}</label>
         <textarea
           value={rootDraft}
           onChange={(e) => setRootDraft(e.target.value)}
-          placeholder="Écrire un commentaire…"
+          placeholder={t.commentPlaceholder}
           rows={4}
           disabled={posting}
           style={{
@@ -274,7 +310,7 @@ export function CommentThread({
             fontSize: 14,
           }}
         >
-          Publier
+          {t.publish}
         </button>
       </div>
     </div>

@@ -1,6 +1,12 @@
 "use client";
 
 import React from "react";
+import { useBpmLocale } from "./i18n";
+
+const STRINGS = {
+  fr: { action: "Action" },
+  en: { action: "Action" },
+} as const;
 
 /**
  * @component bpm.fab
@@ -39,6 +45,8 @@ const positionClasses: Record<NonNullable<FABProps["position"]>, string> = {
  * @forbidden Plus d'une action principale — utiliser bpm.button dans une barre
  */
 export function FAB({ icon, label, onClick, position = "bottom-right", className = "" }: FABProps) {
+  const bpmLocale = useBpmLocale();
+  const t = STRINGS[bpmLocale];
   return (
     <button
       type="button"
@@ -52,7 +60,7 @@ export function FAB({ icon, label, onClick, position = "bottom-right", className
         transition: "var(--bpm-transition)",
       }}
       title={label}
-      aria-label={label ?? "Action"}
+      aria-label={label ?? t.action}
       onMouseEnter={(e) => {
         e.currentTarget.style.background = "var(--bpm-accent-hover)";
       }}

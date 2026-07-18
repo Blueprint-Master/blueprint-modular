@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useEffect } from "react";
+import { useBpmLocale } from "./i18n";
 
 export type ConfirmModalVariant = "danger" | "warning" | "info";
 
@@ -50,17 +51,32 @@ const VARIANT_STYLES: Record<
  * @parent bpm.page, bpm.card
  * @forbidden Information non bloquante — utiliser bpm.toast
  */
+const STRINGS = {
+  fr: {
+    confirmDefault: "Confirmer",
+    cancelDefault: "Annuler",
+  },
+  en: {
+    confirmDefault: "Confirm",
+    cancelDefault: "Cancel",
+  },
+} as const;
+
 export function ConfirmModal({
   isOpen,
   onConfirm,
   onCancel,
   title,
   message,
-  confirmLabel = "Confirmer",
-  cancelLabel = "Annuler",
+  confirmLabel,
+  cancelLabel,
   variant = "info",
   isLoading = false,
 }: ConfirmModalProps) {
+  const bpmLocale = useBpmLocale();
+  const t = STRINGS[bpmLocale];
+  const effConfirmLabel = confirmLabel ?? t.confirmDefault;
+  const effCancelLabel = cancelLabel ?? t.cancelDefault;
   useEffect(() => {
     const handleEscape = (e: KeyboardEvent) => {
       if (e.key === "Escape" && isOpen) onCancel();
@@ -182,7 +198,7 @@ export function ConfirmModal({
               opacity: isLoading ? 0.7 : 1,
             }}
           >
-            {cancelLabel}
+            {effCancelLabel}
           </button>
           <button
             type="button"
@@ -202,7 +218,7 @@ export function ConfirmModal({
               opacity: isLoading ? 0.8 : 1,
             }}
           >
-            {isLoading ? "..." : confirmLabel}
+            {isLoading ? "..." : effConfirmLabel}
           </button>
         </div>
       </div>

@@ -1,6 +1,12 @@
 "use client";
 
 import React from "react";
+import { useBpmLocale } from "./i18n";
+
+const STRINGS = {
+  fr: { defaultTitle: "Aucune donnée" },
+  en: { defaultTitle: "No data" },
+} as const;
 
 /**
  * @component bpm.emptyState
@@ -29,12 +35,15 @@ export interface EmptyStateProps {
  * @context PARENT: bpm.panel | bpm.card | bpm.table (contenu vide). ASSOCIATED: bpm.button, bpm.input. FORBIDDEN: aucun.
  */
 export function EmptyState({
-  title = "Aucune donnée",
+  title,
   description,
   icon,
   action,
   className = "",
 }: EmptyStateProps) {
+  const bpmLocale = useBpmLocale();
+  const t = STRINGS[bpmLocale];
+  const effTitle = title ?? t.defaultTitle;
   return (
     <div
       className={`bpm-emptystate text-center py-8 px-4 ${className}`.trim()}
@@ -42,7 +51,7 @@ export function EmptyState({
     >
       {icon != null && <div className="bpm-emptystate-icon mb-3 flex justify-center">{icon}</div>}
       <h3 className="bpm-emptystate-title text-lg font-semibold m-0 mb-1" style={{ color: "var(--bpm-text-primary)" }}>
-        {title}
+        {effTitle}
       </h3>
       {description != null && <p className="bpm-emptystate-desc text-sm m-0 mb-3">{description}</p>}
       {action != null && <div className="bpm-emptystate-action">{action}</div>}

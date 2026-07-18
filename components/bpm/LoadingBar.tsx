@@ -2,6 +2,12 @@
 
 import React, { useId } from "react";
 import "./LoadingBar.css";
+import { useBpmLocale } from "./i18n";
+
+const STRINGS = {
+  fr: { loading: "Chargement en cours" },
+  en: { loading: "Loading…" },
+} as const;
 
 export type LoadingBarVariant =
   | "sweep"
@@ -55,6 +61,8 @@ export function LoadingBar({
   className = "",
   "aria-label": ariaLabel,
 }: LoadingBarProps) {
+  const bpmLocale = useBpmLocale();
+  const t = STRINGS[bpmLocale];
   const uniqueId = useId().replace(/:/g, "-");
   const pct = value != null ? Math.min(100, Math.max(0, value)) : null;
   const isDeterminate = pct != null && variant === "iso";
@@ -65,7 +73,7 @@ export function LoadingBar({
         "aria-valuemin": 0,
         "aria-valuemax": 100,
       }
-    : { "aria-label": ariaLabel ?? "Chargement en cours" };
+    : { "aria-label": ariaLabel ?? t.loading };
 
   const wrapClass = `bpm-loadingbar bpm-loadingbar--${variant} bpm-loadingbar--${size} ${animated ? "" : "bpm-loadingbar--static"} ${className}`.trim();
 

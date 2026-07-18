@@ -14,8 +14,46 @@ import { DateInput } from "./DateInput";
 import { Toggle } from "./Toggle";
 import { Spinner } from "./Spinner";
 import { Pagination } from "./Pagination";
+import { useBpmLocale } from "./i18n";
 
 const PAGE_SIZE = 20;
+
+const STRINGS = {
+  fr: {
+    yes: "Oui",
+    no: "Non",
+    searchPlaceholder: "Rechercher...",
+    new: "Nouveau",
+    choosePrefix: "Choisir",
+    detail: "Détail",
+    edit: "Modifier",
+    cancel: "Annuler",
+    saving: "Enregistrement…",
+    save: "Enregistrer",
+    delete: "Supprimer",
+    confirmDeleteTitle: "Confirmer la suppression",
+    confirmDeleteMessage: "Êtes-vous sûr de vouloir supprimer cet élément ?",
+    deleting: "Suppression…",
+    page: "Page",
+  },
+  en: {
+    yes: "Yes",
+    no: "No",
+    searchPlaceholder: "Search...",
+    new: "New",
+    choosePrefix: "Choose",
+    detail: "Detail",
+    edit: "Edit",
+    cancel: "Cancel",
+    saving: "Saving…",
+    save: "Save",
+    delete: "Delete",
+    confirmDeleteTitle: "Confirm deletion",
+    confirmDeleteMessage: "Are you sure you want to delete this item?",
+    deleting: "Deleting…",
+    page: "Page",
+  },
+} as const;
 
 export interface CrudColumn {
   key: string;
@@ -48,9 +86,13 @@ export interface CrudPageProps {
   idKey?: string;
 }
 
-function formatCellValue(value: unknown, type?: string): React.ReactNode {
+function formatCellValue(
+  value: unknown,
+  type: string | undefined,
+  labels: { yes: string; no: string }
+): React.ReactNode {
   if (value == null) return "";
-  if (type === "boolean") return value ? "Oui" : "Non";
+  if (type === "boolean") return value ? labels.yes : labels.no;
   if (type === "date" && (value instanceof Date || typeof value === "string")) {
     const d = typeof value === "string" ? new Date(value) : value;
     return Number.isNaN(d.getTime()) ? String(value) : d.toLocaleDateString("fr-FR");
@@ -84,6 +126,8 @@ export function CrudPage({
   fields,
   idKey = "id",
 }: CrudPageProps) {
+  const bpmLocale = useBpmLocale();
+  const t = STRINGS[bpmLocale];
   const [data, setData] = useState<Record<string, unknown>[]>([]);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState("");
@@ -138,15 +182,15 @@ export function CrudPage({
         align: col.type === "number" ? "right" : "left",
         render: (value: unknown, row: Record<string, unknown>) => {
           if (col.type === "badge") {
-            return <Badge variant="default">{formatCellValue(value, col.type)}</Badge>;
+            return <Badge variant="default">{formatCellValue(value, col.type, t)}</Badge>;
           }
           if (col.type === "boolean") {
-            return <Badge variant={value ? "success" : "default"}>{value ? "Oui" : "Non"}</Badge>;
+            return <Badge variant={value ? "success" : "default"}>{value ? t.yes : t.no}</Badge>;
           }
-          return formatCellValue(value, col.type);
+          return formatCellValue(value, col.type, t);
         },
       })),
-    [columns]
+    [columns, t]
   );
 
   const openCreate = () => {
@@ -245,7 +289,7 @@ export function CrudPage({
             options={field.options ?? []}
             value={value != null ? String(value) : null}
             onChange={(v) => setFormValues((prev) => ({ ...prev, [field.key]: v }))}
-            placeholder={`Choisir ${field.label}...`}
+            placeholder={`${t.choosePrefix} ${field.label}...`}
           />
         );
       case "textarea":
@@ -291,13 +335,13 @@ export function CrudPage({
         <div style={{ display: "flex", gap: 8, flexWrap: "wrap", alignItems: "center" }}>
           <Input
             type="search"
-            placeholder="Rechercher..."
+            placeholder={t.searchPlaceholder}
             value={search}
             onChange={setSearch}
             style={{ minHeight: 40, height: 40, boxSizing: "border-box" }}
           />
           <Button variant="primary" size="small" onClick={openCreate} className="!min-h-[40px] !h-[40px]">
-            Nouveau
+            {t.new}
           </Button>
         </div>
       </div>
@@ -323,7 +367,7 @@ export function CrudPage({
                 onPageChange={setPage}
                 pageSize={PAGE_SIZE}
                 totalItems={filteredData.length}
-                label={`Page ${currentPage} / ${totalPages}`}
+                label={`${t.page} ${currentPage} / ${totalPages}`}
               />
             </div>
           )}
@@ -334,7 +378,7 @@ export function CrudPage({
       <Modal
         isOpen={isForm || isDetail}
         onClose={() => { setModalMode(null); setSelectedRow(null); setDeleteConfirm(null); }}
-        title={isDetail ? "Détail" : selectedRow ? "Modifier" : "Nouveau"}
+        title={isDetail ? t.detail : selectedRow ? t.edit : t.new}
         size="medium"
       >
         <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
@@ -342,10 +386,10 @@ export function CrudPage({
           {!isDetail && (
             <div style={{ display: "flex", gap: 8, justifyContent: "flex-end", marginTop: 8 }}>
               <Button variant="secondary" size="small" onClick={() => setModalMode(null)}>
-                Annuler
+                {t.cancel}
               </Button>
               <Button variant="primary" size="small" onClick={handleSubmit} disabled={saving}>
-                {saving ? "Enregistrement…" : "Enregistrer"}
+                {saving ? t.saving : t.save}
               </Button>
               {selectedRow && (
                 <Button
@@ -355,7 +399,7 @@ export function CrudPage({
                   disabled={saving}
                   className="ml-auto"
                 >
-                  Supprimer
+                  {t.delete}
                 </Button>
               )}
             </div>
@@ -367,15 +411,15 @@ export function CrudPage({
       <Modal
         isOpen={!!deleteConfirm}
         onClose={() => setDeleteConfirm(null)}
-        title="Confirmer la suppression"
+        title={t.confirmDeleteTitle}
         size="small"
       >
         <p style={{ color: "var(--bpm-text-secondary)", margin: "0 0 16px 0" }}>
-          Êtes-vous sûr de vouloir supprimer cet élément ?
+          {t.confirmDeleteMessage}
         </p>
         <div style={{ display: "flex", gap: 8, justifyContent: "flex-end" }}>
           <Button variant="secondary" size="small" onClick={() => setDeleteConfirm(null)}>
-            Annuler
+            {t.cancel}
           </Button>
           <Button
             variant="primary"
@@ -383,7 +427,7 @@ export function CrudPage({
             onClick={() => deleteConfirm && handleDelete(deleteConfirm)}
             disabled={saving}
           >
-            {saving ? "Suppression…" : "Supprimer"}
+            {saving ? t.deleting : t.delete}
           </Button>
         </div>
       </Modal>

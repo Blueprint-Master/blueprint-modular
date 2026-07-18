@@ -1,6 +1,38 @@
 "use client";
 
 import React, { useMemo, useState } from "react";
+import { useBpmLocale, type BpmLocale } from "./i18n";
+
+const STRINGS = {
+  fr: {
+    empty: "Aucune notification.",
+    unread: "Non lu",
+    markRead: "Marquer comme lu",
+    remove: "Supprimer",
+    markAllRead: "Tout marquer comme lu",
+    readSection: "Lues",
+    showOlder: "Voir les anciennes",
+    justNow: "à l'instant",
+    yesterday: "hier",
+    dateLocale: "fr-FR",
+    minAgo: (n: number) => `il y a ${n} min`,
+    hoursAgo: (n: number) => `il y a ${n} h`,
+  },
+  en: {
+    empty: "No notifications.",
+    unread: "Unread",
+    markRead: "Mark as read",
+    remove: "Delete",
+    markAllRead: "Mark all as read",
+    readSection: "Read",
+    showOlder: "Show older",
+    justNow: "just now",
+    yesterday: "yesterday",
+    dateLocale: "en-US",
+    minAgo: (n: number) => `${n} min ago`,
+    hoursAgo: (n: number) => `${n} h ago`,
+  },
+} as const;
 
 export interface NotificationItem {
   id: string;
@@ -27,19 +59,19 @@ export interface NotificationCenterProps {
   className?: string;
 }
 
-function formatNotifTime(iso: string): string {
+function formatNotifTime(iso: string, t: (typeof STRINGS)[BpmLocale]): string {
   const d = new Date(iso);
   if (Number.isNaN(d.getTime())) return iso;
   const diffMs = Date.now() - d.getTime();
   const sec = Math.floor(diffMs / 1000);
-  if (sec < 60) return "à l'instant";
+  if (sec < 60) return t.justNow;
   const min = Math.floor(sec / 60);
-  if (min < 60) return `il y a ${min} min`;
+  if (min < 60) return t.minAgo(min);
   const h = Math.floor(min / 60);
-  if (h < 24) return `il y a ${h} h`;
+  if (h < 24) return t.hoursAgo(h);
   const days = Math.floor(h / 24);
-  if (days === 1) return "hier";
-  return d.toLocaleDateString("fr-FR", { day: "numeric", month: "short" });
+  if (days === 1) return t.yesterday;
+  return d.toLocaleDateString(t.dateLocale, { day: "numeric", month: "short" });
 }
 
 function TypeGlyph({ type }: { type: NotificationItem["type"] }) {
@@ -105,9 +137,12 @@ export function NotificationCenter({
   onMarkAllRead,
   onDismiss,
   maxVisible = 50,
-  emptyMessage = "Aucune notification.",
+  emptyMessage,
   className = "",
 }: NotificationCenterProps) {
+  const bpmLocale = useBpmLocale();
+  const t = STRINGS[bpmLocale];
+  const effEmptyMessage = emptyMessage ?? t.empty;
   const [showAll, setShowAll] = useState(false);
   const [hoverId, setHoverId] = useState<string | null>(null);
 
@@ -137,7 +172,7 @@ export function NotificationCenter({
         <span className="material-symbols-outlined" aria-hidden style={{ fontSize: 40, opacity: 0.45, display: "block", marginBottom: 8 }}>
           notifications_off
         </span>
-        {emptyMessage}
+        {effEmptyMessage}
       </div>
     );
   }
@@ -165,12 +200,12 @@ export function NotificationCenter({
               {!n.read && (
                 <span style={{ display: "flex", alignItems: "center", gap: 4, fontSize: 11, fontWeight: 600, color: "var(--bpm-accent)" }}>
                   <span aria-hidden style={{ width: 8, height: 8, borderRadius: "50%", background: "var(--bpm-accent)" }} />
-                  Non lu
+                  {t.unread}
                 </span>
               )}
             </div>
             <p style={{ margin: "6px 0 0", fontSize: 14, color: "var(--bpm-text-secondary)" }}>{n.message}</p>
-            <div style={{ fontSize: 12, color: "var(--bpm-text-secondary)", marginTop: 6 }}>{formatNotifTime(n.timestamp)}</div>
+            <div style={{ fontSize: 12, color: "var(--bpm-text-secondary)", marginTop: 6 }}>{formatNotifTime(n.timestamp, t)}</div>
             {n.actionLabel && (
               <button
                 type="button"
@@ -206,7 +241,7 @@ export function NotificationCenter({
                   color: "var(--bpm-text-primary)",
                 }}
               >
-                Marquer comme lu
+                {t.markRead}
               </button>
             )}
             {hover && n.read && onDismiss && (
@@ -223,7 +258,7 @@ export function NotificationCenter({
                   color: "var(--bpm-error)",
                 }}
               >
-                Supprimer
+                {t.remove}
               </button>
             )}
           </div>
@@ -290,7 +325,7 @@ export function NotificationCenter({
               cursor: "pointer",
             }}
           >
-            Tout marquer comme lu
+            {t.markAllRead}
           </button>
         )}
       </header>
@@ -298,7 +333,7 @@ export function NotificationCenter({
         {list.unread.map(renderRow)}
         {list.read.length > 0 && list.unread.length > 0 && (
           <li style={{ padding: "8px 14px", fontSize: 11, fontWeight: 600, color: "var(--bpm-text-secondary)", background: "var(--bpm-bg-app, var(--bpm-bg-secondary))" }}>
-            Lues
+            {t.readSection}
           </li>
         )}
         {list.read.map(renderRow)}
@@ -318,7 +353,7 @@ export function NotificationCenter({
             cursor: "pointer",
           }}
         >
-          Voir les anciennes
+          {t.showOlder}
         </button>
       )}
     </section>

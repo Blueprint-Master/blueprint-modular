@@ -1,6 +1,12 @@
 "use client";
 
 import React, { useRef } from "react";
+import { useBpmLocale } from "./i18n";
+
+const STRINGS = {
+  fr: { defaultLabel: "Choisir un fichier" },
+  en: { defaultLabel: "Choose a file" },
+} as const;
 
 /**
  * @component bpm.fileUploader
@@ -39,8 +45,11 @@ export function FileUploader({
   maxSizeBytes,
   onFiles,
   disabled = false,
-  label = "Choisir un fichier",
+  label,
 }: FileUploaderProps) {
+  const bpmLocale = useBpmLocale();
+  const t = STRINGS[bpmLocale];
+  const effLabel = label ?? t.defaultLabel;
   const inputRef = useRef<HTMLInputElement>(null);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -73,7 +82,7 @@ export function FileUploader({
           color: "var(--bpm-text-primary)",
         }}
       >
-        {label}
+        {effLabel}
       </button>
     </div>
   );

@@ -2,6 +2,12 @@
 
 import React, { useCallback, useRef, useState } from "react";
 import { Button } from "./Button";
+import { useBpmLocale } from "./i18n";
+
+const STRINGS = {
+  fr: { placeholder: "Écrivez votre message...", send: "Envoyer" },
+  en: { placeholder: "Type your message...", send: "Send" },
+} as const;
 
 /**
  * @component bpm.promptInput
@@ -49,7 +55,7 @@ export function PromptInput({
   value,
   onChange,
   onSubmit,
-  placeholder = "Écrivez votre message...",
+  placeholder,
   isLoading = false,
   disabled: formDisabled = false,
   maxLength,
@@ -58,6 +64,9 @@ export function PromptInput({
   maxRows = DEFAULT_MAX_ROWS,
   className = "",
 }: PromptInputProps) {
+  const bpmLocale = useBpmLocale();
+  const t = STRINGS[bpmLocale];
+  const effPlaceholder = placeholder ?? t.placeholder;
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const [rows, setRows] = useState(minRows);
 
@@ -115,7 +124,7 @@ export function PromptInput({
         value={value}
         onChange={handleChange}
         onKeyDown={handleKeyDown}
-        placeholder={placeholder}
+        placeholder={effPlaceholder}
         disabled={isLoading || formDisabled}
         rows={rows}
         maxLength={maxLength}
@@ -157,7 +166,7 @@ export function PromptInput({
           onClick={handleSubmitClick}
           disabled={submitDisabled}
         >
-          {isLoading ? "..." : "Envoyer"}
+          {isLoading ? "..." : t.send}
         </Button>
       </div>
     </div>

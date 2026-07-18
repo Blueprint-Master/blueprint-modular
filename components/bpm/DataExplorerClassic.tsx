@@ -4,6 +4,18 @@ import React, { useMemo, useState } from "react";
 import { Input } from "./Input";
 import { Button } from "./Button";
 import { Pagination } from "./Pagination";
+import { useBpmLocale } from "./i18n";
+
+const STRINGS = {
+  fr: {
+    searchPlaceholder: "Rechercher...",
+    exportCsv: "Exporter CSV",
+  },
+  en: {
+    searchPlaceholder: "Search...",
+    exportCsv: "Export CSV",
+  },
+} as const;
 
 export interface ColumnDef {
   key: string;
@@ -86,6 +98,8 @@ export function DataExplorerClassic({
   pageSize = 20,
   className = "",
 }: DataExplorerClassicProps) {
+  const bpmLocale = useBpmLocale();
+  const t = STRINGS[bpmLocale];
   const columns = useMemo(() => columnsProp ?? inferColumns(data), [columnsProp, data]);
   const [search, setSearch] = useState("");
   const [sortKey, setSortKey] = useState<string | null>(null);
@@ -167,11 +181,11 @@ export function DataExplorerClassic({
             </h3>
           )}
           {searchable && (
-            <Input value={search} onChange={setSearch} placeholder="Rechercher..." type="search" />
+            <Input value={search} onChange={setSearch} placeholder={t.searchPlaceholder} type="search" />
           )}
           {exportable && (
             <Button type="button" variant="outline" size="small" onClick={handleExportCsv}>
-              Exporter CSV
+              {t.exportCsv}
             </Button>
           )}
         </div>
