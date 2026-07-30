@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-07-18T20:56:34.092Z",
+  "generatedAt": "2026-07-30T12:23:01.352Z",
   "source": "lib/generated/bpm-components.json + public/llms.txt + lib/semantics/bpm-semantics.json",
   "total": 156,
   "categories": [
@@ -4155,14 +4155,14 @@
       "category": "Média",
       "status": "uncurated",
       "fullDescription": "Carte Leaflet interactive avec marqueurs, polylignes, polygones et gestion des clics.",
-      "props": "  center*: [number, number]\n  zoom?: number\n  height?: number | string\n  markers?: MapMarker[]\n  onMarkerClick?: (index: number, marker: MapMarker) => void\n  tileUrl?: string\n  tileAttribution?: string\n  polylines?: [number, number][][]\n  polylineColor?: string\n  polygons?: MapPolygonSpec[]\n  onMapClick?: (latlng: [number, number]) => void\n  className?: string",
+      "props": "  center*: [number, number]\n  zoom?: number\n  height?: number | string\n  markers?: MapMarker[]\n  onMarkerClick?: (index: number, marker: MapMarker) => void\n  tileUrl?: string\n  tileAttribution?: string\n  polylines?: [number, number][][]\n  polylineColor?: string\n  polygons?: MapPolygonSpec[]\n  overlays?: MapOverlaySpec[]  — Calques superposables (données app + WMS/tuiles externes), en transparence.\n  onMapClick?: (latlng: [number, number]) => void\n  className?: string",
       "example": "bpm.mapView({ center: [48.8566, 2.3522], zoom: 13, markers: [{ position: [48.8566, 2.3522], label: \"Paris\" }] })",
       "associated": [
         "bpm.map",
         "bpm.routePlanner",
         "bpm.gps"
       ],
-      "_haystack": "bpm.mapview mapview carte leaflet interactive avec marqueurs, polylignes, polygones et gestion des clics. média carte leaflet interactive avec marqueurs, polylignes, polygones et gestion des clics.   center*: [number, number]\n  zoom?: number\n  height?: number | string\n  markers?: mapmarker[]\n  onmarkerclick?: (index: number, marker: mapmarker) => void\n  tileurl?: string\n  tileattribution?: string\n  polylines?: [number, number][][]\n  polylinecolor?: string\n  polygons?: mappolygonspec[]\n  onmapclick?: (latlng: [number, number]) => void\n  classname?: string bpm.mapview({ center: [48.8566, 2.3522], zoom: 13, markers: [{ position: [48.8566, 2.3522], label: \"paris\" }] }) bpm.map bpm.routeplanner bpm.gps"
+      "_haystack": "bpm.mapview mapview carte leaflet interactive avec marqueurs, polylignes, polygones et gestion des clics. média carte leaflet interactive avec marqueurs, polylignes, polygones et gestion des clics.   center*: [number, number]\n  zoom?: number\n  height?: number | string\n  markers?: mapmarker[]\n  onmarkerclick?: (index: number, marker: mapmarker) => void\n  tileurl?: string\n  tileattribution?: string\n  polylines?: [number, number][][]\n  polylinecolor?: string\n  polygons?: mappolygonspec[]\n  overlays?: mapoverlayspec[]  — calques superposables (données app + wms/tuiles externes), en transparence.\n  onmapclick?: (latlng: [number, number]) => void\n  classname?: string bpm.mapview({ center: [48.8566, 2.3522], zoom: 13, markers: [{ position: [48.8566, 2.3522], label: \"paris\" }] }) bpm.map bpm.routeplanner bpm.gps"
     },
     {
       "slug": "metricrow",
