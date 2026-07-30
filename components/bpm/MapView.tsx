@@ -3,9 +3,9 @@
 import React, { useEffect, useState } from "react";
 import "leaflet/dist/leaflet.css";
 import { MapViewLeafletInner } from "./MapViewLeaflet";
-import type { MapMarker, MapPolygonSpec } from "./MapViewLeaflet";
+import type { MapMarker, MapPolygonSpec, MapOverlaySpec, MapOverlayKind } from "./MapViewLeaflet";
 
-export type { MapMarker, MapPolygonSpec };
+export type { MapMarker, MapPolygonSpec, MapOverlaySpec, MapOverlayKind };
 
 const OSM_TILE =
   "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png";
@@ -27,6 +27,7 @@ const OSM_TILE =
  * @param {[number, number][][]} [props.polylines] - Lignes à tracer. Optionnel.
  * @param {string} [props.polylineColor] - Couleur des polylignes. Optionnel.
  * @param {MapPolygonSpec[]} [props.polygons] - Polygones à afficher. Optionnel.
+ * @param {MapOverlaySpec[]} [props.overlays] - Calques superposables (données app + WMS/tuiles externes), activables via un contrôle de couches, en transparence. Optionnel.
  * @param {function} [props.onMapClick] - Callback au clic sur la carte. Optionnel.
  * @param {string} [props.className=""] - Classes CSS additionnelles. Optionnel.
  *
@@ -43,6 +44,8 @@ export interface MapViewProps {
   polylines?: [number, number][][];
   polylineColor?: string;
   polygons?: MapPolygonSpec[];
+  /** Calques superposables (données app + WMS/tuiles externes), en transparence. */
+  overlays?: MapOverlaySpec[];
   onMapClick?: (latlng: [number, number]) => void;
   className?: string;
 }
@@ -74,6 +77,7 @@ export function MapView({
   polylines,
   polylineColor,
   polygons,
+  overlays,
   onMapClick,
   className = "",
 }: MapViewProps) {
@@ -157,6 +161,7 @@ export function MapView({
       polylines={polylines}
       polylineColor={polylineColor}
       polygons={polygons}
+      overlays={overlays}
       onMapClick={onMapClick}
       className={className}
     />

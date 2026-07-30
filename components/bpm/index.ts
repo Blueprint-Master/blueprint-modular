@@ -281,7 +281,7 @@ export type { LocationFieldProps, LocationValue } from "./LocationField";
 export { MachineStatus } from "./MachineStatus";
 export type { MachineStatusProps, MachineStatusState } from "./MachineStatus";
 export { MapView } from "./MapView";
-export type { MapMarker, MapPolygonSpec, MapViewProps } from "./MapView";
+export type { MapMarker, MapPolygonSpec, MapViewProps, MapOverlaySpec, MapOverlayKind } from "./MapView";
 export { MapViewLeafletInner } from "./MapViewLeaflet";
 export type { MapViewLeafletInnerProps } from "./MapViewLeaflet";
 // —— P ——
