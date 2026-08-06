@@ -129,6 +129,19 @@ export type SchedulerResource = {
 };
 
 /**
+ * Les trois mots de la barre de navigation qu'`Intl` ne sait pas rendre.
+ *
+ * Type NOMMÉ à dessein : le générateur de doc machine (`generate-llms-txt.py`)
+ * coupe un type inline au premier `;` et publierait « labels?: { prev?: string »
+ * — une forme fausse, enseignée telle quelle au modèle qui lit `llms.txt`.
+ */
+export type SchedulerNavLabels = {
+  prev?: string;
+  today?: string;
+  next?: string;
+};
+
+/**
  * @component bpm.scheduler
  * @description Planificateur / agenda (semaine, jour, mois).
  */
@@ -143,7 +156,7 @@ export type SchedulerProps = {
   /** Locale BCP-47 des dates ET des libellés de navigation. Absente = locale du moteur (comportement historique). */
   locale?: string;
   /** Surcharge des trois mots que `Intl` ne rend pas. Absente = dérivée de `locale`. */
-  labels?: { prev?: string; today?: string; next?: string };
+  labels?: SchedulerNavLabels;
 };
 
 function resourceLabel(resources: SchedulerResource[] | undefined, id: string | undefined): string | undefined {

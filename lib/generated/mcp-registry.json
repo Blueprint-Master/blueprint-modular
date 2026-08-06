@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-07-30T12:23:01.352Z",
+  "generatedAt": "2026-08-06T07:47:08.929Z",
   "source": "lib/generated/bpm-components.json + public/llms.txt + lib/semantics/bpm-semantics.json",
   "total": 156,
   "categories": [
@@ -4443,7 +4443,7 @@
       "category": "Affichage de données",
       "status": "curated",
       "fullDescription": "Calendrier/agenda avec vues jour, semaine et mois, gestion d'événements et de ressources.",
-      "props": "  view*: \"day\" | \"week\" | \"month\"\n  events*: SchedulerEvent[]\n  resources?: SchedulerResource[]\n  onEventClick*: (ev: SchedulerEvent) => void\n  onSlotClick*: (dayStart: Date, hour: number) => void\n  startHour?: number\n  endHour?: number",
+      "props": "  view*: \"day\" | \"week\" | \"month\"\n  events*: SchedulerEvent[]\n  resources?: SchedulerResource[]\n  onEventClick*: (ev: SchedulerEvent) => void\n  onSlotClick*: (dayStart: Date, hour: number) => void\n  startHour?: number\n  endHour?: number\n  locale?: string  — Locale BCP-47 des dates ET des libellés de navigation. Absente = locale du moteur (comportement historique).\n  labels?: SchedulerNavLabels  — Surcharge des trois mots que `Intl` ne rend pas. Absente = dérivée de `locale`.",
       "example": "bpm.scheduler({ view: \"week\", events: [{ id: \"1\", title: \"Réunion\", start: \"2024-01-15T10:00\", end: \"2024-01-15T11:00\" }], onEventClick: handleEvent, onSlotClick: handleSlot })",
       "associated": [
         "bpm.calendar",
@@ -4466,7 +4466,7 @@
         ],
         "status": "proposed"
       },
-      "_haystack": "bpm.scheduler scheduler calendrier/agenda avec vues jour, semaine et mois, gestion d'événements et de ressources. affichage de données calendrier/agenda avec vues jour, semaine et mois, gestion d'événements et de ressources.   view*: \"day\" | \"week\" | \"month\"\n  events*: schedulerevent[]\n  resources?: schedulerresource[]\n  oneventclick*: (ev: schedulerevent) => void\n  onslotclick*: (daystart: date, hour: number) => void\n  starthour?: number\n  endhour?: number bpm.scheduler({ view: \"week\", events: [{ id: \"1\", title: \"réunion\", start: \"2024-01-15t10:00\", end: \"2024-01-15t11:00\" }], oneventclick: handleevent, onslotclick: handleslot }) bpm.calendar bpm.timeline composite event agenda autoporteur d'événements positionnés dans le temps (jour/semaine/mois) : afficher, créer au clic sur un créneau, répartir par ressource. bpm.timeline bpm.badge bpm.drawer planning de tâches à dépendances (bpm.gantt) ou historique chronologique en lecture seule (bpm.timeline). événements datés (start/end, ressource optionnelle) projetés sur une grille calendaire ; le clic sur créneau ouvre la création."
+      "_haystack": "bpm.scheduler scheduler calendrier/agenda avec vues jour, semaine et mois, gestion d'événements et de ressources. affichage de données calendrier/agenda avec vues jour, semaine et mois, gestion d'événements et de ressources.   view*: \"day\" | \"week\" | \"month\"\n  events*: schedulerevent[]\n  resources?: schedulerresource[]\n  oneventclick*: (ev: schedulerevent) => void\n  onslotclick*: (daystart: date, hour: number) => void\n  starthour?: number\n  endhour?: number\n  locale?: string  — locale bcp-47 des dates et des libellés de navigation. absente = locale du moteur (comportement historique).\n  labels?: schedulernavlabels  — surcharge des trois mots que `intl` ne rend pas. absente = dérivée de `locale`. bpm.scheduler({ view: \"week\", events: [{ id: \"1\", title: \"réunion\", start: \"2024-01-15t10:00\", end: \"2024-01-15t11:00\" }], oneventclick: handleevent, onslotclick: handleslot }) bpm.calendar bpm.timeline composite event agenda autoporteur d'événements positionnés dans le temps (jour/semaine/mois) : afficher, créer au clic sur un créneau, répartir par ressource. bpm.timeline bpm.badge bpm.drawer planning de tâches à dépendances (bpm.gantt) ou historique chronologique en lecture seule (bpm.timeline). événements datés (start/end, ressource optionnelle) projetés sur une grille calendaire ; le clic sur créneau ouvre la création."
     },
     {
       "slug": "sensorgrid",

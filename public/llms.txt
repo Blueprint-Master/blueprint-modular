@@ -1,7 +1,7 @@
 # Blueprint Modular — Agent Context File
 # Version React (@blueprint-modular/core, npm) : 0.3.5
 # Version Python (blueprint-modular, PyPI)      : 0.1.54
-# Date    : 2026-08-03
+# Date    : 2026-08-06
 # URL canonique : https://blueprint-modular.com/llms.txt
 #
 # Ce fichier est la référence machine de @blueprint-modular/core.
@@ -1461,7 +1461,7 @@ Conteneur page (core) — props : children.
 ```
 
 ## bpm.scheduler
-@component bpm.scheduler @description Calendrier/agenda avec vues jour, semaine et mois, gestion d'événements et de ressources. @example bpm.scheduler({ view: "week", events: [{ id: "1", title: "Réunion", start: "2024-01-15T10:00", end: "2024-01-15T11:00" }], onEventClick: handleEvent, onSlotClick: handleSlot }) @param {object} props @param {"day"|"week"|"month"} props.view - Vue active. Obligatoire. @param {SchedulerEvent[]} props.events - Liste des événements (id, title, start, end, resourceId?, color?). Obligatoire. @param {SchedulerResource[]} [props.resources] - Ressources associables (id, label). Optionnel. @param {function} props.onEventClick - Callback au clic sur un événement. Obligatoire. @param {function} props.onSlotClick - Callback au clic sur un créneau vide (dayStart, hour). Obligatoire. @param {number} [props.startHour=8] - Première heure affichée. Optionnel. @param {number} [props.endHour=20] - Dernière heure affichée. Optionnel. @associated bpm.calendar, bpm.timeline
+@component bpm.scheduler @description Calendrier/agenda avec vues jour, semaine et mois, gestion d'événements et de ressources. @example bpm.scheduler({ view: "week", events: [{ id: "1", title: "Réunion", start: "2024-01-15T10:00", end: "2024-01-15T11:00" }], onEventClick: handleEvent, onSlotClick: handleSlot }) @param {object} props @param {"day"|"week"|"month"} props.view - Vue active. Obligatoire. @param {SchedulerEvent[]} props.events - Liste des événements (id, title, start, end, resourceId?, color?). Obligatoire. @param {SchedulerResource[]} [props.resources] - Ressources associables (id, label). Optionnel. @param {function} props.onEventClick - Callback au clic sur un événement. Obligatoire. @param {function} props.onSlotClick - Callback au clic sur un créneau vide (dayStart, hour). Obligatoire. @param {number} [props.startHour=8] - Première heure affichée. Optionnel. @param {number} [props.endHour=20] - Dernière heure affichée. Optionnel. @param {string} [props.locale] - Locale BCP-47 des dates et des libellés de navigation. Optionnel — défaut : locale du moteur. @param {object} [props.labels] - Surcharge de { prev, today, next }. Optionnel — défaut : dérivé de la locale. @associated bpm.calendar, bpm.timeline
 @semantic role=composite frame=event status=proposed
 @guidance Agenda autoporteur d'événements positionnés dans le temps (jour/semaine/mois) : afficher, créer au clic sur un créneau, répartir par ressource. Associer : bpm.timeline, bpm.badge, bpm.drawer. Éviter : Planning de tâches à dépendances (bpm.gantt) ou historique chronologique en lecture seule (bpm.timeline).
 ```
@@ -1472,6 +1472,8 @@ Conteneur page (core) — props : children.
   onSlotClick*: (dayStart: Date, hour: number) => void
   startHour?: number
   endHour?: number
+  locale?: string  — Locale BCP-47 des dates ET des libellés de navigation. Absente = locale du moteur (comportement historique).
+  labels?: SchedulerNavLabels  — Surcharge des trois mots que `Intl` ne rend pas. Absente = dérivée de `locale`.
 ```
 
 ## bpm.scrollContainer
