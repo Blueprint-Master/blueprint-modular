@@ -119,13 +119,39 @@ export function LabelValue({
     </span>
   );
 
+  /**
+   * LE LIBELLÉ NOMME LA DONNÉE — il n'est pas décoratif.
+   *
+   * Il était peint en `--bpm-text-muted`, le jeton le plus clair de l'échelle,
+   * à 10-12 px, en capitales, avec 0,04em d'interlettrage. Cette combinaison
+   * est le reproche le plus verbatim du parc audité — relevé sur des apps sans
+   * rapport entre elles, en thème clair comme en thème sombre :
+   *
+   *     « Les libellés de champs ('Date de brassage', 'Volume réalisé (L)')
+   *       sont en gris très clair sur fond blanc, contraste insuffisant »
+   *     « Le contraste des labels en petites capitales gris clair sur fond
+   *       sombre dans le panneau détail est insuffisant (ratio estimé < 3:1) »
+   *
+   * Et le ratio EST bas par contrat : les consommateurs garantissent 4,5:1 sur
+   * `--bpm-text-secondary` mais seulement **3:1** sur `--bpm-text-muted`. Or
+   * 3:1 est le plancher des GROS textes ; appliqué à 10 px en capitales, il
+   * décrit précisément ce que le juge décrit.
+   *
+   * `--bpm-text-secondary` est le jeton dont le contrat correspond à cet usage.
+   * `muted` reste ce qu'il doit être : le registre des affordances accessoires
+   * — d'où le bouton « Copier », lui, inchangé.
+   *
+   * La graisse 500 compense l'interlettrage : à cette taille, en capitales,
+   * l'espacement amincit le trait autant qu'il l'aère.
+   */
   const labelNode = (
     <span
       style={{
         fontSize: labelSize,
+        fontWeight: 500,
         textTransform: "uppercase",
         letterSpacing: "0.04em",
-        color: "var(--bpm-text-muted)",
+        color: "var(--bpm-text-secondary, var(--bpm-text-muted))",
       }}
     >
       {label}

@@ -16,6 +16,8 @@ import React, { useMemo, useState } from "react";
  * @param {function} props.onSlotClick - Callback au clic sur un créneau vide (dayStart, hour). Obligatoire.
  * @param {number} [props.startHour=8] - Première heure affichée. Optionnel.
  * @param {number} [props.endHour=20] - Dernière heure affichée. Optionnel.
+ * @param {string} [props.locale] - Locale BCP-47 des dates et des libellés de navigation. Optionnel — défaut : locale du moteur.
+ * @param {object} [props.labels] - Surcharge de { prev, today, next }. Optionnel — défaut : dérivé de la locale.
  *
  * @associated bpm.calendar, bpm.timeline
  */
@@ -47,7 +49,70 @@ function daysInMonth(y: number, m: number): number {
   return new Date(y, m + 1, 0).getDate();
 }
 
-const WEEKDAY_LABELS = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
+/**
+ * LE SEUL COMPOSANT DU CORE QUI PARLAIT ANGLAIS QUOI QU'IL ARRIVE.
+ *
+ * Deux fautes distinctes vivaient ici, et la seconde rendait la première
+ * visible :
+ *
+ * 1. `Prev` / `Today` / `Next` étaient des littéraux anglais sans échappatoire —
+ *    aucune application française n'y coupait ;
+ * 2. l'en-tête des jours était un tableau `["Mon", "Tue", …]` FIGÉ, alors que le
+ *    titre juste au-dessus passait par `toLocaleDateString`. Le même composant
+ *    affichait donc « août 2026 » surmontant « Mon Tue Wed ». Ce n'est pas une
+ *    traduction manquante, c'est une INCOHÉRENCE interne — celle que l'œil
+ *    attrape en premier.
+ *
+ * ## Ce qui remplace, et pourquoi pas une table pour tout
+ *
+ * Les noms de jours ne se traduisent pas à la main : `Intl` les connaît dans
+ * toutes les locales. On les DÉRIVE d'une semaine réelle ancrée sur un lundi,
+ * avec la même locale que le titre. Les deux ne peuvent plus diverger, puisqu'ils
+ * lisent la même source.
+ *
+ * Restent trois mots qu'aucun `Intl` ne rend — précédent, aujourd'hui, suivant.
+ * Eux passent par une table FERMÉE, et c'est ici le bon outil : trois mots, un
+ * vocabulaire qui ne bougera pas, et la seule alternative — laisser l'anglais
+ * par défaut — est exactement le défaut qu'on corrige.
+ *
+ * Locale inconnue → anglais, comme avant : aucune application existante ne
+ * change de langue sans l'avoir demandé.
+ */
+const NAV_LABELS: Record<string, { prev: string; today: string; next: string }> = {
+  fr: { prev: "Précédent", today: "Aujourd'hui", next: "Suivant" },
+  en: { prev: "Prev", today: "Today", next: "Next" },
+  es: { prev: "Anterior", today: "Hoy", next: "Siguiente" },
+  de: { prev: "Zurück", today: "Heute", next: "Weiter" },
+  it: { prev: "Precedente", today: "Oggi", next: "Successivo" },
+  pt: { prev: "Anterior", today: "Hoje", next: "Seguinte" },
+  nl: { prev: "Vorige", today: "Vandaag", next: "Volgende" },
+  ru: { prev: "Назад", today: "Сегодня", next: "Вперёд" },
+  zh: { prev: "上一个", today: "今天", next: "下一个" },
+};
+
+function navLabelsFor(locale: string | undefined): { prev: string; today: string; next: string } {
+  /* `undefined` = locale du moteur, celle-là même que suivent les dates. On la
+     RÉSOUT explicitement pour que les boutons suivent le titre au lieu de
+     retomber en anglais pendant que le titre, lui, est traduit. */
+  let resolved = "en";
+  try {
+    resolved = new Intl.DateTimeFormat(locale).resolvedOptions().locale;
+  } catch {
+    /* Environnement sans ICU complet : on garde l'anglais. */
+  }
+  return NAV_LABELS[resolved.slice(0, 2).toLowerCase()] ?? NAV_LABELS.en!;
+}
+
+/** Noms courts des jours, lundi → dimanche, dans la locale demandée. */
+function weekdayLabelsFor(locale: string | undefined): string[] {
+  try {
+    const fmt = new Intl.DateTimeFormat(locale, { weekday: "short" });
+    // 2024-01-01 est un LUNDI : l'ancre rend la semaine déterministe.
+    return Array.from({ length: 7 }, (_, i) => fmt.format(new Date(2024, 0, 1 + i)));
+  } catch {
+    return ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
+  }
+}
 
 export type SchedulerEvent = {
   id: string;
@@ -64,6 +129,19 @@ export type SchedulerResource = {
 };
 
 /**
+ * Les trois mots de la barre de navigation qu'`Intl` ne sait pas rendre.
+ *
+ * Type NOMMÉ à dessein : le générateur de doc machine (`generate-llms-txt.py`)
+ * coupe un type inline au premier `;` et publierait « labels?: { prev?: string »
+ * — une forme fausse, enseignée telle quelle au modèle qui lit `llms.txt`.
+ */
+export type SchedulerNavLabels = {
+  prev?: string;
+  today?: string;
+  next?: string;
+};
+
+/**
  * @component bpm.scheduler
  * @description Planificateur / agenda (semaine, jour, mois).
  */
@@ -75,6 +153,10 @@ export type SchedulerProps = {
   onSlotClick: (dayStart: Date, hour: number) => void;
   startHour?: number;
   endHour?: number;
+  /** Locale BCP-47 des dates ET des libellés de navigation. Absente = locale du moteur (comportement historique). */
+  locale?: string;
+  /** Surcharge des trois mots que `Intl` ne rend pas. Absente = dérivée de `locale`. */
+  labels?: SchedulerNavLabels;
 };
 
 function resourceLabel(resources: SchedulerResource[] | undefined, id: string | undefined): string | undefined {
@@ -90,8 +172,19 @@ export function Scheduler({
   onSlotClick,
   startHour = 8,
   endHour = 20,
+  locale,
+  labels,
 }: SchedulerProps) {
   const [anchor, setAnchor] = useState(() => startOfLocalDay(new Date()));
+  const nav = useMemo(() => {
+    const base = navLabelsFor(locale);
+    return {
+      prev: labels?.prev ?? base.prev,
+      today: labels?.today ?? base.today,
+      next: labels?.next ?? base.next,
+    };
+  }, [locale, labels?.prev, labels?.today, labels?.next]);
+  const weekdayLabels = useMemo(() => weekdayLabelsFor(locale), [locale]);
   const hourCount = Math.max(1, endHour - startHour);
   const hourRowPx = 44;
   const headerCellH = 36;
@@ -168,14 +261,14 @@ export function Scheduler({
 
   const titleText = useMemo(() => {
     if (view === "day") {
-      return anchor.toLocaleDateString(undefined, { weekday: "long", day: "numeric", month: "long", year: "numeric" });
+      return anchor.toLocaleDateString(locale, { weekday: "long", day: "numeric", month: "long", year: "numeric" });
     }
     if (view === "week") {
       const s = startOfWeekMonday(anchor);
       const e = addDays(s, 6);
-      return `${s.toLocaleDateString(undefined, { day: "numeric", month: "short" })} – ${e.toLocaleDateString(undefined, { day: "numeric", month: "short", year: "numeric" })}`;
+      return `${s.toLocaleDateString(locale, { day: "numeric", month: "short" })} – ${e.toLocaleDateString(locale, { day: "numeric", month: "short", year: "numeric" })}`;
     }
-    return anchor.toLocaleDateString(undefined, { month: "long", year: "numeric" });
+    return anchor.toLocaleDateString(locale, { month: "long", year: "numeric" });
   }, [anchor, view]);
 
   const btnStyle: React.CSSProperties = {
@@ -212,13 +305,13 @@ export function Scheduler({
         >
           <div style={{ display: "flex", gap: 6 }}>
             <button type="button" style={btnStyle} onClick={goPrev}>
-              Prev
+              {nav.prev}
             </button>
             <button type="button" style={btnStyle} onClick={goToday}>
-              Today
+              {nav.today}
             </button>
             <button type="button" style={btnStyle} onClick={goNext}>
-              Next
+              {nav.next}
             </button>
           </div>
           <div style={{ fontWeight: 600, fontSize: 14 }}>{titleText}</div>
@@ -232,7 +325,7 @@ export function Scheduler({
             borderBottom: "1px solid var(--bpm-border)",
           }}
         >
-          {WEEKDAY_LABELS.map((w) => (
+          {weekdayLabels.map((w) => (
             <div
               key={w}
               style={{
@@ -355,13 +448,13 @@ export function Scheduler({
       >
         <div style={{ display: "flex", gap: 6 }}>
           <button type="button" style={btnStyle} onClick={goPrev}>
-            Prev
+            {nav.prev}
           </button>
           <button type="button" style={btnStyle} onClick={goToday}>
-            Today
+            {nav.today}
           </button>
           <button type="button" style={btnStyle} onClick={goNext}>
-            Next
+            {nav.next}
           </button>
         </div>
         <div style={{ fontWeight: 600, fontSize: 14 }}>{titleText}</div>
@@ -416,8 +509,8 @@ export function Scheduler({
                   }}
                 >
                   {view === "week"
-                    ? `${WEEKDAY_LABELS[(day.getDay() + 6) % 7]} ${day.getDate()}`
-                    : day.toLocaleDateString(undefined, { weekday: "short", day: "numeric" })}
+                    ? `${weekdayLabels[(day.getDay() + 6) % 7]} ${day.getDate()}`
+                    : day.toLocaleDateString(locale, { weekday: "short", day: "numeric" })}
                 </div>
                 <div style={{ position: "relative", height: hourCount * hourRowPx }}>
                   {hourSlots.map((h) => (
