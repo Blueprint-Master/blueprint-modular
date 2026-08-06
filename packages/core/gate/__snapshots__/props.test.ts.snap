@@ -902,6 +902,8 @@ exports[`bpm prop surface snapshot > prop names match committed snapshot (additi
     "onSlotClick",
     "startHour",
     "endHour",
+    "locale",
+    "labels",
   ],
   "scrollContainer": [
     "children",
