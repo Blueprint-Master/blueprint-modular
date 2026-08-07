@@ -79,6 +79,8 @@ export interface MetricProps {
   trackContext?: boolean;
   /** Contexte de jugement { reference, direction, comparisonFrame? } : la métrique porte alors un jugement via interpret(value, context) — écart au repère, tendance (si trajectoire), anomalie — révélé sous la valeur. Additif : sans context, rendu inchangé. */
   context?: InterpretContext;
+  /** Rend la carte CLIQUABLE — ex. « voir les factures impayées » depuis le KPI qui les compte. Ajoute le rôle bouton, le focus clavier et Entrée/Espace : une carte cliquable à la souris seulement serait inatteignable au clavier et muette pour un lecteur d'écran. Absent = rendu et sémantique inchangés. */
+  onClick?: (() => void) | null;
 }
 
 export function Metric({
@@ -100,7 +102,12 @@ export function Metric({
   compact = false,
   trackContext = false,
   context,
+  onClick = null,
 }: MetricProps) {
+  /* Carte cliquable : on n'ajoute JAMAIS le curseur seul. Une affordance visuelle
+     sans affordance clavier fabrique un piège — visible pour la souris, invisible
+     pour le reste. Les trois vont donc ensemble : rôle, tabulation, Entrée/Espace. */
+  const clickable = typeof onClick === "function";
   // ── Jugement (additif) : trajectoire → dernier point + tendance ──────────
   const trajectory = Array.isArray(value) ? value : null;
   const sortedTraj = trajectory
@@ -181,9 +188,25 @@ export function Metric({
             : {}),
         color: "var(--bpm-text-primary, #111827)",
         minHeight: compact ? "80px" : undefined,
+        ...(clickable ? { cursor: "pointer" } : {}),
       }}
       data-metric-name={name && name !== "" ? name : undefined}
       data-judgment={judgment ? judgment.level.status : undefined}
+      {...(clickable
+        ? {
+            role: "button" as const,
+            tabIndex: 0,
+            onClick: () => onClick?.(),
+            onKeyDown: (e: React.KeyboardEvent) => {
+              /* Espace déclenche ET défile la page : on retient le défilement,
+                 comme le fait un <button> natif. */
+              if (e.key === "Enter" || e.key === " ") {
+                e.preventDefault();
+                onClick?.();
+              }
+            },
+          }
+        : {})}
     >
       <div className={`flex items-center gap-2 ${compact ? "mb-0.5" : "mb-1"}`} style={compact ? { marginBottom: "calc(0.125rem + 3px)" } : undefined}>
         {icon != null && (
