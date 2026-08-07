@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-08-07T10:39:20.947Z",
+  "generatedAt": "2026-08-07T10:47:17.381Z",
   "source": "lib/generated/bpm-components.json + public/llms.txt + lib/semantics/bpm-semantics.json",
   "total": 156,
   "categories": [
@@ -1002,7 +1002,7 @@
       "category": "Interaction",
       "status": "curated",
       "fullDescription": "Champ de saisie numérique avec validation min/max et formatage au blur.",
-      "props": "  label?: string\n  value?: number | null\n  onChange?: (value: number | null) => void\n  min?: number | null\n  max?: number | null\n  step?: number\n  disabled?: boolean\n  help?: string | null\n  placeholder?: string",
+      "props": "  label?: string\n  value?: number | null\n  onChange?: (value: number | null) => void\n  min?: number | null\n  max?: number | null\n  step?: number\n  disabled?: boolean\n  help?: string | null\n  placeholder?: string\n  error?: string | null  — Message d'erreur du CHAMP : contour rouge + message sous le champ (role=alert, aria-invalid). Additif : défaut null = rendu inchangé.",
       "example": "bpm.numberInput({ label: \"Quantité\", value: 10, onChange: setQty, min: 0, max: 100, step: 1 })",
       "associated": [
         "bpm.input",
@@ -1028,7 +1028,7 @@
         ],
         "status": "proposed"
       },
-      "_haystack": "bpm.numberinput numberinput champ numérique min/max/step. interaction champ de saisie numérique avec validation min/max et formatage au blur.   label?: string\n  value?: number | null\n  onchange?: (value: number | null) => void\n  min?: number | null\n  max?: number | null\n  step?: number\n  disabled?: boolean\n  help?: string | null\n  placeholder?: string bpm.numberinput({ label: \"quantité\", value: 10, onchange: setqty, min: 0, max: 100, step: 1 }) bpm.input bpm.slider saisie entity saisir une valeur numérique précise (field number), avec min/max/step traduisant les contraintes du champ. bpm.wizardform bpm.labelvalue valeur approximative dans une plage bornée (bpm.slider) ou texte libre (bpm.input). min/max/step reflètent field.min/field.max et l'unité du champ."
+      "_haystack": "bpm.numberinput numberinput champ numérique min/max/step. interaction champ de saisie numérique avec validation min/max et formatage au blur.   label?: string\n  value?: number | null\n  onchange?: (value: number | null) => void\n  min?: number | null\n  max?: number | null\n  step?: number\n  disabled?: boolean\n  help?: string | null\n  placeholder?: string\n  error?: string | null  — message d'erreur du champ : contour rouge + message sous le champ (role=alert, aria-invalid). additif : défaut null = rendu inchangé. bpm.numberinput({ label: \"quantité\", value: 10, onchange: setqty, min: 0, max: 100, step: 1 }) bpm.input bpm.slider saisie entity saisir une valeur numérique précise (field number), avec min/max/step traduisant les contraintes du champ. bpm.wizardform bpm.labelvalue valeur approximative dans une plage bornée (bpm.slider) ou texte libre (bpm.input). min/max/step reflètent field.min/field.max et l'unité du champ."
     },
     {
       "slug": "input",

@@ -1,5 +1,6 @@
 /**
- * Erreur AU NIVEAU DU CHAMP — `bpm.input`, `bpm.selectbox`, `bpm.dateInput`.
+ * Erreur AU NIVEAU DU CHAMP — `bpm.input`, `bpm.numberInput`, `bpm.selectbox`,
+ * `bpm.dateInput`.
  *
  * ── Ce qui manquait, et depuis quand ─────────────────────────────────────────
  *
@@ -43,6 +44,7 @@ import { afterEach, describe, expect, it } from "vitest";
 
 import { DateInput } from "../../../components/bpm/DateInput";
 import { Input } from "../../../components/bpm/Input";
+import { NumberInput } from "../../../components/bpm/NumberInput";
 import { Selectbox } from "../../../components/bpm/Selectbox";
 
 afterEach(cleanup);
@@ -137,5 +139,45 @@ describe("bpm.dateInput", () => {
     fireEvent.click(declencheur);
     expect(declencheur.style.borderColor).toBe("var(--bpm-accent)");
     expect(screen.getByRole("alert").textContent).toBe("Date passée");
+  });
+});
+
+/**
+ * ── `bpm.numberInput`, ajouté après coup et pour une raison précise ──────────
+ *
+ * Les trois premiers champs couvraient la saisie ordinaire. `numberInput` est
+ * celui qui porte la validation la plus RICHE — les bornes `min` / `max`, donc
+ * les messages « minimum 0 » / « maximum 100 » — et il était le seul à ne pas
+ * pouvoir les dire. Un formulaire aurait affiché l'erreur au champ partout SAUF
+ * là où la règle est la plus fine : exactement le genre de couverture partielle
+ * qui se remarque à l'usage et pas à la relecture.
+ */
+describe("bpm.numberInput", () => {
+  it("sans `error` : aucune alerte, contour neutre", () => {
+    const { container } = render(<NumberInput label="Quantité" onChange={() => {}} />);
+    expect(screen.queryByRole("alert")).toBeNull();
+    const champ = container.querySelector("input")!;
+    expect(champ.getAttribute("aria-invalid")).toBeNull();
+    expect(champ.style.borderColor).toBe("var(--bpm-border)");
+  });
+
+  it("avec `error` : message en role=alert, contour rouge, aria-invalid", () => {
+    const { container } = render(
+      <NumberInput label="Quantité" min={0} onChange={() => {}} error="Quantité : minimum 0" />,
+    );
+    expect(screen.getByRole("alert").textContent).toBe("Quantité : minimum 0");
+    const champ = container.querySelector("input")!;
+    expect(champ.getAttribute("aria-invalid")).toBe("true");
+    expect(champ.style.borderColor).toBe(ROUGE);
+  });
+
+  it("quitter un champ en erreur n'efface PAS son contour rouge", () => {
+    /* `handleBlur` normalise la valeur ET repeint le contour — le même piège
+       que sur `input`, sur un composant écrit indépendamment. */
+    const { container } = render(<NumberInput onChange={() => {}} error="Obligatoire" />);
+    const champ = container.querySelector("input")!;
+    fireEvent.focus(champ);
+    fireEvent.blur(champ);
+    expect(champ.style.borderColor).toBe(ROUGE);
   });
 });

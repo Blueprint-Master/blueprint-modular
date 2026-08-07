@@ -1,5 +1,5 @@
 # Blueprint Modular — Agent Context File
-# Version React (@blueprint-modular/core, npm) : 0.3.8
+# Version React (@blueprint-modular/core, npm) : 0.3.9
 # Version Python (blueprint-modular, PyPI)      : 0.1.54
 # Date    : 2026-08-07
 # URL canonique : https://blueprint-modular.com/llms.txt
@@ -1139,7 +1139,7 @@ INTERDIT : Carte cliquable : on n'ajoute JAMAIS le curseur seul. Une affordance 
 ```
 
 ## bpm.numberInput
-@component bpm.numberInput @description Champ de saisie numérique avec validation min/max et formatage au blur. @example bpm.numberInput({ label: "Quantité", value: 10, onChange: setQty, min: 0, max: 100, step: 1 }) @param {object} props @param {string} [props.label] - Label affiché au-dessus. Optionnel. @param {number|null} [props.value] - Valeur contrôlée. Optionnel. @param {function} [props.onChange] - Callback (number | null). Optionnel. @param {number|null} [props.min] - Valeur minimale autorisée. Optionnel. @param {number|null} [props.max] - Valeur maximale autorisée. Optionnel. @param {number} [props.step=1] - Pas d'incrémentation. Optionnel. @param {boolean} [props.disabled=false] - Désactive le champ. Optionnel. @param {string} [props.help] - Texte d'aide au survol. Optionnel. @param {string} [props.placeholder=""] - Placeholder. Optionnel. @parent bpm.modal, bpm.panel @associated bpm.input, bpm.slider @forbidden Valeur non numérique — utiliser bpm.input
+@component bpm.numberInput @description Champ de saisie numérique avec validation min/max et formatage au blur. @example bpm.numberInput({ label: "Quantité", value: 10, onChange: setQty, min: 0, max: 100, step: 1 }) @param {object} props @param {string} [props.label] - Label affiché au-dessus. Optionnel. @param {number|null} [props.value] - Valeur contrôlée. Optionnel. @param {function} [props.onChange] - Callback (number | null). Optionnel. @param {number|null} [props.min] - Valeur minimale autorisée. Optionnel. @param {number|null} [props.max] - Valeur maximale autorisée. Optionnel. @param {number} [props.step=1] - Pas d'incrémentation. Optionnel. @param {boolean} [props.disabled=false] - Désactive le champ. Optionnel. @param {string} [props.help] - Texte d'aide au survol. Optionnel. @param {string} [props.placeholder=""] - Placeholder. Optionnel. @param {string|null} [props.error=null] - Message d'erreur du champ : contour rouge + message sous le champ. Optionnel. @parent bpm.modal, bpm.panel @associated bpm.input, bpm.slider @forbidden Valeur non numérique — utiliser bpm.input
 @semantic role=saisie frame=entity status=proposed
 @guidance Saisir une valeur numérique précise (Field number), avec min/max/step traduisant les contraintes du champ. Associer : bpm.wizardForm, bpm.labelValue. Éviter : Valeur approximative dans une plage bornée (bpm.slider) ou texte libre (bpm.input).
 ```
@@ -1152,6 +1152,7 @@ INTERDIT : Carte cliquable : on n'ajoute JAMAIS le curseur seul. Une affordance 
   disabled?: boolean
   help?: string | null
   placeholder?: string
+  error?: string | null  — Message d'erreur du CHAMP : contour rouge + message sous le champ (role=alert, aria-invalid). Additif : défaut null = rendu inchangé.
 ```
 
 ## bpm.offlineIndicator
