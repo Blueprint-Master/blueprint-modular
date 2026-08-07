@@ -1,5 +1,5 @@
 # Blueprint Modular — Agent Context File
-# Version React (@blueprint-modular/core, npm) : 0.3.6
+# Version React (@blueprint-modular/core, npm) : 0.3.7
 # Version Python (blueprint-modular, PyPI)      : 0.1.54
 # Date    : 2026-08-07
 # URL canonique : https://blueprint-modular.com/llms.txt
