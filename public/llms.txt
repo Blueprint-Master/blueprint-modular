@@ -1,7 +1,7 @@
 # Blueprint Modular — Agent Context File
 # Version React (@blueprint-modular/core, npm) : 0.3.6
 # Version Python (blueprint-modular, PyPI)      : 0.1.54
-# Date    : 2026-08-06
+# Date    : 2026-08-07
 # URL canonique : https://blueprint-modular.com/llms.txt
 #
 # Ce fichier est la référence machine de @blueprint-modular/core.
@@ -1074,7 +1074,9 @@ Composant bpm.free — voir @blueprint-modular/core ou BPM_API.md.
   compact?: boolean  — Mode compact : hauteur réduite (~80px), padding et typo plus serrés.
   trackContext?: boolean  — Si true, expose cette métrique au contexte IA.
   context?: InterpretContext  — Contexte de jugement { reference, direction, comparisonFrame? } : la métrique porte alors un jugement via interpret(value, context) — écart au repère, tendance (si trajectoire), anomalie — révélé sous la valeur. Additif : sans context, rendu inchangé.
+  onClick?: (() => void) | null  — Rend la carte CLIQUABLE — ex. « voir les factures impayées » depuis le KPI qui les compte. Ajoute le rôle bouton, le focus clavier et Entrée/Espace : une carte cliquable à la souris seulement serait inatteignable au clavier et muette pour un lecteur d'écran. Absent = rendu et sémantique inchangés.
 ```
+INTERDIT : Carte cliquable : on n'ajoute JAMAIS le curseur seul. Une affordance visuelle
 
 ## bpm.metricRow
 @component bpm.metricRow @description Ligne horizontale de KPIs (bpm.metric) pour tableaux de bord et résumés chiffrés. @example bpm.metricRow({ children: <> {bpm.metric({ label: "CA", value: "142 500 €" })} {bpm.metric({ label: "Marge", value: "28%" })} </> }) @props - children (ReactNode) — Un ou plusieurs bpm.metric. - className (string, optionnel) — Classes CSS. @usage Dashboard, résumé commande, indicateurs ligne de production. @context PARENT: bpm.panel | bpm.tabs | page directe. ASSOCIATED: bpm.metric, bpm.grid. FORBIDDEN: div custom comme parent.
