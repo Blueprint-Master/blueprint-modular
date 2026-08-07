@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-08-07T08:52:48.129Z",
+  "generatedAt": "2026-08-07T10:35:59.640Z",
   "source": "lib/generated/bpm-components.json + public/llms.txt + lib/semantics/bpm-semantics.json",
   "total": 156,
   "categories": [
@@ -964,7 +964,7 @@
       "category": "Interaction",
       "status": "curated",
       "fullDescription": "Liste déroulante avec dropdown portalé, support clavier et placeholder.",
-      "props": "  label?: string  — Label affiché au-dessus.\n  options?: SelectboxOption[]  — Liste d'options. Format : string[] ou [{value, label}].\n  value?: string | null  — Valeur sélectionnée (contrôlé).\n  onChange?: (value: string) => void  — Callback — reçoit la valeur string sélectionnée.\n  disabled?: boolean\n  help?: string | null\n  placeholder?: string\n  required?: boolean\n  triggerHeight?: number  — Hauteur du trigger (px) pour alignement avec d'autres champs (ex. FilterPanel).",
+      "props": "  label?: string  — Label affiché au-dessus.\n  options?: SelectboxOption[]  — Liste d'options. Format : string[] ou [{value, label}].\n  value?: string | null  — Valeur sélectionnée (contrôlé).\n  onChange?: (value: string) => void  — Callback — reçoit la valeur string sélectionnée.\n  disabled?: boolean\n  help?: string | null\n  placeholder?: string\n  required?: boolean\n  error?: string | null  — Message d'erreur du CHAMP : contour rouge + message sous le champ (role=alert, aria-invalid). Additif : défaut null = rendu inchangé.\n  triggerHeight?: number  — Hauteur du trigger (px) pour alignement avec d'autres champs (ex. FilterPanel).",
       "example": "bpm.selectbox({ label: \"Pays\", options: [\"France\", \"Belgique\", \"Suisse\"], value: selected, onChange: setSelected })",
       "associated": [
         "bpm.input",
@@ -993,7 +993,7 @@
         ],
         "status": "proposed"
       },
-      "_haystack": "bpm.selectbox selectbox liste déroulante. interaction liste déroulante avec dropdown portalé, support clavier et placeholder.   label?: string  — label affiché au-dessus.\n  options?: selectboxoption[]  — liste d'options. format : string[] ou [{value, label}].\n  value?: string | null  — valeur sélectionnée (contrôlé).\n  onchange?: (value: string) => void  — callback — reçoit la valeur string sélectionnée.\n  disabled?: boolean\n  help?: string | null\n  placeholder?: string\n  required?: boolean\n  triggerheight?: number  — hauteur du trigger (px) pour alignement avec d'autres champs (ex. filterpanel). bpm.selectbox({ label: \"pays\", options: [\"france\", \"belgique\", \"suisse\"], value: selected, onchange: setselected }) bpm.input bpm.radiogroup bpm.autocomplete saisie entity choisir une valeur parmi une énumération fermée (field enum) de taille moyenne (5-15 options). bpm.filterpanel bpm.wizardform bpm.input ≤5 options visibles d'un coup (bpm.radiogroup) ou recherche dans une longue liste/relation (bpm.autocomplete). options = enumvalues du field ; libellés courts."
+      "_haystack": "bpm.selectbox selectbox liste déroulante. interaction liste déroulante avec dropdown portalé, support clavier et placeholder.   label?: string  — label affiché au-dessus.\n  options?: selectboxoption[]  — liste d'options. format : string[] ou [{value, label}].\n  value?: string | null  — valeur sélectionnée (contrôlé).\n  onchange?: (value: string) => void  — callback — reçoit la valeur string sélectionnée.\n  disabled?: boolean\n  help?: string | null\n  placeholder?: string\n  required?: boolean\n  error?: string | null  — message d'erreur du champ : contour rouge + message sous le champ (role=alert, aria-invalid). additif : défaut null = rendu inchangé.\n  triggerheight?: number  — hauteur du trigger (px) pour alignement avec d'autres champs (ex. filterpanel). bpm.selectbox({ label: \"pays\", options: [\"france\", \"belgique\", \"suisse\"], value: selected, onchange: setselected }) bpm.input bpm.radiogroup bpm.autocomplete saisie entity choisir une valeur parmi une énumération fermée (field enum) de taille moyenne (5-15 options). bpm.filterpanel bpm.wizardform bpm.input ≤5 options visibles d'un coup (bpm.radiogroup) ou recherche dans une longue liste/relation (bpm.autocomplete). options = enumvalues du field ; libellés courts."
     },
     {
       "slug": "numberinput",
@@ -1037,7 +1037,7 @@
       "category": "Interaction",
       "status": "curated",
       "fullDescription": "Champ de saisie texte avec label optionnel. Supporte différents types HTML (text, email, password, etc.).",
-      "props": "  label?: string  — Label affiché au-dessus du champ.\n  value?: string  — Valeur contrôlée.\n  onChange?: (value: string) => void  — Callback — reçoit la valeur string, pas un Event. Ex: (v) => setValue(v)\n  placeholder?: string\n  type?: \"text\" | \"email\" | \"password\" | \"number\" | \"search\" | \"date\"  — Type HTML. Default: 'text'.\n  disabled?: boolean  — Désactive le champ.\n  className?: string",
+      "props": "  label?: string  — Label affiché au-dessus du champ.\n  value?: string  — Valeur contrôlée.\n  onChange?: (value: string) => void  — Callback — reçoit la valeur string, pas un Event. Ex: (v) => setValue(v)\n  placeholder?: string\n  type?: \"text\" | \"email\" | \"password\" | \"number\" | \"search\" | \"date\"  — Type HTML. Default: 'text'.\n  disabled?: boolean  — Désactive le champ.\n  error?: string | null  — Message d'erreur du CHAMP : contour rouge + message sous le champ (role=alert, aria-invalid). Additif : défaut null = rendu inchangé.\n  className?: string",
       "example": "bpm.input({ label: \"Email\", value: email, onChange: setEmail, type: \"email\", placeholder: \"exemple@mail.com\" })",
       "associated": [
         "bpm.button",
@@ -1065,7 +1065,7 @@
         ],
         "status": "proposed"
       },
-      "_haystack": "bpm.input input champ texte une ligne. interaction champ de saisie texte avec label optionnel. supporte différents types html (text, email, password, etc.).   label?: string  — label affiché au-dessus du champ.\n  value?: string  — valeur contrôlée.\n  onchange?: (value: string) => void  — callback — reçoit la valeur string, pas un event. ex: (v) => setvalue(v)\n  placeholder?: string\n  type?: \"text\" | \"email\" | \"password\" | \"number\" | \"search\" | \"date\"  — type html. default: 'text'.\n  disabled?: boolean  — désactive le champ.\n  classname?: string bpm.input({ label: \"email\", value: email, onchange: setemail, type: \"email\", placeholder: \"exemple@mail.com\" }) bpm.button bpm.selectbox saisie entity saisir un champ texte court d'une entité (nom, référence, email). bpm.wizardform bpm.button bpm.autocomplete texte long multiligne (bpm.textarea), nombre (bpm.numberinput), recherche d'entité liée (bpm.autocomplete). field string requis/optionnel ; valider côté formulaire avant l'événement de sauvegarde."
+      "_haystack": "bpm.input input champ texte une ligne. interaction champ de saisie texte avec label optionnel. supporte différents types html (text, email, password, etc.).   label?: string  — label affiché au-dessus du champ.\n  value?: string  — valeur contrôlée.\n  onchange?: (value: string) => void  — callback — reçoit la valeur string, pas un event. ex: (v) => setvalue(v)\n  placeholder?: string\n  type?: \"text\" | \"email\" | \"password\" | \"number\" | \"search\" | \"date\"  — type html. default: 'text'.\n  disabled?: boolean  — désactive le champ.\n  error?: string | null  — message d'erreur du champ : contour rouge + message sous le champ (role=alert, aria-invalid). additif : défaut null = rendu inchangé.\n  classname?: string bpm.input({ label: \"email\", value: email, onchange: setemail, type: \"email\", placeholder: \"exemple@mail.com\" }) bpm.button bpm.selectbox saisie entity saisir un champ texte court d'une entité (nom, référence, email). bpm.wizardform bpm.button bpm.autocomplete texte long multiligne (bpm.textarea), nombre (bpm.numberinput), recherche d'entité liée (bpm.autocomplete). field string requis/optionnel ; valider côté formulaire avant l'événement de sauvegarde."
     },
     {
       "slug": "textarea",
@@ -1192,7 +1192,7 @@
       "category": "Interaction",
       "status": "curated",
       "fullDescription": "Champ de saisie de date avec calendrier popover et format FR (JJ/MM/AAAA).",
-      "props": "  label?: string\n  value?: Date | string | null\n  onChange?: (value: Date | null) => void\n  disabled?: boolean\n  help?: string | null\n  min?: Date | string | null\n  max?: Date | string | null",
+      "props": "  label?: string\n  value?: Date | string | null\n  onChange?: (value: Date | null) => void\n  disabled?: boolean\n  help?: string | null\n  min?: Date | string | null\n  max?: Date | string | null\n  error?: string | null  — Message d'erreur du CHAMP : contour rouge + message sous le champ (role=alert, aria-invalid). Additif : défaut null = rendu inchangé.",
       "example": "bpm.dateInput({ label: \"Date de livraison\", value: new Date(), onChange: setDate })",
       "associated": [
         "bpm.dateRangePicker",
@@ -1217,7 +1217,7 @@
         ],
         "status": "proposed"
       },
-      "_haystack": "bpm.dateinput dateinput sélecteur de date. interaction champ de saisie de date avec calendrier popover et format fr (jj/mm/aaaa).   label?: string\n  value?: date | string | null\n  onchange?: (value: date | null) => void\n  disabled?: boolean\n  help?: string | null\n  min?: date | string | null\n  max?: date | string | null bpm.dateinput({ label: \"date de livraison\", value: new date(), onchange: setdate }) bpm.daterangepicker bpm.datepickerpopover saisie entity saisir une date ponctuelle (field date/datetime) : échéance, date d'événement. bpm.wizardform bpm.timeinput période ou intervalle (bpm.daterangepicker), heure seule (bpm.timeinput). format iso en donnée, affichage localisé (appspecmeta.locale)."
+      "_haystack": "bpm.dateinput dateinput sélecteur de date. interaction champ de saisie de date avec calendrier popover et format fr (jj/mm/aaaa).   label?: string\n  value?: date | string | null\n  onchange?: (value: date | null) => void\n  disabled?: boolean\n  help?: string | null\n  min?: date | string | null\n  max?: date | string | null\n  error?: string | null  — message d'erreur du champ : contour rouge + message sous le champ (role=alert, aria-invalid). additif : défaut null = rendu inchangé. bpm.dateinput({ label: \"date de livraison\", value: new date(), onchange: setdate }) bpm.daterangepicker bpm.datepickerpopover saisie entity saisir une date ponctuelle (field date/datetime) : échéance, date d'événement. bpm.wizardform bpm.timeinput période ou intervalle (bpm.daterangepicker), heure seule (bpm.timeinput). format iso en donnée, affichage localisé (appspecmeta.locale)."
     },
     {
       "slug": "daterangepicker",
