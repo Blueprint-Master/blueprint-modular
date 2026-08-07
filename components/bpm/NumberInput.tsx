@@ -18,6 +18,7 @@ import React, { useState, useEffect } from "react";
  * @param {boolean} [props.disabled=false] - Désactive le champ. Optionnel.
  * @param {string} [props.help] - Texte d'aide au survol. Optionnel.
  * @param {string} [props.placeholder=""] - Placeholder. Optionnel.
+ * @param {string|null} [props.error=null] - Message d'erreur du champ : contour rouge + message sous le champ. Optionnel.
  *
  * @parent bpm.modal, bpm.panel
  * @associated bpm.input, bpm.slider
@@ -33,6 +34,8 @@ export interface NumberInputProps {
   disabled?: boolean;
   help?: string | null;
   placeholder?: string;
+  /** Message d'erreur du CHAMP : contour rouge + message sous le champ (role=alert, aria-invalid). Additif : défaut null = rendu inchangé. */
+  error?: string | null;
 }
 
 export function NumberInput({
@@ -45,6 +48,7 @@ export function NumberInput({
   disabled = false,
   help = null,
   placeholder = "",
+  error = null,
 }: NumberInputProps) {
   const [displayString, setDisplayString] = useState(() =>
     value !== undefined && value != null ? String(value) : ""
@@ -66,7 +70,10 @@ export function NumberInput({
   };
 
   const handleBlur = (e: React.FocusEvent<HTMLInputElement>) => {
-    e.target.style.borderColor = "var(--bpm-border)";
+    /* Le blur RESTAURE l'état du champ, il ne le remet pas à neuf : sans cette
+       branche, quitter un champ en erreur en effacerait le contour rouge alors
+       que l'erreur, elle, reste affichée dessous. */
+    e.target.style.borderColor = error ? "var(--bpm-error, #dc2626)" : "var(--bpm-border)";
     e.target.style.boxShadow = "none";
     let val: number | null = displayString === "" ? null : parseFloat(displayString);
     if (val != null && !Number.isNaN(val)) {
@@ -91,8 +98,9 @@ export function NumberInput({
         inputMode="decimal"
         autoComplete="off"
         className="bpm-number-input w-full px-3 py-2 rounded-lg border text-sm min-h-[40px]"
-        style={{ borderColor: "var(--bpm-border)", background: "var(--bpm-bg-primary)", color: "var(--bpm-text-primary)", minHeight: 40, boxSizing: "border-box" }}
+        style={{ borderColor: error ? "var(--bpm-error, #dc2626)" : "var(--bpm-border)", background: "var(--bpm-bg-primary)", color: "var(--bpm-text-primary)", minHeight: 40, boxSizing: "border-box" }}
         value={displayString}
+        aria-invalid={error ? true : undefined}
         onChange={handleChange}
         onFocus={(e) => {
           e.target.style.outline = "none";
@@ -103,6 +111,15 @@ export function NumberInput({
         disabled={disabled}
         placeholder={placeholder}
       />
+      {error && (
+        <p
+          role="alert"
+          className="bpm-number-input-error mt-1 text-sm"
+          style={{ color: "var(--bpm-error, #dc2626)", fontSize: "var(--bpm-font-size-sm)" }}
+        >
+          {error}
+        </p>
+      )}
     </div>
   );
 }
