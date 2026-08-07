@@ -63,6 +63,23 @@ export interface TableColumn {
   decimals?: number;
   /** Si true, l'en-tête de colonne ne passe pas à la ligne (whitespace-nowrap). */
   noWrap?: boolean;
+  /**
+   * Agrégat affiché en PIED de tableau pour cette colonne.
+   *
+   * Calculé sur les lignes REÇUES (`data`) — c'est-à-dire ce qui est à l'écran.
+   * Un total sur des lignes non affichées mentirait : filtrer une liste et voir
+   * un total inchangé est le défaut classique de cette fonctionnalité. Le tri
+   * ne change rien (même ensemble), la pagination si — l'appelant paginant
+   * lui-même, il passe la page courante et le total suit.
+   *
+   * `sum` et `avg` ignorent les valeurs non numériques ; `count` compte les
+   * lignes dont la valeur est renseignée. Une colonne sans aucune valeur
+   * numérique ne rend RIEN plutôt que « 0 » — un zéro fabriqué est une valeur
+   * qui ment.
+   *
+   * Additif : absent partout = aucun pied émis, rendu inchangé à l'octet.
+   */
+  total?: "sum" | "avg" | "count";
   /** Contexte de jugement de la colonne { reference, direction, comparisonFrame? } : chaque cellule numérique est jugée par interpret — valeur colorée par le verdict, écart en title, data-judgment. Ignoré si render est fourni. Additif : sans context, rendu inchangé. */
   context?: InterpretContext;
 }
@@ -104,6 +121,8 @@ export interface TableProps {
   error?: string | null;
   /** Densité d'affichage : "normal" (défaut, rendu historique) ou "compact" (padding réduit). */
   density?: "normal" | "compact";
+  /** Libellé de la première cellule du pied de totaux. Défaut : "Total". */
+  totalsLabel?: string;
 }
 
 function getSortValue(val: unknown): string | number {
@@ -160,6 +179,7 @@ export function Table({
   loading = false,
   error = null,
   density = "normal",
+  totalsLabel,
 }: TableProps) {
   const bpmLocale = useBpmLocale();
   const t = STRINGS[bpmLocale];
@@ -257,6 +277,29 @@ export function Table({
 
   const tableMinWidthStyle =
     !isMobile && minWidth != null ? { minWidth: `${minWidth}px` } : undefined;
+
+  /* PIED DE TOTAUX — calculé sur `data`, donc sur ce qui est à l'écran. Un
+     total portant sur des lignes non affichées mentirait : filtrer une liste et
+     voir le total inchangé est le défaut classique de cette fonctionnalité.
+     Émis SEULEMENT si au moins une colonne le demande ET qu'il y a des lignes :
+     un pied « Total — » sous une table vide n'apprend rien. */
+  const wantsTotals = columns.some((c) => c.total) && sortedData.length > 0 && !loading && !error;
+  const totalFor = (col: TableColumn): string | null => {
+    if (!col.total) return null;
+    const bruts = sortedData.map((r) => r[col.key]);
+    if (col.total === "count") {
+      const n = bruts.filter((v) => v != null && v !== "").length;
+      return formatNumber(n, 0);
+    }
+    const nombres = bruts.filter(isNumericValue).map(toNumber);
+    /* Aucune valeur numérique : on ne rend RIEN plutôt que « 0 ». Un zéro
+       fabriqué est une valeur qui ment, et c'est précisément ce qu'un total est
+       censé ne jamais faire. */
+    if (nombres.length === 0) return null;
+    const somme = nombres.reduce((a, b) => a + b, 0);
+    const val = col.total === "avg" ? somme / nombres.length : somme;
+    return formatNumber(val, col.decimals ?? valueDecimals);
+  };
 
   return (
     <div
@@ -392,6 +435,31 @@ export function Table({
               </tr>
             ))}
           </tbody>
+          {wantsTotals ? (
+            <tfoot className="bpm-table-tfoot">
+              <tr style={{ fontWeight: 600, color: "var(--bpm-text-primary, #111827)" }}>
+                {columns.map((col, colIdx) => {
+                  const v = totalFor(col);
+                  return (
+                    <td
+                      key={col.key || colIdx}
+                      className={`${density === "compact" ? "px-2 py-1" : "px-3 py-2"} text-sm`}
+                      style={{
+                        textAlign: getColumnAlign(col, data),
+                        borderTop: "2px solid var(--bpm-border, #e5e7eb)",
+                        background: "var(--bpm-bg-secondary, #f8fafc)",
+                      }}
+                    >
+                      {/* Le libellé va dans la PREMIÈRE colonne sans total —
+                          sinon il écraserait un chiffre. Si toutes en portent
+                          un, il n'est pas rendu : les chiffres priment. */}
+                      {v ?? (colIdx === columns.findIndex((c) => !c.total) ? (totalsLabel ?? "Total") : "")}
+                    </td>
+                  );
+                })}
+              </tr>
+            </tfoot>
+          ) : null}
         </table>
       </div>
     </div>
