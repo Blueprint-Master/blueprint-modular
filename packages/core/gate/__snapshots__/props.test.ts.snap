@@ -298,6 +298,7 @@ exports[`bpm prop surface snapshot > prop names match committed snapshot (additi
     "help",
     "min",
     "max",
+    "error",
   ],
   "dateRangePicker": [
     "label",
@@ -503,6 +504,7 @@ exports[`bpm prop surface snapshot > prop names match committed snapshot (additi
     "placeholder",
     "type",
     "disabled",
+    "error",
     "className",
   ],
   "invoiceTemplate": [
@@ -923,6 +925,7 @@ exports[`bpm prop surface snapshot > prop names match committed snapshot (additi
     "help",
     "placeholder",
     "required",
+    "error",
     "triggerHeight",
   ],
   "sensorGrid": [

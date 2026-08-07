@@ -486,7 +486,7 @@ Chat Ollama local (démo).
 ```
 
 ## bpm.dateInput
-@component bpm.dateInput @description Champ de saisie de date avec calendrier popover et format FR (JJ/MM/AAAA). @example bpm.dateInput({ label: "Date de livraison", value: new Date(), onChange: setDate }) @param {object} props @param {string} [props.label] - Libellé du champ. Optionnel. @param {Date|string|null} [props.value] - Valeur de la date. Optionnel. @param {function} [props.onChange] - Callback avec la date sélectionnée. Optionnel. @param {boolean} [props.disabled=false] - Désactive le champ. Optionnel. @param {string} [props.help] - Texte d'aide en tooltip. Optionnel. @param {Date|string|null} [props.min] - Date minimale autorisée. Optionnel. @param {Date|string|null} [props.max] - Date maximale autorisée. Optionnel. @parent bpm.form @associated bpm.dateRangePicker, bpm.datePickerPopover @forbidden Plage de dates — utiliser bpm.dateRangePicker
+@component bpm.dateInput @description Champ de saisie de date avec calendrier popover et format FR (JJ/MM/AAAA). @example bpm.dateInput({ label: "Date de livraison", value: new Date(), onChange: setDate }) @param {object} props @param {string} [props.label] - Libellé du champ. Optionnel. @param {Date|string|null} [props.value] - Valeur de la date. Optionnel. @param {function} [props.onChange] - Callback avec la date sélectionnée. Optionnel. @param {boolean} [props.disabled=false] - Désactive le champ. Optionnel. @param {string} [props.help] - Texte d'aide en tooltip. Optionnel. @param {Date|string|null} [props.min] - Date minimale autorisée. Optionnel. @param {Date|string|null} [props.max] - Date maximale autorisée. Optionnel. @param {string|null} [props.error=null] - Message d'erreur du champ : contour rouge + message sous le champ. Optionnel. @parent bpm.form @associated bpm.dateRangePicker, bpm.datePickerPopover @forbidden Plage de dates — utiliser bpm.dateRangePicker
 @semantic role=saisie frame=entity status=proposed
 @guidance Saisir une date ponctuelle (Field date/datetime) : échéance, date d'événement. Associer : bpm.wizardForm, bpm.timeInput. Éviter : Période ou intervalle (bpm.dateRangePicker), heure seule (bpm.timeInput).
 ```
@@ -497,6 +497,7 @@ Chat Ollama local (démo).
   help?: string | null
   min?: Date | string | null
   max?: Date | string | null
+  error?: string | null  — Message d'erreur du CHAMP : contour rouge + message sous le champ (role=alert, aria-invalid). Additif : défaut null = rendu inchangé.
 ```
 
 ## bpm.dateRangePicker
@@ -844,7 +845,7 @@ Composant bpm.free — voir @blueprint-modular/core ou BPM_API.md.
 ```
 
 ## bpm.input
-@component bpm.input @description Champ de saisie texte avec label optionnel. Supporte différents types HTML (text, email, password, etc.). @example bpm.input({ label: "Email", value: email, onChange: setEmail, type: "email", placeholder: "exemple@mail.com" }) @param {object} props @param {string} [props.label] - Label affiché au-dessus du champ. Optionnel. @param {string} [props.value=""] - Valeur contrôlée. Optionnel. @param {function} [props.onChange] - Callback recevant la valeur string directement. Optionnel. @param {string} [props.placeholder=""] - Texte indicatif. Optionnel. @param {"text"|"email"|"password"|"number"|"search"|"date"} [props.type="text"] - Type HTML du champ. Optionnel. @param {boolean} [props.disabled=false] - Désactive le champ. Optionnel. @param {string} [props.className=""] - Classes CSS additionnelles. Optionnel. @parent bpm.modal, bpm.panel, bpm.card @associated bpm.button, bpm.selectbox
+@component bpm.input @description Champ de saisie texte avec label optionnel. Supporte différents types HTML (text, email, password, etc.). @example bpm.input({ label: "Email", value: email, onChange: setEmail, type: "email", placeholder: "exemple@mail.com" }) @param {object} props @param {string} [props.label] - Label affiché au-dessus du champ. Optionnel. @param {string} [props.value=""] - Valeur contrôlée. Optionnel. @param {function} [props.onChange] - Callback recevant la valeur string directement. Optionnel. @param {string} [props.placeholder=""] - Texte indicatif. Optionnel. @param {"text"|"email"|"password"|"number"|"search"|"date"} [props.type="text"] - Type HTML du champ. Optionnel. @param {boolean} [props.disabled=false] - Désactive le champ. Optionnel. @param {string|null} [props.error=null] - Message d'erreur du champ : contour rouge + message sous le champ. Optionnel. @param {string} [props.className=""] - Classes CSS additionnelles. Optionnel. @parent bpm.modal, bpm.panel, bpm.card @associated bpm.button, bpm.selectbox
 @semantic role=saisie frame=entity status=proposed
 @guidance Saisir un champ texte court d'une entité (nom, référence, email). Associer : bpm.wizardForm, bpm.button, bpm.autocomplete. Éviter : Texte long multiligne (bpm.textarea), nombre (bpm.numberInput), recherche d'entité liée (bpm.autocomplete).
 ```
@@ -854,6 +855,7 @@ Composant bpm.free — voir @blueprint-modular/core ou BPM_API.md.
   placeholder?: string
   type?: "text" | "email" | "password" | "number" | "search" | "date"  — Type HTML. Default: 'text'.
   disabled?: boolean  — Désactive le champ.
+  error?: string | null  — Message d'erreur du CHAMP : contour rouge + message sous le champ (role=alert, aria-invalid). Additif : défaut null = rendu inchangé.
   className?: string
 ```
 
@@ -1492,7 +1494,7 @@ Conteneur page (core) — props : children.
 ```
 
 ## bpm.selectbox
-@component bpm.selectbox @description Liste déroulante avec dropdown portalé, support clavier et placeholder. @example bpm.selectbox({ label: "Pays", options: ["France", "Belgique", "Suisse"], value: selected, onChange: setSelected }) @param {object} props @param {string} [props.label] - Label affiché au-dessus. Optionnel. @param {SelectboxOption[]} [props.options=[]] - Options (string ou { value, label }). Optionnel. @param {string|null} [props.value] - Valeur sélectionnée. Optionnel. @param {function} [props.onChange] - Callback au changement. Optionnel. @param {boolean} [props.disabled=false] - Désactive le composant. Optionnel. @param {string} [props.help] - Texte d'aide au survol. Optionnel. @param {string} [props.placeholder="Sélectionner..."] - Placeholder. Optionnel. @param {boolean} [props.required=false] - Champ obligatoire. Optionnel. @param {number} [props.triggerHeight] - Hauteur du trigger en pixels. Optionnel. @parent bpm.panel, bpm.modal, bpm.card @associated bpm.input, bpm.radioGroup, bpm.autocomplete
+@component bpm.selectbox @description Liste déroulante avec dropdown portalé, support clavier et placeholder. @example bpm.selectbox({ label: "Pays", options: ["France", "Belgique", "Suisse"], value: selected, onChange: setSelected }) @param {object} props @param {string} [props.label] - Label affiché au-dessus. Optionnel. @param {SelectboxOption[]} [props.options=[]] - Options (string ou { value, label }). Optionnel. @param {string|null} [props.value] - Valeur sélectionnée. Optionnel. @param {function} [props.onChange] - Callback au changement. Optionnel. @param {boolean} [props.disabled=false] - Désactive le composant. Optionnel. @param {string} [props.help] - Texte d'aide au survol. Optionnel. @param {string} [props.placeholder="Sélectionner..."] - Placeholder. Optionnel. @param {boolean} [props.required=false] - Champ obligatoire. Optionnel. @param {string|null} [props.error=null] - Message d'erreur du champ : contour rouge + message sous le champ. Optionnel. @param {number} [props.triggerHeight] - Hauteur du trigger en pixels. Optionnel. @parent bpm.panel, bpm.modal, bpm.card @associated bpm.input, bpm.radioGroup, bpm.autocomplete
 @semantic role=saisie frame=entity status=proposed
 @guidance Choisir UNE valeur parmi une énumération fermée (Field enum) de taille moyenne (5-15 options). Associer : bpm.filterPanel, bpm.wizardForm, bpm.input. Éviter : ≤5 options visibles d'un coup (bpm.radioGroup) ou recherche dans une longue liste/relation (bpm.autocomplete).
 ```
@@ -1504,6 +1506,7 @@ Conteneur page (core) — props : children.
   help?: string | null
   placeholder?: string
   required?: boolean
+  error?: string | null  — Message d'erreur du CHAMP : contour rouge + message sous le champ (role=alert, aria-invalid). Additif : défaut null = rendu inchangé.
   triggerHeight?: number  — Hauteur du trigger (px) pour alignement avec d'autres champs (ex. FilterPanel).
 ```
 

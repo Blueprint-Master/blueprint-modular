@@ -181,14 +181,25 @@ import type { MetricRowProps } from "../../../components/bpm";
 import type { SpinnerProps } from "../../../components/bpm/Spinner";
 export type { SpinnerProps as SpinnerPropsBpm, SpinnerSize } from "../../../components/bpm/Spinner";
 
-/** Colonne pour bpm.table — API documentée (renderCell aligné avec Table.tsx render). */
-export interface TableColumn {
-  key: string;
-  label: string;
-  type?: "text" | "number" | "date" | "badge" | "boolean";
-  sortable?: boolean;
-  renderCell?: (value: unknown, row?: unknown) => React.ReactNode;
-}
+/**
+ * Colonne pour bpm.table — RÉEXPORTÉE du composant, jamais redéclarée.
+ *
+ * Ce type était une COPIE écrite à la main, et elle avait dérivé sur trois
+ * points, tous du mauvais côté :
+ *
+ * - `label: string` alors que `Table.tsx` accepte un `React.ReactNode` — une
+ *   case « tout sélectionner » ou une icône dans un en-tête étaient donc
+ *   refusées par le TYPE alors que le composant les rend ;
+ * - `renderCell`, que la doc du composant désigne nommément comme la prop à
+ *   NE PAS employer (« Seule prop supportée — pas renderCell ») : le type
+ *   publié invitait à écrire un renderer qui n'est jamais appelé ;
+ * - `align`, `render`, `decimals`, `noWrap`, `context` absents — cinq props
+ *   réelles invisibles à quiconque type sa colonne avec ce nom.
+ *
+ * Le composant est la source de vérité (`bpm.table = wrap(Table)`), donc le
+ * type l'est aussi. Une copie ne peut que re-diverger.
+ */
+export type { TableColumn } from "../../../components/bpm/Table";
 
 /** Wrapper : (props) => createElement(Component, props) — API toujours en objet */
 function wrap<P extends object>(Component: React.ComponentType<P>) {

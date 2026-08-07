@@ -31,6 +31,8 @@ export interface DateInputProps {
   help?: string | null;
   min?: Date | string | null;
   max?: Date | string | null;
+  /** Message d'erreur du CHAMP : contour rouge + message sous le champ (role=alert, aria-invalid). Additif : défaut null = rendu inchangé. */
+  error?: string | null;
 }
 
 /**
@@ -47,6 +49,7 @@ export interface DateInputProps {
  * @param {string} [props.help] - Texte d'aide en tooltip. Optionnel.
  * @param {Date|string|null} [props.min] - Date minimale autorisée. Optionnel.
  * @param {Date|string|null} [props.max] - Date maximale autorisée. Optionnel.
+ * @param {string|null} [props.error=null] - Message d'erreur du champ : contour rouge + message sous le champ. Optionnel.
  *
  * @parent bpm.form
  * @associated bpm.dateRangePicker, bpm.datePickerPopover
@@ -60,6 +63,7 @@ export function DateInput({
   help = null,
   min = null,
   max = null,
+  error = null,
 }: DateInputProps) {
   const [open, setOpen] = useState(false);
   const triggerRef = useRef<HTMLDivElement>(null);
@@ -91,9 +95,16 @@ export function DateInput({
             setOpen((o) => !o);
           }
         }}
+        aria-invalid={error ? true : undefined}
         className="w-full px-3 py-2 rounded-lg border text-sm flex items-center justify-between gap-2 cursor-pointer"
         style={{
-          borderColor: open ? "var(--bpm-accent)" : "var(--bpm-border)",
+          /* L'ouverture prime sur l'erreur : pendant que le calendrier est
+             ouvert, le contour dit OÙ ON EST ; refermé, il redit ce qui cloche. */
+          borderColor: open
+            ? "var(--bpm-accent)"
+            : error
+              ? "var(--bpm-error, #dc2626)"
+              : "var(--bpm-border)",
           background: "var(--bpm-bg-primary)",
           color: dateVal ? "var(--bpm-text-primary)" : "var(--bpm-text-muted)",
           boxShadow: open ? "0 0 0 2px var(--bpm-accent-soft)" : "none",
@@ -115,6 +126,15 @@ export function DateInput({
           onSelect={handleSelect}
           onClose={() => setOpen(false)}
         />
+      )}
+      {error && (
+        <p
+          role="alert"
+          className="bpm-date-input-error mt-1 text-sm"
+          style={{ color: "var(--bpm-error, #dc2626)", fontSize: "var(--bpm-font-size-sm)" }}
+        >
+          {error}
+        </p>
       )}
     </div>
   );

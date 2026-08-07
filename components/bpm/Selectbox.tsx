@@ -26,6 +26,7 @@ export type SelectboxOption = string | { value: string; label: string };
  * @param {string} [props.help] - Texte d'aide au survol. Optionnel.
  * @param {string} [props.placeholder="Sélectionner..."] - Placeholder. Optionnel.
  * @param {boolean} [props.required=false] - Champ obligatoire. Optionnel.
+ * @param {string|null} [props.error=null] - Message d'erreur du champ : contour rouge + message sous le champ. Optionnel.
  * @param {number} [props.triggerHeight] - Hauteur du trigger en pixels. Optionnel.
  *
  * @parent bpm.panel, bpm.modal, bpm.card
@@ -45,6 +46,8 @@ export interface SelectboxProps {
   help?: string | null;
   placeholder?: string;
   required?: boolean;
+  /** Message d'erreur du CHAMP : contour rouge + message sous le champ (role=alert, aria-invalid). Additif : défaut null = rendu inchangé. */
+  error?: string | null;
   /** Hauteur du trigger (px) pour alignement avec d'autres champs (ex. FilterPanel). */
   triggerHeight?: number;
 }
@@ -65,6 +68,7 @@ export function Selectbox({
   help = null,
   placeholder,
   required = false,
+  error = null,
   triggerHeight,
 }: SelectboxProps) {
   const bpmLocale = useBpmLocale();
@@ -243,8 +247,9 @@ export function Selectbox({
           className={`bpm-selectbox flex items-center justify-between gap-2 px-3 py-2 rounded-lg border cursor-pointer text-sm ${
             disabled ? "opacity-60 cursor-not-allowed" : ""
           } ${isOpen ? "ring-2 ring-offset-1" : ""}`}
+          aria-invalid={error ? true : undefined}
           style={{
-            borderColor: "var(--bpm-border)",
+            borderColor: error ? "var(--bpm-error, #dc2626)" : "var(--bpm-border)",
             background: "var(--bpm-bg-primary)",
             color: displayValue && displayValue !== effPlaceholder ? "var(--bpm-text-primary)" : "var(--bpm-text-secondary)",
             minHeight: triggerHeight ?? 40,
@@ -263,6 +268,15 @@ export function Selectbox({
         </div>
         {typeof document !== "undefined" && dropdownContent && createPortal(dropdownContent, document.body)}
       </div>
+      {error && (
+        <p
+          role="alert"
+          className="bpm-selectbox-error mt-1 text-sm"
+          style={{ color: "var(--bpm-error, #dc2626)", fontSize: "var(--bpm-font-size-sm)" }}
+        >
+          {error}
+        </p>
+      )}
     </div>
   );
 }

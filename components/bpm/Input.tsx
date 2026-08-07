@@ -15,6 +15,7 @@ import React, { useId } from "react";
  * @param {string} [props.placeholder=""] - Texte indicatif. Optionnel.
  * @param {"text"|"email"|"password"|"number"|"search"|"date"} [props.type="text"] - Type HTML du champ. Optionnel.
  * @param {boolean} [props.disabled=false] - Désactive le champ. Optionnel.
+ * @param {string|null} [props.error=null] - Message d'erreur du champ : contour rouge + message sous le champ. Optionnel.
  * @param {string} [props.className=""] - Classes CSS additionnelles. Optionnel.
  *
  * @parent bpm.modal, bpm.panel, bpm.card
@@ -33,6 +34,8 @@ export interface InputProps extends Omit<React.InputHTMLAttributes<HTMLInputElem
   type?: "text" | "email" | "password" | "number" | "search" | "date";
   /** Désactive le champ. */
   disabled?: boolean;
+  /** Message d'erreur du CHAMP : contour rouge + message sous le champ (role=alert, aria-invalid). Additif : défaut null = rendu inchangé. */
+  error?: string | null;
   className?: string;
 }
 
@@ -43,6 +46,7 @@ export function Input({
   placeholder = "",
   type = "text",
   disabled = false,
+  error = null,
   className = "",
   id: idProp,
   ...props
@@ -50,8 +54,9 @@ export function Input({
   const generatedId = useId();
   const id = idProp ?? generatedId;
   const { style: propsStyle, ...restProps } = props;
+  const errorId = error ? `${id}-error` : undefined;
   const inputStyle: React.CSSProperties = {
-    borderColor: "var(--bpm-border)",
+    borderColor: error ? "var(--bpm-error, #dc2626)" : "var(--bpm-border)",
     background: "var(--bpm-bg-primary)",
     color: "var(--bpm-text)",
     borderRadius: "var(--bpm-radius)",
@@ -78,17 +83,32 @@ export function Input({
         onChange={(e) => onChange?.(e.target.value)}
         placeholder={placeholder}
         disabled={disabled}
+        aria-invalid={error ? true : undefined}
+        aria-describedby={errorId}
         onFocus={(e) => {
           e.target.style.outline = "none";
           e.target.style.borderColor = "var(--bpm-accent)";
           e.target.style.boxShadow = "var(--bpm-focus-ring)";
         }}
         onBlur={(e) => {
-          e.target.style.borderColor = "var(--bpm-border)";
+          /* Le blur RESTAURE l'état du champ, il ne le remet pas à neuf : sans
+             cette branche, quitter un champ en erreur en effacerait le contour
+             rouge alors que l'erreur, elle, reste affichée dessous. */
+          e.target.style.borderColor = error ? "var(--bpm-error, #dc2626)" : "var(--bpm-border)";
           e.target.style.boxShadow = "none";
         }}
         {...restProps}
       />
+      {error && (
+        <p
+          id={errorId}
+          role="alert"
+          className="bpm-input-error mt-1 text-sm"
+          style={{ color: "var(--bpm-error, #dc2626)", fontSize: "var(--bpm-font-size-sm)" }}
+        >
+          {error}
+        </p>
+      )}
     </div>
   );
 }
