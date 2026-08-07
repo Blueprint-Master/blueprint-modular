@@ -1,5 +1,5 @@
 # Blueprint Modular — Agent Context File
-# Version React (@blueprint-modular/core, npm) : 0.3.9
+# Version React (@blueprint-modular/core, npm) : 0.3.10
 # Version Python (blueprint-modular, PyPI)      : 0.1.54
 # Date    : 2026-08-07
 # URL canonique : https://blueprint-modular.com/llms.txt
@@ -156,15 +156,17 @@ INTERDIT : import { bpm.modal } ou tout autre destructuring
 ```
 
 ## bpm.autocomplete
-@component bpm.autocomplete @description Champ de saisie avec autocomplétion filtrant les options selon la valeur entrée. @example bpm.autocomplete({ label: "Ville", options: [{ value: "paris", label: "Paris" }], onChange: (v) => console.log(v) }) @param {object} props @param {string} [props.label] - Libellé du champ. Optionnel. @param {string} [props.placeholder=""] - Texte d'aide. Optionnel. @param {string} [props.value=""] - Valeur courante. Optionnel. @param {function} [props.onChange] - Callback appelé à chaque modification. Optionnel. @param {AutocompleteOption[]} props.options - Liste des options {value, label}. Obligatoire. @param {string} [props.className=""] - Classes CSS additionnelles. Optionnel. @parent bpm.form @associated bpm.select, bpm.input, bpm.combobox @forbidden Liste figée courte — utiliser bpm.selectbox
+@component bpm.autocomplete @description Champ de saisie avec autocomplétion filtrant les options selon la valeur entrée. @example bpm.autocomplete({ label: "Ville", options: [{ value: "paris", label: "Paris" }], onChange: (v) => console.log(v) }) @param {object} props @param {string} [props.label] - Libellé du champ. Optionnel. @param {string} [props.placeholder=""] - Texte d'aide. Optionnel. @param {string} [props.value=""] - Valeur courante. Optionnel. @param {function} [props.onChange] - Callback appelé à chaque modification (frappe ET sélection). Optionnel. @param {function} [props.onSelect] - Callback appelé UNIQUEMENT à la sélection d'une option, avec l'option entière. Optionnel. @param {string|null} [props.error=null] - Message d'erreur du champ : contour rouge + message sous le champ. Optionnel. @param {AutocompleteOption[]} props.options - Liste des options {value, label}. Obligatoire. @param {string} [props.className=""] - Classes CSS additionnelles. Optionnel. @parent bpm.form @associated bpm.select, bpm.input, bpm.combobox @forbidden Liste figée courte — utiliser bpm.selectbox
 @semantic role=saisie frame=entity status=proposed
 @guidance Trouver une valeur par la frappe dans un grand référentiel : champ relation (Field relation) ou longue énumération. Associer : bpm.chip, bpm.wizardForm, bpm.input. Éviter : Petites listes fermées (bpm.selectbox, bpm.radioGroup) ou texte libre sans référentiel (bpm.input).
 ```
   label?: string
   placeholder?: string
   value?: string
-  onChange?: (value: string) => void
+  onChange?: (value: string) => void  — Texte SAISI — appelé à chaque frappe ET à la sélection. Ne distingue pas les deux : voir `onSelect`.
+  onSelect?: (option: AutocompleteOption) => void
   options*: AutocompleteOption[]
+  error?: string | null  — Message d'erreur du CHAMP : contour rouge + message sous le champ (role=alert, aria-invalid). Additif : défaut null.
   className?: string
 ```
 
@@ -1704,9 +1706,11 @@ Conteneur page (core) — props : children.
   loading?: boolean  — État chargement : affiche des lignes squelettes (aria-busy). Additif : défaut false.
   error?: string | null  — État erreur : affiche le message en ligne role=alert (prioritaire sur loading/empty). Additif : défaut null.
   density?: "normal" | "compact"  — Densité d'affichage : "normal" (défaut, rendu historique) ou "compact" (padding réduit).
+  totalsLabel?: string  — Libellé de la première cellule du pied de totaux. Défaut : "Total".
 ```
 INTERDIT : - data (Record<string,unknown>[], obligatoire) — Lignes ; jamais de JSX dans data[] (utiliser render).
 INTERDIT : Tableau de données — obligatoire. INTERDIT : JSX dans data[], utiliser render dans TableColumn. */
+INTERDIT : censé ne jamais faire. */
 
 ## bpm.tabs
 @component bpm.tabs @description Système d'onglets avec contenu associé, scroll horizontal si débordement. Cycle de vie : seul l'onglet ACTIF est rendu — le content des onglets inactifs est DÉMONTÉ, son état React n'est pas préservé au changement d'onglet. Ne pas y placer d'état de saisie non persisté ; lever l'état dans le composant parent. @example bpm.tabs({ tabs: [{ label: "Aperçu", content: <Overview /> }, { label: "Détails", content: <Details /> }], defaultTab: 0 }) @param {object} props @param {TabsItems} [props.tabs=[]] - Onglets (string[] ou { label, content, key? }[]). Optionnel. @param {number} [props.defaultTab=0] - Index de l'onglet actif au montage. Optionnel. @param {function} [props.onChange] - Callback au changement d'onglet (index). Optionnel. @param {string} [props.className=""] - Classes CSS additionnelles. Optionnel. @parent bpm.panel, bpm.container @associated bpm.table, bpm.plotlyChart, bpm.metric @forbidden bpm.tabs (pas d'imbrication)

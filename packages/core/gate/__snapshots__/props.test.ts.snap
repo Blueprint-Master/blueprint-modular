@@ -89,7 +89,9 @@ exports[`bpm prop surface snapshot > prop names match committed snapshot (additi
     "placeholder",
     "value",
     "onChange",
+    "onSelect",
     "options",
+    "error",
     "className",
   ],
   "avatar": [
@@ -1060,6 +1062,7 @@ exports[`bpm prop surface snapshot > prop names match committed snapshot (additi
     "loading",
     "error",
     "density",
+    "totalsLabel",
   ],
   "tabs": [
     "tabs",
