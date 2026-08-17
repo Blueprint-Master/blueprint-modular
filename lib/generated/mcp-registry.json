@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-08-07T13:37:17.135Z",
+  "generatedAt": "2026-08-17T12:02:21.391Z",
   "source": "lib/generated/bpm-components.json + public/llms.txt + lib/semantics/bpm-semantics.json",
   "total": 156,
   "categories": [
@@ -3395,7 +3395,7 @@
       "category": "Feedback",
       "status": "curated",
       "fullDescription": "Liste de notifications groupées (non lues / lues), actions lecture et suppression.",
-      "props": "  notifications*: NotificationItem[]\n  onMarkRead*: (id: string) => void\n  onMarkAllRead?: () => void\n  onDismiss?: (id: string) => void\n  maxVisible?: number\n  emptyMessage?: string\n  className?: string",
+      "props": "  notifications*: NotificationItem[]\n  onMarkRead*: (id: string) => void\n  onMarkAllRead?: () => void\n  onDismiss?: (id: string) => void\n  maxVisible?: number\n  emptyMessage?: string\n  className?: string\n  maxWidth?: number | string",
       "example": "bpm.notificationCenter({ notifications, onMarkRead: markRead, onDismiss: dismiss })",
       "associated": [
         "bpm.activityFeed",
@@ -3424,7 +3424,7 @@
         ],
         "status": "proposed"
       },
-      "_haystack": "bpm.notificationcenter notificationcenter liste de notifications (lu/non lu, marquage, suppression). feedback liste de notifications groupées (non lues / lues), actions lecture et suppression.   notifications*: notificationitem[]\n  onmarkread*: (id: string) => void\n  onmarkallread?: () => void\n  ondismiss?: (id: string) => void\n  maxvisible?: number\n  emptymessage?: string\n  classname?: string bpm.notificationcenter({ notifications, onmarkread: markread, ondismiss: dismiss }) bpm.activityfeed bpm.toast bpm.badge affichage event centre de notifications persistant : lu/non-lu, marquage, suppression — la mémoire des eventeffects notify. bpm.toast bpm.topnav bpm.activityfeed confirmation immédiate d'action (bpm.toast) ou flux d'activité d'équipe (bpm.activityfeed). notifications datées avec état lu/non-lu ; le non-lu est un compte signifiant (badge sur l'icône)."
+      "_haystack": "bpm.notificationcenter notificationcenter liste de notifications (lu/non lu, marquage, suppression). feedback liste de notifications groupées (non lues / lues), actions lecture et suppression.   notifications*: notificationitem[]\n  onmarkread*: (id: string) => void\n  onmarkallread?: () => void\n  ondismiss?: (id: string) => void\n  maxvisible?: number\n  emptymessage?: string\n  classname?: string\n  maxwidth?: number | string bpm.notificationcenter({ notifications, onmarkread: markread, ondismiss: dismiss }) bpm.activityfeed bpm.toast bpm.badge affichage event centre de notifications persistant : lu/non-lu, marquage, suppression — la mémoire des eventeffects notify. bpm.toast bpm.topnav bpm.activityfeed confirmation immédiate d'action (bpm.toast) ou flux d'activité d'équipe (bpm.activityfeed). notifications datées avec état lu/non-lu ; le non-lu est un compte signifiant (badge sur l'icône)."
     },
     {
       "slug": "filepreview",
