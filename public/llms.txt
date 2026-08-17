@@ -1,7 +1,7 @@
 # Blueprint Modular — Agent Context File
 # Version React (@blueprint-modular/core, npm) : 0.3.10
 # Version Python (blueprint-modular, PyPI)      : 0.1.54
-# Date    : 2026-08-07
+# Date    : 2026-08-17
 # URL canonique : https://blueprint-modular.com/llms.txt
 #
 # Ce fichier est la référence machine de @blueprint-modular/core.
@@ -1138,6 +1138,7 @@ INTERDIT : Carte cliquable : on n'ajoute JAMAIS le curseur seul. Une affordance 
   maxVisible?: number
   emptyMessage?: string
   className?: string
+  maxWidth?: number | string
 ```
 
 ## bpm.numberInput

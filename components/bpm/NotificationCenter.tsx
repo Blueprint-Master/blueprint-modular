@@ -57,6 +57,13 @@ export interface NotificationCenterProps {
   maxVisible?: number;
   emptyMessage?: string;
   className?: string;
+  /**
+   * Largeur maximale du cadre. Défaut `440` — la largeur d'une POPOVER de
+   * cloche, qui était jusqu'ici la seule possible. Une PAGE de notifications
+   * (l'écran « Alertes » d'une app générée) passe `"100%"` : sans quoi le
+   * composant laisse les deux tiers de l'écran vides.
+   */
+  maxWidth?: number | string;
 }
 
 function formatNotifTime(iso: string, t: (typeof STRINGS)[BpmLocale]): string {
@@ -139,6 +146,7 @@ export function NotificationCenter({
   maxVisible = 50,
   emptyMessage,
   className = "",
+  maxWidth = 440,
 }: NotificationCenterProps) {
   const bpmLocale = useBpmLocale();
   const t = STRINGS[bpmLocale];
@@ -195,10 +203,16 @@ export function NotificationCenter({
         <div style={{ display: "flex", gap: 12, alignItems: "flex-start" }}>
           <TypeGlyph type={n.type} />
           <div style={{ flex: 1, minWidth: 0 }}>
-            <div style={{ display: "flex", alignItems: "center", gap: 8, flexWrap: "wrap" }}>
-              <span style={{ fontWeight: 600, color: "var(--bpm-text-primary)" }}>{n.title}</span>
+            {/* Le badge « non lu » ne DÉPEND PAS de la longueur du titre.
+                Avec `flexWrap: "wrap"`, il restait à droite du titre court et
+                TOMBAIT sous le titre long : dans une même liste, deux éléments
+                voisins ne le portaient pas au même endroit. Le titre occupe
+                donc la place restante et se replie SOUS le badge, qui garde sa
+                position — en haut à droite, aligné sur la première ligne. */}
+            <div style={{ display: "flex", alignItems: "flex-start", gap: 8, flexWrap: "nowrap" }}>
+              <span style={{ fontWeight: 600, color: "var(--bpm-text-primary)", flex: "1 1 auto", minWidth: 0 }}>{n.title}</span>
               {!n.read && (
-                <span style={{ display: "flex", alignItems: "center", gap: 4, fontSize: 11, fontWeight: 600, color: "var(--bpm-accent)" }}>
+                <span style={{ display: "flex", alignItems: "center", gap: 4, fontSize: 11, fontWeight: 600, color: "var(--bpm-accent)", flexShrink: 0, marginTop: 2 }}>
                   <span aria-hidden style={{ width: 8, height: 8, borderRadius: "50%", background: "var(--bpm-accent)" }} />
                   {t.unread}
                 </span>
@@ -276,7 +290,12 @@ export function NotificationCenter({
         borderRadius: "var(--bpm-radius)",
         background: "var(--bpm-surface)",
         overflow: "hidden",
-        maxWidth: 440,
+        /* 440 px est la largeur d'une POPOVER de cloche, et c'était la seule
+           possible. Employé comme PAGE (l'écran « Alertes » d'une app générée),
+           le composant laissait les deux tiers de l'écran vides. La prop rend
+           le cadre réglable ; son défaut reste 440, donc la cloche ne bouge
+           pas d'un pixel. */
+        maxWidth,
       }}
     >
       <header

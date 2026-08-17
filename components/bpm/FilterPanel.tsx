@@ -285,8 +285,12 @@ export function FilterPanel({
   );
 
   if (collapsible) {
+    /* `alignItems` vient de `containerStyle`, calculé pour l'orientation
+       HORIZONTALE — donc `center`. Passer la direction à `column` sans le
+       recalculer centrait et rétrécissait CHAQUE enfant : le bouton comme les
+       champs, au lieu qu'ils occupent la largeur du panneau. */
     return (
-      <div style={{ ...containerStyle, flexDirection: "column" }}>
+      <div style={{ ...containerStyle, flexDirection: "column", alignItems: "stretch" }}>
         <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: collapsed ? 0 : 8 }}>
           <button
             type="button"
@@ -294,7 +298,11 @@ export function FilterPanel({
             onClick={() => setCollapsed((c) => !c)}
             title={collapsed ? t.showFilters : t.hideFilters}
           >
-            {collapsed ? t.filters : t.filters}
+            {/* Le libellé DIT ce que le clic fait. La forme d'avant —
+                `collapsed ? t.filters : t.filters` — rendait la même valeur
+                dans les deux branches : seul `title` changeait, donc le bouton
+                se lisait comme une étiquette, pas comme un contrôle. */}
+            {collapsed ? t.showFilters : t.hideFilters}
             {activeCount > 0 && (
               <span style={{ marginLeft: 8, background: "var(--bpm-accent)", color: "var(--bpm-accent-contrast)", padding: "2px 8px", borderRadius: "var(--bpm-radius-sm)", fontSize: "var(--bpm-font-size-sm)" }}>
                 {activeCount}
