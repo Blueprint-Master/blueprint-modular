@@ -1711,8 +1711,7 @@ Conteneur page (core) — props : children.
   totalsLabel?: string  — Libellé de la première cellule du pied de totaux. Défaut : "Total".
 ```
 INTERDIT : - data (Record<string,unknown>[], obligatoire) — Lignes ; jamais de JSX dans data[] (utiliser render).
-INTERDIT : Tableau de données — obligatoire. INTERDIT : JSX dans data[], utiliser render dans TableColumn. */
-INTERDIT : censé ne jamais faire. */
+INTERDIT : Tableau de données — obligatoire. INTERDIT : JSX dans data[], utiliser render dans TableColumn.
 
 ## bpm.tabs
 @component bpm.tabs @description Système d'onglets avec contenu associé, scroll horizontal si débordement. Cycle de vie : seul l'onglet ACTIF est rendu — le content des onglets inactifs est DÉMONTÉ, son état React n'est pas préservé au changement d'onglet. Ne pas y placer d'état de saisie non persisté ; lever l'état dans le composant parent. @example bpm.tabs({ tabs: [{ label: "Aperçu", content: <Overview /> }, { label: "Détails", content: <Details /> }], defaultTab: 0 }) @param {object} props @param {TabsItems} [props.tabs=[]] - Onglets (string[] ou { label, content, key? }[]). Optionnel. @param {number} [props.defaultTab=0] - Index de l'onglet actif au montage. Optionnel. @param {function} [props.onChange] - Callback au changement d'onglet (index). Optionnel. @param {string} [props.className=""] - Classes CSS additionnelles. Optionnel. @parent bpm.panel, bpm.container @associated bpm.table, bpm.plotlyChart, bpm.metric @forbidden bpm.tabs (pas d'imbrication)
