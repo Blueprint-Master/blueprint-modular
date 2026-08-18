@@ -1,7 +1,7 @@
 # Blueprint Modular — Agent Context File
 # Version React (@blueprint-modular/core, npm) : 0.3.10
 # Version Python (blueprint-modular, PyPI)      : 0.1.54
-# Date    : 2026-08-17
+# Date    : 2026-08-18
 # URL canonique : https://blueprint-modular.com/llms.txt
 #
 # Ce fichier est la référence machine de @blueprint-modular/core.
@@ -1127,7 +1127,7 @@ INTERDIT : Carte cliquable : on n'ajoute JAMAIS le curseur seul. Une affordance 
 ```
 
 ## bpm.notificationCenter
-@component bpm.notificationCenter @description Liste de notifications groupées (non lues / lues), actions lecture et suppression. @example bpm.notificationCenter({ notifications, onMarkRead: markRead, onDismiss: dismiss }) @props - notifications (NotificationItem[], obligatoire) — { id, title, message?, read, date }. - onMarkRead (function, obligatoire) — Callback (id) marque comme lu. - onMarkAllRead (function, optionnel) — Marque toutes les notifications comme lues. - onDismiss (function, optionnel) — Callback (id) supprime une notification. - maxVisible (number, optionnel) — Nombre maximum affiché. - emptyMessage (string, optionnel) — Message liste vide. - className (string, optionnel) — Classes CSS additionnelles. @parent bpm.topNav, bpm.drawer, bpm.page @associated bpm.activityFeed, bpm.toast, bpm.badge @forbidden Message éphémère unique — utiliser bpm.toast
+@component bpm.notificationCenter @description Liste de notifications groupées (non lues / lues), actions lecture et suppression. @example bpm.notificationCenter({ notifications, onMarkRead: markRead, onDismiss: dismiss }) @props - notifications (NotificationItem[], obligatoire) — { id, title, message?, read, date }. - onMarkRead (function, obligatoire) — Callback (id) marque comme lu. - onMarkAllRead (function, optionnel) — Marque toutes les notifications comme lues. - onDismiss (function, optionnel) — Callback (id) supprime une notification. - maxVisible (number, optionnel) — Nombre maximum affiché. - emptyMessage (string, optionnel) — Message liste vide. - className (string, optionnel) — Classes CSS additionnelles. - maxWidth (number|string, optionnel) — Largeur maximale du cadre (défaut 440). - onItemClick (function, optionnel) — Callback (id) au clic sur la LIGNE entière (geste boîte de réception). @parent bpm.topNav, bpm.drawer, bpm.page @associated bpm.activityFeed, bpm.toast, bpm.badge @forbidden Message éphémère unique — utiliser bpm.toast
 @semantic role=affichage frame=event status=proposed
 @guidance Centre de notifications persistant : lu/non-lu, marquage, suppression — la mémoire des EventEffects notify. Associer : bpm.toast, bpm.topNav, bpm.activityFeed. Éviter : Confirmation immédiate d'action (bpm.toast) ou flux d'activité d'équipe (bpm.activityFeed).
 ```
@@ -1139,6 +1139,7 @@ INTERDIT : Carte cliquable : on n'ajoute JAMAIS le curseur seul. Une affordance 
   emptyMessage?: string
   className?: string
   maxWidth?: number | string
+  onItemClick?: (id: string) => void
 ```
 
 ## bpm.numberInput

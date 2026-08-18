@@ -64,6 +64,20 @@ export interface NotificationCenterProps {
    * composant laisse les deux tiers de l'écran vides.
    */
   maxWidth?: number | string;
+  /**
+   * Clic sur une notification ENTIÈRE — le geste d'une boîte de réception.
+   *
+   * `NotificationItem.actionLabel` + `onAction` existent déjà et rendent un
+   * BOUTON par notification. Ce n'est pas le même geste : sur une liste de
+   * vingt éléments, la forme bouton ajoute vingt éléments, là où la référence
+   * (Gmail, GitHub) n'en ajoute aucun et laisse cliquer la ligne. Les deux
+   * cohabitent — un `actionLabel` reste rendu, et son clic ne déclenche PAS
+   * `onItemClick` (cf. `stopPropagation` ci-dessous).
+   *
+   * Absente = comportement d'aujourd'hui à l'octet : aucune affordance n'est
+   * ajoutée, aucune app existante ne bouge.
+   */
+  onItemClick?: (id: string) => void;
 }
 
 function formatNotifTime(iso: string, t: (typeof STRINGS)[BpmLocale]): string {
@@ -134,6 +148,8 @@ function TypeGlyph({ type }: { type: NotificationItem["type"] }) {
  * - maxVisible (number, optionnel) — Nombre maximum affiché.
  * - emptyMessage (string, optionnel) — Message liste vide.
  * - className (string, optionnel) — Classes CSS additionnelles.
+ * - maxWidth (number|string, optionnel) — Largeur maximale du cadre (défaut 440).
+ * - onItemClick (function, optionnel) — Callback (id) au clic sur la LIGNE entière (geste boîte de réception).
  * @parent bpm.topNav, bpm.drawer, bpm.page
  * @associated bpm.activityFeed, bpm.toast, bpm.badge
  * @forbidden Message éphémère unique — utiliser bpm.toast
@@ -147,6 +163,7 @@ export function NotificationCenter({
   emptyMessage,
   className = "",
   maxWidth = 440,
+  onItemClick,
 }: NotificationCenterProps) {
   const bpmLocale = useBpmLocale();
   const t = STRINGS[bpmLocale];
@@ -185,17 +202,47 @@ export function NotificationCenter({
     );
   }
 
+  /* CLIC SUR LA LIGNE (#191) — les props d'affordance ne sont posées que si
+     `onItemClick` est fourni. Sans elle, le `<li>` est exactement celui d'hier :
+     pas de `role`, pas de `tabIndex`, pas de curseur, donc aucune app existante
+     ne bouge et rien n'entre dans l'ordre de tabulation. */
+  const rowInteractionProps = (n: NotificationItem) =>
+    onItemClick
+      ? {
+          role: "button",
+          tabIndex: 0,
+          onClick: () => onItemClick(n.id),
+          onKeyDown: (e: React.KeyboardEvent<HTMLLIElement>) => {
+            // Entrée ET Espace : un élément qui se dit `button` doit les deux.
+            if (e.key !== "Enter" && e.key !== " ") return;
+            // Sans ça, Espace fait défiler la page SOUS la liste.
+            e.preventDefault();
+            onItemClick(n.id);
+          },
+        }
+      : {};
+
+  /* Les boutons déjà présents vivent DANS la ligne : sans cette garde, marquer
+     lu, écarter ou déclencher `onAction` remonterait au `<li>` et ouvrirait
+     aussi la fiche. C'est le piège payé côté Maker sur la case « tout
+     sélectionner » posée dans un `<th>` qui portait déjà un `onClick` de tri. */
+  const stopRowClick = (e: React.MouseEvent) => {
+    if (onItemClick) e.stopPropagation();
+  };
+
   const renderRow = (n: NotificationItem) => {
     const hover = hoverId === n.id;
     return (
       <li
         key={n.id}
+        {...rowInteractionProps(n)}
         style={{
           borderBottom: "1px solid var(--bpm-border)",
           padding: "12px 14px",
           background: hover ? "color-mix(in srgb, var(--bpm-accent) 6%, var(--bpm-surface))" : n.read ? "color-mix(in srgb, var(--bpm-border) 35%, var(--bpm-surface))" : "var(--bpm-surface)",
           opacity: n.read ? 0.85 : 1,
           transition: "background 0.12s ease",
+          ...(onItemClick ? { cursor: "pointer" } : {}),
         }}
         onMouseEnter={() => setHoverId(n.id)}
         onMouseLeave={() => setHoverId(null)}
@@ -223,7 +270,7 @@ export function NotificationCenter({
             {n.actionLabel && (
               <button
                 type="button"
-                onClick={() => n.onAction?.()}
+                onClick={(e) => { stopRowClick(e); n.onAction?.(); }}
                 style={{
                   marginTop: 8,
                   padding: "4px 10px",
@@ -244,7 +291,7 @@ export function NotificationCenter({
             {hover && !n.read && (
               <button
                 type="button"
-                onClick={() => onMarkRead(n.id)}
+                onClick={(e) => { stopRowClick(e); onMarkRead(n.id); }}
                 style={{
                   fontSize: 11,
                   padding: "4px 8px",
@@ -261,7 +308,7 @@ export function NotificationCenter({
             {hover && n.read && onDismiss && (
               <button
                 type="button"
-                onClick={() => onDismiss(n.id)}
+                onClick={(e) => { stopRowClick(e); onDismiss(n.id); }}
                 style={{
                   fontSize: 11,
                   padding: "4px 8px",
