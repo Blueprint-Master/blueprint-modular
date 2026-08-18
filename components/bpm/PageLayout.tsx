@@ -243,14 +243,36 @@ export function PageLayout({
               </span>
             )}
             <span
+              /* Le nom de l'app EN ENTIER au survol. Mesuré sur la critique
+                 vision de la production : « Le titre de la sidebar est tronqué
+                 'Pilotage Trésore…' SANS TOOLTIP ni version courte lisible »,
+                 « 'Gestion Atelier …' […] trahit un manque de soin sur
+                 l'identité de l'application ». Quatre constats, deux apps. */
+              title={typeof title === "string" ? title : undefined}
               style={{
                 fontSize: "var(--bpm-font-size-lg)",
                 fontWeight: 600,
                 color: "var(--bpm-text)",
                 minWidth: 0,
                 overflow: "hidden",
-                whiteSpace: "nowrap",
-                textOverflow: "ellipsis",
+                /* DEUX LIGNES avant de couper, au lieu d'une.
+                 *
+                 * L'infobulle ci-dessus ne rend l'information qu'au SURVOL —
+                 * donc à personne sur un écran tactile, et à personne qui se
+                 * contente de regarder. Or c'est l'identité de l'app : le juge
+                 * dit qu'elle « ne donne pas confiance ».
+                 *
+                 * Le pavé à deux lignes récupère la quasi-totalité des noms
+                 * réels (« Pilotage Trésorerie », « Gestion Atelier Vélos »)
+                 * sans repousser la navigation : à `lineHeight: 1.2`, la
+                 * seconde ligne coûte une hauteur de texte, une seule fois, en
+                 * tête de rail. Au-delà, l'ellipse reprend son rôle et
+                 * l'infobulle prend le relais. */
+                display: "-webkit-box",
+                WebkitLineClamp: 2,
+                WebkitBoxOrient: "vertical",
+                whiteSpace: "normal",
+                overflowWrap: "anywhere",
                 lineHeight: 1.2,
               }}
             >
