@@ -253,13 +253,43 @@ export function Button({
     gap: sDef.gap,
     fontFamily: "inherit",
     fontWeight: 500,
-    cursor: disabled || loading ? "default" : "pointer",
+    /* ÉTAT DÉSACTIVÉ — le curseur conventionnel, enfin visible.
+     *
+     * Mesuré sur la critique vision de la production (14 j), quatre constats
+     * concordants : « il ressemble à un bouton actif pâle », « son style est
+     * quasi identique au bouton Exporter », « son statut (désactivé ou actif ?)
+     * est ambigu ».
+     *
+     * `default` ne dit rien — c'est le curseur de n'importe quel texte. La
+     * convention du Web pour un contrôle indisponible est `not-allowed`, et
+     * `wait` pour une attente. */
+    cursor: disabled ? "not-allowed" : loading ? "wait" : "pointer",
     whiteSpace: "nowrap",
     outline: "none",
     userSelect: "none",
     transition: "background 0.12s ease, border-color 0.12s ease, color 0.12s ease, box-shadow 0.12s ease, transform 0.12s ease",
     opacity: disabled ? 0.42 : loading ? 0.7 : 1,
-    pointerEvents: disabled || loading ? "none" : undefined,
+    /* DÉSATURATION — parce que l'opacité seule ne peut PAS dire l'état.
+     *
+     * `opacity` est déjà le canal de l'EMPHASE dans ce système : un bouton
+     * secondaire ou fantôme est, par dessein, plus pâle qu'un primaire. Un
+     * primaire désactivé à 42 % rend donc ce qu'un tertiaire actif rend —
+     * deux sens sur un seul canal, et le juge lit celui qu'il connaît.
+     *
+     * Le gris retire la TEINTE — un canal que l'emphase laisse libre. Un CTA
+     * désactivé cesse ainsi d'être un CTA coloré pâle. */
+    filter: disabled ? "grayscale(1)" : undefined,
+    /* ⚠️ `pointerEvents: none` RETIRÉ, et c'est le cœur du correctif.
+     *
+     * Un élément en `pointer-events: none` n'est pas une cible de pointeur :
+     * son `cursor` reste inappliqué, le navigateur prend celui du dessous.
+     * Le curseur ci-dessus ne pouvait donc pas se voir — un signal posé et
+     * rendu invisible par la ligne suivante.
+     *
+     * Et il ne protégeait rien : `disabled={disabled || loading}` est posé sur
+     * le `<button>` plus bas, et l'attribut natif bloque déjà le clic. Les
+     * styles de survol, eux, sont gardés par `!disabled && !loading`. On
+     * retirait donc un signal utile pour obtenir ce qui était déjà garanti. */
     height: variant === "link" ? "auto" : sDef.height,
     minHeight: variant === "link" ? undefined : sDef.height,
     padding: isIconOnly ? 0 : (variant === "link" ? 0 : sDef.padding),
