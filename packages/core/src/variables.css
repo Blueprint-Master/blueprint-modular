@@ -41,6 +41,61 @@
   --bpm-success-text: #0d6b2c;
   --bpm-warning-text: #8a5a00;
   --bpm-error-text: #b30d0d;
+
+  /* ───────────────────────────────────────────────────────────────────────
+   * SYNONYMES — les noms que le code écrit par un LLM appelle naturellement.
+   *
+   * ## Le fait, mesuré sur la production Maker (60 j, 363 apps)
+   *
+   * Le code des vues libres et des zones est écrit par un modèle, qui atteint
+   * les jetons par leur nom LE PLUS ATTENDU, pas par celui du référentiel :
+   *
+   * | jeton demandé          | apps | défini | ce qui se passait                |
+   * |------------------------|------|--------|----------------------------------|
+   * | `--bpm-info`           |  86  |   44   | repli constant sur 42 apps       |
+   * | `--bpm-danger`         |  57  |    0   | repli `#dc2626`, ou DÉCLARATION  |
+   * |                        |      |        | JETÉE (56 usages sans repli)     |
+   * | `--bpm-danger-soft`    |  40  |    0   | idem                             |
+   * | `--bpm-color-surface`  |  14  |    0   | idem                             |
+   * | `--bpm-color-text-muted`|  11 |    0   | idem                             |
+   * | `--bpm-color-text`     |  10  |    0   | idem                             |
+   * | `--bpm-color-border`   |  10  |    0   | 68 usages, AUCUN repli → jetés   |
+   *
+   * Deux issues, toutes deux fausses : avec repli, le navigateur peint la
+   * CONSTANTE (donc `#dc2626` sur 101 chartes sur 101, au lieu du rouge de la
+   * charte) ; sans repli, la déclaration est INVALIDE et jetée en silence.
+   *
+   * ## Pourquoi ici, et pas une consigne de prompt
+   *
+   * On ne peut pas policer le vocabulaire d'un modèle par une règle : c'est
+   * l'anti-patron déjà tranché côté Maker (« un problème de rendu se résout par
+   * un composant, pas par une consigne »). Ici la réponse est un ALIAS : le nom
+   * attendu résout, et il résout sur la CHARTE.
+   *
+   * ## Rien n'est inventé — chaque alias pointe une décision existante
+   *
+   * `danger` est le synonyme exact d'`error`, et `Message.tsx` décide DÉJÀ que
+   * `info` se peint en `--bpm-accent` / `--bpm-accent-soft` : l'alias publie ce
+   * choix au lieu de le garder dans un composant. Aucun alias n'introduit une
+   * couleur littérale — un test le vérifie.
+   *
+   * ## Définis UNE fois, justes dans les deux thèmes
+   *
+   * Chaque alias vaut `var(--canonique)` : il est résolu à l'usage, donc il suit
+   * ce qui redéfinit le canonique — le bloc `[data-theme="dark"]` plus bas comme
+   * le `html:root` (spécificité 0,1,1) qu'écrit le Design Language des apps
+   * générées. Les répéter dans le bloc sombre créerait deux tables à tenir, qui
+   * divergeraient au premier changement.
+   * ─────────────────────────────────────────────────────────────────────── */
+  --bpm-danger: var(--bpm-error);
+  --bpm-danger-soft: var(--bpm-error-soft);
+  --bpm-danger-text: var(--bpm-error-text);
+  --bpm-info: var(--bpm-accent);
+  --bpm-info-soft: var(--bpm-accent-soft);
+  --bpm-color-text: var(--bpm-text-primary);
+  --bpm-color-text-muted: var(--bpm-text-muted);
+  --bpm-color-surface: var(--bpm-surface);
+  --bpm-color-border: var(--bpm-border);
 }
 
 [data-theme="dark"] {
