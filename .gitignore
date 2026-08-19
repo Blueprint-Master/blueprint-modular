@@ -25,6 +25,13 @@ node_modules/
 
 # Build
 dist/
+
+# Cache incrémental de tsc — artefact de BUILD, jamais du dépôt.
+# Il était suivi (839 Ko) alors que `dist/` et `.next/` étaient déjà ignorés :
+# tout travail qui compile le réécrit, donc chaque PR entrait en conflit dessus
+# sur un fichier dont le contenu n'a aucun sens à fusionner. Retiré du suivi
+# dans la PR #200, où il était le SEUL conflit.
+*.tsbuildinfo
 packages/core/*.tgz
 .next/
 uploads/
