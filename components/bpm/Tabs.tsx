@@ -73,11 +73,14 @@ export function Tabs({
       <div
         className="bpm-tabs-header flex items-stretch gap-0 overflow-x-auto overflow-y-hidden"
         style={{ borderBottom: "1px solid var(--bpm-border)" }}
+        role="tablist"
       >
         {normalizedTabs.map((tab, index) => (
           <button
             key={tab.key ?? index}
             type="button"
+            role="tab"
+            aria-selected={activeTab === index}
             className={`bpm-tab-button inline-flex items-center py-3 px-2 text-sm whitespace-nowrap flex-shrink-0 transition-colors ${
               activeTab === index ? "bpm-tab-active font-medium" : ""
             }`}
@@ -86,6 +89,31 @@ export function Tabs({
                 activeTab === index
                   ? "var(--bpm-accent)"
                   : "var(--bpm-text-primary)",
+              /* SOULIGNEMENT DE L'ONGLET ACTIF — le repère STRUCTUREL.
+               *
+               * L'onglet actif n'était marqué que par la couleur d'accent et une
+               * graisse. Mesuré sur la critique vision de la production (14 j) :
+               * « l'onglet actif n'est pas visuellement distingué des autres »
+               * revient **11 fois**, sous trois formulations, et c'est la
+               * famille de défaut la plus fréquente de l'écran Paramètres —
+               * lequel est émis déterministiquement dans toute app non-note.
+               *
+               * La couleur seule ne suffit pas : sur une charte où l'accent est
+               * proche de l'encre, l'écart est imperceptible, et il l'est aussi
+               * pour un daltonien. Toutes les références de la typologie
+               * (Material, GitHub, VS Code, onglets de navigateur) marquent
+               * l'actif par un TRAIT, pas par une teinte.
+               *
+               * Le trait suit `--bpm-accent`, donc la charte : il ne peut pas
+               * jurer. Les onglets inactifs portent le même trait TRANSPARENT —
+               * sans lui, les libellés sauteraient de 2 px au changement
+               * d'onglet. Et `marginBottom: -1px` le fait chevaucher le filet du
+               * conteneur au lieu de s'empiler dessous. */
+              borderBottom:
+                activeTab === index
+                  ? "2px solid var(--bpm-accent)"
+                  : "2px solid transparent",
+              marginBottom: "-1px",
             }}
             onClick={() => handleTabClick(index)}
             data-label={tab.label}

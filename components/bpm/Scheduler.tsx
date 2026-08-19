@@ -164,6 +164,68 @@ function resourceLabel(resources: SchedulerResource[] | undefined, id: string | 
   return resources.find((r) => r.id === id)?.label;
 }
 
+/**
+ * L'heure d'un événement, ou rien.
+ *
+ * ABSTENTION plutôt qu'une valeur fausse : une date illisible rend `undefined`
+ * et l'infobulle se réduit au titre. Écrire « Invalid Date » au survol serait un
+ * affichage qui ment, et une infobulle qui ment est pire que pas d'infobulle.
+ *
+ * ⚠️ La branche `NaN` est aujourd'hui INATTEIGNABLE par le rendu — le placement
+ * filtre déjà sur `en > dayStart && s < dayEnd`, comparaisons toutes fausses
+ * avec `NaN`, donc un événement à date cassée n'est posé sur aucun jour. Elle
+ * reste ici parce qu'elle couvre aussi le `throw` d'`Intl` sur un moteur sans
+ * ICU complet, et parce qu'elle survivrait à un assouplissement du filtre. Le
+ * test ne la déclare pas prouvée : il prouve la propriété qui compte pour
+ * l'utilisateur, à savoir que ces mots restent absents du balisage rendu.
+ */
+function eventTimeRange(ev: SchedulerEvent, locale: string | undefined): string | undefined {
+  const debut = new Date(ev.start);
+  const fin = new Date(ev.end);
+  if (Number.isNaN(debut.getTime()) || Number.isNaN(fin.getTime())) return undefined;
+  try {
+    const fmt = new Intl.DateTimeFormat(locale, { hour: "2-digit", minute: "2-digit" });
+    return `${fmt.format(debut)} – ${fmt.format(fin)}`;
+  } catch {
+    /* Environnement sans ICU complet : pas d'heure plutôt qu'une heure fausse. */
+    return undefined;
+  }
+}
+
+/**
+ * LE TEXTE ENTIER D'UN ÉVÉNEMENT, pour l'attribut `title`.
+ *
+ * ## Le fait, mesuré sur la critique vision de la production
+ *
+ * Cinq constats : « les libellés d'événement sont tronqués sans infobulle ».
+ * La cause est dans le rendu, relue telle quelle : la pastille du mois porte
+ * `whiteSpace: "nowrap"` + `textOverflow: "ellipsis"` dans une cellule large
+ * d'un septième de grille, et celle de la semaine porte une hauteur DÉRIVÉE DE
+ * LA DURÉE (`Math.max(18, …)`) avec `overflow: "hidden"` — un rendez-vous d'un
+ * quart d'heure fait 18 px et coupe son titre à la première ligne. Dans les deux
+ * cas l'information n'était récupérable par aucun chemin.
+ *
+ * ## Ce qu'on rend, et dans quel ordre
+ *
+ * `09:00 – 10:00 · Titre · Ressource` — l'heure d'abord, comme le font Outlook
+ * et Google Agenda, parce qu'en vue MOIS elle n'est écrite nulle part ailleurs.
+ * On transcrit le GESTE de la référence, pas son apparence.
+ *
+ * ## Ce que l'infobulle ne remplace pas
+ *
+ * Rien sur un écran tactile, où aucun geste ne la déclenche. C'est assumé : la
+ * pastille est un `<button>` qui appelle `onEventClick`, donc le contenu complet
+ * y est déjà atteignable en un doigt. L'infobulle rend le survol, le clic rend
+ * le reste — les deux publics sont couverts, par deux mécanismes distincts.
+ */
+function eventTooltip(
+  ev: SchedulerEvent,
+  resourceName: string | undefined,
+  locale: string | undefined,
+): string {
+  return [eventTimeRange(ev, locale), ev.title, resourceName].filter(Boolean).join(" · ");
+}
+
 export function Scheduler({
   view,
   events,
@@ -390,6 +452,9 @@ export function Scheduler({
                       <button
                         key={ev.id}
                         type="button"
+                        /* Le texte entier au survol : la pastille tient dans un
+                           septième de grille et coupe à l'ellipse. */
+                        title={eventTooltip(ev, rl, locale)}
                         onClick={(e) => {
                           e.stopPropagation();
                           onEventClick(ev);
@@ -551,6 +616,10 @@ export function Scheduler({
                         <button
                           key={ev.id}
                           type="button"
+                          /* La hauteur suit la DURÉE (`Math.max(18, …)`) : un
+                             rendez-vous d'un quart d'heure coupe son titre à la
+                             première ligne, sous `overflow: hidden`. */
+                          title={eventTooltip(ev, rl, locale)}
                           onClick={(e) => {
                             e.stopPropagation();
                             onEventClick(ev);

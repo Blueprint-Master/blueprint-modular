@@ -101,18 +101,51 @@ export function FilterPanel({
   const activeCount = getActiveCount(filters, values);
   const hasActive = activeCount > 0;
 
-  const containerStyle: React.CSSProperties = {
+  /**
+   * LE FLUX DES CHAMPS — extrait du cadre, parce que les deux branches de rendu
+   * doivent le partager.
+   *
+   * ## Le défaut, mesuré sur la critique vision de la production (14 j)
+   *
+   * « Le panneau de filtres occupe une zone disproportionnée (≈40 % de la
+   * hauteur utile) pour seulement deux champs », « repousse le tableau hors de
+   * l'écran », « ≈200 px de hauteur avec seulement deux champs centrés » —
+   * six constats, quatre formulations indépendantes.
+   *
+   * ## La cause
+   *
+   * La branche `collapsible` rendait `{ ...containerStyle, flexDirection:
+   * "column" }` avec les champs en enfants DIRECTS : chacun prenait sa propre
+   * ligne, pleine largeur. La branche non repliable, elle, les fait couler
+   * horizontalement avec retour à la ligne — c'est la mise en page voulue.
+   *
+   * Or le Maker passe `collapsible: true` en DUR sur toutes ses vues liste :
+   * la branche empilée est donc la SEULE que la production connaisse.
+   *
+   * `collapsible` ajoute un EN-TÊTE au-dessus du contenu ; ça ne dit rien de la
+   * façon dont les champs s'organisent entre eux. Le flux est donc sorti du
+   * cadre et appliqué à un conteneur INTERNE, identique dans les deux branches.
+   */
+  const contentFlowStyle: React.CSSProperties = {
     display: "flex",
     flexDirection: orientation === "vertical" ? "column" : "row",
     flexWrap: orientation === "horizontal" ? "wrap" : "nowrap",
     gap: 12,
     alignItems: orientation === "vertical" ? "stretch" : "center",
+  };
+
+  /** Le CADRE : surface, filet, rayon, largeur. Rien sur l'agencement interne. */
+  const frameStyle: React.CSSProperties = {
     width: orientation === "vertical" ? 240 : "100%",
     padding: 12,
     background: "var(--bpm-surface)",
     border: "1px solid var(--bpm-border)",
     borderRadius: "var(--bpm-radius)",
   };
+
+  /* La forme non repliable est INCHANGÉE à l'octet : cadre + flux, exactement
+     ce que `containerStyle` valait avant la séparation. */
+  const containerStyle: React.CSSProperties = { ...contentFlowStyle, ...frameStyle };
 
   const FILTER_FIELD_HEIGHT = 40;
 
@@ -290,7 +323,7 @@ export function FilterPanel({
        recalculer centrait et rétrécissait CHAQUE enfant : le bouton comme les
        champs, au lieu qu'ils occupent la largeur du panneau. */
     return (
-      <div style={{ ...containerStyle, flexDirection: "column", alignItems: "stretch" }}>
+      <div style={{ ...frameStyle, display: "flex", flexDirection: "column", alignItems: "stretch" }}>
         <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: collapsed ? 0 : 8 }}>
           <button
             type="button"
@@ -310,7 +343,10 @@ export function FilterPanel({
             )}
           </button>
         </div>
-        {!collapsed && content}
+        {/* Le contenu retrouve le FLUX de la branche non repliable : les champs
+            coulent en ligne et reviennent à la ligne quand ils débordent, au
+            lieu de s'empiler un par ligne. */}
+        {!collapsed && <div style={contentFlowStyle}>{content}</div>}
       </div>
     );
   }
