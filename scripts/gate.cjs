@@ -11,6 +11,9 @@
  *   c quater. Couche sémantique — forme valide (bloquant) ; backlog curation (informatif)
  *   d. Smoke render tests (vitest — each bpm.* renders without throw)
  *   e. Prop-surface snapshot (vitest — prop names frozen vs. snapshot)
+ *   f. Garde secrets connecteurs
+ *   g. TOUS les tests racine (tests/**) — voir le bloc de l'étape g : elle n'en
+ *      jouait que quatre sur treize, et deux des neuf ignorés étaient rouges.
  */
 
 "use strict";
@@ -120,22 +123,42 @@ run("node scripts/check-connector-secrets.mjs", {
   label: "check-connector-secrets.mjs",
 });
 
-// ── Step g: Tests du pilier Connecteurs (schéma + mapping) ────────────────────
-// Tests racine, isolés à tests/connectors-* (n'entraînent pas prisma/next).
-// On installe vitest + zod à la racine comme le gate le fait déjà pour React.
-// vitest est ÉPINGLÉ sur ^2 (même major que packages/core) : vitest >=3 tire
-// rolldown, dont le binding natif optionnel (@rolldown/binding-*) n'est pas
-// installé de façon fiable par npm (bug npm/cli#4828) → « Cannot find native
-// binding » en CI. vitest 2 n'a pas cette dépendance et suffit à ces tests.
-step("Step g — Tests connecteurs (schéma + mapping)");
-run(
-  "npm install --no-save --ignore-scripts vitest@^2 zod",
-  { cwd: REPO_ROOT, label: "install vitest + zod (tests connecteurs)" }
-);
-run("npx vitest run tests/connectors-*.test.ts", {
+// ── Step g: TOUS les tests racine ─────────────────────────────────────────────
+//
+// ⚠️ Cette étape ne jouait que `tests/connectors-*.test.ts`, soit QUATRE
+// fichiers sur treize. Les neuf autres existaient, étaient committés, et
+// n'avaient jamais été exécutés. Mesuré le jour où on les a lancés :
+//
+//   - tests/mcp-suggest-composition.test.ts → DEUX assertions ROUGES, toutes
+//     deux justes : le moteur de recherche MCP rendait bpm.statusBox pour
+//     « CRM » et bpm.scheduler pour « salle de réunion », sur la foi de
+//     chaînes inventées dans les @example ;
+//   - tests/asset-manager-authz.test.ts → ZÉRO test collecté (client Prisma
+//     absent). Dix tests d'AUTORISATION — élévation de privilège verticale —
+//     qui ne gardaient rien. « 0 test » se lit comme un succès.
+//
+// Un test qui existe et ne tourne jamais est un mécanisme MORT qui a
+// l'apparence d'un mécanisme vivant — la faute que ce dépôt traque partout,
+// commise sur son propre juge.
+//
+// Le périmètre est désormais celui de vitest.config.ts (tests/**), sans liste
+// tenue à la main : un fichier ajouté demain est joué le jour même.
+//
+// L'installation RACINE devient complète (npm ci, SCRIPTS COMPRIS) : les tests
+// hors connecteurs entraînent Prisma et Next, et le postinstall racine est
+// précisément `prisma generate`. C'est lui qui manquait.
+//
+// vitest reste ÉPINGLÉ sur ^2 et installé APRÈS le npm ci (qui, partant du
+// lockfile, retirerait une dépendance non déclarée) : vitest >= 3 tire
+// rolldown, dont le binding natif optionnel n'est pas installé de façon fiable
+// par npm (bug npm/cli#4828) → « Cannot find native binding » en CI.
+step("Step g — Tests racine (tests/**)");
+run("npm ci", { cwd: REPO_ROOT, label: "npm ci racine (postinstall = prisma generate)" });
+run("npm install --no-save --ignore-scripts vitest@^2", {
   cwd: REPO_ROOT,
-  label: "vitest tests/connectors-*",
+  label: "install vitest (épinglé ^2)",
 });
+run("npx vitest run", { cwd: REPO_ROOT, label: "vitest tests/**" });
 
 // ── Summary ───────────────────────────────────────────────────────────────────
 console.log(`\n${"═".repeat(60)}`);

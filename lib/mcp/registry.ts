@@ -11,6 +11,7 @@
  * n'est exposé. L'index de recherche `_haystack` reste strictement interne.
  */
 import registry from "@/lib/generated/mcp-registry.json";
+import { fieldAnswers } from "@/lib/mcp/match";
 import type { ComponentSemantics } from "@/lib/semantics/types";
 
 export interface BpmComponent {
@@ -216,8 +217,17 @@ function tokenVariants(t: string): string[] {
   return [...variants];
 }
 
+/**
+ * Correspondance ancrée sur un DÉBUT DE MOT — plus jamais par sous-chaîne nue.
+ *
+ * La règle et sa mesure vivent dans `lib/mcp/match.ts` ; ici on n'apporte que
+ * la tolérance au pluriel, dont ce fichier est le seul producteur.
+ *
+ * ⚠️ `field` doit arriver dans sa CASSE D'ORIGINE : le découpage camelCase en
+ * dépend (`bpm.barChart` → `bar` + `chart`).
+ */
 function fieldMatches(field: string, token: string): boolean {
-  return tokenVariants(token).some((v) => field.includes(v));
+  return fieldAnswers(field, tokenVariants(token));
 }
 
 /** Texte sémantique d'un composant (sens : rôle, frame Ω, types, guidance). */
@@ -233,9 +243,9 @@ function semanticText(c: BpmComponent): string {
     s.agentGuidance.use,
     ...s.agentGuidance.pairWith,
     ...s.contextHints,
-  ]
-    .join(" ")
-    .toLowerCase();
+  ].join(" ");
+  /* Pas de `.toLowerCase()` : `pairWith` porte des noms de composants
+     (`bpm.barChart`), dont le camelCase est la seule frontière de mot. */
 }
 
 /** Index sémantique pré-calculé : la signification pèse plus que le simple tag. */
@@ -253,9 +263,12 @@ function scoreComponents(query: string): Scored[] {
 
   const results: Scored[] = [];
   for (const c of COMPONENTS) {
-    const nameL = c.name.toLowerCase();
-    const descL = c.description.toLowerCase();
-    const catL = c.category.toLowerCase();
+    /* Casse D'ORIGINE, délibérément : `fieldMatches` découpe le camelCase
+       (`barChart` → `bar` + `chart`) et abaisse la casse lui-même. Abaisser
+       ici ferait perdre `chart` sur `bpm.barChart`. */
+    const nameL = c.name;
+    const descL = c.description;
+    const catL = c.category;
     const semL = SEM_TEXT.get(c.slug) ?? "";
     let score = 0;
     const matched: string[] = [];

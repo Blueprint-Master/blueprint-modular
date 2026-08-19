@@ -109,7 +109,41 @@ function main() {
     if (d.props) withProps++;
     if (d.example) withExample++;
     if (sem) withSemantics++;
-    // Tokens de recherche : nom + description + catégorie + props + exemple + sémantique.
+    // Index de recherche : CHAMPS CURÉS UNIQUEMENT.
+    //
+    // ⚠️ `d.example` en est ABSENT, et c'est la correction. Un exemple est une
+    // DÉMO : ses valeurs sont inventées pour illustrer, elles ne décrivent pas
+    // le composant. Mesuré sur l'index d'avant, où il figurait : les valeurs
+    // des `@example` apportaient **194 mots introuvables ailleurs** sur
+    // **111 composants sur 156** — `jean`, `dupont`, `dgfip`, `paris`, `jpg`,
+    // `2024`, `crm` — et **189 de ces 194 mots rendaient bel et bien un
+    // composant**. Deux conséquences relues telles quelles :
+    //
+    //   « CRM »             → bpm.scheduler ? non : bpm.statusBox, dont
+    //                          l'exemple porte label: "Synchronisation CRM" ;
+    //   « salle de réunion » → bpm.scheduler, dont l'exemple porte un
+    //                          événement title: "Réunion".
+    //
+    // Le moteur recommandait un composant sur la foi d'une chaîne écrite pour
+    // la documentation. Les deux tests qui l'interdisaient existaient DÉJÀ et
+    // étaient rouges depuis des mois, faute d'être joués par le gate.
+    //
+    // Filtrer l'exemple plutôt que le retirer a été essayé et ABANDONNÉ : la
+    // fiction n'est pas seulement entre guillemets. `<Button>Nouvelle
+    // commande</Button>` est du texte JSX, `onSelect: copy` et `{ prix: 100 }`
+    // sont des identifiants et des clés inventés — chaque filtre laissait
+    // passer une forme de plus. Un index bâti sur les seuls champs CURÉS n'a
+    // pas ce problème : il n'y a rien à trier.
+    //
+    // Rien de réel n'est perdu : les noms de props ET leurs valeurs
+    // d'énumération vivent dans `props`, documenté pour 154 composants sur 156
+    // (`bpm.free` et `bpm.dataExplorer` exceptés — tenu par test, ils restent
+    // trouvables par leur nom, leur description et leur sémantique).
+    //
+    // La CASSE EST CONSERVÉE, délibérément : le moteur découpe `barChart` en
+    // `bar` + `chart` pour ancrer les correspondances sur un début de mot, et
+    // ce découpage a besoin des majuscules. C'est le consommateur qui abaisse
+    // la casse (lib/mcp/match.ts), pas l'index.
     const haystack = [
       c.name,
       c.slug,
@@ -117,13 +151,11 @@ function main() {
       c.category,
       d.fullDescription,
       d.props,
-      d.example,
       ...(d.associated ?? []),
       semanticHaystack(sem),
     ]
       .filter(Boolean)
-      .join(" ")
-      .toLowerCase();
+      .join(" ");
 
     return {
       slug: c.slug,
