@@ -137,6 +137,25 @@ run("npx vitest run tests/connectors-*.test.ts", {
   label: "vitest tests/connectors-*",
 });
 
+// ── Step h: Retard de publication du core (RAPPORT, non bloquant) ───────────
+// Le 19/08, HUIT commits touchant le core dormaient non publiés — dont trois
+// qui corrigeaient des défauts que blueprint-maker mesurait en production, et
+// un qu'une tâche Maker attendait explicitement depuis des semaines. Le
+// workflow `publish-core.yml` marchait ; il refusait simplement de republier
+// une version déjà sur npm, et personne ne savait devoir bumper.
+//
+// NON BLOQUANT, délibérément : le défaut est l'INVISIBILITÉ, pas la
+// permissivité. Exiger un bump dans chaque PR touchant un composant ferait
+// rougir des PR justes et créerait des conflits de version entre PR
+// concurrentes — on remplacerait un silence par une friction, sans rien voir
+// de plus. Le script sort toujours 0 (sauf `--strict`) ; c'est sa SORTIE
+// CONSOLE qui porte l'information.
+step("Step h — Retard de publication du core (rapport)");
+run("node scripts/check-core-publish-drift.mjs", {
+  cwd: REPO_ROOT,
+  label: "check-core-publish-drift.mjs",
+});
+
 // ── Summary ───────────────────────────────────────────────────────────────────
 console.log(`\n${"═".repeat(60)}`);
 if (exitCode === 0) {
