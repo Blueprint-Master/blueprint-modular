@@ -263,10 +263,36 @@ def parse_component_file(path: Path) -> dict | None:
         props = parse_props_interface(source, iface_name)
 
     # Anti-patterns dans les commentaires
+    #
+    # ⚠️ On aspire une LIGNE d'un commentaire qui en fait souvent trois. Une
+    # ligne du milieu ou de la fin est un FRAGMENT : ni sujet, ni contexte, et
+    # parfois le terminateur `*/` en prime. Mesuré sur les 5 lignes `INTERDIT :`
+    # publiées dans public/llms.txt — la doc que le Maker donne au modèle —
+    # DEUX étaient de la prose amputée, dont :
+    #
+    #     INTERDIT : censé ne jamais faire. */
+    #
+    # qui est la 3ᵉ ligne de « Un zéro fabriqué est une valeur qui ment, et
+    # c'est précisément ce qu'un total est censé ne jamais faire. » Illisible,
+    # et présenté au modèle comme une règle.
+    #
+    # Deux garde-fous, tous deux dérivés de la FORME et non d'une liste :
+    #
+    # 1. une ligne qui COMMENCE par une minuscule est la suite d'une phrase
+    #    entamée plus haut — donc un fragment. Les interdits réels commencent
+    #    par une majuscule, un tiret de liste ou le mot INTERDIT ;
+    # 2. le terminateur `*/` est retiré des lignes gardées : il n'appartient
+    #    pas à la règle énoncée.
+    #
+    # Vérifié sur les quatre lignes réellement aspirées : les trois interdits
+    # légitimes sont conservés, le seul fragment est écarté.
     anti = []
     for line in source.splitlines():
         if "INTERDIT" in line or "jamais" in line.lower() or "never" in line.lower():
             clean = re.sub(r"^\s*[/*]+\s*", "", line).strip()
+            if clean and clean[0].islower():
+                continue
+            clean = clean.removesuffix("*/").strip()
             if clean and len(clean) < 120:
                 anti.append(clean)
 
