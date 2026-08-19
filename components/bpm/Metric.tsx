@@ -217,7 +217,18 @@ export function Metric({
             {icon}
           </span>
         )}
-        <div className={`${compact ? "text-xs" : "text-sm"} truncate`} style={{ color: "var(--bpm-text-secondary, #6b7280)" }}>
+        {/* HIÉRARCHIE CHIFFRE / LIBELLÉ — voir le bloc sur la valeur ci-dessous.
+            Le libellé passe en `em` pour la même raison que la valeur : `rem`
+            est relatif à la RACINE, que ni la charte ni l'ergonomie de l'hôte
+            ne touchent. `0.875em` et `0.75em` valent exactement `text-sm` et
+            `text-xs` à corps 16 px — le rendu par défaut ne bouge pas. */}
+        <div
+          className="truncate"
+          style={{
+            fontSize: compact ? "0.75em" : "0.875em",
+            color: "var(--bpm-text-secondary, #6b7280)",
+          }}
+        >
           {label}
           {help && (
             <span className="ml-1" title={help}>
@@ -226,7 +237,40 @@ export function Metric({
           )}
         </div>
       </div>
-      <div className={compact ? "text-lg font-bold" : "text-xl font-bold"} style={compact ? { marginTop: 3 } : undefined}>{displayValue}</div>
+      {/* LA VALEUR EST LE CHIFFRE QU'ON LIT — elle en avait à peine l'air.
+       *
+       * Mesuré sur la critique vision de la production (30 j) : « hiérarchie
+       * plate » est la 2ᵉ famille de défauts (346 constats sur 98 apps), et son
+       * thème dominant est ce rapport-ci — « les chiffres-clés manquent de
+       * hiérarchie », « à peine plus grands que les labels », « même graisse et
+       * taille que les labels ».
+       *
+       * Il valait **1,43** (`text-xl` 20 px contre `text-sm` 14 px), et 1,5 en
+       * compact. Toute référence de tableau de bord place un chiffre de tête
+       * autour de 2. « À peine plus grands » n'était pas une impression : c'est
+       * ce nombre.
+       *
+       * DEUX CHANGEMENTS, ET LE SECOND COMPTE AUTANT.
+       *
+       * 1. Le RAPPORT passe à 2,0 en normal (1,8 en compact, dont le budget de
+       *    hauteur ~80 px est un contrat du composant).
+       * 2. L'unité passe de `rem` à `em`. `rem` est relatif à la RACINE : une
+       *    application hôte qui grossit son `body` — pour un mur d'affichage,
+       *    une charte à échelle typographique ample — voyait tout grandir SAUF
+       *    ses indicateurs. `em` hérite, donc la métrique suit son contexte.
+       *
+       * Le rendu par défaut ne bouge que sur la valeur : `0.875em` d'un corps à
+       * 16 px vaut exactement `text-sm`, et le libellé reste à 14 px. */}
+      <div
+        className="font-bold"
+        style={{
+          fontSize: compact ? "1.35em" : "1.75em",
+          lineHeight: 1.2,
+          ...(compact ? { marginTop: 3 } : {}),
+        }}
+      >
+        {displayValue}
+      </div>
       {judgment && (
         <div
           role="status"
