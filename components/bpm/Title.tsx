@@ -1,6 +1,7 @@
 "use client";
 
 import React from "react";
+import "./Title.css";
 
 const LEVEL_STYLES: Record<1 | 2 | 3 | 4, { fontSize: string; fontWeight: number }> = {
   1: { fontSize: "1.875rem", fontWeight: 700 },

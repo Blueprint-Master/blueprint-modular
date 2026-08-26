@@ -1,0 +1,27 @@
+/* bpm.title — règle de la classe sémantique inverted (style badge).
+ *
+ * Title.tsx pose .bpm-title-inverted (et la custom property
+ * --bpm-title-inverted-bg quand la prop invertedBackground est fournie) mais
+ * la règle ne vivait que dans app/globals.css du repo — jamais dans la feuille
+ * livrée (dist/style.css). Un titre inverted était donc invisible en tant que
+ * tel dans toute app générée. Fond dérivé de l'encre de la charte, encre
+ * dérivée de la surface ; la prop invertedBackground garde la priorité.
+ */
+
+.bpm-title-inverted {
+  display: inline-flex;
+  background: var(--bpm-title-inverted-bg, var(--bpm-text-primary, #1d1d1f));
+  color: var(--bpm-surface, #ffffff);
+  padding: 0.35rem 0.75rem;
+  border-radius: var(--bpm-radius, 6px);
+  margin: 0.25rem 0;
+}
+
+.bpm-title-inverted.bpm-title-with-bar {
+  padding-left: calc(14px + 0.75rem);
+}
+
+.bpm-title-inverted.bpm-title-with-bar::before {
+  background: var(--bpm-title-bar-color, var(--bpm-surface, #ffffff));
+  left: 0.75rem;
+}

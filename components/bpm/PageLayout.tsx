@@ -136,29 +136,39 @@ export function PageLayout({
   const [sidebarHovered, setSidebarHovered] = useState(false);
   const showToggle = !isCollapsed || sidebarHovered;
 
+  /* DÉFÉRENCE À LA CHARTE — ces redéfinitions inline écrasaient les jetons de
+     la charte (html:root) pour TOUT le sous-arbre du shell : accent #048dc3,
+     radius 6px et corps 14px imposés à chaque app générée, quelle que soit sa
+     charte. Chaque valeur passe par un jeton intermédiaire `--bpm-page-layout-*`
+     (le nom qu'émettent déjà les apps générées : alias posés à html:root
+     précisément pour ce shell) avec pour REPLI la valeur d'aujourd'hui — une
+     app sans charte ne bouge pas d'un octet. NB : `--bpm-accent:
+     var(--bpm-accent, …)` serait un cycle CSS (propriété invalide), d'où le
+     jeton intermédiaire ; radius et font-size gagnent les mêmes crochets,
+     à émettre côté charte quand elle voudra les gouverner. */
   const themeVars =
     theme === "dark"
       ? {
-          "--bpm-bg": "#0f172a",
-          "--bpm-bg-secondary": "#1e293b",
-          "--bpm-border": "#334155",
-          "--bpm-text": "#f1f5f9",
-          "--bpm-text-secondary": "#94a3b8",
-          "--bpm-accent": "#048dc3",
-          "--bpm-radius": "6px",
-          "--bpm-font-size-base": "14px",
-          "--bpm-font-size-lg": "1.125rem",
+          "--bpm-bg": "var(--bpm-page-layout-bg, #0f172a)",
+          "--bpm-bg-secondary": "var(--bpm-page-layout-bg-secondary, #1e293b)",
+          "--bpm-border": "var(--bpm-page-layout-border, #334155)",
+          "--bpm-text": "var(--bpm-page-layout-text, #f1f5f9)",
+          "--bpm-text-secondary": "var(--bpm-page-layout-text-secondary, #94a3b8)",
+          "--bpm-accent": "var(--bpm-page-layout-accent, #048dc3)",
+          "--bpm-radius": "var(--bpm-page-layout-radius, 6px)",
+          "--bpm-font-size-base": "var(--bpm-page-layout-font-size-base, 14px)",
+          "--bpm-font-size-lg": "var(--bpm-page-layout-font-size-lg, 1.125rem)",
         }
       : {
-          "--bpm-bg": "#ffffff",
-          "--bpm-bg-secondary": "#f8fafc",
-          "--bpm-border": "#e2e8f0",
-          "--bpm-text": "#0f172a",
-          "--bpm-text-secondary": "#64748b",
-          "--bpm-accent": "#048dc3",
-          "--bpm-radius": "6px",
-          "--bpm-font-size-base": "14px",
-          "--bpm-font-size-lg": "1.125rem",
+          "--bpm-bg": "var(--bpm-page-layout-bg, #ffffff)",
+          "--bpm-bg-secondary": "var(--bpm-page-layout-bg-secondary, #f8fafc)",
+          "--bpm-border": "var(--bpm-page-layout-border, #e2e8f0)",
+          "--bpm-text": "var(--bpm-page-layout-text, #0f172a)",
+          "--bpm-text-secondary": "var(--bpm-page-layout-text-secondary, #64748b)",
+          "--bpm-accent": "var(--bpm-page-layout-accent, #048dc3)",
+          "--bpm-radius": "var(--bpm-page-layout-radius, 6px)",
+          "--bpm-font-size-base": "var(--bpm-page-layout-font-size-base, 14px)",
+          "--bpm-font-size-lg": "var(--bpm-page-layout-font-size-lg, 1.125rem)",
         };
 
   return (

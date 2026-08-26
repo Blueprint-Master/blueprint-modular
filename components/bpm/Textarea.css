@@ -1,0 +1,22 @@
+/* bpm.textarea — règle de la classe sémantique inverted.
+ *
+ * Textarea.tsx pose .bpm-textarea-inverted et met alors les styles inline du
+ * label et du champ à `undefined` : le rendu inverted est DÉLÉGUÉ à cette
+ * classe, absente de la feuille livrée (dist/style.css). Couleurs dérivées
+ * des jetons (fond = encre de la charte, encre = surface), replis = valeurs
+ * :root d'aujourd'hui.
+ */
+
+.bpm-textarea-inverted .bpm-textarea-label {
+  color: var(--bpm-surface, #ffffff);
+}
+
+.bpm-textarea-inverted .bpm-textarea {
+  background: var(--bpm-text-primary, #1d1d1f);
+  border-color: color-mix(in srgb, var(--bpm-surface, #ffffff) 20%, transparent);
+  color: var(--bpm-surface, #ffffff);
+}
+
+.bpm-textarea-inverted .bpm-textarea::placeholder {
+  color: color-mix(in srgb, var(--bpm-surface, #ffffff) 50%, transparent);
+}

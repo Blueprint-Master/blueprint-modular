@@ -1,0 +1,28 @@
+/* bpm.card — règle de la classe sémantique inverted.
+ *
+ * Card.tsx pose .bpm-card-inverted et met alors son background inline à
+ * `undefined` : le composant DÉLÈGUE le fond à cette classe — qui n'existait
+ * pas dans la feuille livrée (dist/style.css). Une carte inverted était donc
+ * transparente dans toute app générée (la règle ne vivait que dans
+ * app/globals.css du repo, avec un #1d1d1f codé en dur).
+ *
+ * Ici les couleurs sont DÉRIVÉES des jetons : fond = encre de la charte,
+ * encre = surface de la charte — l'inversion suit la charte et le thème au
+ * lieu de figer un noir de marque. Replis = valeurs :root d'aujourd'hui.
+ */
+
+.bpm-card-inverted {
+  background: var(--bpm-text-primary, #1d1d1f);
+  color: var(--bpm-surface, #ffffff);
+}
+
+.bpm-card-inverted .bpm-card-title,
+.bpm-card-inverted .bpm-card-subtitle,
+.bpm-card-inverted .bpm-card-content,
+.bpm-card-inverted .bpm-card-actions {
+  color: var(--bpm-surface, #ffffff);
+}
+
+.bpm-card-inverted .bpm-card-subtitle {
+  color: color-mix(in srgb, var(--bpm-surface, #ffffff) 85%, transparent);
+}

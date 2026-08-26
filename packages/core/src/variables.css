@@ -104,6 +104,14 @@
   --bpm-background: #0f172a;
   --bpm-surface: #1e293b;
   --bpm-border: #334155;
+  /* --bpm-bg-primary / --bpm-bg-secondary : le bloc sombre redéfinissait
+     --bpm-bg-tertiary et PAS les deux premiers — ils restaient donc clairs
+     (#ffffff / #f1f5f9) sous data-theme="dark", et tout consommateur de
+     --bpm-bg (alias de --bpm-bg-primary) peignait un fond BLANC en thème
+     sombre. Valeurs alignées sur l'échelle sombre déjà posée ici :
+     background #0f172a → bg-primary ; surface #1e293b → bg-secondary. */
+  --bpm-bg-primary: #0f172a;
+  --bpm-bg-secondary: #1e293b;
   --bpm-bg-tertiary: #334155;
   --bpm-text-primary: #f1f5f9;
   --bpm-text-secondary: #94a3b8;
