@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-08-19T00:01:17.746Z",
+  "generatedAt": "2026-08-26T22:10:14.869Z",
   "source": "lib/generated/bpm-components.json + public/llms.txt + lib/semantics/bpm-semantics.json",
   "total": 156,
   "categories": [
@@ -2945,7 +2945,7 @@
       "category": "Interaction",
       "status": "curated",
       "fullDescription": "Panneau de filtres dynamiques (select, multiselect, daterange, text, toggle) avec réinitialisation.",
-      "props": "  filters*: FilterConfig[]  — Liste des filtres à afficher.\n  values?: Record<string, unknown>  — Valeurs courantes (clé = filter.key).\n  onChange*: (key: string, value: unknown) => void  — Callback à chaque changement d'un filtre.\n  onReset*: () => void  — Callback réinitialisation.\n  orientation?: \"horizontal\" | \"vertical\"  — Disposition : horizontal (flex row) ou vertical (colonne 240px).\n  collapsible?: boolean  — Afficher un bouton pour replier le panneau (avec badge si filtres actifs).",
+      "props": "  filters*: FilterConfig[]  — Liste des filtres à afficher.\n  values?: Record<string, unknown>  — Valeurs courantes (clé = filter.key).\n  onChange*: (key: string, value: unknown) => void  — Callback à chaque changement d'un filtre.\n  onReset*: () => void  — Callback réinitialisation.\n  orientation?: \"horizontal\" | \"vertical\"  — Disposition : horizontal (flex row) ou vertical (colonne 240px).\n  collapsible?: boolean  — Afficher un bouton pour replier le panneau (avec badge si filtres actifs).\n  defaultCollapsed?: boolean",
       "example": "bpm.filterPanel({ filters: [...], values: { status: \"active\" }, onChange: handleChange, onReset: reset })",
       "associated": [
         "bpm.table",
@@ -2975,7 +2975,7 @@
         ],
         "status": "proposed"
       },
-      "_haystack": "bpm.filterPanel filterpanel Panneau de filtres (select, multiselect, daterange, text, toggle). Interaction Panneau de filtres dynamiques (select, multiselect, daterange, text, toggle) avec réinitialisation.   filters*: FilterConfig[]  — Liste des filtres à afficher.\n  values?: Record<string, unknown>  — Valeurs courantes (clé = filter.key).\n  onChange*: (key: string, value: unknown) => void  — Callback à chaque changement d'un filtre.\n  onReset*: () => void  — Callback réinitialisation.\n  orientation?: \"horizontal\" | \"vertical\"  — Disposition : horizontal (flex row) ou vertical (colonne 240px).\n  collapsible?: boolean  — Afficher un bouton pour replier le panneau (avec badge si filtres actifs). bpm.table bpm.dataExplorer bpm.chip saisie section Restreindre une collection selon plusieurs critères typés (select, multiselect, daterange, text, toggle). bpm.table bpm.dataExplorer bpm.chip bpm.pagination Critère unique (un bpm.selectbox suffit) ou recherche plein-texte seule (bpm.input). Critères = Section.filterFields (champs filtrables de l'Entity) ; l'état des filtres cadre la lecture des indicateurs voisins."
+      "_haystack": "bpm.filterPanel filterpanel Panneau de filtres (select, multiselect, daterange, text, toggle). Interaction Panneau de filtres dynamiques (select, multiselect, daterange, text, toggle) avec réinitialisation.   filters*: FilterConfig[]  — Liste des filtres à afficher.\n  values?: Record<string, unknown>  — Valeurs courantes (clé = filter.key).\n  onChange*: (key: string, value: unknown) => void  — Callback à chaque changement d'un filtre.\n  onReset*: () => void  — Callback réinitialisation.\n  orientation?: \"horizontal\" | \"vertical\"  — Disposition : horizontal (flex row) ou vertical (colonne 240px).\n  collapsible?: boolean  — Afficher un bouton pour replier le panneau (avec badge si filtres actifs).\n  defaultCollapsed?: boolean bpm.table bpm.dataExplorer bpm.chip saisie section Restreindre une collection selon plusieurs critères typés (select, multiselect, daterange, text, toggle). bpm.table bpm.dataExplorer bpm.chip bpm.pagination Critère unique (un bpm.selectbox suffit) ou recherche plein-texte seule (bpm.input). Critères = Section.filterFields (champs filtrables de l'Entity) ; l'état des filtres cadre la lecture des indicateurs voisins."
     },
     {
       "slug": "confirmmodal",

@@ -1,7 +1,7 @@
 # Blueprint Modular — Agent Context File
 # Version React (@blueprint-modular/core, npm) : 0.3.11
 # Version Python (blueprint-modular, PyPI)      : 0.1.54
-# Date    : 2026-08-19
+# Date    : 2026-08-26
 # URL canonique : https://blueprint-modular.com/llms.txt
 #
 # Ce fichier est la référence machine de @blueprint-modular/core.
@@ -676,7 +676,7 @@ Chat Ollama local (démo).
 ```
 
 ## bpm.filterPanel
-@component bpm.filterPanel @description Panneau de filtres dynamiques (select, multiselect, daterange, text, toggle) avec réinitialisation. @example bpm.filterPanel({ filters: [...], values: { status: "active" }, onChange: handleChange, onReset: reset }) @param {object} props @param {FilterConfig[]} props.filters - Configuration des filtres {key, label, type, options?}. Obligatoire. @param {Record<string, unknown>} [props.values={}] - Valeurs courantes des filtres. Optionnel. @param {function} props.onChange - Callback (key, value). Obligatoire. @param {function} props.onReset - Callback de réinitialisation. Obligatoire. @param {"horizontal"|"vertical"} [props.orientation="horizontal"] - Disposition. Optionnel. @param {boolean} [props.collapsible=false] - Panneau repliable avec badge. Optionnel. @associated bpm.table, bpm.dataExplorer, bpm.chip @parent bpm.drawer, bpm.card, bpm.dataExplorer @forbidden aucun
+@component bpm.filterPanel @description Panneau de filtres dynamiques (select, multiselect, daterange, text, toggle) avec réinitialisation. @example bpm.filterPanel({ filters: [...], values: { status: "active" }, onChange: handleChange, onReset: reset }) @param {object} props @param {FilterConfig[]} props.filters - Configuration des filtres {key, label, type, options?}. Obligatoire. @param {Record<string, unknown>} [props.values={}] - Valeurs courantes des filtres. Optionnel. @param {function} props.onChange - Callback (key, value). Obligatoire. @param {function} props.onReset - Callback de réinitialisation. Obligatoire. @param {"horizontal"|"vertical"} [props.orientation="horizontal"] - Disposition. Optionnel. @param {boolean} [props.collapsible=false] - Panneau repliable avec badge. Optionnel. @param {boolean} [props.defaultCollapsed=false] - État initial du panneau repliable : true = replié au premier rendu. Sans effet si collapsible est absent. Optionnel. @associated bpm.table, bpm.dataExplorer, bpm.chip @parent bpm.drawer, bpm.card, bpm.dataExplorer @forbidden aucun
 @semantic role=saisie frame=section status=proposed
 @guidance Restreindre une collection selon plusieurs critères typés (select, multiselect, daterange, text, toggle). Associer : bpm.table, bpm.dataExplorer, bpm.chip, bpm.pagination. Éviter : Critère unique (un bpm.selectbox suffit) ou recherche plein-texte seule (bpm.input).
 ```
@@ -686,6 +686,7 @@ Chat Ollama local (démo).
   onReset*: () => void  — Callback réinitialisation.
   orientation?: "horizontal" | "vertical"  — Disposition : horizontal (flex row) ou vertical (colonne 240px).
   collapsible?: boolean  — Afficher un bouton pour replier le panneau (avec badge si filtres actifs).
+  defaultCollapsed?: boolean
 ```
 
 ## bpm.flowDiagram

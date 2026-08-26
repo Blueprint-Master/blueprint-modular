@@ -52,6 +52,24 @@ export interface FilterPanelProps {
   orientation?: "horizontal" | "vertical";
   /** Afficher un bouton pour replier le panneau (avec badge si filtres actifs). */
   collapsible?: boolean;
+  /**
+   * État initial du panneau repliable : `true` = REPLIÉ au premier rendu.
+   *
+   * Sans cette prop, `collapsible` n'offrait qu'un panneau **toujours déplié à
+   * l'ouverture** — l'état interne partait à `false` et rien ne permettait de le
+   * changer. Une vue liste qui passe `collapsible: true` obtenait donc un bloc
+   * de contrôles bordé, pleine largeur, poussant la table sous la ligne de
+   * flottaison à CHAQUE arrivée sur l'écran, y compris quand aucun filtre n'est
+   * actif.
+   *
+   * `collapsible` dit qu'on PEUT replier ; il ne disait rien de l'état de
+   * départ. C'est la même distinction que celle déjà tranchée plus bas pour le
+   * flux des champs : la prop décrivait l'en-tête, pas le contenu.
+   *
+   * Défaut `false` = comportement actuel à l'octet ; sans `collapsible`, la prop
+   * n'a pas de sens et est ignorée (il n'y a alors ni en-tête ni bouton).
+   */
+  defaultCollapsed?: boolean;
 }
 
 function getActiveCount(filters: FilterConfig[], values: Record<string, unknown>): number {
@@ -82,6 +100,7 @@ function getActiveCount(filters: FilterConfig[], values: Record<string, unknown>
  * @param {function} props.onReset - Callback de réinitialisation. Obligatoire.
  * @param {"horizontal"|"vertical"} [props.orientation="horizontal"] - Disposition. Optionnel.
  * @param {boolean} [props.collapsible=false] - Panneau repliable avec badge. Optionnel.
+ * @param {boolean} [props.defaultCollapsed=false] - État initial du panneau repliable : true = replié au premier rendu. Sans effet si collapsible est absent. Optionnel.
  *
  * @associated bpm.table, bpm.dataExplorer, bpm.chip
  * @parent bpm.drawer, bpm.card, bpm.dataExplorer
@@ -94,10 +113,15 @@ export function FilterPanel({
   onReset,
   orientation = "horizontal",
   collapsible = false,
+  defaultCollapsed = false,
 }: FilterPanelProps) {
   const bpmLocale = useBpmLocale();
   const t = STRINGS[bpmLocale];
-  const [collapsed, setCollapsed] = useState(false);
+  /* État INITIAL seulement : `useState` ne relit pas son argument aux rendus
+     suivants, donc un panneau que l'utilisateur a ouvert le reste. Une prop
+     contrôlée fermerait le panneau sous ses doigts au moindre re-rendu du
+     parent — ce n'est pas ce qu'on veut ici. */
+  const [collapsed, setCollapsed] = useState(defaultCollapsed);
   const activeCount = getActiveCount(filters, values);
   const hasActive = activeCount > 0;
 
