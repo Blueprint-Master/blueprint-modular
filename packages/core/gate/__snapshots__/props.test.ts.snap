@@ -406,6 +406,7 @@ exports[`bpm prop surface snapshot > prop names match committed snapshot (additi
     "onReset",
     "orientation",
     "collapsible",
+    "defaultCollapsed",
   ],
   "flowDiagram": [
     "states",
