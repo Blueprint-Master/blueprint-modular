@@ -1,6 +1,7 @@
 "use client";
 
 import React from "react";
+import "./Textarea.css";
 
 /**
  * @component bpm.textarea

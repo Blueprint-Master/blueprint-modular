@@ -1,6 +1,7 @@
 "use client";
 
 import React from "react";
+import "./Card.css";
 
 export type CardVariant = "default" | "elevated" | "outlined";
 

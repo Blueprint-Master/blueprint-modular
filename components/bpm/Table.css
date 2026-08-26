@@ -1,0 +1,25 @@
+/* bpm.table — règles des classes sémantiques striped / hover / clickable.
+ *
+ * Table.tsx pose ces classes depuis toujours (striped et hover valent true par
+ * DÉFAUT), mais aucune règle n'existait dans la feuille livrée (dist/style.css,
+ * copiée dans chaque app générée) : trois classes mortes sur chaque table de
+ * chaque app. Les règles vivaient uniquement dans app/globals.css du repo — la
+ * vitrine les voyait, les apps générées jamais.
+ *
+ * Teintes DÉRIVÉES de l'encre (--bpm-text-primary) par color-mix : hue-neutres,
+ * donc justes sur toute charte et dans les deux thèmes (l'encre s'inverse avec
+ * le thème, le voile suit). Jamais un hex de marque. Le repli est la valeur
+ * :root d'aujourd'hui — une app sans charte ne bouge pas de teinte.
+ */
+
+.bpm-table-striped tbody tr:nth-of-type(even) {
+  background-color: color-mix(in srgb, var(--bpm-text-primary, #0f172a) 3.5%, transparent);
+}
+
+.bpm-table-hover tbody tr:hover {
+  background-color: color-mix(in srgb, var(--bpm-text-primary, #0f172a) 6%, transparent);
+}
+
+.bpm-table-clickable tbody tr {
+  cursor: pointer;
+}

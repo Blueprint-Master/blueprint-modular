@@ -1,0 +1,14 @@
+/* bpm.panel — règle de la classe sémantique inverted.
+ *
+ * Panel.tsx pose .bpm-panel-inverted et met alors background/color inline à
+ * `undefined` : le fond est DÉLÉGUÉ à cette classe, absente de la feuille
+ * livrée (dist/style.css) — un panel inverted restait sur le fond du parent
+ * dans toute app générée. Couleurs dérivées des jetons (fond = encre de la
+ * charte, encre = surface), replis = valeurs :root d'aujourd'hui.
+ */
+
+.bpm-panel-inverted {
+  background: var(--bpm-text-primary, #1d1d1f);
+  color: var(--bpm-surface, #ffffff);
+  border-color: color-mix(in srgb, var(--bpm-surface, #ffffff) 20%, transparent);
+}

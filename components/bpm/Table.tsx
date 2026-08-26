@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState, useMemo } from "react";
+import "./Table.css";
 import { useIsMobile } from "@/hooks/useIsMobile";
 import { useBPMContext } from "@/lib/ai/context";
 import type { MetricValueLocale } from "./Metric";
