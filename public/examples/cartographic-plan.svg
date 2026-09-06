@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" role="img" aria-label="Plan illustratif d’une ville imaginaire, style gravure ancienne">
+  <defs><pattern id="grain" width="3" height="3" patternUnits="userSpaceOnUse"><path d="M0 1h.7M1.5 2.5h.5" stroke="#ab9769" stroke-width=".12"/></pattern></defs>
+  <rect width="100" height="100" fill="#eadcb9"/><rect width="100" height="100" fill="url(#grain)"/>
+  <path d="M32 79L39 66L37 52L47 39L52 22L48 0H53L57 21L52 40L43 53L44 67L39 81Z M0 75L15 82L32 79L50 85L64 81L80 86L100 82V100H0Z" fill="#adbaa5" stroke="#7c8b7c" stroke-width=".4"/>
+  <g fill="none" stroke="#83724d" stroke-width=".4"><path d="M4 75H30L50 48H96M36 72V23M5 48H38M5 72V23H33M58 20H94V72H58Z"/><path d="M4 74H30L50 47H96M37 72V23" stroke-width=".15"/></g>
+  <g fill="#c4b185" stroke="#8c7751" stroke-width=".3"><path d="M9 28H29V46H9ZM14 33V41H24V33Z" fill-rule="evenodd"/><path d="M8 65H13V70H8ZM15 65H20V70H15ZM22 65H27V70H22ZM29 65H34V70H29ZM8 58H13V63H8ZM15 58H20V63H15ZM22 58H27V63H22ZM29 58H34V63H29ZM8 51H13V56H8ZM15 51H20V56H15ZM22 51H27V56H22ZM29 51H34V56H29Z"/></g>
+  <g fill="none" stroke="#9d8e64" stroke-width=".3"><path d="M59 21H91M59 32H91M59 43H91M59 54H91M59 65H91M59 71V18M70 71V18M81 71V18M92 71V18"/></g>
+  <g font-family="Georgia,serif" fill="#69573b" text-anchor="middle"><text x="22" y="15" font-size="3">VILLE IMAGINAIRE</text><text x="71" y="94" font-size="3" font-style="italic">L’Estuaire</text><text x="77" y="15" font-size="2.3">Les Champs</text></g>
+  <path d="M91 4V12M87 8H95M91 4L89.5 7H92.5Z" fill="#69573b" stroke="#69573b" stroke-width=".3"/><text x="91" y="3" font-size="2" text-anchor="middle" fill="#69573b">N</text>
+</svg>

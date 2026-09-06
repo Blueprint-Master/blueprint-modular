@@ -281,9 +281,46 @@ export type { LocationFieldProps, LocationValue } from "./LocationField";
 export { MachineStatus } from "./MachineStatus";
 export type { MachineStatusProps, MachineStatusState } from "./MachineStatus";
 export { MapView } from "./MapView";
-export type { MapMarker, MapPolygonSpec, MapViewProps, MapOverlaySpec, MapOverlayKind } from "./MapView";
+export type { MapMarker, MapPolygonSpec, MapViewProps, MapOverlaySpec, MapOverlayKind, MapRenderContext } from "./MapView";
+export { CartographicMap } from "./CartographicMap";
+export type { CartographicMapProps } from "./CartographicMap";
+export { MapLayerControl } from "./MapLayerControl";
+export type { MapLayerControlProps } from "./MapLayerControl";
+export { MapLegend } from "./MapLegend";
+export type { MapLegendProps, MapLegendItem } from "./MapLegend";
+export { CARTOGRAPHIC_THEMES, createMapRaster, mapColorAt, normalizeMapFeatures, matchesMapFilters, resolveMapStyle, resolveMapLayers, setMapLayerVisibility } from "./cartography";
+export type { MapPosition, MapGeometry, MapFeature, MapFeatureData, MapBounds, MapProjection, MapSource,
+  MapColorStop, MapFilter, MapFeatureStyle, MapStyleRule, MapLayerGroup, MapLayerBase, MapVectorLayer,
+  MapTileLayer, MapWmsLayer, MapImageLayer, MapRasterLayer, MapCustomLayer, CartographicLayer, MapLayerState,
+  MapFeatureSelection, CartographicTheme, ResolvedMapLayer } from "./cartography";
 export { SkyMap, parseCelestialAngle, projectHammer } from "./SkyMap";
 export type { SkyMapProps, SkyPoint } from "./SkyMap";
+export { CelestialBody } from "./CelestialBody";
+export type { CelestialBodyProps } from "./CelestialBody";
+export { CelestialScene } from "./CelestialScene";
+export type { CelestialSceneProps, CelestialObject, CelestialParticle, CelestialPath, CelestialRenderContext } from "./CelestialScene";
+export { OrbitalSystem, resolveOrbitalSystem } from "./OrbitalSystem";
+export type { OrbitalSystemProps, OrbitalBody } from "./OrbitalSystem";
+export { SolarSystem, createSolarSystemBodies } from "./SolarSystem";
+export type { SolarSystemProps } from "./SolarSystem";
+export { GalaxyView, createGalaxyParticles } from "./GalaxyView";
+export type { GalaxyViewProps } from "./GalaxyView";
+export { MoonPhase } from "./MoonPhase";
+export type { MoonPhaseProps } from "./MoonPhase";
+export { AircraftMarker } from "./AircraftMarker";
+export type { AircraftMarkerProps } from "./AircraftMarker";
+export { FlightMap } from "./FlightMap";
+export type { FlightMapProps, FlightPosition, FlightRoute, AirportPosition } from "./FlightMap";
+export { FlightInstruments } from "./FlightInstruments";
+export type { FlightInstrumentsProps } from "./FlightInstruments";
+export { FlightProfile } from "./FlightProfile";
+export type { FlightProfileProps, FlightProfilePoint } from "./FlightProfile";
+export { AirportBoard } from "./AirportBoard";
+export type { AirportBoardProps, AirportFlight } from "./AirportBoard";
+export { SeatMap } from "./SeatMap";
+export type { SeatMapProps, CabinRow, CabinSeat } from "./SeatMap";
+export { projectSpatial, orbitalPosition, seededRandom, greatCircle, geoPath, projectGeo } from "./spatial";
+export type { SpatialPoint, ProjectedPoint, SceneCamera, OrbitalElements, GeoPosition } from "./spatial";
 export { MapViewLeafletInner } from "./MapViewLeaflet";
 export type { MapViewLeafletInnerProps } from "./MapViewLeaflet";
 // —— P ——

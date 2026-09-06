@@ -1,5 +1,13 @@
 # @blueprint-modular/core — Guide d'intégration
 
+## Atlas, scènes célestes et aviation
+
+La cartographie se compose avec trois primitives : `bpm.cartographicMap`, `bpm.mapLayerControl`, `bpm.mapLegend`. Une pile de calques GeoJSON, tuiles XYZ/TMS, WMS, images géoréférencées, grilles scalaires et adaptateurs libres couvre parcelles, cadastre, reliefs, fonds marins, fleuves, villes, cartes anciennes, agriculture et aviation. Les groupes sont imbriquables ; l’ordre, la visibilité, l’opacité, les règles, les périodes et les plages de zoom sont pilotables par un état JSON partagé.
+
+Les scènes célestes utilisent `bpm.celestialScene`, `bpm.celestialBody`, `bpm.orbitalSystem`, `bpm.solarSystem`, `bpm.galaxyView`, `bpm.moonPhase`. Les vues aviation utilisent `bpm.aircraftMarker`, `bpm.flightMap`, `bpm.flightInstruments`, `bpm.flightProfile`, `bpm.airportBoard`, `bpm.seatMap`. Les préréglages sont remplaçables et les renderers React permettent une composition libre.
+
+Voir [BPM_API.md](https://github.com/Blueprint-Master/blueprint-modular/blob/master/BPM_API.md) pour les contrats de données, coordonnées, exemples, sources et limites. Les types et fonctions pures (`CartographicLayer`, `MapLayerState`, `createMapRaster`, `resolveMapLayers`, `OrbitalBody`, `createSolarSystemBodies`, etc.) sont exportés par le paquet. Aucune nouvelle dépendance : les cartes interactives utilisent les pairs `leaflet` et `react-leaflet` déjà prévus ; les scènes SVG ne sollicitent aucun service cartographique.
+
 ## Installation
 ```bash
 npm install @blueprint-modular/core tailwindcss

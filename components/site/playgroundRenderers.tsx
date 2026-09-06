@@ -53,6 +53,10 @@ import {
   SpinnerDot,
 } from "@/components/bpm";
 import { PlotlyChart } from "@/components/bpm";
+import { AircraftMarker, AirportBoard, CelestialBody, CelestialScene, FlightInstruments, FlightMap,
+  FlightProfile, GalaxyView, MoonPhase, OrbitalSystem, SeatMap, SolarSystem, CartographicMap, MapLayerControl, MapLegend } from "@/components/bpm";
+import { createDemoMapLayers, DEMO_MAP_GROUPS } from "@/components/showcase/cartography-scenes";
+import { EXOMOONS, DEMO_FLIGHTS, CABIN } from "@/components/showcase/domain-scenes";
 
 /**
  * Registre des composants rendables en direct dans le playground. Chaque entrée
@@ -107,6 +111,22 @@ const SAMPLE_PLOTLY = [
 ];
 
 export const PLAYGROUND_RENDERERS: Record<string, PlaygroundRenderer> = {
+  cartographicmap: reg(CartographicMap, { layers: createDemoMapLayers(), groups: DEMO_MAP_GROUPS, projection: "simple", center: [50, 50], bounds: [[0, 0], [100, 100]], description: "Territoire imaginaire · données synthétiques" }),
+  maplayercontrol: reg(MapLayerControl, { layers: createDemoMapLayers(), groups: DEMO_MAP_GROUPS }),
+  maplegend: reg(MapLegend, { layers: createDemoMapLayers("agricultural"), groups: DEMO_MAP_GROUPS, theme: "agricultural" }),
+  // — Scènes célestes et aviation : préréglages éditables du catalogue —
+  celestialbody: reg(CelestialBody, { label: "Astre", rings: true, color: "#cbb598" }),
+  celestialscene: reg(CelestialScene, { objects: [{ id: "star", label: "Étoile", x: 0, y: 0, kind: "star", radius: 20, color: "#ffc071" }] }),
+  orbitalsystem: reg(OrbitalSystem, { bodies: EXOMOONS, speed: 3 }),
+  solarsystem: reg(SolarSystem),
+  galaxyview: reg(GalaxyView, { title: "Galaxie illustrative", starCount: 1200 }),
+  moonphase: reg(MoonPhase, { phase: 0.18 }),
+  aircraftmarker: reg(AircraftMarker, { heading: 35, size: 64 }),
+  flightmap: reg(FlightMap, { flights: DEMO_FLIGHTS, caption: "Vols de démonstration" }),
+  flightinstruments: reg(FlightInstruments, { pitch: 8, roll: 15, heading: 82, altitude: 32000, airspeed: 280, verticalSpeed: 1200, caption: "Télémétrie de démonstration" }),
+  flightprofile: reg(FlightProfile, { points: [{ id: "a", x: 0, altitude: 0 }, { id: "b", x: 20, altitude: 32000 }, { id: "c", x: 90, altitude: 0 }] }),
+  airportboard: reg(AirportBoard, { flights: [{ id: "demo", flightNumber: "DEMO 42", destination: "Lisbonne", scheduledTime: "14:20", status: "Embarquement", direction: "departure" }] }),
+  seatmap: reg(SeatMap, { rows: CABIN }),
   // — Texte & affichage —
   title: reg(Title, { level: 2, children: "Titre exemple" }),
   title1: reg(Title, { level: 1, children: "Titre exemple" }),

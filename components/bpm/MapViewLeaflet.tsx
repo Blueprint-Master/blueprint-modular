@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useMemo } from "react";
+import type { MapRenderContext } from "./MapView";
 
 /**
  * @component bpm.mapViewLeaflet
@@ -100,6 +101,10 @@ export interface MapViewLeafletInnerProps {
   /** Calques superposables (données app + WMS/tuiles externes). */
   overlays?: MapOverlaySpec[];
   onMapClick?: (latlng: [number, number]) => void;
+  baseLayer?: boolean;
+  projection?: "mercator" | "geographic" | "simple";
+  crs?: import("leaflet").CRS;
+  renderLayers?: (context: MapRenderContext) => React.ReactNode;
   className?: string;
 }
 
@@ -136,6 +141,10 @@ export function MapViewLeafletInner({
   polygons,
   overlays,
   onMapClick,
+  baseLayer = true,
+  projection,
+  crs,
+  renderLayers,
   className = "",
 }: MapViewLeafletInnerProps) {
   const { MapContainer, TileLayer, Marker, Popup, Polyline, Polygon } = rl;
@@ -228,12 +237,15 @@ export function MapViewLeafletInner({
 
   return (
     <MapContainer
+      key={projection}
+      {...(crs ? { crs } : projection ? { crs: projection === "simple" ? L.CRS.Simple : projection === "geographic" ? L.CRS.EPSG4326 : L.CRS.EPSG3857 } : {})}
       center={center}
       zoom={zoom}
       style={{ height: h, width: "100%", background: "var(--bpm-bg-secondary)" }}
       className={"bpm-mapview-leaflet rounded-lg " + className}
     >
-      <TileLayer attribution={tileAttribution} url={tileUrl} />
+      {baseLayer && <TileLayer attribution={tileAttribution} url={tileUrl} />}
+      {renderLayers?.({ rl, L })}
       {safeOverlays.length > 0 ? (
         <LayersControl position="topright" collapsed={false}>
           {safeOverlays.map((ov) => (

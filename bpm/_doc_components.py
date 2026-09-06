@@ -156,6 +156,21 @@ COMPONENT_DOC: list[ComponentDoc] = [
 # gate pas la liste. Clé = slug (nom bpm.* en minuscules). Un slug absent ici
 # ET de COMPONENT_DOC reçoit la catégorie de repli "Utilitaires".
 EXTRA_CATEGORIES: dict[str, str] = {
+    "cartographicmap":  "Média",
+    "maplayercontrol":  "Interaction",
+    "maplegend":        "Affichage de données",
+    "celestialbody":    "Média",
+    "celestialscene":   "Média",
+    "orbitalsystem":    "Média",
+    "solarsystem":      "Média",
+    "galaxyview":       "Média",
+    "moonphase":        "Média",
+    "aircraftmarker":   "Média",
+    "flightmap":        "Média",
+    "flightinstruments": "Affichage de données",
+    "flightprofile":    "Graphiques",
+    "airportboard":     "Affichage de données",
+    "seatmap":          "Interaction",
     "addressinput":     "Interaction",
     "aiquerybar":       "IA & Spécialisés",
     "alarmpanel":       "Feedback",

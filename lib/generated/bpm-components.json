@@ -637,6 +637,18 @@
       "category": "IA & Spécialisés"
     },
     {
+      "slug": "aircraftmarker",
+      "name": "bpm.aircraftMarker",
+      "description": "Symbole d'aéronef orientable : avion à réaction, avion à hélice, hélicoptère ou drone, couleur et silhouette SVG libres pour cartes et radars.",
+      "category": "Média"
+    },
+    {
+      "slug": "airportboard",
+      "name": "bpm.airportBoard",
+      "description": "Tableau d'aéroport des départs et arrivées avec recherche, horaire prévu/estimé, porte, compagnie et statut libre ; données et fuseau horaire fournis par l'application.",
+      "category": "Affichage de données"
+    },
+    {
       "slug": "alarmpanel",
       "name": "bpm.alarmPanel",
       "description": "Liste d’alarmes triée par gravité avec accusé de réception, suppression et clignotement pour les alertes critiques.",
@@ -653,6 +665,24 @@
       "name": "bpm.breadcrumbs",
       "description": "Fil d’Ariane avancé avec séparateur personnalisable et réduction automatique si trop d’entrées.",
       "category": "Navigation"
+    },
+    {
+      "slug": "cartographicmap",
+      "name": "bpm.cartographicMap",
+      "description": "Carte composable à pile de calques GeoJSON, XYZ/TMS, WMS, images et grilles scalaires.",
+      "category": "Média"
+    },
+    {
+      "slug": "celestialbody",
+      "name": "bpm.celestialBody",
+      "description": "Astre vectoriel personnalisable : étoile, planète, lune, astéroïde ou trou noir, avec anneaux, inclinaison et couche SVG libre.",
+      "category": "Média"
+    },
+    {
+      "slug": "celestialscene",
+      "name": "bpm.celestialScene",
+      "description": "Scène céleste composable en projection 3D orthographique : objets, trajectoires, particules, caméra, sélection et couches SVG libres pour nébuleuses, amas, constellations ou univers imaginaires.",
+      "category": "Média"
     },
     {
       "slug": "changelog",
@@ -709,6 +739,24 @@
       "category": "Interaction"
     },
     {
+      "slug": "flightinstruments",
+      "name": "bpm.flightInstruments",
+      "description": "Instruments d'aviation : horizon artificiel, assiette, roulis, cap, altitude, vitesse et variomètre à partir de télémétrie fournie ; unités et panneaux complémentaires personnalisables.",
+      "category": "Affichage de données"
+    },
+    {
+      "slug": "flightmap",
+      "name": "bpm.flightMap",
+      "description": "Carte aérienne hors ligne en latitude/longitude : avions orientés, aéroports, routes orthodromiques, traces, sélection et calques libres.",
+      "category": "Média"
+    },
+    {
+      "slug": "flightprofile",
+      "name": "bpm.flightProfile",
+      "description": "Profil de vol altitude/temps ou altitude/distance, points sélectionnables et altitude de référence.",
+      "category": "Graphiques"
+    },
+    {
       "slug": "free",
       "name": "bpm.free",
       "description": "Composant bpm.free — voir @blueprint-modular/core ou BPM_API.md.",
@@ -719,6 +767,12 @@
       "name": "bpm.funnelChart",
       "description": "Graphique en entonnoir pour visualiser les étapes d'un processus de conversion avec pourcentages.",
       "category": "Graphiques"
+    },
+    {
+      "slug": "galaxyview",
+      "name": "bpm.galaxyView",
+      "description": "Galaxie procédurale déterministe : Voie lactée stylisée, spirale, spirale barrée, elliptique ou irrégulière ; bras, densité, palette, repères et couches libres personnalisables.",
+      "category": "Média"
     },
     {
       "slug": "gantt",
@@ -775,6 +829,18 @@
       "category": "IA & Spécialisés"
     },
     {
+      "slug": "maplayercontrol",
+      "name": "bpm.mapLayerControl",
+      "description": "Contrôle de pile cartographique : groupes imbriqués, fonds exclusifs, visibilité, opacité et réorganisation au clavier.",
+      "category": "Interaction"
+    },
+    {
+      "slug": "maplegend",
+      "name": "bpm.mapLegend",
+      "description": "Légende issue des mêmes règles et palettes que les calques visibles ; seuils numériques, unités et symboles libres additionnels.",
+      "category": "Affichage de données"
+    },
+    {
       "slug": "mapview",
       "name": "bpm.mapView",
       "description": "Carte Leaflet interactive avec marqueurs, polylignes, polygones et gestion des clics.",
@@ -787,10 +853,22 @@
       "category": "Affichage de données"
     },
     {
+      "slug": "moonphase",
+      "name": "bpm.moonPhase",
+      "description": "Phase lunaire à partir d'une fraction de cycle fournie : nouvelle lune, croissant, quartier, pleine lune, orientation nord/sud et pourcentage éclairé.",
+      "category": "Média"
+    },
+    {
       "slug": "offlineindicator",
       "name": "bpm.offlineIndicator",
       "description": "Indicateur de statut hors ligne avec compteur de requêtes en attente et bouton de synchronisation.",
       "category": "Feedback"
+    },
+    {
+      "slug": "orbitalsystem",
+      "name": "bpm.orbitalSystem",
+      "description": "Système orbital configurable avec hiérarchie parent/enfant, orbites elliptiques de Kepler, satellites, contrôle temporel et personnalisation intégrale de la scène ; fonctionne aussi pour des systèmes fictifs.",
+      "category": "Média"
     },
     {
       "slug": "page",
@@ -865,6 +943,12 @@
       "category": "Affichage de données"
     },
     {
+      "slug": "seatmap",
+      "name": "bpm.seatMap",
+      "description": "Plan de cabine d'avion configurable : rangées libres, couloirs, classes, issues et sièges disponibles/occupés/bloqués, sélection simple ou multiple et rendu de siège personnalisable.",
+      "category": "Interaction"
+    },
+    {
       "slug": "sensorgrid",
       "name": "bpm.sensorGrid",
       "description": "Grille de cartes capteur avec valeur, unité, statut coloré et détail optionnel.",
@@ -880,6 +964,12 @@
       "slug": "skymap",
       "name": "bpm.skyMap",
       "description": "Carte céleste équatoriale (projection de Hammer) : place des observations en ascension droite / déclinaison, avec sélection, zoom et liste tactile.",
+      "category": "Média"
+    },
+    {
+      "slug": "solarsystem",
+      "name": "bpm.solarSystem",
+      "description": "Système solaire prêt à composer avec Soleil et huit planètes, vue interne, distances schématiques ou relatives et remplacement complet des corps ; préréglage illustratif, sans positions astronomiques en temps réel.",
       "category": "Média"
     },
     {

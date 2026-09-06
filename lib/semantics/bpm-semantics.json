@@ -1358,6 +1358,235 @@
       ],
       "contextHints": ["3+ axes de même échelle normalisée pour un ou quelques sujets comparés ; au-delà de ~8 axes la lecture se dégrade."],
       "status": "proposed"
+    },
+    "celestialbody": {
+      "semanticRole": "affichage",
+      "frame": "entity",
+      "agentGuidance": {
+        "use": "Dessiner un astre isolé, un soleil, une planète, une lune ou un trou noir avec sa propre apparence.",
+        "pairWith": [
+          "bpm.celestialScene",
+          "bpm.orbitalSystem"
+        ],
+        "avoid": "Pour les positions et trajectoires de plusieurs objets, employer celestialScene ou orbitalSystem."
+      },
+      "contextHints": [
+        "Composant React SSR-safe ; API typée et exemples dans BPM_API.md. Données sérialisables et renderers React optionnels."
+      ],
+      "status": "proposed"
+    },
+    "cartographicmap": {
+      "semanticRole": "composite",
+      "frame": "entity",
+      "agentGuidance": {
+        "use": "Composer un atlas par calques : parcelles cadastrales, agriculture, relief, bathymétrie, fonds marins, fleuves, villes, cartes maritimes, aériennes, anciennes, modernes ou militaires. Choisir les données, leur pile, les groupes, les règles et les adaptateurs ; ne pas créer un composant par domaine.",
+        "pairWith": ["bpm.mapLayerControl", "bpm.mapLegend", "bpm.flightInstruments", "bpm.timeline"],
+        "avoid": "Ne pas inventer de données réelles, d’attribution, de licence ou de précision. Les thèmes changent la présentation ; la 3D et les tuiles vectorielles demandent un adaptateur. Pour le ciel équatorial utiliser skyMap."
+      },
+      "contextHints": ["Six types de calques, groupes imbriqués, ordre, opacité, fusion, zoom, temps et GeoJSON [longitude, latitude]. Contrats complets et compositions dans BPM_API.md."],
+      "status": "proposed"
+    },
+    "maplayercontrol": {
+      "semanticRole": "action",
+      "frame": "entity",
+      "agentGuidance": {
+        "use": "Piloter une pile de couches : cadastre, parcelles, bâtiments, réseaux, zones, imagerie, relief, annotations. Partager un MapLayerState avec une ou plusieurs cartes.",
+        "pairWith": ["bpm.cartographicMap", "bpm.mapLegend"],
+        "avoid": "Ce contrôle ne fournit ni données ni moteur cartographique. Les groupes contrôlent la visibilité ; l’ordre global contrôle l’empilement."
+      },
+      "contextHints": ["État JSON : order du bas vers le haut, visible, opacity et groups. Réorganisation et réglages accessibles au clavier."],
+      "status": "proposed"
+    },
+    "maplegend": {
+      "semanticRole": "affichage",
+      "frame": "entity",
+      "agentGuidance": {
+        "use": "Expliquer les couleurs, seuils, unités et classes des calques visibles à partir des mêmes règles que la carte. Ajouter des symboles libres avec items.",
+        "pairWith": ["bpm.cartographicMap", "bpm.mapLayerControl"],
+        "avoid": "Ne pas attribuer de sens ou d’unité à des couleurs sans données. La légende suit les filtres temporels, les groupes et le zoom si ces valeurs sont partagées."
+      },
+      "contextHints": ["Légende de parcelles, altitude, profondeur, occupation du sol, réseaux ou couches aériennes ; sources et dates restent celles de l’appelant."],
+      "status": "proposed"
+    },
+    "celestialscene": {
+      "semanticRole": "composite",
+      "frame": "entity",
+      "agentGuidance": {
+        "use": "Composer un ensemble céleste libre : amas, nébuleuse, constellation, système binaire ou univers fictif avec objets et couches SVG personnalisées.",
+        "pairWith": [
+          "bpm.celestialBody",
+          "bpm.orbitalSystem",
+          "bpm.galaxyView"
+        ],
+        "avoid": "Pour un catalogue en ascension droite/déclinaison, employer skyMap."
+      },
+      "contextHints": [
+        "Composant React SSR-safe ; API typée et exemples dans BPM_API.md. Données sérialisables et renderers React optionnels."
+      ],
+      "status": "proposed"
+    },
+    "orbitalsystem": {
+      "semanticRole": "composite",
+      "frame": "entity",
+      "agentGuidance": {
+        "use": "Montrer un système de corps et satellites liés par des orbites elliptiques et explorer son évolution avec un temps de modèle.",
+        "pairWith": [
+          "bpm.celestialScene",
+          "bpm.solarSystem"
+        ],
+        "avoid": "Les éléments orbitaux doivent être fournis ; aucune position datée ni éphéméride ne peut être déduite du préréglage."
+      },
+      "contextHints": [
+        "Composant React SSR-safe ; API typée et exemples dans BPM_API.md. Données sérialisables et renderers React optionnels."
+      ],
+      "status": "proposed"
+    },
+    "solarsystem": {
+      "semanticRole": "composite",
+      "frame": "entity",
+      "agentGuidance": {
+        "use": "Partir du Soleil et des huit planètes pour une exploration pédagogique du système solaire ou remplacer entièrement le préréglage.",
+        "pairWith": [
+          "bpm.orbitalSystem",
+          "bpm.galaxyView",
+          "bpm.moonPhase"
+        ],
+        "avoid": "Le préréglage est illustratif. Pour des positions observées, fournir des données astronomiques adaptées."
+      },
+      "contextHints": [
+        "Composant React SSR-safe ; API typée et exemples dans BPM_API.md. Données sérialisables et renderers React optionnels."
+      ],
+      "status": "proposed"
+    },
+    "galaxyview": {
+      "semanticRole": "composite",
+      "frame": "entity",
+      "agentGuidance": {
+        "use": "Composer une Voie lactée stylisée ou une galaxie spirale, barrée, elliptique ou irrégulière avec une graine reproductible.",
+        "pairWith": [
+          "bpm.celestialScene",
+          "bpm.solarSystem"
+        ],
+        "avoid": "Les particules sont illustratives. Pour des étoiles mesurées, fournir un catalogue à skyMap ou celestialScene."
+      },
+      "contextHints": [
+        "Composant React SSR-safe ; API typée et exemples dans BPM_API.md. Données sérialisables et renderers React optionnels."
+      ],
+      "status": "proposed"
+    },
+    "moonphase": {
+      "semanticRole": "affichage",
+      "frame": "entity",
+      "agentGuidance": {
+        "use": "Afficher une phase lunaire fournie sous forme de fraction du cycle et son orientation nord/sud.",
+        "pairWith": [
+          "bpm.celestialBody",
+          "bpm.skyMap"
+        ],
+        "avoid": "Ne calcule pas la phase du jour ; cette valeur vient de la source astronomique de l’application."
+      },
+      "contextHints": [
+        "Composant React SSR-safe ; API typée et exemples dans BPM_API.md. Données sérialisables et renderers React optionnels."
+      ],
+      "status": "proposed"
+    },
+    "aircraftmarker": {
+      "semanticRole": "affichage",
+      "frame": "entity",
+      "agentGuidance": {
+        "use": "Représenter et orienter un avion à réaction ou à hélice, un hélicoptère ou un drone sur une carte ou un radar.",
+        "pairWith": [
+          "bpm.flightMap",
+          "bpm.flightInstruments"
+        ],
+        "avoid": "Ce symbole ne fournit ni position ni télémétrie."
+      },
+      "contextHints": [
+        "Composant React SSR-safe ; API typée et exemples dans BPM_API.md. Données sérialisables et renderers React optionnels."
+      ],
+      "status": "proposed"
+    },
+    "flightmap": {
+      "semanticRole": "composite",
+      "frame": "entity",
+      "agentGuidance": {
+        "use": "Explorer des avions, aéroports, routes et traces géographiques fournis, avec sélection et calques sur mesure.",
+        "pairWith": [
+          "bpm.aircraftMarker",
+          "bpm.flightInstruments",
+          "bpm.flightProfile",
+          "bpm.airportBoard"
+        ],
+        "avoid": "Les routes calculées sont indicatives ; les trajectoires et positions réelles doivent venir de données fournies."
+      },
+      "contextHints": [
+        "Composant React SSR-safe ; API typée et exemples dans BPM_API.md. Données sérialisables et renderers React optionnels."
+      ],
+      "status": "proposed"
+    },
+    "flightinstruments": {
+      "semanticRole": "affichage",
+      "frame": "entity",
+      "agentGuidance": {
+        "use": "Afficher des angles d’assiette, roulis et cap ainsi que altitude, vitesse air et vitesse verticale de télémétrie aéronautique.",
+        "pairWith": [
+          "bpm.flightMap",
+          "bpm.flightProfile"
+        ],
+        "avoid": "Restitue les valeurs fournies et leurs unités ; ne fournit aucune acquisition de télémétrie ou certification avionique."
+      },
+      "contextHints": [
+        "Composant React SSR-safe ; API typée et exemples dans BPM_API.md. Données sérialisables et renderers React optionnels."
+      ],
+      "status": "proposed"
+    },
+    "flightprofile": {
+      "semanticRole": "affichage",
+      "frame": "entity",
+      "agentGuidance": {
+        "use": "Explorer l’altitude d’un avion au fil du temps ou de la distance avec une référence optionnelle.",
+        "pairWith": [
+          "bpm.flightMap",
+          "bpm.flightInstruments"
+        ],
+        "avoid": "Les échantillons doivent être ordonnés en x ; les trous ne sont pas interpolés."
+      },
+      "contextHints": [
+        "Composant React SSR-safe ; API typée et exemples dans BPM_API.md. Données sérialisables et renderers React optionnels."
+      ],
+      "status": "proposed"
+    },
+    "airportboard": {
+      "semanticRole": "composite",
+      "frame": "entity",
+      "agentGuidance": {
+        "use": "Consulter et filtrer les départs et arrivées d’un aéroport : horaires, destinations, compagnies, portes et statuts.",
+        "pairWith": [
+          "bpm.flightMap",
+          "bpm.seatMap"
+        ],
+        "avoid": "Les horaires et leur fuseau sont fournis par l’application ; aucune donnée live implicite."
+      },
+      "contextHints": [
+        "Composant React SSR-safe ; API typée et exemples dans BPM_API.md. Données sérialisables et renderers React optionnels."
+      ],
+      "status": "proposed"
+    },
+    "seatmap": {
+      "semanticRole": "saisie",
+      "frame": "entity",
+      "agentGuidance": {
+        "use": "Sélectionner des sièges dans une cabine d’avion dont rangées, couloirs, classes et issues sont configurables.",
+        "pairWith": [
+          "bpm.airportBoard",
+          "bpm.card"
+        ],
+        "avoid": "La sélection exprime une intention ; la réservation et la disponibilité autoritaire relèvent de l’application."
+      },
+      "contextHints": [
+        "Composant React SSR-safe ; API typée et exemples dans BPM_API.md. Données sérialisables et renderers React optionnels."
+      ],
+      "status": "proposed"
     }
   }
 }
