@@ -1,6 +1,6 @@
 {
   "name": "@blueprint-modular/core",
-  "version": "0.3.12",
+  "version": "0.3.13",
   "description": "Blueprint Modular — composants React pour apps de données",
   "main": "./dist/index.js",
   "module": "./dist/index.mjs",
