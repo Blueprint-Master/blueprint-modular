@@ -7,6 +7,7 @@ import { getSemantics } from "@/lib/semantics";
 import { getDict } from "@/lib/i18n/server";
 import type { Metadata } from "next";
 import { ficheMetadata } from "@/lib/ficheMetadata";
+import { DomainSceneExamples } from "@/components/showcase/domain-scenes";
 
 type Props = { params: Promise<{ slug: string }> };
 
@@ -158,6 +159,8 @@ export default async function DocComponentSlugPage({ params }: Props) {
           </pre>
         </section>
       )}
+
+      <DomainSceneExamples slug={slug} />
 
       <nav className="doc-pagination mt-12">
         {prev ? <Link href={"/composants/" + prev}>← bpm.{prev}</Link> : <span />}

@@ -7,6 +7,12 @@ import type { MapMarker, MapPolygonSpec, MapOverlaySpec, MapOverlayKind } from "
 
 export type { MapMarker, MapPolygonSpec, MapOverlaySpec, MapOverlayKind };
 
+/** Dynamically loaded modules, supplied inside the Leaflet map context. */
+export interface MapRenderContext {
+  rl: typeof import("react-leaflet");
+  L: typeof import("leaflet");
+}
+
 const OSM_TILE =
   "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png";
 
@@ -29,6 +35,9 @@ const OSM_TILE =
  * @param {MapPolygonSpec[]} [props.polygons] - Polygones à afficher. Optionnel.
  * @param {MapOverlaySpec[]} [props.overlays] - Calques superposables (données app + WMS/tuiles externes), activables via un contrôle de couches, en transparence. Optionnel.
  * @param {function} [props.onMapClick] - Callback au clic sur la carte. Optionnel.
+ * @param {boolean} [props.baseLayer=true] - Afficher le fond de tuiles par défaut.
+ * @param {string} [props.projection] - mercator, geographic ou simple (coordonnées locales).
+ * @param {function} [props.renderLayers] - Extension React dans le contexte Leaflet, recevant les modules rl et L.
  * @param {string} [props.className=""] - Classes CSS additionnelles. Optionnel.
  *
  * @associated bpm.map, bpm.routePlanner, bpm.gps
@@ -47,6 +56,11 @@ export interface MapViewProps {
   /** Calques superposables (données app + WMS/tuiles externes), en transparence. */
   overlays?: MapOverlaySpec[];
   onMapClick?: (latlng: [number, number]) => void;
+  baseLayer?: boolean;
+  projection?: "mercator" | "geographic" | "simple";
+  /** Custom application-provided CRS; remount the map when changing it. */
+  crs?: import("leaflet").CRS;
+  renderLayers?: (context: MapRenderContext) => React.ReactNode;
   className?: string;
 }
 
@@ -79,6 +93,10 @@ export function MapView({
   polygons,
   overlays,
   onMapClick,
+  baseLayer,
+  projection,
+  crs,
+  renderLayers,
   className = "",
 }: MapViewProps) {
   const [mods, setMods] = useState<LeafletMods | null>(null);
@@ -163,6 +181,10 @@ export function MapView({
       polygons={polygons}
       overlays={overlays}
       onMapClick={onMapClick}
+      baseLayer={baseLayer}
+      projection={projection}
+      crs={crs}
+      renderLayers={renderLayers}
       className={className}
     />
   );

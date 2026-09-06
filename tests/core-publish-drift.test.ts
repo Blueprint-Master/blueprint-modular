@@ -25,22 +25,22 @@ describe("les TROIS états, jamais deux", () => {
        Rendre « à jour » ici serait exactement la faute qu'il existe pour
        corriger — un mécanisme muet et un mécanisme mort doivent se voir
        différemment. */
-    expect(verdict({ version: "0.3.11", publiee: null, commits: [] })).toBe("indetermine");
+    expect(verdict({ publiee: null, commits: [] })).toBe("indetermine");
     /* Publiée MAIS historique illisible : là, on ne sait vraiment pas. */
-    expect(verdict({ version: "0.3.11", publiee: true, commits: null })).toBe("indetermine");
+    expect(verdict({ publiee: true, commits: null })).toBe("indetermine");
   });
 
   it("publiée + des commits derrière ⇒ EN RETARD", () => {
-    expect(verdict({ version: "0.3.10", publiee: true, commits: ["abc fix(x)"] })).toBe("en-retard");
+    expect(verdict({ publiee: true, commits: ["abc fix(x)"] })).toBe("en-retard");
   });
 
   it("publiée + rien derrière ⇒ à jour", () => {
-    expect(verdict({ version: "0.3.10", publiee: true, commits: [] })).toBe("a-jour");
+    expect(verdict({ publiee: true, commits: [] })).toBe("a-jour");
   });
 
   it("pas encore publiée ⇒ à publier, jamais « en retard »", () => {
     /* C'est l'état NORMAL d'une PR qui vient de bumper : rien à signaler. */
-    expect(verdict({ version: "0.3.11", publiee: false, commits: ["abc"] })).toBe("a-publier");
+    expect(verdict({ publiee: false, commits: ["abc"] })).toBe("a-publier");
   });
 
   it("⚠️ non publiée + historique ILLISIBLE ⇒ à publier quand même", () => {
@@ -52,7 +52,7 @@ describe("les TROIS états, jamais deux", () => {
 
        Version non publiée ⇒ rien n'est en retard, et l'historique est hors
        sujet. Un détecteur qui crie sur le bon comportement cesse d'être lu. */
-    expect(verdict({ version: "0.3.11", publiee: false, commits: null })).toBe("a-publier");
+    expect(verdict({ publiee: false, commits: null })).toBe("a-publier");
   });
 });
 

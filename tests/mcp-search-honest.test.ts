@@ -25,7 +25,7 @@
 import { describe, expect, it } from "vitest";
 
 import registry from "@/lib/generated/mcp-registry.json";
-import { fieldWords, wordAnswers } from "@/lib/mcp/match";
+import { fieldAnswers, fieldWords, wordAnswers } from "@/lib/mcp/match";
 import { searchComponents, suggestComposition } from "@/lib/mcp/registry";
 
 interface Composant {
@@ -127,14 +127,19 @@ describe("une correspondance est ancrée sur un DÉBUT DE MOT", () => {
     }
   });
 
-  it("le milieu d'un mot ne répond plus — `art`, `eur` s'abstiennent", () => {
+  it("le milieu d'un mot ne répond plus, même quand un nouveau préfixe devient légitime", () => {
     /* Avant : « art » rendait 55 composants sur 156, dont ZÉRO pertinent
        (« carte », « écart », « départ », « quart ») ; « eur » en rendait 123
        (« couleur », « valeur », « hauteur », « utilisateur »). Un moteur qui
        répond toujours ne dit rien. */
-    for (const q of ["art", "eur"]) {
-      expect((searchComponents(q) as unknown as { total: number }).total, q).toBe(0);
-    }
+    // Le nouvel horizon ARTificiel est une vraie correspondance de « art ».
+    // Figer le total à zéro empêcherait l'enrichissement légitime du catalogue.
+    expect(fieldAnswers("carte écart départ quart", ["art"])).toBe(false);
+    expect(fieldAnswers("couleur valeur hauteur utilisateur", ["eur"])).toBe(false);
+    expect(fieldAnswers("horizon artificiel", ["art"])).toBe(true);
+    const art = searchComponents("art") as unknown as { results: { name: string }[] };
+    expect(art.results.map(c => c.name)).toContain("bpm.flightInstruments");
+    expect(art.results.map(c => c.name)).not.toContain("bpm.skyMap");
   });
 
   it("le PRÉFIXE est conservé — il porte le pluriel et la dérivation", () => {

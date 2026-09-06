@@ -100,13 +100,16 @@ function parseLine(line: string): PropSpec | null {
   const spec: PropSpec = { name, type, required, editable: false, description };
 
   const isFunction = /=>/.test(type); // callback (ex. (value: number) => void)
+  // Arrays and generic object contracts are data, not text/select controls.
+  // In particular, Omit<SceneProps, "objects" | "paths"> is not an enum.
+  const isStructured = /\[\]|^(?:Array|ReadonlyArray|Omit|Pick|Partial|Record|Readonly)\s*</.test(type);
   const isBoolean = type === "boolean";
   const isNumberOnly = type === "number";
   const isReactNode = /\bReact\.ReactNode\b|\bReactNode\b/.test(type);
   const options = isFunction ? [] : inferOptions(type, description);
   const rawDefault = inferDefault(description);
 
-  if (isFunction) {
+  if (isFunction || isStructured) {
     // Callback : non éditable (géré par des handlers par défaut côté renderer).
     return spec;
   } else if (isBoolean) {

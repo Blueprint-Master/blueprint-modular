@@ -124,7 +124,7 @@ describe("SkyMap — se rend sans props, comme tout composant du core", () => {
     const formes: unknown[] = [undefined, null, "pas un tableau", 42, {}, NaN];
     for (const forme of formes) {
       expect(
-        () => renderToStaticMarkup(<SkyMap {...({ points: forme } as never)} />),
+        () => renderToStaticMarkup(<SkyMap points={forme as never} />),
         `forme refusée : ${JSON.stringify(forme) ?? String(forme)}`,
       ).not.toThrow();
     }

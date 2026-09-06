@@ -1,7 +1,7 @@
 {
-  "generatedAt": "2026-09-06T08:44:28.930Z",
+  "generatedAt": "2026-09-06T09:52:12.397Z",
   "source": "lib/generated/bpm-components.json + public/llms.txt + lib/semantics/bpm-semantics.json",
-  "total": 157,
+  "total": 172,
   "categories": [
     "Affichage de données",
     "Feedback",
@@ -3718,6 +3718,69 @@
       "_haystack": "bpm.aiQueryBar aiquerybar Barre de requête IA permettant à l'utilisateur de poser des questions sur ses données avec suggestions et historique. IA & Spécialisés Barre de requête IA permettant à l'utilisateur de poser des questions sur ses données avec suggestions et historique.   onQuery*: (question: string) => Promise<string>\n  placeholder?: string\n  suggestions?: string[]\n  loading?: boolean\n  className?: string bpm.chatInterface bpm.assistantPanel"
     },
     {
+      "slug": "aircraftmarker",
+      "name": "bpm.aircraftMarker",
+      "description": "Symbole d'aéronef orientable : avion à réaction, avion à hélice, hélicoptère ou drone, couleur et silhouette SVG libres pour cartes et radars.",
+      "category": "Média",
+      "status": "curated",
+      "fullDescription": "Symbole d'aéronef orientable : avion à réaction, avion à hélice, hélicoptère ou drone, couleur et silhouette SVG libres pour cartes et radars.",
+      "props": "  kind?: \"jet\" | \"propeller\" | \"helicopter\" | \"drone\"\n  heading?: number  — Heading in degrees clockwise from north; 0 points up.\n  size?: number\n  color?: string\n  label?: string\n  children?: React.ReactNode  — Custom SVG silhouette centered at 32,32 in a 64 × 64 viewBox.\n  className?: string",
+      "example": "bpm.aircraftMarker({ kind: \"jet\", heading: 45, color: \"#80d9ff\", label: \"Avion sélectionné\" })",
+      "associated": [
+        "bpm.flightMap",
+        "bpm.flightInstruments"
+      ],
+      "semantics": {
+        "semanticRole": "affichage",
+        "frame": "entity",
+        "agentGuidance": {
+          "use": "Représenter et orienter un avion à réaction ou à hélice, un hélicoptère ou un drone sur une carte ou un radar.",
+          "pairWith": [
+            "bpm.flightMap",
+            "bpm.flightInstruments"
+          ],
+          "avoid": "Ce symbole ne fournit ni position ni télémétrie."
+        },
+        "contextHints": [
+          "Composant React SSR-safe ; API typée et exemples dans BPM_API.md. Données sérialisables et renderers React optionnels."
+        ],
+        "status": "proposed"
+      },
+      "_haystack": "bpm.aircraftMarker aircraftmarker Symbole d'aéronef orientable : avion à réaction, avion à hélice, hélicoptère ou drone, couleur et silhouette SVG libres pour cartes et radars. Média Symbole d'aéronef orientable : avion à réaction, avion à hélice, hélicoptère ou drone, couleur et silhouette SVG libres pour cartes et radars.   kind?: \"jet\" | \"propeller\" | \"helicopter\" | \"drone\"\n  heading?: number  — Heading in degrees clockwise from north; 0 points up.\n  size?: number\n  color?: string\n  label?: string\n  children?: React.ReactNode  — Custom SVG silhouette centered at 32,32 in a 64 × 64 viewBox.\n  className?: string bpm.flightMap bpm.flightInstruments affichage entity Représenter et orienter un avion à réaction ou à hélice, un hélicoptère ou un drone sur une carte ou un radar. bpm.flightMap bpm.flightInstruments Ce symbole ne fournit ni position ni télémétrie. Composant React SSR-safe ; API typée et exemples dans BPM_API.md. Données sérialisables et renderers React optionnels."
+    },
+    {
+      "slug": "airportboard",
+      "name": "bpm.airportBoard",
+      "description": "Tableau d'aéroport des départs et arrivées avec recherche, horaire prévu/estimé, porte, compagnie et statut libre ; données et fuseau horaire fournis par l'application.",
+      "category": "Affichage de données",
+      "status": "curated",
+      "fullDescription": "Tableau d'aéroport des départs et arrivées avec recherche, horaire prévu/estimé, porte, compagnie et statut libre ; données et fuseau horaire fournis par l'application.",
+      "props": "  flights?: AirportFlight[]\n  title?: string\n  timezoneLabel?: string\n  direction?: \"all\" | \"departure\" | \"arrival\"\n  searchable?: boolean\n  onFlightSelect?: (flight: AirportFlight) => void\n  renderStatus?: (flight: AirportFlight) => React.ReactNode\n  className?: string",
+      "example": "bpm.airportBoard({ timezoneLabel: \"Heure locale · Europe/Paris\", flights: [{ id: \"demo\", flightNumber: \"DEMO 42\", destination: \"Lisbonne\", scheduledTime: \"14:20\", gate: \"B12\", status: \"Embarquement\", direction: \"departure\" }] })",
+      "associated": [
+        "bpm.flightMap",
+        "bpm.seatMap",
+        "bpm.timeline"
+      ],
+      "semantics": {
+        "semanticRole": "composite",
+        "frame": "entity",
+        "agentGuidance": {
+          "use": "Consulter et filtrer les départs et arrivées d’un aéroport : horaires, destinations, compagnies, portes et statuts.",
+          "pairWith": [
+            "bpm.flightMap",
+            "bpm.seatMap"
+          ],
+          "avoid": "Les horaires et leur fuseau sont fournis par l’application ; aucune donnée live implicite."
+        },
+        "contextHints": [
+          "Composant React SSR-safe ; API typée et exemples dans BPM_API.md. Données sérialisables et renderers React optionnels."
+        ],
+        "status": "proposed"
+      },
+      "_haystack": "bpm.airportBoard airportboard Tableau d'aéroport des départs et arrivées avec recherche, horaire prévu/estimé, porte, compagnie et statut libre ; données et fuseau horaire fournis par l'application. Affichage de données Tableau d'aéroport des départs et arrivées avec recherche, horaire prévu/estimé, porte, compagnie et statut libre ; données et fuseau horaire fournis par l'application.   flights?: AirportFlight[]\n  title?: string\n  timezoneLabel?: string\n  direction?: \"all\" | \"departure\" | \"arrival\"\n  searchable?: boolean\n  onFlightSelect?: (flight: AirportFlight) => void\n  renderStatus?: (flight: AirportFlight) => React.ReactNode\n  className?: string bpm.flightMap bpm.seatMap bpm.timeline composite entity Consulter et filtrer les départs et arrivées d’un aéroport : horaires, destinations, compagnies, portes et statuts. bpm.flightMap bpm.seatMap Les horaires et leur fuseau sont fournis par l’application ; aucune donnée live implicite. Composant React SSR-safe ; API typée et exemples dans BPM_API.md. Données sérialisables et renderers React optionnels."
+    },
+    {
       "slug": "alarmpanel",
       "name": "bpm.alarmPanel",
       "description": "Liste d’alarmes triée par gravité avec accusé de réception, suppression et clignotement pour les alertes critiques.",
@@ -3767,6 +3830,108 @@
         "bpm.navbar"
       ],
       "_haystack": "bpm.breadcrumbs breadcrumbs Fil d’Ariane avancé avec séparateur personnalisable et réduction automatique si trop d’entrées. Navigation Fil d’Ariane avancé avec séparateur personnalisable et réduction automatique si trop d’entrées.   items*: BreadcrumbsItem[]\n  separator?: React.ReactNode\n  maxItems?: number\n  className?: string bpm.breadcrumb bpm.tabs"
+    },
+    {
+      "slug": "cartographicmap",
+      "name": "bpm.cartographicMap",
+      "description": "Carte composable à pile de calques GeoJSON, XYZ/TMS, WMS, images et grilles scalaires.",
+      "category": "Média",
+      "status": "curated",
+      "fullDescription": "Carte composable à pile de calques GeoJSON, XYZ/TMS, WMS, images et grilles scalaires. Groupes imbriqués, parcelles et géométries à trous, palettes, filtres, dates, zoom, sélection et adaptateurs libres. Aucun fond ou jeu de données implicite.",
+      "props": "  layers?: CartographicLayer[]\n  groups?: MapLayerGroup[]\n  center?: [number, number]  — [latitude, longitude], or [y, x] in a simple local coordinate system.\n  zoom?: number\n  bounds?: MapBounds\n  projection?: MapProjection\n  crs?: import(\"leaflet\").CRS  — Advanced CRS provided by the application. Remount when changing it; source grids must match it.\n  height?: number | string\n  title?: string\n  description?: React.ReactNode\n  theme?: keyof typeof CARTOGRAPHIC_THEMES | CartographicTheme\n  state?: MapLayerState\n  onStateChange?: (state: MapLayerState) => void\n  time?: number  — Application-defined numeric time used to filter layer validity.\n  selected?: { layerId: string\n  onFeatureSelect?: (selection: MapFeatureSelection | null) => void\n  onViewChange?: (view: { center: [number, number]\n  onMapClick?: (position: [number, number]) => void\n  showLayerControl?: boolean\n  showLegend?: boolean\n  showScale?: boolean\n  defaultInteractive?: boolean  — False initially preserves page scrolling; the map toolbar explicitly enables navigation.\n  renderLayer?: (layer: CartographicLayer, context: MapRenderContext & { pane: string  — Runs inside the Leaflet context, in the layer's pane. Custom adapters retain order, blend and opacity.\n  renderFeatureDetails?: (selection: MapFeatureSelection) => React.ReactNode\n  renderOverlay?: () => React.ReactNode  — Free HTML overlay anchored to the map viewport.\n  className?: string",
+      "example": "bpm.cartographicMap({ title: \"Cadastre et hydrographie\", center: [48.85, 2.35], zoom: 13, layers: [{ id: \"parcels\", label: \"Parcelles\", kind: \"geojson\", data: { type: \"FeatureCollection\", features: [{ type: \"Feature\", id: \"A01\", properties: { name: \"Parcelle A01\" }, geometry: { type: \"Polygon\", coordinates: [[[2.34,48.85],[2.35,48.85],[2.35,48.86],[2.34,48.86],[2.34,48.85]]] } }] }, labelField: \"name\" }] })",
+      "associated": [
+        "bpm.mapLayerControl",
+        "bpm.mapLegend",
+        "bpm.mapView",
+        "bpm.flightMap",
+        "bpm.celestialScene"
+      ],
+      "semantics": {
+        "semanticRole": "composite",
+        "frame": "entity",
+        "agentGuidance": {
+          "use": "Composer un atlas par calques : parcelles cadastrales, agriculture, relief, bathymétrie, fonds marins, fleuves, villes, cartes maritimes, aériennes, anciennes, modernes ou militaires. Choisir les données, leur pile, les groupes, les règles et les adaptateurs ; ne pas créer un composant par domaine.",
+          "pairWith": [
+            "bpm.mapLayerControl",
+            "bpm.mapLegend",
+            "bpm.flightInstruments",
+            "bpm.timeline"
+          ],
+          "avoid": "Ne pas inventer de données réelles, d’attribution, de licence ou de précision. Les thèmes changent la présentation ; la 3D et les tuiles vectorielles demandent un adaptateur. Pour le ciel équatorial utiliser skyMap."
+        },
+        "contextHints": [
+          "Six types de calques, groupes imbriqués, ordre, opacité, fusion, zoom, temps et GeoJSON [longitude, latitude]. Contrats complets et compositions dans BPM_API.md."
+        ],
+        "status": "proposed"
+      },
+      "_haystack": "bpm.cartographicMap cartographicmap Carte composable à pile de calques GeoJSON, XYZ/TMS, WMS, images et grilles scalaires. Média Carte composable à pile de calques GeoJSON, XYZ/TMS, WMS, images et grilles scalaires. Groupes imbriqués, parcelles et géométries à trous, palettes, filtres, dates, zoom, sélection et adaptateurs libres. Aucun fond ou jeu de données implicite.   layers?: CartographicLayer[]\n  groups?: MapLayerGroup[]\n  center?: [number, number]  — [latitude, longitude], or [y, x] in a simple local coordinate system.\n  zoom?: number\n  bounds?: MapBounds\n  projection?: MapProjection\n  crs?: import(\"leaflet\").CRS  — Advanced CRS provided by the application. Remount when changing it; source grids must match it.\n  height?: number | string\n  title?: string\n  description?: React.ReactNode\n  theme?: keyof typeof CARTOGRAPHIC_THEMES | CartographicTheme\n  state?: MapLayerState\n  onStateChange?: (state: MapLayerState) => void\n  time?: number  — Application-defined numeric time used to filter layer validity.\n  selected?: { layerId: string\n  onFeatureSelect?: (selection: MapFeatureSelection | null) => void\n  onViewChange?: (view: { center: [number, number]\n  onMapClick?: (position: [number, number]) => void\n  showLayerControl?: boolean\n  showLegend?: boolean\n  showScale?: boolean\n  defaultInteractive?: boolean  — False initially preserves page scrolling; the map toolbar explicitly enables navigation.\n  renderLayer?: (layer: CartographicLayer, context: MapRenderContext & { pane: string  — Runs inside the Leaflet context, in the layer's pane. Custom adapters retain order, blend and opacity.\n  renderFeatureDetails?: (selection: MapFeatureSelection) => React.ReactNode\n  renderOverlay?: () => React.ReactNode  — Free HTML overlay anchored to the map viewport.\n  className?: string bpm.mapLayerControl bpm.mapLegend bpm.mapView bpm.flightMap bpm.celestialScene composite entity Composer un atlas par calques : parcelles cadastrales, agriculture, relief, bathymétrie, fonds marins, fleuves, villes, cartes maritimes, aériennes, anciennes, modernes ou militaires. Choisir les données, leur pile, les groupes, les règles et les adaptateurs ; ne pas créer un composant par domaine. bpm.mapLayerControl bpm.mapLegend bpm.flightInstruments bpm.timeline Ne pas inventer de données réelles, d’attribution, de licence ou de précision. Les thèmes changent la présentation ; la 3D et les tuiles vectorielles demandent un adaptateur. Pour le ciel équatorial utiliser skyMap. Six types de calques, groupes imbriqués, ordre, opacité, fusion, zoom, temps et GeoJSON [longitude, latitude]. Contrats complets et compositions dans BPM_API.md."
+    },
+    {
+      "slug": "celestialbody",
+      "name": "bpm.celestialBody",
+      "description": "Astre vectoriel personnalisable : étoile, planète, lune, astéroïde ou trou noir, avec anneaux, inclinaison et couche SVG libre.",
+      "category": "Média",
+      "status": "curated",
+      "fullDescription": "Astre vectoriel personnalisable : étoile, planète, lune, astéroïde ou trou noir, avec anneaux, inclinaison et couche SVG libre.",
+      "props": "  label?: string  — Accessible object name.\n  kind?: \"star\" | \"planet\" | \"moon\" | \"asteroid\" | \"black-hole\"\n  color?: string\n  size?: number\n  rings?: boolean  — Optional ring system.\n  tilt?: number  — Ring/axis tilt in degrees.\n  children?: React.ReactNode  — SVG content inside the disc, in a 100 × 100 viewBox.\n  className?: string",
+      "example": "bpm.celestialBody({ label: \"Saturne\", kind: \"planet\", rings: true, color: \"#d9bb83\", tilt: -24 })",
+      "associated": [
+        "bpm.celestialScene",
+        "bpm.orbitalSystem",
+        "bpm.moonPhase"
+      ],
+      "semantics": {
+        "semanticRole": "affichage",
+        "frame": "entity",
+        "agentGuidance": {
+          "use": "Dessiner un astre isolé, un soleil, une planète, une lune ou un trou noir avec sa propre apparence.",
+          "pairWith": [
+            "bpm.celestialScene",
+            "bpm.orbitalSystem"
+          ],
+          "avoid": "Pour les positions et trajectoires de plusieurs objets, employer celestialScene ou orbitalSystem."
+        },
+        "contextHints": [
+          "Composant React SSR-safe ; API typée et exemples dans BPM_API.md. Données sérialisables et renderers React optionnels."
+        ],
+        "status": "proposed"
+      },
+      "_haystack": "bpm.celestialBody celestialbody Astre vectoriel personnalisable : étoile, planète, lune, astéroïde ou trou noir, avec anneaux, inclinaison et couche SVG libre. Média Astre vectoriel personnalisable : étoile, planète, lune, astéroïde ou trou noir, avec anneaux, inclinaison et couche SVG libre.   label?: string  — Accessible object name.\n  kind?: \"star\" | \"planet\" | \"moon\" | \"asteroid\" | \"black-hole\"\n  color?: string\n  size?: number\n  rings?: boolean  — Optional ring system.\n  tilt?: number  — Ring/axis tilt in degrees.\n  children?: React.ReactNode  — SVG content inside the disc, in a 100 × 100 viewBox.\n  className?: string bpm.celestialScene bpm.orbitalSystem bpm.moonPhase affichage entity Dessiner un astre isolé, un soleil, une planète, une lune ou un trou noir avec sa propre apparence. bpm.celestialScene bpm.orbitalSystem Pour les positions et trajectoires de plusieurs objets, employer celestialScene ou orbitalSystem. Composant React SSR-safe ; API typée et exemples dans BPM_API.md. Données sérialisables et renderers React optionnels."
+    },
+    {
+      "slug": "celestialscene",
+      "name": "bpm.celestialScene",
+      "description": "Scène céleste composable en projection 3D orthographique : objets, trajectoires, particules, caméra, sélection et couches SVG libres pour nébuleuses, amas, constellations ou univers imaginaires.",
+      "category": "Média",
+      "status": "curated",
+      "fullDescription": "Scène céleste composable en projection 3D orthographique : objets, trajectoires, particules, caméra, sélection et couches SVG libres pour nébuleuses, amas, constellations ou univers imaginaires.",
+      "props": "  objects?: CelestialObject[]  — Objects use one shared arbitrary Cartesian unit; labels/sizes are independently configurable.\n  paths?: CelestialPath[]\n  particles?: CelestialParticle[]  — Decorative particles, never represented as measured catalog stars.\n  title?: string\n  caption?: string\n  height?: number | string\n  extent?: number\n  camera?: SceneCamera\n  onCameraChange?: (camera: SceneCamera) => void\n  selectedId?: string | null\n  onSelect?: (object: CelestialObject) => void\n  showLabels?: boolean\n  showControls?: boolean\n  background?: string\n  seed?: number\n  renderObject?: (object: CelestialObject, selected: boolean) => React.ReactNode  — SVG glyph replacement, centered at 0,0.\n  renderOverlay?: (context: CelestialRenderContext) => React.ReactNode  — Free SVG layer: reuse context.project for annotations, nebulae or custom geometry.\n  renderDetails?: (object: CelestialObject) => React.ReactNode\n  children?: React.ReactNode\n  className?: string",
+      "example": "bpm.celestialScene({ title: \"Système binaire\", objects: [{ id: \"a\", label: \"Étoile A\", x: -35, y: 0, kind: \"star\", color: \"#ffc778\" }, { id: \"b\", label: \"Étoile B\", x: 35, y: 0, kind: \"star\", color: \"#85caff\" }] })",
+      "associated": [
+        "bpm.celestialBody",
+        "bpm.orbitalSystem",
+        "bpm.galaxyView",
+        "bpm.skyMap"
+      ],
+      "semantics": {
+        "semanticRole": "composite",
+        "frame": "entity",
+        "agentGuidance": {
+          "use": "Composer un ensemble céleste libre : amas, nébuleuse, constellation, système binaire ou univers fictif avec objets et couches SVG personnalisées.",
+          "pairWith": [
+            "bpm.celestialBody",
+            "bpm.orbitalSystem",
+            "bpm.galaxyView"
+          ],
+          "avoid": "Pour un catalogue en ascension droite/déclinaison, employer skyMap."
+        },
+        "contextHints": [
+          "Composant React SSR-safe ; API typée et exemples dans BPM_API.md. Données sérialisables et renderers React optionnels."
+        ],
+        "status": "proposed"
+      },
+      "_haystack": "bpm.celestialScene celestialscene Scène céleste composable en projection 3D orthographique : objets, trajectoires, particules, caméra, sélection et couches SVG libres pour nébuleuses, amas, constellations ou univers imaginaires. Média Scène céleste composable en projection 3D orthographique : objets, trajectoires, particules, caméra, sélection et couches SVG libres pour nébuleuses, amas, constellations ou univers imaginaires.   objects?: CelestialObject[]  — Objects use one shared arbitrary Cartesian unit; labels/sizes are independently configurable.\n  paths?: CelestialPath[]\n  particles?: CelestialParticle[]  — Decorative particles, never represented as measured catalog stars.\n  title?: string\n  caption?: string\n  height?: number | string\n  extent?: number\n  camera?: SceneCamera\n  onCameraChange?: (camera: SceneCamera) => void\n  selectedId?: string | null\n  onSelect?: (object: CelestialObject) => void\n  showLabels?: boolean\n  showControls?: boolean\n  background?: string\n  seed?: number\n  renderObject?: (object: CelestialObject, selected: boolean) => React.ReactNode  — SVG glyph replacement, centered at 0,0.\n  renderOverlay?: (context: CelestialRenderContext) => React.ReactNode  — Free SVG layer: reuse context.project for annotations, nebulae or custom geometry.\n  renderDetails?: (object: CelestialObject) => React.ReactNode\n  children?: React.ReactNode\n  className?: string bpm.celestialBody bpm.orbitalSystem bpm.galaxyView bpm.skyMap composite entity Composer un ensemble céleste libre : amas, nébuleuse, constellation, système binaire ou univers fictif avec objets et couches SVG personnalisées. bpm.celestialBody bpm.orbitalSystem bpm.galaxyView Pour un catalogue en ascension droite/déclinaison, employer skyMap. Composant React SSR-safe ; API typée et exemples dans BPM_API.md. Données sérialisables et renderers React optionnels."
     },
     {
       "slug": "changelog",
@@ -3899,6 +4064,105 @@
       "_haystack": "bpm.exportButton exportbutton Bouton d'export avec menu déroulant pour télécharger en CSV ou JSON avec configuration BOM/délimiteur. Interaction Bouton d'export avec menu déroulant pour télécharger en CSV ou JSON avec configuration BOM/délimiteur.   data*: T[] | (() => T[])\n  filename*: string\n  formats?: (\"csv\" | \"json\")[]\n  columns?: ExportColumn<T>[]\n  csvDelimiter?: \"\n  csvBOM?: boolean\n  className?: string bpm.table bpm.dataExplorer"
     },
     {
+      "slug": "flightinstruments",
+      "name": "bpm.flightInstruments",
+      "description": "Instruments d'aviation : horizon artificiel, assiette, roulis, cap, altitude, vitesse et variomètre à partir de télémétrie fournie ; unités et panneaux complémentaires personnalisables.",
+      "category": "Affichage de données",
+      "status": "curated",
+      "fullDescription": "Instruments d'aviation : horizon artificiel, assiette, roulis, cap, altitude, vitesse et variomètre à partir de télémétrie fournie ; unités et panneaux complémentaires personnalisables.",
+      "props": "  pitch?: number  — Positive pitch = nose up; positive roll = bank right, in degrees.\n  roll?: number\n  heading?: number\n  altitude?: number\n  airspeed?: number\n  verticalSpeed?: number\n  altitudeUnit?: string\n  speedUnit?: string\n  verticalSpeedUnit?: string\n  title?: string\n  caption?: string  — Human-readable provenance/time supplied by the caller.\n  children?: React.ReactNode\n  className?: string",
+      "example": "bpm.flightInstruments({ pitch: 8, roll: 15, heading: 82, altitude: 32000, airspeed: 280, verticalSpeed: 1200, caption: \"Télémétrie de démonstration\" })",
+      "associated": [
+        "bpm.flightMap",
+        "bpm.flightProfile",
+        "bpm.liveChart"
+      ],
+      "semantics": {
+        "semanticRole": "affichage",
+        "frame": "entity",
+        "agentGuidance": {
+          "use": "Afficher des angles d’assiette, roulis et cap ainsi que altitude, vitesse air et vitesse verticale de télémétrie aéronautique.",
+          "pairWith": [
+            "bpm.flightMap",
+            "bpm.flightProfile"
+          ],
+          "avoid": "Restitue les valeurs fournies et leurs unités ; ne fournit aucune acquisition de télémétrie ou certification avionique."
+        },
+        "contextHints": [
+          "Composant React SSR-safe ; API typée et exemples dans BPM_API.md. Données sérialisables et renderers React optionnels."
+        ],
+        "status": "proposed"
+      },
+      "_haystack": "bpm.flightInstruments flightinstruments Instruments d'aviation : horizon artificiel, assiette, roulis, cap, altitude, vitesse et variomètre à partir de télémétrie fournie ; unités et panneaux complémentaires personnalisables. Affichage de données Instruments d'aviation : horizon artificiel, assiette, roulis, cap, altitude, vitesse et variomètre à partir de télémétrie fournie ; unités et panneaux complémentaires personnalisables.   pitch?: number  — Positive pitch = nose up; positive roll = bank right, in degrees.\n  roll?: number\n  heading?: number\n  altitude?: number\n  airspeed?: number\n  verticalSpeed?: number\n  altitudeUnit?: string\n  speedUnit?: string\n  verticalSpeedUnit?: string\n  title?: string\n  caption?: string  — Human-readable provenance/time supplied by the caller.\n  children?: React.ReactNode\n  className?: string bpm.flightMap bpm.flightProfile bpm.liveChart affichage entity Afficher des angles d’assiette, roulis et cap ainsi que altitude, vitesse air et vitesse verticale de télémétrie aéronautique. bpm.flightMap bpm.flightProfile Restitue les valeurs fournies et leurs unités ; ne fournit aucune acquisition de télémétrie ou certification avionique. Composant React SSR-safe ; API typée et exemples dans BPM_API.md. Données sérialisables et renderers React optionnels."
+    },
+    {
+      "slug": "flightmap",
+      "name": "bpm.flightMap",
+      "description": "Carte aérienne hors ligne en latitude/longitude : avions orientés, aéroports, routes orthodromiques, traces, sélection et calques libres.",
+      "category": "Média",
+      "status": "curated",
+      "fullDescription": "Carte aérienne hors ligne en latitude/longitude : avions orientés, aéroports, routes orthodromiques, traces, sélection et calques libres. Affiche les données fournies, sans trafic temps réel implicite.",
+      "props": "  flights?: FlightPosition[]\n  airports?: AirportPosition[]\n  routes?: FlightRoute[]\n  boundaries?: GeoPosition[][]  — Optional geographic boundaries, latitude/longitude in degrees.\n  title?: string\n  caption?: string\n  height?: number | string\n  selectedFlightId?: string | null\n  onFlightSelect?: (flight: FlightPosition) => void\n  onAirportSelect?: (airport: AirportPosition) => void\n  renderAircraft?: (flight: FlightPosition) => React.ReactNode\n  renderOverlay?: (project: typeof projectGeo) => React.ReactNode\n  renderDetails?: (flight: FlightPosition) => React.ReactNode\n  className?: string",
+      "example": "bpm.flightMap({ flights: [{ id: \"demo\", label: \"Vol de démonstration\", lat: 48, lon: 4, heading: 80 }], airports: [{ id: \"cdg\", code: \"CDG\", lat: 49.01, lon: 2.55 }] })",
+      "associated": [
+        "bpm.aircraftMarker",
+        "bpm.flightInstruments",
+        "bpm.flightProfile",
+        "bpm.airportBoard"
+      ],
+      "semantics": {
+        "semanticRole": "composite",
+        "frame": "entity",
+        "agentGuidance": {
+          "use": "Explorer des avions, aéroports, routes et traces géographiques fournis, avec sélection et calques sur mesure.",
+          "pairWith": [
+            "bpm.aircraftMarker",
+            "bpm.flightInstruments",
+            "bpm.flightProfile",
+            "bpm.airportBoard"
+          ],
+          "avoid": "Les routes calculées sont indicatives ; les trajectoires et positions réelles doivent venir de données fournies."
+        },
+        "contextHints": [
+          "Composant React SSR-safe ; API typée et exemples dans BPM_API.md. Données sérialisables et renderers React optionnels."
+        ],
+        "status": "proposed"
+      },
+      "_haystack": "bpm.flightMap flightmap Carte aérienne hors ligne en latitude/longitude : avions orientés, aéroports, routes orthodromiques, traces, sélection et calques libres. Média Carte aérienne hors ligne en latitude/longitude : avions orientés, aéroports, routes orthodromiques, traces, sélection et calques libres. Affiche les données fournies, sans trafic temps réel implicite.   flights?: FlightPosition[]\n  airports?: AirportPosition[]\n  routes?: FlightRoute[]\n  boundaries?: GeoPosition[][]  — Optional geographic boundaries, latitude/longitude in degrees.\n  title?: string\n  caption?: string\n  height?: number | string\n  selectedFlightId?: string | null\n  onFlightSelect?: (flight: FlightPosition) => void\n  onAirportSelect?: (airport: AirportPosition) => void\n  renderAircraft?: (flight: FlightPosition) => React.ReactNode\n  renderOverlay?: (project: typeof projectGeo) => React.ReactNode\n  renderDetails?: (flight: FlightPosition) => React.ReactNode\n  className?: string bpm.aircraftMarker bpm.flightInstruments bpm.flightProfile bpm.airportBoard composite entity Explorer des avions, aéroports, routes et traces géographiques fournis, avec sélection et calques sur mesure. bpm.aircraftMarker bpm.flightInstruments bpm.flightProfile bpm.airportBoard Les routes calculées sont indicatives ; les trajectoires et positions réelles doivent venir de données fournies. Composant React SSR-safe ; API typée et exemples dans BPM_API.md. Données sérialisables et renderers React optionnels."
+    },
+    {
+      "slug": "flightprofile",
+      "name": "bpm.flightProfile",
+      "description": "Profil de vol altitude/temps ou altitude/distance, points sélectionnables et altitude de référence.",
+      "category": "Graphiques",
+      "status": "curated",
+      "fullDescription": "Profil de vol altitude/temps ou altitude/distance, points sélectionnables et altitude de référence. Conserve les ruptures de télémétrie au lieu de les interpoler.",
+      "props": "  points?: FlightProfilePoint[]\n  title?: string\n  xLabel?: string\n  xUnit?: string\n  altitudeUnit?: string\n  color?: string\n  selectedId?: string | null\n  onPointSelect?: (point: FlightProfilePoint) => void\n  referenceAltitude?: number  — Optional horizontal reference in altitudeUnit.\n  className?: string",
+      "example": "bpm.flightProfile({ xUnit: \"min\", points: [{ id: \"takeoff\", label: \"Décollage\", x: 0, altitude: 0 }, { id: \"cruise\", label: \"Croisière\", x: 25, altitude: 32000 }, { id: \"landing\", label: \"Atterrissage\", x: 90, altitude: 0 }] })",
+      "associated": [
+        "bpm.flightMap",
+        "bpm.flightInstruments",
+        "bpm.timeline"
+      ],
+      "semantics": {
+        "semanticRole": "affichage",
+        "frame": "entity",
+        "agentGuidance": {
+          "use": "Explorer l’altitude d’un avion au fil du temps ou de la distance avec une référence optionnelle.",
+          "pairWith": [
+            "bpm.flightMap",
+            "bpm.flightInstruments"
+          ],
+          "avoid": "Les échantillons doivent être ordonnés en x ; les trous ne sont pas interpolés."
+        },
+        "contextHints": [
+          "Composant React SSR-safe ; API typée et exemples dans BPM_API.md. Données sérialisables et renderers React optionnels."
+        ],
+        "status": "proposed"
+      },
+      "_haystack": "bpm.flightProfile flightprofile Profil de vol altitude/temps ou altitude/distance, points sélectionnables et altitude de référence. Graphiques Profil de vol altitude/temps ou altitude/distance, points sélectionnables et altitude de référence. Conserve les ruptures de télémétrie au lieu de les interpoler.   points?: FlightProfilePoint[]\n  title?: string\n  xLabel?: string\n  xUnit?: string\n  altitudeUnit?: string\n  color?: string\n  selectedId?: string | null\n  onPointSelect?: (point: FlightProfilePoint) => void\n  referenceAltitude?: number  — Optional horizontal reference in altitudeUnit.\n  className?: string bpm.flightMap bpm.flightInstruments bpm.timeline affichage entity Explorer l’altitude d’un avion au fil du temps ou de la distance avec une référence optionnelle. bpm.flightMap bpm.flightInstruments Les échantillons doivent être ordonnés en x ; les trous ne sont pas interpolés. Composant React SSR-safe ; API typée et exemples dans BPM_API.md. Données sérialisables et renderers React optionnels."
+    },
+    {
       "slug": "free",
       "name": "bpm.free",
       "description": "Composant bpm.free — voir @blueprint-modular/core ou BPM_API.md.",
@@ -3953,6 +4217,38 @@
         "status": "proposed"
       },
       "_haystack": "bpm.funnelChart funnelchart Graphique en entonnoir pour visualiser les étapes d'un processus de conversion avec pourcentages. Graphiques Graphique en entonnoir pour visualiser les étapes d'un processus de conversion avec pourcentages.   stages*: FunnelStage[]\n  showPercentage?: boolean\n  horizontal?: boolean\n  className?: string bpm.barChart bpm.metric indicateur kpi taux compte hausse=bon instantane Conversion étape par étape d'un tunnel : volume restant et taux de passage entre phases (acquisition, activation, achat). bpm.metric bpm.statusTracker bpm.caption Étapes d'un parcours sans déperdition mesurée (bpm.stepper) ou comparaison catégorielle simple (bpm.barChart). Étapes ordonnées d'un même parcours à effectif décroissant ; chaque étape ⊆ la précédente. contraste-avec bpm.statusTracker déperdition mesurée entre étapes vs position dans des étapes normées"
+    },
+    {
+      "slug": "galaxyview",
+      "name": "bpm.galaxyView",
+      "description": "Galaxie procédurale déterministe : Voie lactée stylisée, spirale, spirale barrée, elliptique ou irrégulière ; bras, densité, palette, repères et couches libres personnalisables.",
+      "category": "Média",
+      "status": "curated",
+      "fullDescription": "Galaxie procédurale déterministe : Voie lactée stylisée, spirale, spirale barrée, elliptique ou irrégulière ; bras, densité, palette, repères et couches libres personnalisables. Distribution illustrative, sans catalogue stellaire mesuré.",
+      "props": "  morphology?: \"spiral\" | \"barred\" | \"elliptical\" | \"irregular\"\n  arms?: number\n  starCount?: number  — Capped at 4,000 particles for mobile SVG rendering.\n  radius?: number\n  twist?: number\n  thickness?: number\n  seed?: number\n  palette?: string[]\n  landmarks?: CelestialObject[]  — Actual or fictional objects supplied by the caller, in scene units.\n  title?: string\n  scene?: Omit<CelestialSceneProps, \"objects\" | \"particles\" | \"title\" | \"seed\">\n  className?: string",
+      "example": "bpm.galaxyView({ title: \"Voie lactée · vue artistique\", morphology: \"barred\", arms: 4, seed: 42, landmarks: [{ id: \"sun\", label: \"Repère solaire illustratif\", x: 55, y: -20, radius: 4, color: \"#ffd58b\" }] })",
+      "associated": [
+        "bpm.celestialScene",
+        "bpm.solarSystem",
+        "bpm.skyMap"
+      ],
+      "semantics": {
+        "semanticRole": "composite",
+        "frame": "entity",
+        "agentGuidance": {
+          "use": "Composer une Voie lactée stylisée ou une galaxie spirale, barrée, elliptique ou irrégulière avec une graine reproductible.",
+          "pairWith": [
+            "bpm.celestialScene",
+            "bpm.solarSystem"
+          ],
+          "avoid": "Les particules sont illustratives. Pour des étoiles mesurées, fournir un catalogue à skyMap ou celestialScene."
+        },
+        "contextHints": [
+          "Composant React SSR-safe ; API typée et exemples dans BPM_API.md. Données sérialisables et renderers React optionnels."
+        ],
+        "status": "proposed"
+      },
+      "_haystack": "bpm.galaxyView galaxyview Galaxie procédurale déterministe : Voie lactée stylisée, spirale, spirale barrée, elliptique ou irrégulière ; bras, densité, palette, repères et couches libres personnalisables. Média Galaxie procédurale déterministe : Voie lactée stylisée, spirale, spirale barrée, elliptique ou irrégulière ; bras, densité, palette, repères et couches libres personnalisables. Distribution illustrative, sans catalogue stellaire mesuré.   morphology?: \"spiral\" | \"barred\" | \"elliptical\" | \"irregular\"\n  arms?: number\n  starCount?: number  — Capped at 4,000 particles for mobile SVG rendering.\n  radius?: number\n  twist?: number\n  thickness?: number\n  seed?: number\n  palette?: string[]\n  landmarks?: CelestialObject[]  — Actual or fictional objects supplied by the caller, in scene units.\n  title?: string\n  scene?: Omit<CelestialSceneProps, \"objects\" | \"particles\" | \"title\" | \"seed\">\n  className?: string bpm.celestialScene bpm.solarSystem bpm.skyMap composite entity Composer une Voie lactée stylisée ou une galaxie spirale, barrée, elliptique ou irrégulière avec une graine reproductible. bpm.celestialScene bpm.solarSystem Les particules sont illustratives. Pour des étoiles mesurées, fournir un catalogue à skyMap ou celestialScene. Composant React SSR-safe ; API typée et exemples dans BPM_API.md. Données sérialisables et renderers React optionnels."
     },
     {
       "slug": "gantt",
@@ -4149,20 +4445,83 @@
       "_haystack": "bpm.machineStatus machinestatus Carte d'état machine avec indicateur LED animé (clignotement en production ou défaut). IA & Spécialisés Carte d'état machine avec indicateur LED animé (clignotement en production ou défaut).   title*: string\n  state*: MachineStatusState\n  detail?: string\n  className?: string\n  value?: number | TrajectoryPoint[]  — Mesure de production associée (cadence, TRS… ; scalaire ou trajectoire v(t) [{t,v}]) — jugée via interpret si context est fourni.\n  context?: InterpretContext  — Contexte de jugement { reference, direction, comparisonFrame? } : un verdict écart/tendance/anomalie est révélé sous l'état (role=status) et la bordure gauche prend la couleur du jugement. Additif : sans context, rendu inchangé. bpm.sensorGrid bpm.liveGauge bpm.statusBox"
     },
     {
+      "slug": "maplayercontrol",
+      "name": "bpm.mapLayerControl",
+      "description": "Contrôle de pile cartographique : groupes imbriqués, fonds exclusifs, visibilité, opacité et réorganisation au clavier.",
+      "category": "Interaction",
+      "status": "curated",
+      "fullDescription": "Contrôle de pile cartographique : groupes imbriqués, fonds exclusifs, visibilité, opacité et réorganisation au clavier. L’ordre de dessin va du bas vers le haut.",
+      "props": "  layers?: CartographicLayer[]\n  groups?: MapLayerGroup[]\n  state?: MapLayerState\n  onChange?: (state: MapLayerState) => void\n  zoom?: number\n  time?: number\n  title?: string\n  reorderable?: boolean\n  className?: string",
+      "example": "bpm.mapLayerControl({ layers: [{ id: \"parcels\", label: \"Parcelles\", kind: \"geojson\", data: { type: \"FeatureCollection\", features: [] } }] })",
+      "associated": [
+        "bpm.cartographicMap",
+        "bpm.mapLegend",
+        "bpm.mapView"
+      ],
+      "semantics": {
+        "semanticRole": "action",
+        "frame": "entity",
+        "agentGuidance": {
+          "use": "Piloter une pile de couches : cadastre, parcelles, bâtiments, réseaux, zones, imagerie, relief, annotations. Partager un MapLayerState avec une ou plusieurs cartes.",
+          "pairWith": [
+            "bpm.cartographicMap",
+            "bpm.mapLegend"
+          ],
+          "avoid": "Ce contrôle ne fournit ni données ni moteur cartographique. Les groupes contrôlent la visibilité ; l’ordre global contrôle l’empilement."
+        },
+        "contextHints": [
+          "État JSON : order du bas vers le haut, visible, opacity et groups. Réorganisation et réglages accessibles au clavier."
+        ],
+        "status": "proposed"
+      },
+      "_haystack": "bpm.mapLayerControl maplayercontrol Contrôle de pile cartographique : groupes imbriqués, fonds exclusifs, visibilité, opacité et réorganisation au clavier. Interaction Contrôle de pile cartographique : groupes imbriqués, fonds exclusifs, visibilité, opacité et réorganisation au clavier. L’ordre de dessin va du bas vers le haut.   layers?: CartographicLayer[]\n  groups?: MapLayerGroup[]\n  state?: MapLayerState\n  onChange?: (state: MapLayerState) => void\n  zoom?: number\n  time?: number\n  title?: string\n  reorderable?: boolean\n  className?: string bpm.cartographicMap bpm.mapLegend bpm.mapView action entity Piloter une pile de couches : cadastre, parcelles, bâtiments, réseaux, zones, imagerie, relief, annotations. Partager un MapLayerState avec une ou plusieurs cartes. bpm.cartographicMap bpm.mapLegend Ce contrôle ne fournit ni données ni moteur cartographique. Les groupes contrôlent la visibilité ; l’ordre global contrôle l’empilement. État JSON : order du bas vers le haut, visible, opacity et groups. Réorganisation et réglages accessibles au clavier."
+    },
+    {
+      "slug": "maplegend",
+      "name": "bpm.mapLegend",
+      "description": "Légende issue des mêmes règles et palettes que les calques visibles ; seuils numériques, unités et symboles libres additionnels.",
+      "category": "Affichage de données",
+      "status": "curated",
+      "fullDescription": "Légende issue des mêmes règles et palettes que les calques visibles ; seuils numériques, unités et symboles libres additionnels.",
+      "props": "  layers?: CartographicLayer[]\n  groups?: MapLayerGroup[]\n  state?: MapLayerState\n  zoom?: number\n  time?: number\n  theme?: keyof typeof CARTOGRAPHIC_THEMES | CartographicTheme\n  items?: MapLegendItem[]\n  title?: string\n  className?: string",
+      "example": "bpm.mapLegend({ items: [{ id: \"river\", label: \"Fleuve\", color: \"#167fa6\", shape: \"line\" }, { id: \"parcel\", label: \"Parcelle\", color: \"#8ea45e\" }] })",
+      "associated": [
+        "bpm.cartographicMap",
+        "bpm.mapLayerControl"
+      ],
+      "semantics": {
+        "semanticRole": "affichage",
+        "frame": "entity",
+        "agentGuidance": {
+          "use": "Expliquer les couleurs, seuils, unités et classes des calques visibles à partir des mêmes règles que la carte. Ajouter des symboles libres avec items.",
+          "pairWith": [
+            "bpm.cartographicMap",
+            "bpm.mapLayerControl"
+          ],
+          "avoid": "Ne pas attribuer de sens ou d’unité à des couleurs sans données. La légende suit les filtres temporels, les groupes et le zoom si ces valeurs sont partagées."
+        },
+        "contextHints": [
+          "Légende de parcelles, altitude, profondeur, occupation du sol, réseaux ou couches aériennes ; sources et dates restent celles de l’appelant."
+        ],
+        "status": "proposed"
+      },
+      "_haystack": "bpm.mapLegend maplegend Légende issue des mêmes règles et palettes que les calques visibles ; seuils numériques, unités et symboles libres additionnels. Affichage de données Légende issue des mêmes règles et palettes que les calques visibles ; seuils numériques, unités et symboles libres additionnels.   layers?: CartographicLayer[]\n  groups?: MapLayerGroup[]\n  state?: MapLayerState\n  zoom?: number\n  time?: number\n  theme?: keyof typeof CARTOGRAPHIC_THEMES | CartographicTheme\n  items?: MapLegendItem[]\n  title?: string\n  className?: string bpm.cartographicMap bpm.mapLayerControl affichage entity Expliquer les couleurs, seuils, unités et classes des calques visibles à partir des mêmes règles que la carte. Ajouter des symboles libres avec items. bpm.cartographicMap bpm.mapLayerControl Ne pas attribuer de sens ou d’unité à des couleurs sans données. La légende suit les filtres temporels, les groupes et le zoom si ces valeurs sont partagées. Légende de parcelles, altitude, profondeur, occupation du sol, réseaux ou couches aériennes ; sources et dates restent celles de l’appelant."
+    },
+    {
       "slug": "mapview",
       "name": "bpm.mapView",
       "description": "Carte Leaflet interactive avec marqueurs, polylignes, polygones et gestion des clics.",
       "category": "Média",
       "status": "uncurated",
       "fullDescription": "Carte Leaflet interactive avec marqueurs, polylignes, polygones et gestion des clics.",
-      "props": "  center*: [number, number]\n  zoom?: number\n  height?: number | string\n  markers?: MapMarker[]\n  onMarkerClick?: (index: number, marker: MapMarker) => void\n  tileUrl?: string\n  tileAttribution?: string\n  polylines?: [number, number][][]\n  polylineColor?: string\n  polygons?: MapPolygonSpec[]\n  overlays?: MapOverlaySpec[]  — Calques superposables (données app + WMS/tuiles externes), en transparence.\n  onMapClick?: (latlng: [number, number]) => void\n  className?: string",
+      "props": "  center*: [number, number]\n  zoom?: number\n  height?: number | string\n  markers?: MapMarker[]\n  onMarkerClick?: (index: number, marker: MapMarker) => void\n  tileUrl?: string\n  tileAttribution?: string\n  polylines?: [number, number][][]\n  polylineColor?: string\n  polygons?: MapPolygonSpec[]\n  overlays?: MapOverlaySpec[]  — Calques superposables (données app + WMS/tuiles externes), en transparence.\n  onMapClick?: (latlng: [number, number]) => void\n  baseLayer?: boolean\n  projection?: \"mercator\" | \"geographic\" | \"simple\"\n  crs?: import(\"leaflet\").CRS  — Custom application-provided CRS; remount the map when changing it.\n  renderLayers?: (context: MapRenderContext) => React.ReactNode\n  className?: string",
       "example": "bpm.mapView({ center: [48.8566, 2.3522], zoom: 13, markers: [{ position: [48.8566, 2.3522], label: \"Paris\" }] })",
       "associated": [
         "bpm.map",
         "bpm.routePlanner",
         "bpm.gps"
       ],
-      "_haystack": "bpm.mapView mapview Carte Leaflet interactive avec marqueurs, polylignes, polygones et gestion des clics. Média Carte Leaflet interactive avec marqueurs, polylignes, polygones et gestion des clics.   center*: [number, number]\n  zoom?: number\n  height?: number | string\n  markers?: MapMarker[]\n  onMarkerClick?: (index: number, marker: MapMarker) => void\n  tileUrl?: string\n  tileAttribution?: string\n  polylines?: [number, number][][]\n  polylineColor?: string\n  polygons?: MapPolygonSpec[]\n  overlays?: MapOverlaySpec[]  — Calques superposables (données app + WMS/tuiles externes), en transparence.\n  onMapClick?: (latlng: [number, number]) => void\n  className?: string bpm.map bpm.routePlanner bpm.gps"
+      "_haystack": "bpm.mapView mapview Carte Leaflet interactive avec marqueurs, polylignes, polygones et gestion des clics. Média Carte Leaflet interactive avec marqueurs, polylignes, polygones et gestion des clics.   center*: [number, number]\n  zoom?: number\n  height?: number | string\n  markers?: MapMarker[]\n  onMarkerClick?: (index: number, marker: MapMarker) => void\n  tileUrl?: string\n  tileAttribution?: string\n  polylines?: [number, number][][]\n  polylineColor?: string\n  polygons?: MapPolygonSpec[]\n  overlays?: MapOverlaySpec[]  — Calques superposables (données app + WMS/tuiles externes), en transparence.\n  onMapClick?: (latlng: [number, number]) => void\n  baseLayer?: boolean\n  projection?: \"mercator\" | \"geographic\" | \"simple\"\n  crs?: import(\"leaflet\").CRS  — Custom application-provided CRS; remount the map when changing it.\n  renderLayers?: (context: MapRenderContext) => React.ReactNode\n  className?: string bpm.map bpm.routePlanner bpm.gps"
     },
     {
       "slug": "metricrow",
@@ -4193,6 +4552,38 @@
       "_haystack": "bpm.metricRow metricrow Ligne horizontale de KPIs (bpm.metric) pour tableaux de bord et résumés chiffrés. Affichage de données Ligne horizontale de KPIs (bpm.metric) pour tableaux de bord et résumés chiffrés.   children*: React.ReactNode\n  className?: string conteneur section Aligner plusieurs KPI scalaires de même rang en tête de tableau de bord : une rangée de bpm.metric lus ensemble. bpm.metric bpm.lineChart bpm.card Une seule mesure (bpm.metric seul) ou des éléments hétérogènes de poids visuel inégal (bpm.grid, bpm.column). Contient des bpm.metric de même nature et échelle de lecture ; 2 à 5 par rangée pour rester scannable."
     },
     {
+      "slug": "moonphase",
+      "name": "bpm.moonPhase",
+      "description": "Phase lunaire à partir d'une fraction de cycle fournie : nouvelle lune, croissant, quartier, pleine lune, orientation nord/sud et pourcentage éclairé.",
+      "category": "Média",
+      "status": "curated",
+      "fullDescription": "Phase lunaire à partir d'une fraction de cycle fournie : nouvelle lune, croissant, quartier, pleine lune, orientation nord/sud et pourcentage éclairé. Aucune phase du jour n'est inventée.",
+      "props": "  phase?: number  — Fraction of the cycle: 0=new, .25=first quarter, .5=full, .75=last quarter.\n  hemisphere?: \"north\" | \"south\"\n  label?: string\n  size?: number\n  color?: string\n  showLabel?: boolean\n  className?: string",
+      "example": "bpm.moonPhase({ phase: 0.18, label: \"Lune croissante\", hemisphere: \"north\" })",
+      "associated": [
+        "bpm.celestialBody",
+        "bpm.solarSystem",
+        "bpm.skyMap"
+      ],
+      "semantics": {
+        "semanticRole": "affichage",
+        "frame": "entity",
+        "agentGuidance": {
+          "use": "Afficher une phase lunaire fournie sous forme de fraction du cycle et son orientation nord/sud.",
+          "pairWith": [
+            "bpm.celestialBody",
+            "bpm.skyMap"
+          ],
+          "avoid": "Ne calcule pas la phase du jour ; cette valeur vient de la source astronomique de l’application."
+        },
+        "contextHints": [
+          "Composant React SSR-safe ; API typée et exemples dans BPM_API.md. Données sérialisables et renderers React optionnels."
+        ],
+        "status": "proposed"
+      },
+      "_haystack": "bpm.moonPhase moonphase Phase lunaire à partir d'une fraction de cycle fournie : nouvelle lune, croissant, quartier, pleine lune, orientation nord/sud et pourcentage éclairé. Média Phase lunaire à partir d'une fraction de cycle fournie : nouvelle lune, croissant, quartier, pleine lune, orientation nord/sud et pourcentage éclairé. Aucune phase du jour n'est inventée.   phase?: number  — Fraction of the cycle: 0=new, .25=first quarter, .5=full, .75=last quarter.\n  hemisphere?: \"north\" | \"south\"\n  label?: string\n  size?: number\n  color?: string\n  showLabel?: boolean\n  className?: string bpm.celestialBody bpm.solarSystem bpm.skyMap affichage entity Afficher une phase lunaire fournie sous forme de fraction du cycle et son orientation nord/sud. bpm.celestialBody bpm.skyMap Ne calcule pas la phase du jour ; cette valeur vient de la source astronomique de l’application. Composant React SSR-safe ; API typée et exemples dans BPM_API.md. Données sérialisables et renderers React optionnels."
+    },
+    {
       "slug": "offlineindicator",
       "name": "bpm.offlineIndicator",
       "description": "Indicateur de statut hors ligne avec compteur de requêtes en attente et bouton de synchronisation.",
@@ -4206,6 +4597,38 @@
         "bpm.statusBox"
       ],
       "_haystack": "bpm.offlineIndicator offlineindicator Indicateur de statut hors ligne avec compteur de requêtes en attente et bouton de synchronisation. Feedback Indicateur de statut hors ligne avec compteur de requêtes en attente et bouton de synchronisation.   demo?: boolean  — Affiche le composant même sans file (pour démo / page composants). bpm.toast bpm.statusBox"
+    },
+    {
+      "slug": "orbitalsystem",
+      "name": "bpm.orbitalSystem",
+      "description": "Système orbital configurable avec hiérarchie parent/enfant, orbites elliptiques de Kepler, satellites, contrôle temporel et personnalisation intégrale de la scène ; fonctionne aussi pour des systèmes fictifs.",
+      "category": "Média",
+      "status": "curated",
+      "fullDescription": "Système orbital configurable avec hiérarchie parent/enfant, orbites elliptiques de Kepler, satellites, contrôle temporel et personnalisation intégrale de la scène ; fonctionne aussi pour des systèmes fictifs.",
+      "props": "  bodies?: OrbitalBody[]\n  time?: number  — Controlled model time. No wall clock or actual date is implied.\n  defaultTime?: number\n  onTimeChange?: (time: number) => void\n  speed?: number  — Model time units per real second when the user presses Play.\n  showOrbits?: boolean\n  showPlayback?: boolean\n  title?: string\n  scene?: Omit<CelestialSceneProps, \"objects\" | \"paths\" | \"title\">  — All scene customization hooks, camera, selection, particles and overlays.\n  className?: string",
+      "example": "bpm.orbitalSystem({ bodies: [{ id: \"star\", label: \"Étoile\", kind: \"star\", color: \"#ffc778\" }, { id: \"planet\", label: \"Planète\", parentId: \"star\", orbit: { semiMajorAxis: 70, period: 30, eccentricity: 0.2 } }] })",
+      "associated": [
+        "bpm.celestialScene",
+        "bpm.solarSystem",
+        "bpm.celestialBody"
+      ],
+      "semantics": {
+        "semanticRole": "composite",
+        "frame": "entity",
+        "agentGuidance": {
+          "use": "Montrer un système de corps et satellites liés par des orbites elliptiques et explorer son évolution avec un temps de modèle.",
+          "pairWith": [
+            "bpm.celestialScene",
+            "bpm.solarSystem"
+          ],
+          "avoid": "Les éléments orbitaux doivent être fournis ; aucune position datée ni éphéméride ne peut être déduite du préréglage."
+        },
+        "contextHints": [
+          "Composant React SSR-safe ; API typée et exemples dans BPM_API.md. Données sérialisables et renderers React optionnels."
+        ],
+        "status": "proposed"
+      },
+      "_haystack": "bpm.orbitalSystem orbitalsystem Système orbital configurable avec hiérarchie parent/enfant, orbites elliptiques de Kepler, satellites, contrôle temporel et personnalisation intégrale de la scène ; fonctionne aussi pour des systèmes fictifs. Média Système orbital configurable avec hiérarchie parent/enfant, orbites elliptiques de Kepler, satellites, contrôle temporel et personnalisation intégrale de la scène ; fonctionne aussi pour des systèmes fictifs.   bodies?: OrbitalBody[]\n  time?: number  — Controlled model time. No wall clock or actual date is implied.\n  defaultTime?: number\n  onTimeChange?: (time: number) => void\n  speed?: number  — Model time units per real second when the user presses Play.\n  showOrbits?: boolean\n  showPlayback?: boolean\n  title?: string\n  scene?: Omit<CelestialSceneProps, \"objects\" | \"paths\" | \"title\">  — All scene customization hooks, camera, selection, particles and overlays.\n  className?: string bpm.celestialScene bpm.solarSystem bpm.celestialBody composite entity Montrer un système de corps et satellites liés par des orbites elliptiques et explorer son évolution avec un temps de modèle. bpm.celestialScene bpm.solarSystem Les éléments orbitaux doivent être fournis ; aucune position datée ni éphéméride ne peut être déduite du préréglage. Composant React SSR-safe ; API typée et exemples dans BPM_API.md. Données sérialisables et renderers React optionnels."
     },
     {
       "slug": "page",
@@ -4469,6 +4892,38 @@
       "_haystack": "bpm.scheduler scheduler Calendrier/agenda avec vues jour, semaine et mois, gestion d'événements et de ressources. Affichage de données Calendrier/agenda avec vues jour, semaine et mois, gestion d'événements et de ressources.   view*: \"day\" | \"week\" | \"month\"\n  events*: SchedulerEvent[]\n  resources?: SchedulerResource[]\n  onEventClick*: (ev: SchedulerEvent) => void\n  onSlotClick*: (dayStart: Date, hour: number) => void\n  startHour?: number\n  endHour?: number\n  locale?: string  — Locale BCP-47 des dates ET des libellés de navigation. Absente = locale du moteur (comportement historique).\n  labels?: SchedulerNavLabels  — Surcharge des trois mots que `Intl` ne rend pas. Absente = dérivée de `locale`. bpm.calendar bpm.timeline composite event Agenda autoporteur d'événements positionnés dans le temps (jour/semaine/mois) : afficher, créer au clic sur un créneau, répartir par ressource. bpm.timeline bpm.badge bpm.drawer Planning de tâches à dépendances (bpm.gantt) ou historique chronologique en lecture seule (bpm.timeline). Événements datés (start/end, ressource optionnelle) projetés sur une grille calendaire ; le clic sur créneau ouvre la création."
     },
     {
+      "slug": "seatmap",
+      "name": "bpm.seatMap",
+      "description": "Plan de cabine d'avion configurable : rangées libres, couloirs, classes, issues et sièges disponibles/occupés/bloqués, sélection simple ou multiple et rendu de siège personnalisable.",
+      "category": "Interaction",
+      "status": "curated",
+      "fullDescription": "Plan de cabine d'avion configurable : rangées libres, couloirs, classes, issues et sièges disponibles/occupés/bloqués, sélection simple ou multiple et rendu de siège personnalisable.",
+      "props": "  rows?: CabinRow[]\n  selectedSeatIds?: string[]\n  defaultSelectedSeatIds?: string[]\n  onSelectionChange?: (ids: string[], seat: CabinSeat) => void\n  multiple?: boolean\n  title?: string\n  renderSeat?: (seat: CabinSeat, selected: boolean) => React.ReactNode  — Custom seat content, inside the existing accessible button.\n  children?: React.ReactNode\n  className?: string",
+      "example": "bpm.seatMap({ rows: [{ id: \"1\", label: \"1\", seats: [{ id: \"1A\", label: \"1A\" }, null, { id: \"1C\", label: \"1C\", status: \"occupied\" }] }] })",
+      "associated": [
+        "bpm.airportBoard",
+        "bpm.flightMap",
+        "bpm.card"
+      ],
+      "semantics": {
+        "semanticRole": "saisie",
+        "frame": "entity",
+        "agentGuidance": {
+          "use": "Sélectionner des sièges dans une cabine d’avion dont rangées, couloirs, classes et issues sont configurables.",
+          "pairWith": [
+            "bpm.airportBoard",
+            "bpm.card"
+          ],
+          "avoid": "La sélection exprime une intention ; la réservation et la disponibilité autoritaire relèvent de l’application."
+        },
+        "contextHints": [
+          "Composant React SSR-safe ; API typée et exemples dans BPM_API.md. Données sérialisables et renderers React optionnels."
+        ],
+        "status": "proposed"
+      },
+      "_haystack": "bpm.seatMap seatmap Plan de cabine d'avion configurable : rangées libres, couloirs, classes, issues et sièges disponibles/occupés/bloqués, sélection simple ou multiple et rendu de siège personnalisable. Interaction Plan de cabine d'avion configurable : rangées libres, couloirs, classes, issues et sièges disponibles/occupés/bloqués, sélection simple ou multiple et rendu de siège personnalisable.   rows?: CabinRow[]\n  selectedSeatIds?: string[]\n  defaultSelectedSeatIds?: string[]\n  onSelectionChange?: (ids: string[], seat: CabinSeat) => void\n  multiple?: boolean\n  title?: string\n  renderSeat?: (seat: CabinSeat, selected: boolean) => React.ReactNode  — Custom seat content, inside the existing accessible button.\n  children?: React.ReactNode\n  className?: string bpm.airportBoard bpm.flightMap bpm.card saisie entity Sélectionner des sièges dans une cabine d’avion dont rangées, couloirs, classes et issues sont configurables. bpm.airportBoard bpm.card La sélection exprime une intention ; la réservation et la disponibilité autoritaire relèvent de l’application. Composant React SSR-safe ; API typée et exemples dans BPM_API.md. Données sérialisables et renderers React optionnels."
+    },
+    {
       "slug": "sensorgrid",
       "name": "bpm.sensorGrid",
       "description": "Grille de cartes capteur avec valeur, unité, statut coloré et détail optionnel.",
@@ -4513,6 +4968,39 @@
         "bpm.gps"
       ],
       "_haystack": "bpm.skyMap skymap Carte céleste équatoriale (projection de Hammer) : place des observations en ascension droite / déclinaison, avec sélection, zoom et liste tactile. Média Carte céleste équatoriale (projection de Hammer) : place des observations en ascension droite / déclinaison, avec sélection, zoom et liste tactile.   points*: SkyPoint[]\n  raUnit?: \"degrees\" | \"hours\"  — Unité de l'ascension droite DÉCIMALE. La forme sexagésimale reste en heures.\n  height?: number | string\n  onPointClick?: (index: number, point: SkyPoint) => void\n  title?: string  — Titre de la carte.\n  className?: string bpm.mapView bpm.gps"
+    },
+    {
+      "slug": "solarsystem",
+      "name": "bpm.solarSystem",
+      "description": "Système solaire prêt à composer avec Soleil et huit planètes, vue interne, distances schématiques ou relatives et remplacement complet des corps ; préréglage illustratif, sans positions astronomiques en temps réel.",
+      "category": "Média",
+      "status": "curated",
+      "fullDescription": "Système solaire prêt à composer avec Soleil et huit planètes, vue interne, distances schématiques ou relatives et remplacement complet des corps ; préréglage illustratif, sans positions astronomiques en temps réel.",
+      "props": "  bodies?: OrbitalBody[]  — Replace the entire preset, including its star, for complete creative freedom.\n  distanceScale?: \"schematic\" | \"relative\"  — Schematic spacing is readable on mobile; relative spacing uses AU ratios.\n  region?: \"all\" | \"inner\"\n  title?: string\n  time?: number\n  onTimeChange?: (time: number) => void\n  options?: Omit<OrbitalSystemProps, \"bodies\" | \"title\" | \"time\" | \"onTimeChange\">  — Playback, camera, renderer and overlay customization.\n  className?: string",
+      "example": "bpm.solarSystem({ distanceScale: \"schematic\", options: { speed: 40, scene: { height: 520, camera: { elevation: 40, azimuth: -20 } } } })",
+      "associated": [
+        "bpm.orbitalSystem",
+        "bpm.galaxyView",
+        "bpm.moonPhase"
+      ],
+      "semantics": {
+        "semanticRole": "composite",
+        "frame": "entity",
+        "agentGuidance": {
+          "use": "Partir du Soleil et des huit planètes pour une exploration pédagogique du système solaire ou remplacer entièrement le préréglage.",
+          "pairWith": [
+            "bpm.orbitalSystem",
+            "bpm.galaxyView",
+            "bpm.moonPhase"
+          ],
+          "avoid": "Le préréglage est illustratif. Pour des positions observées, fournir des données astronomiques adaptées."
+        },
+        "contextHints": [
+          "Composant React SSR-safe ; API typée et exemples dans BPM_API.md. Données sérialisables et renderers React optionnels."
+        ],
+        "status": "proposed"
+      },
+      "_haystack": "bpm.solarSystem solarsystem Système solaire prêt à composer avec Soleil et huit planètes, vue interne, distances schématiques ou relatives et remplacement complet des corps ; préréglage illustratif, sans positions astronomiques en temps réel. Média Système solaire prêt à composer avec Soleil et huit planètes, vue interne, distances schématiques ou relatives et remplacement complet des corps ; préréglage illustratif, sans positions astronomiques en temps réel.   bodies?: OrbitalBody[]  — Replace the entire preset, including its star, for complete creative freedom.\n  distanceScale?: \"schematic\" | \"relative\"  — Schematic spacing is readable on mobile; relative spacing uses AU ratios.\n  region?: \"all\" | \"inner\"\n  title?: string\n  time?: number\n  onTimeChange?: (time: number) => void\n  options?: Omit<OrbitalSystemProps, \"bodies\" | \"title\" | \"time\" | \"onTimeChange\">  — Playback, camera, renderer and overlay customization.\n  className?: string bpm.orbitalSystem bpm.galaxyView bpm.moonPhase composite entity Partir du Soleil et des huit planètes pour une exploration pédagogique du système solaire ou remplacer entièrement le préréglage. bpm.orbitalSystem bpm.galaxyView bpm.moonPhase Le préréglage est illustratif. Pour des positions observées, fournir des données astronomiques adaptées. Composant React SSR-safe ; API typée et exemples dans BPM_API.md. Données sérialisables et renderers React optionnels."
     },
     {
       "slug": "sparkline",

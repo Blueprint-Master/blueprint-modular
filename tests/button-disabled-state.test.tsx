@@ -29,7 +29,7 @@ import { describe, expect, it } from "vitest";
 import { Button } from "@/components/bpm/Button";
 
 const html = (props: Record<string, unknown>) =>
-  renderToStaticMarkup(<Button label="Supprimer" {...props} />);
+  renderToStaticMarkup(<Button {...props}>Supprimer</Button>);
 
 describe("le curseur peut enfin se voir", () => {
   it("désactivé : `not-allowed`, la convention du Web", () => {
