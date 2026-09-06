@@ -1,7 +1,7 @@
 {
-  "generatedAt": "2026-08-26T22:10:14.869Z",
+  "generatedAt": "2026-09-06T08:44:28.930Z",
   "source": "lib/generated/bpm-components.json + public/llms.txt + lib/semantics/bpm-semantics.json",
-  "total": 156,
+  "total": 157,
   "categories": [
     "Affichage de données",
     "Feedback",
@@ -4498,6 +4498,21 @@
         "bpm.image"
       ],
       "_haystack": "bpm.signaturePad signaturepad Zone de signature canvas avec export data URL PNG et boutons effacer/enregistrer. Interaction Zone de signature canvas avec export data URL PNG et boutons effacer/enregistrer.   width?: number\n  height?: number\n  lineColor?: string\n  className?: string\n  onChangeDataUrl?: (dataUrl: string | null) => void bpm.fileUploader bpm.image"
+    },
+    {
+      "slug": "skymap",
+      "name": "bpm.skyMap",
+      "description": "Carte céleste équatoriale (projection de Hammer) : place des observations en ascension droite / déclinaison, avec sélection, zoom et liste tactile.",
+      "category": "Média",
+      "status": "uncurated",
+      "fullDescription": "Carte céleste équatoriale (projection de Hammer) : place des observations en ascension droite / déclinaison, avec sélection, zoom et liste tactile.",
+      "props": "  points*: SkyPoint[]\n  raUnit?: \"degrees\" | \"hours\"  — Unité de l'ascension droite DÉCIMALE. La forme sexagésimale reste en heures.\n  height?: number | string\n  onPointClick?: (index: number, point: SkyPoint) => void\n  title?: string  — Titre de la carte.\n  className?: string",
+      "example": "bpm.skyMap({ points: [{ id: \"s1\", label: \"Sirius\", ra: \"06:45:09\", dec: \"-16:42:58\" }] })",
+      "associated": [
+        "bpm.mapView",
+        "bpm.gps"
+      ],
+      "_haystack": "bpm.skyMap skymap Carte céleste équatoriale (projection de Hammer) : place des observations en ascension droite / déclinaison, avec sélection, zoom et liste tactile. Média Carte céleste équatoriale (projection de Hammer) : place des observations en ascension droite / déclinaison, avec sélection, zoom et liste tactile.   points*: SkyPoint[]\n  raUnit?: \"degrees\" | \"hours\"  — Unité de l'ascension droite DÉCIMALE. La forme sexagésimale reste en heures.\n  height?: number | string\n  onPointClick?: (index: number, point: SkyPoint) => void\n  title?: string  — Titre de la carte.\n  className?: string bpm.mapView bpm.gps"
     },
     {
       "slug": "sparkline",

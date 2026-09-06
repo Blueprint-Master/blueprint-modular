@@ -282,6 +282,8 @@ export { MachineStatus } from "./MachineStatus";
 export type { MachineStatusProps, MachineStatusState } from "./MachineStatus";
 export { MapView } from "./MapView";
 export type { MapMarker, MapPolygonSpec, MapViewProps, MapOverlaySpec, MapOverlayKind } from "./MapView";
+export { SkyMap, parseCelestialAngle, projectHammer } from "./SkyMap";
+export type { SkyMapProps, SkyPoint } from "./SkyMap";
 export { MapViewLeafletInner } from "./MapViewLeaflet";
 export type { MapViewLeafletInnerProps } from "./MapViewLeaflet";
 // —— P ——

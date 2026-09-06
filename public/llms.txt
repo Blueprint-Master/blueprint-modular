@@ -1,7 +1,7 @@
 # Blueprint Modular — Agent Context File
 # Version React (@blueprint-modular/core, npm) : 0.3.12
 # Version Python (blueprint-modular, PyPI)      : 0.1.54
-# Date    : 2026-08-31
+# Date    : 2026-09-06
 # URL canonique : https://blueprint-modular.com/llms.txt
 #
 # Ce fichier est la référence machine de @blueprint-modular/core.
@@ -1547,6 +1547,17 @@ Conteneur page (core) — props : children.
   shimmer?: boolean  — Animation shimmer (dégradé balayant) en alternative au pulse.
   rounded?: SkeletonRounded  — Contrôle le rayon des bords (ignoré si variant === "circular").
   lines?: number  — Nombre de lignes de skeleton empilées (variant text). Default: 1.
+```
+
+## bpm.skyMap
+@component bpm.skyMap @description Carte céleste équatoriale (projection de Hammer) : place des observations en ascension droite / déclinaison, avec sélection, zoom et liste tactile. @example bpm.skyMap({ points: [{ id: "s1", label: "Sirius", ra: "06:45:09", dec: "-16:42:58" }] }) @param {object} props @param {SkyPoint[]} props.points - Observations à placer. Coordonnées BRUTES (décimales ou sexagésimales) ; celles qui ne se lisent pas sont comptées, jamais masquées. Obligatoire. @param {"degrees"|"hours"} [props.raUnit="degrees"] - Unité de l'ascension droite DÉCIMALE. Optionnel. @param {number|string} [props.height] - Hauteur du canevas. Optionnel. @param {function} [props.onPointClick] - Callback au clic sur un point : (index, point). Optionnel. @param {string} [props.title="Carte équatoriale"] - Titre affiché. Optionnel. @param {string} [props.className=""] - Classes CSS additionnelles. Optionnel. @associated bpm.mapView, bpm.gps
+```
+  points*: SkyPoint[]
+  raUnit?: "degrees" | "hours"  — Unité de l'ascension droite DÉCIMALE. La forme sexagésimale reste en heures.
+  height?: number | string
+  onPointClick?: (index: number, point: SkyPoint) => void
+  title?: string  — Titre de la carte.
+  className?: string
 ```
 
 ## bpm.slider

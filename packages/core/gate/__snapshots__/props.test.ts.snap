@@ -956,6 +956,14 @@ exports[`bpm prop surface snapshot > prop names match committed snapshot (additi
     "rounded",
     "lines",
   ],
+  "skyMap": [
+    "points",
+    "raUnit",
+    "height",
+    "onPointClick",
+    "title",
+    "className",
+  ],
   "slider": [
     "value",
     "min",

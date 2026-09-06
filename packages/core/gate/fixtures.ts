@@ -160,6 +160,7 @@ export const FIXTURES: Record<string, Record<string, unknown>> = {
   locationField: {},
   machineStatus: { title: "Machine A", state: "running" },
   mapView: {},
+  skyMap: {},
   markdown: { text: "# Hello\nWorld" },
   masterDetail: {
     items: [],
