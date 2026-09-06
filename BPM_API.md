@@ -2,6 +2,8 @@
 
 Cette extension ajoute quinze composants à `@blueprint-modular/core`, sous le namespace `bpm.*`. **Trois primitives suffisent à composer la cartographie terrestre** : `cartographicMap`, `mapLayerControl`, `mapLegend`. Les sujets sont des compositions de données et de styles, pas de nouveaux composants. La carte `bpm.skyMap` existante conserve son API et sa projection équatoriale. La distribution npm suit la publication du core après intégration de la PR.
 
+Version du core préparée : **0.3.14**, après la 0.3.13 de `skyMap`. Le workflow de publication reste manuel.
+
 ```tsx
 import { bpm, createSolarSystemBodies } from '@blueprint-modular/core';
 import type { OrbitalBody, CelestialObject, FlightPosition, CabinRow } from '@blueprint-modular/core';
