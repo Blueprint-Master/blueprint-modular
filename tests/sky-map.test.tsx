@@ -28,9 +28,10 @@
  * puis l'invariant qui rend le composant honnête : **un point illisible est
  * COMPTÉ, jamais escamoté**.
  */
+import { renderToStaticMarkup } from "react-dom/server";
 import { describe, expect, it } from "vitest";
 
-import { parseCelestialAngle, projectHammer } from "../components/bpm/SkyMap";
+import { SkyMap, parseCelestialAngle, projectHammer } from "../components/bpm/SkyMap";
 
 describe("parseCelestialAngle — les six écritures légitimes", () => {
   it("la sonde est VIVANTE : une forme connue-bonne se lit", () => {
@@ -97,5 +98,61 @@ describe("projectHammer — les repères que la carte dessine", () => {
        depuis son centre, donc l'axe est inversé. L'orienter comme une mappemonde
        rendrait un ciel en miroir, lisible et faux. */
     expect(projectHammer(90, 0).x).toBeGreaterThan(projectHammer(270, 0).x);
+  });
+});
+
+/**
+ * LA ROBUSTESSE QUE LE GATE DE FUMÉE DU CORE EXIGE — et que j'avais manquée.
+ *
+ * Ma première rédaction déclarait `points` obligatoire et faisait `points.flatMap`
+ * sans garde. Elle a passé mes 9 tests, et le gate l'a fait tomber :
+ * `bpm.skyMap renders without throw` → *Cannot read properties of undefined*.
+ *
+ * La cause n'est pas une fixture manquante, c'est un **défaut réel** : la
+ * fixture de `bpm.mapView` est `{}`, et c'est la convention du core — **chaque
+ * composant doit se rendre SANS AUCUNE PROP**. Elle n'est pas décorative ici :
+ * ces composants sont appelés par l'objet `bpm.*` depuis du code GÉNÉRÉ, et les
+ * props `bpm.*` ne sont opposables que sur 5 composants sur 156 — le typage ne
+ * protège donc rien au point d'appel. Un `points` absent ou d'une autre forme
+ * arrive pour de vrai.
+ *
+ * *J'avais lancé `tests/` et pas `gate/`, et j'en ai conclu que c'était vert.*
+ * Le cas ci-dessous existe pour que ce défaut-là ne repasse pas par le gate.
+ */
+describe("SkyMap — se rend sans props, comme tout composant du core", () => {
+  it("`points` absent ou d'une autre FORME ne fait pas lever le rendu", () => {
+    const formes: unknown[] = [undefined, null, "pas un tableau", 42, {}, NaN];
+    for (const forme of formes) {
+      expect(
+        () => renderToStaticMarkup(<SkyMap {...({ points: forme } as never)} />),
+        `forme refusée : ${JSON.stringify(forme) ?? String(forme)}`,
+      ).not.toThrow();
+    }
+  });
+
+  it("sans point, il ANNONCE le vide au lieu de se taire", () => {
+    /* Un canevas vide et muet se lit « la carte est cassée ». Le composant dit
+       ce qu'il sait — et c'est le même invariant que le comptage des points
+       illisibles : une absence CONSTATÉE se distingue d'une panne. */
+    const html = renderToStaticMarkup(<SkyMap points={[]} />);
+    expect(html).toContain("Aucune observation à positionner");
+    expect(html).toContain("0 sur 0 observations positionnées");
+  });
+
+  it("un point ILLISIBLE est compté, jamais escamoté", () => {
+    /* L'invariant qui justifie que le parseur vive DANS le composant : il est le
+       seul à savoir combien de lignes il n'a pas su lire. */
+    const html = renderToStaticMarkup(
+      <SkyMap
+        points={[
+          { id: "ok", label: "Sirius", ra: "06:45:09", dec: "-16:42:58" },
+          { id: "ko", label: "Illisible", ra: "pas une coordonnée", dec: "12" },
+        ]}
+      />,
+    );
+    expect(html).toContain("1 sur 2 observations positionnées");
+    expect(html).toContain("1 observation(s) sans coordonnées célestes valides");
+    expect(html, "le point lisible est placé").toContain("data-celestial-point=\"ok\"");
+    expect(html, "le point illisible n'est PAS placé").not.toContain("data-celestial-point=\"ko\"");
   });
 });

@@ -877,6 +877,12 @@
       "category": "Interaction"
     },
     {
+      "slug": "skymap",
+      "name": "bpm.skyMap",
+      "description": "Carte céleste équatoriale (projection de Hammer) : place des observations en ascension droite / déclinaison, avec sélection, zoom et liste tactile.",
+      "category": "Média"
+    },
+    {
       "slug": "sparkline",
       "name": "bpm.sparkline",
       "description": "Courbe SVG compacte pour afficher une tendance avec couleur selon la direction (up/down/flat).",

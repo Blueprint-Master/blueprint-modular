@@ -180,6 +180,7 @@ EXTRA_CATEGORIES: dict[str, str] = {
     "livechart":        "Graphiques",
     "machinestatus":    "IA & Spécialisés",
     "mapview":          "Média",
+    "skymap":           "Média",
     "metricrow":        "Affichage de données",
     "offlineindicator": "Feedback",
     "page":             "Mise en page",

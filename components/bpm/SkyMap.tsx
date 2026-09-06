@@ -132,7 +132,7 @@ export function projectHammer(ra: number, dec: number): { x: number; y: number }
  * @associated bpm.mapView, bpm.gps
  */
 export function SkyMap({
-  points,
+  points = [],
   raUnit = "degrees",
   height,
   onPointClick,
@@ -143,9 +143,17 @@ export function SkyMap({
   const [selectedId, setSelectedId] = React.useState("");
   const [zoom, setZoom] = React.useState(1);
 
+  /* `points` peut arriver absent ou d'une autre FORME que celle annoncée : ce
+     composant est rendu par un objet `bpm.*` que le Maker appelle depuis du code
+     généré, et les props `bpm.*` ne sont opposables que sur 5 composants sur 156
+     — le typage ne protège donc rien ici. Le gate de fumée du core le dit
+     autrement : chaque composant doit se rendre AVEC UNE FIXTURE VIDE. Un défaut
+     et une garde de forme, pas une valeur devinée. */
+  const liste = Array.isArray(points) ? points : [];
+
   const placed = React.useMemo(
     () =>
-      points.flatMap((point, index) => {
+      liste.flatMap((point, index) => {
         const ra = parseCelestialAngle(point.ra, "ra", raUnit);
         const dec = parseCelestialAngle(point.dec, "dec");
         if (ra === null || dec === null) return [];
@@ -161,7 +169,7 @@ export function SkyMap({
           },
         ];
       }),
-    [points, raUnit],
+    [liste, raUnit],
   );
 
   const selected = placed.find((point) => point.id === selectedId);
@@ -219,7 +227,7 @@ export function SkyMap({
         <div style={{ flex: "1 1 180px" }}>
           <strong>{title}</strong>
           <div role="status" style={{ color: muted, fontSize: 13, marginTop: 4 }}>
-            {placed.length} sur {points.length} observations positionnées
+            {placed.length} sur {liste.length} observations positionnées
           </div>
         </div>
         <div role="group" aria-label="Zoom de la carte" style={{ display: "flex", flexWrap: "wrap", gap: 6 }}>
@@ -359,11 +367,11 @@ export function SkyMap({
             </div>
           </div>
         )}
-        {points.length === 0 ? (
+        {liste.length === 0 ? (
           <p style={{ margin: 0 }}>Aucune observation à positionner pour cette sélection.</p>
-        ) : placed.length < points.length ? (
+        ) : placed.length < liste.length ? (
           <p style={{ margin: 0 }}>
-            {points.length - placed.length} observation(s) sans coordonnées célestes valides. Renseignez leur ascension
+            {liste.length - placed.length} observation(s) sans coordonnées célestes valides. Renseignez leur ascension
             droite et leur déclinaison pour les placer.
           </p>
         ) : null}
