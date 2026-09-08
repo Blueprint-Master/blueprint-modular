@@ -20,7 +20,7 @@ export function PlanetObject({id,label,size=360,style="photorealistic",playing=t
   const [inView,setInView]=useState(false),[pageVisible,setPageVisible]=useState(true),[displayWidth,setDisplayWidth]=useState(size);
   const canvasRef=useRef<HTMLCanvasElement>(null);
   const instructionsId=useId();
-  const settings=useRef({playing,speed,angle,style});settings.current={playing,speed,angle,style};
+  const settings=useRef({playing,speed,angle,style});
   const orientation=useRef({rotation:.05,pitch:0});
   const repaint=useRef(()=>{});
   const drag=useRef<{x:number;y:number;pointer:number}|null>(null);
@@ -28,23 +28,26 @@ export function PlanetObject({id,label,size=360,style="photorealistic",playing=t
   const [restart,setRestart]=useState(0),[softwareOnly,setSoftwareOnly]=useState(false);
   const safeSize=Number.isFinite(size)?Math.max(48,Math.min(size,1000)):360;
   useEffect(()=>{orientation.current={rotation:.05,pitch:0};elapsed.current=0;},[id]);
-  useEffect(()=>{repaint.current();},[playing,speed,angle,style]);
+  useEffect(()=>{settings.current={playing,speed,angle,style};repaint.current();},[playing,speed,angle,style]);
   useEffect(()=>{
     if(thumbnail)return;
     const element=rootRef.current;if(!element)return;
-    const visibility=()=>setPageVisible(!document.hidden);visibility();
+    const visibility=()=>setPageVisible(!document.hidden);
     document.addEventListener("visibilitychange",visibility);
     const observer=typeof IntersectionObserver!=="undefined"?new IntersectionObserver(([entry])=>setInView(entry.isIntersecting),{threshold:.01}):null;
-    if(observer)observer.observe(element);else setInView(true);
+    observer?.observe(element);
     const resize=()=>setDisplayWidth(Math.max(48,Math.round(element.getBoundingClientRect().width||safeSize)));
-    const sizing=typeof ResizeObserver!=="undefined"?new ResizeObserver(resize):null;sizing?.observe(element);resize();
-    return()=>{observer?.disconnect();sizing?.disconnect();document.removeEventListener("visibilitychange",visibility);};
+    const sizing=typeof ResizeObserver!=="undefined"?new ResizeObserver(resize):null;sizing?.observe(element);
+    // Defer the initial external snapshot until subscriptions are installed.
+    // Subsequent measurements come only from observer/visibility callbacks.
+    let subscribed=true;
+    void Promise.resolve().then(()=>{if(!subscribed)return;visibility();resize();if(!observer)setInView(true);});
+    return()=>{subscribed=false;observer?.disconnect();sizing?.disconnect();document.removeEventListener("visibilitychange",visibility);};
   },[thumbnail,safeSize]);
   useEffect(()=>{
     if(thumbnail||!inView||!pageVisible)return;
     const canvas=canvasRef.current;if(!canvas)return;
     let disposed=false,ready=false;
-    setStatus("loading");
     const media=window.matchMedia("(prefers-reduced-motion: reduce)");
     const constrained=window.matchMedia("(pointer: coarse)").matches||window.innerWidth<600||(navigator as Navigator&{connection?:{saveData?:boolean}}).connection?.saveData===true;
     const budget=planetBudget(Math.min(safeSize,displayWidth),window.devicePixelRatio||1,constrained,softwareOnly);
@@ -63,6 +66,10 @@ export function PlanetObject({id,label,size=360,style="photorealistic",playing=t
     });
     const refresh=()=>{if(disposed)return;draw();if(ready&&!media.matches&&settings.current.playing)clock.start();else clock.stop();};
     repaint.current=refresh;
+    // Acquire the renderer asynchronously; a superseded effect allocates nothing.
+    void Promise.resolve().then(()=>{
+    if(disposed)return;
+    setStatus("loading");
     try{
       const config={surface:textureUrl??`${assetBaseUrl}/${planetSurfacePath(id,style)}`,clouds:!textureUrl&&id==="earth"?`${assetBaseUrl}/compact/earth-clouds.webp`:undefined,
         rings:id==="saturn"?`${assetBaseUrl}/saturn-rings.png`:undefined,atmosphere:PLANET_ATMOSPHERES[id],star:id==="sun",activity:textureUrl?0:PLANET_ACTIVITY[id]??0};
@@ -70,6 +77,7 @@ export function PlanetObject({id,label,size=360,style="photorealistic",playing=t
       else {try{renderer=createPlanetRenderer(canvas,config);}catch{setSoftwareOnly(true);}}
       renderer?.ready.then(()=>{if(!disposed){ready=true;setStatus("ready");refresh();}},()=>{if(!disposed)setStatus("error");});
     }catch(error){console.error("[PlanetObject]",error);setStatus("error");}
+    });
     media.addEventListener("change",refresh);
     const lost=(event:Event)=>{event.preventDefault();ready=false;clock.stop();setStatus("error");};
     const restored=()=>setRestart(n=>n+1);

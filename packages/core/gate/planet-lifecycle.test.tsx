@@ -17,6 +17,12 @@ beforeEach(()=>{
 afterEach(async()=>{await act(async()=>root.unmount());element.remove();vi.useRealTimers();vi.unstubAllGlobals();});
 async function show(){await act(async()=>intersection([{isIntersecting:true}]));}
 describe('living objects stay idle outside the selected view',()=>{
+ it('cancels pending renderer acquisition when the component unmounts',async()=>{
+  await act(async()=>root.render(<PlanetObject id="sun" label="Sun"/>));
+  act(()=>intersection([{isIntersecting:true}]));
+  await act(async()=>root.unmount());
+  expect(mocked.create).not.toHaveBeenCalled();expect(vi.getTimerCount()).toBe(0);
+ });
  it('does not initialise a renderer until visible; disposes and stops offscreen',async()=>{
   await act(async()=>root.render(<PlanetObject id="earth" label="Earth"/>));expect(mocked.create).not.toHaveBeenCalled();
   await show();expect(mocked.create).toHaveBeenCalledTimes(1);expect(mocked.create.mock.calls[0][1].surface).toContain('compact/earth.webp');
@@ -24,13 +30,13 @@ describe('living objects stay idle outside the selected view',()=>{
   await act(async()=>intersection([{isIntersecting:false}]));const count=mocked.draw.mock.calls.length;
   await act(async()=>vi.advanceTimersByTime(2000));expect(mocked.draw).toHaveBeenCalledTimes(count);expect(mocked.dispose).toHaveBeenCalledTimes(1);
  });
- it('pause and reduced motion freeze the complete scene, with no timer left',async()=>{
-  await act(async()=>root.render(<PlanetObject id="earth" label="Earth"/>));await show();
+ it.each(['earth','sun'] as const)('pause and reduced motion freeze %s, with no timer left',async id=>{
+  await act(async()=>root.render(<PlanetObject id={id} label="Earth"/>));await show();
   await act(async()=>vi.advanceTimersByTime(1000));
-  await act(async()=>root.render(<PlanetObject id="earth" label="Earth" playing={false}/>));
+  await act(async()=>root.render(<PlanetObject id={id} label="Earth" playing={false}/>));
   const paused=mocked.draw.mock.calls.at(-1)![0];expect(paused.time).toBeGreaterThan(0);
   expect(vi.getTimerCount()).toBe(0);await act(async()=>vi.advanceTimersByTime(5000));
-  await act(async()=>root.render(<PlanetObject id="earth" label="Earth"/>));
+  await act(async()=>root.render(<PlanetObject id={id} label="Earth"/>));
   expect(mocked.draw.mock.calls.at(-1)![0]).toEqual(paused);
   reduced=true;await act(async()=>mediaChange());expect(vi.getTimerCount()).toBe(0);
  });
