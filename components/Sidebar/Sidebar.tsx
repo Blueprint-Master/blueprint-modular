@@ -5,7 +5,7 @@ import Image from "next/image";
 import { usePathname } from "next/navigation";
 import { useSession, signOut } from "next-auth/react";
 import { useTheme } from "@/components/ThemeProvider";
-import { Sun, Box } from "lucide-react";
+import { Sun } from "lucide-react";
 import { useState } from "react";
 import { SandboxIcon } from "@/components/icons/SandboxIcon";
 import { useSidebar } from "@/contexts/SidebarContext";
@@ -26,6 +26,21 @@ function IconComposants({ className }: { className?: string }) {
   return (
     <svg xmlns="http://www.w3.org/2000/svg" viewBox={vb} fill="currentColor" className={className}>
       <path d="M120-120v-203.08h203.08V-120H120Zm258.46 0v-203.08h203.08V-120H378.46Zm258.46 0v-203.08H840V-120H636.92ZM120-378.46v-203.08h203.08v203.08H120Zm258.46 0v-203.08h203.08v203.08H378.46Zm258.46 0v-203.08H840v203.08H636.92ZM120-636.92V-840h461.54v203.08H120Zm516.92 0V-840H840v203.08H636.92ZM283.08-283.08Zm135.38 0h123.08-123.08Zm258.46 0ZM283.08-418.46v-123.08 123.08ZM480-480Zm196.92 61.54v-123.08 123.08Zm0-258.46ZM160-160h123.08v-123.08H160V-160Zm258.46 0h123.08v-123.08H418.46V-160Zm258.46 0H800v-123.08H676.92V-160ZM160-418.46h123.08v-123.08H160v123.08Zm258.46 0h123.08v-123.08H418.46v123.08Zm258.46 0H800v-123.08H676.92v123.08Zm0-258.46H800V-800H676.92v123.08Z" />
+    </svg>
+  );
+}
+
+function IconObjets({ className }: { className?: string }) {
+  return (
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      height="24px"
+      viewBox="0 -960 960 960"
+      width="24px"
+      fill="currentColor"
+      className={className}
+    >
+      <path d="M460-171.46v-297.08L200-619.08v283.23q0 6.16 3.08 11.54 3.07 5.39 9.23 9.23L460-171.46Zm40 0 247.69-143.62q6.16-3.84 9.23-9.23 3.08-5.38 3.08-11.54v-283.23L500-468.54v297.08Zm-20-331.46 257-148.54-244.69-141.62q-6.16-3.84-12.31-3.84t-12.31 3.84L223-651.46l257 148.54ZM192.31-279.69q-15.16-8.69-23.73-23.62-8.58-14.92-8.58-32.31v-288.76q0-17.39 8.58-32.31 8.57-14.93 23.73-23.62l255.38-147.15q15.16-8.69 32.31-8.69 17.15 0 32.31 8.69l255.38 147.15q15.16 8.69 23.73 23.62 8.58 14.92 8.58 32.31v288.76q0 17.39-8.58 32.31-8.57 14.93-23.73 23.62L512.31-132.54q-15.16 8.69-32.31 8.69-17.15 0-32.31-8.69L192.31-279.69ZM480-480Z" />
     </svg>
   );
 }
@@ -121,7 +136,7 @@ type NavKey = "accueil" | "composants" | "objets" | "modules" | "connecteurs" | 
 const navItems: { href: string; key: NavKey; icon: React.ElementType }[] = [
   { href: "/dashboard", key: "accueil", icon: IconAccueil },
   { href: "/composants", key: "composants", icon: IconComposants },
-  { href: "/objets", key: "objets", icon: Box },
+  { href: "/objets", key: "objets", icon: IconObjets },
   { href: "/modules", key: "modules", icon: IconModules },
   { href: "/connecteurs", key: "connecteurs", icon: IconConnecteurs },
   { href: "/sandbox", key: "sandbox", icon: SandboxIcon },
