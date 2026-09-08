@@ -32,7 +32,8 @@ export function createCanvasPlanetRenderer(canvas:HTMLCanvasElement,config:{surf
    let color=[0,0,0],alpha=0,sphereT=100;
    if(rr<=1){
     const z=Math.sqrt(1-rr),n=orient(px,py,z);sphereT=4-z;
-    const u=Math.atan2(n[2],n[0])/(2*Math.PI)+.5,v=Math.acos(Math.max(-1,Math.min(1,n[1])))/Math.PI;
+    // Match WebGL: east is right on the visible +Z hemisphere; north stays up.
+    const u=1-Math.atan2(n[2],n[0])/(2*Math.PI),v=Math.acos(Math.max(-1,Math.min(1,n[1])))/Math.PI;
     let tex=sample(surface!,u+frame.rotation,v);
     const diffuse=Math.max(0,px*light[0]+py*light[1]+z*light[2]);
     let lighting=.12+.95*Math.pow(diffuse,.8);

@@ -45,7 +45,7 @@ export function PlanetObject({id,label,size=360,style="photorealistic",playing=t
       const delta=last?Math.min((time-last)/1000,.05):0;last=time;
       if(active()){
         const v=settings.current.speed;
-        orientation.current.rotation+=delta/42*(Number.isFinite(v)?Math.max(.1,Math.min(3,v)):1)*(id==="venus"?-1:1);
+        orientation.current.rotation-=delta/42*(Number.isFinite(v)?Math.max(.1,Math.min(3,v)):1)*(id==="venus"?-1:1);
         if(time-lastDraw>=1000/maxFps){draw();lastDraw=time;}raf=requestAnimationFrame(tick);
       }
     };
