@@ -1,0 +1,21 @@
+import {beforeEach,describe,expect,it,vi} from 'vitest';
+vi.mock('next-auth',()=>({getServerSession:vi.fn()}));
+vi.mock('@/lib/auth',()=>({authOptions:{}}));
+vi.mock('@/lib/prisma',()=>({prisma:{user:{findUnique:vi.fn()},objectContribution:{findMany:vi.fn(),count:vi.fn(),updateMany:vi.fn()}}}));
+import {getServerSession} from 'next-auth';
+import {prisma} from '@/lib/prisma';
+import {objectContributor,contributionSchema,limitedFormData} from '@/lib/objects/contributions';
+import {POST,GET} from '@/app/api/objects/contributions/route';
+import {PATCH} from '@/app/api/objects/contributions/[id]/route';
+const metadata={name:'Planète',family:'space',kind:'planet-texture',license:'CC-BY-4.0',sourceUrl:'https://example.org/original',rightsConfirmed:'true'};
+beforeEach(()=>vi.resetAllMocks());
+describe('Community contributions permissions and input boundaries',()=>{
+ it('requires an actual authenticated user',async()=>{vi.mocked(getServerSession).mockResolvedValue(null);expect(await objectContributor()).toBeNull();expect(prisma.user.findUnique).not.toHaveBeenCalled();expect((await POST(new Request('https://modular.test/api/objects',{method:'POST'}))).status).toBe(401);});
+ it('rejects a cross-origin upload before reading its body',async()=>{expect((await POST(new Request('https://modular.test/api/objects',{method:'POST',headers:{origin:'https://other.test'}}))).status).toBe(403);expect(getServerSession).not.toHaveBeenCalled();});
+ it('only lists published objects publicly',async()=>{vi.mocked(prisma.objectContribution.findMany).mockResolvedValue([]);await GET(new Request('https://modular.test/api/objects'));expect(prisma.objectContribution.findMany).toHaveBeenCalledWith(expect.objectContaining({where:{status:'published'},take:101}));});
+ it('does not expose personal submissions without login',async()=>{vi.mocked(getServerSession).mockResolvedValue(null);expect((await GET(new Request('https://modular.test/api/objects?scope=mine'))).status).toBe(401);expect(prisma.objectContribution.findMany).not.toHaveBeenCalled();});
+ it('prevents a contributor from publishing',async()=>{vi.mocked(getServerSession).mockResolvedValue({user:{email:'test@example.org'}});vi.mocked(prisma.user.findUnique).mockResolvedValue({id:'u',role:'USER'} as never);expect((await PATCH(new Request('https://modular.test/api/objects/id',{method:'PATCH',body:JSON.stringify({status:'published'})}),{params:Promise.resolve({id:'id'})})).status).toBe(403);expect(prisma.objectContribution.updateMany).not.toHaveBeenCalled();});
+ it.each([{rightsConfirmed:'false'},{sourceUrl:'javascript:alert(1)'},{license:'unknown'},{kind:'tsx'},{family:'unknown'}])('rejects invalid metadata %j',change=>expect(contributionSchema.safeParse({...metadata,...change}).success).toBe(false));
+ it('accepts an original contribution without an existing public URL',()=>expect(contributionSchema.safeParse({...metadata,sourceUrl:''}).success).toBe(true));
+ it('bounds streaming multipart input even without Content-Length',async()=>{const request=new Request('https://modular.test',{method:'POST',body:'123456'});await expect(limitedFormData(request,5)).rejects.toThrow('Too large');});
+});

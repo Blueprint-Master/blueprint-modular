@@ -4,14 +4,14 @@ export type ObjectFamily = "space" | "buildings" | "mobility" | "logistics";
 export type ObjectShape = "planet" | "star" | "moon" | "house" | "building" | "warehouse" | "factory" | "car" | "van" | "truck" | "pallet" | "parcel" | "container";
 export interface ModularObjectDefinition {
   readonly id: string;
-  readonly version: typeof OBJECT_CATALOG_VERSION;
+  readonly version: string;
   readonly name: Readonly<{ fr: string; en: string }>;
   readonly family: ObjectFamily;
   readonly shape: ObjectShape;
   readonly color: string;
   readonly rings: boolean;
-  readonly license: "Apache-2.0";
-  readonly fidelity: "stylized-illustration";
+  readonly license: "Apache-2.0" | "CC-BY-4.0";
+  readonly fidelity: "stylized-illustration" | "textured-sphere";
 }
 function object(id: string, fr: string, en: string, family: ObjectFamily, shape: ObjectShape, color: string, rings = false): ModularObjectDefinition {
   return Object.freeze({ id, version: OBJECT_CATALOG_VERSION, name: Object.freeze({ fr, en }), family, shape, color, rings,
@@ -41,8 +41,12 @@ export const MODULAR_OBJECTS: readonly ModularObjectDefinition[] = Object.freeze
 ]);
 
 /** Exact resolution only. An unknown ID/version must never pick a lookalike. */
+export const MODULAR_OBJECT_VERSIONS:readonly ModularObjectDefinition[]=Object.freeze([
+  ...MODULAR_OBJECTS,
+  ...MODULAR_OBJECTS.filter(item=>item.family==="space").map(item=>Object.freeze({...item,version:"2.0.0",license:"CC-BY-4.0" as const,fidelity:"textured-sphere" as const})),
+]);
 export function resolveModularObject(id: string, version: string = OBJECT_CATALOG_VERSION): ModularObjectDefinition | undefined {
-  return MODULAR_OBJECTS.find(item => item.id === id && item.version === version);
+  return MODULAR_OBJECT_VERSIONS.find(item => item.id === id && item.version === version);
 }
 export function searchModularObjects(query = "", family?: ObjectFamily): readonly ModularObjectDefinition[] {
   const normalize = (text: string) => text.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();

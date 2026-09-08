@@ -24,8 +24,8 @@ describe("versioned reusable objects", () => {
   });
   it("fails visibly for unknown objects or versions instead of substituting", () => {
     expect(resolveModularObject("unknown")).toBeUndefined();
-    expect(resolveModularObject("earth","2.0.0")).toBeUndefined();
-    expect(renderToStaticMarkup(<ModularObject id="earth" version="2.0.0"/>)).toContain("Objet indisponible");
+    expect(resolveModularObject("earth","9.0.0")).toBeUndefined();
+    expect(renderToStaticMarkup(<ModularObject id="earth" version="9.0.0"/>)).toContain("Objet indisponible");
   });
   it("searches both languages, ignores accents, and respects the category", () => {
     expect(searchModularObjects("Venus").map(o=>o.id)).toEqual(["venus"]);

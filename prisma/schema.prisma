@@ -30,6 +30,25 @@ model User {
   assignmentsAsTech    Assignment[]      @relation("AssignmentTechnician")
   notifications        Notification[]
   calendarEvents       CalendarEvent[]
+  objectContributions  ObjectContribution[]
+}
+
+model ObjectContribution {
+  id          String   @id @default(cuid())
+  authorId    String
+  author      User     @relation(fields: [authorId], references: [id], onDelete: Cascade)
+  name        String
+  family      String
+  kind        String
+  license     String
+  sourceUrl   String
+  status      String   @default("pending")
+  sha256      String
+  filePath    String
+  createdAt   DateTime @default(now())
+  reviewedAt  DateTime?
+  @@index([status, createdAt])
+  @@index([authorId])
 }
 
 model Notification {

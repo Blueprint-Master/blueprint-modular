@@ -1,0 +1,8 @@
+Planet textures by Solar System Scope / INOVE
+https://www.solarsystemscope.com/textures/
+Licensed under CC BY 4.0: https://creativecommons.org/licenses/by/4.0/
+Retrieved from the recorded public mirror; see manifest.json for original URLs and checksums.
+Changes: spherical lighting, projection, independent cloud rotation, optional painterly shader.
+These are artistic visualizations, not scientific ephemerides; source textures contain reconstructed regions.
+
+Illustration surface maps: original AI-generated paintings, 2026-09-08. They are not Solar System Scope photographs. Prompts and SHA-256: illustration-manifest.json. Clouds/rings in both styles: Solar System Scope, CC BY 4.0.

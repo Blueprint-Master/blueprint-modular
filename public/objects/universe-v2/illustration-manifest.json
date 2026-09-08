@@ -1,0 +1,72 @@
+[
+  {
+    "id": "mercury",
+    "file": "illustrations/mercury.jpg",
+    "sha256": "de5d98f2e704e32119b4bb1984e8e74a6d943ce42f9d15be47f15240e0182cb9",
+    "provenance": "AI-generated original artwork, 2026-09-08",
+    "prompt": "Use case: stylized-concept. One FLAT 2:1 EQUIRECTANGULAR TEXTURE MAP for a rotating 3D globe: Mercury: grey heavily cratered rocky terrain, silver highlights, no atmosphere. Horizontal 2:1 aspect ratio, full surface edge to edge, seamless left/right wrap, poles top and bottom. Exquisite hand-painted gouache, watercolor and delicate colored pencil from a collectible celestial atlas, expressive brushwork, sophisticated pigment granulation, organic rich detail. Beautiful luminous palette appropriate to this planet. Uniform diffuse illumination, NO painted lighting, NO shadow. NO spherical shape, NO globe silhouette, NO empty background, NO stars, NO rings, no typography, no watermark. Every pixel contains the flat painted surface map. The renderer supplies the 3D sphere and its lighting."
+  },
+  {
+    "id": "venus",
+    "file": "illustrations/venus.jpg",
+    "sha256": "d270ccfb85b0f8c9679a7064f2dd93683a0d736dac73c77774e05fbec1a72d44",
+    "provenance": "AI-generated original artwork, 2026-09-08",
+    "prompt": "Use case: stylized-concept. One FLAT 2:1 EQUIRECTANGULAR TEXTURE MAP for a rotating 3D globe: Venus: luminous ivory and ochre swirling atmosphere, soft cloud wisps, no surface. Horizontal 2:1 aspect ratio, full surface edge to edge, seamless left/right wrap, poles top and bottom. Exquisite hand-painted gouache, watercolor and delicate colored pencil from a collectible celestial atlas, expressive brushwork, sophisticated pigment granulation, organic rich detail. Beautiful luminous palette appropriate to this planet. Uniform diffuse illumination, NO painted lighting, NO shadow. NO spherical shape, NO globe silhouette, NO empty background, NO stars, NO rings, no typography, no watermark. Every pixel contains the flat painted surface map. The renderer supplies the 3D sphere and its lighting."
+  },
+  {
+    "id": "earth",
+    "file": "illustrations/earth.jpg",
+    "sha256": "1eff3e90c10df9ec2ae0e1e4655afe065cc55add1369ab1eaabe3d5693ff9fac",
+    "provenance": "AI-generated original artwork, 2026-09-08",
+    "prompt": "Use case: stylized-concept. One FLAT 2:1 EQUIRECTANGULAR TEXTURE MAP for a rotating 3D globe: Earth: recognizable continents, Americas left, Africa Europe center, Asia Australia right; ultramarine oceans and emerald land. Horizontal 2:1 aspect ratio, full surface edge to edge, seamless left/right wrap, poles top and bottom. Exquisite hand-painted gouache, watercolor and delicate colored pencil from a collectible celestial atlas, expressive brushwork, sophisticated pigment granulation, organic rich detail. Beautiful luminous palette appropriate to this planet. Uniform diffuse illumination, NO painted lighting, NO shadow. NO spherical shape, NO globe silhouette, NO empty background, NO stars, NO rings, no typography, no watermark. Every pixel contains the flat painted surface map. The renderer supplies the 3D sphere and its lighting."
+  },
+  {
+    "id": "mars",
+    "file": "illustrations/mars.jpg",
+    "sha256": "912c69ff637b3879d8a0265a199cb0f699d8a212c19d21636bb436e8a0c28381",
+    "provenance": "AI-generated original artwork, 2026-09-08",
+    "prompt": "Use case: stylized-concept. One FLAT 2:1 EQUIRECTANGULAR TEXTURE MAP for a rotating 3D globe: Mars: rust red terrain, dark volcanic plains, canyons and small polar ice caps. Horizontal 2:1 aspect ratio, full surface edge to edge, seamless left/right wrap, poles top and bottom. Exquisite hand-painted gouache, watercolor and delicate colored pencil from a collectible celestial atlas, expressive brushwork, sophisticated pigment granulation, organic rich detail. Beautiful luminous palette appropriate to this planet. Uniform diffuse illumination, NO painted lighting, NO shadow. NO spherical shape, NO globe silhouette, NO empty background, NO stars, NO rings, no typography, no watermark. Every pixel contains the flat painted surface map. The renderer supplies the 3D sphere and its lighting."
+  },
+  {
+    "id": "jupiter",
+    "file": "illustrations/jupiter.jpg",
+    "sha256": "213aeae3e62d51d0be0bf0db2dbfb3750082280257b1267105ceb624ca6acad4",
+    "provenance": "AI-generated original artwork, 2026-09-08",
+    "prompt": "Use case: stylized-concept. One FLAT 2:1 EQUIRECTANGULAR TEXTURE MAP for a rotating 3D globe: Jupiter: complex cream ochre russet horizontal cloud bands and the Great Red Spot. Horizontal 2:1 aspect ratio, full surface edge to edge, seamless left/right wrap, poles top and bottom. Exquisite hand-painted gouache, watercolor and delicate colored pencil from a collectible celestial atlas, expressive brushwork, sophisticated pigment granulation, organic rich detail. Beautiful luminous palette appropriate to this planet. Uniform diffuse illumination, NO painted lighting, NO shadow. NO spherical shape, NO globe silhouette, NO empty background, NO stars, NO rings, no typography, no watermark. Every pixel contains the flat painted surface map. The renderer supplies the 3D sphere and its lighting."
+  },
+  {
+    "id": "saturn",
+    "file": "illustrations/saturn.jpg",
+    "sha256": "6e98f6b56be3e2de3724e28ffa304dbb0b18490840514c1b685f217e6eb4a0d6",
+    "provenance": "AI-generated original artwork, 2026-09-08",
+    "prompt": "Use case: stylized-concept. One FLAT 2:1 EQUIRECTANGULAR TEXTURE MAP for a rotating 3D globe: Saturn: elegant pale golden subtle cloud bands, NO RINGS. Horizontal 2:1 aspect ratio, full surface edge to edge, seamless left/right wrap, poles top and bottom. Exquisite hand-painted gouache, watercolor and delicate colored pencil from a collectible celestial atlas, expressive brushwork, sophisticated pigment granulation, organic rich detail. Beautiful luminous palette appropriate to this planet. Uniform diffuse illumination, NO painted lighting, NO shadow. NO spherical shape, NO globe silhouette, NO empty background, NO stars, NO rings, no typography, no watermark. Every pixel contains the flat painted surface map. The renderer supplies the 3D sphere and its lighting."
+  },
+  {
+    "id": "uranus",
+    "file": "illustrations/uranus.jpg",
+    "sha256": "cefe0a21bb253f9212f9e030a2abfa395994925ad2747f5c7273c51ddc4c8f2d",
+    "provenance": "AI-generated original artwork, 2026-09-08",
+    "prompt": "Use case: stylized-concept. One FLAT 2:1 EQUIRECTANGULAR TEXTURE MAP for a rotating 3D globe: Uranus: pale cyan softly banded atmosphere. Horizontal 2:1 aspect ratio, full surface edge to edge, seamless left/right wrap, poles top and bottom. Exquisite hand-painted gouache, watercolor and delicate colored pencil from a collectible celestial atlas, expressive brushwork, sophisticated pigment granulation, organic rich detail. Beautiful luminous palette appropriate to this planet. Uniform diffuse illumination, NO painted lighting, NO shadow. NO spherical shape, NO globe silhouette, NO empty background, NO stars, NO rings, no typography, no watermark. Every pixel contains the flat painted surface map. The renderer supplies the 3D sphere and its lighting."
+  },
+  {
+    "id": "neptune",
+    "file": "illustrations/neptune.jpg",
+    "sha256": "50b25eb7cc00aaf199724d92187c1a18c43eefff98758cceca14128bedf126b5",
+    "provenance": "AI-generated original artwork, 2026-09-08",
+    "prompt": "Use case: stylized-concept. One FLAT 2:1 EQUIRECTANGULAR TEXTURE MAP for a rotating 3D globe: Neptune: cobalt azure atmosphere, wispy white clouds and dark storm. Horizontal 2:1 aspect ratio, full surface edge to edge, seamless left/right wrap, poles top and bottom. Exquisite hand-painted gouache, watercolor and delicate colored pencil from a collectible celestial atlas, expressive brushwork, sophisticated pigment granulation, organic rich detail. Beautiful luminous palette appropriate to this planet. Uniform diffuse illumination, NO painted lighting, NO shadow. NO spherical shape, NO globe silhouette, NO empty background, NO stars, NO rings, no typography, no watermark. Every pixel contains the flat painted surface map. The renderer supplies the 3D sphere and its lighting."
+  },
+  {
+    "id": "sun",
+    "file": "illustrations/sun.jpg",
+    "sha256": "08392f56b74f0cdbc85db5f50e386534fc40c81cf57d883c880140341a130ee9",
+    "provenance": "AI-generated original artwork, 2026-09-08",
+    "prompt": "Use case: stylized-concept. One FLAT 2:1 EQUIRECTANGULAR TEXTURE MAP for a rotating 3D globe: Sun: amber orange plasma granulation, fiery detailed surface. Horizontal 2:1 aspect ratio, full surface edge to edge, seamless left/right wrap, poles top and bottom. Exquisite hand-painted gouache, watercolor and delicate colored pencil from a collectible celestial atlas, expressive brushwork, sophisticated pigment granulation, organic rich detail. Beautiful luminous palette appropriate to this planet. Uniform diffuse illumination, NO painted lighting, NO shadow. NO spherical shape, NO globe silhouette, NO empty background, NO stars, NO rings, no typography, no watermark. Every pixel contains the flat painted surface map. The renderer supplies the 3D sphere and its lighting."
+  },
+  {
+    "id": "moon",
+    "file": "illustrations/moon.jpg",
+    "sha256": "8b9eed53926ba78b7f55a6a0cbc40217b5f5a424b1ecb9e7c94eee933c54c295",
+    "provenance": "AI-generated original artwork, 2026-09-08",
+    "prompt": "Use case: stylized-concept. One FLAT 2:1 EQUIRECTANGULAR TEXTURE MAP for a rotating 3D globe: Earth's Moon: grey lunar maria, highlands and intricate craters. Horizontal 2:1 aspect ratio, full surface edge to edge, seamless left/right wrap, poles top and bottom. Exquisite hand-painted gouache, watercolor and delicate colored pencil from a collectible celestial atlas, expressive brushwork, sophisticated pigment granulation, organic rich detail. Beautiful luminous palette appropriate to this planet. Uniform diffuse illumination, NO painted lighting, NO shadow. NO spherical shape, NO globe silhouette, NO empty background, NO stars, NO rings, no typography, no watermark. Every pixel contains the flat painted surface map. The renderer supplies the 3D sphere and its lighting."
+  }
+]

@@ -1,5 +1,7 @@
 "use client";
 import React from "react";
+import { PlanetObject } from "./PlanetObject";
+import { isPlanetId, UNIVERSE_VERSION, type PlanetStyle } from "./universe";
 import { CelestialBody } from "../../../../components/bpm/CelestialBody";
 import { resolveModularObject, OBJECT_CATALOG_VERSION, type ModularObjectDefinition } from "./catalog";
 
@@ -13,6 +15,12 @@ export interface ModularObjectProps {
   angle?: number;
   color?: string;
   className?: string;
+  variant?: PlanetStyle;
+  playing?: boolean;
+  speed?: number;
+  interactive?: boolean;
+  assetBaseUrl?: string;
+  thumbnail?: boolean;
 }
 
 function Solid({ x = 0, y = 0, width = 100, height = 70, depth = 28, color }: {
@@ -59,11 +67,15 @@ function BuiltObject({ item, color }: { item: ModularObjectDefinition; color: st
   </g>;
 }
 
-/** Lightweight stylized object; no network, timer, randomness, global CSS or WebGL. */
-export function ModularObject({ id, version = OBJECT_CATALOG_VERSION, label, locale = "fr", size = 240, angle = 0, color, className }: ModularObjectProps) {
+/** Version 1 renders stable vectors; Universe version 2 renders interactive textured spheres. */
+export function ModularObject({ id, version = OBJECT_CATALOG_VERSION, label, locale = "fr", size = 240, angle = 0, color, className, variant="photorealistic",playing=true,speed=1,interactive=true,assetBaseUrl,thumbnail=false }: ModularObjectProps) {
+  if(version===UNIVERSE_VERSION&&isPlanetId(id)&&(variant==="photorealistic"||variant==="illustration")){
+    const definition=resolveModularObject(id)!;
+    return <span className={className} data-modular-object={`${id}@${version}`}><PlanetObject id={id} label={label??definition.name[locale]} size={size} angle={angle} style={variant} playing={playing} speed={speed} interactive={interactive} assetBaseUrl={assetBaseUrl} thumbnail={thumbnail}/></span>;
+  }
   const item = resolveModularObject(id, version);
   const safeSize = Number.isFinite(size) ? Math.max(48, Math.min(1000,size)) : 240;
-  if (!item) return <span role="status" data-object-unavailable={`${id}@${version}`}>{locale === "fr" ? "Objet indisponible" : "Object unavailable"}</span>;
+  if (!item || version===UNIVERSE_VERSION) return <span role="status" data-object-unavailable={`${id}@${version}`}>{locale === "fr" ? "Objet indisponible" : "Object unavailable"}</span>;
   const title = label ?? item.name[locale];
   // Reject URL paint servers and arbitrary CSS; the host may supply a hex theme token value.
   const paint = color && /^#[0-9a-f]{6}$/i.test(color) ? color : item.color;

@@ -4,6 +4,8 @@ import { afterEach, describe, expect, it, vi } from "vitest";
 vi.mock("@/lib/i18n/LocaleProvider", () => ({useI18n: () => ({locale:"fr"})}));
 import { ObjectsCatalogue } from "../../../components/site/ObjectsCatalogue";
 
+vi.mock("../../../components/site/ObjectContributions",()=>({ObjectContributions:()=>null}));
+vi.mock("../src/objects/PlanetObject",()=>({PlanetObject:({label}: {label:string})=><span role="img" aria-label={label}/> }));
 afterEach(cleanup);
 describe("Objets: real catalogue consumer", () => {
   it("selects a standard object and updates the actual rendering and pinned snippet", () => {
