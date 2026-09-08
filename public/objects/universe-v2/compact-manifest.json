@@ -1,0 +1,330 @@
+{
+  "encoding": "WebP quality 84, width <=1024; posters <=256. No image flip or geographic edit.",
+  "outputs": [
+    {
+      "path": "compact/callisto.webp",
+      "bytes": 132786,
+      "sha256": "57f606de0b1bc409fb8d9e6e342aabcb09084d31045f4375bf371a19b7b697c3"
+    },
+    {
+      "path": "compact/earth-clouds.webp",
+      "bytes": 140598,
+      "sha256": "dfe327142074ad8d24a39d5fbf7e0eddba24bc62c0891397ec8c3c7e10c9c3a0"
+    },
+    {
+      "path": "compact/earth.webp",
+      "bytes": 47560,
+      "sha256": "83538fd80d15179f021ce29c0f5e893bc6dd08bc56f9add1d3e286dd468d674b"
+    },
+    {
+      "path": "compact/enceladus.webp",
+      "bytes": 49396,
+      "sha256": "07596295bfea52bc21f10c0c9a5f30da589d98fa79b96393a7ec61baffbc8705"
+    },
+    {
+      "path": "compact/europa.webp",
+      "bytes": 63418,
+      "sha256": "96ba6079d8a9c54d30bfcaac273b9d686c39d0256fa6f5c6f71b60e63ef96562"
+    },
+    {
+      "path": "compact/ganymede.webp",
+      "bytes": 103404,
+      "sha256": "92caf3937e66c78612f0ed0940dee3f2a98c92a5cfc726d852ff83a24a78982b"
+    },
+    {
+      "path": "compact/illustrations/earth.webp",
+      "bytes": 155532,
+      "sha256": "2f75d079968b95d930339c5066c21a2d320b7a69cfc59341977e7cbc69f80189"
+    },
+    {
+      "path": "compact/illustrations/jupiter.webp",
+      "bytes": 123024,
+      "sha256": "ff66892f8ffa1ef79b8ea66f95c72cea5a828220ecdf6d218190fe4fb100de65"
+    },
+    {
+      "path": "compact/illustrations/mars.webp",
+      "bytes": 135282,
+      "sha256": "6e75b1f754320e04fa4d5b5e30e8c0921aa4557931bd89c6ca0dcd7992f7a27c"
+    },
+    {
+      "path": "compact/illustrations/mercury.webp",
+      "bytes": 197626,
+      "sha256": "d32ed87b61cc9f11a667411c25e4203c213879c5518ad3306fff0b4d641c33bd"
+    },
+    {
+      "path": "compact/illustrations/moon.webp",
+      "bytes": 169260,
+      "sha256": "5f5d608b1ca1bbdaf0a6daa96b120171f7cfa3adc8821a7575bd9ad20b082dba"
+    },
+    {
+      "path": "compact/illustrations/neptune.webp",
+      "bytes": 112572,
+      "sha256": "af0fced9bbef68eaa4600ccd5626d5a290c83d6934e6efce81711baff19eec94"
+    },
+    {
+      "path": "compact/illustrations/saturn.webp",
+      "bytes": 83580,
+      "sha256": "b32f01d8ee279cf4bf10dca813220c5347348c142131b654eec5f44010e5f5a0"
+    },
+    {
+      "path": "compact/illustrations/sun.webp",
+      "bytes": 180914,
+      "sha256": "74fa9774aade8a6c53b7e8fbe15300ffdbe2f6d752f8c931c5602c703a960525"
+    },
+    {
+      "path": "compact/illustrations/uranus.webp",
+      "bytes": 81726,
+      "sha256": "f4b5a334a30f2b81f4caf1e6ba4f5ea95f4e83151a900ab8bd31592bedace303"
+    },
+    {
+      "path": "compact/illustrations/venus.webp",
+      "bytes": 96496,
+      "sha256": "9b50594e86def2bc913503b555846476a6eeb9cddedb76d09d62262a7424c593"
+    },
+    {
+      "path": "compact/io.webp",
+      "bytes": 52982,
+      "sha256": "4d21a453ae3404e1b18c93601888abb15252b4ad27f52a6275949cac33452a5f"
+    },
+    {
+      "path": "compact/jupiter.webp",
+      "bytes": 45908,
+      "sha256": "4372350e5583880f4cc7898fbfee0111abdcd15d68377c0967899cee2b8d269b"
+    },
+    {
+      "path": "compact/mars.webp",
+      "bytes": 65938,
+      "sha256": "ded8bfd571964c13f70053f8ae87fcb1bb62307ad1a9b7969b79135edbd22756"
+    },
+    {
+      "path": "compact/mercury.webp",
+      "bytes": 104962,
+      "sha256": "6500edb936ab65c5396dd21c345d357c10b8be78ae8454b7d437f051df19aa84"
+    },
+    {
+      "path": "compact/moon.webp",
+      "bytes": 139010,
+      "sha256": "4d93db79c326e9f5d8a0bdb084690370cf4ea14c3f0e0dabc4641ce1314b5bcc"
+    },
+    {
+      "path": "compact/neptune.webp",
+      "bytes": 5760,
+      "sha256": "061977ddbded9d5a99f6c8599888a0720c11b554cf9e47428e0e5ed22b2bfa97"
+    },
+    {
+      "path": "compact/saturn.webp",
+      "bytes": 10882,
+      "sha256": "f8e5a827ee8c3f1c144e7511d9949a8e003365560a31d1c826c7ce6117956fc0"
+    },
+    {
+      "path": "compact/sun.webp",
+      "bytes": 93288,
+      "sha256": "8d6767be8cbd75f584851d51887559c89b44c3241c86e00fe63f1c08b3cc5f14"
+    },
+    {
+      "path": "compact/titan.webp",
+      "bytes": 1762,
+      "sha256": "353a1fef815b930c9ff3e25e61c858360e16ccc0c74b2f720a998dafbe36e99e"
+    },
+    {
+      "path": "compact/titania.webp",
+      "bytes": 19896,
+      "sha256": "3bd641ef88e4aaf41e528ad473b461d850ce15598c57dfd12ffb878501a49ab3"
+    },
+    {
+      "path": "compact/triton.webp",
+      "bytes": 25350,
+      "sha256": "ee952d91a09fe533db712881f509200bee34395999388ef36af1570b7aad723d"
+    },
+    {
+      "path": "compact/uranus.webp",
+      "bytes": 2422,
+      "sha256": "b8b6b2877a81e4e4ad3a2dcd254727114625131bd98ed3e35332c8b94ffcb3fe"
+    },
+    {
+      "path": "compact/venus.webp",
+      "bytes": 14208,
+      "sha256": "177966e7dd079e131db50ccfb5e0f73035f9ba6e7129b8f48ffe17acbad9eabf"
+    },
+    {
+      "path": "previews/callisto-illustration.webp",
+      "bytes": 9762,
+      "sha256": "df0844a3602b8a2e968fba01de5cdc4f1a75aeed365a9381b950fb361ea3aaee"
+    },
+    {
+      "path": "previews/callisto-photorealistic.webp",
+      "bytes": 8696,
+      "sha256": "6eca22a74e8f1eb961c6f484c2a4495bc97498d0dd9a20e2a8718f780f39b172"
+    },
+    {
+      "path": "previews/earth-illustration.webp",
+      "bytes": 18910,
+      "sha256": "ff19586aca9b1281d60e52fa7ad87ea7a914d91c2e50660e1f1b1a881af26ad1"
+    },
+    {
+      "path": "previews/earth-photorealistic.webp",
+      "bytes": 16898,
+      "sha256": "8be7a5a120510f8cc1b05f58de23b22b5d5dca362d9da4bff559001cb9f3217d"
+    },
+    {
+      "path": "previews/enceladus-illustration.webp",
+      "bytes": 8292,
+      "sha256": "2e42fbb2ed7d0ba98b56e159a162dfadaf85f6564ee6b065136aec471c4a92f8"
+    },
+    {
+      "path": "previews/enceladus-photorealistic.webp",
+      "bytes": 6388,
+      "sha256": "360485074465fd674d3ad054f0aec111b83721431ad9cecc8f29a4749029ffbb"
+    },
+    {
+      "path": "previews/europa-illustration.webp",
+      "bytes": 8754,
+      "sha256": "12c9161898cbe996be1287ca9a2e152360de0690a972f7af4bc9229531751965"
+    },
+    {
+      "path": "previews/europa-photorealistic.webp",
+      "bytes": 7434,
+      "sha256": "a530848fc95e5b855cee70d4dd45b2e3c7ae48cca84bce475c8577ddf66bc201"
+    },
+    {
+      "path": "previews/ganymede-illustration.webp",
+      "bytes": 8922,
+      "sha256": "8d3040514808d7174add14f614839cd653d318be02586695cd63e5118af5b981"
+    },
+    {
+      "path": "previews/ganymede-photorealistic.webp",
+      "bytes": 7864,
+      "sha256": "85d97dcdf996e2843baad359ca622f3721bd6c3590315c1caade9a40ff826b45"
+    },
+    {
+      "path": "previews/io-illustration.webp",
+      "bytes": 8166,
+      "sha256": "9e9814ee6b7440a59787f67e76697f39a3fc41355f7c291b02f74275a0e32f06"
+    },
+    {
+      "path": "previews/io-photorealistic.webp",
+      "bytes": 6606,
+      "sha256": "ac2e45f9ca511843d7a82d377d78c6c0f98f18984829fe2e3984f6fcb562170f"
+    },
+    {
+      "path": "previews/jupiter-illustration.webp",
+      "bytes": 13136,
+      "sha256": "96f8e06938a2431480fd08ae7dbad4e4af31b3045dd3b506fb38dd1033e833e9"
+    },
+    {
+      "path": "previews/jupiter-photorealistic.webp",
+      "bytes": 9828,
+      "sha256": "b649c18812832a908c30cd9b7403636c48e9013554288494a62b411f785bfbe1"
+    },
+    {
+      "path": "previews/mars-illustration.webp",
+      "bytes": 12584,
+      "sha256": "d15b58b3fe3334e5d15a7af9966de64801daeb74d0c298e5139f2ed069266d2b"
+    },
+    {
+      "path": "previews/mars-photorealistic.webp",
+      "bytes": 9972,
+      "sha256": "01997fa12ce2069e91b93f437e727c65ee30828236340bbba530a0d8c9a1aae1"
+    },
+    {
+      "path": "previews/mercury-illustration.webp",
+      "bytes": 11882,
+      "sha256": "dbc8afa9d737fdeb02ae9ffd2d1977d1de51c7c1a56b4e6368f1b05d367ec444"
+    },
+    {
+      "path": "previews/mercury-photorealistic.webp",
+      "bytes": 6750,
+      "sha256": "661538101a976aa58dec13dd6d95fc51e028e9ee320b0a98dc150aa48588ff16"
+    },
+    {
+      "path": "previews/moon-illustration.webp",
+      "bytes": 10756,
+      "sha256": "415530669345a3900df83f6ece17ffd88b6a91e3271e4107528c0670ec7b94cc"
+    },
+    {
+      "path": "previews/moon-photorealistic.webp",
+      "bytes": 8662,
+      "sha256": "f57b7d28495b4a8170328041f348e0f159b9ce8cf49423c2fe4d08ca84b5c5a6"
+    },
+    {
+      "path": "previews/neptune-illustration.webp",
+      "bytes": 13440,
+      "sha256": "69878d9e1ba839ae7de247dbf8fa8713be4e75304e02dd1aaa5a7882acbc5060"
+    },
+    {
+      "path": "previews/neptune-photorealistic.webp",
+      "bytes": 7514,
+      "sha256": "ec8c0f69f8bf3105dcf652b59b2c6366b638805495cf53597e3ba5b474ca7bc9"
+    },
+    {
+      "path": "previews/saturn-illustration.webp",
+      "bytes": 12590,
+      "sha256": "4633bd970fee5f8e2916f503e0d71b28645324c49db42561cab92cb423a4a1b3"
+    },
+    {
+      "path": "previews/saturn-photorealistic.webp",
+      "bytes": 11616,
+      "sha256": "448aa37f93c159199df95bebeefe49a4430635358dd7145779f91d5d3376589f"
+    },
+    {
+      "path": "previews/sun-illustration.webp",
+      "bytes": 23810,
+      "sha256": "73555bd07ffabc12f32a06a738b96cfab69d8e23f77c4390487974f4aa59b97a"
+    },
+    {
+      "path": "previews/sun-photorealistic.webp",
+      "bytes": 19390,
+      "sha256": "751148cd645d0ab08934a3a51679b7b16db0336267e26f3eafb4eb92b3bea41c"
+    },
+    {
+      "path": "previews/titan-illustration.webp",
+      "bytes": 8050,
+      "sha256": "4e41d832b31f134f748b1969f3cd091d0a62f817a3b45fc34cf180bc7e4d4b2d"
+    },
+    {
+      "path": "previews/titan-photorealistic.webp",
+      "bytes": 8098,
+      "sha256": "743a3da9bb9dc84d57a65fca72363680af12d01e885f03605f62ee3dd1c1338f"
+    },
+    {
+      "path": "previews/titania-illustration.webp",
+      "bytes": 5772,
+      "sha256": "555dc4d6833ec7a35714349a16ad132a05b4bf4cc758399a7d06166e22389e64"
+    },
+    {
+      "path": "previews/titania-photorealistic.webp",
+      "bytes": 4438,
+      "sha256": "80c8321483782b00a79cd2e0dd225a4cfa5ebbe9bc874a5b7f8fb4f494f3a32d"
+    },
+    {
+      "path": "previews/triton-illustration.webp",
+      "bytes": 6564,
+      "sha256": "b2f48ae8f3485482b3f97c05bb92260c9cf95a57cc4d6945b6de79981e1694ad"
+    },
+    {
+      "path": "previews/triton-photorealistic.webp",
+      "bytes": 5288,
+      "sha256": "a387e3b8a83197879b4d891452b104b1eeff3b0dd397303f5d7063154e8cbc1b"
+    },
+    {
+      "path": "previews/uranus-illustration.webp",
+      "bytes": 12926,
+      "sha256": "45d7c2097b5463b594c0efafdadad30de6771b9728544df1bbe0ae8f06087867"
+    },
+    {
+      "path": "previews/uranus-photorealistic.webp",
+      "bytes": 8584,
+      "sha256": "c193c9dd51b831bc28fc2b0cb361bdf491c4eb1695b0cfe496d4c69f4a1ff86a"
+    },
+    {
+      "path": "previews/venus-illustration.webp",
+      "bytes": 14454,
+      "sha256": "144dfae152764c6bc1070574dbb7e02a118ceb71e55da4cb07c8162d71424beb"
+    },
+    {
+      "path": "previews/venus-photorealistic.webp",
+      "bytes": 9730,
+      "sha256": "50a86c90ae83ac4a70dca4b3551f251a8f2e576d3341ad7870c0d188bfd97fdf"
+    }
+  ]
+}

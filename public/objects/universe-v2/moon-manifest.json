@@ -1,0 +1,102 @@
+{
+  "repository": "nasa/NASA-3D-Resources",
+  "revision": "11ebb4ee043715aefbba6aeec8a61746fad67fa7",
+  "maps": [
+    {
+      "id": "io",
+      "mode": "100644",
+      "path": "Images and Textures/Jupiter - Io (A)/Jupiter - Io (A).jpg",
+      "sha": "cf8c4e6f68f3e855a8cdac8af564f6e94e70f804",
+      "size": 702001,
+      "type": "blob",
+      "sourceSha256": "fdd79a58331864ec1f93035b3ebb92767b01715d2ce75d5b73cf8537b6af3382",
+      "source": "https://github.com/nasa/NASA-3D-Resources/blob/11ebb4ee043715aefbba6aeec8a61746fad67fa7/Images and Textures/Jupiter - Io (A)/Jupiter - Io (A).jpg"
+    },
+    {
+      "id": "europa",
+      "mode": "100644",
+      "path": "Images and Textures/Jupiter - Europa/Jupiter - Europa.jpg",
+      "sha": "14ce864501a9fe32850427eee9e57c971ada81c7",
+      "size": 610862,
+      "type": "blob",
+      "sourceSha256": "50d01ca5c01352d1c507bb17fefd1c46ba11260305656250062c6cdac89c8ebf",
+      "source": "https://github.com/nasa/NASA-3D-Resources/blob/11ebb4ee043715aefbba6aeec8a61746fad67fa7/Images and Textures/Jupiter - Europa/Jupiter - Europa.jpg"
+    },
+    {
+      "id": "ganymede",
+      "mode": "100644",
+      "path": "Images and Textures/Jupiter - Ganymede/Jupiter - Ganymede.jpg",
+      "sha": "f4963a643ae873fad788461236108264984da364",
+      "size": 710923,
+      "type": "blob",
+      "sourceSha256": "1aa9d5a6f20e72230c13ce3d78592fc056e22f1e1ee39ea7acfa7e08d09fe173",
+      "source": "https://github.com/nasa/NASA-3D-Resources/blob/11ebb4ee043715aefbba6aeec8a61746fad67fa7/Images and Textures/Jupiter - Ganymede/Jupiter - Ganymede.jpg"
+    },
+    {
+      "id": "callisto",
+      "mode": "100644",
+      "path": "Images and Textures/Jupiter - Callisto/Jupiter - Callisto.jpg",
+      "sha": "9c72ce6243a821e9288d6ebf080730af850c15c4",
+      "size": 783405,
+      "type": "blob",
+      "sourceSha256": "b9f4fa5db94debabd12814853fd132db3449889646a490b6f95a897b2c47b121",
+      "source": "https://github.com/nasa/NASA-3D-Resources/blob/11ebb4ee043715aefbba6aeec8a61746fad67fa7/Images and Textures/Jupiter - Callisto/Jupiter - Callisto.jpg"
+    },
+    {
+      "id": "titan",
+      "mode": "100644",
+      "path": "Images and Textures/Saturn - Titan/Saturn - Titan.jpg",
+      "sha": "09385f16f8781f1b9393c42244edf035d5622454",
+      "size": 49233,
+      "type": "blob",
+      "sourceSha256": "a213516e3ccbe46bfbdb576963859c82c75799612ccab775ec3cf24b451feca0",
+      "source": "https://github.com/nasa/NASA-3D-Resources/blob/11ebb4ee043715aefbba6aeec8a61746fad67fa7/Images and Textures/Saturn - Titan/Saturn - Titan.jpg"
+    },
+    {
+      "id": "enceladus",
+      "mode": "100644",
+      "path": "Images and Textures/Saturn - Enceladus/Saturn - Enceladus.jpg",
+      "sha": "7083248dc7b2b92bd5e416c1961901f48098c613",
+      "size": 472211,
+      "type": "blob",
+      "sourceSha256": "4e16d38b98b788468e4f005b56d04282ccfe2f086eebfb1c0e5d20d8fd65ebef",
+      "source": "https://github.com/nasa/NASA-3D-Resources/blob/11ebb4ee043715aefbba6aeec8a61746fad67fa7/Images and Textures/Saturn - Enceladus/Saturn - Enceladus.jpg"
+    },
+    {
+      "id": "titania",
+      "mode": "100644",
+      "path": "textures/medres/titania.jpg",
+      "sha": "075840d85de08cc86337e9744f8615c9761f6f44",
+      "size": 144401,
+      "type": "blob",
+      "sourceSha256": "55aea8ea3666fffb1cd39d89c7b453f300e04e6c00f5aab0f11476bc1ab14301",
+      "source": "https://github.com/CelestiaProject/CelestiaContent/blob/1993a082ee6307c0df7fdc0828eb117a0e8e9958/textures/medres/titania.jpg",
+      "licenseText": "SPDX-FileCopyrightText: 2025-2026 ItzImcool\nSPDX-FileCopyrightText: 2020 Paul Schenk\nSPDX-FileCopyrightText: NASA / JPL / Ted Stryk\n\nSPDX-License-Identifier: CC-BY-SA-4.0\n",
+      "repository": "CelestiaProject/CelestiaContent",
+      "revision": "1993a082ee6307c0df7fdc0828eb117a0e8e9958",
+      "sourceFile": "celestia-titania.jpg",
+      "license": "CC-BY-SA-4.0",
+      "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0/",
+      "changes": "WebP recompression without flips. Original map contains reconstructed or uniform unobserved areas. Derived texture and both rendered posters retain the stated source license."
+    },
+    {
+      "id": "triton",
+      "mode": "100644",
+      "path": "textures/hires/triton.jpg",
+      "sha": "5765a4b10e4be82655140a4c79f285102f50be46",
+      "size": 662510,
+      "type": "blob",
+      "sourceSha256": "0b1a0fbbd14a0f06fb4593f73abff9f3516397aef95895211b1926090854e4d8",
+      "source": "https://github.com/CelestiaProject/CelestiaContent/blob/1993a082ee6307c0df7fdc0828eb117a0e8e9958/textures/hires/triton.jpg",
+      "licenseText": "SPDX-FileCopyrightText: 2018 Askaniy Anpilogov\nSPDX-FileCopyrightText: NASA/JPL-Caltech/ASI/USGS\n\nSPDX-License-Identifier: CC-BY-3.0\n",
+      "repository": "CelestiaProject/CelestiaContent",
+      "revision": "1993a082ee6307c0df7fdc0828eb117a0e8e9958",
+      "sourceFile": "celestia-triton.jpg",
+      "license": "CC-BY-3.0",
+      "licenseUrl": "https://creativecommons.org/licenses/by/3.0/",
+      "changes": "WebP recompression without flips. Original map contains reconstructed or uniform unobserved areas. Derived texture and both rendered posters retain the stated source license."
+    }
+  ],
+  "credit": "Six NASA 3D Resources maps under NASA media guidelines; Titania and Triton from CelestiaContent with individual CC licenses and full credits below. No endorsement.",
+  "changes": "Recompressed to WebP at <=1024px, no flips. Photor\u00e9aliste: illuminated map. Dessin: same credited source map with procedural paper and quantised lighting, not a separately painted map. Presentation rotation, not an ephemeris; maps include reconstructed and lower-resolution regions."
+}

@@ -2,7 +2,7 @@
 import React, { useMemo, useState } from "react";
 import { Box, Copy, Download, Pause, Play, RotateCcw, Search } from "lucide-react";
 import { useI18n } from "@/lib/i18n/LocaleProvider";
-import { ModularObject, MODULAR_OBJECTS, resolveModularObject, searchModularObjects, isPlanetId, UNIVERSE_VERSION, UNIVERSE_PROVENANCE, type PlanetStyle, type ObjectFamily } from "../../packages/core/src/objects";
+import { ModularObject, DISCOVERABLE_OBJECTS, resolveModularObject, searchModularObjects, isPlanetId, UNIVERSE_VERSION, planetProvenance, type PlanetStyle, type ObjectFamily } from "../../packages/core/src/objects";
 import { CatalogueHero } from "./CatalogueLayout";
 import { ObjectContributions } from "./ObjectContributions";
 import styles from "./ObjectsCatalogue.module.css";
@@ -17,14 +17,14 @@ export function ObjectsCatalogue(){
  const [angle,setAngle]=useState(0),[size,setSize]=useState(360),[motion,setMotion]=useState(true),[speed,setSpeed]=useState(1),[variant,setVariant]=useState<PlanetStyle>("photorealistic");
  const [copyState,setCopyState]=useState<"idle"|"done"|"error"|"download">("idle");
  const items=useMemo(()=>searchModularObjects(query,family),[query,family]);
- const item=resolveModularObject(selected)!,planet=isPlanetId(selected),version=planet?UNIVERSE_VERSION:item.version;
+ const planet=isPlanetId(selected),item=resolveModularObject(selected,planet?UNIVERSE_VERSION:"1.0.0")!,version=item.version,provenance=planetProvenance(selected);
  const code=`import { ModularObject } from '@blueprint-modular/core/objects';\n\n<ModularObject id="${selected}" version="${version}"\n  locale="${locale}" size={${size}} angle={${angle}}${planet?`\n  variant="${variant}" playing={${motion}} speed={${speed}}`:""} />`;
  const choose=(id:string)=>{setSelected(id);setAngle(0);setCopyState("idle");};
  async function copy(){try{await navigator.clipboard.writeText(code);setCopyState("done");}catch{setCopyState("error");}}
  function download(){const data=planet?{schemaVersion:1,kind:"modular-object",id:selected,version:UNIVERSE_VERSION,style:variant,animation:{playing:motion,speed}}:{schemaVersion:1,kind:"modular-object",id:selected,version:"1.0.0",style:"vector",animation:{playing:false,speed:1}};
   const url=URL.createObjectURL(new Blob([JSON.stringify(data,null,2)],{type:"application/json"}));const a=document.createElement("a");a.href=url;a.download=`${selected}-${data.style}.modular.json`;a.click();setTimeout(()=>URL.revokeObjectURL(url),1000);setCopyState("download");}
  return <>
-  <CatalogueHero eyebrow="CATALOGUE" title={S.title} lead={S.intro} meta={`${MODULAR_OBJECTS.length} ${S.count}`}/>
+  <CatalogueHero eyebrow="CATALOGUE" title={S.title} lead={S.intro} meta={`${DISCOVERABLE_OBJECTS.length} ${S.count}`}/>
   <section className="site-section site-section-bordered"><div className="site-container"><div className={styles.page}>
   <div className={styles.filters}><div className={styles.tabs} role="group" aria-label={S.title}>{([undefined,...families] as const).map(f=><button type="button" key={f??"all"} aria-pressed={family===f} onClick={()=>setFamily(f)}>{f?S[f]:S.all}</button>)}</div><label className={styles.search}><Search size={18}/><input aria-label={S.search} placeholder={S.search} value={query} onChange={e=>setQuery(e.target.value)}/></label></div>
   <section className={styles.studio} aria-label={S.controls}>
@@ -39,12 +39,12 @@ export function ObjectsCatalogue(){
     <label className={styles.range}>{S.size}<output>{size}px</output><input aria-label={S.size} type="range" min="160" max="420" step="10" value={size} onChange={e=>{setSize(Number(e.target.value));setCopyState("idle");}}/></label>
     <div className={styles.actions}><button type="button" onClick={download}><Download size={18}/>{S.download}</button><button type="button" aria-label={S.reset} onClick={()=>{setAngle(0);setSize(360);setSpeed(1);setMotion(true);setCopyState("idle");}}><RotateCcw size={18}/></button></div>
     <p className={styles.note} role="status">{copyState==="download"?S.downloadHint:copyState==="error"?S.copyError:copyState==="done"?S.copied:planet?S.art:S.vector}</p>
-    {planet&&<a className={styles.credit} href={UNIVERSE_PROVENANCE.source} target="_blank" rel="noreferrer">{S.source}</a>}
+    {planet&&<a className={styles.credit} href={provenance.source} target="_blank" rel="noreferrer">{item.parent&&provenance.license!=="LicenseRef-NASA-Media"?`${provenance.author} · ${provenance.license}`:item.parent?(locale==="en"?"Source textures: NASA · usage guidelines":"Textures sources : NASA · conditions d’utilisation"):S.source}</a>}
    </div>
   </section>
   <details className={styles.code}><summary>{S.code}</summary><pre><code>{code}</code></pre><button type="button" onClick={copy}><Copy size={16}/>{S.copy}</button></details>
-  <p className={styles.count} role="status">{items.length} / {MODULAR_OBJECTS.length} {S.count}</p>
-  {families.map(f=>{const group=items.filter(o=>o.family===f);return group.length>0&&<section key={f} className={styles.collection} aria-label={S[f]}><div className={styles.collectionHeading}><h2>{S[f]}</h2><span>{group.length} {S.count}</span></div>
+  <p className={styles.count} role="status">{items.length} / {DISCOVERABLE_OBJECTS.length} {S.count}</p>
+  {[{family:"space" as const,parent:undefined},...(["jupiter","saturn","uranus","neptune"] as const).map(parent=>({family:"space" as const,parent})),...families.filter(f=>f!=="space").map(family=>({family,parent:undefined}))].map(({family:f,parent})=>{const group=items.filter(o=>o.family===f&&o.parent===parent),heading=parent?`${S.space} · ${locale==="en"?"Moons of ":parent==="uranus"?"Lunes d’":"Lunes de "}${resolveModularObject(parent)!.name[locale]}`:S[f];return group.length>0&&<section key={parent??f} className={styles.collection} aria-label={heading}><div className={styles.collectionHeading}><h2>{heading}</h2><span>{group.length} {S.count}</span></div>
    <div className={styles.grid}>{group.map(o=><button type="button" className={styles.card} key={o.id} aria-pressed={o.id===selected} aria-label={o.name[locale]} onClick={()=>choose(o.id)}>
     <div className={`${styles.thumbnail} ${f==="space"?styles.cosmic:""}`}><ModularObject id={o.id} version={f==="space"?UNIVERSE_VERSION:o.version} variant={variant} locale={locale} size={220} thumbnail/></div>
     <span className={styles.cardName}>{o.name[locale]}<Box size={16}/></span><span className={styles.cardMeta}>{f==="space"?`${S[variant]} · 360°`:S[f]}</span></button>)}</div></section>;})}

@@ -6,7 +6,7 @@ export const PLANET_FRAGMENT = `
 precision highp float;
 varying vec2 uv;
 uniform sampler2D surfaceMap, cloudsMap, ringMap;
-uniform float rotation, tilt, pitch, ringed, atmosphere, star, earth, illustrated;
+uniform float rotation, tilt, pitch, ringed, atmosphere, star, earth, illustrated, activity, time;
 uniform vec3 atmosphereColor;
 const float PI=3.14159265359;
 mat3 rx(float a){float c=cos(a),s=sin(a);return mat3(1.,0.,0.,0.,c,s,0.,-s,c);}
@@ -28,7 +28,11 @@ void main(){
    sphereT=4.-normal.z;
    vec3 n=orient*normal;
    vec2 st=sphereUV(n,rotation);
-   vec3 tex=texture2D(surfaceMap,st).rgb;
+   // Bounded latitude-dependent flow in gas/cloud envelopes; terrain stays rigid.
+   vec2 moving=st;
+   if(activity==2.)moving.x=fract(st.x+.014*sin(st.y*55.)*sin(time*.05));
+   vec3 tex=texture2D(surfaceMap,moving).rgb;
+   if(activity==3.)tex*=.98+.02*sin(time*.3+st.x*31.4159265+st.y*16.);
    float diffuse=max(dot(normal,light),0.);
    float lighting=.12+.95*pow(diffuse,.8);
    if(illustrated>.5){
@@ -42,7 +46,9 @@ void main(){
    }
    color=tex*mix(lighting,1.15,star);
    if(earth>.5){
-     float clouds=texture2D(cloudsMap,sphereUV(n,rotation*1.045+.015)).r;
+     vec2 cloudUV=sphereUV(n,rotation*1.045+.015);
+     if(activity==1.)cloudUV.x=fract(cloudUV.x+time*.0008+.003*sin(time*.12)*sin(st.y*20.));
+     float clouds=texture2D(cloudsMap,cloudUV).r;
      clouds=smoothstep(.12,.85,clouds)*.86;
      color=mix(color,vec3(.92,.96,1.)*lighting,clouds);
      float ocean=step(tex.r*1.15,tex.b)*step(tex.g*.9,tex.b);
@@ -77,9 +83,9 @@ void main(){
  gl_FragColor=vec4(color,alpha);
 }`;
 
-export interface PlanetFrame { rotation: number; tilt: number; pitch: number; illustrated: boolean }
+export interface PlanetFrame { rotation: number; tilt: number; pitch: number; illustrated: boolean; time?: number }
 export function createPlanetRenderer(canvas: HTMLCanvasElement, config: {
-  surface: string; clouds?: string; rings?: string; atmosphere: readonly number[]; star: boolean;
+  surface: string; clouds?: string; rings?: string; atmosphere: readonly number[]; star: boolean; activity?: number;
 }) {
   const gl = canvas.getContext("webgl", { alpha: true, antialias: true, premultipliedAlpha: false, powerPreference: "low-power", preserveDrawingBuffer: true });
   if (!gl) throw new Error("WebGL unavailable");
@@ -98,7 +104,9 @@ export function createPlanetRenderer(canvas: HTMLCanvasElement, config: {
     gl.useProgram(program);gl.bindBuffer(gl.ARRAY_BUFFER,buffer);
     gl.bufferData(gl.ARRAY_BUFFER,new Float32Array([-1,-1,1,-1,-1,1,-1,1,1,-1,1,1]),gl.STATIC_DRAW);
     const position=gl.getAttribLocation(program,"position");gl.enableVertexAttribArray(position);gl.vertexAttribPointer(position,2,gl.FLOAT,false,0,0);
-    const u=(name:string)=>gl.getUniformLocation(program,name);
+    const locations=new Map<string,WebGLUniformLocation|null>();
+    const u=(name:string)=>{if(!locations.has(name))locations.set(name,gl.getUniformLocation(program,name));return locations.get(name)!;};
+    gl.uniform1f(u("activity"),config.activity??0);
     gl.uniform1f(u("ringed"),config.rings?1:0);gl.uniform1f(u("earth"),config.clouds?1:0);gl.uniform1f(u("star"),config.star?1:0);
     gl.uniform1f(u("atmosphere"),config.atmosphere.some(x=>x>0)?1:0);gl.uniform3fv(u("atmosphereColor"),new Float32Array(config.atmosphere));
     const ready=Promise.all([config.surface,config.clouds,config.rings].map((url,index)=>new Promise<void>((resolve,reject)=>{
@@ -114,7 +122,7 @@ export function createPlanetRenderer(canvas: HTMLCanvasElement, config: {
     })));
     return {ready,dispose,draw(frame:PlanetFrame){
       if(disposed)return;gl.viewport(0,0,canvas.width,canvas.height);gl.useProgram(program);
-      gl.uniform1f(u("rotation"),frame.rotation);gl.uniform1f(u("tilt"),frame.tilt);gl.uniform1f(u("pitch"),frame.pitch);gl.uniform1f(u("illustrated"),frame.illustrated?1:0);
+      gl.uniform1f(u("time"),frame.time??0);gl.uniform1f(u("rotation"),frame.rotation);gl.uniform1f(u("tilt"),frame.tilt);gl.uniform1f(u("pitch"),frame.pitch);gl.uniform1f(u("illustrated"),frame.illustrated?1:0);
       gl.clearColor(0,0,0,0);gl.clear(gl.COLOR_BUFFER_BIT);gl.drawArrays(gl.TRIANGLES,0,6);
     }};
   }catch(error){dispose();throw error;}

@@ -1,7 +1,7 @@
 import React from "react";
 import { describe, expect, it } from "vitest";
 import { renderToStaticMarkup } from "react-dom/server";
-import { MODULAR_OBJECTS, resolveModularObject, searchModularObjects, ModularObject } from "../src/objects";
+import { MODULAR_OBJECTS, MOON_OBJECTS, DISCOVERABLE_OBJECTS, planetProvenance, resolveModularObject, searchModularObjects, ModularObject } from "../src/objects";
 
 describe("versioned reusable objects", () => {
   it("contains twenty distinct immutable definitions, including all eight planets", () => {
@@ -40,4 +40,18 @@ describe("versioned reusable objects", () => {
     expect(markup).toContain("&lt;script&gt;");
     expect(renderToStaticMarkup(<ModularObject id="house" angle={30}/>)).not.toEqual(renderToStaticMarkup(<ModularObject id="house" angle={0}/>));
   });
+});
+
+it("discovers new moons under their parent without inventing v1 versions",()=>{
+ expect(DISCOVERABLE_OBJECTS).toHaveLength(28);expect(MOON_OBJECTS).toHaveLength(8);
+ for(const moon of MOON_OBJECTS){expect(resolveModularObject(moon.id,"2.0.0")).toBe(moon);expect(resolveModularObject(moon.id,"1.0.0")).toBeUndefined();expect(moon.parent).toBeTruthy();
+  expect(renderToStaticMarkup(<ModularObject id={moon.id} version="2.0.0" thumbnail/>)).toContain(`${moon.id}-photorealistic.webp`);}
+ expect(searchModularObjects("jupiter").filter(o=>o.parent==="jupiter")).toHaveLength(4);
+});
+
+it("preserves the distinct redistribution licenses of the imported maps",()=>{
+ expect(planetProvenance("titania").license).toBe("CC-BY-SA-4.0");
+ expect(planetProvenance("triton").license).toBe("CC-BY-3.0");
+ expect(planetProvenance("europa").license).toBe("LicenseRef-NASA-Media");
+ expect(resolveModularObject("titania","2.0.0")?.license).toBe("CC-BY-SA-4.0");
 });

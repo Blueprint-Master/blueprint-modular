@@ -70,7 +70,7 @@ function BuiltObject({ item, color }: { item: ModularObjectDefinition; color: st
 /** Version 1 renders stable vectors; Universe version 2 renders interactive textured spheres. */
 export function ModularObject({ id, version = OBJECT_CATALOG_VERSION, label, locale = "fr", size = 240, angle = 0, color, className, variant="photorealistic",playing=true,speed=1,interactive=true,assetBaseUrl,thumbnail=false }: ModularObjectProps) {
   if(version===UNIVERSE_VERSION&&isPlanetId(id)&&(variant==="photorealistic"||variant==="illustration")){
-    const definition=resolveModularObject(id)!;
+    const definition=resolveModularObject(id,version)!;
     return <span className={className} data-modular-object={`${id}@${version}`}><PlanetObject id={id} label={label??definition.name[locale]} size={size} angle={angle} style={variant} playing={playing} speed={speed} interactive={interactive} assetBaseUrl={assetBaseUrl} thumbnail={thumbnail}/></span>;
   }
   const item = resolveModularObject(id, version);
