@@ -33,7 +33,8 @@ export function createCanvasPlanetRenderer(canvas:HTMLCanvasElement,config:{surf
    if(rr<=1){
     const z=Math.sqrt(1-rr),n=orient(px,py,z);sphereT=4-z;
     const u=Math.atan2(n[2],n[0])/(2*Math.PI)+.5,v=Math.acos(Math.max(-1,Math.min(1,n[1])))/Math.PI;
-    let tex=sample(surface!,u+frame.rotation,v),diffuse=Math.max(0,px*light[0]+py*light[1]+z*light[2]);
+    let tex=sample(surface!,u+frame.rotation,v);
+    const diffuse=Math.max(0,px*light[0]+py*light[1]+z*light[2]);
     let lighting=.12+.95*Math.pow(diffuse,.8);
     if(frame.illustrated){const lum=tex[0]*.299+tex[1]*.587+tex[2]*.114;const paper=(Math.sin(Math.floor(u*1600)*127.1+Math.floor(v*1600)*311.7)*43758.5453)%1;
      tex=tex.map((c,i)=>((lum+(c-lum)*1.22)*.88+[1,.91,.75][i%3]*.12)*(.94+.12*Math.abs(paper)));
