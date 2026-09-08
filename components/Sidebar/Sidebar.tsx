@@ -5,7 +5,7 @@ import Image from "next/image";
 import { usePathname } from "next/navigation";
 import { useSession, signOut } from "next-auth/react";
 import { useTheme } from "@/components/ThemeProvider";
-import { Sun } from "lucide-react";
+import { Sun, Box } from "lucide-react";
 import { useState } from "react";
 import { SandboxIcon } from "@/components/icons/SandboxIcon";
 import { useSidebar } from "@/contexts/SidebarContext";
@@ -84,6 +84,7 @@ function IconSidebarChevronRight() {
 const SIDEBAR_FR = {
   accueil: "Accueil",
   composants: "Composants",
+  objets: "Objets",
   modules: "Modules",
   connecteurs: "Connecteurs",
   sandbox: "Sandbox",
@@ -101,6 +102,7 @@ const SIDEBAR_STRINGS: Record<Locale, typeof SIDEBAR_FR> = {
   en: {
     accueil: "Home",
     composants: "Components",
+    objets: "Objects",
     modules: "Modules",
     connecteurs: "Connectors",
     sandbox: "Sandbox",
@@ -115,10 +117,11 @@ const SIDEBAR_STRINGS: Record<Locale, typeof SIDEBAR_FR> = {
   },
 };
 
-type NavKey = "accueil" | "composants" | "modules" | "connecteurs" | "sandbox" | "demo";
+type NavKey = "accueil" | "composants" | "objets" | "modules" | "connecteurs" | "sandbox" | "demo";
 const navItems: { href: string; key: NavKey; icon: React.ElementType }[] = [
   { href: "/dashboard", key: "accueil", icon: IconAccueil },
   { href: "/composants", key: "composants", icon: IconComposants },
+  { href: "/objets", key: "objets", icon: Box },
   { href: "/modules", key: "modules", icon: IconModules },
   { href: "/connecteurs", key: "connecteurs", icon: IconConnecteurs },
   { href: "/sandbox", key: "sandbox", icon: SandboxIcon },
@@ -148,7 +151,8 @@ export function Sidebar() {
     return (
       <Link
         href={href}
-        className={`bpm-sidebar-item ${compact ? "flex-col gap-0.5 py-2 min-w-0 rounded-lg flex-1 basis-0 justify-center items-center" : ""}`}
+        className={`bpm-sidebar-item ${compact ? "flex-col gap-0.5 py-2 min-w-[64px] rounded-lg flex-1 basis-0 justify-center items-center" : ""}`}
+        aria-current={isActive ? "page" : undefined}
         style={compact ? undefined : { background: isActive ? "var(--bpm-sidebar-active-bg)" : "transparent" }}
         title={compact ? label : undefined}
       >
@@ -164,7 +168,7 @@ export function Sidebar() {
   const mobileNavBar = (
     <aside
       aria-label={S.mobileNav}
-      className="fixed left-0 right-0 bottom-0 z-40 md:hidden flex flex-row items-stretch border-t pb-[env(safe-area-inset-bottom,0)] pt-2 bpm-mobile-nav-bar"
+      className="fixed left-0 right-0 bottom-0 z-40 md:hidden flex flex-row items-stretch overflow-x-auto border-t pb-[env(safe-area-inset-bottom,0)] pt-2 bpm-mobile-nav-bar"
       style={{
         background: "var(--bpm-sidebar-bg)",
         color: "var(--bpm-sidebar-text)",

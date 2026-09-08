@@ -11,6 +11,11 @@
       "require": "./dist/index.js",
       "types": "./dist/packages/core/src/index.d.ts"
     },
+    "./objects": {
+      "types": "./dist/packages/core/src/objects/index.d.ts",
+      "import": "./dist/objects/index.mjs",
+      "require": "./dist/objects/index.js"
+    },
     "./schema": {
       "import": "./dist/schema/index.js",
       "require": "./dist/schema/index.js",
@@ -27,6 +32,7 @@
   "files": [
     "dist/",
     "USAGE.md",
+    "OBJECTS.md",
     "LICENSE",
     "NOTICE"
   ],
