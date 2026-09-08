@@ -15,8 +15,10 @@ function texture(cloud=false) {
   return data;
 }
 afterEach(()=>vi.unstubAllGlobals());
-async function scene(clouds=false,activity=0) {
+async function scene(clouds=false,activity=0,uniformClouds=false,renderSize=size) {
+  const size=renderSize;
   const maps={surface:texture(),clouds:texture(true),black:new Uint8ClampedArray(width*height*4)};
+  if(uniformClouds)for(let i=0;i<maps.clouds.length;i+=4)maps.clouds[i]=200;
   class ImageStub {
     width=width; height=height; data=new Uint8ClampedArray(); onload?:()=>void;
     set src(value:string) {this.data=maps[value as keyof typeof maps];queueMicrotask(()=>this.onload?.());}
@@ -64,4 +66,35 @@ describe("independent atmospheric motion",()=>{
     const {renderer,snapshot}=await scene(false,0);const frame={rotation:0,tilt:0,pitch:0,illustrated:false};
     renderer.draw({...frame,time:0});const before=snapshot();renderer.draw({...frame,time:35});expect(snapshot()).toEqual(before);renderer.dispose();
   });
+});
+
+// A changing RGB pixel alone could just be a rotating static texture. These
+// cases isolate the corona silhouette and a uniform cloud map respectively.
+describe("visible solar eruptions and cloud evolution",()=>{
+ it.each([false,true])("raises local plasma above the solar limb, illustrated=%s",async illustrated=>{
+  const size=224; // Actual constrained-device backing resolution.
+  const {renderer,snapshot}=await scene(false,3,false,size);
+  const frame={rotation:0,tilt:0,pitch:0,illustrated};
+  renderer.draw({...frame,time:0});const before=snapshot();
+  renderer.draw({...frame,time:4});const after=snapshot();
+  let bright=0,changed=0,outside=0;
+  for(let y=0;y<size;y++)for(let x=0;x<size;x++){
+   const radius=Math.hypot(((x+.5)/size*2-1)*1.3,(1-(y+.5)/size*2)*1.3);
+   if(radius<=1.05)continue;outside++;
+   const alpha=(y*size+x)*4+3;
+   if(after[alpha]>90)bright++;
+   if(Math.abs(after[alpha]-before[alpha])>35)changed++;
+  }
+  expect(bright).toBeGreaterThan(8);expect(bright).toBeLessThan(outside*.12);
+  expect(changed).toBeGreaterThan(15);
+  renderer.draw({...frame,time:4});expect(snapshot()).toEqual(after);renderer.dispose();
+ });
+ it("forms and dissipates cloud banks even when translation cannot change a uniform map",async()=>{
+  const {renderer,snapshot}=await scene(true,1,true);
+  const frame={rotation:0,tilt:0,pitch:0,illustrated:false};
+  renderer.draw({...frame,time:0});const before=snapshot();renderer.draw({...frame,time:4});const after=snapshot();
+  let forming=0,dissipating=0;
+  for(let i=0;i<after.length;i+=4){if(after[i]-before[i]>25)forming++;if(before[i]-after[i]>25)dissipating++;}
+  expect(forming).toBeGreaterThan(50);expect(dissipating).toBeGreaterThan(50);renderer.dispose();
+ });
 });

@@ -32,7 +32,7 @@ void main(){
    vec2 moving=st;
    if(activity==2.)moving.x=fract(st.x+.014*sin(st.y*55.)*sin(time*.05));
    vec3 tex=texture2D(surfaceMap,moving).rgb;
-   if(activity==3.)tex*=.98+.02*sin(time*.3+st.x*31.4159265+st.y*16.);
+   if(activity==3.)tex*=.88+.12*sin(time*.65+st.x*31.4159265+st.y*16.)*sin(st.y*38.-time*.4);
    float diffuse=max(dot(normal,light),0.);
    float lighting=.12+.95*pow(diffuse,.8);
    if(illustrated>.5){
@@ -49,6 +49,8 @@ void main(){
      vec2 cloudUV=sphereUV(n,rotation*1.045+.015);
      if(activity==1.)cloudUV.x=fract(cloudUV.x+time*.0008+.003*sin(time*.12)*sin(st.y*20.));
      float clouds=texture2D(cloudsMap,cloudUV).r;
+     // Local condensation/dissipation, carried by the cloud layer. No extra map.
+     if(activity==1.)clouds*=.72+.4*sin(cloudUV.x*18.8495559+st.y*18.+time*.38)*sin(cloudUV.x*43.9822972-st.y*11.-time*.23);
      clouds=smoothstep(.12,.85,clouds)*.86;
      color=mix(color,vec3(.92,.96,1.)*lighting,clouds);
      float ocean=step(tex.r*1.15,tex.b)*step(tex.g*.9,tex.b);
@@ -62,6 +64,33 @@ void main(){
    float glow=exp(-distance*mix(34.,11.,star))*.36;
    color=atmosphereColor;
    alpha=glow*max(atmosphere,star);
+   if(star>.5&&activity==3.){
+     // Three staggered prominences: anchored arches rise, expand and dissipate.
+     // Same analytic shape in the software renderer; one shared animation clock.
+     float theta=atan(p.y,p.x);
+     float plasma=0.;
+     for(int i=0;i<3;i++){
+       float site=float(i);
+       float phase=fract(time/14.+.18+site*.33);
+       float life=sin(PI*phase);
+       float centre=-.35+site*2.05+.06*sin(time*.05+site);
+       float delta=mod(theta-centre+PI,2.*PI)-PI;
+       float q=delta/(.10+.09*phase);
+       if(abs(q)<1.){
+         float arch=(.04+.20*life)*max(0.,1.-q*q);
+         float d=abs(distance-arch);
+         float filament=max(0.,1.-d/.017);
+         float halo=.32/(1.+1600.*d*d);
+         float plume=.18*(1.-abs(q))*max(0.,1.-distance/(.07+.20*life));
+         plasma+=(filament*.78+halo+plume)*life*life*(1.-smoothstep(.98,1.,abs(q)));
+       }
+     }
+     plasma=min(.95,plasma);
+     float nextAlpha=plasma+alpha*(1.-plasma);
+     vec3 hot=mix(vec3(1.,.18,.025),vec3(1.,.72,.22),min(1.,plasma*1.5));
+     color=(hot*plasma+color*alpha*(1.-plasma))/max(.001,nextAlpha);
+     alpha=nextAlpha;
+   }
  }
  if(ringed>.5&&abs(ray.y)>.001){
    float t=-origin.y/ray.y;
