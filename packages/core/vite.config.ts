@@ -1,8 +1,8 @@
 import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
 import dts from 'vite-plugin-dts'
-import { resolve } from 'path'
-import { cpSync } from 'node:fs'
+import { resolve, relative } from 'path'
+import { cpSync, rmSync } from 'node:fs'
 
 // Alias @ vers racine du repo pour que les composants bpm qui importent @/lib, @/hooks, etc. résolvent au build.
 const repoRoot = resolve(__dirname, '../..')
@@ -13,7 +13,11 @@ export default defineConfig({
   },
   plugins: [
     react(),
-    { name: "ship-object-assets", closeBundle() { cpSync(resolve(repoRoot, "public/objects"), resolve(__dirname, "dist/assets/objects"), {recursive:true}); } },
+    { name: "ship-object-assets", closeBundle() { rmSync(resolve(__dirname,"dist/assets/objects"),{recursive:true,force:true}); cpSync(resolve(repoRoot, "public/objects"), resolve(__dirname, "dist/assets/objects"), {recursive:true,filter(source){
+      // Publish only runtime derivatives. Original maps/posters remain in the source repo.
+      const name=relative(resolve(repoRoot,"public/objects"),source).replaceAll("\\","/");
+      return !/^universe-v2\/(?:illustrations\/)?[^/]+\.jpg$/.test(name)&&!/^universe-v2\/previews\/[^/]+\.png$/.test(name);
+    }}); } },
     dts({ insertTypesEntry: true }),
   ],
   build: {

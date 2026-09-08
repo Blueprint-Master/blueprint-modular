@@ -15,7 +15,7 @@ function texture(cloud=false) {
   return data;
 }
 afterEach(()=>vi.unstubAllGlobals());
-async function scene(clouds=false) {
+async function scene(clouds=false,activity=0) {
   const maps={surface:texture(),clouds:texture(true),black:new Uint8ClampedArray(width*height*4)};
   class ImageStub {
     width=width; height=height; data=new Uint8ClampedArray(); onload?:()=>void;
@@ -30,9 +30,9 @@ async function scene(clouds=false) {
     createImageData(w:number,h:number){return {data:new Uint8ClampedArray(w*h*4)};},
     putImageData(image:{data:Uint8ClampedArray}){pixels=image.data;},
   };}} as unknown as HTMLCanvasElement;
-  const renderer=createCanvasPlanetRenderer(canvas,{surface:clouds?"black":"surface",clouds:clouds?"clouds":undefined,atmosphere:[0,0,0],star:true});
+  const renderer=createCanvasPlanetRenderer(canvas,{surface:clouds?"black":"surface",clouds:clouds?"clouds":undefined,atmosphere:[0,0,0],star:true,activity});
   await renderer.ready;
-  return {renderer,pixel(x:number,y:number,channel=0){return pixels[(y*size+x)*4+channel];}};
+  return {renderer,snapshot(){return new Uint8ClampedArray(pixels);},pixel(x:number,y:number,channel=0){return pixels[(y*size+x)*4+channel];}};
 }
 describe("planet map orientation",()=>{
   it.each([false,true])("keeps east right and north up, illustrated=%s",async illustrated=>{
@@ -50,5 +50,18 @@ describe("planet map orientation",()=>{
     expect(pixel(20,32)).toBeGreaterThan(100);
     expect(pixel(44,32)).toBe(0);
     renderer.dispose();
+  });
+});
+
+describe("independent atmospheric motion",()=>{
+  it.each([1,2,3])("animates activity %s with a fixed surface rotation",async activity=>{
+    const {renderer,snapshot}=await scene(activity===1,activity);
+    const frame={rotation:0,tilt:0,pitch:0,illustrated:false};
+    renderer.draw({...frame,time:0});const before=snapshot();renderer.draw({...frame,time:35});const after=snapshot();
+    expect(after).not.toEqual(before);renderer.draw({...frame,time:35});expect(snapshot()).toEqual(after);renderer.dispose();
+  });
+  it("does not deform an airless moon as time passes",async()=>{
+    const {renderer,snapshot}=await scene(false,0);const frame={rotation:0,tilt:0,pitch:0,illustrated:false};
+    renderer.draw({...frame,time:0});const before=snapshot();renderer.draw({...frame,time:35});expect(snapshot()).toEqual(before);renderer.dispose();
   });
 });

@@ -1,3 +1,4 @@
+import {MOON_PARENTS,planetProvenance} from "./universe";
 /** Versioned, data-only objects. No remote assets, arbitrary code or user data. */
 export const OBJECT_CATALOG_VERSION = "1.0.0" as const;
 export type ObjectFamily = "space" | "buildings" | "mobility" | "logistics";
@@ -10,7 +11,8 @@ export interface ModularObjectDefinition {
   readonly shape: ObjectShape;
   readonly color: string;
   readonly rings: boolean;
-  readonly license: "Apache-2.0" | "CC-BY-4.0";
+  readonly parent?: string;
+  readonly license: "Apache-2.0" | "CC-BY-4.0" | "LicenseRef-NASA-Media" | "CC-BY-3.0" | "CC-BY-SA-4.0";
   readonly fidelity: "stylized-illustration" | "textured-sphere";
 }
 function object(id: string, fr: string, en: string, family: ObjectFamily, shape: ObjectShape, color: string, rings = false): ModularObjectDefinition {
@@ -40,9 +42,16 @@ export const MODULAR_OBJECTS: readonly ModularObjectDefinition[] = Object.freeze
   object("container", "Conteneur", "Container", "logistics", "container", "#60978f"),
 ]);
 
+/** The immutable v1 catalogue stays intact. New moons are available only at v2. */
+export const MOON_OBJECTS:readonly ModularObjectDefinition[]=Object.freeze([
+  ["io","Io","Io"],["europa","Europe","Europa"],["ganymede","Ganymède","Ganymede"],["callisto","Callisto","Callisto"],
+  ["titan","Titan","Titan"],["enceladus","Encelade","Enceladus"],["titania","Titania","Titania"],["triton","Triton","Triton"],
+].map(([id,fr,en])=>Object.freeze({...object(id,fr,en,"space","moon","#bbc1c9"),version:"2.0.0",parent:MOON_PARENTS[id as keyof typeof MOON_PARENTS],license:planetProvenance(id).license as ModularObjectDefinition["license"],fidelity:"textured-sphere" as const})));
+export const DISCOVERABLE_OBJECTS=Object.freeze([...MODULAR_OBJECTS,...MOON_OBJECTS]);
+
 /** Exact resolution only. An unknown ID/version must never pick a lookalike. */
 export const MODULAR_OBJECT_VERSIONS:readonly ModularObjectDefinition[]=Object.freeze([
-  ...MODULAR_OBJECTS,
+  ...MODULAR_OBJECTS,...MOON_OBJECTS,
   ...MODULAR_OBJECTS.filter(item=>item.family==="space").map(item=>Object.freeze({...item,version:"2.0.0",license:"CC-BY-4.0" as const,fidelity:"textured-sphere" as const})),
 ]);
 export function resolveModularObject(id: string, version: string = OBJECT_CATALOG_VERSION): ModularObjectDefinition | undefined {
@@ -51,6 +60,6 @@ export function resolveModularObject(id: string, version: string = OBJECT_CATALO
 export function searchModularObjects(query = "", family?: ObjectFamily): readonly ModularObjectDefinition[] {
   const normalize = (text: string) => text.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
   const words = normalize(query).trim().split(/\s+/).filter(Boolean);
-  return MODULAR_OBJECTS.filter(item => (!family || item.family === family) &&
-    words.every(word => normalize(`${item.id} ${item.name.fr} ${item.name.en}`).includes(word)));
+  return DISCOVERABLE_OBJECTS.filter(item => (!family || item.family === family) &&
+    words.every(word => normalize(`${item.id} ${item.name.fr} ${item.name.en} ${item.parent??""}`).includes(word)));
 }

@@ -6,3 +6,31 @@ Changes: spherical lighting, projection, independent cloud rotation, optional pa
 These are artistic visualizations, not scientific ephemerides; source textures contain reconstructed regions.
 
 Illustration surface maps: original AI-generated paintings, 2026-09-08. They are not Solar System Scope photographs. Prompts and SHA-256: illustration-manifest.json. Clouds/rings in both styles: Solar System Scope, CC BY 4.0.
+
+
+NASA-SOURCE MOONS: Io, Europa, Ganymede, Callisto, Titan, Enceladus
+Source material: NASA 3D Resources, https://github.com/nasa/NASA-3D-Resources
+The repository describes its assets as free and without copyright. Media usage guidelines: https://www.nasa.gov/nasa-brand-center/images-and-media/
+No NASA logos, people or endorsement. See moon-manifest.json for original paths, revision and SHA-256.
+Changes by Blueprint Modular: WebP recompression (no flips), illumination and presentation rotation. Illustration uses procedural drawn shading over the same NASA source map, not a separately painted map. Maps include reconstructed/low-resolution regions; these are artistic presentations, not ephemerides or live weather.
+Compact Solar System Scope derivatives retain CC BY 4.0; original illustrations retain their original credits.
+
+
+TITANIA AND TRITON (CelestiaContent, individual map licenses; not the repository code license)
+TITANIA surface map
+SPDX-FileCopyrightText: 2025-2026 ItzImcool
+SPDX-FileCopyrightText: 2020 Paul Schenk
+SPDX-FileCopyrightText: NASA / JPL / Ted Stryk
+
+SPDX-License-Identifier: CC-BY-SA-4.0
+Source: https://github.com/CelestiaProject/CelestiaContent/blob/1993a082ee6307c0df7fdc0828eb117a0e8e9958/textures/medres/titania.jpg
+License: https://creativecommons.org/licenses/by-sa/4.0/
+WebP recompression without flips. Original map contains reconstructed or uniform unobserved areas. Derived texture and both rendered posters retain the stated source license.
+TRITON surface map
+SPDX-FileCopyrightText: 2018 Askaniy Anpilogov
+SPDX-FileCopyrightText: NASA/JPL-Caltech/ASI/USGS
+
+SPDX-License-Identifier: CC-BY-3.0
+Source: https://github.com/CelestiaProject/CelestiaContent/blob/1993a082ee6307c0df7fdc0828eb117a0e8e9958/textures/hires/triton.jpg
+License: https://creativecommons.org/licenses/by/3.0/
+WebP recompression without flips. Original map contains reconstructed or uniform unobserved areas. Derived texture and both rendered posters retain the stated source license.
