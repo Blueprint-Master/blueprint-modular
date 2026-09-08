@@ -1,5 +1,5 @@
 "use client";
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useId, useRef, useState } from "react";
 import { createPlanetRenderer } from "./planet-renderer";
 import { createCanvasPlanetRenderer } from "./planet-canvas-renderer";
 import { PLANET_ATMOSPHERES, UNIVERSE_ASSET_PATH, type PlanetId, type PlanetStyle } from "./universe";
@@ -15,6 +15,7 @@ export interface PlanetObjectProps {
  * Assets are shipped with core and must be copied into the consumer's public/objects. */
 export function PlanetObject({id,label,size=360,style="photorealistic",playing=true,speed=1,angle=0,interactive=true,assetBaseUrl=UNIVERSE_ASSET_PATH,thumbnail=false,textureUrl}:PlanetObjectProps){
   const canvasRef=useRef<HTMLCanvasElement>(null);
+  const instructionsId=useId();
   const settings=useRef({playing,speed,angle,style});settings.current={playing,speed,angle,style};
   const orientation=useRef({rotation:.05,pitch:0});
   const repaint=useRef(()=>{});
@@ -65,9 +66,10 @@ export function PlanetObject({id,label,size=360,style="photorealistic",playing=t
   },[id,safeSize,assetBaseUrl,thumbnail,restart,textureUrl,style,softwareOnly]);
   const poster=`${assetBaseUrl}/previews/${id}-${style}.png`;
   return <span data-planet-style={style} data-planet-state={thumbnail?"poster":status} style={{position:"relative",display:"inline-block",width:safeSize,maxWidth:"100%",aspectRatio:"1",verticalAlign:"middle"}}>
-    {/* Poster generated from this exact renderer, also available with no WebGL. */}
-    {(thumbnail||status!=="ready")&&<img src={textureUrl??poster} alt={label} loading={thumbnail?"lazy":"eager"} width={safeSize} height={safeSize} style={{width:"100%",height:"100%",objectFit:"contain"}}/>}
-    {!thumbnail&&<canvas key={softwareOnly?"software":"webgl"} ref={canvasRef} role="img" aria-label={label} tabIndex={interactive?0:undefined} aria-description="Drag or use arrow keys to rotate the globe"
+    {/* Pre-rendered poster: native picture keeps this renderer portable outside Next.js. */}
+    {(thumbnail||status!=="ready")&&<picture><img src={textureUrl??poster} alt={label} loading={thumbnail?"lazy":"eager"} width={safeSize} height={safeSize} style={{width:"100%",height:"100%",objectFit:"contain"}}/></picture>}
+    {!thumbnail&&interactive&&<span id={instructionsId} hidden>Drag or use arrow keys to rotate the globe</span>}
+    {!thumbnail&&<canvas key={softwareOnly?"software":"webgl"} ref={canvasRef} role="img" aria-label={label} tabIndex={interactive?0:undefined} aria-describedby={interactive?instructionsId:undefined}
       style={{position:"absolute",inset:0,width:"100%",height:"100%",opacity:status==="ready"?1:0,touchAction:"pan-y",cursor:interactive?"grab":"default"}}
       onPointerDown={e=>{if(!interactive)return;drag.current={x:e.clientX,y:e.clientY,pointer:e.pointerId};e.currentTarget.setPointerCapture(e.pointerId);}}
       onPointerMove={e=>{const d=drag.current;if(!d||!interactive)return;orientation.current.rotation-=(e.clientX-d.x)/safeSize*.45;orientation.current.pitch=Math.max(-.8,Math.min(.8,orientation.current.pitch+(e.clientY-d.y)/safeSize));drag.current={x:e.clientX,y:e.clientY,pointer:e.pointerId};repaint.current();}}
