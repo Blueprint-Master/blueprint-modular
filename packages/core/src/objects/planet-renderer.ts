@@ -11,7 +11,8 @@ uniform vec3 atmosphereColor;
 const float PI=3.14159265359;
 mat3 rx(float a){float c=cos(a),s=sin(a);return mat3(1.,0.,0.,0.,c,s,0.,-s,c);}
 mat3 rz(float a){float c=cos(a),s=sin(a);return mat3(c,s,0.,-s,c,0.,0.,0.,1.);}
-vec2 sphereUV(vec3 n,float turn){return vec2(fract(atan(n.z,n.x)/(2.*PI)+.5+turn),acos(clamp(n.y,-1.,1.))/PI);}
+// Camera sees +Z: longitude must increase left to right. Preserve the central meridian.
+vec2 sphereUV(vec3 n,float turn){return vec2(fract(1.-atan(n.z,n.x)/(2.*PI)+turn),acos(clamp(n.y,-1.,1.))/PI);}
 float grain(vec2 p){return fract(sin(dot(p,vec2(127.1,311.7)))*43758.5453);}
 void main(){
  float scale=mix(1.30,2.55,ringed);
