@@ -2,6 +2,7 @@ import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
 import dts from 'vite-plugin-dts'
 import { resolve } from 'path'
+import { cpSync } from 'node:fs'
 
 // Alias @ vers racine du repo pour que les composants bpm qui importent @/lib, @/hooks, etc. résolvent au build.
 const repoRoot = resolve(__dirname, '../..')
@@ -12,6 +13,7 @@ export default defineConfig({
   },
   plugins: [
     react(),
+    { name: "ship-object-assets", closeBundle() { cpSync(resolve(repoRoot, "public/objects"), resolve(__dirname, "dist/assets/objects"), {recursive:true}); } },
     dts({ insertTypesEntry: true }),
   ],
   build: {

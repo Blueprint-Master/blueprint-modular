@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "clean": "node scripts/clear-cache.cjs",
-    "dev": "next dev",
+    "dev": "node scripts/dev.mjs",
     "build": "node scripts/generate-versions.mjs && node scripts/generate-changelog.mjs && node scripts/generate-component-examples.mjs && next build",
     "build:standalone": "node scripts/generate-versions.mjs && node scripts/generate-changelog.mjs && node scripts/generate-component-examples.mjs && next build && bash deploy/copy-standalone-assets.sh",
     "start": "next start",

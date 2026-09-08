@@ -694,6 +694,10 @@ def main():
         full_lines.append(format_component_full(comp))
     full_lines.append(PATTERN_MODAL)
     full_lines.append(PATTERN_ROUTES)
+    full_lines.append("""
+## VERSIONED OBJECTS (separate /objects entry)
+`@blueprint-modular/core/objects` exports ModularObject and PlanetObject. Universe 2.0.0 includes eight planets, Sun and Moon with photorealistic/illustration variants, rotating surface textures, independent clouds and depth-tested rings. Use playing, speed (0.1–3), interactive and thumbnail props. Copy dist/assets/objects to public/objects; retain source credits. Version 1.0.0 vectors are unchanged. See packages/core/OBJECTS.md for installation, community contributions and the pinned Maker attachment contract. This is not an additional bpm.* namespace.
+""")
     full_content = "\n".join(full_lines)
 
     # --- Générer llms-core.txt compact ---

@@ -277,3 +277,8 @@ Les unités sont des libellés, jamais des conversions implicites. Une télémé
 Les quinze clés sont exportées dans `bpm`, documentées par JSDoc, proposées dans la couche sémantique, puis reprises dans `public/llms.txt`, le catalogue MCP et les exemples du showcase. Le guide ne présume pas qu'une version npm a déjà été publiée ni que le Maker a déjà autorisé les nouvelles clés.
 
 Après intégration et publication du core, le consommateur Maker doit utiliser la version contenant ces exports et inclure les nouvelles clés dans ses listes de composants autorisés. Cette PR Modular ne modifie pas le dépôt Maker. Le choix du composant, des paramètres, des données et des renderers est laissé au LLM ; la projection, la géométrie et la gestion des interactions restent déterministes.
+
+
+## Versioned objects entry
+
+`@blueprint-modular/core/objects`: `ModularObject`, `PlanetObject`, exact catalogue resolver and portable attachment parser. Universe 2.0.0 supports `variant="photorealistic"|"illustration"`, `playing`, bounded `speed`, `interactive`, `thumbnail` and `assetBaseUrl`, with rotating textures, clouds and ring depth. Version 1.0.0 vector objects remain stable. See `packages/core/OBJECTS.md` for asset installation, attribution, community uploads and Maker integration.
