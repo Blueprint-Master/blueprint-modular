@@ -20,3 +20,8 @@ pas « terminés » tant que leur animation en navigateur n’est pas approuvée
 
 Références et états précis de validation : [Météo](weather-atmospheres.md).
 Exemples transportables : `examples/objects/weather-*.modular.json`.
+
+PR existantes : [Modular #220](https://github.com/Blueprint-Master/blueprint-modular/pull/220)
+et [Maker #1929](https://github.com/Blueprint-Master/blueprint-maker/pull/1929).
+Correction du 2026-09-09 : éclair ramifié perceptible dès les premières secondes
+de la grande vue sélectionnée, mobile compris ; éclair fixe sur les deux posters.

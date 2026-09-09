@@ -19,7 +19,12 @@ et l’évaporation modifient la densité, sans déplacer toute la vignette. Les
 éclaircies ouvrent davantage le nuage ; le couvert reste un banc plus plat.
 Pluie et neige apparaissent, tombent puis disparaissent ; le nuage accompagne
 doucement ce mouvement. L’orage ajoute un éclair progressif rare en grande vue
-seulement, sans stroboscope ni flash plein écran. Boucle analytique de 24 s.
+seulement (largeur CSS ≥ 280 px), mobile compris, sans stroboscope ni flash plein
+écran. Le canal se forme dès 1 s à vitesse normale, se ramifie puis se dissipe
+avant 2,8 s ; un seul événement par boucle analytique de 24 s. Le poster fixe
+capture 1,35 s pour distinguer l’orage de la pluie sans animer les vignettes.
+Correction du 9 septembre : la limite mobile ne supprime plus les éclairs ;
+elle conserve les plafonds 224 px / 12 fps. Reduced-motion supprime la décharge.
 
 Un seul minuteur par objet sélectionné, zéro sur les vignettes, en pause,
 hors écran, onglet masqué ou reduced-motion. Les tests avec horloge simulée
@@ -41,6 +46,10 @@ Inspection effectuée : planches à l’arrêt 320 px, frames des deux vidéos a
 instants 0, 2, 5,5 et 8 s à 192 px ; fond sombre pour le réaliste, clair pour
 la gouache. Cette inspection a fait corriger la visibilité des précipitations
 sur fond clair et la forme trop géométrique de l’éclair.
+Après le signalement « l’orage n’a pas d’éclairs », nouvelles captures inspectées
+dans les deux styles à 192 px : 0, 1,08, 1,33, 1,83, 2,5 et 3,17 s. Formation,
+ramification et disparition du canal visibles ; le test de composant vérifie
+désormais la grande vue tactile avec rendu limité à 224 px et une seule boucle.
 
 **Non exécutés / à approuver avant merge :** lecture live fluide en navigateur,
 deux fonds dans chaque style, petits/grands formats interactifs, inspection
