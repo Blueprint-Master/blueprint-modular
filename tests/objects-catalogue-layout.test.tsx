@@ -66,3 +66,16 @@ describe("contributions — rythme vertical et portée des styles", () => {
     expect(css).toContain(".tabs button{color:inherit;background:transparent}");
   });
 });
+
+
+describe("sections éditoriales — séparateurs homogènes", () => {
+  const css = readFileSync(
+    new URL("../components/site/ObjectsCatalogue.module.css", import.meta.url),
+    "utf8",
+  );
+
+  it("sépare Enrichir la bibliothèque comme les autres parties majeures", () => {
+    expect(css).toMatch(/\.sources\{[^}]*border-top:1px solid var\(--bpm-border/);
+    expect(css).toMatch(/\.sources\{[^}]*padding-top:48px/);
+  });
+});
