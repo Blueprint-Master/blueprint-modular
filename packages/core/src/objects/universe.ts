@@ -1,3 +1,4 @@
+import {parseEarthLayers, type EarthLayers} from "./earth-layers";
 import {isWeatherId,WEATHER_VERSION,type WeatherId} from "./weather";
 export const UNIVERSE_VERSION = "2.0.0" as const;
 export const PLANET_IDS = ["mercury","venus","earth","mars","jupiter","saturn","uranus","neptune","sun","moon"] as const;
@@ -11,7 +12,7 @@ export const PLANET_PITCHES:Partial<Record<PlanetId,number>>={saturn:.45,titania
 export const PLANET_ACTIVITY:Partial<Record<PlanetId,number>> = {earth:1,venus:2,jupiter:2,saturn:2,uranus:2,neptune:2,titan:2,sun:3};
 export function planetSurfacePath(id:PlanetId,style:PlanetStyle){return `compact/${style==="illustration"&&!isMoonId(id)?"illustrations/":""}${id}.webp`;}
 export function planetPosterPath(id:PlanetId,style:PlanetStyle){return `previews/${id}-${style}.webp`;}
-export function planetAssetPaths(id:PlanetId,style:PlanetStyle){return [planetSurfacePath(id,style),planetPosterPath(id,style),...(id==="earth"?["compact/earth-clouds.webp"]:[]),...(id==="saturn"?["saturn-rings.png"]:[])];}
+export function planetAssetPaths(id:PlanetId,style:PlanetStyle){return [planetSurfacePath(id,style),planetPosterPath(id,style),...(id==="earth"?["compact/earth-clouds.webp","compact/earth-night.webp","earth-night-manifest.json"]:[]),...(id==="saturn"?["saturn-rings.png"]:[])];}
 export type PlanetStyle = "photorealistic" | "illustration";
 export const UNIVERSE_ASSET_PATH = "/objects/universe-v2";
 export const PLANET_ATMOSPHERES: Record<PlanetId, readonly [number,number,number]> = {
@@ -36,7 +37,7 @@ export function planetProvenance(id:string){return id==="titania"||id==="triton"
 /** Portable, data-only attachment. Exact identity survives chat and generation. */
 export interface BuiltinObjectAttachment {
   schemaVersion:1; kind:"modular-object"; id:PlanetId; version:typeof UNIVERSE_VERSION;
-  style:PlanetStyle; animation:{playing:boolean; speed:number};
+  style:PlanetStyle; animation:{playing:boolean; speed:number}; earth?:EarthLayers;
 }
 export interface CommunityObjectAttachment {
   schemaVersion:1; kind:"modular-object"; id:string; version:"1.0.0";
@@ -49,10 +50,12 @@ export type ModularObjectAttachment = BuiltinObjectAttachment | CommunityObjectA
 export function parseModularObjectAttachment(raw:unknown):ModularObjectAttachment|undefined {
   if(!raw||typeof raw!=="object")return;
   const o=raw as Record<string,unknown>,a=o.animation as Record<string,unknown>|undefined;
+  const earth=o.earth===undefined?undefined:parseEarthLayers(o.earth);
+  if(o.earth!==undefined&&(!earth||o.id!=="earth"||o.version!==UNIVERSE_VERSION))return;
   if(o.schemaVersion===1&&o.kind==="modular-object"&&(VECTOR_IDS as readonly unknown[]).includes(o.id)&&o.version==="1.0.0"&&o.style==="vector"&&a?.playing===false&&a?.speed===1)return {schemaVersion:1,kind:"modular-object",id:o.id as VectorObjectAttachment['id'],version:"1.0.0",style:"vector",animation:{playing:false,speed:1}};
   if(o.schemaVersion!==1||o.kind!=="modular-object"||typeof o.id!=="string"||
     (o.style!=="photorealistic"&&o.style!=="illustration")||!a||typeof a.playing!=="boolean"||typeof a.speed!=="number"||!Number.isFinite(a.speed)||a.speed<.1||a.speed>3)return;
-  if(isPlanetId(o.id)&&o.version===UNIVERSE_VERSION)return {schemaVersion:1,kind:"modular-object",id:o.id,version:UNIVERSE_VERSION,style:o.style,animation:{playing:a.playing,speed:a.speed}};
+  if(isPlanetId(o.id)&&o.version===UNIVERSE_VERSION)return {schemaVersion:1,kind:"modular-object",id:o.id,version:UNIVERSE_VERSION,style:o.style,animation:{playing:a.playing,speed:a.speed},...(earth?{earth}:{})};
   if(isWeatherId(o.id)&&o.version===WEATHER_VERSION)return {schemaVersion:1,kind:"modular-object",id:o.id,version:WEATHER_VERSION,style:o.style,animation:{playing:a.playing,speed:a.speed}};
   if(/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/.test(o.id)&&o.version==="1.0.0"&&typeof o.sha256==="string"&&/^[0-9a-f]{64}$/.test(o.sha256))return {schemaVersion:1,kind:"modular-object",id:o.id,version:"1.0.0",sha256:o.sha256,style:o.style,animation:{playing:a.playing,speed:a.speed}};
 }

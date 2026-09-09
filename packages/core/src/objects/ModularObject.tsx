@@ -1,4 +1,5 @@
 "use client";
+import type {EarthLayers} from "./earth-layers";
 import React from "react";
 import { PlanetObject } from "./PlanetObject";
 import { WeatherObject } from "./WeatherObject";
@@ -23,6 +24,7 @@ export interface ModularObjectProps {
   interactive?: boolean;
   assetBaseUrl?: string;
   thumbnail?: boolean;
+  earth?: Partial<EarthLayers>;
 }
 
 function Solid({ x = 0, y = 0, width = 100, height = 70, depth = 28, color }: {
@@ -70,11 +72,11 @@ function BuiltObject({ item, color }: { item: ModularObjectDefinition; color: st
 }
 
 /** Version 1 renders stable vectors; Universe version 2 renders interactive textured spheres. */
-export function ModularObject({ id, version = OBJECT_CATALOG_VERSION, label, locale = "fr", size = 240, angle = 0, color, className, variant="photorealistic",playing=true,speed=1,interactive=true,assetBaseUrl,thumbnail=false }: ModularObjectProps) {
+export function ModularObject({ id, version = OBJECT_CATALOG_VERSION, label, locale = "fr", size = 240, angle = 0, color, className, variant="photorealistic",playing=true,speed=1,interactive=true,assetBaseUrl,thumbnail=false,earth }: ModularObjectProps) {
   if(version===WEATHER_VERSION&&isWeatherId(id)&&(variant==="photorealistic"||variant==="illustration"))return <span className={className} data-modular-object={`${id}@${version}`}><WeatherObject id={id} label={label??WEATHER_NAMES[id][locale]} size={size} style={variant} playing={playing} speed={speed} assetBaseUrl={assetBaseUrl} thumbnail={thumbnail}/></span>;
   if(version===UNIVERSE_VERSION&&isPlanetId(id)&&(variant==="photorealistic"||variant==="illustration")){
     const definition=resolveModularObject(id,version)!;
-    return <span className={className} data-modular-object={`${id}@${version}`}><PlanetObject id={id} label={label??definition.name[locale]} size={size} angle={angle} style={variant} playing={playing} speed={speed} interactive={interactive} assetBaseUrl={assetBaseUrl} thumbnail={thumbnail}/></span>;
+    return <span className={className} data-modular-object={`${id}@${version}`}><PlanetObject id={id} label={label??definition.name[locale]} size={size} angle={angle} style={variant} playing={playing} speed={speed} earth={earth} interactive={interactive} assetBaseUrl={assetBaseUrl} thumbnail={thumbnail}/></span>;
   }
   const item = resolveModularObject(id, version);
   const safeSize = Number.isFinite(size) ? Math.max(48, Math.min(1000,size)) : 240;

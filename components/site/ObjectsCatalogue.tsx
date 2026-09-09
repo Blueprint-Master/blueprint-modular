@@ -2,7 +2,7 @@
 import React, { useMemo, useState } from "react";
 import { Box, Copy, Download, Pause, Play, RotateCcw, Search } from "lucide-react";
 import { useI18n } from "@/lib/i18n/LocaleProvider";
-import { ModularObject, DISCOVERABLE_OBJECTS, resolveModularObject, searchModularObjects, isPlanetId, isWeatherId, UNIVERSE_VERSION, planetProvenance, type PlanetStyle, type ObjectFamily } from "../../packages/core/src/objects";
+import { ModularObject, EarthControls, DEFAULT_EARTH_LAYERS, type EarthLayers, DISCOVERABLE_OBJECTS, resolveModularObject, searchModularObjects, isPlanetId, isWeatherId, UNIVERSE_VERSION, planetProvenance, type PlanetStyle, type ObjectFamily } from "../../packages/core/src/objects";
 import { CatalogueHero } from "./CatalogueLayout";
 import { ObjectContributions } from "./ObjectContributions";
 import styles from "./ObjectsCatalogue.module.css";
@@ -15,13 +15,14 @@ export function ObjectsCatalogue(){
  const [selected,setSelected]=useState("saturn"),[query,setQuery]=useState("");
  const [family,setFamily]=useState<ObjectFamily|undefined>();
  const [angle,setAngle]=useState(0),[size,setSize]=useState(360),[motion,setMotion]=useState(true),[speed,setSpeed]=useState(1),[variant,setVariant]=useState<PlanetStyle>("photorealistic");
+ const [earth,setEarth]=useState<EarthLayers>({...DEFAULT_EARTH_LAYERS});
  const [copyState,setCopyState]=useState<"idle"|"done"|"error"|"download">("idle");
  const items=useMemo(()=>searchModularObjects(query,family),[query,family]);
  const planet=isPlanetId(selected),weather=isWeatherId(selected),animated=planet||weather,item=resolveModularObject(selected,planet?UNIVERSE_VERSION:"1.0.0")!,version=item.version,provenance=planetProvenance(selected);
- const code=`import { ModularObject } from '@blueprint-modular/core/objects';\n\n<ModularObject id="${selected}" version="${version}"\n  locale="${locale}" size={${size}} angle={${angle}}${animated?`\n  variant="${variant}" playing={${motion}} speed={${speed}}`:""} />`;
+ const code=`import { ModularObject } from '@blueprint-modular/core/objects';\n\n<ModularObject id="${selected}" version="${version}"\n  locale="${locale}" size={${size}} angle={${angle}}${animated?`\n  variant="${variant}" playing={${motion}} speed={${speed}}`:""}${selected==="earth"?`\n  earth={${JSON.stringify(earth)}}`:""} />`;
  const choose=(id:string)=>{setSelected(id);setAngle(0);setCopyState("idle");};
  async function copy(){try{await navigator.clipboard.writeText(code);setCopyState("done");}catch{setCopyState("error");}}
- function download(){const data=animated?{schemaVersion:1,kind:"modular-object",id:selected,version,style:variant,animation:{playing:motion,speed}}:{schemaVersion:1,kind:"modular-object",id:selected,version:"1.0.0",style:"vector",animation:{playing:false,speed:1}};
+ function download(){const data=animated?{schemaVersion:1,kind:"modular-object",id:selected,version,style:variant,animation:{playing:motion,speed},...(selected==="earth"?{earth}:{})}:{schemaVersion:1,kind:"modular-object",id:selected,version:"1.0.0",style:"vector",animation:{playing:false,speed:1}};
   const url=URL.createObjectURL(new Blob([JSON.stringify(data,null,2)],{type:"application/json"}));const a=document.createElement("a");a.href=url;a.download=`${selected}-${data.style}.modular.json`;a.click();setTimeout(()=>URL.revokeObjectURL(url),1000);setCopyState("download");}
  return <>
   <CatalogueHero eyebrow="CATALOGUE" title={S.title} lead={S.intro} meta={`${DISCOVERABLE_OBJECTS.length} ${S.count}`}/>
@@ -29,7 +30,7 @@ export function ObjectsCatalogue(){
   <div className={styles.filters}><div className={styles.tabs} role="group" aria-label={S.title}>{([undefined,...families] as const).map(f=><button type="button" key={f??"all"} aria-pressed={family===f} onClick={()=>setFamily(f)}>{f?S[f]:S.all}</button>)}</div><label className={styles.search}><Search size={18}/><input aria-label={S.search} placeholder={S.search} value={query} onChange={e=>setQuery(e.target.value)}/></label></div>
   <section className={styles.studio} aria-label={S.controls}>
    <div className={styles.stage}><span className={styles.stageLabel}>{S[item.family]} / {item.name[locale]}</span>
-    <div className={styles.object}><ModularObject id={selected} version={version} locale={locale} size={size} angle={angle} variant={variant} playing={motion} speed={speed}/></div>
+    <div className={styles.object}><ModularObject id={selected} version={version} locale={locale} size={size} angle={angle} variant={variant} playing={motion} speed={speed} earth={selected==="earth"?earth:undefined}/></div>
     <div className={styles.stageFooter}><span>{weather?S.weatherHint:planet?S.hint:S.vector}</span>{animated&&<button type="button" aria-label={S.motion} aria-pressed={motion} onClick={()=>setMotion(!motion)}>{motion?<Pause size={18}/>:<Play size={18}/>}</button>}</div>
    </div>
    <div className={styles.details}><span className={styles.eyebrow}>{S.reuse}</span><h2>{item.name[locale]}</h2>
@@ -37,7 +38,8 @@ export function ObjectsCatalogue(){
     {!weather&&<label className={styles.range}>{S.angle}<output>{angle}°</output><input aria-label={S.angle} type="range" min="-35" max="35" value={angle} onChange={e=>{setAngle(Number(e.target.value));setCopyState("idle");}}/></label>}
     {animated&&<label className={styles.range}>{S.speed}<output>×{speed.toFixed(1)}</output><input aria-label={S.speed} type="range" min="0.1" max="3" step="0.1" value={speed} onChange={e=>{setSpeed(Number(e.target.value));setCopyState("idle");}}/></label>}
     <label className={styles.range}>{S.size}<output>{size}px</output><input aria-label={S.size} type="range" min="160" max="420" step="10" value={size} onChange={e=>{setSize(Number(e.target.value));setCopyState("idle");}}/></label>
-    <div className={styles.actions}><button type="button" onClick={download}><Download size={18}/>{S.download}</button><button type="button" aria-label={S.reset} onClick={()=>{setAngle(0);setSize(360);setSpeed(1);setMotion(true);setCopyState("idle");}}><RotateCcw size={18}/></button></div>
+    {selected==="earth"&&<EarthControls value={earth} locale={locale} onChange={value=>{setEarth(value);setCopyState("idle");}}/>}
+    <div className={styles.actions}><button type="button" onClick={download}><Download size={18}/>{S.download}</button><button type="button" aria-label={S.reset} onClick={()=>{setAngle(0);setSize(360);setSpeed(1);setMotion(true);setEarth({...DEFAULT_EARTH_LAYERS});setCopyState("idle");}}><RotateCcw size={18}/></button></div>
     <p className={styles.note} role="status">{copyState==="download"?S.downloadHint:copyState==="error"?S.copyError:copyState==="done"?S.copied:weather?S.weatherHint:planet?S.art:S.vector}</p>
     {planet&&<a className={styles.credit} href={provenance.source} target="_blank" rel="noreferrer">{item.parent&&provenance.license!=="LicenseRef-NASA-Media"?`${provenance.author} · ${provenance.license}`:item.parent?(locale==="en"?"Source textures: NASA · usage guidelines":"Textures sources : NASA · conditions d’utilisation"):S.source}</a>}
    </div>

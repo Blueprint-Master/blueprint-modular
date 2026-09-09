@@ -79,3 +79,54 @@ Before release, apply `20260908150000_object_contributions` and configure `OBJEC
 Core/Modular builds and TypeScript checks pass locally. The software renderer is visually checked in the supervised browser; accelerated WebGL needs a GPU-enabled browser check. Maker's focused tests cover exact references and packaging across nine shell/theme combinations. Full Maker build/CI and an authenticated chat-to-deployment run remain release gates. Do not self-merge or claim deployment from source changes.
 
 Titania and Triton: initial NASA maps with large black unmapped regions were rejected during visual review. Their replacement maps come from CelestiaContent and retain CC BY-SA 4.0 (Titania) / CC BY 3.0 (Triton), including the compact textures and both derived posters. Full authors, source links and changes ship in ATTRIBUTION.txt and moon-manifest.json. Unobserved regions remain neutral rather than invented terrain.
+
+
+## Earth layer composition
+
+```tsx
+import {useState} from 'react';
+import {ModularObject, EarthControls, DEFAULT_EARTH_LAYERS, type EarthLayers} from '@blueprint-modular/core/objects';
+const [earth, setEarth] = useState<EarthLayers>({...DEFAULT_EARTH_LAYERS, lighting: 'night'});
+<ModularObject id="earth" version="2.0.0" earth={earth} />
+<EarthControls value={earth} onChange={setEarth} locale="fr" />
+```
+
+`earth` accepts a partial `EarthLayers`; omitted fields get defaults. The transport
+parser rejects invalid values, unknown keys and layers on other objects. Existing
+references without `earth` remain valid. Export and reimport `.modular.json` to
+reuse a composition. The catalogue's React snippet includes all settings.
+
+| Field | Values | Default |
+|---|---|---|
+| lighting | day / night / coordinated | coordinated |
+| sunAzimuth | −180 to 180 degrees; coordinated only | 0 |
+| clouds | boolean | true |
+| cloudCoverage / cloudOpacity | 0–1 | 0.5 / 0.86 |
+| cloudSpeed / cloudEvolution | 0–3 | 1 / 1 |
+| atmosphere / atmosphereIntensity | boolean / 0–2 | true / 1 |
+| lights / lightsIntensity | boolean / 0–3 | true / 1 |
+| auroras / auroraIntensity | boolean / 0–2 | false / 1 |
+
+Day shows the whole daytime surface with soft shape shading; night shows the whole
+nighttime face. These modes ignore Sun position. Coordinated mode uses the same
+light direction for surface illumination and the night-light mask. A fixed Sun
+and rotating surface give a day/night cycle. Clouds, atmosphere and artistic
+auroras are independently selectable in every mode. Night uses a Solar System
+Scope city-light map, recompressed without flipping; credits/hashes are in
+`earth-night-manifest.json`. Aurora ribbons are procedural artistic effects.
+
+Cloud drift is relative to the surface; zero speed keeps clouds attached to it.
+Zero evolution freezes their form at the current phase without rewinding.
+Coverage changes their spatial extent; opacity changes transparency. Global
+animation speed scales all clocks; pause/reduced-motion/offscreen stop them all.
+Settings repaint immediately, including while paused, without allocating another
+renderer or timer. Existing resource limits remain unchanged.
+
+Custom compositions have no exact static thumbnail: use the live selected view.
+The component shows a loading/unavailable state instead of claiming the default
+day poster matches a custom night/cloud-free composition. Maker similarly excludes
+custom Earth from its generic static-poster prompt; its generated interactive
+collection renders the actual layers. No new arbitrary placement system is added.
+
+Verification: `node scripts/review-earth-layers.cjs` generates five combinations in
+both styles with software render timings. See `docs/earth-layers.md` for limits.

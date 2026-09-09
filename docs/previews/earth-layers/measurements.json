@@ -1,0 +1,66 @@
+{
+  "node": "v24.19.0",
+  "method": "Software renderer only; 8 frames, 3 warmup, 288px. Not browser or battery.",
+  "measurements": [
+    {
+      "name": "day",
+      "style": "photorealistic",
+      "size": 288,
+      "medianMs": 27.173296999999934
+    },
+    {
+      "name": "night",
+      "style": "photorealistic",
+      "size": 288,
+      "medianMs": 33.94591800000012
+    },
+    {
+      "name": "coordinated",
+      "style": "photorealistic",
+      "size": 288,
+      "medianMs": 36.08737200000019
+    },
+    {
+      "name": "cloudy",
+      "style": "photorealistic",
+      "size": 288,
+      "medianMs": 34.53618899999992
+    },
+    {
+      "name": "auroras",
+      "style": "photorealistic",
+      "size": 288,
+      "medianMs": 34.82155700000021
+    },
+    {
+      "name": "day",
+      "style": "illustration",
+      "size": 288,
+      "medianMs": 53.163658000000396
+    },
+    {
+      "name": "night",
+      "style": "illustration",
+      "size": 288,
+      "medianMs": 42.55212699999993
+    },
+    {
+      "name": "coordinated",
+      "style": "illustration",
+      "size": 288,
+      "medianMs": 39.37637900000027
+    },
+    {
+      "name": "cloudy",
+      "style": "illustration",
+      "size": 288,
+      "medianMs": 39.37461499999972
+    },
+    {
+      "name": "auroras",
+      "style": "illustration",
+      "size": 288,
+      "medianMs": 36.97440999999981
+    }
+  ]
+}

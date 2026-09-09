@@ -56,3 +56,12 @@ describe('living objects stay idle outside the selected view',()=>{
   clock.stop();expect(vi.getTimerCount()).toBe(0);const count=draw.mock.calls.length;vi.advanceTimersByTime(1000);expect(draw).toHaveBeenCalledTimes(count);
  });
 });
+
+it('freezes cloud clocks at zero without rewinding, and updates layers without reallocating',async()=>{
+ await act(async()=>root.render(<PlanetObject id="earth" label="Terre" earth={{cloudSpeed:2,cloudEvolution:1}}/>));await show();
+ await act(async()=>vi.advanceTimersByTime(1000));const before=mocked.draw.mock.calls.at(-1)![0];
+ expect(before.cloudTime).toBeCloseTo(before.time*2);expect(before.evolutionTime).toBeCloseTo(before.time);
+ await act(async()=>root.render(<PlanetObject id="earth" label="Terre" earth={{lighting:'night',cloudSpeed:0,cloudEvolution:0}}/>));
+ await act(async()=>vi.advanceTimersByTime(1000));const after=mocked.draw.mock.calls.at(-1)![0];
+ expect(after.cloudTime).toBe(before.cloudTime);expect(after.evolutionTime).toBe(before.evolutionTime);expect(after.rotation).not.toBe(before.rotation);expect(after.earth.lighting).toBe('night');expect(mocked.create).toHaveBeenCalledTimes(1);
+});

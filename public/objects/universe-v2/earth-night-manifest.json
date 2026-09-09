@@ -1,0 +1,10 @@
+{
+  "source": "https://www.solarsystemscope.com/textures/download/2k_earth_nightmap.jpg",
+  "mirror": "https://github.com/louh/lcars/blob/35f3efd713c10a066144e1e1ee5273d76be9b16a/public/planets/2k_earth_nightmap.jpg",
+  "author": "Solar System Scope / INOVE",
+  "license": "CC-BY-4.0",
+  "sourceSha256": "c16fd1bc096ab91a5c5265c6ff9847c43f489f2e2ee790ccdbcbd03251cf3a5a",
+  "file": "compact/earth-night.webp",
+  "sha256": "5b167b3d9058c89014995a7659e5ba39d3792df823bc746d854e5f0d337135e6",
+  "changes": "Resized to 1024x512 and encoded WebP quality 88. No flip or longitude shift."
+}

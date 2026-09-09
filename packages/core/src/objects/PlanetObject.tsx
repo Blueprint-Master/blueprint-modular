@@ -1,4 +1,5 @@
 "use client";
+import {earthLayers, type EarthLayers} from "./earth-layers";
 import React, { useEffect, useId, useRef, useState } from "react";
 import { createPlanetRenderer } from "./planet-renderer";
 import { createCanvasPlanetRenderer } from "./planet-canvas-renderer";
@@ -9,26 +10,29 @@ export interface PlanetObjectProps {
   id:PlanetId; label:string; size?:number; style?:PlanetStyle; playing?:boolean; speed?:number;
   angle?:number; interactive?:boolean; assetBaseUrl?:string; thumbnail?:boolean;
   textureUrl?:string;
+  /** Independent Earth layers; ignored by other bodies. */
+  earth?:Partial<EarthLayers>;
 }
 /** A textured sphere with independent cloud motion, fixed lighting and occluding rings.
  * Reduced motion, hidden tabs and offscreen objects stop the animation clock.
  * Drag horizontally to rotate, vertically to tip; arrows provide the same control.
  * Assets are shipped with core and must be copied into the consumer's public/objects. */
-export function PlanetObject({id,label,size=360,style="photorealistic",playing=true,speed=1,angle=0,interactive=true,assetBaseUrl=UNIVERSE_ASSET_PATH,thumbnail=false,textureUrl}:PlanetObjectProps){
+export function PlanetObject({id,label,size=360,style="photorealistic",playing=true,speed=1,angle=0,interactive=true,assetBaseUrl=UNIVERSE_ASSET_PATH,thumbnail=false,textureUrl,earth}:PlanetObjectProps){
   const rootRef=useRef<HTMLSpanElement>(null);
   const elapsed=useRef(0);
+  const cloudTime=useRef(0),evolutionTime=useRef(0);
   const [inView,setInView]=useState(false),[pageVisible,setPageVisible]=useState(true),[displayWidth,setDisplayWidth]=useState(size);
   const canvasRef=useRef<HTMLCanvasElement>(null);
   const instructionsId=useId();
-  const settings=useRef({playing,speed,angle,style});
+  const settings=useRef({playing,speed,angle,style,earth:earthLayers(earth)});
   const orientation=useRef({rotation:.05,pitch:0});
   const repaint=useRef(()=>{});
   const drag=useRef<{x:number;y:number;pointer:number}|null>(null);
   const [status,setStatus]=useState<"loading"|"ready"|"error">("loading");
   const [restart,setRestart]=useState(0),[softwareOnly,setSoftwareOnly]=useState(false);
   const safeSize=Number.isFinite(size)?Math.max(48,Math.min(size,1000)):360;
-  useEffect(()=>{orientation.current={rotation:.05,pitch:0};elapsed.current=0;},[id]);
-  useEffect(()=>{settings.current={playing,speed,angle,style};repaint.current();},[playing,speed,angle,style]);
+  useEffect(()=>{orientation.current={rotation:.05,pitch:0};elapsed.current=0;cloudTime.current=0;evolutionTime.current=0;},[id]);
+  useEffect(()=>{settings.current={playing,speed,angle,style,earth:earthLayers(earth)};repaint.current();},[playing,speed,angle,style,earth]);
   useEffect(()=>{
     if(thumbnail)return;
     const element=rootRef.current;if(!element)return;
@@ -57,11 +61,13 @@ export function PlanetObject({id,label,size=360,style="photorealistic",playing=t
       if(!ready||disposed)return;
       const s=settings.current;
       renderer?.draw({rotation:orientation.current.rotation,tilt:(Number.isFinite(s.angle)?s.angle:0)*Math.PI/180+(id==="uranus"?1.45:-.25),
-        pitch:orientation.current.pitch+(PLANET_PITCHES[id]??.08),illustrated:s.style==="illustration",time:elapsed.current});
+        pitch:orientation.current.pitch+(PLANET_PITCHES[id]??.08),illustrated:s.style==="illustration",time:elapsed.current,earth:id==="earth"&&!textureUrl?s.earth:undefined,cloudTime:cloudTime.current,evolutionTime:evolutionTime.current});
     };
     const clock=createPlanetClock(budget.fps,delta=>{
       const v=settings.current.speed,rate=Number.isFinite(v)?Math.max(.1,Math.min(3,v)):1;
       elapsed.current+=delta*rate;
+      cloudTime.current+=delta*rate*settings.current.earth.cloudSpeed;
+      evolutionTime.current+=delta*rate*settings.current.earth.cloudEvolution;
       orientation.current.rotation-=delta/42*rate*(id==="venus"?-1:1);draw();
     });
     const refresh=()=>{if(disposed)return;draw();if(ready&&!media.matches&&settings.current.playing)clock.start();else clock.stop();};
@@ -72,6 +78,7 @@ export function PlanetObject({id,label,size=360,style="photorealistic",playing=t
     setStatus("loading");
     try{
       const config={surface:textureUrl??`${assetBaseUrl}/${planetSurfacePath(id,style)}`,clouds:!textureUrl&&id==="earth"?`${assetBaseUrl}/compact/earth-clouds.webp`:undefined,
+        night:!textureUrl&&id==="earth"?`${assetBaseUrl}/compact/earth-night.webp`:undefined,
         rings:id==="saturn"?`${assetBaseUrl}/saturn-rings.png`:undefined,atmosphere:PLANET_ATMOSPHERES[id],star:id==="sun",activity:textureUrl?0:PLANET_ACTIVITY[id]??0};
       if(softwareOnly)renderer=createCanvasPlanetRenderer(canvas,config);
       else {try{renderer=createPlanetRenderer(canvas,config);}catch{setSoftwareOnly(true);}}
@@ -88,16 +95,17 @@ export function PlanetObject({id,label,size=360,style="photorealistic",playing=t
   const poster=`${assetBaseUrl}/${planetPosterPath(id,style)}`;
   return <span ref={rootRef} data-planet-style={style} data-planet-state={thumbnail?"poster":status} style={{position:"relative",display:"inline-block",width:safeSize,maxWidth:"100%",aspectRatio:"1",verticalAlign:"middle"}}>
     {/* Pre-rendered poster: native picture keeps this renderer portable outside Next.js. */}
-    {(thumbnail||status!=="ready"||!inView||!pageVisible)&&<picture><img src={textureUrl??poster} alt={label} loading="lazy" width={safeSize} height={safeSize} style={{width:"100%",height:"100%",objectFit:"contain"}}/></picture>}
+    {(thumbnail||status!=="ready")&&!(id==="earth"&&earth)&&<picture><img src={textureUrl??poster} alt={label} loading="lazy" width={safeSize} height={safeSize} style={{width:"100%",height:"100%",objectFit:"contain"}}/></picture>}
+    {id==="earth"&&earth&&(thumbnail||status!=="ready")&&<span role="status" style={{position:"absolute",inset:0,display:"grid",placeItems:"center",fontSize:12}}>{thumbnail?"Composition personnalisée":status==="error"?"Composition indisponible":"Chargement de la composition…"}</span>}
     {!thumbnail&&interactive&&<span id={instructionsId} hidden>Drag or use arrow keys to rotate the globe</span>}
     {!thumbnail&&<canvas key={softwareOnly?"software":"webgl"} ref={canvasRef} role="img" aria-label={label} tabIndex={interactive?0:undefined} aria-describedby={interactive?instructionsId:undefined}
-      style={{position:"absolute",inset:0,width:"100%",height:"100%",opacity:status==="ready"&&inView&&pageVisible?1:0,touchAction:"pan-y",cursor:interactive?"grab":"default"}}
+      style={{position:"absolute",inset:0,width:"100%",height:"100%",opacity:status==="ready"?1:0,touchAction:"pan-y",cursor:interactive?"grab":"default"}}
       onPointerDown={e=>{if(!interactive)return;drag.current={x:e.clientX,y:e.clientY,pointer:e.pointerId};e.currentTarget.setPointerCapture(e.pointerId);}}
       onPointerMove={e=>{const d=drag.current;if(!d||!interactive)return;orientation.current.rotation-=(e.clientX-d.x)/safeSize*.45;orientation.current.pitch=Math.max(-.8,Math.min(.8,orientation.current.pitch+(e.clientY-d.y)/safeSize));drag.current={x:e.clientX,y:e.clientY,pointer:e.pointerId};repaint.current();}}
       onPointerUp={()=>{drag.current=null;}} onPointerCancel={()=>{drag.current=null;}} onLostPointerCapture={()=>{drag.current=null;}}
       onKeyDown={e=>{if(!interactive)return;if(["ArrowLeft","ArrowRight","ArrowUp","ArrowDown"].includes(e.key)){e.preventDefault();
         if(e.key==="ArrowLeft"||e.key==="ArrowRight")orientation.current.rotation+=e.key==="ArrowLeft"?.04:-.04;
         else orientation.current.pitch=Math.max(-.8,Math.min(.8,orientation.current.pitch+(e.key==="ArrowUp"?.1:-.1)));repaint.current();}}}/>}
-    {!thumbnail&&status==="error"&&<span role="status" style={{position:"absolute",bottom:0,left:0,right:0,fontSize:11,textAlign:"center"}}>Aperçu fixe · animation indisponible</span>}
+    {!thumbnail&&status==="error"&&<span role="status" style={{position:"absolute",bottom:0,left:0,right:0,fontSize:11,textAlign:"center"}}>{id==="earth"&&earth?"Animation indisponible":"Aperçu fixe · animation indisponible"}</span>}
   </span>;
 }
