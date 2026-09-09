@@ -12,3 +12,7 @@ export type {WeatherObjectProps} from "./WeatherObject";
 export {WEATHER_OBJECTS} from "./catalog";
 export {WEATHER_IDS,WEATHER_NAMES,WEATHER_VERSION,WEATHER_ASSET_PATH,isWeatherId,weatherPosterPath,weatherAssetPaths} from "./weather";
 export type {WeatherId,WeatherStyle} from "./weather";
+
+export {DEFAULT_EARTH_LAYERS, EARTH_PRESETS, earthLayers, parseEarthLayers} from "./earth-layers";
+export type {EarthLayers} from "./earth-layers";
+export {EarthControls} from "./EarthControls";

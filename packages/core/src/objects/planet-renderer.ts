@@ -1,3 +1,4 @@
+import {earthLayers, type EarthLayers} from "./earth-layers";
 /** A real textured sphere and ray/plane rings. Rotation changes spherical UVs,
  * never the canvas or its lighting. Browser-only, owned and disposed by PlanetObject. */
 export const PLANET_VERTEX = `attribute vec2 position; varying vec2 uv;
@@ -5,9 +6,11 @@ void main(){uv=position;gl_Position=vec4(position,0.,1.);}`;
 export const PLANET_FRAGMENT = `
 precision highp float;
 varying vec2 uv;
-uniform sampler2D surfaceMap, cloudsMap, ringMap;
+uniform sampler2D surfaceMap, cloudsMap, ringMap, nightMap;
 uniform float rotation, tilt, pitch, ringed, atmosphere, star, earth, illustrated, activity, time;
 uniform vec3 atmosphereColor;
+uniform float layered, lightMode, sunAzimuth, cloudsEnabled, cloudCoverage, cloudOpacity, cloudTime, evolutionTime;
+uniform float atmosphereStrength, lightsStrength, auroraStrength;
 const float PI=3.14159265359;
 mat3 rx(float a){float c=cos(a),s=sin(a);return mat3(1.,0.,0.,0.,c,s,0.,-s,c);}
 mat3 rz(float a){float c=cos(a),s=sin(a);return mat3(c,s,0.,-s,c,0.,0.,0.,1.);}
@@ -22,6 +25,7 @@ void main(){
  vec3 origin=orient*vec3(p,4.);
  vec3 ray=orient*vec3(0.,0.,-1.);
  vec3 light=normalize(vec3(-.65,.5,1.2));
+ if(layered>.5){float c=cos(sunAzimuth),s=sin(sunAzimuth);light=vec3(c*light.x+s*light.z,light.y,-s*light.x+c*light.z);}
  vec3 color=vec3(0.); float alpha=0.; float sphereT=100.;
  if(rr<=1.){
    vec3 normal=vec3(p,sqrt(1.-rr));
@@ -44,26 +48,48 @@ void main(){
      tex*=.94+.12*paper;
      lighting=mix(lighting,floor(lighting*7.)/7.,.22);
    }
+   float nightWeight=0.;
+   if(layered>.5){
+     nightWeight=lightMode<.5?0.:lightMode<1.5?1.:1.-smoothstep(-.12,.18,dot(normal,light));
+     if(lightMode<.5)lighting=.72+.28*normal.z;
+     else if(lightMode<1.5)lighting=.055;
+   }
    color=tex*mix(lighting,1.15,star);
+   if(layered>.5){
+     vec3 cities=texture2D(nightMap,st).rgb;
+     color+=cities*lightsStrength*nightWeight;
+     float band=exp(-pow((abs(n.y)-.87)/.045,2.));
+     float curtain=.5+.5*sin(st.x*62.831853+time*.25+sin(st.x*25.132741-time*.12));
+     color+=vec3(.12,1.,.55)*band*curtain*.4*auroraStrength;
+   }
    if(earth>.5){
      vec2 cloudUV=sphereUV(n,rotation*1.045+.015);
-     if(activity==1.)cloudUV.x=fract(cloudUV.x+time*.0008+.003*sin(time*.12)*sin(st.y*20.));
-     float clouds=texture2D(cloudsMap,cloudUV).r;
-     // Local condensation/dissipation, carried by the cloud layer. No extra map.
-     if(activity==1.)clouds*=.72+.4*sin(cloudUV.x*18.8495559+st.y*18.+time*.38)*sin(cloudUV.x*43.9822972-st.y*11.-time*.23);
-     clouds=smoothstep(.12,.85,clouds)*.86;
+     float clouds=0.;
+     if(layered>.5){
+       cloudUV=sphereUV(n,rotation+.015+cloudTime*.0019);
+       cloudUV.x=fract(cloudUV.x+.003*sin(evolutionTime*.12)*sin(st.y*20.));
+       float density=texture2D(cloudsMap,cloudUV).r;
+       density*=.72+.4*sin(cloudUV.x*18.8495559+st.y*18.+evolutionTime*.38)*sin(cloudUV.x*43.9822972-st.y*11.-evolutionTime*.23);
+       clouds=smoothstep(.12,.85,density+(cloudCoverage-.5)*1.8)*cloudOpacity*cloudsEnabled;
+       if(cloudCoverage<=0.)clouds=0.;
+     }else{
+       if(activity==1.)cloudUV.x=fract(cloudUV.x+time*.0008+.003*sin(time*.12)*sin(st.y*20.));
+       clouds=texture2D(cloudsMap,cloudUV).r;
+       if(activity==1.)clouds*=.72+.4*sin(cloudUV.x*18.8495559+st.y*18.+time*.38)*sin(cloudUV.x*43.9822972-st.y*11.-time*.23);
+       clouds=smoothstep(.12,.85,clouds)*.86;
+     }
      color=mix(color,vec3(.92,.96,1.)*lighting,clouds);
      float ocean=step(tex.r*1.15,tex.b)*step(tex.g*.9,tex.b);
-     color+=vec3(.5,.7,1.)*pow(max(dot(reflect(-light,normal),vec3(0.,0.,1.)),0.),38.)*.35*ocean;
+     color+=vec3(.5,.7,1.)*pow(max(dot(reflect(-light,normal),vec3(0.,0.,1.)),0.),38.)*.35*ocean*(1.-nightWeight);
    }
    float rim=pow(1.-normal.z,3.2)*(.35+.65*diffuse)*atmosphere;
-   color+=atmosphereColor*rim*.65;
+   color+=atmosphereColor*rim*.65*atmosphereStrength;
    alpha=1.;
  }else if(atmosphere>0.||star>.5){
    float distance=sqrt(rr)-1.;
    float glow=exp(-distance*mix(34.,11.,star))*.36;
    color=atmosphereColor;
-   alpha=glow*max(atmosphere,star);
+   alpha=glow*max(atmosphere*atmosphereStrength,star);
    if(star>.5&&activity==3.){
      // Textured plasma volume; keep equations aligned with the software renderer.
      float phase=fract(time/18.+.12),life=sin(PI*min(1.,phase/.8));
@@ -102,9 +128,9 @@ void main(){
  gl_FragColor=vec4(color,alpha);
 }`;
 
-export interface PlanetFrame { rotation: number; tilt: number; pitch: number; illustrated: boolean; time?: number }
+export interface PlanetFrame { rotation: number; tilt: number; pitch: number; illustrated: boolean; time?: number; earth?: Partial<EarthLayers>; cloudTime?: number; evolutionTime?: number }
 export function createPlanetRenderer(canvas: HTMLCanvasElement, config: {
-  surface: string; clouds?: string; rings?: string; atmosphere: readonly number[]; star: boolean; activity?: number;
+  surface: string; night?: string; clouds?: string; rings?: string; atmosphere: readonly number[]; star: boolean; activity?: number;
 }) {
   const gl = canvas.getContext("webgl", { alpha: true, antialias: true, premultipliedAlpha: false, powerPreference: "low-power", preserveDrawingBuffer: true });
   if (!gl) throw new Error("WebGL unavailable");
@@ -128,21 +154,34 @@ export function createPlanetRenderer(canvas: HTMLCanvasElement, config: {
     gl.uniform1f(u("activity"),config.activity??0);
     gl.uniform1f(u("ringed"),config.rings?1:0);gl.uniform1f(u("earth"),config.clouds?1:0);gl.uniform1f(u("star"),config.star?1:0);
     gl.uniform1f(u("atmosphere"),config.atmosphere.some(x=>x>0)?1:0);gl.uniform3fv(u("atmosphereColor"),new Float32Array(config.atmosphere));
-    const ready=Promise.all([config.surface,config.clouds,config.rings].map((url,index)=>new Promise<void>((resolve,reject)=>{
+    const ready=Promise.all([config.surface,config.clouds,config.rings,config.night].map((url,index)=>new Promise<void>((resolve,reject)=>{
       const texture=gl.createTexture()!;textures.push(texture);gl.activeTexture(gl.TEXTURE0+index);gl.bindTexture(gl.TEXTURE_2D,texture);
       gl.texImage2D(gl.TEXTURE_2D,0,gl.RGBA,1,1,0,gl.RGBA,gl.UNSIGNED_BYTE,new Uint8Array([0,0,0,0]));
       gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_MIN_FILTER,gl.LINEAR);gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_MAG_FILTER,gl.LINEAR);
       gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_WRAP_S,gl.CLAMP_TO_EDGE);gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_WRAP_T,gl.CLAMP_TO_EDGE);
-      gl.uniform1i(u(["surfaceMap","cloudsMap","ringMap"][index]),index);
+      gl.uniform1i(u(["surfaceMap","cloudsMap","ringMap","nightMap"][index]),index);
       if(!url){resolve();return;}
       const img=new Image();img.crossOrigin="anonymous";
       img.onload=()=>{if(disposed){resolve();return;}try{gl.activeTexture(gl.TEXTURE0+index);gl.bindTexture(gl.TEXTURE_2D,texture);gl.texImage2D(gl.TEXTURE_2D,0,gl.RGBA,gl.RGBA,gl.UNSIGNED_BYTE,img);resolve();}catch{reject(new Error("Texture unavailable"));}};
       img.onerror=()=>reject(new Error("Texture unavailable"));img.src=url;
     })));
     return {ready,dispose,draw(frame:PlanetFrame){
-      if(disposed)return;gl.viewport(0,0,canvas.width,canvas.height);gl.useProgram(program);
+      if(disposed)return;
+      const e=earthLayers(frame.earth),active=Boolean(config.night);
+      gl.uniform1f(u("layered"),active?1:0);
+      gl.uniform1f(u("lightMode"),e.lighting==="day"?0:e.lighting==="night"?1:2);
+      gl.uniform1f(u("sunAzimuth"),e.lighting==="coordinated"?e.sunAzimuth*Math.PI/180:0);
+      gl.uniform1f(u("cloudsEnabled"),e.clouds?1:0);
+      gl.uniform1f(u("cloudCoverage"),e.cloudCoverage);gl.uniform1f(u("cloudOpacity"),e.cloudOpacity);
+      gl.uniform1f(u("cloudTime"),frame.cloudTime??(frame.time??0)*e.cloudSpeed);
+      gl.uniform1f(u("evolutionTime"),frame.evolutionTime??(frame.time??0)*e.cloudEvolution);
+      gl.uniform1f(u("atmosphereStrength"),active?(e.atmosphere?e.atmosphereIntensity:0):1);
+      gl.uniform1f(u("lightsStrength"),e.lights?e.lightsIntensity:0);
+      gl.uniform1f(u("auroraStrength"),e.auroras?e.auroraIntensity:0);
+      gl.viewport(0,0,canvas.width,canvas.height);gl.useProgram(program);
       gl.uniform1f(u("time"),frame.time??0);gl.uniform1f(u("rotation"),frame.rotation);gl.uniform1f(u("tilt"),frame.tilt);gl.uniform1f(u("pitch"),frame.pitch);gl.uniform1f(u("illustrated"),frame.illustrated?1:0);
       gl.clearColor(0,0,0,0);gl.clear(gl.COLOR_BUFFER_BIT);gl.drawArrays(gl.TRIANGLES,0,6);
     }};
   }catch(error){dispose();throw error;}
 }
+

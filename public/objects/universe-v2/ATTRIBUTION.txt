@@ -34,3 +34,9 @@ SPDX-License-Identifier: CC-BY-3.0
 Source: https://github.com/CelestiaProject/CelestiaContent/blob/1993a082ee6307c0df7fdc0828eb117a0e8e9958/textures/hires/triton.jpg
 License: https://creativecommons.org/licenses/by/3.0/
 WebP recompression without flips. Original map contains reconstructed or uniform unobserved areas. Derived texture and both rendered posters retain the stated source license.
+
+Earth night map: Solar System Scope / INOVE, CC BY 4.0.
+https://www.solarsystemscope.com/textures/download/2k_earth_nightmap.jpg
+Changes: resized to 1024x512, WebP quality 88, no flips or meridian shift; composed
+with surface, independent clouds, lighting, atmospheric halo and artistic auroras.
+Source and derivative SHA-256: earth-night-manifest.json.

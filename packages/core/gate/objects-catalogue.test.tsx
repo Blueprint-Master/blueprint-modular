@@ -38,3 +38,14 @@ describe("Objets: real catalogue consumer", () => {
     expect(screen.queryByText("Code copié")).toBeNull();
   });
 });
+
+it('carries independently edited Earth layers into the actual React integration',()=>{
+ const {container}=render(<ObjectsCatalogue/>);
+ fireEvent.click(screen.getByRole('button',{name:'Terre',exact:true}));
+ fireEvent.click(screen.getByRole('button',{name:'Nuit',exact:true}));
+ fireEvent.change(screen.getByRole('slider',{name:'Déplacement des nuages'}),{target:{value:'0'}});
+ fireEvent.change(screen.getByRole('slider',{name:'Évolution des formes'}),{target:{value:'2'}});
+ const code=container.querySelector('code')?.textContent;
+ expect(code).toContain('"lighting":"night"');expect(code).toContain('"cloudSpeed":0');expect(code).toContain('"cloudEvolution":2');
+ fireEvent.click(screen.getByRole('button',{name:'Réinitialiser',exact:true}));expect(container.querySelector('code')?.textContent).toContain('"lighting":"coordinated"');
+});
