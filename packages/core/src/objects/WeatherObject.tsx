@@ -46,7 +46,7 @@ export function WeatherObject({id,label,size=360,style="photorealistic",playing=
       if(disposed)return;setStatus("loading");target.width=target.height=budget.size;
       const ctx=target.getContext("2d");if(!ctx)throw Error("Canvas unavailable");
       const field=createWeatherField(budget.size,texture),frame=ctx.createImageData(budget.size,budget.size);
-      draw=()=>{frame.data.set(field.draw(id,style,elapsed.current,!constrained&&width>=280&&!media.matches));ctx.putImageData(frame,0,0);};
+      draw=()=>{frame.data.set(field.draw(id,style,elapsed.current,width>=280&&!media.matches));ctx.putImageData(frame,0,0);};
       refresh.current=update;media.addEventListener("change",update);setStatus("ready");update();
     }).catch(()=>{if(!disposed){clock.stop();setStatus("error");}});
     return()=>{disposed=true;controller.abort();clock.stop();media.removeEventListener("change",update);refresh.current=()=>{};};

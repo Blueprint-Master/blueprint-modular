@@ -4,19 +4,26 @@ import {beforeEach,afterEach,it,expect,vi} from "vitest";
 import {WeatherObject} from "../src/objects/WeatherObject";
 const mocked=vi.hoisted(()=>({create:vi.fn(),draw:vi.fn()}));
 vi.mock("../src/objects/weather-renderer",()=>({createWeatherField:mocked.create}));
-let root:Root,element:HTMLDivElement,intersection:(e:{isIntersecting:boolean}[])=>void,mediaChange:()=>void,reduced=false;
+let root:Root,element:HTMLDivElement,intersection:(e:{isIntersecting:boolean}[])=>void,mediaChange:()=>void,reduced=false,coarse=false;
 beforeEach(()=>{
- vi.useFakeTimers();vi.stubGlobal("IS_REACT_ACT_ENVIRONMENT",true);mocked.create.mockReset();mocked.draw.mockReset();
+ vi.useFakeTimers({toFake:["setTimeout","clearTimeout","performance"]});vi.stubGlobal("IS_REACT_ACT_ENVIRONMENT",true);mocked.create.mockReset();mocked.draw.mockReset();
  mocked.create.mockImplementation((size:number)=>({draw:mocked.draw.mockImplementation(()=>new Uint8ClampedArray(size*size*4))}));
  vi.stubGlobal("IntersectionObserver",class{constructor(cb:typeof intersection){intersection=cb;}observe(){}disconnect(){}});
- vi.stubGlobal("matchMedia",(q:string)=>({get matches(){return q.includes("reduced-motion")&&reduced;},addEventListener(_e:string,cb:()=>void){if(q.includes("reduced-motion"))mediaChange=cb;},removeEventListener(){}}));
+ vi.stubGlobal("matchMedia",(q:string)=>({get matches(){return q.includes("reduced-motion")?reduced:q.includes("pointer: coarse")&&coarse;},addEventListener(_e:string,cb:()=>void){if(q.includes("reduced-motion"))mediaChange=cb;},removeEventListener(){}}));
  vi.stubGlobal("fetch",vi.fn().mockResolvedValue({ok:true,blob:async()=>new Blob()}));
  vi.stubGlobal("createImageBitmap",vi.fn().mockResolvedValue({width:4,height:4,close:vi.fn()}));
  vi.spyOn(HTMLCanvasElement.prototype,"getContext").mockImplementation(()=>({drawImage(){},getImageData(){return {data:new Uint8ClampedArray(64)};},createImageData(w:number,h:number){return {data:new Uint8ClampedArray(w*h*4)};},putImageData(){}} as unknown as CanvasRenderingContext2D));
- reduced=false;element=document.createElement("div");document.body.append(element);root=createRoot(element);
+ reduced=false;coarse=false;element=document.createElement("div");document.body.append(element);root=createRoot(element);
 });
 afterEach(async()=>{await act(async()=>root.unmount());element.remove();vi.useRealTimers();vi.unstubAllGlobals();vi.restoreAllMocks();});
 async function show(){await act(async()=>{intersection([{isIntersecting:true}]);});await act(async()=>{await vi.dynamicImportSettled();});}
+it("allows lightning in selected mobile detail without exceeding its rendering budget",async()=>{
+ coarse=true;await act(async()=>root.render(<WeatherObject id="weather-storm" label="Storm" size={360}/>));await show();
+ expect(mocked.create.mock.calls[0][0]).toBe(224);expect(mocked.draw.mock.calls.at(-1)![3]).toBe(true);expect(vi.getTimerCount()).toBe(1);
+ await act(async()=>vi.advanceTimersByTime(1500));expect(mocked.draw.mock.calls.at(-1)![2]).toBeGreaterThan(1);
+ await act(async()=>root.render(<WeatherObject id="weather-storm" label="Storm" size={360} playing={false}/>));expect(vi.getTimerCount()).toBe(0);
+ reduced=true;await act(async()=>mediaChange());expect(mocked.draw.mock.calls.at(-1)![3]).toBe(false);expect(vi.getTimerCount()).toBe(0);
+});
 it("never fetches textures or schedules timers for fixed thumbnails",async()=>{
  await act(async()=>root.render(<WeatherObject id="weather-snow" label="Snow" thumbnail/>));expect(fetch).not.toHaveBeenCalled();expect(mocked.create).not.toHaveBeenCalled();expect(element.querySelector("canvas")).toBeNull();expect(vi.getTimerCount()).toBe(0);
 });
