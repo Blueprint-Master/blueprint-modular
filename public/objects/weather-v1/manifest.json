@@ -62,15 +62,15 @@
     },
     {
       "file": "previews/weather-storm-photorealistic.webp",
-      "bytes": 18534,
-      "sha256": "aaf04f85bf17c9e9a5debcbdf1cd67966f6c65b9babf4a6ccd60056f3b1c4955",
+      "bytes": 18862,
+      "sha256": "e702fb96cc3a7f0d446b22d1611585758bc5e0dcf06a07ea7a20fe4ddb4ceedc",
       "width": 256,
       "height": 256
     },
     {
       "file": "previews/weather-storm-illustration.webp",
-      "bytes": 17254,
-      "sha256": "f6655fb46cd61bec731f7f0e0aa1d7220a44ed17ce82c0b161bf7cef3ee78563",
+      "bytes": 17662,
+      "sha256": "f67efed1bc93a9aa22edca5e29884a3107902d022ca8449edea3a7220205dab7",
       "width": 256,
       "height": 256
     },

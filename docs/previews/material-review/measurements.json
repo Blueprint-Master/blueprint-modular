@@ -1,0 +1,67 @@
+{
+  "date": "2026-09-09",
+  "environment": {
+    "node": "v24.19.0",
+    "platform": "linux",
+    "cpu": "AMD EPYC 9V74 80-Core Processor"
+  },
+  "scope": "Software RGBA only, 36 samples; excludes browser composition and GPU. No phone or battery measurements.",
+  "metrics": [
+    {
+      "size": 224,
+      "object": "sun",
+      "style": "photorealistic",
+      "medianMs": 9.189405000000079,
+      "p95Ms": 18.381902999999966
+    },
+    {
+      "size": 224,
+      "object": "storm",
+      "style": "photorealistic",
+      "medianMs": 4.759672000000137,
+      "p95Ms": 5.024231000000327
+    },
+    {
+      "size": 224,
+      "object": "sun",
+      "style": "illustration",
+      "medianMs": 11.85880700000007,
+      "p95Ms": 12.46790800000008
+    },
+    {
+      "size": 224,
+      "object": "storm",
+      "style": "illustration",
+      "medianMs": 4.8539929999997184,
+      "p95Ms": 6.9033079999999245
+    },
+    {
+      "size": 320,
+      "object": "sun",
+      "style": "photorealistic",
+      "medianMs": 18.682386000000406,
+      "p95Ms": 20.800505999999586
+    },
+    {
+      "size": 320,
+      "object": "storm",
+      "style": "photorealistic",
+      "medianMs": 10.635787999999593,
+      "p95Ms": 21.177855999998428
+    },
+    {
+      "size": 320,
+      "object": "sun",
+      "style": "illustration",
+      "medianMs": 25.747537999999622,
+      "p95Ms": 31.60977500000081
+    },
+    {
+      "size": 320,
+      "object": "storm",
+      "style": "illustration",
+      "medianMs": 9.883702000002813,
+      "p95Ms": 21.68769600000087
+    }
+  ]
+}

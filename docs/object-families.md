@@ -7,7 +7,7 @@ disponibilité automatiquement déduite d’un numéro de package.
 | --- | --- | --- |
 | Univers | 8 planètes, Soleil, Lune, Io, Europe, Ganymède, Callisto, Titan, Encelade, Titania, Triton ; réaliste/dessin ; objets 2.0.0 | Modular #214, #217, #218 et Maker #1915, #1917 fusionnées le 2026-09-08 ; disponibilité effective en production non testée ici |
 | Bâtiments, mobilité, logistique | 10 objets vectoriels historiques, 1.0.0 | Conservés sans modification |
-| Météo & atmosphères | `weather-fair`, `weather-overcast`, `weather-rain`, `weather-storm`, `weather-snow` ; chacun réaliste + gouache ; 1.0.0 | Socle Modular #220 fusionné le 2026-09-09 par une action externe ; correctif des éclairs sur la branche `fix/weather-visible-lightning-20260909`. Maker #1929 en PR brouillon. Validation visuelle live requise ; publication npm et disponibilité en production non vérifiées |
+| Météo & atmosphères | `weather-fair`, `weather-overcast`, `weather-rain`, `weather-storm`, `weather-snow` ; chacun réaliste + gouache ; 1.0.0 | Modular #220/#222 et Maker #1929 fusionnées le 2026-09-09. Reprise de matière Orage/Soleil sur `fix/natural-lightning-and-plasma`. Validation visuelle live requise ; publication npm et disponibilité en production non vérifiées |
 | Météo : soleil isolé | À réaliser ; distinct du Soleil astronomique | Essai rejeté pour qualité insuffisante, absent du catalogue et du parseur. Priorité à la reprise de cette famille |
 | Eau, végétation, cristaux, formes/ondes | Pas de nouvelle famille dans cette passe | À examiner après validation de Météo |
 
@@ -25,3 +25,7 @@ PR du socle : [Modular #220, fusionnée](https://github.com/Blueprint-Master/blu
 et [Maker #1929](https://github.com/Blueprint-Master/blueprint-maker/pull/1929).
 Correction du 2026-09-09 : éclair ramifié perceptible dès les premières secondes
 de la grande vue sélectionnée, mobile compris ; éclair fixe sur les deux posters.
+
+Reprise suivante du 2026-09-09 : le trait bleu et les contours solaires ont été
+jugés sous le niveau de qualité du reste de l’objet. Canal fin éclairant le
+nuage et volume de plasma texturé : [preuves et limites](previews/material-review/README.md).
