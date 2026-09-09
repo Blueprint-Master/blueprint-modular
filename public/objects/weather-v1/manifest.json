@@ -1,0 +1,92 @@
+{
+  "version": "1.0.0",
+  "author": "Blueprint / BEAM Consulting SARL",
+  "license": "Apache-2.0",
+  "source": "packages/core/src/objects/weather-renderer.ts",
+  "assets": [
+    {
+      "file": "cloud-photorealistic.webp",
+      "bytes": 46896,
+      "sha256": "4e0db6d3fa2fb7b73a5789ed1025350df92b7dd40f72b7a9e92b34a594b34dd8",
+      "width": 512,
+      "height": 512
+    },
+    {
+      "file": "cloud-illustration.webp",
+      "bytes": 42672,
+      "sha256": "a3da85174dd590356ba437ef034d4c9ab9a00e86f82110e01416290a5d65609a",
+      "width": 512,
+      "height": 512
+    },
+    {
+      "file": "previews/weather-fair-photorealistic.webp",
+      "bytes": 18072,
+      "sha256": "fd000384a8896849c1cd24c5cdc2e5767bd1ba52bc7cac42fa80fededfb9a20b",
+      "width": 256,
+      "height": 256
+    },
+    {
+      "file": "previews/weather-fair-illustration.webp",
+      "bytes": 16306,
+      "sha256": "d22fd24f2c2faf7a6b86f92609083276bc0e80f98da3760b3aa6f2bdd0e4376f",
+      "width": 256,
+      "height": 256
+    },
+    {
+      "file": "previews/weather-overcast-photorealistic.webp",
+      "bytes": 13688,
+      "sha256": "13182a3edb3c5a86b4cc74f455e568334907f945e49c4286a267e0910f90ee7b",
+      "width": 256,
+      "height": 256
+    },
+    {
+      "file": "previews/weather-overcast-illustration.webp",
+      "bytes": 11802,
+      "sha256": "c50dc8047bd10a6b1a0583992e36e6606a885bc4d15be1c580704b2a9a74cab0",
+      "width": 256,
+      "height": 256
+    },
+    {
+      "file": "previews/weather-rain-photorealistic.webp",
+      "bytes": 16938,
+      "sha256": "443715be4223c275009e36905d6ba6dd1d01aa407324fff3f244f05aef14863c",
+      "width": 256,
+      "height": 256
+    },
+    {
+      "file": "previews/weather-rain-illustration.webp",
+      "bytes": 15588,
+      "sha256": "8d5da44610d855abdcf87a40123b55a6cad6d5c5f373f09a7970abc770766049",
+      "width": 256,
+      "height": 256
+    },
+    {
+      "file": "previews/weather-storm-photorealistic.webp",
+      "bytes": 17476,
+      "sha256": "d56a71e2915fe98e1cc5c891665cf55f8d1da414dadc4240b48afeef438a56b3",
+      "width": 256,
+      "height": 256
+    },
+    {
+      "file": "previews/weather-storm-illustration.webp",
+      "bytes": 16456,
+      "sha256": "558776def9f3ed4e918976724c3931fd3b70b4029eda2de04dce4d54bd10bf6f",
+      "width": 256,
+      "height": 256
+    },
+    {
+      "file": "previews/weather-snow-photorealistic.webp",
+      "bytes": 17962,
+      "sha256": "de6ce64b97f9ffd2e71677bbbb8d0f468837d324d319c9c7794fc6772a61c7fd",
+      "width": 256,
+      "height": 256
+    },
+    {
+      "file": "previews/weather-snow-illustration.webp",
+      "bytes": 15976,
+      "sha256": "8875f18a2248182500191a9c8b903024b8c527176ae7329af994ff39ef476f82",
+      "width": 256,
+      "height": 256
+    }
+  ]
+}

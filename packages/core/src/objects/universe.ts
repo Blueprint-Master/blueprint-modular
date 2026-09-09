@@ -1,3 +1,4 @@
+import {isWeatherId,WEATHER_VERSION,type WeatherId} from "./weather";
 export const UNIVERSE_VERSION = "2.0.0" as const;
 export const PLANET_IDS = ["mercury","venus","earth","mars","jupiter","saturn","uranus","neptune","sun","moon"] as const;
 export const MOON_IDS = ["io","europa","ganymede","callisto","titan","enceladus","titania","triton"] as const;
@@ -43,7 +44,8 @@ export interface CommunityObjectAttachment {
 }
 export const VECTOR_IDS = ["house","building","warehouse","factory","car","van","truck","pallet","parcel","container"] as const;
 export interface VectorObjectAttachment {schemaVersion:1;kind:"modular-object";id:typeof VECTOR_IDS[number];version:"1.0.0";style:"vector";animation:{playing:false;speed:1}}
-export type ModularObjectAttachment = BuiltinObjectAttachment | CommunityObjectAttachment | VectorObjectAttachment;
+export interface WeatherObjectAttachment {schemaVersion:1;kind:"modular-object";id:WeatherId;version:typeof WEATHER_VERSION;style:PlanetStyle;animation:{playing:boolean;speed:number}}
+export type ModularObjectAttachment = BuiltinObjectAttachment | CommunityObjectAttachment | VectorObjectAttachment | WeatherObjectAttachment;
 export function parseModularObjectAttachment(raw:unknown):ModularObjectAttachment|undefined {
   if(!raw||typeof raw!=="object")return;
   const o=raw as Record<string,unknown>,a=o.animation as Record<string,unknown>|undefined;
@@ -51,5 +53,6 @@ export function parseModularObjectAttachment(raw:unknown):ModularObjectAttachmen
   if(o.schemaVersion!==1||o.kind!=="modular-object"||typeof o.id!=="string"||
     (o.style!=="photorealistic"&&o.style!=="illustration")||!a||typeof a.playing!=="boolean"||typeof a.speed!=="number"||!Number.isFinite(a.speed)||a.speed<.1||a.speed>3)return;
   if(isPlanetId(o.id)&&o.version===UNIVERSE_VERSION)return {schemaVersion:1,kind:"modular-object",id:o.id,version:UNIVERSE_VERSION,style:o.style,animation:{playing:a.playing,speed:a.speed}};
+  if(isWeatherId(o.id)&&o.version===WEATHER_VERSION)return {schemaVersion:1,kind:"modular-object",id:o.id,version:WEATHER_VERSION,style:o.style,animation:{playing:a.playing,speed:a.speed}};
   if(/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/.test(o.id)&&o.version==="1.0.0"&&typeof o.sha256==="string"&&/^[0-9a-f]{64}$/.test(o.sha256))return {schemaVersion:1,kind:"modular-object",id:o.id,version:"1.0.0",sha256:o.sha256,style:o.style,animation:{playing:a.playing,speed:a.speed}};
 }

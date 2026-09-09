@@ -1,8 +1,9 @@
 import {MOON_PARENTS,planetProvenance} from "./universe";
+import {WEATHER_IDS,WEATHER_NAMES,WEATHER_VERSION} from "./weather";
 /** Versioned, data-only objects. No remote assets, arbitrary code or user data. */
 export const OBJECT_CATALOG_VERSION = "1.0.0" as const;
-export type ObjectFamily = "space" | "buildings" | "mobility" | "logistics";
-export type ObjectShape = "planet" | "star" | "moon" | "house" | "building" | "warehouse" | "factory" | "car" | "van" | "truck" | "pallet" | "parcel" | "container";
+export type ObjectFamily = "space" | "weather" | "buildings" | "mobility" | "logistics";
+export type ObjectShape = "planet" | "star" | "moon" | "atmosphere" | "house" | "building" | "warehouse" | "factory" | "car" | "van" | "truck" | "pallet" | "parcel" | "container";
 export interface ModularObjectDefinition {
   readonly id: string;
   readonly version: string;
@@ -13,7 +14,7 @@ export interface ModularObjectDefinition {
   readonly rings: boolean;
   readonly parent?: string;
   readonly license: "Apache-2.0" | "CC-BY-4.0" | "LicenseRef-NASA-Media" | "CC-BY-3.0" | "CC-BY-SA-4.0";
-  readonly fidelity: "stylized-illustration" | "textured-sphere";
+  readonly fidelity: "stylized-illustration" | "textured-sphere" | "living-atmosphere";
 }
 function object(id: string, fr: string, en: string, family: ObjectFamily, shape: ObjectShape, color: string, rings = false): ModularObjectDefinition {
   return Object.freeze({ id, version: OBJECT_CATALOG_VERSION, name: Object.freeze({ fr, en }), family, shape, color, rings,
@@ -47,11 +48,15 @@ export const MOON_OBJECTS:readonly ModularObjectDefinition[]=Object.freeze([
   ["io","Io","Io"],["europa","Europe","Europa"],["ganymede","Ganymède","Ganymede"],["callisto","Callisto","Callisto"],
   ["titan","Titan","Titan"],["enceladus","Encelade","Enceladus"],["titania","Titania","Titania"],["triton","Triton","Triton"],
 ].map(([id,fr,en])=>Object.freeze({...object(id,fr,en,"space","moon","#bbc1c9"),version:"2.0.0",parent:MOON_PARENTS[id as keyof typeof MOON_PARENTS],license:planetProvenance(id).license as ModularObjectDefinition["license"],fidelity:"textured-sphere" as const})));
-export const DISCOVERABLE_OBJECTS=Object.freeze([...MODULAR_OBJECTS,...MOON_OBJECTS]);
+export const WEATHER_OBJECTS:readonly ModularObjectDefinition[]=Object.freeze(WEATHER_IDS.map(id=>Object.freeze({
+  ...object(id,WEATHER_NAMES[id].fr,WEATHER_NAMES[id].en,"weather","atmosphere","#91adc9"),
+  version:WEATHER_VERSION,fidelity:"living-atmosphere" as const,
+})));
+export const DISCOVERABLE_OBJECTS=Object.freeze([...MODULAR_OBJECTS,...MOON_OBJECTS,...WEATHER_OBJECTS]);
 
 /** Exact resolution only. An unknown ID/version must never pick a lookalike. */
 export const MODULAR_OBJECT_VERSIONS:readonly ModularObjectDefinition[]=Object.freeze([
-  ...MODULAR_OBJECTS,...MOON_OBJECTS,
+  ...MODULAR_OBJECTS,...MOON_OBJECTS,...WEATHER_OBJECTS,
   ...MODULAR_OBJECTS.filter(item=>item.family==="space").map(item=>Object.freeze({...item,version:"2.0.0",license:"CC-BY-4.0" as const,fidelity:"textured-sphere" as const})),
 ]);
 export function resolveModularObject(id: string, version: string = OBJECT_CATALOG_VERSION): ModularObjectDefinition | undefined {

@@ -1,0 +1,152 @@
+{
+  "date": "2026-09-09",
+  "environment": {
+    "node": "v24.19.0",
+    "platform": "linux",
+    "arch": "x64",
+    "cpu": "AMD EPYC 9V74 80-Core Processor"
+  },
+  "method": "Software RGBA renderer only; 36 warm samples per object/style. Excludes browser compositing. Not a mobile-device or battery measurement.",
+  "metrics": [
+    {
+      "id": "weather-fair",
+      "style": "photorealistic",
+      "resolution": 320,
+      "medianMs": 10.022705000000315,
+      "p95Ms": 18.987301000000116
+    },
+    {
+      "id": "weather-fair",
+      "style": "photorealistic",
+      "resolution": 224,
+      "medianMs": 5.344004999999925,
+      "p95Ms": 5.8793840000003
+    },
+    {
+      "id": "weather-fair",
+      "style": "illustration",
+      "resolution": 320,
+      "medianMs": 9.734354000000167,
+      "p95Ms": 11.018213999999716
+    },
+    {
+      "id": "weather-fair",
+      "style": "illustration",
+      "resolution": 224,
+      "medianMs": 4.791041999999834,
+      "p95Ms": 5.482006000000183
+    },
+    {
+      "id": "weather-overcast",
+      "style": "photorealistic",
+      "resolution": 320,
+      "medianMs": 6.8195680000008,
+      "p95Ms": 7.521238000000267
+    },
+    {
+      "id": "weather-overcast",
+      "style": "photorealistic",
+      "resolution": 224,
+      "medianMs": 3.3196680000000924,
+      "p95Ms": 3.542403999999806
+    },
+    {
+      "id": "weather-overcast",
+      "style": "illustration",
+      "resolution": 320,
+      "medianMs": 6.873165999999401,
+      "p95Ms": 8.932488000000376
+    },
+    {
+      "id": "weather-overcast",
+      "style": "illustration",
+      "resolution": 224,
+      "medianMs": 3.2875380000004952,
+      "p95Ms": 3.682925000000978
+    },
+    {
+      "id": "weather-rain",
+      "style": "photorealistic",
+      "resolution": 320,
+      "medianMs": 7.984805000000051,
+      "p95Ms": 11.893412000001263
+    },
+    {
+      "id": "weather-rain",
+      "style": "photorealistic",
+      "resolution": 224,
+      "medianMs": 3.686431000000084,
+      "p95Ms": 5.194469000000026
+    },
+    {
+      "id": "weather-rain",
+      "style": "illustration",
+      "resolution": 320,
+      "medianMs": 7.011026000000129,
+      "p95Ms": 8.167233000000124
+    },
+    {
+      "id": "weather-rain",
+      "style": "illustration",
+      "resolution": 224,
+      "medianMs": 3.4493019999990793,
+      "p95Ms": 3.7250400000011723
+    },
+    {
+      "id": "weather-storm",
+      "style": "photorealistic",
+      "resolution": 320,
+      "medianMs": 7.644172000000253,
+      "p95Ms": 11.267288000000917
+    },
+    {
+      "id": "weather-storm",
+      "style": "photorealistic",
+      "resolution": 224,
+      "medianMs": 4.747724999997445,
+      "p95Ms": 6.926869000002625
+    },
+    {
+      "id": "weather-storm",
+      "style": "illustration",
+      "resolution": 320,
+      "medianMs": 7.66049700000076,
+      "p95Ms": 53.773496999998315
+    },
+    {
+      "id": "weather-storm",
+      "style": "illustration",
+      "resolution": 224,
+      "medianMs": 3.7209729999995034,
+      "p95Ms": 4.557527000000846
+    },
+    {
+      "id": "weather-snow",
+      "style": "photorealistic",
+      "resolution": 320,
+      "medianMs": 8.848551999999472,
+      "p95Ms": 12.003549999997631
+    },
+    {
+      "id": "weather-snow",
+      "style": "photorealistic",
+      "resolution": 224,
+      "medianMs": 3.7619249999988824,
+      "p95Ms": 4.366458000000421
+    },
+    {
+      "id": "weather-snow",
+      "style": "illustration",
+      "resolution": 320,
+      "medianMs": 7.1637660000014876,
+      "p95Ms": 7.882762999997794
+    },
+    {
+      "id": "weather-snow",
+      "style": "illustration",
+      "resolution": 224,
+      "medianMs": 3.5401400000009744,
+      "p95Ms": 3.941978000002564
+    }
+  ]
+}

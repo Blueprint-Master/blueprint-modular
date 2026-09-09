@@ -1,6 +1,6 @@
 # Reusable objects
 
-`@blueprint-modular/core/objects` exports `ModularObject`, `PlanetObject`, a versioned catalogue and a strict `.modular.json` parser. Existing 1.0.0 vector objects remain unchanged. Universe 2.0.0 adds eight planets, Sun, Moon and eight additional moons in photorealistic and illustration styles.
+`@blueprint-modular/core/objects` exports `ModularObject`, `PlanetObject`, `WeatherObject`, a versioned catalogue and a strict `.modular.json` parser. Existing 1.0.0 vector objects remain unchanged. Universe 2.0.0 adds eight planets, Sun, Moon and eight additional moons in photorealistic and illustration styles. Weather 1.0.0 adds five atmospheric studies; see the dated status in `docs/object-families.md`.
 
 ```tsx
 import { ModularObject } from '@blueprint-modular/core/objects';
@@ -33,6 +33,40 @@ The catalogue also links to Poly Haven, ambientCG and Kenney. Their asset licens
 Review candidates at thumbnail and full size: distinctive silhouette, surface detail, coherent light, clean transparency/seams, convincing motion and a deliberately different painted treatment. Reject blurred enlargements, broken poles or seams, generic gradients, misleading source claims and missing redistribution rights.
 
 ## Community and release
+
+### Weather 1.0.0 (draft, not yet published)
+
+```tsx
+import {ModularObject, WeatherObject, WEATHER_IDS} from '@blueprint-modular/core/objects';
+<ModularObject id="weather-rain" version="1.0.0" variant="illustration"
+  size={360} playing={isSelected} speed={1} />
+<WeatherObject id="weather-snow" label="Neige" style="photorealistic" thumbnail />
+```
+
+Five IDs: `weather-fair`, `weather-overcast`, `weather-rain`, `weather-storm`,
+`weather-snow`. Both styles have separately generated original cloud materials.
+The standalone weather sun is intentionally deferred, not replaced by a basic
+icon; the existing Universe sun is unchanged. The complete discoverable catalogue
+now contains 33 objects (the earlier Universe/legacy subset still contains 28).
+
+Copy the **new** `dist/assets/objects/weather-v1` to `public/objects/weather-v1`,
+including attribution, fingerprints and generation prompts. `assetBaseUrl` on a
+weather object points to that directory, not to `universe-v2`.
+Only one selected style material (512×512 WebP) and its poster (256×256) load.
+No animation video is shipped in the package. Main cloud updrafts change shape
+locally and condensation changes opacity; precipitation falls and fades.
+Lightning is rare (one smooth discharge per 24 s), detailed desktop only.
+Pause/speed control the whole study. `angle`, `color` and globe dragging do not
+apply to weather. Put controls in the host, set `thumbnail` on all fixed cards,
+and mount/animate only the selected object. Hidden/reduced-motion views stop the
+clock. Caps: 320 px/18 fps, 224 px/12 fps constrained; these are not battery claims.
+
+Regenerate: `node scripts/generate-weather-previews.cjs --video` (ffmpeg for
+optional 24-second proof videos). Inspect: `npx vite --config
+scripts/weather-preview.config.ts --host 127.0.0.1` then `/weather-preview.html`.
+The September 9 run inspected captured instants, not live browser playback;
+the browser policy blocked local previews. Live visual approval remains required.
+The companion Maker adapter must be merged/deployed independently of npm.
 
 The catalogue groups built-ins by theme and offers public contributions and submissions. A real signed-in user can submit; OWNER/ADMIN users can publish or reject pending objects from “Mes propositions”. Pending/rejected images are private to authors and reviewers. Published bytes/hashes are immutable. Uploads are bounded to 10 MB and 16 megapixels, decoded and re-encoded to WebP without metadata. Planet textures require a 2:1 ratio. No SVG or executable uploads.
 
