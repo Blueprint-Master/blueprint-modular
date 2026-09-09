@@ -281,6 +281,14 @@ Après intégration et publication du core, le consommateur Maker doit utiliser 
 
 ## Versioned objects entry
 
+Weather 1.0.0 adds `WeatherObject`, `WEATHER_IDS`, `WEATHER_OBJECTS` and
+`isWeatherId` to the separate `/objects` entry. Five objects (fair, overcast,
+rain, storm, snow) have photorealistic and painted materials with local shape
+and density evolution. Use `ModularObject id="weather-rain" version="1.0.0"`,
+`variant`, `playing`, `speed` and fixed `thumbnail`; copy `weather-v1` assets
+from the next built package. Catalogue total: 33 objects. Draft visual approval
+and npm publication are separate gates; see `docs/weather-atmospheres.md`.
+
 `@blueprint-modular/core/objects`: `ModularObject`, `PlanetObject`, exact catalogue resolver and portable attachment parser. Universe 2.0.0 supports `variant="photorealistic"|"illustration"`, `playing`, bounded `speed`, `interactive`, `thumbnail` and `assetBaseUrl`, with rotating textures, locally forming/dissipating clouds, rising/fading solar prominences and ring depth. The solar and cloud effects share the same pause/speed controls and require no additional assets. Version 1.0.0 vector objects remain stable. See `packages/core/OBJECTS.md` for asset installation, attribution, community uploads and Maker integration.
 
 Universe living-object update: `DISCOVERABLE_OBJECTS` exposes 28 objects, including io, europa, ganymede, callisto, titan, enceladus, titania and triton (version 2.0.0 only). `MODULAR_OBJECTS` keeps the original 20 immutable v1 definitions. Source maps: six from NASA 3D Resources; Titania from Celestia contributors under CC BY-SA 4.0, Triton under CC BY 3.0; illustration uses procedural drawn shading. Preserve per-object provenance. Atmospheric time and rotation pause together. Runtime maps are compact WebP, loaded only on entering view; thumbnails are fixed. GPU ceilings: 512px/24fps desktop, 320px/18fps constrained. Software: 288px/12fps, 224px/12fps constrained. Copy the current dist/assets/objects into public/objects after upgrading core. See packages/core/OBJECTS.md.

@@ -7,3 +7,8 @@ export { PlanetObject } from "./PlanetObject";
 export type { PlanetObjectProps } from "./PlanetObject";
 export { PLANET_IDS, MOON_IDS, MOON_PARENTS, planetProvenance, UNIVERSE_VERSION, UNIVERSE_PROVENANCE, UNIVERSE_ASSET_PATH, isPlanetId, parseModularObjectAttachment } from "./universe";
 export type { PlanetId, PlanetStyle, ModularObjectAttachment } from "./universe";
+export {WeatherObject} from "./WeatherObject";
+export type {WeatherObjectProps} from "./WeatherObject";
+export {WEATHER_OBJECTS} from "./catalog";
+export {WEATHER_IDS,WEATHER_NAMES,WEATHER_VERSION,WEATHER_ASSET_PATH,isWeatherId,weatherPosterPath,weatherAssetPaths} from "./weather";
+export type {WeatherId,WeatherStyle} from "./weather";
