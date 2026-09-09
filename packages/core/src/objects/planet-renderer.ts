@@ -65,31 +65,21 @@ void main(){
    color=atmosphereColor;
    alpha=glow*max(atmosphere,star);
    if(star>.5&&activity==3.){
-     // Three staggered prominences: anchored arches rise, expand and dissipate.
-     // Same analytic shape in the software renderer; one shared animation clock.
-     float theta=atan(p.y,p.x);
-     float plasma=0.;
-     for(int i=0;i<3;i++){
-       float site=float(i);
-       float phase=fract(time/14.+.18+site*.33);
-       float life=sin(PI*phase);
-       float centre=-.35+site*2.05+.06*sin(time*.05+site);
-       float delta=mod(theta-centre+PI,2.*PI)-PI;
-       float q=delta/(.10+.09*phase);
-       if(abs(q)<1.){
-         float arch=(.04+.20*life)*max(0.,1.-q*q);
-         float d=abs(distance-arch);
-         float filament=max(0.,1.-d/.017);
-         float halo=.32/(1.+1600.*d*d);
-         float plume=.18*(1.-abs(q))*max(0.,1.-distance/(.07+.20*life));
-         plasma+=(filament*.78+halo+plume)*life*life*(1.-smoothstep(.98,1.,abs(q)));
-       }
+     // Textured plasma volume; keep equations aligned with the software renderer.
+     float phase=fract(time/18.+.12),life=sin(PI*min(1.,phase/.8));
+     float width=.24+.08*life,height=.05+.24*life;
+     float q=(mod(atan(p.y,p.x)+.35+PI,2.*PI)-PI)/width;
+     if(phase<.8&&abs(q)<1.&&distance<height*1.15){
+       float bend=q+.055*sin(distance*32.-time*.7),arch=height*max(0.,1.-bend*bend);
+       vec3 material=texture2D(surfaceMap,vec2(fract(.37+bend*.23+time*.008),.35+distance*1.7+.035*sin(q*9.-time*.4))).rgb;
+       float strand=pow(clamp((material.g-.12)*1.8,0.,1.),1.4);
+       float envelope=(1.-smoothstep(arch*.45,arch*(.85+.25*strand)+.008,distance))*(1.-smoothstep(.70,1.,abs(q)));
+       float density=(.32+.68*strand)*(.7+.3*sin(q*5.-time*.7+distance*12.));
+       float plasma=min(.94,envelope*density*life*1.5);
+       vec3 hot=vec3(1.,.24+.57*material.g+.10*strand,.025+.25*material.b);
+       float nextAlpha=plasma+alpha*(1.-plasma);
+       color=(hot*plasma+color*alpha*(1.-plasma))/max(.001,nextAlpha);alpha=nextAlpha;
      }
-     plasma=min(.95,plasma);
-     float nextAlpha=plasma+alpha*(1.-plasma);
-     vec3 hot=mix(vec3(1.,.18,.025),vec3(1.,.72,.22),min(1.,plasma*1.5));
-     color=(hot*plasma+color*alpha*(1.-plasma))/max(.001,nextAlpha);
-     alpha=nextAlpha;
    }
  }
  if(ringed>.5&&abs(ray.y)>.001){

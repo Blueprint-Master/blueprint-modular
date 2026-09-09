@@ -1,6 +1,6 @@
 # Météo & atmosphères — 2026-09-09
 
-**Socle fusionné via #220 le 2026-09-09 ; correctif des éclairs en PR brouillon.
+**Socle et éclairs fusionnés via #220/#222 le 2026-09-09 ; reprise de matière en PR brouillon.
 Qualité visuelle live non validée.**
 
 Cinq objets 1.0.0, chacun en photoréalisme et gouache : éclaircies, ciel couvert,
@@ -26,6 +26,8 @@ avant 2,8 s ; un seul événement par boucle analytique de 24 s. Le poster fixe
 capture 1,35 s pour distinguer l’orage de la pluie sans animer les vignettes.
 Correction du 9 septembre : la limite mobile ne supprime plus les éclairs ;
 elle conserve les plafonds 224 px / 12 fps. Reduced-motion supprime la décharge.
+La reprise de matière suivante remplace le trait bleu par un canal irrégulier
+fin, avec lumière diffuse dans le nuage. [Comparaison multi-instants et limites](previews/material-review/README.md).
 
 Un seul minuteur par objet sélectionné, zéro sur les vignettes, en pause,
 hors écran, onglet masqué ou reduced-motion. Les tests avec horloge simulée

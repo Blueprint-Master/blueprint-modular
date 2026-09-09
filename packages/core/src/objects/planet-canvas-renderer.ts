@@ -46,10 +46,9 @@ export function createCanvasPlanetRenderer(canvas:HTMLCanvasElement,config:{surf
   }
   const time=frame.time??0,flow=.014*Math.sin(time*.05),cloudFlow=.003*Math.sin(time*.12);
   // Precompute event state once per frame, not once per pixel. No particles/maps.
-  const prominences=config.star&&config.activity===3?[0,1,2].map(site=>{
-   const phase=((time/14+.18+site*.33)%1+1)%1,life=Math.sin(Math.PI*phase);
-   return {centre:-.35+site*2.05+.06*Math.sin(time*.05+site),width:.10+.09*phase,height:.04+.20*life,strength:life*life};
-  }):[];
+  const phase=((time/18+.12)%1+1)%1,life=Math.sin(Math.PI*Math.min(1,phase/.8));
+  const eruption=config.star&&config.activity===3&&phase<.8;
+  const plumeWidth=.24+.08*life,plumeHeight=.05+.24*life;
   for(let y=0;y<size;y++)for(let x=0;x<size;x++){
    const px=((x+.5)/size*2-1)*scale,py=(1-(y+.5)/size*2)*scale,rr=px*px+py*py;
    let color=[0,0,0],alpha=0,sphereT=100;
@@ -73,18 +72,21 @@ export function createCanvasPlanetRenderer(canvas:HTMLCanvasElement,config:{surf
    }else if(config.star||config.atmosphere.some(c=>c>0)){
     const gi=(y*size+x)*5,distance=geometry[gi+1];
     alpha=geometry[gi+2];color=[...config.atmosphere];
-    if(prominences.length){
-     const theta=geometry[gi];let plasma=0;
-     for(const event of prominences){
-      let delta=theta-event.centre;if(delta>Math.PI)delta-=2*Math.PI;else if(delta< -Math.PI)delta+=2*Math.PI;
-      const q=delta/event.width;
-      if(Math.abs(q)>=1)continue;
-      const arch=event.height*Math.max(0,1-q*q),d=Math.abs(distance-arch);
-      const plume=.18*(1-Math.abs(q))*Math.max(0,1-distance/(event.height+.03));
-      plasma+=(Math.max(0,1-d/.017)*.78+.32/(1+1600*d*d)+plume)*event.strength*(1-smooth(.98,1,Math.abs(q)));
+    if(eruption){
+     let delta=geometry[gi]+.35;if(delta>Math.PI)delta-=2*Math.PI;else if(delta< -Math.PI)delta+=2*Math.PI;
+     const q=delta/plumeWidth;
+     if(Math.abs(q)<1&&distance<plumeHeight*1.15){
+      // A torn, optically thick curtain of strands, using the SAME solar material.
+      // The volume grows from the limb; there is no stroked perimeter/closed ring.
+      const bend=q+.055*Math.sin(distance*32-time*.7),arch=plumeHeight*Math.max(0,1-bend*bend);
+      const material=sample(surface!,.37+bend*.23+time*.008,.35+distance*1.7+.035*Math.sin(q*9-time*.4));
+      const strand=Math.pow(Math.max(0,Math.min(1,(material[1]-.12)*1.8)),1.4);
+      const envelope=(1-smooth(arch*.45,arch*(.85+.25*strand)+.008,distance))*(1-smooth(.70,1,Math.abs(q)));
+      const density=(.32+.68*strand)*(.7+.3*Math.sin(q*5-time*.7+distance*12));
+      const plasma=Math.min(.94,envelope*density*life*1.5);
+      const hot=[1,.24+.57*material[1]+.10*strand,.025+.25*material[2]],nextAlpha=plasma+alpha*(1-plasma);
+      color=color.map((c,i)=>(hot[i]*plasma+c*alpha*(1-plasma))/Math.max(.001,nextAlpha));alpha=nextAlpha;
      }
-     plasma=Math.min(.95,plasma);const heat=Math.min(1,plasma*1.5),hot=[1,.18+.54*heat,.025+.195*heat],nextAlpha=plasma+alpha*(1-plasma);
-     color=color.map((c,i)=>(hot[i]*plasma+c*alpha*(1-plasma))/Math.max(.001,nextAlpha));alpha=nextAlpha;
     }
    }
    if(rings&&Math.abs(ray[1])>.001){const origin=orient(px,py,4),t=-origin[1]/ray[1],hit=origin.map((p,i)=>p+ray[i]*t),r=Math.hypot(hit[0],hit[2]);

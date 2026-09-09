@@ -16,6 +16,28 @@ export function createWeatherField(size:number,texture?:WeatherTexture) {
   const n=Math.max(48,Math.min(512,Math.round(size))),count=n*n;
   const grain=new Float32Array(count),detail=new Float32Array(count),sunRadius=new Float32Array(count),sunAngle=new Float32Array(count);
   const rgba=new Uint8ClampedArray(count*4);
+  // Cache a branching discharge as a distance field. MAX coverage, never repeated
+  // alpha stamps: overlapping segments must not turn a thin channel into neon tubing.
+  let discharge:Float32Array|undefined;
+  const lightning=()=>{
+    if(discharge)return discharge;
+    const field=new Float32Array(count*2),trunk:number[][]=[];discharge=field;
+    const trace=(ax:number,ay:number,bx:number,by:number,seed:number,power:number,depth:number)=>{
+      if(depth){const jitter=(hash(seed,depth)-.5)*Math.hypot(bx-ax,by-ay)*.65;const mx=(ax+bx)/2+jitter,my=(ay+by)/2;trace(ax,ay,mx,my,seed*2,power,depth-1);trace(mx,my,bx,by,seed*2+1,power,depth-1);return;}
+      if(power===1)trunk.push([ax,ay]);
+      const vx=(bx-ax)*n,vy=(by-ay)*n,length=vx*vx+vy*vy,radius=Math.max(2,n*.012);
+      for(let y=Math.max(1,Math.floor(ay*n-radius));y<Math.min(n-1,Math.ceil(by*n+radius));y++)for(let x=Math.max(1,Math.floor(Math.min(ax,bx)*n-radius));x<Math.min(n-1,Math.ceil(Math.max(ax,bx)*n+radius));x++){
+        const u=clamp(((x-ax*n)*vx+(y-ay*n)*vy)/Math.max(.001,length)),dx=x-ax*n-u*vx,dy=y-ay*n-u*vy,d=Math.hypot(dx,dy),k=(y*n+x)*2;
+        const width=Math.max(.32,n*.0017)*power;
+        field[k]=Math.max(field[k],clamp(width+.55-d)*power);
+        field[k+1]=Math.max(field[k+1],Math.exp(-d*d/(n*n*.000018))*power*.22);
+      }
+    };
+    trace(.55,.42,.45,.80,71,1,6);
+    trace(trunk[17][0],trunk[17][1],.64,.67,83,.55,5);trace(trunk[34][0],trunk[34][1],.36,.74,97,.42,5);
+    trace(trunk[12][0],trunk[12][1],.62,.63,43,.22,4);trace(trunk[49][0],trunk[49][1],.50,.83,29,.24,4);
+    return field;
+  };
   for(let y=0;y<n;y++)for(let x=0;x<n;x++){const k=y*n+x;grain[k]=fbm(x/n*17+9,y/n*17+4)-.5;detail[k]=fbm(x/n*53+7,y/n*53+11)-.5;sunRadius[k]=Math.hypot(x/n-.66,y/n-.32);sunAngle[k]=Math.atan2(y/n-.32,x/n-.66);}
   const composite=(k:number,r:number,g:number,b:number,a:number)=>{
     const p=k*4,back=rgba[p+3]/255,out=a+back*(1-a);if(out<=0)return;
@@ -24,6 +46,7 @@ export function createWeatherField(size:number,texture?:WeatherTexture) {
   return {size:n,draw(id:WeatherId,style:WeatherStyle,time=0,detailed=true){
     const t=Number.isFinite(time)?((time%24)+24)%24:0,phase=t/24*TAU,paint=style==="illustration";
     const fair=id==="weather-fair",storm=id==="weather-storm",rain=id==="weather-rain",snow=id==="weather-snow";
+    const age=(t-1+24)%24,energy=storm&&detailed&&age<1.8?smooth(age/.10)*Math.pow(1-age/1.8,2):0;
     rgba.fill(0);
     // Atmospheric sun: refractive streamers grow and dissolve, no astrophysical
     // explosions in a terrestrial weather object. Eclipsed by clouds for fair sky.
@@ -57,7 +80,8 @@ export function createWeatherField(size:number,texture?:WeatherTexture) {
         const local=smooth((grain[k]*2+.42*Math.sin(phase*3+u*9+v*6)+.65)*1.4);
         const density=(fair?.38:.72)+(fair?.62:.28)*local;
         const shade=storm?.58:rain?.78:1;
-        composite(k,channels[0]*shade,channels[1]*shade,channels[2]*(shade+.03),channels[3]/255*density);
+        const illumination=energy*Math.exp(-((u-.035)*(u-.035)*95+(v-.085)*(v-.085)*65))*(.32+.38*local);
+        composite(k,channels[0]*shade+illumination*140,channels[1]*shade+illumination*133,channels[2]*(shade+.03)+illumination*145,channels[3]/255*density);
       }
     }
     // Analytic drops/snow: fixed count, deterministic birth/fall/fade.
@@ -79,19 +103,13 @@ export function createWeatherField(size:number,texture?:WeatherTexture) {
     }
     // One branching discharge / 24s in detail only, never a full-screen flash.
     // A growing channel then a smooth afterglow (no strobe/repeated flashes).
-    if(storm&&detailed){
-      const age=(t-1+24)%24,life=1.8,energy=age<life?smooth(age/.16)*Math.pow(1-age/life,1.2):0;
-      if(energy>0){
-        const channels=[[[.56,.44],[.535,.49],[.548,.515],[.512,.55],[.528,.576],[.492,.615],[.501,.633],[.465,.681],[.454,.711],[.43,.78]],[[.512,.55],[.57,.588],[.554,.616],[.595,.66]]];
-        for(let branch=0;branch<channels.length;branch++){
-        const points=channels[branch];
-        for(let j=0;j<points.length-1;j++){
-          const a=points[j],b=points[j+1];
-          for(let s=0;s<=1;s+=1/n){if(s+j+(branch?3:0)>age*65)break;const px=(a[0]+(b[0]-a[0])*s)*n,py=(a[1]+(b[1]-a[1])*s)*n;
-            for(let dy=-3;dy<=3;dy++)for(let dx=-3;dx<=3;dx++){const x=Math.round(px+dx),y=Math.round(py+dy),distance=(dx*dx+dy*dy)/Math.max(.7,n/224);if(x>0&&x<n&&y>0&&y<n){composite(y*n+x,104,155,255,energy*Math.exp(-distance*.4)*.16);composite(y*n+x,247,249,255,energy*Math.exp(-distance*2)*(branch?.5:.85));}}
-          }
-        }
-        }
+    if(energy>0){
+      const field=lightning();
+      for(let y=Math.floor(n*.42);y<n*.85;y++)for(let x=Math.floor(n*.28);x<n*.72;x++){
+        const k=y*n+x,reveal=smooth((age*6-(y/n-.42))*30),occlusion=smooth((y/n-.43)/.12);
+        const strength=energy*reveal*occlusion;
+        composite(k,paint?177:192,paint?181:197,paint?200:215,field[k*2+1]*strength);
+        composite(k,250,248,255,field[k*2]*strength);
       }
     }
     return rgba;

@@ -32,4 +32,10 @@ describe("weather actual material evolution",()=>{
   }
  });
  it("caps rendering independently of CSS size and high DPR",()=>{expect(weatherBudget(1000,3,true)).toEqual({size:224,fps:12});expect(weatherBudget(1000,3,false)).toEqual({size:320,fps:18});});
+ it("keeps the discharge fine while lighting the cloud locally",()=>{
+  const size=224,field=createWeatherField(size,texture),quiet=field.draw("weather-storm","photorealistic",1.35,false).slice(),lit=field.draw("weather-storm","photorealistic",1.35,true).slice();
+  let brightChannel=0,litCloud=0;
+  for(let y=0;y<size;y++)for(let x=0;x<size;x++){const k=(y*size+x)*4,delta=lit[k]-quiet[k];if(y>size*.56&&delta>45&&lit[k+3]>80)brightChannel++;if(y<size*.52&&delta>20)litCloud++;}
+  expect(brightChannel).toBeGreaterThan(10);expect(brightChannel).toBeLessThan(size*2);expect(litCloud).toBeGreaterThan(20);
+ });
 });
