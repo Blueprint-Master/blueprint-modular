@@ -14,12 +14,13 @@ async function main(){
  }
  for(const style of styles){const file=`cloud-${style}.webp`,data=fs.readFileSync(path.join(dir,file)),raw=await sharp(data).ensureAlpha().raw().toBuffer({resolveWithObject:true});textures[style]={data:new Uint8ClampedArray(raw.data),width:raw.info.width,height:raw.info.height};assets.push({file,bytes:data.length,sha256:crypto.createHash('sha256').update(data).digest('hex'),width:512,height:512});}
  for(const id of ids)for(const style of styles){
-  const renderer=mod.exports.createWeatherField(320,textures[style]),pixels=Buffer.from(renderer.draw(id,style,0));
+  // A fixed lightning channel makes the storm recognizable without animating thumbnails.
+  const renderer=mod.exports.createWeatherField(320,textures[style]),pixels=Buffer.from(renderer.draw(id,style,id==='weather-storm'?1.35:0));
   const file=`previews/${id}-${style}.webp`,data=await sharp(pixels,{raw:{width:320,height:320,channels:4}}).resize(256).webp({quality:86,effort:6}).toBuffer();
   fs.writeFileSync(path.join(dir,file),data);assets.push({file,bytes:data.length,sha256:crypto.createHash('sha256').update(data).digest('hex'),width:256,height:256});
   const tile=await sharp(pixels,{raw:{width:320,height:320,channels:4}}).flatten({background:style==='illustration'?'#f4f1ec':'#111b2a'}).png().toBuffer();
   tiles.push({input:tile,left:ids.indexOf(id)*320,top:styles.indexOf(style)*320});
-  for(const resolution of [320,224]){const measured=resolution===320?renderer:mod.exports.createWeatherField(resolution,textures[style]);const times=[];for(let j=0;j<40;j++){const start=performance.now();measured.draw(id,style,j/3,resolution===320);if(j>=4)times.push(performance.now()-start);}times.sort((a,b)=>a-b);metrics.push({id,style,resolution,medianMs:times[18],p95Ms:times[34]});}
+  for(const resolution of [320,224]){const measured=resolution===320?renderer:mod.exports.createWeatherField(resolution,textures[style]);const times=[];for(let j=0;j<40;j++){const start=performance.now();measured.draw(id,style,j/3,true);if(j>=4)times.push(performance.now()-start);}times.sort((a,b)=>a-b);metrics.push({id,style,resolution,medianMs:times[18],p95Ms:times[34]});}
   if(process.argv.includes('--animated')){
    const frames=[];for(let j=0;j<96;j++)frames.push(Buffer.from(renderer.draw(id,style,j/4)));
    await sharp(Buffer.concat(frames),{raw:{width:320,height:320*96,channels:4,pageHeight:320}}).webp({quality:72,loop:0,delay:Array(96).fill(250),effort:4}).toFile(path.join(root,`docs/previews/weather/${id}-${style}.webp`));

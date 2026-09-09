@@ -55,7 +55,9 @@ weather object points to that directory, not to `universe-v2`.
 Only one selected style material (512×512 WebP) and its poster (256×256) load.
 No animation video is shipped in the package. Main cloud updrafts change shape
 locally and condensation changes opacity; precipitation falls and fades.
-Lightning is rare (one smooth discharge per 24 s), detailed desktop only.
+Lightning starts after 1 s, branches and dissipates before 2.8 s, once per 24 s.
+Selected detail views (CSS width ≥ 280 px) include mobile at its 224 px/12 fps cap.
+Reduced motion suppresses discharges. Fixed storm posters show the 1.35 s channel.
 Pause/speed control the whole study. `angle`, `color` and globe dragging do not
 apply to weather. Put controls in the host, set `thumbnail` on all fixed cards,
 and mount/animate only the selected object. Hidden/reduced-motion views stop the

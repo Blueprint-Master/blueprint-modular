@@ -12,141 +12,141 @@
       "id": "weather-fair",
       "style": "photorealistic",
       "resolution": 320,
-      "medianMs": 10.022705000000315,
-      "p95Ms": 18.987301000000116
+      "medianMs": 11.488334000000123,
+      "p95Ms": 14.079737999999907
     },
     {
       "id": "weather-fair",
       "style": "photorealistic",
       "resolution": 224,
-      "medianMs": 5.344004999999925,
-      "p95Ms": 5.8793840000003
+      "medianMs": 5.137840000000324,
+      "p95Ms": 7.965803000000051
     },
     {
       "id": "weather-fair",
       "style": "illustration",
       "resolution": 320,
-      "medianMs": 9.734354000000167,
-      "p95Ms": 11.018213999999716
+      "medianMs": 10.639861999999994,
+      "p95Ms": 12.58177599999999
     },
     {
       "id": "weather-fair",
       "style": "illustration",
       "resolution": 224,
-      "medianMs": 4.791041999999834,
-      "p95Ms": 5.482006000000183
+      "medianMs": 5.146703999999772,
+      "p95Ms": 6.06629299999986
     },
     {
       "id": "weather-overcast",
       "style": "photorealistic",
       "resolution": 320,
-      "medianMs": 6.8195680000008,
-      "p95Ms": 7.521238000000267
+      "medianMs": 7.133026000001337,
+      "p95Ms": 9.33587400000033
     },
     {
       "id": "weather-overcast",
       "style": "photorealistic",
       "resolution": 224,
-      "medianMs": 3.3196680000000924,
-      "p95Ms": 3.542403999999806
+      "medianMs": 3.5365529999999126,
+      "p95Ms": 4.5729580000006536
     },
     {
       "id": "weather-overcast",
       "style": "illustration",
       "resolution": 320,
-      "medianMs": 6.873165999999401,
-      "p95Ms": 8.932488000000376
+      "medianMs": 7.240697999999611,
+      "p95Ms": 8.187699999998586
     },
     {
       "id": "weather-overcast",
       "style": "illustration",
       "resolution": 224,
-      "medianMs": 3.2875380000004952,
-      "p95Ms": 3.682925000000978
+      "medianMs": 3.5138980000010633,
+      "p95Ms": 4.429200999999011
     },
     {
       "id": "weather-rain",
       "style": "photorealistic",
       "resolution": 320,
-      "medianMs": 7.984805000000051,
-      "p95Ms": 11.893412000001263
+      "medianMs": 7.636034999999538,
+      "p95Ms": 11.07916799999839
     },
     {
       "id": "weather-rain",
       "style": "photorealistic",
       "resolution": 224,
-      "medianMs": 3.686431000000084,
-      "p95Ms": 5.194469000000026
+      "medianMs": 4.000373000000764,
+      "p95Ms": 8.460391999999047
     },
     {
       "id": "weather-rain",
       "style": "illustration",
       "resolution": 320,
-      "medianMs": 7.011026000000129,
-      "p95Ms": 8.167233000000124
+      "medianMs": 7.326616999998805,
+      "p95Ms": 8.525667999998404
     },
     {
       "id": "weather-rain",
       "style": "illustration",
       "resolution": 224,
-      "medianMs": 3.4493019999990793,
-      "p95Ms": 3.7250400000011723
+      "medianMs": 3.615651000000071,
+      "p95Ms": 4.000923999999941
     },
     {
       "id": "weather-storm",
       "style": "photorealistic",
       "resolution": 320,
-      "medianMs": 7.644172000000253,
-      "p95Ms": 11.267288000000917
+      "medianMs": 7.714507000000594,
+      "p95Ms": 20.62278200000219
     },
     {
       "id": "weather-storm",
       "style": "photorealistic",
       "resolution": 224,
-      "medianMs": 4.747724999997445,
-      "p95Ms": 6.926869000002625
+      "medianMs": 3.7203819999995176,
+      "p95Ms": 23.764048999997613
     },
     {
       "id": "weather-storm",
       "style": "illustration",
       "resolution": 320,
-      "medianMs": 7.66049700000076,
-      "p95Ms": 53.773496999998315
+      "medianMs": 10.185160999997606,
+      "p95Ms": 22.187465999999404
     },
     {
       "id": "weather-storm",
       "style": "illustration",
       "resolution": 224,
-      "medianMs": 3.7209729999995034,
-      "p95Ms": 4.557527000000846
+      "medianMs": 3.9117280000027677,
+      "p95Ms": 13.596668999998656
     },
     {
       "id": "weather-snow",
       "style": "photorealistic",
       "resolution": 320,
-      "medianMs": 8.848551999999472,
-      "p95Ms": 12.003549999997631
+      "medianMs": 7.648103000003175,
+      "p95Ms": 13.850291999999172
     },
     {
       "id": "weather-snow",
       "style": "photorealistic",
       "resolution": 224,
-      "medianMs": 3.7619249999988824,
-      "p95Ms": 4.366458000000421
+      "medianMs": 3.753089000001637,
+      "p95Ms": 5.35908500000005
     },
     {
       "id": "weather-snow",
       "style": "illustration",
       "resolution": 320,
-      "medianMs": 7.1637660000014876,
-      "p95Ms": 7.882762999997794
+      "medianMs": 7.330964000000677,
+      "p95Ms": 8.976934999998775
     },
     {
       "id": "weather-snow",
       "style": "illustration",
       "resolution": 224,
-      "medianMs": 3.5401400000009744,
-      "p95Ms": 3.941978000002564
+      "medianMs": 4.162286999999196,
+      "p95Ms": 7.0267840000014985
     }
   ]
 }

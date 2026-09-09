@@ -23,6 +23,13 @@ describe("weather actual material evolution",()=>{
   expect(b).not.toEqual(a);expect(field.draw(id,"photorealistic",24)).toEqual(a);expect(a[3]).toBe(0);
   const changed=a.filter((v,i)=>Math.abs(v-b[i])>12).length;expect(changed).toBeGreaterThan(200);
  });
- it("keeps lightning out of small/reduced-motion renders",()=>{const field=createWeatherField(96,texture);expect(field.draw("weather-storm","illustration",5.5,true).slice()).not.toEqual(field.draw("weather-storm","illustration",5.5,false));});
+ it("reveals a lightning channel in the first seconds, then lets it dissipate",()=>{
+  const field=createWeatherField(224,texture);
+  for(const style of ["photorealistic","illustration"] as const){
+   for(const t of [1.2,1.35,2])expect(field.draw("weather-storm",style,t,true).slice()).not.toEqual(field.draw("weather-storm",style,t,false));
+   for(const t of [0,1,3,5,23])expect(field.draw("weather-storm",style,t,true).slice()).toEqual(field.draw("weather-storm",style,t,false));
+   expect(field.draw("weather-storm",style,25.35,true).slice()).toEqual(field.draw("weather-storm",style,1.35,true));
+  }
+ });
  it("caps rendering independently of CSS size and high DPR",()=>{expect(weatherBudget(1000,3,true)).toEqual({size:224,fps:12});expect(weatherBudget(1000,3,false)).toEqual({size:320,fps:18});});
 });

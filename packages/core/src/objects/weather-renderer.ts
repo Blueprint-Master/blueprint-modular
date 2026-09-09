@@ -80,14 +80,17 @@ export function createWeatherField(size:number,texture?:WeatherTexture) {
     // One branching discharge / 24s in detail only, never a full-screen flash.
     // A growing channel then a smooth afterglow (no strobe/repeated flashes).
     if(storm&&detailed){
-      const age=(t-5+24)%24,life=1.3,energy=age<life?Math.sin(age/life*Math.PI):0;
+      const age=(t-1+24)%24,life=1.8,energy=age<life?smooth(age/.16)*Math.pow(1-age/life,1.2):0;
       if(energy>0){
-        const points=[[.56,.48],[.535,.51],[.548,.535],[.512,.56],[.528,.576],[.492,.615],[.501,.633],[.465,.681],[.454,.711],[.43,.75]];
+        const channels=[[[.56,.44],[.535,.49],[.548,.515],[.512,.55],[.528,.576],[.492,.615],[.501,.633],[.465,.681],[.454,.711],[.43,.78]],[[.512,.55],[.57,.588],[.554,.616],[.595,.66]]];
+        for(let branch=0;branch<channels.length;branch++){
+        const points=channels[branch];
         for(let j=0;j<points.length-1;j++){
           const a=points[j],b=points[j+1];
-          for(let s=0;s<=1;s+=1/n){if(s+j>age*10)break;const px=(a[0]+(b[0]-a[0])*s)*n,py=(a[1]+(b[1]-a[1])*s)*n;
-            for(let dy=-2;dy<=2;dy++)for(let dx=-2;dx<=2;dx++){const x=Math.round(px+dx),y=Math.round(py+dy);if(x>0&&x<n&&y>0&&y<n)composite(y*n+x,212,227,255,energy*Math.exp(-(dx*dx+dy*dy)*1.8)*.55);}
+          for(let s=0;s<=1;s+=1/n){if(s+j+(branch?3:0)>age*65)break;const px=(a[0]+(b[0]-a[0])*s)*n,py=(a[1]+(b[1]-a[1])*s)*n;
+            for(let dy=-3;dy<=3;dy++)for(let dx=-3;dx<=3;dx++){const x=Math.round(px+dx),y=Math.round(py+dy),distance=(dx*dx+dy*dy)/Math.max(.7,n/224);if(x>0&&x<n&&y>0&&y<n){composite(y*n+x,104,155,255,energy*Math.exp(-distance*.4)*.16);composite(y*n+x,247,249,255,energy*Math.exp(-distance*2)*(branch?.5:.85));}}
           }
+        }
         }
       }
     }
