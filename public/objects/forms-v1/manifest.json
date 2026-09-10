@@ -1,0 +1,89 @@
+{
+  "schemaVersion": 1,
+  "date": "2026-09-10",
+  "version": "1.0.0",
+  "license": "Apache-2.0",
+  "rendererSha256": "c33509b6e826c7b572756692236a9489bafcc08bc1f5e39c79ac7c7e57d4ceaa",
+  "assets": [
+    {
+      "path": "previews/form-silk-photorealistic.webp",
+      "bytes": 3910,
+      "sha256": "c49f4caa6dc0bf7735cd051f4a4bacee43fdccbd8e0f7e320f9ae710a337ee29",
+      "width": 320,
+      "height": 320,
+      "source": "packages/core/src/objects/forms-renderer.ts",
+      "author": "Blueprint Modular / BEAM Consulting SARL",
+      "license": "Apache-2.0"
+    },
+    {
+      "path": "previews/form-shell-photorealistic.webp",
+      "bytes": 3696,
+      "sha256": "aeedd5ea797b0980a77144615312930af62fb0459ede08394e1909f1e3330379",
+      "width": 320,
+      "height": 320,
+      "source": "packages/core/src/objects/forms-renderer.ts",
+      "author": "Blueprint Modular / BEAM Consulting SARL",
+      "license": "Apache-2.0"
+    },
+    {
+      "path": "previews/form-loop-photorealistic.webp",
+      "bytes": 4092,
+      "sha256": "b82066faebba49a140b32448331995fa2001c7d04b880dbea9ffd8313665e884",
+      "width": 320,
+      "height": 320,
+      "source": "packages/core/src/objects/forms-renderer.ts",
+      "author": "Blueprint Modular / BEAM Consulting SARL",
+      "license": "Apache-2.0"
+    },
+    {
+      "path": "previews/form-ripple-photorealistic.webp",
+      "bytes": 5154,
+      "sha256": "973ef1f45ac445651ed8ffae228400993104aeb5dbd0723ee9a51174f93ed270",
+      "width": 320,
+      "height": 320,
+      "source": "packages/core/src/objects/forms-renderer.ts",
+      "author": "Blueprint Modular / BEAM Consulting SARL",
+      "license": "Apache-2.0"
+    },
+    {
+      "path": "previews/form-silk-illustration.webp",
+      "bytes": 5022,
+      "sha256": "56f617cb2248c7a4b7f8ebf04a6ab68ddeaf5a4b1c6ecb107c126eeb876d2c85",
+      "width": 320,
+      "height": 320,
+      "source": "packages/core/src/objects/forms-renderer.ts",
+      "author": "Blueprint Modular / BEAM Consulting SARL",
+      "license": "Apache-2.0"
+    },
+    {
+      "path": "previews/form-shell-illustration.webp",
+      "bytes": 6334,
+      "sha256": "9f6c0aa894243e5fc0967b0e9c51068778c6c78bf2e2f4c0ac932827ec082fb3",
+      "width": 320,
+      "height": 320,
+      "source": "packages/core/src/objects/forms-renderer.ts",
+      "author": "Blueprint Modular / BEAM Consulting SARL",
+      "license": "Apache-2.0"
+    },
+    {
+      "path": "previews/form-loop-illustration.webp",
+      "bytes": 4998,
+      "sha256": "118a1a65a7996f8fe5be105da86a613ae9d7a7a30ab4117e5c9337e9f1fcd5f2",
+      "width": 320,
+      "height": 320,
+      "source": "packages/core/src/objects/forms-renderer.ts",
+      "author": "Blueprint Modular / BEAM Consulting SARL",
+      "license": "Apache-2.0"
+    },
+    {
+      "path": "previews/form-ripple-illustration.webp",
+      "bytes": 6364,
+      "sha256": "1334308691356da45eb6937d47a57ced398ae807f1d9d03df8138d91357f80d3",
+      "width": 320,
+      "height": 320,
+      "source": "packages/core/src/objects/forms-renderer.ts",
+      "author": "Blueprint Modular / BEAM Consulting SARL",
+      "license": "Apache-2.0"
+    }
+  ]
+}

@@ -1,0 +1,11 @@
+{
+  "schemaVersion": 1,
+  "kind": "modular-object",
+  "id": "form-loop",
+  "version": "1.0.0",
+  "style": "illustration",
+  "animation": {
+    "playing": true,
+    "speed": 1
+  }
+}

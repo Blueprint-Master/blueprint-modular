@@ -6,7 +6,17 @@ import { ObjectsCatalogue } from "../../../components/site/ObjectsCatalogue";
 
 vi.mock("../../../components/site/ObjectContributions",()=>({ObjectContributions:()=>null}));
 vi.mock("../src/objects/PlanetObject",()=>({PlanetObject:({label}: {label:string})=><span role="img" aria-label={label}/> }));
+vi.mock("../src/objects/FormObject",()=>({FormObject:({label}: {label:string})=><span role="img" aria-label={label}/> }));
 afterEach(cleanup);
+it("discovers the forms family and keeps style and motion in its real integration snippet",()=>{
+ const {container}=render(<ObjectsCatalogue/>);fireEvent.click(screen.getByRole("button",{name:"Formes & ondes",exact:true}));
+ fireEvent.click(screen.getByRole("button",{name:"Soie ondulante",exact:true}));
+ fireEvent.click(screen.getByRole("button",{name:"Dessin",exact:true}));
+ fireEvent.change(screen.getByRole("slider",{name:"Vitesse de l’animation"}),{target:{value:"0.5"}});
+ fireEvent.click(screen.getByRole("button",{name:"Animation",exact:true}));
+ const code=container.querySelector("code")?.textContent;expect(code).toContain('id="form-silk" version="1.0.0"');expect(code).toContain('variant="illustration" playing={false} speed={0.5}');
+ expect(screen.queryByRole("slider",{name:"Inclinaison"})).toBeNull();
+});
 describe("Objets: real catalogue consumer", () => {
   it("selects a standard object and updates the actual rendering and pinned snippet", () => {
     const {container}=render(<ObjectsCatalogue/>);

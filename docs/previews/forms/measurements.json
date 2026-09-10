@@ -1,0 +1,179 @@
+{
+  "date": "2026-09-10",
+  "environment": {
+    "node": "v24.19.0",
+    "platform": "linux",
+    "cpu": "AMD EPYC 9V74 80-Core Processor"
+  },
+  "scope": "36 actual software render samples per object/style/resolution; excludes browser composition and transfer. No physical phone or battery test.",
+  "metrics": [
+    {
+      "size": 160,
+      "id": "form-silk",
+      "style": "photorealistic",
+      "medianMs": 2.1897409999999695,
+      "p95Ms": 3.165440999999987
+    },
+    {
+      "size": 160,
+      "id": "form-shell",
+      "style": "photorealistic",
+      "medianMs": 2.5335079999999834,
+      "p95Ms": 6.028345000000002
+    },
+    {
+      "size": 160,
+      "id": "form-loop",
+      "style": "photorealistic",
+      "medianMs": 2.488582000000065,
+      "p95Ms": 3.5432479999999487
+    },
+    {
+      "size": 160,
+      "id": "form-ripple",
+      "style": "photorealistic",
+      "medianMs": 2.470505000000003,
+      "p95Ms": 3.017963000000009
+    },
+    {
+      "size": 160,
+      "id": "form-silk",
+      "style": "illustration",
+      "medianMs": 2.2818469999999706,
+      "p95Ms": 3.4165709999999763
+    },
+    {
+      "size": 160,
+      "id": "form-shell",
+      "style": "illustration",
+      "medianMs": 2.3880229999999756,
+      "p95Ms": 3.017571999999973
+    },
+    {
+      "size": 160,
+      "id": "form-loop",
+      "style": "illustration",
+      "medianMs": 2.373822999999902,
+      "p95Ms": 2.7237089999998716
+    },
+    {
+      "size": 160,
+      "id": "form-ripple",
+      "style": "illustration",
+      "medianMs": 2.4490740000001097,
+      "p95Ms": 2.883483999999953
+    },
+    {
+      "size": 224,
+      "id": "form-silk",
+      "style": "photorealistic",
+      "medianMs": 3.2525590000000193,
+      "p95Ms": 4.356397000000015
+    },
+    {
+      "size": 224,
+      "id": "form-shell",
+      "style": "photorealistic",
+      "medianMs": 3.2112789999996494,
+      "p95Ms": 4.585806000000048
+    },
+    {
+      "size": 224,
+      "id": "form-loop",
+      "style": "photorealistic",
+      "medianMs": 3.2627739999998084,
+      "p95Ms": 3.979917000000114
+    },
+    {
+      "size": 224,
+      "id": "form-ripple",
+      "style": "photorealistic",
+      "medianMs": 3.3157619999997223,
+      "p95Ms": 3.8715720000000147
+    },
+    {
+      "size": 224,
+      "id": "form-silk",
+      "style": "illustration",
+      "medianMs": 2.9351010000000315,
+      "p95Ms": 3.447987000000012
+    },
+    {
+      "size": 224,
+      "id": "form-shell",
+      "style": "illustration",
+      "medianMs": 3.437290999999732,
+      "p95Ms": 4.698021000000153
+    },
+    {
+      "size": 224,
+      "id": "form-loop",
+      "style": "illustration",
+      "medianMs": 3.2987370000000737,
+      "p95Ms": 4.736367999999857
+    },
+    {
+      "size": 224,
+      "id": "form-ripple",
+      "style": "illustration",
+      "medianMs": 3.5568779999998696,
+      "p95Ms": 4.092227999999977
+    },
+    {
+      "size": 320,
+      "id": "form-silk",
+      "style": "photorealistic",
+      "medianMs": 5.798315000000002,
+      "p95Ms": 6.630812999999762
+    },
+    {
+      "size": 320,
+      "id": "form-shell",
+      "style": "photorealistic",
+      "medianMs": 6.360815000000002,
+      "p95Ms": 7.413658000000396
+    },
+    {
+      "size": 320,
+      "id": "form-loop",
+      "style": "photorealistic",
+      "medianMs": 5.976908999999978,
+      "p95Ms": 6.721628000000237
+    },
+    {
+      "size": 320,
+      "id": "form-ripple",
+      "style": "photorealistic",
+      "medianMs": 6.291274000000158,
+      "p95Ms": 7.001071000000593
+    },
+    {
+      "size": 320,
+      "id": "form-silk",
+      "style": "illustration",
+      "medianMs": 6.099970999999641,
+      "p95Ms": 7.21946299999945
+    },
+    {
+      "size": 320,
+      "id": "form-shell",
+      "style": "illustration",
+      "medianMs": 7.122940000000199,
+      "p95Ms": 7.728322999999364
+    },
+    {
+      "size": 320,
+      "id": "form-loop",
+      "style": "illustration",
+      "medianMs": 6.52358600000025,
+      "p95Ms": 8.720647000000099
+    },
+    {
+      "size": 320,
+      "id": "form-ripple",
+      "style": "illustration",
+      "medianMs": 7.116289999999935,
+      "p95Ms": 8.404451000000336
+    }
+  ]
+}
