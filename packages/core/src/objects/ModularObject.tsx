@@ -3,6 +3,8 @@ import type {EarthLayers} from "./earth-layers";
 import React from "react";
 import { PlanetObject } from "./PlanetObject";
 import { WeatherObject } from "./WeatherObject";
+import {FormObject} from "./FormObject";
+import {isFormId,FORMS_VERSION,FORM_NAMES} from "./forms";
 import {isWeatherId,WEATHER_VERSION,WEATHER_NAMES} from "./weather";
 import { isPlanetId, UNIVERSE_VERSION, type PlanetStyle } from "./universe";
 import { CelestialBody } from "../../../../components/bpm/CelestialBody";
@@ -73,6 +75,7 @@ function BuiltObject({ item, color }: { item: ModularObjectDefinition; color: st
 
 /** Version 1 renders stable vectors; Universe version 2 renders interactive textured spheres. */
 export function ModularObject({ id, version = OBJECT_CATALOG_VERSION, label, locale = "fr", size = 240, angle = 0, color, className, variant="photorealistic",playing=true,speed=1,interactive=true,assetBaseUrl,thumbnail=false,earth }: ModularObjectProps) {
+  if(version===FORMS_VERSION&&isFormId(id)&&(variant==="photorealistic"||variant==="illustration"))return <span className={className} data-modular-object={`${id}@${version}`}><FormObject id={id} label={label??FORM_NAMES[id][locale]} size={size} style={variant} playing={playing} speed={speed} assetBaseUrl={assetBaseUrl} thumbnail={thumbnail}/></span>;
   if(version===WEATHER_VERSION&&isWeatherId(id)&&(variant==="photorealistic"||variant==="illustration"))return <span className={className} data-modular-object={`${id}@${version}`}><WeatherObject id={id} label={label??WEATHER_NAMES[id][locale]} size={size} style={variant} playing={playing} speed={speed} assetBaseUrl={assetBaseUrl} thumbnail={thumbnail}/></span>;
   if(version===UNIVERSE_VERSION&&isPlanetId(id)&&(variant==="photorealistic"||variant==="illustration")){
     const definition=resolveModularObject(id,version)!;
@@ -80,7 +83,7 @@ export function ModularObject({ id, version = OBJECT_CATALOG_VERSION, label, loc
   }
   const item = resolveModularObject(id, version);
   const safeSize = Number.isFinite(size) ? Math.max(48, Math.min(1000,size)) : 240;
-  if (!item || version===UNIVERSE_VERSION || item.family==="weather") return <span role="status" data-object-unavailable={`${id}@${version}`}>{locale === "fr" ? "Objet indisponible" : "Object unavailable"}</span>;
+  if (!item || version===UNIVERSE_VERSION || item.family==="weather" || item.family==="forms") return <span role="status" data-object-unavailable={`${id}@${version}`}>{locale === "fr" ? "Objet indisponible" : "Object unavailable"}</span>;
   const title = label ?? item.name[locale];
   // Reject URL paint servers and arbitrary CSS; the host may supply a hex theme token value.
   const paint = color && /^#[0-9a-f]{6}$/i.test(color) ? color : item.color;

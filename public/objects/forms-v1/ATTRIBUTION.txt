@@ -1,0 +1,4 @@
+Formes & ondes — Original procedural sculptures.
+Copyright 2026 BEAM Consulting SARL. Apache-2.0; see repository LICENSE and NOTICE.
+Source: packages/core/src/objects/forms-renderer.ts. No third-party raster material.
+Studio-lit synthetic and illustrated variants, not photographs or physical simulations.

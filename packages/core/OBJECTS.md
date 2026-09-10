@@ -1,6 +1,6 @@
 # Reusable objects
 
-`@blueprint-modular/core/objects` exports `ModularObject`, `PlanetObject`, `WeatherObject`, a versioned catalogue and a strict `.modular.json` parser. Existing 1.0.0 vector objects remain unchanged. Universe 2.0.0 adds eight planets, Sun, Moon and eight additional moons in photorealistic and illustration styles. Weather 1.0.0 adds five atmospheric studies; see the dated status in `docs/object-families.md`.
+`@blueprint-modular/core/objects` exports `ModularObject`, `PlanetObject`, `WeatherObject`, `FormObject`, a versioned catalogue and a strict `.modular.json` parser. Existing 1.0.0 vector objects remain unchanged. Universe 2.0.0 adds eight planets, Sun, Moon and eight additional moons in photorealistic and illustration styles. Weather 1.0.0 adds five atmospheric studies; Formes & ondes 1.0.0 adds four procedural sculptures. See the dated status in `docs/object-families.md`.
 
 ```tsx
 import { ModularObject } from '@blueprint-modular/core/objects';
@@ -47,7 +47,7 @@ Five IDs: `weather-fair`, `weather-overcast`, `weather-rain`, `weather-storm`,
 `weather-snow`. Both styles have separately generated original cloud materials.
 The standalone weather sun is intentionally deferred, not replaced by a basic
 icon; the existing Universe sun is unchanged. The complete discoverable catalogue
-now contains 33 objects (the earlier Universe/legacy subset still contains 28).
+contains 33 objects before the four Formes & ondes additions (37 total).
 
 Copy the **new** `dist/assets/objects/weather-v1` to `public/objects/weather-v1`,
 including attribution, fingerprints and generation prompts. `assetBaseUrl` on a
@@ -130,3 +130,32 @@ collection renders the actual layers. No new arbitrary placement system is added
 
 Verification: `node scripts/review-earth-layers.cjs` generates five combinations in
 both styles with software render timings. See `docs/earth-layers.md` for limits.
+
+## Formes & ondes 1.0.0 — draft candidates
+
+```tsx
+import {ModularObject, FormObject, FORM_IDS} from '@blueprint-modular/core/objects';
+<ModularObject id="form-silk" version="1.0.0" variant="photorealistic"
+  size={360} playing={isSelected} speed={0.5} />
+<FormObject id="form-loop" label="Anneau souple" style="illustration" thumbnail />
+```
+
+IDs: `form-silk`, `form-shell`, `form-loop`, `form-ripple`. Original procedural
+geometry, Apache-2.0, no third-party material. `photorealistic` denotes synthetic
+studio shading, not a photo; `illustration` uses stepped shading, not a painted
+raster. One characteristic local deformation each, period 12 s. Camera fixed.
+`playing`, `speed` (0.1–3), `size`, `thumbnail`, `assetBaseUrl` are supported.
+`angle`, `color`, globe dragging and Earth layers do not apply to these objects.
+
+Copy `dist/assets/objects/forms-v1` to `public/objects/forms-v1`; a custom
+`assetBaseUrl` points to that family directory. No texture download, just the
+selected static poster and lazy renderer module. Vignettes are fixed; the host
+mounts only its selected full renderer. One timer, capped at 320 px/18 fps or
+224 px/12 fps constrained; no timer when paused, offscreen, hidden or reduced
+motion is requested. Form references use version **1.0.0**, never Universe 2.0.0.
+The separate Maker adapter must know the IDs and render FormObject, preserve
+the exact reference and package its actual selected poster.
+
+See `docs/previews/forms/README.md` for multi-instant captures, the 12 s software
+video, measured software costs and the explicitly unexecuted live-browser
+checks. These are integrated review candidates, not approved production assets.
