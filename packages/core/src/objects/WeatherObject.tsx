@@ -1,7 +1,7 @@
 "use client";
 import React,{useEffect,useRef,useState} from "react";
 import {createPlanetClock} from "./planet-budget";
-import {WEATHER_ASSET_PATH,weatherBudget,weatherPosterPath,weatherSurfacePath,type WeatherId,type WeatherStyle} from "./weather";
+import {WEATHER_ASSET_PATH,weatherBudget,weatherMaterialPath,weatherPosterPath,type WeatherId,type WeatherStyle} from "./weather";
 import type {WeatherTexture} from "./weather-renderer";
 
 export interface WeatherObjectProps {
@@ -38,7 +38,7 @@ export function WeatherObject({id,label,size=360,style="photorealistic",playing=
     const controller=new AbortController();
     void Promise.resolve().then(()=>{if(!disposed)setStatus("loading");});
     const loadTexture=async():Promise<WeatherTexture|undefined>=>{
-      const response=await fetch(`${assetBaseUrl}/${weatherSurfacePath(style)}`,{signal:controller.signal});if(!response.ok)throw Error("Texture unavailable");
+      const response=await fetch(`${assetBaseUrl}/${weatherMaterialPath(id,style)}`,{signal:controller.signal});if(!response.ok)throw Error("Texture unavailable");
       const bitmap=await createImageBitmap(await response.blob());
       try{const buffer=document.createElement("canvas");buffer.width=bitmap.width;buffer.height=bitmap.height;const context=buffer.getContext("2d");if(!context)throw Error("Canvas unavailable");context.drawImage(bitmap,0,0);return {data:context.getImageData(0,0,bitmap.width,bitmap.height).data,width:bitmap.width,height:bitmap.height};}finally{bitmap.close();}
     };

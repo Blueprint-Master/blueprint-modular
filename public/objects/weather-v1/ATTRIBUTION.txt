@@ -1,14 +1,17 @@
 Météo & atmosphères 1.0.0 — Blueprint Modular
 Copyright 2026 BEAM Consulting SARL. Distributed under Apache-2.0.
 
-Cloud materials: original AI-assisted imagery generated for this project with
-OpenAI image generation, 2026-09-09. Artistic direction: Blueprint.
-Two separate originals: photorealistic cumulus and painted gouache cumulus.
+Materials: original AI-assisted imagery generated for this project with OpenAI
+image generation, 2026-09-09 and 2026-09-11. Artistic direction: Blueprint.
+Four accepted originals: photorealistic and painted-gouache variants for the
+cumulus and clear-weather sun. A first astronomical-looking sun was rejected
+and is not distributed.
 No third-party photographs, brands, client data or downloaded stock assets.
 Source prompts and original fingerprints: generation.json.
 Redistributed 512px WebP materials and 256px posters: manifest.json (SHA-256).
 
-Renderer: weather-renderer.ts; local advection, condensation and precipitation.
+Renderer: weather-renderer.ts; local advection, condensation, precipitation and
+clear-sun atmospheric ray/density evolution.
 Posters are rendered from that same runtime, not separate marketing mockups.
 These are accelerated artistic weather studies, not meteorological forecasts.
 Retain this attribution with copied assets. See package LICENSE and NOTICE.

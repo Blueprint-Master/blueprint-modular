@@ -7,16 +7,22 @@ import {weatherAssetPaths,weatherBudget} from "../src/objects/weather";
 const texture={width:32,height:32,data:new Uint8ClampedArray(32*32*4)};
 for(let y=0;y<32;y++)for(let x=0;x<32;x++){const k=(y*32+x)*4;texture.data.set([180+x,200+y,230,Math.hypot(x-16,y-16)<12?255:0],k);}
 describe("weather exact identity and portable references",()=>{
- it("adds five weather situations without substituting an unfinished sun",()=>{expect(WEATHER_OBJECTS).toHaveLength(5);expect(searchModularObjects("","weather")).toHaveLength(5);expect(resolveModularObject("weather-sun")).toBeUndefined();});
+ it("completes the six ordinary weather situations with a dedicated atmospheric sun",()=>{expect(WEATHER_OBJECTS).toHaveLength(6);expect(searchModularObjects("","weather")).toHaveLength(6);expect(resolveModularObject("weather-sun")).toMatchObject({version:"1.0.0",family:"weather"});});
  for(const id of WEATHER_IDS)for(const style of ["photorealistic","illustration"] as const)it(`${id}/${style} resolves, transports and renders a lazy SSR poster`,()=>{
   const ref={schemaVersion:1,kind:"modular-object",id,version:"1.0.0",style,animation:{playing:true,speed:.5}};
   expect(parseModularObjectAttachment(ref)).toEqual(ref);expect(parseModularObjectAttachment({...ref,version:"2.0.0"})).toBeUndefined();
   const markup=renderToStaticMarkup(<ModularObject id={id} version="1.0.0" variant={style} thumbnail/>);
   expect(markup).toContain(`${id}-${style}.webp`);expect(markup).not.toContain("<canvas");expect(markup).not.toContain("<svg");
-  expect(weatherAssetPaths(id,style)).toEqual([`previews/${id}-${style}.webp`,`cloud-${style}.webp`]);
+  expect(weatherAssetPaths(id,style)).toEqual([`previews/${id}-${style}.webp`,`${id==="weather-sun"?"sun":"cloud"}-${style}.webp`]);
  });
  it("rejects wrong style and arbitrary code",()=>{expect(renderToStaticMarkup(<ModularObject id="weather-rain" variant={"vector" as "illustration"}/>)).toContain("Objet indisponible");expect(parseModularObjectAttachment({schemaVersion:1,kind:"modular-object",id:"weather-rain",version:"1.0.0",style:"illustration",animation:{playing:true,speed:1},code:"alert(1)"})).not.toHaveProperty("code");});
 });
+ it("grows and dissolves local atmospheric rays without moving the whole sun",()=>{
+  const field=createWeatherField(160,texture),a=field.draw("weather-sun","photorealistic",0).slice(),b=field.draw("weather-sun","photorealistic",2).slice();
+  let changed=0,stableCore=0;
+  for(let y=0;y<160;y++)for(let x=0;x<160;x++){const k=(y*160+x)*4,d=Math.hypot(x/160-.5,y/160-.5);if(Math.abs(a[k+3]-b[k+3])>10&&d>.2)changed++;if(d<.1&&Math.abs(a[k+3]-b[k+3])<8)stableCore++;}
+  expect(changed).toBeGreaterThan(120);expect(stableCore).toBeGreaterThan(500);
+ });
 describe("weather actual material evolution",()=>{
  for(const id of WEATHER_IDS)it(`${id}: deterministic, changing locally, transparent and exactly periodic`,()=>{
   const field=createWeatherField(96,texture),a=field.draw(id,"photorealistic",0).slice(),b=field.draw(id,"photorealistic",2).slice();
