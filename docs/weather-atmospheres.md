@@ -1,8 +1,9 @@
 # Météo & atmosphères — mise à jour du 2026-09-11
 
 **Socle, éclairs et reprise de matière fusionnés via #220/#222/#223. Le soleil
-météorologique complète la famille sur `feat/weather-sun-20260911`.
-Qualité visuelle live du nouvel objet non validée.**
+météorologique complète la famille dans [Modular #226](https://github.com/Blueprint-Master/blueprint-modular/pull/226)
+et [Maker #1960](https://github.com/Blueprint-Master/blueprint-maker/pull/1960),
+en brouillon avec CI verte. Qualité visuelle live du nouvel objet non validée.**
 
 Six objets 1.0.0, chacun en photoréalisme et gouache : grand soleil, éclaircies,
 ciel couvert, pluie, orage, neige. Quatre matières originales générées séparément avec l’outil
