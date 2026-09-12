@@ -12,11 +12,39 @@
       "height": 512
     },
     {
+      "file": "sun-photorealistic.webp",
+      "bytes": 82790,
+      "sha256": "90ebae7df700f548be588c379345edaf3f65911cb5318f9056933107e2334054",
+      "width": 512,
+      "height": 512
+    },
+    {
       "file": "cloud-illustration.webp",
       "bytes": 42672,
       "sha256": "a3da85174dd590356ba437ef034d4c9ab9a00e86f82110e01416290a5d65609a",
       "width": 512,
       "height": 512
+    },
+    {
+      "file": "sun-illustration.webp",
+      "bytes": 99612,
+      "sha256": "aad4fe3e265119f751fd62559b1bf192ec11b5ad8fecb5ac954075fae6cab0ac",
+      "width": 512,
+      "height": 512
+    },
+    {
+      "file": "previews/weather-sun-photorealistic.webp",
+      "bytes": 18768,
+      "sha256": "e6d1b4a064fb52f2ac9b7114878711f7ac07f05c450274fc62e27b2f0a2953f3",
+      "width": 256,
+      "height": 256
+    },
+    {
+      "file": "previews/weather-sun-illustration.webp",
+      "bytes": 23960,
+      "sha256": "2b634c13ac70b2d5a3b4a1a2aa1b9e205d53dfad57597cee532564414aff9707",
+      "width": 256,
+      "height": 256
     },
     {
       "file": "previews/weather-fair-photorealistic.webp",

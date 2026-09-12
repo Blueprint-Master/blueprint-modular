@@ -1,6 +1,6 @@
 # Reusable objects
 
-`@blueprint-modular/core/objects` exports `ModularObject`, `PlanetObject`, `WeatherObject`, `FormObject`, `WaterObject`, a versioned catalogue and a strict `.modular.json` parser. Existing 1.0.0 vector objects remain unchanged. Universe 2.0.0 adds eight planets, Sun, Moon and eight additional moons in photorealistic and illustration styles. Weather 1.0.0 adds five atmospheric studies; Formes & ondes 1.0.0 adds four procedural sculptures; Eau & phénomènes naturels 1.0.0 adds four living water studies. See the dated status in `docs/object-families.md`.
+`@blueprint-modular/core/objects` exports `ModularObject`, `PlanetObject`, `WeatherObject`, `FormObject`, `WaterObject`, a versioned catalogue and a strict `.modular.json` parser. Existing 1.0.0 vector objects remain unchanged. Universe 2.0.0 adds eight planets, Sun, Moon and eight additional moons in photorealistic and illustration styles. Weather 1.0.0 adds six atmospheric studies; Formes & ondes 1.0.0 adds four procedural sculptures; Eau & phénomènes naturels 1.0.0 adds four living water studies. See the dated status in `docs/object-families.md`.
 
 ```tsx
 import { ModularObject } from '@blueprint-modular/core/objects';
@@ -43,11 +43,13 @@ import {ModularObject, WeatherObject, WEATHER_IDS} from '@blueprint-modular/core
 <WeatherObject id="weather-snow" label="Neige" style="photorealistic" thumbnail />
 ```
 
-Five IDs: `weather-fair`, `weather-overcast`, `weather-rain`, `weather-storm`,
-`weather-snow`. Both styles have separately generated original cloud materials.
-The standalone weather sun is intentionally deferred, not replaced by a basic
-icon; the existing Universe sun is unchanged. The complete discoverable catalogue
-contains 33 objects before the four Formes & ondes and four water additions (41 total).
+Six IDs: `weather-sun`, `weather-fair`, `weather-overcast`, `weather-rain`,
+`weather-storm`, `weather-snow`. Both styles have separately generated original
+cloud and clear-sun materials. `weather-sun` is a terrestrial atmospheric study,
+distinct from the existing astronomical Universe Sun. Its outer haze deforms by
+sector while the disc stays anchored; local rays appear, lengthen and dissolve.
+The complete discoverable catalogue contains 38 objects before the four water
+additions (42 total).
 
 Copy the **new** `dist/assets/objects/weather-v1` to `public/objects/weather-v1`,
 including attribution, fingerprints and generation prompts. `assetBaseUrl` on a
@@ -66,8 +68,10 @@ clock. Caps: 320 px/18 fps, 224 px/12 fps constrained; these are not battery cla
 Regenerate: `node scripts/generate-weather-previews.cjs --video` (ffmpeg for
 optional 24-second proof videos). Inspect: `npx vite --config
 scripts/weather-preview.config.ts --host 127.0.0.1` then `/weather-preview.html`.
-The September 9 run inspected captured instants, not live browser playback;
-the browser policy blocked local previews. Live visual approval remains required.
+The dedicated clear-sun proof is generated with
+`node scripts/generate-weather-sun-review.cjs`. The September 11 run inspected
+both styles at 160/224/320 px, on light/dark backgrounds and seven instants;
+the browser policy again blocked local playback. Live visual approval remains required.
 The companion Maker adapter must be merged/deployed independently of npm.
 
 The catalogue groups built-ins by theme and offers public contributions and submissions. A real signed-in user can submit; OWNER/ADMIN users can publish or reject pending objects from “Mes propositions”. Pending/rejected images are private to authors and reviewers. Published bytes/hashes are immutable. Uploads are bounded to 10 MB and 16 megapixels, decoded and re-encoded to WebP without metadata. Planet textures require a 2:1 ratio. No SVG or executable uploads.

@@ -5,7 +5,7 @@ import {WEATHER_IDS,WEATHER_NAMES,type WeatherId,type WeatherStyle} from "../pac
 function Preview(){
  const [id,setId]=useState<WeatherId>("weather-fair"),[style,setStyle]=useState<WeatherStyle>("photorealistic"),[playing,setPlaying]=useState(true),[dark,setDark]=useState(true),[size,setSize]=useState(420),[speed,setSpeed]=useState(1);
  return <main style={{fontFamily:"system-ui",background:dark?"#101a28":"#f6f2eb",color:dark?"#eef3fa":"#263849",minHeight:"180vh",padding:24}}>
- <h1>Études atmosphériques</h1><p>Un objet vivant, cinq situations ordinaires. Les vignettes sont fixes.</p>
+ <h1>Études atmosphériques</h1><p>Six situations ordinaires et vivantes. Les vignettes sont fixes.</p>
  <div style={{display:"flex",gap:12,flexWrap:"wrap"}}>
  <label>Objet <select aria-label="Objet" value={id} onChange={e=>setId(e.target.value as WeatherId)}>{WEATHER_IDS.map(i=><option key={i} value={i}>{WEATHER_NAMES[i].fr}</option>)}</select></label>
  <label>Style <select aria-label="Style" value={style} onChange={e=>setStyle(e.target.value as WeatherStyle)}><option value="photorealistic">Photoréaliste</option><option value="illustration">Gouache</option></select></label>

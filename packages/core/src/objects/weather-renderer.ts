@@ -15,6 +15,7 @@ export interface WeatherTexture {data:Uint8ClampedArray;width:number;height:numb
 export function createWeatherField(size:number,texture?:WeatherTexture) {
   const n=Math.max(48,Math.min(512,Math.round(size))),count=n*n;
   const grain=new Float32Array(count),detail=new Float32Array(count),sunRadius=new Float32Array(count),sunAngle=new Float32Array(count);
+  const clearRadius=new Float32Array(count),clearAngle=new Float32Array(count),clearSectorA=new Float32Array(count),clearSectorB=new Float32Array(count),clearShimmer=new Float32Array(count);
   const rgba=new Uint8ClampedArray(count*4);
   // Cache a branching discharge as a distance field. MAX coverage, never repeated
   // alpha stamps: overlapping segments must not turn a thin channel into neon tubing.
@@ -38,16 +39,48 @@ export function createWeatherField(size:number,texture?:WeatherTexture) {
     trace(trunk[12][0],trunk[12][1],.62,.63,43,.22,4);trace(trunk[49][0],trunk[49][1],.50,.83,29,.24,4);
     return field;
   };
-  for(let y=0;y<n;y++)for(let x=0;x<n;x++){const k=y*n+x;grain[k]=fbm(x/n*17+9,y/n*17+4)-.5;detail[k]=fbm(x/n*53+7,y/n*53+11)-.5;sunRadius[k]=Math.hypot(x/n-.66,y/n-.32);sunAngle[k]=Math.atan2(y/n-.32,x/n-.66);}
+  for(let y=0;y<n;y++)for(let x=0;x<n;x++){const k=y*n+x,dx=x/n-.5,dy=y/n-.5,a=Math.atan2(dy,dx),r=Math.hypot(dx,dy);grain[k]=fbm(x/n*17+9,y/n*17+4)-.5;detail[k]=fbm(x/n*53+7,y/n*53+11)-.5;sunRadius[k]=Math.hypot(x/n-.66,y/n-.32);sunAngle[k]=Math.atan2(y/n-.32,x/n-.66);clearRadius[k]=r;clearAngle[k]=a;clearSectorA[k]=a*5+Math.sin(a*3-.7)*1.1;clearSectorB[k]=a*7-Math.sin(a*2+.4)*.8;clearShimmer[k]=r*36+a*4;}
   const composite=(k:number,r:number,g:number,b:number,a:number)=>{
     const p=k*4,back=rgba[p+3]/255,out=a+back*(1-a);if(out<=0)return;
     rgba[p]=(r*a+rgba[p]*back*(1-a))/out;rgba[p+1]=(g*a+rgba[p+1]*back*(1-a))/out;rgba[p+2]=(b*a+rgba[p+2]*back*(1-a))/out;rgba[p+3]=255*out;
   };
   return {size:n,draw(id:WeatherId,style:WeatherStyle,time=0,detailed=true){
     const t=Number.isFinite(time)?((time%24)+24)%24:0,phase=t/24*TAU,paint=style==="illustration";
-    const fair=id==="weather-fair",storm=id==="weather-storm",rain=id==="weather-rain",snow=id==="weather-snow";
+    const sunny=id==="weather-sun",fair=id==="weather-fair",storm=id==="weather-storm",rain=id==="weather-rain",snow=id==="weather-snow";
     const age=(t-1+24)%24,energy=storm&&detailed&&age<1.8?smooth(age/.10)*Math.pow(1-age/1.8,2):0;
     rgba.fill(0);
+    // The clear-weather Sun is a terrestrial optical study, not the astronomical
+    // star. Its centre stays anchored while separate sectors of the outer haze
+    // refract, grow and dissolve. Sampling radially inward extends only those
+    // local rays: no global scale, rotation, translated sprite or opacity pulse.
+    if(sunny&&texture){
+      const {data,width:w,height:h}=texture;
+      for(let y=0;y<n;y++)for(let x=0;x<n;x++){
+        const k=y*n+x,dx=x/n-.5,dy=y/n-.5,r=clearRadius[k];if(r>.49)continue;
+        const angle=clearAngle[k],outer=smooth((r-.16)/.28);
+        const sectorA=Math.pow(Math.max(0,Math.sin(clearSectorA[k]+phase*1.45)),5);
+        const sectorB=Math.pow(Math.max(0,Math.sin(clearSectorB[k]-phase*1.1)),8);
+        const evolveA=.5+.5*Math.sin(phase+angle*1.7),evolveB=.5+.5*Math.cos(phase*2-angle*2.2);
+        const extension=outer*(sectorA*(.09+.21*evolveA)+sectorB*(.04+.12*evolveB));
+        const shimmer=outer*.014*Math.sin(phase*3+clearShimmer[k]),scale=1/(1+extension);
+        const tx=(.5+(dx-dy*shimmer)*scale)*w,ty=(.5+(dy+dx*shimmer)*scale)*h;
+        const ix=Math.floor(tx),iy=Math.floor(ty);if(ix<0||iy<0||ix>=w-1||iy>=h-1)continue;
+        const ax=tx-ix,ay=ty-iy,p=(iy*w+ix)*4,p2=p+w*4,w00=(1-ax)*(1-ay),w10=ax*(1-ay),w01=(1-ax)*ay,w11=ax*ay;
+        const red=data[p]*w00+data[p+4]*w10+data[p2]*w01+data[p2+4]*w11;
+        const green=data[p+1]*w00+data[p+5]*w10+data[p2+1]*w01+data[p2+5]*w11;
+        const blue=data[p+2]*w00+data[p+6]*w10+data[p2+2]*w01+data[p2+6]*w11;
+        const alpha=(data[p+3]*w00+data[p+7]*w10+data[p2+3]*w01+data[p2+7]*w11)/255;if(alpha<=.002)continue;
+        const rayDensity=1-outer*.38+outer*(sectorA*(.25+.52*evolveA)+sectorB*.34*evolveB);
+        const warm=paint?1:Math.max(0,(r-.2)*65);
+        composite(k,red,green-warm*.10,blue-warm*.28,clamp(alpha*rayDensity));
+        // A thin atmospheric caustic crosses one sector, appears and disappears,
+        // and remains subordinate to the changing silhouette.
+        const caustic=Math.exp(-Math.pow(r-(.25+.015*Math.sin(phase+angle*2)),2)*900)*
+          Math.pow(Math.max(0,Math.sin(angle*2.5-phase*.72)),10)*smooth(Math.sin(phase-angle)*.5+.5)*outer;
+        if(caustic>.002)composite(k,255,paint?222:242,paint?154:205,caustic*(paint?.22:.34));
+      }
+      return rgba;
+    }
     // Atmospheric sun: refractive streamers grow and dissolve, no astrophysical
     // explosions in a terrestrial weather object. Eclipsed by clouds for fair sky.
     if(fair){
