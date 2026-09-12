@@ -1,152 +1,180 @@
 {
-  "date": "2026-09-09",
+  "date": "2026-09-11",
   "environment": {
     "node": "v24.19.0",
     "platform": "linux",
     "arch": "x64",
-    "cpu": "AMD EPYC 9V74 80-Core Processor"
+    "cpu": "Intel(R) Xeon(R) Platinum 8370C CPU @ 2.80GHz"
   },
-  "method": "Software RGBA renderer only; 36 warm samples per object/style. Excludes browser compositing. Not a mobile-device or battery measurement.",
+  "method": "Software RGBA renderer only; 36 warm samples per object/style. Excludes browser compositing. Not a mobile-device, network-transfer or battery measurement.",
   "metrics": [
     {
+      "id": "weather-sun",
+      "style": "photorealistic",
+      "resolution": 320,
+      "medianMs": 19.22411099999954,
+      "p95Ms": 31.75704399999995
+    },
+    {
+      "id": "weather-sun",
+      "style": "photorealistic",
+      "resolution": 224,
+      "medianMs": 10.145533999999316,
+      "p95Ms": 21.353135000000293
+    },
+    {
+      "id": "weather-sun",
+      "style": "illustration",
+      "resolution": 320,
+      "medianMs": 18.62565799999902,
+      "p95Ms": 20.29326399999991
+    },
+    {
+      "id": "weather-sun",
+      "style": "illustration",
+      "resolution": 224,
+      "medianMs": 9.079697999999553,
+      "p95Ms": 11.634830999999394
+    },
+    {
       "id": "weather-fair",
       "style": "photorealistic",
       "resolution": 320,
-      "medianMs": 10.938150999999834,
-      "p95Ms": 11.930241000000024
+      "medianMs": 16.859260000001086,
+      "p95Ms": 23.001815999999963
     },
     {
       "id": "weather-fair",
       "style": "photorealistic",
       "resolution": 224,
-      "medianMs": 5.9823410000003605,
-      "p95Ms": 10.765183999999863
+      "medianMs": 8.170528000000559,
+      "p95Ms": 9.308133999998972
     },
     {
       "id": "weather-fair",
       "style": "illustration",
       "resolution": 320,
-      "medianMs": 13.957534000000123,
-      "p95Ms": 14.867489999999634
+      "medianMs": 16.737606999999116,
+      "p95Ms": 20.477936999999656
     },
     {
       "id": "weather-fair",
       "style": "illustration",
       "resolution": 224,
-      "medianMs": 6.086708999999246,
-      "p95Ms": 8.122430999999779
+      "medianMs": 8.130989999997837,
+      "p95Ms": 8.753809999998339
     },
     {
       "id": "weather-overcast",
       "style": "photorealistic",
       "resolution": 320,
-      "medianMs": 8.283234000000448,
-      "p95Ms": 10.151778999999806
+      "medianMs": 12.184374000000389,
+      "p95Ms": 13.814089999999851
     },
     {
       "id": "weather-overcast",
       "style": "photorealistic",
       "resolution": 224,
-      "medianMs": 4.164926999999807,
-      "p95Ms": 4.82129999999961
+      "medianMs": 5.94851700000072,
+      "p95Ms": 6.67804199999955
     },
     {
       "id": "weather-overcast",
       "style": "illustration",
       "resolution": 320,
-      "medianMs": 8.790401000000202,
-      "p95Ms": 11.100392999998803
+      "medianMs": 12.367066999999224,
+      "p95Ms": 14.649466000002576
     },
     {
       "id": "weather-overcast",
       "style": "illustration",
       "resolution": 224,
-      "medianMs": 4.046417999999903,
-      "p95Ms": 6.6196989999989455
+      "medianMs": 6.006348999999318,
+      "p95Ms": 6.8062449999997625
     },
     {
       "id": "weather-rain",
       "style": "photorealistic",
       "resolution": 320,
-      "medianMs": 10.988263999999617,
-      "p95Ms": 12.070780000000013
+      "medianMs": 12.593138000000181,
+      "p95Ms": 16.179362999999285
     },
     {
       "id": "weather-rain",
       "style": "photorealistic",
       "resolution": 224,
-      "medianMs": 5.2341099999994185,
-      "p95Ms": 6.88283600000068
+      "medianMs": 7.8271830000012415,
+      "p95Ms": 16.33068699999785
     },
     {
       "id": "weather-rain",
       "style": "illustration",
       "resolution": 320,
-      "medianMs": 8.57466100000056,
-      "p95Ms": 11.158606999999392
+      "medianMs": 12.851975000001403,
+      "p95Ms": 14.75969299999997
     },
     {
       "id": "weather-rain",
       "style": "illustration",
       "resolution": 224,
-      "medianMs": 4.253689999999551,
-      "p95Ms": 5.6129540000001725
+      "medianMs": 6.353854000000865,
+      "p95Ms": 9.132401000002574
     },
     {
       "id": "weather-storm",
       "style": "photorealistic",
       "resolution": 320,
-      "medianMs": 8.98576299999695,
-      "p95Ms": 12.79817600000024
+      "medianMs": 13.692456999997376,
+      "p95Ms": 16.16687699999602
     },
     {
       "id": "weather-storm",
       "style": "photorealistic",
       "resolution": 224,
-      "medianMs": 5.504220000002533,
-      "p95Ms": 9.762277000001632
+      "medianMs": 6.0159310000017285,
+      "p95Ms": 12.278458000000683
     },
     {
       "id": "weather-storm",
       "style": "illustration",
       "resolution": 320,
-      "medianMs": 10.247486000000208,
-      "p95Ms": 14.921639999996842
+      "medianMs": 12.050583999996888,
+      "p95Ms": 13.694917000000714
     },
     {
       "id": "weather-storm",
       "style": "illustration",
       "resolution": 224,
-      "medianMs": 4.817580999999336,
-      "p95Ms": 6.185637999999017
+      "medianMs": 6.037840000004508,
+      "p95Ms": 7.4595269999990705
     },
     {
       "id": "weather-snow",
       "style": "photorealistic",
       "resolution": 320,
-      "medianMs": 9.575906999998551,
-      "p95Ms": 15.640019000002212
+      "medianMs": 11.515134000001126,
+      "p95Ms": 17.432279000000563
     },
     {
       "id": "weather-snow",
       "style": "photorealistic",
       "resolution": 224,
-      "medianMs": 5.805240000001504,
-      "p95Ms": 56.775856999996904
+      "medianMs": 8.71670499999891,
+      "p95Ms": 12.557646999994176
     },
     {
       "id": "weather-snow",
       "style": "illustration",
       "resolution": 320,
-      "medianMs": 9.650219999999536,
-      "p95Ms": 12.679320999999618
+      "medianMs": 11.390694999994594,
+      "p95Ms": 13.423969000003126
     },
     {
       "id": "weather-snow",
       "style": "illustration",
       "resolution": 224,
-      "medianMs": 4.680000000000291,
-      "p95Ms": 5.037000000000262
+      "medianMs": 5.801319999998668,
+      "p95Ms": 11.942807000006724
     }
   ]
 }

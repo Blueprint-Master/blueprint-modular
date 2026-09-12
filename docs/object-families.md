@@ -1,21 +1,20 @@
 # Index des familles de visuels
 
-Mis à jour le **2026-09-10**. Cet index décrit le code et sa validation, pas une
+Mis à jour le **2026-09-11**. Cet index décrit le code et sa validation, pas une
 disponibilité automatiquement déduite d’un numéro de package.
 
 | Famille | Objets et variantes | État vérifié |
 | --- | --- | --- |
 | Univers | 8 planètes, Soleil, Lune, Io, Europe, Ganymède, Callisto, Titan, Encelade, Titania, Triton ; réaliste/dessin ; objets 2.0.0 | Modular #214, #217, #218 et Maker #1915, #1917 fusionnées le 2026-09-08 ; disponibilité effective en production non testée ici |
 | Bâtiments, mobilité, logistique | 10 objets vectoriels historiques, 1.0.0 | Conservés sans modification |
-| Météo & atmosphères | `weather-fair`, `weather-overcast`, `weather-rain`, `weather-storm`, `weather-snow` ; chacun réaliste + gouache ; 1.0.0 | Modular #220/#222 et Maker #1929 fusionnées le 2026-09-09. Reprise de matière Orage/Soleil sur `fix/natural-lightning-and-plasma`. Validation visuelle live requise ; publication npm et disponibilité en production non vérifiées |
-| Météo : soleil isolé | À réaliser ; distinct du Soleil astronomique | Essai rejeté pour qualité insuffisante, absent du catalogue et du parseur. Priorité à la reprise de cette famille |
-| Formes & ondes | form-silk, form-shell, form-loop, form-ripple ; rendu studio + illustration ; 1.0.0 | Créés sur `feat/forms-waves-20260910`, 8 références et transport Maker. Candidats en brouillon ; revue live non validée. [Preuves et limites](previews/forms/README.md). Non fusionnés, non publiés npm, non disponibles en production par cette passe |
+| Météo & atmosphères | `weather-sun`, `weather-fair`, `weather-overcast`, `weather-rain`, `weather-storm`, `weather-snow` ; chacun réaliste + gouache ; 1.0.0 | Cinq objets fusionnés via Modular #220/#222/#223 et Maker #1929/#1933. `weather-sun` en PR brouillon [Modular #226](https://github.com/Blueprint-Master/blueprint-modular/pull/226) et [Maker #1960](https://github.com/Blueprint-Master/blueprint-maker/pull/1960) ; CI verte, revue live non validée. [Preuves](previews/weather-sun/README.md). Non fusionné, non publié npm et non disponible en production par cette passe |
+| Formes & ondes | form-silk, form-shell, form-loop, form-ripple ; rendu studio + illustration ; 1.0.0 | Modular #225 et Maker #1951 fusionnées le 2026-09-10. Revue live et disponibilité effective en production non vérifiées |
 | Eau, végétation, cristaux | Absents de cette passe | À examiner sans dupliquer les familles existantes |
 
 ## Continuité
 
 Reprendre la PR météo existante si elle est encore ouverte/incomplète. Ne pas
-recréer les cinq identifiants et ne pas réimporter les matériaux. Vérifier les
+recréer les six identifiants et ne pas réimporter les matériaux. Vérifier les
 PR ouvertes avant de démarrer une autre famille. Les objets candidats ne sont
 pas « terminés » tant que leur animation en navigateur n’est pas approuvée.
 
@@ -35,11 +34,16 @@ Vérification du 2026-09-10 : Modular #214/#218/#220/#222/#223 et Maker
 #1915/#1917/#1929/#1933 fusionnées. Les calques Terre ont été fusionnés dans
 Modular #224 et Maker #1935. Aucune PR ouverte pour Formes & ondes au démarrage.
 La date de fusion ne démontre ni une publication npm ni une validation visuelle.
-Le soleil météorologique isolé reste explicitement à reprendre ; il n’a pas été
-remplacé par le Soleil astronomique ni compté dans la nouvelle famille.
+Le soleil météorologique isolé est désormais distinct du Soleil astronomique.
 
 Limite de publication de cette passe : l’ajout à la documentation machine
 `public/llms.txt` a été refusé par le contrôle automatique d’autorisation.
-Ce fichier et son générateur sont donc conservés inchangés dans la PR ; la
-documentation humaine et les exports sont présents, mais la documentation
-machine de la famille reste à publier après résolution de ce blocage.
+Ce fichier et son générateur sont restés inchangés dans #225 ; leur extension
+pour Formes & ondes demeure à publier après résolution de ce blocage.
+
+Vérification du 2026-09-11 : Modular #225 et Maker #1951 sont fusionnées. Aucun
+doublon météo ouvert n’a été trouvé. La passe complète la famille existante avec
+`weather-sun`, sans toucher aux cinq rendus fusionnés ni au Soleil d’Univers.
+Modular #226 et Maker #1960 sont publiées en brouillon ; leurs CI sont vertes sur
+les commits de tête. Cette validation ne vaut ni fusion, ni publication, ni
+déploiement.
