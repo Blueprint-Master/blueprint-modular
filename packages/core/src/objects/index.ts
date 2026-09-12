@@ -21,3 +21,8 @@ export type {FormObjectProps} from "./FormObject";
 export {FORM_OBJECTS} from "./catalog";
 export {FORM_IDS,FORM_NAMES,FORMS_VERSION,FORMS_ASSET_PATH,isFormId,formPosterPath} from "./forms";
 export type {FormId,FormStyle} from "./forms";
+export {WaterObject} from "./WaterObject";
+export type {WaterObjectProps} from "./WaterObject";
+export {WATER_OBJECTS} from "./catalog";
+export {WATER_IDS,WATER_NAMES,WATER_VERSION,WATER_ASSET_PATH,isWaterId,waterPosterPath,waterSurfacePath,waterAssetPaths,waterBudget} from "./water";
+export type {WaterId,WaterStyle} from "./water";

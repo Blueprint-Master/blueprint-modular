@@ -1,6 +1,6 @@
 # Index des familles de visuels
 
-Mis à jour le **2026-09-10**. Cet index décrit le code et sa validation, pas une
+Mis à jour le **2026-09-12**. Cet index décrit le code et sa validation, pas une
 disponibilité automatiquement déduite d’un numéro de package.
 
 | Famille | Objets et variantes | État vérifié |
@@ -9,8 +9,9 @@ disponibilité automatiquement déduite d’un numéro de package.
 | Bâtiments, mobilité, logistique | 10 objets vectoriels historiques, 1.0.0 | Conservés sans modification |
 | Météo & atmosphères | `weather-fair`, `weather-overcast`, `weather-rain`, `weather-storm`, `weather-snow` ; chacun réaliste + gouache ; 1.0.0 | Modular #220/#222 et Maker #1929 fusionnées le 2026-09-09. Reprise de matière Orage/Soleil sur `fix/natural-lightning-and-plasma`. Validation visuelle live requise ; publication npm et disponibilité en production non vérifiées |
 | Météo : soleil isolé | À réaliser ; distinct du Soleil astronomique | Essai rejeté pour qualité insuffisante, absent du catalogue et du parseur. Priorité à la reprise de cette famille |
-| Formes & ondes | form-silk, form-shell, form-loop, form-ripple ; rendu studio + illustration ; 1.0.0 | Créés sur `feat/forms-waves-20260910`, 8 références et transport Maker. Candidats en brouillon ; revue live non validée. [Preuves et limites](previews/forms/README.md). Non fusionnés, non publiés npm, non disponibles en production par cette passe |
-| Eau, végétation, cristaux | Absents de cette passe | À examiner sans dupliquer les familles existantes |
+| Formes & ondes | form-silk, form-shell, form-loop, form-ripple ; rendu studio + illustration ; 1.0.0 | Fusionnés par Modular #225 et Maker #1951 ; publication npm et disponibilité en production non vérifiées ici |
+| Eau & phénomènes naturels | `water-wave`, `water-ripple`, `water-waterfall`, `water-whirlpool` ; matière studio + gouache ; 1.0.0 | Créés sur `feat/water-phenomena-20260912`, 8 références et transport Maker à publier en PR brouillon. [Preuves et limites](previews/water/README.md). Non fusionnés, non publiés npm, non disponibles en production |
+| Végétation, cristaux | Absents de cette passe | À examiner sans dupliquer les familles existantes |
 
 ## Continuité
 
