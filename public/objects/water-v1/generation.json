@@ -1,0 +1,21 @@
+{
+  "schemaVersion": 1,
+  "date": "2026-09-12",
+  "tool": "OpenAI built-in image generation",
+  "author": "Blueprint Modular / BEAM Consulting SARL with OpenAI",
+  "license": "Apache-2.0",
+  "materials": [
+    {
+      "style": "photorealistic",
+      "sourceSha256": "cbb1542b0290917fbc5fc371a9ed25bc231e4ab735f113bb709249a8c17d84d5",
+      "changes": "Generated original cropped to square, resized to 384 px and encoded WebP quality 72.",
+      "prompt": "Square close-up translucent ocean-water material: deep teal body, turquoise caustics, pearly foam filaments and fine suspended bubbles; full bleed, cinematic photorealistic macro, refined dark-studio rim light; no scene, horizon, container, rocks, sky, fauna, people, text, logo, watermark, iconography, neon or obvious tiling."
+    },
+    {
+      "style": "illustration",
+      "sourceSha256": "36e9ced294629d09ea4d0351e2a18787f83cb603d137da5f99ab99d68fb2554f",
+      "changes": "Generated original cropped to square, resized to 384 px and encoded WebP quality 72.",
+      "prompt": "Square full-bleed hand-painted water material: layered indigo, petrol and turquoise washes washes, delicate white gouache foam, dry-brush granulation and translucent blooms; sophisticated editorial watercolor/gouache on cold-press paper; no scene, horizon, rocks, sky, fauna, people, text, logo, watermark, icon, childish cartoon or neon."
+    }
+  ]
+}

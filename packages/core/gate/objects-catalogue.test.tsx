@@ -7,6 +7,7 @@ import { ObjectsCatalogue } from "../../../components/site/ObjectsCatalogue";
 vi.mock("../../../components/site/ObjectContributions",()=>({ObjectContributions:()=>null}));
 vi.mock("../src/objects/PlanetObject",()=>({PlanetObject:({label}: {label:string})=><span role="img" aria-label={label}/> }));
 vi.mock("../src/objects/FormObject",()=>({FormObject:({label}: {label:string})=><span role="img" aria-label={label}/> }));
+vi.mock("../src/objects/WaterObject",()=>({WaterObject:({label}: {label:string})=><span role="img" aria-label={label}/> }));
 vi.mock("../src/objects/FloraObject",()=>({FloraObject:({label}: {label:string})=><span role="img" aria-label={label}/> }));
 afterEach(cleanup);
 it("discovers the forms family and keeps style and motion in its real integration snippet",()=>{
@@ -17,6 +18,11 @@ it("discovers the forms family and keeps style and motion in its real integratio
  fireEvent.click(screen.getByRole("button",{name:"Animation",exact:true}));
  const code=container.querySelector("code")?.textContent;expect(code).toContain('id="form-silk" version="1.0.0"');expect(code).toContain('variant="illustration" playing={false} speed={0.5}');
  expect(screen.queryByRole("slider",{name:"Inclinaison"})).toBeNull();
+});
+it("discovers living water and transports the selected treatment",()=>{
+ const {container}=render(<ObjectsCatalogue/>);fireEvent.click(screen.getByRole("button",{name:"Eau & phénomènes naturels",exact:true}));
+ fireEvent.click(screen.getByRole("button",{name:"Vague déferlante",exact:true}));fireEvent.click(screen.getByRole("button",{name:"Dessin",exact:true}));
+ expect(container.querySelector("code")?.textContent).toContain('id="water-wave" version="1.0.0"');expect(container.querySelector("code")?.textContent).toContain('variant="illustration"');expect(screen.queryByRole("slider",{name:"Inclinaison"})).toBeNull();
 });
 describe("Objets: real catalogue consumer", () => {
   it("selects a standard object and updates the actual rendering and pinned snippet", () => {

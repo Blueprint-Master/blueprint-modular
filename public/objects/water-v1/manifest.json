@@ -1,0 +1,109 @@
+{
+  "schemaVersion": 1,
+  "date": "2026-09-12",
+  "version": "1.0.0",
+  "license": "Apache-2.0",
+  "rendererSha256": "10983c5e4ee8ecf8a8cbaaf45648c2cfa9b5b7b2b41985b55eb5960c240dc1f5",
+  "assets": [
+    {
+      "path": "water-photorealistic.webp",
+      "bytes": 37940,
+      "sha256": "b848790c32ca9a9129d921dda9de08f04a0adb2718ed59dacc73dcd6b4c98b83",
+      "width": 384,
+      "height": 384,
+      "source": "OpenAI image generation; exact prompt and source hash in generation.json",
+      "author": "Blueprint Modular / BEAM Consulting SARL with OpenAI",
+      "license": "Apache-2.0"
+    },
+    {
+      "path": "water-illustration.webp",
+      "bytes": 42144,
+      "sha256": "eb7d4514466fe5b3dcebf6115579c2bc14c2184dc2bcc037dcca75ec70e5bfb2",
+      "width": 384,
+      "height": 384,
+      "source": "OpenAI image generation; exact prompt and source hash in generation.json",
+      "author": "Blueprint Modular / BEAM Consulting SARL with OpenAI",
+      "license": "Apache-2.0"
+    },
+    {
+      "path": "previews/water-wave-photorealistic.webp",
+      "bytes": 15930,
+      "sha256": "08a2e85f471bd09728f1f92df982a6fd73c6006361dbf855c4e96f0c609e9de6",
+      "width": 320,
+      "height": 320,
+      "source": "packages/core/src/objects/water-renderer.ts",
+      "author": "Blueprint Modular / BEAM Consulting SARL",
+      "license": "Apache-2.0"
+    },
+    {
+      "path": "previews/water-ripple-photorealistic.webp",
+      "bytes": 23776,
+      "sha256": "8e6cea0f668f485279771f1f77d2fda1d7df53a547f6cf0376f2abc785b0d55a",
+      "width": 320,
+      "height": 320,
+      "source": "packages/core/src/objects/water-renderer.ts",
+      "author": "Blueprint Modular / BEAM Consulting SARL",
+      "license": "Apache-2.0"
+    },
+    {
+      "path": "previews/water-waterfall-photorealistic.webp",
+      "bytes": 23382,
+      "sha256": "01229edbf45c2b9b545eaea9c10f4ef4a0a8d474c02787d20c0f6c233a25399c",
+      "width": 320,
+      "height": 320,
+      "source": "packages/core/src/objects/water-renderer.ts",
+      "author": "Blueprint Modular / BEAM Consulting SARL",
+      "license": "Apache-2.0"
+    },
+    {
+      "path": "previews/water-whirlpool-photorealistic.webp",
+      "bytes": 26786,
+      "sha256": "7a8a36feb2ada7026d3e44dc767fc1e03dd7d51c6c26ccac1bd0c8d2419d1aa5",
+      "width": 320,
+      "height": 320,
+      "source": "packages/core/src/objects/water-renderer.ts",
+      "author": "Blueprint Modular / BEAM Consulting SARL",
+      "license": "Apache-2.0"
+    },
+    {
+      "path": "previews/water-wave-illustration.webp",
+      "bytes": 18832,
+      "sha256": "e6009574aa0439558371b7fa9ae0394a4ba4fe6ee98dc514480c311ec40a719b",
+      "width": 320,
+      "height": 320,
+      "source": "packages/core/src/objects/water-renderer.ts",
+      "author": "Blueprint Modular / BEAM Consulting SARL",
+      "license": "Apache-2.0"
+    },
+    {
+      "path": "previews/water-ripple-illustration.webp",
+      "bytes": 25116,
+      "sha256": "3967268c79e6c623cff8eb3f99d7900362c405c04e525b40756d01dd2fc26676",
+      "width": 320,
+      "height": 320,
+      "source": "packages/core/src/objects/water-renderer.ts",
+      "author": "Blueprint Modular / BEAM Consulting SARL",
+      "license": "Apache-2.0"
+    },
+    {
+      "path": "previews/water-waterfall-illustration.webp",
+      "bytes": 25486,
+      "sha256": "048930b4fa25fa673f7d95850cf5fef89c4c9d54500c8e04af656fa84e6b2e64",
+      "width": 320,
+      "height": 320,
+      "source": "packages/core/src/objects/water-renderer.ts",
+      "author": "Blueprint Modular / BEAM Consulting SARL",
+      "license": "Apache-2.0"
+    },
+    {
+      "path": "previews/water-whirlpool-illustration.webp",
+      "bytes": 28350,
+      "sha256": "b887d4bd97d9c8414b0a822578b54b8afae21fe50a7b3e8c7d34e42505bee23b",
+      "width": 320,
+      "height": 320,
+      "source": "packages/core/src/objects/water-renderer.ts",
+      "author": "Blueprint Modular / BEAM Consulting SARL",
+      "license": "Apache-2.0"
+    }
+  ]
+}

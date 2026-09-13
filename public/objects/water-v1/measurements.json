@@ -1,0 +1,179 @@
+{
+  "date": "2026-09-12",
+  "environment": {
+    "node": "v24.19.0",
+    "platform": "linux",
+    "cpu": "AMD EPYC 9V74 80-Core Processor"
+  },
+  "scope": "36 actual software render samples per object/style/resolution with a decoded 384px material; excludes browser composition, transfer, physical phone and battery.",
+  "metrics": [
+    {
+      "size": 160,
+      "id": "water-wave",
+      "style": "photorealistic",
+      "medianMs": 8.208031000000005,
+      "p95Ms": 22.426485999999954
+    },
+    {
+      "size": 160,
+      "id": "water-ripple",
+      "style": "photorealistic",
+      "medianMs": 6.455441999999948,
+      "p95Ms": 7.486966000000052
+    },
+    {
+      "size": 160,
+      "id": "water-waterfall",
+      "style": "photorealistic",
+      "medianMs": 8.708318999999847,
+      "p95Ms": 10.310364000000163
+    },
+    {
+      "size": 160,
+      "id": "water-whirlpool",
+      "style": "photorealistic",
+      "medianMs": 7.933074000000033,
+      "p95Ms": 9.914140000000089
+    },
+    {
+      "size": 160,
+      "id": "water-wave",
+      "style": "illustration",
+      "medianMs": 9.332531000000017,
+      "p95Ms": 11.117175999999972
+    },
+    {
+      "size": 160,
+      "id": "water-ripple",
+      "style": "illustration",
+      "medianMs": 7.4879869999999755,
+      "p95Ms": 7.745065999999952
+    },
+    {
+      "size": 160,
+      "id": "water-waterfall",
+      "style": "illustration",
+      "medianMs": 10.889118999999937,
+      "p95Ms": 14.479401000000053
+    },
+    {
+      "size": 160,
+      "id": "water-whirlpool",
+      "style": "illustration",
+      "medianMs": 9.058876999999939,
+      "p95Ms": 9.452398000000358
+    },
+    {
+      "size": 224,
+      "id": "water-wave",
+      "style": "photorealistic",
+      "medianMs": 16.443130999999994,
+      "p95Ms": 21.714093999999932
+    },
+    {
+      "size": 224,
+      "id": "water-ripple",
+      "style": "photorealistic",
+      "medianMs": 12.726472000000285,
+      "p95Ms": 16.277125999999953
+    },
+    {
+      "size": 224,
+      "id": "water-waterfall",
+      "style": "photorealistic",
+      "medianMs": 16.78726900000038,
+      "p95Ms": 21.196890000000167
+    },
+    {
+      "size": 224,
+      "id": "water-whirlpool",
+      "style": "photorealistic",
+      "medianMs": 15.80634100000043,
+      "p95Ms": 22.814809999999852
+    },
+    {
+      "size": 224,
+      "id": "water-wave",
+      "style": "illustration",
+      "medianMs": 17.67688300000009,
+      "p95Ms": 18.830165000000306
+    },
+    {
+      "size": 224,
+      "id": "water-ripple",
+      "style": "illustration",
+      "medianMs": 14.478320000000167,
+      "p95Ms": 19.790068000000247
+    },
+    {
+      "size": 224,
+      "id": "water-waterfall",
+      "style": "illustration",
+      "medianMs": 18.446418999999878,
+      "p95Ms": 18.94224100000065
+    },
+    {
+      "size": 224,
+      "id": "water-whirlpool",
+      "style": "illustration",
+      "medianMs": 17.36953899999935,
+      "p95Ms": 19.436134999999922
+    },
+    {
+      "size": 320,
+      "id": "water-wave",
+      "style": "photorealistic",
+      "medianMs": 32.39953400000013,
+      "p95Ms": 34.37275600000066
+    },
+    {
+      "size": 320,
+      "id": "water-ripple",
+      "style": "photorealistic",
+      "medianMs": 25.55196199999955,
+      "p95Ms": 72.98928200000046
+    },
+    {
+      "size": 320,
+      "id": "water-waterfall",
+      "style": "photorealistic",
+      "medianMs": 33.7396719999997,
+      "p95Ms": 138.0328410000002
+    },
+    {
+      "size": 320,
+      "id": "water-whirlpool",
+      "style": "photorealistic",
+      "medianMs": 31.314972000000125,
+      "p95Ms": 134.69840599999952
+    },
+    {
+      "size": 320,
+      "id": "water-wave",
+      "style": "illustration",
+      "medianMs": 34.40711799999917,
+      "p95Ms": 35.19603400000051
+    },
+    {
+      "size": 320,
+      "id": "water-ripple",
+      "style": "illustration",
+      "medianMs": 28.891313000000082,
+      "p95Ms": 36.460824999998295
+    },
+    {
+      "size": 320,
+      "id": "water-waterfall",
+      "style": "illustration",
+      "medianMs": 36.624863000000914,
+      "p95Ms": 37.75614399999904
+    },
+    {
+      "size": 320,
+      "id": "water-whirlpool",
+      "style": "illustration",
+      "medianMs": 34.656145999997534,
+      "p95Ms": 37.261813999997685
+    }
+  ]
+}

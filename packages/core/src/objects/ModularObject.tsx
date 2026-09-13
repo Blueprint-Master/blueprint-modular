@@ -7,6 +7,8 @@ import {FormObject} from "./FormObject";
 import {FloraObject} from "./FloraObject";
 import {isFloraId,FLORA_VERSION,FLORA_NAMES} from "./flora";
 import {isFormId,FORMS_VERSION,FORM_NAMES} from "./forms";
+import {WaterObject} from "./WaterObject";
+import {isWaterId,WATER_VERSION,WATER_NAMES} from "./water";
 import {isWeatherId,WEATHER_VERSION,WEATHER_NAMES} from "./weather";
 import { isPlanetId, UNIVERSE_VERSION, type PlanetStyle } from "./universe";
 import { CelestialBody } from "../../../../components/bpm/CelestialBody";
@@ -78,6 +80,7 @@ function BuiltObject({ item, color }: { item: ModularObjectDefinition; color: st
 /** Version 1 renders stable vectors; Universe version 2 renders interactive textured spheres. */
 export function ModularObject({ id, version = OBJECT_CATALOG_VERSION, label, locale = "fr", size = 240, angle = 0, color, className, variant="photorealistic",playing=true,speed=1,interactive=true,assetBaseUrl,thumbnail=false,earth }: ModularObjectProps) {
   if(version===FLORA_VERSION&&isFloraId(id)&&(variant==="photorealistic"||variant==="illustration"))return <span className={className} data-modular-object={`${id}@${version}`}><FloraObject id={id} label={label??FLORA_NAMES[id][locale]} size={size} style={variant} playing={playing} speed={speed} assetBaseUrl={assetBaseUrl} thumbnail={thumbnail}/></span>;
+  if(version===WATER_VERSION&&isWaterId(id)&&(variant==="photorealistic"||variant==="illustration"))return <span className={className} data-modular-object={`${id}@${version}`}><WaterObject id={id} label={label??WATER_NAMES[id][locale]} size={size} style={variant} playing={playing} speed={speed} assetBaseUrl={assetBaseUrl} thumbnail={thumbnail}/></span>;
   if(version===FORMS_VERSION&&isFormId(id)&&(variant==="photorealistic"||variant==="illustration"))return <span className={className} data-modular-object={`${id}@${version}`}><FormObject id={id} label={label??FORM_NAMES[id][locale]} size={size} style={variant} playing={playing} speed={speed} assetBaseUrl={assetBaseUrl} thumbnail={thumbnail}/></span>;
   if(version===WEATHER_VERSION&&isWeatherId(id)&&(variant==="photorealistic"||variant==="illustration"))return <span className={className} data-modular-object={`${id}@${version}`}><WeatherObject id={id} label={label??WEATHER_NAMES[id][locale]} size={size} style={variant} playing={playing} speed={speed} assetBaseUrl={assetBaseUrl} thumbnail={thumbnail}/></span>;
   if(version===UNIVERSE_VERSION&&isPlanetId(id)&&(variant==="photorealistic"||variant==="illustration")){
@@ -86,7 +89,7 @@ export function ModularObject({ id, version = OBJECT_CATALOG_VERSION, label, loc
   }
   const item = resolveModularObject(id, version);
   const safeSize = Number.isFinite(size) ? Math.max(48, Math.min(1000,size)) : 240;
-  if (!item || version===UNIVERSE_VERSION || item.family==="weather" || item.family==="forms" || item.family==="flora") return <span role="status" data-object-unavailable={`${id}@${version}`}>{locale === "fr" ? "Objet indisponible" : "Object unavailable"}</span>;
+  if (!item || version===UNIVERSE_VERSION || item.family==="weather" || item.family==="forms" || item.family==="water" || item.family==="flora") return <span role="status" data-object-unavailable={`${id}@${version}`}>{locale === "fr" ? "Objet indisponible" : "Object unavailable"}</span>;
   const title = label ?? item.name[locale];
   // Reject URL paint servers and arbitrary CSS; the host may supply a hex theme token value.
   const paint = color && /^#[0-9a-f]{6}$/i.test(color) ? color : item.color;

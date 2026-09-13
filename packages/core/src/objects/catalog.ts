@@ -1,11 +1,12 @@
 import {MOON_PARENTS,planetProvenance} from "./universe";
 import {WEATHER_IDS,WEATHER_NAMES,WEATHER_VERSION} from "./weather";
 import {FORM_IDS,FORM_NAMES,FORMS_VERSION} from "./forms";
+import {WATER_IDS,WATER_NAMES,WATER_VERSION} from "./water";
 import {FLORA_IDS,FLORA_NAMES,FLORA_VERSION} from "./flora";
 /** Versioned, data-only objects. No remote assets, arbitrary code or user data. */
 export const OBJECT_CATALOG_VERSION = "1.0.0" as const;
-export type ObjectFamily = "space" | "weather" | "forms" | "flora" | "buildings" | "mobility" | "logistics";
-export type ObjectShape = "planet" | "star" | "moon" | "atmosphere" | "sculpture" | "plant" | "house" | "building" | "warehouse" | "factory" | "car" | "van" | "truck" | "pallet" | "parcel" | "container";
+export type ObjectFamily = "space" | "weather" | "forms" | "water" | "flora" | "buildings" | "mobility" | "logistics";
+export type ObjectShape = "planet" | "star" | "moon" | "atmosphere" | "sculpture" | "water" | "plant" | "house" | "building" | "warehouse" | "factory" | "car" | "van" | "truck" | "pallet" | "parcel" | "container";
 export interface ModularObjectDefinition {
   readonly id: string;
   readonly version: string;
@@ -58,15 +59,19 @@ export const FORM_OBJECTS:readonly ModularObjectDefinition[]=Object.freeze(FORM_
   ...object(id,FORM_NAMES[id].fr,FORM_NAMES[id].en,"forms","sculpture","#549fa2"),
   version:FORMS_VERSION,fidelity:"deforming-surface" as const,
 })));
+export const WATER_OBJECTS:readonly ModularObjectDefinition[]=Object.freeze(WATER_IDS.map(id=>Object.freeze({
+  ...object(id,WATER_NAMES[id].fr,WATER_NAMES[id].en,"water","water","#2f99bd"),
+  version:WATER_VERSION,fidelity:"deforming-surface" as const,
+})));
 export const FLORA_OBJECTS:readonly ModularObjectDefinition[]=Object.freeze(FLORA_IDS.map(id=>Object.freeze({
   ...object(id,FLORA_NAMES[id].fr,FLORA_NAMES[id].en,"flora","plant","#4d8f56"),
   version:FLORA_VERSION,fidelity:"living-botanical" as const,
 })));
-export const DISCOVERABLE_OBJECTS=Object.freeze([...MODULAR_OBJECTS,...MOON_OBJECTS,...WEATHER_OBJECTS,...FORM_OBJECTS,...FLORA_OBJECTS]);
+export const DISCOVERABLE_OBJECTS=Object.freeze([...MODULAR_OBJECTS,...MOON_OBJECTS,...WEATHER_OBJECTS,...FORM_OBJECTS,...WATER_OBJECTS,...FLORA_OBJECTS,...FLORA_OBJECTS]);
 
 /** Exact resolution only. An unknown ID/version must never pick a lookalike. */
 export const MODULAR_OBJECT_VERSIONS:readonly ModularObjectDefinition[]=Object.freeze([
-  ...MODULAR_OBJECTS,...MOON_OBJECTS,...WEATHER_OBJECTS,...FORM_OBJECTS,...FLORA_OBJECTS,
+  ...MODULAR_OBJECTS,...MOON_OBJECTS,...WEATHER_OBJECTS,...FORM_OBJECTS,...WATER_OBJECTS,
   ...MODULAR_OBJECTS.filter(item=>item.family==="space").map(item=>Object.freeze({...item,version:"2.0.0",license:"CC-BY-4.0" as const,fidelity:"textured-sphere" as const})),
 ]);
 export function resolveModularObject(id: string, version: string = OBJECT_CATALOG_VERSION): ModularObjectDefinition | undefined {
