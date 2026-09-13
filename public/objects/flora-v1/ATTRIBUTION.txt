@@ -1,0 +1,5 @@
+Végétation — quatre études botaniques procédurales originales.
+Copyright 2026 BEAM Consulting SARL. Apache-2.0; voir LICENSE et NOTICE.
+Source du mouvement : packages/core/src/objects/flora-renderer.ts.
+Aucun asset, raster, modèle, police ou code tiers. Les variantes « photoréalistes »
+sont des rendus botaniques synthétiques de studio, pas des photographies ni des simulations scientifiques.

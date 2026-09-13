@@ -1,6 +1,6 @@
 # Index des familles de visuels
 
-Mis à jour le **2026-09-11**. Cet index décrit le code et sa validation, pas une
+Mis à jour le **2026-09-13**. Cet index décrit le code et sa validation, pas une
 disponibilité automatiquement déduite d’un numéro de package.
 
 | Famille | Objets et variantes | État vérifié |
@@ -9,7 +9,9 @@ disponibilité automatiquement déduite d’un numéro de package.
 | Bâtiments, mobilité, logistique | 10 objets vectoriels historiques, 1.0.0 | Conservés sans modification |
 | Météo & atmosphères | `weather-sun`, `weather-fair`, `weather-overcast`, `weather-rain`, `weather-storm`, `weather-snow` ; chacun réaliste + gouache ; 1.0.0 | Cinq objets fusionnés via Modular #220/#222/#223 et Maker #1929/#1933. `weather-sun` en PR brouillon [Modular #226](https://github.com/Blueprint-Master/blueprint-modular/pull/226) et [Maker #1960](https://github.com/Blueprint-Master/blueprint-maker/pull/1960) ; CI verte, revue live non validée. [Preuves](previews/weather-sun/README.md). Non fusionné, non publié npm et non disponible en production par cette passe |
 | Formes & ondes | form-silk, form-shell, form-loop, form-ripple ; rendu studio + illustration ; 1.0.0 | Modular #225 et Maker #1951 fusionnées le 2026-09-10. Revue live et disponibilité effective en production non vérifiées |
-| Eau, végétation, cristaux | Absents de cette passe | À examiner sans dupliquer les familles existantes |
+| Eau & phénomènes naturels | `water-wave`, `water-ripple`, `water-waterfall`, `water-whirlpool` ; réaliste + illustration ; 1.0.0 | Modular #227 ouverte, Maker #1964 fusionnée le 2026-09-12 ; non publié npm |
+| Végétation | `flora-fern`, `flora-blossom`, `flora-meadow`, `flora-branch` ; studio botanique + illustration ; 1.0.0 | Branche et PR brouillon du 2026-09-13 ; validation animée live requise |
+| Cristaux & matières | Absents | À examiner sans dupliquer les familles existantes |
 
 ## Continuité
 
@@ -47,3 +49,10 @@ doublon météo ouvert n’a été trouvé. La passe complète la famille exista
 Modular #226 et Maker #1960 sont publiées en brouillon ; leurs CI sont vertes sur
 les commits de tête. Cette validation ne vaut ni fusion, ni publication, ni
 déploiement.
+
+
+Vérification du 2026-09-13 : Eau n’est pas dupliquée ; Modular #227 reste ouverte
+et Maker #1964 est fusionnée. La passe ouvre Végétation sur une branche autonome,
+sans dépendre de la PR Eau. Les posters et sources sont originaux Apache-2.0 ;
+aucun asset tiers. Le runner local était indisponible, donc l’inspection animée,
+les mesures de frame et le test téléphone restent explicitement non validés.

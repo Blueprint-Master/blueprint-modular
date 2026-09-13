@@ -1,0 +1,92 @@
+{
+  "schemaVersion": 1,
+  "date": "2026-09-13",
+  "version": "1.0.0",
+  "author": "Blueprint Modular / BEAM Consulting SARL",
+  "license": "Apache-2.0",
+  "source": "packages/core/src/objects/flora-renderer.ts",
+  "thirdPartyAssets": [],
+  "fingerprintAlgorithm": "git-blob-sha1",
+  "assets": [
+    {
+      "path": "previews/flora-fern-photorealistic.svg",
+      "bytes": 6036,
+      "width": 320,
+      "height": 320,
+      "id": "flora-fern",
+      "style": "photorealistic",
+      "gitBlob": "60677742e894dba6bc17acdb7acd15b150b7fc4e",
+      "source": "procedural SVG poster"
+    },
+    {
+      "path": "previews/flora-fern-illustration.svg",
+      "bytes": 6783,
+      "width": 320,
+      "height": 320,
+      "id": "flora-fern",
+      "style": "illustration",
+      "gitBlob": "999497121e876d3681632c739cdca9b6b4d42a34",
+      "source": "procedural SVG poster"
+    },
+    {
+      "path": "previews/flora-blossom-photorealistic.svg",
+      "bytes": 4399,
+      "width": 320,
+      "height": 320,
+      "id": "flora-blossom",
+      "style": "photorealistic",
+      "gitBlob": "39486580b01cb8da3335048b00099916bbff4c41",
+      "source": "procedural SVG poster"
+    },
+    {
+      "path": "previews/flora-blossom-illustration.svg",
+      "bytes": 5356,
+      "width": 320,
+      "height": 320,
+      "id": "flora-blossom",
+      "style": "illustration",
+      "gitBlob": "f5da4987660b35a88e67f649a203a9a069f65e5b",
+      "source": "procedural SVG poster"
+    },
+    {
+      "path": "previews/flora-meadow-photorealistic.svg",
+      "bytes": 4984,
+      "width": 320,
+      "height": 320,
+      "id": "flora-meadow",
+      "style": "photorealistic",
+      "gitBlob": "ec5294e93e2e11cdd90db351f32444dd0972c3c5",
+      "source": "procedural SVG poster"
+    },
+    {
+      "path": "previews/flora-meadow-illustration.svg",
+      "bytes": 4893,
+      "width": 320,
+      "height": 320,
+      "id": "flora-meadow",
+      "style": "illustration",
+      "gitBlob": "1e906a9af3becf1eb4f2f6d4f695e1380bfa2a52",
+      "source": "procedural SVG poster"
+    },
+    {
+      "path": "previews/flora-branch-photorealistic.svg",
+      "bytes": 2503,
+      "width": 320,
+      "height": 320,
+      "id": "flora-branch",
+      "style": "photorealistic",
+      "gitBlob": "b1b5c1acb109893efe51f83372db652caa574611",
+      "source": "procedural SVG poster"
+    },
+    {
+      "path": "previews/flora-branch-illustration.svg",
+      "bytes": 2865,
+      "width": 320,
+      "height": 320,
+      "id": "flora-branch",
+      "style": "illustration",
+      "gitBlob": "e15390e19e29e08260261174f9abf58b6fa7dd34",
+      "source": "procedural SVG poster"
+    }
+  ]
+}

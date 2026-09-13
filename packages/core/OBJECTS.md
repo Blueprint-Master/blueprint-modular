@@ -162,3 +162,26 @@ the exact reference and package its actual selected poster.
 See `docs/previews/forms/README.md` for multi-instant captures, the 12 s software
 video, measured software costs and the explicitly unexecuted live-browser
 checks. These are integrated review candidates, not approved production assets.
+
+
+## Végétation 1.0.0 — candidats en revue
+
+```tsx
+import {ModularObject, FloraObject, FLORA_IDS} from '@blueprint-modular/core/objects';
+<ModularObject id="flora-fern" version="1.0.0" variant="photorealistic"
+  size={360} playing={isSelected} speed={1} />
+<FloraObject id="flora-blossom" label="Pivoine vivante" style="illustration" thumbnail />
+```
+
+IDs : `flora-fern`, `flora-blossom`, `flora-meadow`, `flora-branch`.
+Deux styles procéduraux originaux, sans asset tiers ni raster. La fougère se
+déroule, la pivoine ouvre ses couronnes, une rafale traverse la prairie et les
+feuilles de ginkgo se tordent localement. Boucle 12 s ; un mouvement principal
+et un détail secondaire au maximum. Vignettes SVG fixes ; le moteur Canvas 2D
+est différé et seulement monté pour la vue active.
+
+Pause, vitesse 0,1–3, arrêt hors écran/onglet caché et `prefers-reduced-motion`
+sont supportés. Plafonds : 320 px/18 fps, ou 224 px/12 fps sur mobile, pointeur
+grossier et économie de données. Ce sont des plafonds, pas des mesures batterie.
+Copier `dist/assets/objects/flora-v1` avec le package. Voir
+`docs/previews/flora/README.md` pour les preuves, limites et contrôle visuel.
