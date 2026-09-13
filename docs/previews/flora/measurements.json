@@ -1,0 +1,33 @@
+{
+  "date": "2026-09-13",
+  "environment": "local execution unavailable (exec-server initialization timeout)",
+  "posterBytes": {
+    "flora-fern/photorealistic": 6036,
+    "flora-fern/illustration": 6783,
+    "flora-blossom/photorealistic": 4399,
+    "flora-blossom/illustration": 5356,
+    "flora-meadow/photorealistic": 4984,
+    "flora-meadow/illustration": 4893,
+    "flora-branch/photorealistic": 2503,
+    "flora-branch/illustration": 2865
+  },
+  "runtime": {
+    "resolutionCaps": {
+      "desktop": 320,
+      "mobile": 224
+    },
+    "fpsCaps": {
+      "desktop": 18,
+      "mobile": 12
+    },
+    "activeLoopsPerSelectedObject": 1
+  },
+  "measured": {
+    "bundleGzipBytes": null,
+    "frameCostMs": null,
+    "networkTransfer": null,
+    "physicalMobile": null,
+    "battery": null
+  },
+  "note": "Null means not executed; CI validates code, not interactive visual quality."
+}

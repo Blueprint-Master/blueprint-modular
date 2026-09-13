@@ -1,6 +1,6 @@
 # Index des familles de visuels
 
-Mis à jour le **2026-09-12**. Cet index décrit le code et sa validation, pas une
+Mis à jour le **2026-09-13**. Cet index décrit le code et sa validation, pas une
 disponibilité automatiquement déduite d’un numéro de package.
 
 | Famille | Objets et variantes | État vérifié |
@@ -9,8 +9,9 @@ disponibilité automatiquement déduite d’un numéro de package.
 | Bâtiments, mobilité, logistique | 10 objets vectoriels historiques, 1.0.0 | Conservés sans modification |
 | Météo & atmosphères | `weather-sun`, `weather-fair`, `weather-overcast`, `weather-rain`, `weather-storm`, `weather-snow` ; chacun réaliste + gouache ; 1.0.0 | Modular #220/#222/#223/#226 et Maker #1929/#1933/#1960 fusionnées, les deux dernières le 2026-09-12. [Preuves Soleil météo](previews/weather-sun/README.md). Revue live, publication npm et disponibilité en production non vérifiées |
 | Formes & ondes | form-silk, form-shell, form-loop, form-ripple ; rendu studio + illustration ; 1.0.0 | Modular #225 et Maker #1951 fusionnées le 2026-09-10. Revue live et disponibilité effective en production non vérifiées |
-| Eau & phénomènes naturels | `water-wave`, `water-ripple`, `water-waterfall`, `water-whirlpool` ; matière studio + gouache ; 1.0.0 | En PR [Modular #227](https://github.com/Blueprint-Master/blueprint-modular/pull/227) et [Maker #1964](https://github.com/Blueprint-Master/blueprint-maker/pull/1964), 8 références et transport chat → AppSpec → archive. [Preuves et limites](previews/water/README.md). Non fusionnés, non publiés npm, non disponibles en production |
-| Végétation, cristaux | Absents de cette passe | À examiner sans dupliquer les familles existantes |
+| Eau & phénomènes naturels | `water-wave`, `water-ripple`, `water-waterfall`, `water-whirlpool` ; matière studio + gouache ; 1.0.0 | Modular #227 et Maker #1964 fusionnées le 2026-09-13. [Preuves et limites](previews/water/README.md). Publication npm et disponibilité en production non vérifiées |
+| Végétation | `flora-fern`, `flora-blossom`, `flora-meadow`, `flora-branch` ; studio botanique + illustration ; 1.0.0 | En PR [Modular #228](https://github.com/Blueprint-Master/blueprint-modular/pull/228) et [Maker #1968](https://github.com/Blueprint-Master/blueprint-maker/pull/1968) ; CI verte, validation animée live requise |
+| Cristaux & matières | Absents | À examiner sans dupliquer les familles existantes |
 
 ## Continuité
 
@@ -46,3 +47,9 @@ doublon météo ouvert n’a été trouvé. La passe complète la famille exista
 `weather-sun`, sans toucher aux cinq rendus fusionnés ni au Soleil d’Univers.
 Modular #226 et Maker #1960 ont été fusionnées le 2026-09-12. Cette fusion ne vaut
 ni publication npm, ni déploiement, ni validation visuelle live.
+
+Vérification du 2026-09-13 : Eau est désormais fusionnée dans Modular et Maker,
+sans que cela démontre une publication npm. Végétation reste une PR distincte.
+Ses posters et sources sont originaux Apache-2.0, sans asset tiers. Le runner
+local était indisponible : inspection animée, coût de frame et téléphone restent
+explicitement non validés.

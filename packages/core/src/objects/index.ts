@@ -26,3 +26,8 @@ export type {WaterObjectProps} from "./WaterObject";
 export {WATER_OBJECTS} from "./catalog";
 export {WATER_IDS,WATER_NAMES,WATER_VERSION,WATER_ASSET_PATH,isWaterId,waterPosterPath,waterSurfacePath,waterAssetPaths,waterBudget} from "./water";
 export type {WaterId,WaterStyle} from "./water";
+export {FloraObject} from "./FloraObject";
+export type {FloraObjectProps} from "./FloraObject";
+export {FLORA_OBJECTS} from "./catalog";
+export {FLORA_IDS,FLORA_NAMES,FLORA_VERSION,FLORA_ASSET_PATH,isFloraId,floraPosterPath} from "./flora";
+export type {FloraId,FloraStyle} from "./flora";

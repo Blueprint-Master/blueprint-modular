@@ -1,6 +1,6 @@
 # Reusable objects
 
-`@blueprint-modular/core/objects` exports `ModularObject`, `PlanetObject`, `WeatherObject`, `FormObject`, `WaterObject`, a versioned catalogue and a strict `.modular.json` parser. Existing 1.0.0 vector objects remain unchanged. Universe 2.0.0 adds eight planets, Sun, Moon and eight additional moons in photorealistic and illustration styles. Weather 1.0.0 adds six atmospheric studies; Formes & ondes 1.0.0 adds four procedural sculptures; Eau & phénomènes naturels 1.0.0 adds four living water studies. See the dated status in `docs/object-families.md`.
+`@blueprint-modular/core/objects` exports `ModularObject`, `PlanetObject`, `WeatherObject`, `FormObject`, `WaterObject`, `FloraObject`, a versioned catalogue and a strict `.modular.json` parser. Existing 1.0.0 vector objects remain unchanged. Universe 2.0.0 adds eight planets, Sun, Moon and eight additional moons in photorealistic and illustration styles. Weather 1.0.0 adds six atmospheric studies; Formes & ondes 1.0.0 adds four procedural sculptures; Eau & phénomènes naturels 1.0.0 adds four living water studies; Végétation 1.0.0 adds four procedural botanical studies. See the dated status in `docs/object-families.md`.
 
 ```tsx
 import { ModularObject } from '@blueprint-modular/core/objects';
@@ -49,7 +49,7 @@ cloud and clear-sun materials. `weather-sun` is a terrestrial atmospheric study,
 distinct from the existing astronomical Universe Sun. Its outer haze deforms by
 sector while the disc stays anchored; local rays appear, lengthen and dissolve.
 The complete discoverable catalogue contains 38 objects before the four water
-additions (42 total).
+and four vegetation additions (46 total).
 
 Copy the **new** `dist/assets/objects/weather-v1` to `public/objects/weather-v1`,
 including attribution, fingerprints and generation prompts. `assetBaseUrl` on a
@@ -188,3 +188,25 @@ reduced-motion stop it. Copy `dist/assets/objects/water-v1`; a Maker adapter mus
 carry the exact ID/style/reference and only its material and poster. See
 `docs/previews/water/README.md` for proofs, measured Node costs and unexecuted
 browser/device checks.
+
+## Végétation 1.0.0 — candidats en revue
+
+```tsx
+import {ModularObject, FloraObject, FLORA_IDS} from '@blueprint-modular/core/objects';
+<ModularObject id="flora-fern" version="1.0.0" variant="photorealistic"
+  size={360} playing={isSelected} speed={1} />
+<FloraObject id="flora-blossom" label="Pivoine vivante" style="illustration" thumbnail />
+```
+
+IDs : `flora-fern`, `flora-blossom`, `flora-meadow`, `flora-branch`.
+Deux styles procéduraux originaux, sans asset tiers ni raster. La fougère se
+déroule, la pivoine ouvre ses couronnes, une rafale traverse la prairie et les
+feuilles de ginkgo se tordent localement. Boucle 12 s ; un mouvement principal
+et un détail secondaire au maximum. Vignettes SVG fixes ; le moteur Canvas 2D
+est différé et seulement monté pour la vue active.
+
+Pause, vitesse 0,1–3, arrêt hors écran/onglet caché et `prefers-reduced-motion`
+sont supportés. Plafonds : 320 px/18 fps, ou 224 px/12 fps sur mobile, pointeur
+grossier et économie de données. Ce sont des plafonds, pas des mesures batterie.
+Copier `dist/assets/objects/flora-v1` avec le package. Voir
+`docs/previews/flora/README.md` pour les preuves, limites et contrôle visuel.

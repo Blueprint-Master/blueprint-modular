@@ -8,6 +8,7 @@ vi.mock("../../../components/site/ObjectContributions",()=>({ObjectContributions
 vi.mock("../src/objects/PlanetObject",()=>({PlanetObject:({label}: {label:string})=><span role="img" aria-label={label}/> }));
 vi.mock("../src/objects/FormObject",()=>({FormObject:({label}: {label:string})=><span role="img" aria-label={label}/> }));
 vi.mock("../src/objects/WaterObject",()=>({WaterObject:({label}: {label:string})=><span role="img" aria-label={label}/> }));
+vi.mock("../src/objects/FloraObject",()=>({FloraObject:({label}: {label:string})=><span role="img" aria-label={label}/> }));
 afterEach(cleanup);
 it("discovers the forms family and keeps style and motion in its real integration snippet",()=>{
  const {container}=render(<ObjectsCatalogue/>);fireEvent.click(screen.getByRole("button",{name:"Formes & ondes",exact:true}));
@@ -65,3 +66,5 @@ it('carries independently edited Earth layers into the actual React integration'
  expect(code).toContain('"lighting":"night"');expect(code).toContain('"cloudSpeed":0');expect(code).toContain('"cloudEvolution":2');
  fireEvent.click(screen.getByRole('button',{name:'Réinitialiser',exact:true}));expect(container.querySelector('code')?.textContent).toContain('"lighting":"coordinated"');
 });
+
+it("discovers vegetation and carries style, pause and speed into the integration",()=>{const {container}=render(<ObjectsCatalogue/>);fireEvent.click(screen.getByRole("button",{name:"Végétation",exact:true}));fireEvent.click(screen.getByRole("button",{name:"Fougère qui s’éveille",exact:true}));fireEvent.click(screen.getByRole("button",{name:"Dessin",exact:true}));fireEvent.change(screen.getByRole("slider",{name:"Vitesse de l’animation"}),{target:{value:"0.5"}});fireEvent.click(screen.getByRole("button",{name:"Animation",exact:true}));const code=container.querySelector("code")?.textContent;expect(code).toContain('id="flora-fern" version="1.0.0"');expect(code).toContain('variant="illustration" playing={false} speed={0.5}');expect(screen.queryByRole("slider",{name:"Inclinaison"})).toBeNull();});

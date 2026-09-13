@@ -43,7 +43,7 @@ describe("versioned reusable objects", () => {
 });
 
 it("discovers new moons under their parent without inventing v1 versions",()=>{
- expect(DISCOVERABLE_OBJECTS).toHaveLength(42);expect(MOON_OBJECTS).toHaveLength(8);
+ expect(DISCOVERABLE_OBJECTS).toHaveLength(46);expect(MOON_OBJECTS).toHaveLength(8);
  for(const moon of MOON_OBJECTS){expect(resolveModularObject(moon.id,"2.0.0")).toBe(moon);expect(resolveModularObject(moon.id,"1.0.0")).toBeUndefined();expect(moon.parent).toBeTruthy();
   expect(renderToStaticMarkup(<ModularObject id={moon.id} version="2.0.0" thumbnail/>)).toContain(`${moon.id}-photorealistic.webp`);}
  expect(searchModularObjects("jupiter").filter(o=>o.parent==="jupiter")).toHaveLength(4);
