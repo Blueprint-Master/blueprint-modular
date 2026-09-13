@@ -1,6 +1,6 @@
 # Reusable objects
 
-`@blueprint-modular/core/objects` exports `ModularObject`, `PlanetObject`, `WeatherObject`, `FormObject`, a versioned catalogue and a strict `.modular.json` parser. Existing 1.0.0 vector objects remain unchanged. Universe 2.0.0 adds eight planets, Sun, Moon and eight additional moons in photorealistic and illustration styles. Weather 1.0.0 adds six atmospheric studies; Formes & ondes 1.0.0 adds four procedural sculptures. See the dated status in `docs/object-families.md`.
+`@blueprint-modular/core/objects` exports `ModularObject`, `PlanetObject`, `WeatherObject`, `FormObject`, `WaterObject`, a versioned catalogue and a strict `.modular.json` parser. Existing 1.0.0 vector objects remain unchanged. Universe 2.0.0 adds eight planets, Sun, Moon and eight additional moons in photorealistic and illustration styles. Weather 1.0.0 adds six atmospheric studies; Formes & ondes 1.0.0 adds four procedural sculptures; Eau & phénomènes naturels 1.0.0 adds four living water studies. See the dated status in `docs/object-families.md`.
 
 ```tsx
 import { ModularObject } from '@blueprint-modular/core/objects';
@@ -48,7 +48,8 @@ Six IDs: `weather-sun`, `weather-fair`, `weather-overcast`, `weather-rain`,
 cloud and clear-sun materials. `weather-sun` is a terrestrial atmospheric study,
 distinct from the existing astronomical Universe Sun. Its outer haze deforms by
 sector while the disc stays anchored; local rays appear, lengthen and dissolve.
-The complete discoverable catalogue contains 38 objects.
+The complete discoverable catalogue contains 38 objects before the four water
+additions (42 total).
 
 Copy the **new** `dist/assets/objects/weather-v1` to `public/objects/weather-v1`,
 including attribution, fingerprints and generation prompts. `assetBaseUrl` on a
@@ -162,3 +163,28 @@ the exact reference and package its actual selected poster.
 See `docs/previews/forms/README.md` for multi-instant captures, the 12 s software
 video, measured software costs and the explicitly unexecuted live-browser
 checks. These are integrated review candidates, not approved production assets.
+
+## Eau & phénomènes naturels 1.0.0 — draft candidates
+
+```tsx
+import {ModularObject, WaterObject, WATER_IDS} from '@blueprint-modular/core/objects';
+<ModularObject id="water-wave" version="1.0.0" variant="photorealistic"
+  size={360} playing={isSelected} speed={1} />
+<WaterObject id="water-whirlpool" label="Tourbillon" style="illustration" thumbnail />
+```
+
+IDs: `water-wave`, `water-ripple`, `water-waterfall`, `water-whirlpool`. The
+procedural mask changes local silhouette, depth and foam over a seamless 12 s
+cycle; it does not merely translate a poster. One compact 384 px material for
+the selected style is loaded on demand, then clipped and deformed by the shared
+renderer. Both materials were generated specifically for this family; exact
+prompts, authorship, source fingerprints and transformations are in
+`dist/assets/objects/water-v1/generation.json` and `manifest.json`.
+
+`playing`, `speed` (0.1–3), `size`, `thumbnail` and `assetBaseUrl` are supported.
+Vignettes are fixed. One selected view uses at most one 320 px/18 fps clock,
+or 224 px/12 fps on constrained devices. Pause, hidden page, offscreen and
+reduced-motion stop it. Copy `dist/assets/objects/water-v1`; a Maker adapter must
+carry the exact ID/style/reference and only its material and poster. See
+`docs/previews/water/README.md` for proofs, measured Node costs and unexecuted
+browser/device checks.

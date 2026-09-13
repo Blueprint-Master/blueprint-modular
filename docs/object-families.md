@@ -1,21 +1,21 @@
 # Index des familles de visuels
 
-Mis à jour le **2026-09-11**. Cet index décrit le code et sa validation, pas une
+Mis à jour le **2026-09-12**. Cet index décrit le code et sa validation, pas une
 disponibilité automatiquement déduite d’un numéro de package.
 
 | Famille | Objets et variantes | État vérifié |
 | --- | --- | --- |
 | Univers | 8 planètes, Soleil, Lune, Io, Europe, Ganymède, Callisto, Titan, Encelade, Titania, Triton ; réaliste/dessin ; objets 2.0.0 | Modular #214, #217, #218 et Maker #1915, #1917 fusionnées le 2026-09-08 ; disponibilité effective en production non testée ici |
 | Bâtiments, mobilité, logistique | 10 objets vectoriels historiques, 1.0.0 | Conservés sans modification |
-| Météo & atmosphères | `weather-sun`, `weather-fair`, `weather-overcast`, `weather-rain`, `weather-storm`, `weather-snow` ; chacun réaliste + gouache ; 1.0.0 | Cinq objets fusionnés via Modular #220/#222/#223 et Maker #1929/#1933. `weather-sun` en PR brouillon [Modular #226](https://github.com/Blueprint-Master/blueprint-modular/pull/226) et [Maker #1960](https://github.com/Blueprint-Master/blueprint-maker/pull/1960) ; CI verte, revue live non validée. [Preuves](previews/weather-sun/README.md). Non fusionné, non publié npm et non disponible en production par cette passe |
+| Météo & atmosphères | `weather-sun`, `weather-fair`, `weather-overcast`, `weather-rain`, `weather-storm`, `weather-snow` ; chacun réaliste + gouache ; 1.0.0 | Modular #220/#222/#223/#226 et Maker #1929/#1933/#1960 fusionnées, les deux dernières le 2026-09-12. [Preuves Soleil météo](previews/weather-sun/README.md). Revue live, publication npm et disponibilité en production non vérifiées |
 | Formes & ondes | form-silk, form-shell, form-loop, form-ripple ; rendu studio + illustration ; 1.0.0 | Modular #225 et Maker #1951 fusionnées le 2026-09-10. Revue live et disponibilité effective en production non vérifiées |
-| Eau, végétation, cristaux | Absents de cette passe | À examiner sans dupliquer les familles existantes |
+| Eau & phénomènes naturels | `water-wave`, `water-ripple`, `water-waterfall`, `water-whirlpool` ; matière studio + gouache ; 1.0.0 | En PR [Modular #227](https://github.com/Blueprint-Master/blueprint-modular/pull/227) et [Maker #1964](https://github.com/Blueprint-Master/blueprint-maker/pull/1964), 8 références et transport chat → AppSpec → archive. [Preuves et limites](previews/water/README.md). Non fusionnés, non publiés npm, non disponibles en production |
+| Végétation, cristaux | Absents de cette passe | À examiner sans dupliquer les familles existantes |
 
 ## Continuité
 
-Reprendre la PR météo existante si elle est encore ouverte/incomplète. Ne pas
-recréer les six identifiants et ne pas réimporter les matériaux. Vérifier les
-PR ouvertes avant de démarrer une autre famille. Les objets candidats ne sont
+Ne pas recréer les six identifiants météo ni réimporter leurs matériaux. Vérifier
+les PR ouvertes avant de démarrer une autre famille. Les objets candidats ne sont
 pas « terminés » tant que leur animation en navigateur n’est pas approuvée.
 
 Références et états précis de validation : [Météo](weather-atmospheres.md).
@@ -44,6 +44,5 @@ pour Formes & ondes demeure à publier après résolution de ce blocage.
 Vérification du 2026-09-11 : Modular #225 et Maker #1951 sont fusionnées. Aucun
 doublon météo ouvert n’a été trouvé. La passe complète la famille existante avec
 `weather-sun`, sans toucher aux cinq rendus fusionnés ni au Soleil d’Univers.
-Modular #226 et Maker #1960 sont publiées en brouillon ; leurs CI sont vertes sur
-les commits de tête. Cette validation ne vaut ni fusion, ni publication, ni
-déploiement.
+Modular #226 et Maker #1960 ont été fusionnées le 2026-09-12. Cette fusion ne vaut
+ni publication npm, ni déploiement, ni validation visuelle live.

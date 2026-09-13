@@ -1,0 +1,4 @@
+Eau & phénomènes naturels — Original procedural studies and AI-assisted original water materials.
+Copyright 2026 BEAM Consulting SARL. Apache-2.0; see repository LICENSE and NOTICE.
+Source: packages/core/src/objects/water-renderer.ts and generation.json. No third-party asset.
+Synthetic studio and illustrated treatments; artistic motion, not a fluid simulation.
