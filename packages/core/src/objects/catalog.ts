@@ -67,11 +67,11 @@ export const FLORA_OBJECTS:readonly ModularObjectDefinition[]=Object.freeze(FLOR
   ...object(id,FLORA_NAMES[id].fr,FLORA_NAMES[id].en,"flora","plant","#4d8f56"),
   version:FLORA_VERSION,fidelity:"living-botanical" as const,
 })));
-export const DISCOVERABLE_OBJECTS=Object.freeze([...MODULAR_OBJECTS,...MOON_OBJECTS,...WEATHER_OBJECTS,...FORM_OBJECTS,...WATER_OBJECTS,...FLORA_OBJECTS,...FLORA_OBJECTS]);
+export const DISCOVERABLE_OBJECTS=Object.freeze([...MODULAR_OBJECTS,...MOON_OBJECTS,...WEATHER_OBJECTS,...FORM_OBJECTS,...WATER_OBJECTS,...FLORA_OBJECTS]);
 
 /** Exact resolution only. An unknown ID/version must never pick a lookalike. */
 export const MODULAR_OBJECT_VERSIONS:readonly ModularObjectDefinition[]=Object.freeze([
-  ...MODULAR_OBJECTS,...MOON_OBJECTS,...WEATHER_OBJECTS,...FORM_OBJECTS,...WATER_OBJECTS,
+  ...MODULAR_OBJECTS,...MOON_OBJECTS,...WEATHER_OBJECTS,...FORM_OBJECTS,...WATER_OBJECTS,...FLORA_OBJECTS,
   ...MODULAR_OBJECTS.filter(item=>item.family==="space").map(item=>Object.freeze({...item,version:"2.0.0",license:"CC-BY-4.0" as const,fidelity:"textured-sphere" as const})),
 ]);
 export function resolveModularObject(id: string, version: string = OBJECT_CATALOG_VERSION): ModularObjectDefinition | undefined {
