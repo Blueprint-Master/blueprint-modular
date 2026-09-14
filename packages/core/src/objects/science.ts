@@ -63,8 +63,8 @@ const LANTHANOIDS="La Ce Pr Nd Pm Sm Eu Gd Tb Dy Ho Er Tm Yb Lu".split(" ");
 const ACTINOIDS="Ac Th Pa U Np Pu Am Cm Bk Cf Es Fm Md No Lr".split(" ");
 const byPosition=new Map<string,{period:number;group:number;row:number}>();
 MAIN_ROWS.forEach((row,period)=>row.forEach(([symbol,group])=>byPosition.set(symbol,{period:period+1,group,row:period+1})));
-LANTHANOIDS.forEach((symbol,index)=>byPosition.set(symbol,{period:6,group:3,row:8}));
-ACTINOIDS.forEach((symbol,index)=>byPosition.set(symbol,{period:7,group:3,row:9}));
+LANTHANOIDS.forEach(symbol=>byPosition.set(symbol,{period:6,group:3,row:8}));
+ACTINOIDS.forEach(symbol=>byPosition.set(symbol,{period:7,group:3,row:9}));
 
 const sets={
  alkali:new Set("Li Na K Rb Cs Fr".split(" ")),alkaline:new Set("Be Mg Ca Sr Ba Ra".split(" ")),
