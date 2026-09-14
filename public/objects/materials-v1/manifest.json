@@ -6,7 +6,7 @@
   "license": "Apache-2.0",
   "source": "packages/core/src/objects/material-renderer.ts",
   "thirdPartyAssets": [],
-  "rendererSha256": "568c2a29fdbf68b27c6ad4bb137616746d384122256c53105f62eea67397947f",
+  "rendererSha256": "909f558a51d19d2644847217c2bd7d8cd55ccf8e5a519f9f105c9e75f43fb046",
   "assets": [
     {
       "path": "previews/material-crystal-photorealistic.svg",
