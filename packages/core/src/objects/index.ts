@@ -31,3 +31,8 @@ export type {FloraObjectProps} from "./FloraObject";
 export {FLORA_OBJECTS} from "./catalog";
 export {FLORA_IDS,FLORA_NAMES,FLORA_VERSION,FLORA_ASSET_PATH,isFloraId,floraPosterPath} from "./flora";
 export type {FloraId,FloraStyle} from "./flora";
+export {MaterialObject} from "./MaterialObject";
+export type {MaterialObjectProps} from "./MaterialObject";
+export {MATERIAL_OBJECTS} from "./catalog";
+export {MATERIAL_IDS,MATERIAL_NAMES,MATERIAL_VERSION,MATERIAL_ASSET_PATH,isMaterialId,materialPosterPath,materialBudget} from "./materials";
+export type {MaterialId,MaterialStyle} from "./materials";
