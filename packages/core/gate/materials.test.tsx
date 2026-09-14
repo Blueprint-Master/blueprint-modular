@@ -5,7 +5,7 @@ import {ModularObject,MATERIAL_IDS,MATERIAL_OBJECTS,parseModularObjectAttachment
 import {materialMotion} from "../src/objects/material-renderer";
 import {materialBudget} from "../src/objects/materials";
 describe("Cristaux & matières — références publiques exactes",()=>{
- it("ajoute cinq matières distinctes dans une famille dédiée",()=>{expect(MATERIAL_OBJECTS).toHaveLength(5);expect(searchModularObjects("","materials")).toHaveLength(5);});
+ it("conserve cinq références compatibles mais les retire de la découverte",()=>{expect(MATERIAL_OBJECTS).toHaveLength(5);expect(searchModularObjects("","materials")).toHaveLength(0);});
  for(const id of MATERIAL_IDS)for(const style of ["photorealistic","illustration"] as const)it(`${id}/${style}: poster SSR, référence exacte et évolution perceptible`,()=>{
   const ref={schemaVersion:1,kind:"modular-object",id,version:"1.0.0",style,animation:{playing:false,speed:.5}};
   expect(parseModularObjectAttachment(ref)).toEqual(ref);expect(parseModularObjectAttachment({...ref,version:"2.0.0"})).toBeUndefined();

@@ -1,6 +1,6 @@
 # Reusable objects
 
-`@blueprint-modular/core/objects` exports `ModularObject`, `PlanetObject`, `WeatherObject`, `FormObject`, `WaterObject`, `FloraObject`, `MaterialObject`, a versioned catalogue and a strict `.modular.json` parser. Existing 1.0.0 vector objects remain unchanged. Universe 2.0.0 adds eight planets, Sun, Moon and eight additional moons in photorealistic and illustration styles. Weather 1.0.0 adds six atmospheric studies; Formes & ondes 1.0.0 adds four procedural sculptures; Eau & phénomènes naturels 1.0.0 adds four living water studies; Végétation 1.0.0 adds four procedural botanical studies; Cristaux & matières 1.0.0 adds five living material studies. See the dated status in `docs/object-families.md`.
+`@blueprint-modular/core/objects` exports `ModularObject`, the specialised renderers and controls, a versioned catalogue and a strict `.modular.json` parser. Sciences & éléments 1.0.0 adds four layered views backed by the complete 118-element table. Végétation and Cristaux & matières remain resolvable for compatibility but are withdrawn from discovery after visual rejection. See the dated status in `docs/object-families.md`.
 
 ```tsx
 import { ModularObject } from '@blueprint-modular/core/objects';
@@ -22,7 +22,7 @@ At the repository root, `node scripts/generate-object-previews.cjs` regenerates 
 
 Photorealistic maps, clouds and rings: [Solar System Scope / INOVE](https://www.solarsystemscope.com/textures/), CC BY 4.0. `public/objects/universe-v2/manifest.json` records the fixed source-mirror commit, filenames and SHA-256. Painted surfaces are original AI-generated artwork; prompts and hashes appear in `illustration-manifest.json`. Clouds/rings retain Solar System Scope attribution in both styles. Keep `ATTRIBUTION.txt` on redistribution. Imagery includes artistic reconstruction; it is not a set of telescope photographs.
 
-Eight source-textured moons are grouped by parent: Io, Europa, Ganymede, Callisto (Jupiter); Titan, Enceladus (Saturn); Titania (Uranus); Triton (Neptune). `moon-manifest.json` records the pinned NASA/Celestia paths, hashes and per-map licenses. NASA media terms are distinct from CC BY; keep the supplied credits and do not imply endorsement. Their illustration variant uses procedural drawn shading over the source map, not a separately painted texture. `DISCOVERABLE_OBJECTS` includes 28 selectable objects; `MODULAR_OBJECTS` preserves the immutable 20 v1 definitions. New moons resolve only at version 2.0.0.
+Eight source-textured moons are grouped by parent: Io, Europa, Ganymede, Callisto (Jupiter); Titan, Enceladus (Saturn); Titania (Uranus); Triton (Neptune). `moon-manifest.json` records the pinned NASA/Celestia paths, hashes and per-map licenses. NASA media terms are distinct from CC BY; keep the supplied credits and do not imply endorsement. Their illustration variant uses procedural drawn shading over the source map, not a separately painted texture. The Universe subset contains 28 selectable objects; `MODULAR_OBJECTS` preserves the immutable 20 v1 definitions. New moons resolve only at version 2.0.0.
 
 Earth clouds drift and locally form/dissipate through smooth density changes. The Sun has one locally erupting plasma volume, textured with its own surface material, which expands and dissipates, plus evolving surface brightness. Latitude-dependent gas/cloud-envelope flow remains gentle; airless terrain stays rigid. All effects share the rotation clock: `playing={false}` and reduced motion freeze the whole scene. These are artistic, accelerated cycles, not a weather or solar-physics simulation. No extra textures, particles, video or dependencies are loaded. Solar shape cycles last 18 seconds at speed 1 and remain within the existing canvas bounds.
 
@@ -48,8 +48,9 @@ Six IDs: `weather-sun`, `weather-fair`, `weather-overcast`, `weather-rain`,
 cloud and clear-sun materials. `weather-sun` is a terrestrial atmospheric study,
 distinct from the existing astronomical Universe Sun. Its outer haze deforms by
 sector while the disc stays anchored; local rays appear, lengthen and dissolve.
-The complete discoverable catalogue contains 38 objects before the four water
-and four vegetation additions (46 total).
+The current discoverable catalogue count is generated from
+`DISCOVERABLE_OBJECTS`; do not hard-code it in documentation. Flora and
+materials are intentionally excluded until a new visual review approves them.
 
 Copy the **new** `dist/assets/objects/weather-v1` to `public/objects/weather-v1`,
 including attribution, fingerprints and generation prompts. `assetBaseUrl` on a
@@ -84,6 +85,29 @@ Core/Modular builds and TypeScript checks pass locally. The software renderer is
 
 Titania and Triton: initial NASA maps with large black unmapped regions were rejected during visual review. Their replacement maps come from CelestiaContent and retain CC BY-SA 4.0 (Titania) / CC BY 3.0 (Triton), including the compact textures and both derived posters. Full authors, source links and changes ship in ATTRIBUTION.txt and moon-manifest.json. Unobserved regions remain neutral rather than invented terrain.
 
+
+## Sciences & elements 1.0.0 — review candidate
+
+```tsx
+import {ModularObject, ScienceControls, DEFAULT_SCIENCE_SETTINGS} from '@blueprint-modular/core/objects';
+const [science,setScience]=useState(DEFAULT_SCIENCE_SETTINGS);
+<ModularObject id="science-periodic-table" version="1.0.0" variant="midnight"
+  element={science.element} compareElement={science.compareElement}
+  colorMode={science.colorMode} layers={science.layers} onElementChange={element=>setScience({...science,element})}/>
+<ScienceControls id="science-periodic-table" value={science} onChange={setScience}/>
+```
+
+Four views share one 118-element data model: periodic table, atomic analyser,
+element card and comparator. Structure, identity, classification, guides and
+analysis are independent layers. The element, comparison element, colour mode
+and layers survive the strict data-only `.modular.json` transport.
+
+The atom is a schematic density view, not a quantum calculation and not to
+scale. Data identity and periodic positions follow IUPAC (4 May 2022) and NIST.
+The fixed SVG posters transfer at 0.6–3.2 KiB gzip; no raster or third-party
+asset loads. See `docs/previews/science/README.md` and
+`docs/object-quality-gate.md`. Browser and physical-mobile approval remain
+mandatory before leaving draft.
 
 ## Earth layer composition
 
