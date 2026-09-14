@@ -11,7 +11,7 @@ disponibilité automatiquement déduite d’un numéro de package.
 | Formes & ondes | form-silk, form-shell, form-loop, form-ripple ; rendu studio + illustration ; 1.0.0 | Modular #225 et Maker #1951 fusionnées le 2026-09-10. Revue live et disponibilité effective en production non vérifiées |
 | Eau & phénomènes naturels | `water-wave`, `water-ripple`, `water-waterfall`, `water-whirlpool` ; matière studio + gouache ; 1.0.0 | Modular #227 et Maker #1964 fusionnées le 2026-09-13. [Preuves et limites](previews/water/README.md). Publication npm et disponibilité en production non vérifiées |
 | Végétation | `flora-fern`, `flora-blossom`, `flora-meadow`, `flora-branch` ; studio botanique + illustration ; 1.0.0 | Modular #228 et Maker #1968 fusionnées le 2026-09-13 ; publication npm et disponibilité en production non vérifiées |
-| Cristaux & matières | `material-crystal`, `material-geode`, `material-liquid-metal`, `material-dichroic-glass`, `material-obsidian` ; studio synthétique + illustration ; 1.0.0 | Créés le 2026-09-14 ; [preuves et limites](previews/materials/README.md) ; PR et CI à compléter |
+| Cristaux & matières | `material-crystal`, `material-geode`, `material-liquid-metal`, `material-dichroic-glass`, `material-obsidian` ; studio synthétique + illustration ; 1.0.0 | Créés le 2026-09-14 ; [Modular #229](https://github.com/Blueprint-Master/blueprint-modular/pull/229) en brouillon ; [preuves et limites](previews/materials/README.md) ; CI à confirmer |
 
 ## Continuité
 
