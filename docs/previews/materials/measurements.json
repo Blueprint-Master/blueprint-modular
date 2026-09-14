@@ -1,0 +1,247 @@
+{
+  "date": "2026-09-14",
+  "environment": {
+    "node": "v24.19.0",
+    "platform": "linux",
+    "cpu": "Intel(R) Xeon(R) Platinum 8370C CPU @ 2.80GHz",
+    "canvas": "@napi-rs/canvas"
+  },
+  "scope": "36 renderer calls per object/style/resolution; native server Canvas. Excludes browser composition, network, physical phone and battery.",
+  "posterBytes": {
+    "material-crystal/photorealistic": 1768,
+    "material-crystal/illustration": 1771,
+    "material-geode/photorealistic": 3488,
+    "material-geode/illustration": 3488,
+    "material-liquid-metal/photorealistic": 1782,
+    "material-liquid-metal/illustration": 1785,
+    "material-dichroic-glass/photorealistic": 1674,
+    "material-dichroic-glass/illustration": 1672,
+    "material-obsidian/photorealistic": 1847,
+    "material-obsidian/illustration": 1852
+  },
+  "runtime": {
+    "resolutionCaps": {
+      "desktop": 320,
+      "mobile": 224
+    },
+    "fpsCaps": {
+      "desktop": 18,
+      "mobile": 12
+    },
+    "activeLoopsPerSelectedObject": 1,
+    "rendererSourceBytes": 10111,
+    "rendererGzipBytes": 3328
+  },
+  "metrics": [
+    {
+      "size": 160,
+      "id": "material-crystal",
+      "style": "photorealistic",
+      "medianMs": 0.193,
+      "p95Ms": 0.416
+    },
+    {
+      "size": 160,
+      "id": "material-crystal",
+      "style": "illustration",
+      "medianMs": 0.181,
+      "p95Ms": 0.741
+    },
+    {
+      "size": 160,
+      "id": "material-geode",
+      "style": "photorealistic",
+      "medianMs": 0.212,
+      "p95Ms": 0.532
+    },
+    {
+      "size": 160,
+      "id": "material-geode",
+      "style": "illustration",
+      "medianMs": 0.237,
+      "p95Ms": 0.55
+    },
+    {
+      "size": 160,
+      "id": "material-liquid-metal",
+      "style": "photorealistic",
+      "medianMs": 0.045,
+      "p95Ms": 0.14
+    },
+    {
+      "size": 160,
+      "id": "material-liquid-metal",
+      "style": "illustration",
+      "medianMs": 0.041,
+      "p95Ms": 0.077
+    },
+    {
+      "size": 160,
+      "id": "material-dichroic-glass",
+      "style": "photorealistic",
+      "medianMs": 0.039,
+      "p95Ms": 0.093
+    },
+    {
+      "size": 160,
+      "id": "material-dichroic-glass",
+      "style": "illustration",
+      "medianMs": 0.036,
+      "p95Ms": 0.08
+    },
+    {
+      "size": 160,
+      "id": "material-obsidian",
+      "style": "photorealistic",
+      "medianMs": 0.102,
+      "p95Ms": 0.545
+    },
+    {
+      "size": 160,
+      "id": "material-obsidian",
+      "style": "illustration",
+      "medianMs": 0.085,
+      "p95Ms": 0.361
+    },
+    {
+      "size": 224,
+      "id": "material-crystal",
+      "style": "photorealistic",
+      "medianMs": 0.129,
+      "p95Ms": 0.248
+    },
+    {
+      "size": 224,
+      "id": "material-crystal",
+      "style": "illustration",
+      "medianMs": 0.123,
+      "p95Ms": 0.264
+    },
+    {
+      "size": 224,
+      "id": "material-geode",
+      "style": "photorealistic",
+      "medianMs": 0.177,
+      "p95Ms": 0.321
+    },
+    {
+      "size": 224,
+      "id": "material-geode",
+      "style": "illustration",
+      "medianMs": 0.173,
+      "p95Ms": 0.274
+    },
+    {
+      "size": 224,
+      "id": "material-liquid-metal",
+      "style": "photorealistic",
+      "medianMs": 0.085,
+      "p95Ms": 0.428
+    },
+    {
+      "size": 224,
+      "id": "material-liquid-metal",
+      "style": "illustration",
+      "medianMs": 0.044,
+      "p95Ms": 0.084
+    },
+    {
+      "size": 224,
+      "id": "material-dichroic-glass",
+      "style": "photorealistic",
+      "medianMs": 0.043,
+      "p95Ms": 0.079
+    },
+    {
+      "size": 224,
+      "id": "material-dichroic-glass",
+      "style": "illustration",
+      "medianMs": 0.065,
+      "p95Ms": 0.194
+    },
+    {
+      "size": 224,
+      "id": "material-obsidian",
+      "style": "photorealistic",
+      "medianMs": 0.087,
+      "p95Ms": 0.324
+    },
+    {
+      "size": 224,
+      "id": "material-obsidian",
+      "style": "illustration",
+      "medianMs": 0.092,
+      "p95Ms": 0.193
+    },
+    {
+      "size": 320,
+      "id": "material-crystal",
+      "style": "photorealistic",
+      "medianMs": 0.174,
+      "p95Ms": 0.541
+    },
+    {
+      "size": 320,
+      "id": "material-crystal",
+      "style": "illustration",
+      "medianMs": 0.24,
+      "p95Ms": 0.437
+    },
+    {
+      "size": 320,
+      "id": "material-geode",
+      "style": "photorealistic",
+      "medianMs": 0.219,
+      "p95Ms": 0.353
+    },
+    {
+      "size": 320,
+      "id": "material-geode",
+      "style": "illustration",
+      "medianMs": 0.197,
+      "p95Ms": 0.331
+    },
+    {
+      "size": 320,
+      "id": "material-liquid-metal",
+      "style": "photorealistic",
+      "medianMs": 0.052,
+      "p95Ms": 0.108
+    },
+    {
+      "size": 320,
+      "id": "material-liquid-metal",
+      "style": "illustration",
+      "medianMs": 0.096,
+      "p95Ms": 0.172
+    },
+    {
+      "size": 320,
+      "id": "material-dichroic-glass",
+      "style": "photorealistic",
+      "medianMs": 0.054,
+      "p95Ms": 0.223
+    },
+    {
+      "size": 320,
+      "id": "material-dichroic-glass",
+      "style": "illustration",
+      "medianMs": 0.062,
+      "p95Ms": 0.169
+    },
+    {
+      "size": 320,
+      "id": "material-obsidian",
+      "style": "photorealistic",
+      "medianMs": 0.093,
+      "p95Ms": 0.166
+    },
+    {
+      "size": 320,
+      "id": "material-obsidian",
+      "style": "illustration",
+      "medianMs": 0.125,
+      "p95Ms": 0.335
+    }
+  ]
+}

@@ -1,6 +1,6 @@
 # Reusable objects
 
-`@blueprint-modular/core/objects` exports `ModularObject`, `PlanetObject`, `WeatherObject`, `FormObject`, `WaterObject`, `FloraObject`, a versioned catalogue and a strict `.modular.json` parser. Existing 1.0.0 vector objects remain unchanged. Universe 2.0.0 adds eight planets, Sun, Moon and eight additional moons in photorealistic and illustration styles. Weather 1.0.0 adds six atmospheric studies; Formes & ondes 1.0.0 adds four procedural sculptures; Eau & phénomènes naturels 1.0.0 adds four living water studies; Végétation 1.0.0 adds four procedural botanical studies. See the dated status in `docs/object-families.md`.
+`@blueprint-modular/core/objects` exports `ModularObject`, `PlanetObject`, `WeatherObject`, `FormObject`, `WaterObject`, `FloraObject`, `MaterialObject`, a versioned catalogue and a strict `.modular.json` parser. Existing 1.0.0 vector objects remain unchanged. Universe 2.0.0 adds eight planets, Sun, Moon and eight additional moons in photorealistic and illustration styles. Weather 1.0.0 adds six atmospheric studies; Formes & ondes 1.0.0 adds four procedural sculptures; Eau & phénomènes naturels 1.0.0 adds four living water studies; Végétation 1.0.0 adds four procedural botanical studies; Cristaux & matières 1.0.0 adds five living material studies. See the dated status in `docs/object-families.md`.
 
 ```tsx
 import { ModularObject } from '@blueprint-modular/core/objects';
@@ -210,3 +210,25 @@ sont supportés. Plafonds : 320 px/18 fps, ou 224 px/12 fps sur mobile, pointeur
 grossier et économie de données. Ce sont des plafonds, pas des mesures batterie.
 Copier `dist/assets/objects/flora-v1` avec le package. Voir
 `docs/previews/flora/README.md` pour les preuves, limites et contrôle visuel.
+
+## Cristaux & matières 1.0.0 — candidats en revue
+
+```tsx
+import {ModularObject, MaterialObject, MATERIAL_IDS} from '@blueprint-modular/core/objects';
+<ModularObject id="material-liquid-metal" version="1.0.0" variant="photorealistic"
+  size={360} playing={isSelected} speed={1} />
+<MaterialObject id="material-geode" label="Géode irisée" style="illustration" thumbnail />
+```
+
+IDs : `material-crystal`, `material-geode`, `material-liquid-metal`,
+`material-dichroic-glass`, `material-obsidian`. Deux traitements originaux :
+matière de studio synthétique et illustration. Aucun asset raster ou tiers. Les
+cristaux croissent, la couronne de géode cristallise, une goutte de métal fusionne,
+le verre se plie et les fissures d’obsidienne se ramifient puis se referment.
+La lumière mobile est l’unique détail secondaire.
+
+Boucle exacte de 12 s ; pause, vitesse 0,1–3, onglet caché, arrêt hors écran et
+`prefers-reduced-motion`. Vignettes SVG fixes et moteur Canvas 2D différé pour la
+vue active uniquement. Plafonds : 320 px/18 fps, ou 224 px/12 fps sur appareil
+contraint. Copier `dist/assets/objects/materials-v1` avec le package. Voir
+`docs/previews/materials/README.md` pour les planches, la vidéo et les mesures.

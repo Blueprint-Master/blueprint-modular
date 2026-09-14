@@ -3,6 +3,7 @@ import {isWeatherId,WEATHER_VERSION,type WeatherId} from "./weather";
 import {isFormId,FORMS_VERSION,type FormId} from "./forms";
 import {isWaterId,WATER_VERSION,type WaterId} from "./water";
 import {isFloraId,FLORA_VERSION,type FloraId} from "./flora";
+import {isMaterialId,MATERIAL_VERSION,type MaterialId} from "./materials";
 export const UNIVERSE_VERSION = "2.0.0" as const;
 export const PLANET_IDS = ["mercury","venus","earth","mars","jupiter","saturn","uranus","neptune","sun","moon"] as const;
 export const MOON_IDS = ["io","europa","ganymede","callisto","titan","enceladus","titania","triton"] as const;
@@ -52,7 +53,8 @@ export interface WeatherObjectAttachment {schemaVersion:1;kind:"modular-object";
 export interface FormObjectAttachment {schemaVersion:1;kind:"modular-object";id:FormId;version:typeof FORMS_VERSION;style:PlanetStyle;animation:{playing:boolean;speed:number}}
 export interface WaterObjectAttachment {schemaVersion:1;kind:"modular-object";id:WaterId;version:typeof WATER_VERSION;style:PlanetStyle;animation:{playing:boolean;speed:number}}
 export interface FloraObjectAttachment {schemaVersion:1;kind:"modular-object";id:FloraId;version:typeof FLORA_VERSION;style:PlanetStyle;animation:{playing:boolean;speed:number}}
-export type ModularObjectAttachment = BuiltinObjectAttachment | CommunityObjectAttachment | VectorObjectAttachment | WeatherObjectAttachment | FormObjectAttachment | WaterObjectAttachment | FloraObjectAttachment;
+export interface MaterialObjectAttachment {schemaVersion:1;kind:"modular-object";id:MaterialId;version:typeof MATERIAL_VERSION;style:PlanetStyle;animation:{playing:boolean;speed:number}}
+export type ModularObjectAttachment = BuiltinObjectAttachment | CommunityObjectAttachment | VectorObjectAttachment | WeatherObjectAttachment | FormObjectAttachment | WaterObjectAttachment | FloraObjectAttachment | MaterialObjectAttachment;
 export function parseModularObjectAttachment(raw:unknown):ModularObjectAttachment|undefined {
   if(!raw||typeof raw!=="object")return;
   const o=raw as Record<string,unknown>,a=o.animation as Record<string,unknown>|undefined;
@@ -66,5 +68,6 @@ export function parseModularObjectAttachment(raw:unknown):ModularObjectAttachmen
   if(isFormId(o.id)&&o.version===FORMS_VERSION)return {schemaVersion:1,kind:"modular-object",id:o.id,version:FORMS_VERSION,style:o.style,animation:{playing:a.playing,speed:a.speed}};
   if(isWaterId(o.id)&&o.version===WATER_VERSION)return {schemaVersion:1,kind:"modular-object",id:o.id,version:WATER_VERSION,style:o.style,animation:{playing:a.playing,speed:a.speed}};
   if(isFloraId(o.id)&&o.version===FLORA_VERSION)return {schemaVersion:1,kind:"modular-object",id:o.id,version:FLORA_VERSION,style:o.style,animation:{playing:a.playing,speed:a.speed}};
+  if(isMaterialId(o.id)&&o.version===MATERIAL_VERSION)return {schemaVersion:1,kind:"modular-object",id:o.id,version:MATERIAL_VERSION,style:o.style,animation:{playing:a.playing,speed:a.speed}};
   if(/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/.test(o.id)&&o.version==="1.0.0"&&typeof o.sha256==="string"&&/^[0-9a-f]{64}$/.test(o.sha256))return {schemaVersion:1,kind:"modular-object",id:o.id,version:"1.0.0",sha256:o.sha256,style:o.style,animation:{playing:a.playing,speed:a.speed}};
 }

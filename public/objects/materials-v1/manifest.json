@@ -1,0 +1,112 @@
+{
+  "schemaVersion": 1,
+  "date": "2026-09-14",
+  "version": "1.0.0",
+  "author": "Blueprint Modular / BEAM Consulting SARL",
+  "license": "Apache-2.0",
+  "source": "packages/core/src/objects/material-renderer.ts",
+  "thirdPartyAssets": [],
+  "rendererSha256": "909f558a51d19d2644847217c2bd7d8cd55ccf8e5a519f9f105c9e75f43fb046",
+  "assets": [
+    {
+      "path": "previews/material-crystal-photorealistic.svg",
+      "bytes": 1768,
+      "width": 320,
+      "height": 320,
+      "id": "material-crystal",
+      "style": "photorealistic",
+      "sha256": "e157f17d8e09fba98489b97b41586b36ea20a3e888eb12fef620f347fbd24037",
+      "source": "original procedural SVG poster"
+    },
+    {
+      "path": "previews/material-crystal-illustration.svg",
+      "bytes": 1771,
+      "width": 320,
+      "height": 320,
+      "id": "material-crystal",
+      "style": "illustration",
+      "sha256": "a47daaa9069f695b6c3f4de54fe205adcaeb62a8d4425866c7ba635bd2a4686d",
+      "source": "original procedural SVG poster"
+    },
+    {
+      "path": "previews/material-geode-photorealistic.svg",
+      "bytes": 3488,
+      "width": 320,
+      "height": 320,
+      "id": "material-geode",
+      "style": "photorealistic",
+      "sha256": "a4cbe5adfdcfcaec0e432eb28c730e72aeb724f6c623bb4d9a5a5bbf6387177a",
+      "source": "original procedural SVG poster"
+    },
+    {
+      "path": "previews/material-geode-illustration.svg",
+      "bytes": 3488,
+      "width": 320,
+      "height": 320,
+      "id": "material-geode",
+      "style": "illustration",
+      "sha256": "21e9d164f1256b87ee18f5d9699fdac392090c73c8858de3b5c179f530c62bb7",
+      "source": "original procedural SVG poster"
+    },
+    {
+      "path": "previews/material-liquid-metal-photorealistic.svg",
+      "bytes": 1782,
+      "width": 320,
+      "height": 320,
+      "id": "material-liquid-metal",
+      "style": "photorealistic",
+      "sha256": "9de313f4c48003d039336690692cf587d362398f3fd67c6e507f45887596db13",
+      "source": "original procedural SVG poster"
+    },
+    {
+      "path": "previews/material-liquid-metal-illustration.svg",
+      "bytes": 1785,
+      "width": 320,
+      "height": 320,
+      "id": "material-liquid-metal",
+      "style": "illustration",
+      "sha256": "240310dd916580bfacb7248ccfadebd1f66d20436179dc844007b5b30ea77a25",
+      "source": "original procedural SVG poster"
+    },
+    {
+      "path": "previews/material-dichroic-glass-photorealistic.svg",
+      "bytes": 1674,
+      "width": 320,
+      "height": 320,
+      "id": "material-dichroic-glass",
+      "style": "photorealistic",
+      "sha256": "f0505599a4e8d75a0929dce41af2a88dcca20a0f21d2f044f07159811413a208",
+      "source": "original procedural SVG poster"
+    },
+    {
+      "path": "previews/material-dichroic-glass-illustration.svg",
+      "bytes": 1672,
+      "width": 320,
+      "height": 320,
+      "id": "material-dichroic-glass",
+      "style": "illustration",
+      "sha256": "c163812590776a9d6588df7c25472d8ac91dda3f0429b123293e8d451fb2be5a",
+      "source": "original procedural SVG poster"
+    },
+    {
+      "path": "previews/material-obsidian-photorealistic.svg",
+      "bytes": 1847,
+      "width": 320,
+      "height": 320,
+      "id": "material-obsidian",
+      "style": "photorealistic",
+      "sha256": "f9356b22fbcd3debf989880e4530d7665261faf40490085f98854b0bbe83b986",
+      "source": "original procedural SVG poster"
+    },
+    {
+      "path": "previews/material-obsidian-illustration.svg",
+      "bytes": 1852,
+      "width": 320,
+      "height": 320,
+      "id": "material-obsidian",
+      "style": "illustration",
+      "sha256": "0ae3995b2f8761c25ffef569bcfb88ec5421f9459764acd5865047bbae2c8648",
+      "source": "original procedural SVG poster"
+    }
+  ]
+}
