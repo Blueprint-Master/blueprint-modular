@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-09-06T09:52:12.397Z",
+  "generatedAt": "2026-09-15T20:07:36.168Z",
   "source": "lib/generated/bpm-components.json + public/llms.txt + lib/semantics/bpm-semantics.json",
   "total": 172,
   "categories": [
@@ -287,7 +287,7 @@
       "category": "Affichage de données",
       "status": "curated",
       "fullDescription": "Étiquette compacte pour afficher un statut, une catégorie ou un compteur avec variantes de couleur.",
-      "props": "  children*: React.ReactNode  — PARENT: bpm.table (colonne statut) | bpm.metric | bpm.card. INTERDIT: texte long >20 chars — utiliser bpm.chip. ASSOCIÉ: bpm.table, bpm.metric, bpm.statusBox.\n  variant?: BadgeVariant  — Style / couleur du badge. Valeurs : 'default' | 'primary' | 'success' | 'warning' | 'error'. Default: 'default'.\n  className?: string\n  size?: \"sm\" | \"md\" | \"lg\"  — Taille du badge. 'sm' (défaut) | 'md' | 'lg'. Additif — n'affecte pas le rendu existant.",
+      "props": "  children*: React.ReactNode  — PARENT: bpm.table (colonne statut) | bpm.metric | bpm.card. INTERDIT: texte long >20 chars — utiliser bpm.chip. ASSOCIÉ: bpm.table, bpm.metric, bpm.statusBox.\n  variant?: BadgeVariant  — Style / couleur du badge. Valeurs : 'default' | 'primary' | 'success' | 'warning' | 'error' | 'info'. Default: 'default'.\n  className?: string\n  size?: \"sm\" | \"md\" | \"lg\"  — Taille du badge. 'sm' (défaut) | 'md' | 'lg'. Additif — n'affecte pas le rendu existant.",
       "example": "bpm.badge({ children: \"En cours\", variant: \"warning\" })",
       "associated": [
         "bpm.chip",
@@ -335,7 +335,7 @@
         ],
         "status": "proposed"
       },
-      "_haystack": "bpm.badge badge Badge / étiquette (success, warning, etc.). Affichage de données Étiquette compacte pour afficher un statut, une catégorie ou un compteur avec variantes de couleur.   children*: React.ReactNode  — PARENT: bpm.table (colonne statut) | bpm.metric | bpm.card. INTERDIT: texte long >20 chars — utiliser bpm.chip. ASSOCIÉ: bpm.table, bpm.metric, bpm.statusBox.\n  variant?: BadgeVariant  — Style / couleur du badge. Valeurs : 'default' | 'primary' | 'success' | 'warning' | 'error'. Default: 'default'.\n  className?: string\n  size?: \"sm\" | \"md\" | \"lg\"  — Taille du badge. 'sm' (défaut) | 'md' | 'lg'. Additif — n'affecte pas le rendu existant. bpm.chip bpm.statusBox indicateur workflow statut neutre instantane Statut ponctuel d'une instance : valeur d'énumération (WorkflowState) dont la couleur porte la sémantique d'état. bpm.table bpm.card bpm.timeline Élément cliquable ou filtre (bpm.chip), message système (bpm.message), bloc de statut détaillé (bpm.statusBox). Valeur d'un EnumValue/WorkflowState avec couleur sémantique (success, warning, error…). Le libellé doit être l'état métier, pas une décoration. compose-dans bpm.statusTracker une séquence de statuts forme un suivi de progression contraste-avec bpm.statusBox étiquette compacte vs bloc de statut avec explication"
+      "_haystack": "bpm.badge badge Badge / étiquette (success, warning, etc.). Affichage de données Étiquette compacte pour afficher un statut, une catégorie ou un compteur avec variantes de couleur.   children*: React.ReactNode  — PARENT: bpm.table (colonne statut) | bpm.metric | bpm.card. INTERDIT: texte long >20 chars — utiliser bpm.chip. ASSOCIÉ: bpm.table, bpm.metric, bpm.statusBox.\n  variant?: BadgeVariant  — Style / couleur du badge. Valeurs : 'default' | 'primary' | 'success' | 'warning' | 'error' | 'info'. Default: 'default'.\n  className?: string\n  size?: \"sm\" | \"md\" | \"lg\"  — Taille du badge. 'sm' (défaut) | 'md' | 'lg'. Additif — n'affecte pas le rendu existant. bpm.chip bpm.statusBox indicateur workflow statut neutre instantane Statut ponctuel d'une instance : valeur d'énumération (WorkflowState) dont la couleur porte la sémantique d'état. bpm.table bpm.card bpm.timeline Élément cliquable ou filtre (bpm.chip), message système (bpm.message), bloc de statut détaillé (bpm.statusBox). Valeur d'un EnumValue/WorkflowState avec couleur sémantique (success, warning, error…). Le libellé doit être l'état métier, pas une décoration. compose-dans bpm.statusTracker une séquence de statuts forme un suivi de progression contraste-avec bpm.statusBox étiquette compacte vs bloc de statut avec explication"
     },
     {
       "slug": "progress",
