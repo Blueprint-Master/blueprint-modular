@@ -1,6 +1,6 @@
 # Index des familles de visuels
 
-Mis à jour le **2026-09-14**. Cet index décrit le code et sa validation, pas une
+Mis à jour le **2026-09-15**. Cet index décrit le code et sa validation, pas une
 disponibilité automatiquement déduite d’un numéro de package.
 
 | Famille | Objets et variantes | État vérifié |
@@ -10,8 +10,9 @@ disponibilité automatiquement déduite d’un numéro de package.
 | Météo & atmosphères | `weather-sun`, `weather-fair`, `weather-overcast`, `weather-rain`, `weather-storm`, `weather-snow` ; chacun réaliste + gouache ; 1.0.0 | Modular #220/#222/#223/#226 et Maker #1929/#1933/#1960 fusionnées, les deux dernières le 2026-09-12. [Preuves Soleil météo](previews/weather-sun/README.md). Revue live, publication npm et disponibilité en production non vérifiées |
 | Formes & ondes | form-silk, form-shell, form-loop, form-ripple ; rendu studio + illustration ; 1.0.0 | Modular #225 et Maker #1951 fusionnées le 2026-09-10. Revue live et disponibilité effective en production non vérifiées |
 | Eau & phénomènes naturels | `water-wave`, `water-ripple`, `water-waterfall`, `water-whirlpool` ; matière studio + gouache ; 1.0.0 | Modular #227 et Maker #1964 fusionnées le 2026-09-13. [Preuves et limites](previews/water/README.md). Publication npm et disponibilité en production non vérifiées |
-| Végétation | `flora-fern`, `flora-blossom`, `flora-meadow`, `flora-branch` ; studio botanique + illustration ; 1.0.0 | Modular #228 et Maker #1968 fusionnées le 2026-09-13 ; publication npm et disponibilité en production non vérifiées |
-| Cristaux & matières | `material-crystal`, `material-geode`, `material-liquid-metal`, `material-dichroic-glass`, `material-obsidian` ; studio synthétique + illustration ; 1.0.0 | Créés le 2026-09-14 ; [Modular #229](https://github.com/Blueprint-Master/blueprint-modular/pull/229) en brouillon ; [preuves et limites](previews/materials/README.md) ; CI à confirmer |
+| Végétation | flora-fern, flora-blossom, flora-meadow, flora-branch ; 1.0.0 | Fusionnée puis **retirée de la découverte le 2026-09-14** après revue visuelle insuffisante. Identifiants conservés pour compatibilité |
+| Cristaux & matières | material-crystal, material-geode, material-liquid-metal, material-dichroic-glass, material-obsidian ; 1.0.0 | Fusionnée via Modular #229 et Maker #1973 puis **retirée de la découverte le 2026-09-14** après revue visuelle insuffisante. Identifiants conservés pour compatibilité |
+| Sciences & éléments | science-periodic-table, science-atom, science-element-card, science-comparator ; nuit + papier ; 1.0.0 | Candidat du 2026-09-14 : 118 éléments, cinq calques, sélection et comparaison. [Preuves et limites](previews/science/README.md). Revue Chromium/mobile requise avant sortie du brouillon |
 
 ## Continuité
 
@@ -59,3 +60,10 @@ fusionnées. Cristaux & matières est la première famille absente. Ses sources 
 posters sont originaux Apache-2.0, sans asset tiers. Les planches multi-instants
 et la vidéo utilisent le renderer livré via Canvas natif ; la manipulation DOM
 dans Chromium n’a pas été exécutée, le binaire du navigateur étant indisponible.
+
+Vérification du 2026-09-15 : Modular #230 et Maker #1982 restent ouvertes en
+brouillon. Revue du modèle scientifique : le tableau n’expose plus 118 arrêts
+successifs au clavier ; une seule cellule est tabulable, les flèches suivent
+ligne et colonne, l’état sélectionné est annoncé, et toute vitesse reçue hors
+manifeste est bornée. La CI publique du commit correspondant est verte. La
+revue visuelle live demeure bloquante avant promotion.

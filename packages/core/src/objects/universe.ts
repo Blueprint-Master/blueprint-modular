@@ -4,6 +4,7 @@ import {isFormId,FORMS_VERSION,type FormId} from "./forms";
 import {isWaterId,WATER_VERSION,type WaterId} from "./water";
 import {isFloraId,FLORA_VERSION,type FloraId} from "./flora";
 import {isMaterialId,MATERIAL_VERSION,type MaterialId} from "./materials";
+import {isScienceId,SCIENCE_VERSION,parseScienceSettings,type ScienceId,type ScienceSettings,type ScienceStyle} from "./science";
 export const UNIVERSE_VERSION = "2.0.0" as const;
 export const PLANET_IDS = ["mercury","venus","earth","mars","jupiter","saturn","uranus","neptune","sun","moon"] as const;
 export const MOON_IDS = ["io","europa","ganymede","callisto","titan","enceladus","titania","triton"] as const;
@@ -54,13 +55,16 @@ export interface FormObjectAttachment {schemaVersion:1;kind:"modular-object";id:
 export interface WaterObjectAttachment {schemaVersion:1;kind:"modular-object";id:WaterId;version:typeof WATER_VERSION;style:PlanetStyle;animation:{playing:boolean;speed:number}}
 export interface FloraObjectAttachment {schemaVersion:1;kind:"modular-object";id:FloraId;version:typeof FLORA_VERSION;style:PlanetStyle;animation:{playing:boolean;speed:number}}
 export interface MaterialObjectAttachment {schemaVersion:1;kind:"modular-object";id:MaterialId;version:typeof MATERIAL_VERSION;style:PlanetStyle;animation:{playing:boolean;speed:number}}
-export type ModularObjectAttachment = BuiltinObjectAttachment | CommunityObjectAttachment | VectorObjectAttachment | WeatherObjectAttachment | FormObjectAttachment | WaterObjectAttachment | FloraObjectAttachment | MaterialObjectAttachment;
+export interface ScienceObjectAttachment {schemaVersion:1;kind:"modular-object";id:ScienceId;version:typeof SCIENCE_VERSION;style:ScienceStyle;animation:{playing:boolean;speed:number};science:ScienceSettings}
+export type ModularObjectAttachment = BuiltinObjectAttachment | CommunityObjectAttachment | VectorObjectAttachment | WeatherObjectAttachment | FormObjectAttachment | WaterObjectAttachment | FloraObjectAttachment | MaterialObjectAttachment | ScienceObjectAttachment;
 export function parseModularObjectAttachment(raw:unknown):ModularObjectAttachment|undefined {
   if(!raw||typeof raw!=="object")return;
   const o=raw as Record<string,unknown>,a=o.animation as Record<string,unknown>|undefined;
   const earth=o.earth===undefined?undefined:parseEarthLayers(o.earth);
   if(o.earth!==undefined&&(!earth||o.id!=="earth"||o.version!==UNIVERSE_VERSION))return;
   if(o.schemaVersion===1&&o.kind==="modular-object"&&(VECTOR_IDS as readonly unknown[]).includes(o.id)&&o.version==="1.0.0"&&o.style==="vector"&&a?.playing===false&&a?.speed===1)return {schemaVersion:1,kind:"modular-object",id:o.id as VectorObjectAttachment['id'],version:"1.0.0",style:"vector",animation:{playing:false,speed:1}};
+  const science=parseScienceSettings(o.science);
+  if(o.schemaVersion===1&&o.kind==="modular-object"&&typeof o.id==="string"&&isScienceId(o.id)&&o.version===SCIENCE_VERSION&&(o.style==="midnight"||o.style==="paper")&&a&&typeof a.playing==="boolean"&&typeof a.speed==="number"&&Number.isFinite(a.speed)&&a.speed>=.1&&a.speed<=3&&science)return {schemaVersion:1,kind:"modular-object",id:o.id,version:SCIENCE_VERSION,style:o.style,animation:{playing:a.playing,speed:a.speed},science};
   if(o.schemaVersion!==1||o.kind!=="modular-object"||typeof o.id!=="string"||
     (o.style!=="photorealistic"&&o.style!=="illustration")||!a||typeof a.playing!=="boolean"||typeof a.speed!=="number"||!Number.isFinite(a.speed)||a.speed<.1||a.speed>3)return;
   if(isPlanetId(o.id)&&o.version===UNIVERSE_VERSION)return {schemaVersion:1,kind:"modular-object",id:o.id,version:UNIVERSE_VERSION,style:o.style,animation:{playing:a.playing,speed:a.speed},...(earth?{earth}:{})};

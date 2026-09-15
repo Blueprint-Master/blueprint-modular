@@ -5,7 +5,7 @@ import {ModularObject,FLORA_IDS,FLORA_OBJECTS,parseModularObjectAttachment,searc
 import {floraMotion} from "../src/objects/flora-renderer";
 import {floraBudget} from "../src/objects/flora";
 describe("Végétation — références publiques exactes",()=>{
- it("ajoute quatre silhouettes distinctes dans une famille dédiée",()=>{expect(FLORA_OBJECTS).toHaveLength(4);expect(searchModularObjects("","flora")).toHaveLength(4);});
+ it("conserve quatre références compatibles mais les retire de la découverte",()=>{expect(FLORA_OBJECTS).toHaveLength(4);expect(searchModularObjects("","flora")).toHaveLength(0);});
  for(const id of FLORA_IDS)for(const style of ["photorealistic","illustration"] as const)it(`${id}/${style}: poster SSR, référence exacte et évolution perceptible`,()=>{
   const ref={schemaVersion:1,kind:"modular-object",id,version:"1.0.0",style,animation:{playing:false,speed:.5}};
   expect(parseModularObjectAttachment(ref)).toEqual(ref);expect(parseModularObjectAttachment({...ref,version:"2.0.0"})).toBeUndefined();

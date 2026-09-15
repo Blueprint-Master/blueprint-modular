@@ -1,0 +1,31 @@
+{
+  "schemaVersion": 1,
+  "family": "science",
+  "version": "1.0.0",
+  "generated": "2026-09-14",
+  "objects": [
+    "science-periodic-table",
+    "science-atom",
+    "science-element-card",
+    "science-comparator"
+  ],
+  "styles": ["midnight", "paper"],
+  "layers": ["structure", "identity", "classification", "guides", "analysis"],
+  "data": {
+    "elements": 118,
+    "sources": [
+      "https://iupac.org/what-we-do/periodic-table-of-elements/",
+      "https://physics.nist.gov/PhysRefData/Handbook/periodictable.htm"
+    ]
+  },
+  "assets": {
+    "previews/science-atom-midnight.svg": "65b231b4ae708a25b9a24dbe80e7871af7f913c0623be58e03106df164700cbb",
+    "previews/science-atom-paper.svg": "1410f6e02fa17101081090cf7478542fcc760d786bddc5426043976ddffacb64",
+    "previews/science-comparator-midnight.svg": "1d92dccabdf81dc101920dcd18466a031a06655f423eb85baa8d9bed7565dbc7",
+    "previews/science-comparator-paper.svg": "3d5bb7676cd9347636ff6223f4ae32ce1011bdd43142e17f2fc8cfa9a68153d8",
+    "previews/science-element-card-midnight.svg": "c03e8000a9274f5fa03ef453c5834e379a019fd74d3dcc827da60fa8beb44743",
+    "previews/science-element-card-paper.svg": "85221e76b49b31c4019a4acd767762710106f424a3945fd66c3385746e18a89d",
+    "previews/science-periodic-table-midnight.svg": "c9ffe0a8806756da34041fe4f2d6cbfff0b5927212ab2f6bd42d8befd265f4eb",
+    "previews/science-periodic-table-paper.svg": "83c321da784214d139b642a4d45428137e5dea2357e219c599bb8a6c1fd33b45"
+  }
+}

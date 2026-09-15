@@ -1,0 +1,8 @@
+Scientific identities and periodic positions
+Sources consulted: International Union of Pure and Applied Chemistry (IUPAC), Periodic Table of Elements, release dated 4 May 2022; NIST Chemistry WebBook periodic table.
+https://iupac.org/what-we-do/periodic-table-of-elements/
+https://physics.nist.gov/PhysRefData/Handbook/periodictable.htm
+
+The rendered SVGs and interactive components are original Blueprint Modular work.
+Renderer: Copyright 2026 BEAM Consulting SARL — Apache License 2.0.
+No third-party raster, font, photograph or model is redistributed in this family.
