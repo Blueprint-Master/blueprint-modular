@@ -29,7 +29,13 @@ describe("scientific object contract",()=>{
  });
  it("selects an element from the real SVG table and exposes paused state",()=>{
   const onChange=vi.fn();const {container}=render(<ScienceObject id="science-periodic-table" label="Tableau périodique" locale="fr" element="C" onElementChange={onChange} playing={false}/>);
-  fireEvent.click(screen.getByRole("button",{name:/8 Oxygène O/}));expect(onChange).toHaveBeenCalledWith("O");
+  const carbon=screen.getByRole("button",{name:/6 Carbone C/}),oxygen=screen.getByRole("button",{name:/8 Oxygène O/});
+  expect(screen.getByRole("group",{name:"Tableau périodique interactif"})).toBeTruthy();expect(carbon).toHaveAttribute("tabindex","0");expect(oxygen).toHaveAttribute("tabindex","-1");
+  fireEvent.keyDown(carbon,{key:"ArrowRight"});expect(onChange).toHaveBeenCalledWith("N");fireEvent.click(oxygen);expect(onChange).toHaveBeenLastCalledWith("O");
   expect(container.querySelector("[data-science-state=paused]")).toBeTruthy();
+ });
+ it("clamps unsafe motion speed before producing CSS durations",()=>{
+  const {container}=render(<ScienceObject id="science-atom" label="Atome" speed={Number.POSITIVE_INFINITY}/>);
+  expect(container.innerHTML).toContain("science-cloud 16s");expect(container.innerHTML).not.toContain("0s linear");
  });
 });
