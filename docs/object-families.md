@@ -1,6 +1,6 @@
 # Index des familles de visuels
 
-Mis à jour le **2026-09-14**. Cet index décrit le code et sa validation, pas une
+Mis à jour le **2026-09-15**. Cet index décrit le code et sa validation, pas une
 disponibilité automatiquement déduite d’un numéro de package.
 
 | Famille | Objets et variantes | État vérifié |
@@ -60,3 +60,10 @@ fusionnées. Cristaux & matières est la première famille absente. Ses sources 
 posters sont originaux Apache-2.0, sans asset tiers. Les planches multi-instants
 et la vidéo utilisent le renderer livré via Canvas natif ; la manipulation DOM
 dans Chromium n’a pas été exécutée, le binaire du navigateur étant indisponible.
+
+Vérification du 2026-09-15 : Modular #230 et Maker #1982 restent ouvertes en
+brouillon. Revue du modèle scientifique : le tableau n’expose plus 118 arrêts
+successifs au clavier ; une seule cellule est tabulable, les flèches suivent
+ligne et colonne, l’état sélectionné est annoncé, et toute vitesse reçue hors
+manifeste est bornée. La CI publique du commit correspondant est verte. La
+revue visuelle live demeure bloquante avant promotion.

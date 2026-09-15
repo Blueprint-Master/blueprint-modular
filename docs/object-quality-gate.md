@@ -11,7 +11,9 @@ une famille découvrable. Une famille candidate doit réunir :
 4. les mesures de poids et d’activité ; aucun résultat batterie ne peut être
    déduit d’un benchmark serveur ;
 5. un apport fonctionnel transverse. Une animation ou une série de silhouettes
-   décoratives ne suffit pas.
+   décoratives ne suffit pas ;
+6. pour un objet analysable, une navigation clavier sans piège, un état
+   sélectionné annoncé et des contrôles bornés.
 
 En cas d’échec visuel après fusion, les identifiants restent résolvables pour
 la compatibilité, mais la famille est retirée de DISCOVERABLE_OBJECTS jusqu’à
