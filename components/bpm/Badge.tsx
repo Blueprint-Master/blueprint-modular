@@ -2,7 +2,7 @@
 
 import React from "react";
 
-export type BadgeVariant = "default" | "primary" | "success" | "warning" | "error";
+export type BadgeVariant = "default" | "primary" | "success" | "warning" | "error" | "info";
 
 /**
  * @component bpm.badge
@@ -11,7 +11,7 @@ export type BadgeVariant = "default" | "primary" | "success" | "warning" | "erro
 export interface BadgeProps {
   /** PARENT: bpm.table (colonne statut) | bpm.metric | bpm.card. INTERDIT: texte long >20 chars — utiliser bpm.chip. ASSOCIÉ: bpm.table, bpm.metric, bpm.statusBox. */
   children: React.ReactNode;
-  /** Style / couleur du badge. Valeurs : 'default' | 'primary' | 'success' | 'warning' | 'error'. Default: 'default'. */
+  /** Style / couleur du badge. Valeurs : 'default' | 'primary' | 'success' | 'warning' | 'error' | 'info'. Default: 'default'. */
   variant?: BadgeVariant;
   className?: string;
   /** Taille du badge. 'sm' (défaut) | 'md' | 'lg'. Additif — n'affecte pas le rendu existant. */
@@ -49,6 +49,29 @@ const variantStyles: Record<BadgeVariant, React.CSSProperties> = {
     border: "1px solid var(--bpm-error)",
     borderRadius: "var(--bpm-radius-sm)",
   },
+  /* `info` ne CHOISIT aucune couleur : il transcrit les deux décisions que ce
+     paquet a déjà prises pour ce mot. `Message.tsx` peint un bandeau `info` en
+     `--bpm-accent-soft` / `--bpm-accent` ; le glyphe `TypeGlyph` de
+     `NotificationCenter.tsx` prend l'accent pour ENCRE sur un fond d'accent
+     dilué — d'où l'encre ici, là où les voisines emploient un `-text`.
+
+     Les alias `--bpm-info*` sont préférés aux canoniques `--bpm-accent*` : le
+     bloc d'alias de `variables.css` existe précisément pour PUBLIER ce choix au
+     lieu de le laisser dans un composant, et il résout sur la charte de l'app.
+
+     ⚠️ `var()` NUES, comme les quatre voisines. Une première rédaction imbriquait
+     un repli (`var(--bpm-info-soft, var(--bpm-accent-soft))`) sur la prémisse
+     qu'une app puisse ignorer les alias — prémisse FAUSSE : les deux jetons sont
+     écrits par ce paquet, donc un repli ne couvre que le cas où la feuille du
+     core n'est pas chargée, où RIEN ne serait peint de toute façon. Ce que le
+     repli aurait vraiment fait, c'est cacher au cliquet un jeton non défini —
+     exactement ce qui a rendu `--bpm-accent-text` invisible jusqu'ici. */
+  info: {
+    background: "var(--bpm-info-soft)",
+    color: "var(--bpm-info)",
+    border: "1px solid var(--bpm-info)",
+    borderRadius: "var(--bpm-radius-sm)",
+  },
 };
 
 /**
@@ -59,7 +82,7 @@ const variantStyles: Record<BadgeVariant, React.CSSProperties> = {
  *
  * @param {object} props
  * @param {ReactNode} props.children - Contenu du badge. Obligatoire.
- * @param {"default"|"primary"|"success"|"warning"|"error"} [props.variant="default"] - Style du badge. Optionnel.
+ * @param {"default"|"primary"|"success"|"warning"|"error"|"info"} [props.variant="default"] - Style du badge. Optionnel.
  * @param {string} [props.className=""] - Classes CSS additionnelles. Optionnel.
  *
  * @parent bpm.table, bpm.card, bpm.metric

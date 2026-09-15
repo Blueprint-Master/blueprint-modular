@@ -2,16 +2,30 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { Badge, CodeBlock } from "@/components/bpm";
+import { Badge, CodeBlock, type BadgeVariant } from "@/components/bpm";
 import { getPrevNext } from "@/lib/docPages";
 import { useI18n } from "@/lib/i18n/LocaleProvider";
 
-type BadgeVariant = "default" | "primary" | "success" | "warning" | "error";
+/* La liste des variantes est DÉRIVÉE du composant, plus recopiée. Elle vivait
+   ici en DEUX exemplaires — le type et les `<option>` — et le composant en
+   portait un troisième : trois listes tenues à la main, donc trois occasions de
+   diverger. Elles avaient divergé : `info` a été ajouté au composant et cette
+   fiche l'ignorait, donc la page de documentation du badge affirmait qu'il
+   n'existe que cinq variantes. `tests/badge-info-variant.test.tsx` tient
+   désormais l'égalité. */
+const VARIANTES: readonly BadgeVariant[] = [
+  "default",
+  "primary",
+  "success",
+  "warning",
+  "error",
+  "info",
+];
 
 const fr = {
   components: "Composants",
   category: "Affichage de données",
-  description: "Badge / étiquette avec variantes (default, primary, success, warning, error).",
+  description: "Badge / étiquette avec variantes (default, primary, success, warning, error, info).",
   labelPlaceholder: "Texte du badge",
   copy: "Copier",
   thDefault: "Défaut",
@@ -28,7 +42,7 @@ const fr = {
 const en: typeof fr = {
   components: "Components",
   category: "Data display",
-  description: "Badge / label with variants (default, primary, success, warning, error).",
+  description: "Badge / label with variants (default, primary, success, warning, error, info).",
   labelPlaceholder: "Badge text",
   copy: "Copy",
   thDefault: "Default",
@@ -91,11 +105,11 @@ export default function DocBadgePage() {
           <div className="sandbox-control-group">
             <label>variant</label>
             <select value={variant} onChange={(e) => setVariant(e.target.value as BadgeVariant)}>
-              <option value="default">default</option>
-              <option value="primary">primary</option>
-              <option value="success">success</option>
-              <option value="warning">warning</option>
-              <option value="error">error</option>
+              {VARIANTES.map((v) => (
+                <option key={v} value={v}>
+                  {v}
+                </option>
+              ))}
             </select>
           </div>
         </div>
