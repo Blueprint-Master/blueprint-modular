@@ -54,6 +54,9 @@ dans les deux styles. Leur poids transféré avec `gzip -9` va de 592 octets à
 3,13 Kio. Aucun raster ni asset tiers n’est chargé.
 
 La structure de l’animation, ses quatre phases locales, la pause, le bornage de
-vitesse et `prefers-reduced-motion` sont couverts par tests. Une revue Chromium
-sur plusieurs instants et le rendu sur téléphone physique restent néanmoins
-requis avant de qualifier la correction visuelle de validée.
+vitesse et `prefers-reduced-motion` sont couverts par tests. La preuve SVG a été
+ouverte dans Chrome et inspectée à trois instants espacés de trois secondes :
+les concentrations visibles changent bien de lobe et d’échelle sans rotation
+globale. Cette vérification porte sur la preuve animée fidèle aux keyframes, pas
+sur le composant React monté dans le catalogue. Le DOM applicatif, le rendu sur
+téléphone physique, le coût GPU et la batterie restent donc non validés.
