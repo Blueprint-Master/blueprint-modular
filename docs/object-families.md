@@ -70,6 +70,9 @@ revue visuelle live demeure bloquante avant promotion.
 
 Vérification du 2026-09-16 : la fusion ne clôt pas la dette visuelle. Le simple
 mouvement orbital de `science-atom` est remplacé par une évolution locale de
-densité en quatre lobes déphasés sur 12 s. Vignettes, données, calques et API
-restent inchangés. La qualité animée doit encore être confirmée dans Chromium et
-sur mobile avant publication npm ou affirmation de disponibilité en production.
+densité en quatre lobes déphasés sur 12 s. La preuve SVG correspondante a été
+inspectée dans Chrome à trois phases distinctes ; l’apparition, la concentration
+et la dissipation locales sont perceptibles sans rotation globale. Vignettes,
+données, calques et API restent inchangés. Le composant React monté dans le
+catalogue et le mobile physique restent à valider avant publication npm ou
+affirmation de disponibilité en production.
