@@ -88,8 +88,7 @@ Titania and Triton: initial NASA maps with large black unmapped regions were rej
 
 ## Sciences & elements 1.0.0 — review candidate
 
-All four views accept `variant="transparent"` in addition to `midnight` and `paper`. Transparent views emit no canvas fill and inherit host text/border tokens. The atom analyser is a crisp density map without decorative orbits or blur: its `s`, `p`, `d` and `f` geometries differ, and its nucleus, inner-shell and valence zones can be selected to expose a local reading.
-
+All five views accept `variant="transparent"` in addition to `midnight` and `paper`. Transparent views emit no canvas and inherit the host foreground. Scientific compositions are stationary: changing orientation is a user action, not physical motion. The atomic diagram is explicitly qualitative, without fake measurement axes or inferred orbitals.
 ```tsx
 import {ModularObject, ScienceControls, DEFAULT_SCIENCE_SETTINGS} from '@blueprint-modular/core/objects';
 const [science,setScience]=useState(DEFAULT_SCIENCE_SETTINGS);
@@ -99,17 +98,18 @@ const [science,setScience]=useState(DEFAULT_SCIENCE_SETTINGS);
 <ScienceControls id="science-periodic-table" value={science} onChange={setScience}/>
 ```
 
-Four views share one 118-element data model: periodic table, atomic analyser,
-element card and comparator. Structure, identity, classification, guides and
-analysis are independent layers. The element, comparison element, colour mode
-and layers survive the strict data-only `.modular.json` transport.
+Five views share one 118-element identity model: periodic table, atomic analyser,
+element card, comparator and molecule composer. The existing five display layers
+remain compatible. Additive `atomic` and `molecule` fields survive data-only
+references. The public background-free SVG groups `AtomicDensityLayer`,
+`AtomSphereLayer` and `MoleculeLayer` compose inside a host SVG.
 
-The atom is a schematic density view, not a quantum calculation and not to
-scale. Data identity and periodic positions follow IUPAC (4 May 2022) and NIST.
-The fixed SVG posters transfer at 0.6–3.2 KiB gzip; no raster or third-party
-asset loads. See `docs/previews/science/README.md` and
-`docs/object-quality-gate.md`. Browser and physical-mobile approval remain
-mandatory before leaving draft.
+See [scientific composition](../../docs/scientific-composition.md) for the complete
+public API, editable molecule graph, NIST geometries, colour conventions and
+limits. The atom is NOT a computed density or a nucleus model. Four neutral
+gas-phase molecular presets use sourced Cartesian coordinates; edited graphs
+lose the sourced status. No untrusted code runs and no live scientific API loads.
+
 
 ## Earth layer composition
 

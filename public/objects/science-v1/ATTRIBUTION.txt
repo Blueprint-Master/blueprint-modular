@@ -6,3 +6,17 @@ https://physics.nist.gov/PhysRefData/Handbook/periodictable.htm
 The rendered SVGs and interactive components are original Blueprint Modular work.
 Renderer: Copyright 2026 BEAM Consulting SARL — Apache License 2.0.
 No third-party raster, font, photograph or model is redistributed in this family.
+
+Molecular geometries — individual scientific facts transcribed 2026-09-16
+NIST Computational Chemistry Comparison and Benchmark Database (CCCBDB),
+Standard Reference Database 101, Release 22 (May 2022), editor Russell D. Johnson III.
+Water H2O: https://cccbdb.nist.gov/exp2x.asp?casno=7732185&charge=0
+Carbon dioxide CO2: https://cccbdb.nist.gov/exp2x.asp?casno=124389&charge=0
+Methane CH4: https://cccbdb.nist.gov/exp2x.asp?casno=74828&charge=0
+Ammonia NH3: https://cccbdb.nist.gov/exp2x.asp?casno=7664417&charge=0
+Cartesian coordinates in angstroms. Atomic positions only; no NIST illustration,
+database file, software or source text is redistributed. Original research
+references and geometric conventions are recorded in docs/scientific-composition.md.
+NIST source material is not relicensed under the renderer's Apache licence.
+Colour convention: CPK/Jmol https://jmol.sourceforge.net/jscolors/
+Only colour-convention facts are used, no Jmol code or third-party model.

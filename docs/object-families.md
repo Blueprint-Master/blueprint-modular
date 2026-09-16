@@ -12,7 +12,7 @@ disponibilité automatiquement déduite d’un numéro de package.
 | Eau & phénomènes naturels | `water-wave`, `water-ripple`, `water-waterfall`, `water-whirlpool` ; matière studio + gouache ; 1.0.0 | Modular #227 et Maker #1964 fusionnées le 2026-09-13. [Preuves et limites](previews/water/README.md). Publication npm et disponibilité en production non vérifiées |
 | Végétation | flora-fern, flora-blossom, flora-meadow, flora-branch ; 1.0.0 | Fusionnée puis **retirée de la découverte le 2026-09-14** après revue visuelle insuffisante. Identifiants conservés pour compatibilité |
 | Cristaux & matières | material-crystal, material-geode, material-liquid-metal, material-dichroic-glass, material-obsidian ; 1.0.0 | Fusionnée via Modular #229 et Maker #1973 puis **retirée de la découverte le 2026-09-14** après revue visuelle insuffisante. Identifiants conservés pour compatibilité |
-| Sciences & éléments | science-periodic-table, science-atom, science-element-card, science-comparator ; nuit + papier + transparent ; 1.0.0 | Modular #230 et Maker #1982 fusionnées le 2026-09-15. L’analyseur devient une carte de densité et les quatre vues acceptent un fond réellement transparent. [Preuves et limites](previews/science/README.md). Revue mobile encore requise |
+| Sciences & éléments | science-periodic-table, science-atom, science-element-card, science-comparator, science-molecule ; nuit + papier + transparent ; 1.0.0 | Modular #230 et Maker #1982 fusionnées le 2026-09-15. L’analyseur devient une carte de densité et les quatre vues acceptent un fond réellement transparent. [Preuves et limites](previews/science/README.md). Revue mobile encore requise |
 
 ## Continuité
 
@@ -84,3 +84,18 @@ diffèrent ; noyau, couches internes et valence sont sélectionnables et exposen
 une lecture locale. Le style `transparent` est ajouté aux quatre vues, au parseur
 `.modular.json`, au catalogue, aux aperçus et au transport Maker. Il n’émet
 aucun aplat de fond ; les couleurs de texte proviennent de l’application hôte.
+
+## 2026-09-16 — calques atomiques et compositions moléculaires
+
+Reprise du socle Modular #234 / Maker #2010, fusionné. Cette passe ajoute un
+compositeur, pas une série décorative : trois calques SVG publics indépendants,
+quatre géométries NIST (eau, CO₂, CH₄, NH₃), trois fonds (nuit, papier,
+transparent). L’analyseur atomique est explicitement qualitatif : anciennes
+graduations, faux comptage de nucléons, pseudo-orbitales par bloc et pulsation
+physique supposée retirés. Coordonnées Å, liaisons et calques sont éditables ;
+une modification retire le statut sourcé. Le moteur ne calcule pas la chimie.
+
+Statut de cette passe : créé, destiné aux PR liées ; pas fusionné, pas publié npm,
+pas déployé. Aperçus et limites : [calques scientifiques](previews/science/README.md).
+La validation visuelle live demeure bloquée pour localhost dans le navigateur
+disponible. Tests DOM et inspection des exports ne remplacent pas ce contrôle.

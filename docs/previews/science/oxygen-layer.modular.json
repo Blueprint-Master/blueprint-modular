@@ -1,0 +1,13 @@
+{
+  "schemaVersion": 1,
+  "kind": "modular-object",
+  "id": "science-atom",
+  "version": "1.0.0",
+  "style": "transparent",
+  "animation": {"playing": false, "speed": 1},
+  "science": {
+    "element": "O", "compareElement": "H", "colorMode": "category",
+    "layers": {"structure": true, "identity": false, "classification": false, "guides": false, "analysis": false},
+    "atomic": {"representation": "sphere", "density": false, "nucleus": false, "opacity": 1}
+  }
+}

@@ -1,7 +1,9 @@
 /** Scientific objects are data views, not decorative simulations. */
+import {parseAtomicSettings,type AtomicLayerSettings} from "./atomic-settings";
+import {parseMoleculeSettings,type MoleculeSettings} from "./molecules";
 export const SCIENCE_VERSION = "1.0.0" as const;
 export const SCIENCE_ASSET_PATH = "/objects/science-v1";
-export const SCIENCE_IDS = ["science-periodic-table","science-atom","science-element-card","science-comparator"] as const;
+export const SCIENCE_IDS = ["science-periodic-table","science-atom","science-element-card","science-comparator","science-molecule"] as const;
 export type ScienceId = typeof SCIENCE_IDS[number];
 export type ScienceStyle = "midnight" | "paper" | "transparent";
 export type ScienceColorMode = "category" | "block" | "period" | "mono";
@@ -13,6 +15,7 @@ export const SCIENCE_NAMES:Readonly<Record<ScienceId,{fr:string;en:string}>>=Obj
   "science-atom":{fr:"Analyseur atomique",en:"Atomic analyser"},
   "science-element-card":{fr:"Fiche d’élément",en:"Element card"},
   "science-comparator":{fr:"Comparateur d’éléments",en:"Element comparator"},
+  "science-molecule":{fr:"Compositeur moléculaire",en:"Molecule composer"},
 });
 
 const SYMBOLS="H He Li Be B C N O F Ne Na Mg Al Si P S Cl Ar K Ca Sc Ti V Cr Mn Fe Co Ni Cu Zn Ga Ge As Se Br Kr Rb Sr Y Zr Nb Mo Tc Ru Rh Pd Ag Cd In Sn Sb Te I Xe Cs Ba La Ce Pr Nd Pm Sm Eu Gd Tb Dy Ho Er Tm Yb Lu Hf Ta W Re Os Ir Pt Au Hg Tl Pb Bi Po At Rn Fr Ra Ac Th Pa U Np Pu Am Cm Bk Cf Es Fm Md No Lr Rf Db Sg Bh Hs Mt Ds Rg Cn Nh Fl Mc Lv Ts Og".split(" ");
@@ -78,7 +81,14 @@ export const ELEMENTS:readonly ElementDatum[]=Object.freeze(SYMBOLS.map((symbol,
 export function elementBySymbol(symbol:string){return ELEMENTS.find(element=>element.symbol===symbol);}
 export function isScienceId(id:string):id is ScienceId{return (SCIENCE_IDS as readonly string[]).includes(id);}
 export function sciencePosterPath(id:ScienceId,style:ScienceStyle){return "previews/"+id+"-"+style+".svg";}
-export function parseScienceLayers(raw:unknown):ScienceLayers|undefined{if(!raw||typeof raw!=="object"||Array.isArray(raw))return;const value=raw as Record<string,unknown>;for(const [key,item] of Object.entries(value)){if(!(key in DEFAULT_SCIENCE_LAYERS)||typeof item!=="boolean")return;}return {...DEFAULT_SCIENCE_LAYERS,...value};}
-export interface ScienceSettings {element:string;compareElement:string;colorMode:ScienceColorMode;layers:ScienceLayers;}
+export function parseScienceLayers(raw:unknown):ScienceLayers|undefined{if(!raw||typeof raw!=="object"||Array.isArray(raw))return;const value=raw as Record<string,unknown>;for(const [key,item] of Object.entries(value)){if(!Object.prototype.hasOwnProperty.call(DEFAULT_SCIENCE_LAYERS,key)||typeof item!=="boolean")return;}return {...DEFAULT_SCIENCE_LAYERS,...value};}
+export interface ScienceSettings {element:string;compareElement:string;colorMode:ScienceColorMode;layers:ScienceLayers;atomic?:AtomicLayerSettings;molecule?:MoleculeSettings;}
 export const DEFAULT_SCIENCE_SETTINGS:Readonly<ScienceSettings>=Object.freeze({element:"C",compareElement:"O",colorMode:"category",layers:{...DEFAULT_SCIENCE_LAYERS}});
-export function parseScienceSettings(raw:unknown):ScienceSettings|undefined{if(!raw||typeof raw!=="object"||Array.isArray(raw))return;const value=raw as Record<string,unknown>,layers=parseScienceLayers(value.layers);if(Object.keys(value).some(key=>!["element","compareElement","colorMode","layers"].includes(key))||typeof value.element!=="string"||typeof value.compareElement!=="string"||!elementBySymbol(value.element)||!elementBySymbol(value.compareElement)||!["category","block","period","mono"].includes(value.colorMode as string)||!layers)return;return {element:value.element,compareElement:value.compareElement,colorMode:value.colorMode as ScienceColorMode,layers};}
+export function parseScienceSettings(raw:unknown):ScienceSettings|undefined{
+ if(!raw||typeof raw!=="object"||Array.isArray(raw))return;
+ const value=raw as Record<string,unknown>,layers=parseScienceLayers(value.layers);
+ if(Object.keys(value).some(key=>!["element","compareElement","colorMode","layers","atomic","molecule"].includes(key))||typeof value.element!=="string"||typeof value.compareElement!=="string"||!elementBySymbol(value.element)||!elementBySymbol(value.compareElement)||!["category","block","period","mono"].includes(value.colorMode as string)||!layers)return;
+ const atomic=value.atomic===undefined?undefined:parseAtomicSettings(value.atomic),molecule=value.molecule===undefined?undefined:parseMoleculeSettings(value.molecule);
+ if(value.atomic!==undefined&&!atomic||value.molecule!==undefined&&!molecule)return;
+ return {element:value.element,compareElement:value.compareElement,colorMode:value.colorMode as ScienceColorMode,layers,...(atomic?{atomic}:{}),...(molecule?{molecule}:{})};
+}

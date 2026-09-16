@@ -1,4 +1,6 @@
 "use client";
+import type {AtomicLayerSettings} from "./atomic-settings";
+import type {MoleculeSettings} from "./molecules";
 import type {EarthLayers} from "./earth-layers";
 import React from "react";
 import { PlanetObject } from "./PlanetObject";
@@ -35,6 +37,8 @@ export interface ModularObjectProps {
   assetBaseUrl?: string;
   thumbnail?: boolean;
   earth?: Partial<EarthLayers>;
+  atomic?: AtomicLayerSettings;
+  molecule?: MoleculeSettings;
   element?: string;
   compareElement?: string;
   colorMode?: ScienceColorMode;
@@ -87,8 +91,8 @@ function BuiltObject({ item, color }: { item: ModularObjectDefinition; color: st
 }
 
 /** Version 1 renders stable vectors; Universe version 2 renders interactive textured spheres. */
-export function ModularObject({ id, version = OBJECT_CATALOG_VERSION, label, locale = "fr", size = 240, angle = 0, color, className, variant="photorealistic",playing=true,speed=1,interactive=true,assetBaseUrl,thumbnail=false,earth,element,compareElement,colorMode,layers,onElementChange }: ModularObjectProps) {
-  if(version===SCIENCE_VERSION&&isScienceId(id)&&(variant==="midnight"||variant==="paper"||variant==="transparent"))return <span className={className} data-modular-object={`${id}@${version}`}><ScienceObject id={id} label={label??SCIENCE_NAMES[id][locale]} locale={locale} size={size} style={variant} playing={playing} speed={speed} interactive={interactive} thumbnail={thumbnail} element={element} compareElement={compareElement} colorMode={colorMode} layers={layers} onElementChange={onElementChange}/></span>;
+export function ModularObject({ id, version = OBJECT_CATALOG_VERSION, label, locale = "fr", size = 240, angle = 0, color, className, variant="photorealistic",playing=true,speed=1,interactive=true,assetBaseUrl,thumbnail=false,earth,element,compareElement,colorMode,layers,atomic,molecule,onElementChange }: ModularObjectProps) {
+  if(version===SCIENCE_VERSION&&isScienceId(id)&&(variant==="midnight"||variant==="paper"||variant==="transparent"))return <span className={className} data-modular-object={`${id}@${version}`}><ScienceObject id={id} label={label??SCIENCE_NAMES[id][locale]} locale={locale} size={size} style={variant} playing={playing} speed={speed} interactive={interactive} thumbnail={thumbnail} element={element} compareElement={compareElement} colorMode={colorMode} layers={layers} atomic={atomic} molecule={molecule} onElementChange={onElementChange}/></span>;
   if(version===MATERIAL_VERSION&&isMaterialId(id)&&(variant==="photorealistic"||variant==="illustration"))return <span className={className} data-modular-object={`${id}@${version}`}><MaterialObject id={id} label={label??MATERIAL_NAMES[id][locale]} size={size} style={variant} playing={playing} speed={speed} assetBaseUrl={assetBaseUrl} thumbnail={thumbnail}/></span>;
   if(version===FLORA_VERSION&&isFloraId(id)&&(variant==="photorealistic"||variant==="illustration"))return <span className={className} data-modular-object={`${id}@${version}`}><FloraObject id={id} label={label??FLORA_NAMES[id][locale]} size={size} style={variant} playing={playing} speed={speed} assetBaseUrl={assetBaseUrl} thumbnail={thumbnail}/></span>;
   if(version===WATER_VERSION&&isWaterId(id)&&(variant==="photorealistic"||variant==="illustration"))return <span className={className} data-modular-object={`${id}@${version}`}><WaterObject id={id} label={label??WATER_NAMES[id][locale]} size={size} style={variant} playing={playing} speed={speed} assetBaseUrl={assetBaseUrl} thumbnail={thumbnail}/></span>;

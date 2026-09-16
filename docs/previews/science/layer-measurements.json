@@ -1,0 +1,68 @@
+{
+  "date": "2026-09-16",
+  "environment": {
+    "cpu": "INTEL(R) XEON(R) PLATINUM 8573C",
+    "platform": "linux",
+    "arch": "x64",
+    "node": "v24.19.0",
+    "renderer": "Sharp/libvips software SVG to PNG; not DOM/GPU"
+  },
+  "posters": {
+    "water": {
+      "bytes": 5648,
+      "gzipBytes": 1604,
+      "viewBox": "520 × 520"
+    },
+    "carbon-dioxide": {
+      "bytes": 6580,
+      "gzipBytes": 1597,
+      "viewBox": "520 × 520"
+    },
+    "methane": {
+      "bytes": 8569,
+      "gzipBytes": 1820,
+      "viewBox": "520 × 520"
+    },
+    "ammonia": {
+      "bytes": 7140,
+      "gzipBytes": 1875,
+      "viewBox": "520 × 520"
+    }
+  },
+  "demo": {
+    "bytes": 189458,
+    "gzipBytes": 61915,
+    "includes": "React + all scientific objects + controls; offline QA only"
+  },
+  "softwareRaster224": {
+    "water": {
+      "medianMs": 8.45189099999999,
+      "minMs": 7.9199610000000575,
+      "maxMs": 9.379357999999968
+    },
+    "carbon-dioxide": {
+      "medianMs": 10.09672999999998,
+      "minMs": 8.485952999999995,
+      "maxMs": 13.572745000000054
+    },
+    "methane": {
+      "medianMs": 9.404907999999978,
+      "minMs": 8.913418999999976,
+      "maxMs": 11.037232000000017
+    },
+    "ammonia": {
+      "medianMs": 8.681466,
+      "minMs": 8.510499999999979,
+      "maxMs": 9.924391000000014
+    }
+  },
+  "activeLoops": 0,
+  "automaticMotion": false,
+  "notMeasured": [
+    "network transfer",
+    "browser layout/paint",
+    "GPU",
+    "physical mobile",
+    "battery"
+  ]
+}
