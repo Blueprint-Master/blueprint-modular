@@ -12,7 +12,7 @@ disponibilité automatiquement déduite d’un numéro de package.
 | Eau & phénomènes naturels | `water-wave`, `water-ripple`, `water-waterfall`, `water-whirlpool` ; matière studio + gouache ; 1.0.0 | Modular #227 et Maker #1964 fusionnées le 2026-09-13. [Preuves et limites](previews/water/README.md). Publication npm et disponibilité en production non vérifiées |
 | Végétation | flora-fern, flora-blossom, flora-meadow, flora-branch ; 1.0.0 | Fusionnée puis **retirée de la découverte le 2026-09-14** après revue visuelle insuffisante. Identifiants conservés pour compatibilité |
 | Cristaux & matières | material-crystal, material-geode, material-liquid-metal, material-dichroic-glass, material-obsidian ; 1.0.0 | Fusionnée via Modular #229 et Maker #1973 puis **retirée de la découverte le 2026-09-14** après revue visuelle insuffisante. Identifiants conservés pour compatibilité |
-| Sciences & éléments | science-periodic-table, science-atom, science-element-card, science-comparator ; nuit + papier ; 1.0.0 | Modular #230 et Maker #1982 fusionnées le 2026-09-15. Correction de suivi : la rotation atomique est remplacée par quatre concentrations locales de densité en apparition/évolution/disparition. [Preuves et limites](previews/science/README.md). Revue Chromium/mobile encore requise |
+| Sciences & éléments | science-periodic-table, science-atom, science-element-card, science-comparator ; nuit + papier + transparent ; 1.0.0 | Modular #230 et Maker #1982 fusionnées le 2026-09-15. L’analyseur devient une carte de densité et les quatre vues acceptent un fond réellement transparent. [Preuves et limites](previews/science/README.md). Revue mobile encore requise |
 
 ## Continuité
 
@@ -76,3 +76,10 @@ et la dissipation locales sont perceptibles sans rotation globale. Vignettes,
 données, calques et API restent inchangés. Le composant React monté dans le
 catalogue et le mobile physique restent à valider avant publication npm ou
 affirmation de disponibilité en production.
+
+
+Seconde vérification du 2026-09-16 : l’analyseur est recomposé comme une carte
+de densité (noyau, contours et quatre lobes), et non plus comme un pictogramme
+orbital. Le style `transparent` est ajouté aux quatre vues, au parseur
+`.modular.json`, au catalogue, aux aperçus et au transport Maker. Il n’émet
+aucun aplat de fond ; les couleurs de texte proviennent de l’application hôte.
