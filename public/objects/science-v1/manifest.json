@@ -29,17 +29,17 @@
     ]
   },
   "assets": {
-    "previews/science-atom-midnight.svg": "8fd398f6a199b5d92e427d495565cd642c5a2c32ddee7a3c5564a8c859ee3dc1",
-    "previews/science-atom-paper.svg": "8dd11a3eb08c9d0496cbe0cc60265f8bfb17b22e753d09750344c1f223c0dba4",
-    "previews/science-atom-transparent.svg": "3e0363a24540e22f888d0e03e9af7ee48f51073d1e6cf14a6b32b59970ee9db4",
-    "previews/science-comparator-midnight.svg": "35ab42735a1d4368f002225bd697a0ddf3ff9ae7833a4c97c576840ed88f59ce",
-    "previews/science-comparator-paper.svg": "10c367ecf0e157aad50f77a342fecf1651c48fff916483e8ccf9ee9965852490",
+    "previews/science-atom-midnight.svg": "b7060d13dc9cb3dd406fbf7cbffea346586b08eb0cec1b67af1b57cd34ea71fd",
+    "previews/science-atom-paper.svg": "16c89c2de5b061e5d8e294a575a2f1825e0980a9e0652a82c1e551ca8cff29c3",
+    "previews/science-atom-transparent.svg": "ab8c6ca47f47de0a3af1280dd98315d303cd25ab7f058f444d3b5d22a9594d08",
+    "previews/science-comparator-midnight.svg": "1d92dccabdf81dc101920dcd18466a031a06655f423eb85baa8d9bed7565dbc7",
+    "previews/science-comparator-paper.svg": "3d5bb7676cd9347636ff6223f4ae32ce1011bdd43142e17f2fc8cfa9a68153d8",
     "previews/science-comparator-transparent.svg": "6f80d74a5198944e7e035746430534d8e68e77409e97b28b929b2a34c48a6cc0",
-    "previews/science-element-card-midnight.svg": "d003fdc40bf64249f49c89ffb51c6a245318bfd2bd50bdcbefb8ff36970175b9",
-    "previews/science-element-card-paper.svg": "00fb5b5b34871969df68421f35507a9921fe199ae8e6eb7b11510582e7c7cc96",
-    "previews/science-element-card-transparent.svg": "812133d3efcc0f627e644101cf44a53b7eb93dac752c990b6ecc2a3915c9bfd5",
-    "previews/science-periodic-table-midnight.svg": "fa604bda2daa534d62258e75b7d99cd5a16dcad08699300d59a2e0960504be4b",
-    "previews/science-periodic-table-paper.svg": "1beda6f8f303236b1da13473bbd67684d70e22eec58f8d176f081c204e823793",
-    "previews/science-periodic-table-transparent.svg": "e835b4ba7e5fdb022a529e041459d39c81d20e950bc40774782e71ed15f3f134"
+    "previews/science-element-card-midnight.svg": "c03e8000a9274f5fa03ef453c5834e379a019fd74d3dcc827da60fa8beb44743",
+    "previews/science-element-card-paper.svg": "85221e76b49b31c4019a4acd767762710106f424a3945fd66c3385746e18a89d",
+    "previews/science-element-card-transparent.svg": "c37064a61aed5e17731b82061a4d1511482d91b0a44e5c3c8cc5dea9818a798f",
+    "previews/science-periodic-table-midnight.svg": "c9ffe0a8806756da34041fe4f2d6cbfff0b5927212ab2f6bd42d8befd265f4eb",
+    "previews/science-periodic-table-paper.svg": "83c321da784214d139b642a4d45428137e5dea2357e219c599bb8a6c1fd33b45",
+    "previews/science-periodic-table-transparent.svg": "ef8086956de269bfda1663ce510e7500a83895cf5c29376f423009c2494b005d"
   }
 }
