@@ -3,7 +3,7 @@ export const SCIENCE_VERSION = "1.0.0" as const;
 export const SCIENCE_ASSET_PATH = "/objects/science-v1";
 export const SCIENCE_IDS = ["science-periodic-table","science-atom","science-element-card","science-comparator"] as const;
 export type ScienceId = typeof SCIENCE_IDS[number];
-export type ScienceStyle = "midnight" | "paper";
+export type ScienceStyle = "midnight" | "paper" | "transparent";
 export type ScienceColorMode = "category" | "block" | "period" | "mono";
 export type ElementCategory = "alkali"|"alkaline"|"transition"|"post-transition"|"metalloid"|"nonmetal"|"halogen"|"noble-gas"|"lanthanoid"|"actinoid";
 export interface ScienceLayers {structure:boolean;identity:boolean;classification:boolean;guides:boolean;analysis:boolean;}
