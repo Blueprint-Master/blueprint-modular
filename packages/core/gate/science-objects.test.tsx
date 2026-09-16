@@ -26,6 +26,15 @@ describe("scientific object contract",()=>{
  it("round-trips a data-only layered attachment",()=>{
   const attachment={schemaVersion:1,kind:"modular-object",id:"science-periodic-table",version:"1.0.0",style:"midnight",animation:{playing:false,speed:.8},science:DEFAULT_SCIENCE_SETTINGS};
   expect(parseModularObjectAttachment(attachment)).toEqual(attachment);
+  const transparent={...attachment,id:"science-element-card",style:"transparent" as const};
+  expect(parseModularObjectAttachment(transparent)).toEqual(transparent);
+ });
+ it("offers a genuinely transparent canvas for every scientific view",()=>{
+  for(const id of ["science-periodic-table","science-atom","science-element-card","science-comparator"] as const){
+   const {container}=render(<ScienceObject id={id} label={id} style="transparent" thumbnail/>);
+   expect(container.querySelector("[data-science-canvas]")).toBeNull();
+   expect(container.innerHTML).toContain("currentColor");
+  }
  });
  it("selects an element from the real SVG table and exposes paused state",()=>{
   const onChange=vi.fn();const {container}=render(<ScienceObject id="science-periodic-table" label="Tableau périodique" locale="fr" element="C" onElementChange={onChange} playing={false}/>);
