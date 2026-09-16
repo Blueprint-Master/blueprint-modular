@@ -43,13 +43,16 @@ describe("scientific object contract",()=>{
   fireEvent.keyDown(carbon,{key:"ArrowRight"});expect(onChange).toHaveBeenCalledWith("N");fireEvent.click(oxygen);expect(onChange).toHaveBeenLastCalledWith("O");
   expect(container.querySelector("[data-science-state=paused]")).toBeTruthy();
  });
- it("animates local density blooms and clamps unsafe motion speed",()=>{
-  const {container}=render(<ScienceObject id="science-atom" label="Atome" speed={Number.POSITIVE_INFINITY}/>);
-  expect(container.querySelector('[data-science-density-lobes="4"]')?.children).toHaveLength(4);
-  expect(container.innerHTML).toContain("science-density-bloom 12s");expect(container.innerHTML).not.toContain("Infinity");
-  expect(container.innerHTML).toContain("prefers-reduced-motion:reduce");expect(container.innerHTML).not.toContain("science-cloud");
-  const paused=render(<ScienceObject id="science-atom" label="Atome en pause" playing={false}/>).container;
-  expect(paused.querySelector("[data-science-state=paused]")).toBeTruthy();expect(paused.querySelector("[data-science-density-lobes] ellipse")?.getAttribute("style")).toContain("animation-play-state: paused");
+ it("renders crisp block-aware density regions and clamps unsafe motion speed",()=>{
+  const {container}=render(<ScienceObject id="science-atom" label="Atome" element="Ru" speed={Number.POSITIVE_INFINITY}/>);
+  expect(container.querySelector('[data-science-density-regions="4"]')?.children).toHaveLength(4);
+  expect(container.innerHTML).toContain("science-density-pulse 12s");expect(container.innerHTML).not.toContain("Infinity");
+  expect(container.innerHTML).toContain("prefers-reduced-motion:reduce");expect(container.innerHTML).not.toContain("feGaussianBlur");
+  expect(container.innerHTML).not.toContain("science-density-bloom");expect(container.innerHTML).not.toContain("<ellipse");
+  const valence=screen.getByRole("button",{name:"Valence"}),inner=screen.getByRole("button",{name:"Couches internes"});
+  expect(valence).toHaveAttribute("aria-pressed","true");fireEvent.click(inner);expect(inner).toHaveAttribute("aria-pressed","true");expect(container.querySelector("[data-active-density-zone=inner]")).toBeTruthy();
+  const paused=render(<ScienceObject id="science-atom" label="Atome en pause" element="Ru" playing={false}/>).container;
+  expect(paused.querySelector("[data-science-state=paused]")).toBeTruthy();expect(paused.querySelector("[data-science-density-regions] path")?.getAttribute("style")).toContain("animation-play-state: paused");
   expect(render(<ScienceObject id="science-atom" label="Vignette" thumbnail/>).container.querySelector("[data-science-state=poster]")).toBeTruthy();
  });
 });
