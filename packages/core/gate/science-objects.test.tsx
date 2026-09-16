@@ -32,7 +32,7 @@ describe("scientific object contract",()=>{
  it("offers a genuinely transparent canvas for every scientific view",()=>{
   for(const id of ["science-periodic-table","science-atom","science-element-card","science-comparator"] as const){
    const {container}=render(<ScienceObject id={id} label={id} style="transparent" thumbnail/>);
-   expect(container.querySelector("[data-science-canvas]")).toBeNull();
+   expect(container.querySelector(id==="science-periodic-table"?'svg > rect[width="760"][height="470"]':'svg > rect[width="520"][height="520"]')).toBeNull();
    expect(container.innerHTML).toContain("currentColor");
   }
  });
