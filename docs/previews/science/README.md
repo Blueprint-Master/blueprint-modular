@@ -34,6 +34,10 @@ locales de densité. Chaque lobe apparaît, se concentre, se dilate puis se
 dissipe, avec des phases décalées sur une boucle de 12 s. Une pause fige la
 phase, `prefers-reduced-motion` supprime le cycle et les vignettes restent fixes.
 
+[Ouvrir la preuve SVG animée](science-atom-motion.svg). Cette preuve reprend les
+mêmes quatre géométries, déphasages et keyframes que le composant ; elle ne vaut
+pas validation du DOM React dans l’application consommatrice.
+
 ## Aperçus issus du composant
 
 | Vue | Nuit | Papier |
