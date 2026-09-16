@@ -79,7 +79,8 @@ affirmation de disponibilité en production.
 
 
 Seconde vérification du 2026-09-16 : l’analyseur est recomposé comme une carte
-de densité (noyau, contours et quatre lobes), et non plus comme un pictogramme
-orbital. Le style `transparent` est ajouté aux quatre vues, au parseur
+de densité nette sans orbite ni flou. Les géométries `s`, `p`, `d` et `f`
+diffèrent ; noyau, couches internes et valence sont sélectionnables et exposent
+une lecture locale. Le style `transparent` est ajouté aux quatre vues, au parseur
 `.modular.json`, au catalogue, aux aperçus et au transport Maker. Il n’émet
 aucun aplat de fond ; les couleurs de texte proviennent de l’application hôte.
