@@ -12,7 +12,7 @@ disponibilité automatiquement déduite d’un numéro de package.
 | Eau & phénomènes naturels | `water-wave`, `water-ripple`, `water-waterfall`, `water-whirlpool` ; matière studio + gouache ; 1.0.0 | Modular #227 et Maker #1964 fusionnées le 2026-09-13. [Preuves et limites](previews/water/README.md). Publication npm et disponibilité en production non vérifiées |
 | Végétation | flora-fern, flora-blossom, flora-meadow, flora-branch ; 1.0.0 | Fusionnée puis **retirée de la découverte le 2026-09-14** après revue visuelle insuffisante. Identifiants conservés pour compatibilité |
 | Cristaux & matières | material-crystal, material-geode, material-liquid-metal, material-dichroic-glass, material-obsidian ; 1.0.0 | Fusionnée via Modular #229 et Maker #1973 puis **retirée de la découverte le 2026-09-14** après revue visuelle insuffisante. Identifiants conservés pour compatibilité |
-| Sciences & éléments | science-periodic-table, science-atom, science-element-card, science-comparator, science-molecule ; nuit + papier + transparent ; 1.0.0 | Modular #230 et Maker #1982 fusionnées le 2026-09-15. L’analyseur devient une carte de densité et les quatre vues acceptent un fond réellement transparent. [Preuves et limites](previews/science/README.md). Revue mobile encore requise |
+| Sciences & éléments | science-periodic-table, science-atom, science-element-card, science-comparator ; nuit + papier + transparent ; 1.0.0 ; science-molecule proposé | Socle Modular #230/#234 et Maker #1982/#2010 fusionné. Calques atomiques et compositeur moléculaire dans Modular #235 / Maker #2012, en brouillon, non fusionnés. [Preuves et limites](previews/science/README.md). Revue live/mobile encore requise |
 
 ## Continuité
 
@@ -95,7 +95,8 @@ graduations, faux comptage de nucléons, pseudo-orbitales par bloc et pulsation
 physique supposée retirés. Coordonnées Å, liaisons et calques sont éditables ;
 une modification retire le statut sourcé. Le moteur ne calcule pas la chimie.
 
-Statut de cette passe : créé, destiné aux PR liées ; pas fusionné, pas publié npm,
-pas déployé. Aperçus et limites : [calques scientifiques](previews/science/README.md).
+Statut de cette passe : créé, dans les PR en brouillon [Modular #235](https://github.com/Blueprint-Master/blueprint-modular/pull/235)
+et [Maker #2012](https://github.com/Blueprint-Master/blueprint-maker/pull/2012) ;
+pas fusionné, pas publié npm, pas déployé. Aperçus et limites : [calques scientifiques](previews/science/README.md).
 La validation visuelle live demeure bloquée pour localhost dans le navigateur
 disponible. Tests DOM et inspection des exports ne remplacent pas ce contrôle.
