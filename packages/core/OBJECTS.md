@@ -88,6 +88,8 @@ Titania and Triton: initial NASA maps with large black unmapped regions were rej
 
 ## Sciences & elements 1.0.0 — review candidate
 
+All four views accept `variant="transparent"` in addition to `midnight` and `paper`. Transparent views emit no canvas fill and inherit host text/border tokens. The atom analyser uses a nucleus, iso-density contours and four locally evolving density lobes rather than a rotating orbital pictogram.
+
 ```tsx
 import {ModularObject, ScienceControls, DEFAULT_SCIENCE_SETTINGS} from '@blueprint-modular/core/objects';
 const [science,setScience]=useState(DEFAULT_SCIENCE_SETTINGS);
