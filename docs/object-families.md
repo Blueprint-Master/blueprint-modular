@@ -1,6 +1,6 @@
 # Index des familles de visuels
 
-Mis à jour le **2026-09-15**. Cet index décrit le code et sa validation, pas une
+Mis à jour le **2026-09-16**. Cet index décrit le code et sa validation, pas une
 disponibilité automatiquement déduite d’un numéro de package.
 
 | Famille | Objets et variantes | État vérifié |
@@ -12,7 +12,7 @@ disponibilité automatiquement déduite d’un numéro de package.
 | Eau & phénomènes naturels | `water-wave`, `water-ripple`, `water-waterfall`, `water-whirlpool` ; matière studio + gouache ; 1.0.0 | Modular #227 et Maker #1964 fusionnées le 2026-09-13. [Preuves et limites](previews/water/README.md). Publication npm et disponibilité en production non vérifiées |
 | Végétation | flora-fern, flora-blossom, flora-meadow, flora-branch ; 1.0.0 | Fusionnée puis **retirée de la découverte le 2026-09-14** après revue visuelle insuffisante. Identifiants conservés pour compatibilité |
 | Cristaux & matières | material-crystal, material-geode, material-liquid-metal, material-dichroic-glass, material-obsidian ; 1.0.0 | Fusionnée via Modular #229 et Maker #1973 puis **retirée de la découverte le 2026-09-14** après revue visuelle insuffisante. Identifiants conservés pour compatibilité |
-| Sciences & éléments | science-periodic-table, science-atom, science-element-card, science-comparator ; nuit + papier ; 1.0.0 | Candidat du 2026-09-14 : 118 éléments, cinq calques, sélection et comparaison. [Preuves et limites](previews/science/README.md). Revue Chromium/mobile requise avant sortie du brouillon |
+| Sciences & éléments | science-periodic-table, science-atom, science-element-card, science-comparator ; nuit + papier ; 1.0.0 | Modular #230 et Maker #1982 fusionnées le 2026-09-15. Correction de suivi : la rotation atomique est remplacée par quatre concentrations locales de densité en apparition/évolution/disparition. [Preuves et limites](previews/science/README.md). Revue Chromium/mobile encore requise |
 
 ## Continuité
 
@@ -61,9 +61,18 @@ posters sont originaux Apache-2.0, sans asset tiers. Les planches multi-instants
 et la vidéo utilisent le renderer livré via Canvas natif ; la manipulation DOM
 dans Chromium n’a pas été exécutée, le binaire du navigateur étant indisponible.
 
-Vérification du 2026-09-15 : Modular #230 et Maker #1982 restent ouvertes en
-brouillon. Revue du modèle scientifique : le tableau n’expose plus 118 arrêts
+Vérification du 2026-09-15 : Modular #230 et Maker #1982 ont été fusionnées.
+Revue du modèle scientifique : le tableau n’expose plus 118 arrêts
 successifs au clavier ; une seule cellule est tabulable, les flèches suivent
 ligne et colonne, l’état sélectionné est annoncé, et toute vitesse reçue hors
 manifeste est bornée. La CI publique du commit correspondant est verte. La
 revue visuelle live demeure bloquante avant promotion.
+
+Vérification du 2026-09-16 : la fusion ne clôt pas la dette visuelle. Le simple
+mouvement orbital de `science-atom` est remplacé par une évolution locale de
+densité en quatre lobes déphasés sur 12 s. La preuve SVG correspondante a été
+inspectée dans Chrome à trois phases distinctes ; l’apparition, la concentration
+et la dissipation locales sont perceptibles sans rotation globale. Vignettes,
+données, calques et API restent inchangés. Le composant React monté dans le
+catalogue et le mobile physique restent à valider avant publication npm ou
+affirmation de disponibilité en production.
