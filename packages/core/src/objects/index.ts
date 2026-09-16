@@ -42,3 +42,13 @@ export {ScienceControls} from "./ScienceControls";
 export {SCIENCE_OBJECTS} from "./catalog";
 export {SCIENCE_IDS,SCIENCE_NAMES,SCIENCE_VERSION,SCIENCE_ASSET_PATH,ELEMENTS,DEFAULT_SCIENCE_LAYERS,DEFAULT_SCIENCE_SETTINGS,isScienceId,sciencePosterPath,elementBySymbol,parseScienceLayers,parseScienceSettings} from "./science";
 export type {ScienceId,ScienceStyle,ScienceColorMode,ScienceLayers,ScienceSettings,ElementDatum,ElementCategory} from "./science";
+
+export {AtomicDensityLayer,AtomSphereLayer} from "./ScienceLayers";
+export type {AtomicDensityLayerProps,AtomSphereLayerProps} from "./ScienceLayers";
+export {MoleculeLayer,projectMolecule} from "./MoleculeLayer";
+export type {MoleculeLayerProps} from "./MoleculeLayer";
+export {DEFAULT_ATOMIC_SETTINGS,parseAtomicSettings} from "./atomic-settings";
+export type {AtomicLayerSettings} from "./atomic-settings";
+export {MOLECULE_PRESETS,moleculeGraph,moleculePresetSettings} from "./molecule-presets";
+export {DEFAULT_MOLECULE_SETTINGS,MOLECULE_ELEMENTS,MOLECULE_COLORS,parseMoleculeGraph,parseMoleculeSettings,bondLength,bondAngle,moleculeWarnings} from "./molecules";
+export type {MoleculeSettings,MoleculeGraph,MoleculeAtom,MoleculeBond,MoleculeLayers,MolecularElement,Position3} from "./molecules";

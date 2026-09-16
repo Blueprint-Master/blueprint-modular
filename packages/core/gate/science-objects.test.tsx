@@ -16,7 +16,7 @@ describe("scientific object contract",()=>{
  it("withdraws rejected decorative families without breaking exact resolution",()=>{
   expect(DISCOVERABLE_OBJECTS.some(item=>item.family==="flora"||item.family==="materials")).toBe(false);
   expect(resolveModularObject("flora-fern","1.0.0")).toBeTruthy();expect(resolveModularObject("material-crystal","1.0.0")).toBeTruthy();
-  expect(DISCOVERABLE_OBJECTS.filter(item=>item.family==="science")).toHaveLength(4);
+  expect(DISCOVERABLE_OBJECTS.filter(item=>item.family==="science")).toHaveLength(5);
  });
  it("keeps every layer and rejects unknown or invalid science settings",()=>{
   expect(parseScienceSettings(DEFAULT_SCIENCE_SETTINGS)).toEqual(DEFAULT_SCIENCE_SETTINGS);
@@ -30,7 +30,7 @@ describe("scientific object contract",()=>{
   expect(parseModularObjectAttachment(transparent)).toEqual(transparent);
  });
  it("offers a genuinely transparent canvas for every scientific view",()=>{
-  for(const id of ["science-periodic-table","science-atom","science-element-card","science-comparator"] as const){
+  for(const id of ["science-periodic-table","science-atom","science-element-card","science-comparator","science-molecule"] as const){
    const {container}=render(<ScienceObject id={id} label={id} style="transparent" thumbnail/>);
    expect(container.querySelector(id==="science-periodic-table"?'svg > rect[width="760"][height="470"]':'svg > rect[width="520"][height="520"]')).toBeNull();
    expect(container.innerHTML).toContain("currentColor");
@@ -41,18 +41,14 @@ describe("scientific object contract",()=>{
   const carbon=screen.getByRole("button",{name:/6 Carbone C/}),oxygen=screen.getByRole("button",{name:/8 Oxygène O/});
   expect(screen.getByRole("group",{name:"Tableau périodique interactif"})).toBeTruthy();expect(carbon).toHaveAttribute("tabindex","0");expect(oxygen).toHaveAttribute("tabindex","-1");
   fireEvent.keyDown(carbon,{key:"ArrowRight"});expect(onChange).toHaveBeenCalledWith("N");fireEvent.click(oxygen);expect(onChange).toHaveBeenLastCalledWith("O");
-  expect(container.querySelector("[data-science-state=paused]")).toBeTruthy();
+  expect(container.querySelector("[data-science-state=static]")).toBeTruthy();
  });
- it("renders crisp block-aware density regions and clamps unsafe motion speed",()=>{
+ it("never labels an illustrative distribution as measured, and keeps it stationary",()=>{
   const {container}=render(<ScienceObject id="science-atom" label="Atome" element="Ru" speed={Number.POSITIVE_INFINITY}/>);
-  expect(container.querySelector('[data-science-density-regions="4"]')?.children).toHaveLength(4);
-  expect(container.innerHTML).toContain("science-density-pulse 12s");expect(container.innerHTML).not.toContain("Infinity");
-  expect(container.innerHTML).toContain("prefers-reduced-motion:reduce");expect(container.innerHTML).not.toContain("feGaussianBlur");
-  expect(container.innerHTML).not.toContain("science-density-bloom");expect(container.innerHTML).not.toContain("<ellipse");
-  const valence=screen.getByRole("button",{name:"Valence"}),inner=screen.getByRole("button",{name:"Couches internes"});
-  expect(valence).toHaveAttribute("aria-pressed","true");fireEvent.click(inner);expect(inner).toHaveAttribute("aria-pressed","true");expect(container.querySelector("[data-active-density-zone=inner]")).toBeTruthy();
-  const paused=render(<ScienceObject id="science-atom" label="Atome en pause" element="Ru" playing={false}/>).container;
-  expect(paused.querySelector("[data-science-state=paused]")).toBeTruthy();expect(paused.querySelector("[data-science-density-regions] path")?.getAttribute("style")).toContain("animation-play-state: paused");
+  expect(container.innerHTML).toContain('data-scientific-status="qualitative-not-computed"');
+  expect(container.innerHTML).toContain("Isotope requis");
+  expect(container.innerHTML).not.toMatch(/science-density-pulse|Infinity|ρ\(r\)|feGaussianBlur/);
   expect(render(<ScienceObject id="science-atom" label="Vignette" thumbnail/>).container.querySelector("[data-science-state=poster]")).toBeTruthy();
  });
+
 });

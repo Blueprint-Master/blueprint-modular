@@ -1,0 +1,16 @@
+{
+  "schemaVersion": 1,
+  "kind": "modular-object",
+  "id": "science-molecule",
+  "version": "1.0.0",
+  "style": "transparent",
+  "animation": {"playing": false, "speed": 1},
+  "science": {
+    "element": "O", "compareElement": "H", "colorMode": "category",
+    "layers": {"structure": true, "identity": true, "classification": true, "guides": false, "analysis": true},
+    "molecule": {
+      "preset": "water", "yaw": 0, "pitch": 0,
+      "layers": {"atoms": true, "bonds": true, "labels": true, "measurements": true}
+    }
+  }
+}
