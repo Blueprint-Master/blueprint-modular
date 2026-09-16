@@ -34,8 +34,10 @@ describe("scientific object contract",()=>{
   fireEvent.keyDown(carbon,{key:"ArrowRight"});expect(onChange).toHaveBeenCalledWith("N");fireEvent.click(oxygen);expect(onChange).toHaveBeenLastCalledWith("O");
   expect(container.querySelector("[data-science-state=paused]")).toBeTruthy();
  });
- it("clamps unsafe motion speed before producing CSS durations",()=>{
+ it("animates local density blooms and clamps unsafe motion speed",()=>{
   const {container}=render(<ScienceObject id="science-atom" label="Atome" speed={Number.POSITIVE_INFINITY}/>);
-  expect(container.innerHTML).toContain("science-cloud 16s");expect(container.innerHTML).not.toContain("0s linear");
+  expect(container.querySelector('[data-science-density-lobes="4"]')?.children).toHaveLength(4);
+  expect(container.innerHTML).toContain("science-density-bloom 12s");expect(container.innerHTML).not.toContain("Infinity");
+  expect(container.innerHTML).not.toContain("science-cloud");
  });
 });
