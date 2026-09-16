@@ -40,7 +40,7 @@ describe("scientific object contract",()=>{
   expect(container.innerHTML).toContain("science-density-bloom 12s");expect(container.innerHTML).not.toContain("Infinity");
   expect(container.innerHTML).toContain("prefers-reduced-motion:reduce");expect(container.innerHTML).not.toContain("science-cloud");
   const paused=render(<ScienceObject id="science-atom" label="Atome en pause" playing={false}/>).container;
-  expect(paused.querySelector("[data-science-state=paused]")).toBeTruthy();expect(paused.innerHTML).toContain("animation-play-state:paused");
+  expect(paused.querySelector("[data-science-state=paused]")).toBeTruthy();expect(paused.querySelector("[data-science-density-lobes] ellipse")?.getAttribute("style")).toContain("animation-play-state: paused");
   expect(render(<ScienceObject id="science-atom" label="Vignette" thumbnail/>).container.querySelector("[data-science-state=poster]")).toBeTruthy();
  });
 });
