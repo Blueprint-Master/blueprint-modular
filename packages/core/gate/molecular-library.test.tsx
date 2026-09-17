@@ -9,11 +9,13 @@ import {MoleculeControls} from "../src/objects/MoleculeControls";
 import {ScienceObject} from "../src/objects/ScienceObject";
 import {ELEMENTS} from "../src/objects/science";
 import {electronConfiguration,hydrogenicRadial,orbitalAmplitude} from "../src/objects/atomic-orbitals";
+import {AtomicControls} from "../src/objects/AtomicControls";
+import {DEFAULT_ATOMIC_SETTINGS} from "../src/objects/atomic-settings";
 import {moleculeMotionPose} from "../src/objects/useMoleculeMotion";
 afterEach(()=>{cleanup();vi.unstubAllGlobals();});
 describe("sourced molecular library and reverse composition",()=>{
- it("ships at least 120 bounded, independent, sourced molecular graphs",()=>{
-  expect(Object.keys(MOLECULE_PRESETS).length).toBeGreaterThanOrEqual(120);
+ it("ships at least 300 bounded, independent, sourced molecular graphs",()=>{
+  expect(Object.keys(MOLECULE_PRESETS).length).toBeGreaterThanOrEqual(300);
   for(const p of Object.values(MOLECULE_PRESETS)){
    expect(parseMoleculeGraph(p.graph)).toEqual(p.graph);
    expect(moleculeFormula(p.graph)).toMatch(/^[A-Z]/);
@@ -46,6 +48,30 @@ describe("sourced molecular library and reverse composition",()=>{
   fireEvent.change(screen.getByLabelText("Rechercher une molécule ou une formule"),{target:{value:"cafeine"}});
   expect(screen.getByRole("option",{name:/Caféine/})).toBeTruthy();
  });
+ it("searches without discarding the current custom graph or its motion/layer settings",()=>{
+  const original={...moleculePresetSettings("ethanol"),preset:"custom" as const,graph:MOLECULE_PRESETS.ethanol.graph,motion:true,motionSpeed:.5};
+  const change=vi.fn();render(<MoleculeControls value={original} onChange={change}/>);
+  fireEvent.change(screen.getByLabelText("Nombre d’atomes C"),{target:{value:"2"}});
+  fireEvent.change(screen.getByLabelText("Nombre d’atomes H"),{target:{value:"6"}});
+  fireEvent.click(screen.getByRole("button",{name:/Rechercher avec ces atomes/}));
+  expect(change).not.toHaveBeenCalled();
+  expect(screen.getByLabelText("Molécule")).toHaveValue("custom");
+  fireEvent.click(screen.getByRole("button",{name:"Éther diméthylique"}));
+  expect(change).toHaveBeenCalledWith(expect.objectContaining({preset:"dimethyl-ether",motion:true,motionSpeed:.5,layers:original.layers}));
+ });
+ it("analyses existing bonds without changing the graph and clears stale search results",()=>{
+  const change=vi.fn();render(<MoleculeControls value={moleculePresetSettings("ethanol")} onChange={change}/>);
+  fireEvent.click(screen.getByRole("button",{name:"Analyser la composition affichée"}));
+  expect(screen.getByRole("button",{name:"Éthanol"})).toBeTruthy();
+  expect(screen.queryByRole("button",{name:"Éther diméthylique"})).toBeNull();
+  expect(screen.getByLabelText("Nombre d’atomes C")).toHaveValue(2);
+  fireEvent.change(screen.getByLabelText("Nombre d’atomes H"),{target:{value:"48"}});
+  expect(screen.queryByRole("button",{name:"Éthanol"})).toBeNull();
+  expect(screen.getByRole("button",{name:/Rechercher avec ces atomes/})).toBeDisabled();
+  fireEvent.click(screen.getByRole("button",{name:"Vider les quantités"}));
+  expect(screen.getByLabelText("Nombre d’atomes C")).toHaveValue(0);
+  expect(change).not.toHaveBeenCalled();
+ });
  it("bounds new motion values and keeps legacy references identical",()=>{
   const old=moleculePresetSettings("water");expect(parseMoleculeSettings(old)).toEqual(old);
   for(const extra of [{motion:"yes"},{motionSpeed:Infinity},{motionSpeed:0},{motionSpeed:3}])expect(parseMoleculeSettings({...old,...extra})).toBeUndefined();
@@ -57,6 +83,16 @@ describe("scientific atomic basis",()=>{
   for(const e of ELEMENTS){const shells=electronConfiguration(e.symbol);expect(shells.reduce((n,p)=>n+p.electrons,0),e.symbol).toBe(e.atomicNumber);for(const p of shells)expect(p.electrons).toBeLessThanOrEqual(2*(2*p.l+1));}
   expect(electronConfiguration("O")).toEqual([{id:"1s",n:1,l:0,electrons:2},{id:"2s",n:2,l:0,electrons:2},{id:"2p",n:2,l:1,electrons:4}]);
   expect(electronConfiguration("Lr")).toContainEqual({id:"7p",n:7,l:1,electrons:1});
+ });
+ it("exposes occupied subshells as keyboard-accessible buttons and preserves layer settings",()=>{
+  const change=vi.fn(),value={...DEFAULT_ATOMIC_SETTINGS,opacity:.4,nucleus:false,orbital:"2p"};
+  const view=render(<AtomicControls element="O" value={value} onChange={change} locale="fr"/>);
+  expect(screen.getByRole("button",{name:"2p · 4 e⁻"})).toHaveAttribute("aria-pressed","true");
+  fireEvent.click(screen.getByRole("button",{name:"1s · 2 e⁻"}));
+  expect(change).toHaveBeenCalledWith({...value,orbital:"1s"});
+  view.rerender(<AtomicControls element="H" value={value} onChange={change} locale="en"/>);
+  expect(screen.queryByRole("button",{name:/2p/})).toBeNull();
+  expect(screen.getByRole("button",{name:"1s · 1 e⁻"})).toHaveAttribute("aria-pressed","true");
  });
  it("has analytic 1s decay, 2s radial node and 2p nodal plane/opposite signs",()=>{
   expect(hydrogenicRadial(1,0,1)).toBeCloseTo(Math.exp(-1),12);
