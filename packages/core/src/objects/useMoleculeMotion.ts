@@ -5,7 +5,7 @@ export function moleculeMotionPose(seconds:number) {
   const phase=seconds*Math.PI/10;
   return { yaw:9*Math.sin(phase),pitch:4*Math.sin(phase*2) };
 }
-export function useMoleculeMotion(ref:RefObject<SVGSVGElement>,enabled:boolean,speed=1) {
+export function useMoleculeMotion(ref:RefObject<SVGSVGElement|null>,enabled:boolean,speed=1) {
   const elapsed=useRef(0);
   const [pose,setPose]=useState({yaw:0,pitch:0}),[active,setActive]=useState(false);
   useEffect(()=>{
