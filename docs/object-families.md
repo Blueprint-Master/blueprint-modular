@@ -13,7 +13,6 @@ disponibilité automatiquement déduite d’un numéro de package.
 | Végétation | flora-fern, flora-blossom, flora-meadow, flora-branch ; 1.0.0 | Fusionnée puis **retirée de la découverte le 2026-09-14** après revue visuelle insuffisante. Identifiants conservés pour compatibilité |
 | Cristaux & matières | material-crystal, material-geode, material-liquid-metal, material-dichroic-glass, material-obsidian ; 1.0.0 | Fusionnée via Modular #229 et Maker #1973 puis **retirée de la découverte le 2026-09-14** après revue visuelle insuffisante. Identifiants conservés pour compatibilité |
 | Sciences & éléments | science-periodic-table, science-atom, science-element-card, science-comparator ; nuit + papier + transparent ; 1.0.0 ; science-molecule ; 153 molécules proposées | Socle Modular #230/#234 et Maker #1982/#2010 fusionné. Calques atomiques et compositeur moléculaire : Modular #235 fusionnée ; extension du catalogue et de l’analyseur dans Modular #236, Maker #2012 en brouillon. [Preuves et limites](previews/science/README.md). Revue live/mobile encore requise |
-
 | Drapeaux — prochaine priorité | Tous les pays ; tissu photoréaliste + dessin ; fixe + flottant ; calques modifiables et transparence | Demande confirmée le 2026-09-17. Planifié, aucun objet de cette famille livré dans la passe Sciences. Couverture des pays, sources/licences et variantes à inventorier explicitement ; territoires distingués |
 
 ## Continuité
