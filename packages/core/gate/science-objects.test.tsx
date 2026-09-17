@@ -45,7 +45,7 @@ describe("scientific object contract",()=>{
  });
  it("never labels an illustrative distribution as measured, and keeps it stationary",()=>{
   const {container}=render(<ScienceObject id="science-atom" label="Atome" element="Ru" speed={Number.POSITIVE_INFINITY}/>);
-  expect(container.innerHTML).toContain('data-scientific-status="qualitative-not-computed"');
+  expect(container.innerHTML).toContain('data-scientific-status="hydrogenic-basis-not-total-density"');
   expect(container.innerHTML).toContain("Isotope requis");
   expect(container.innerHTML).not.toMatch(/science-density-pulse|Infinity|ρ\(r\)|feGaussianBlur/);
   expect(render(<ScienceObject id="science-atom" label="Vignette" thumbnail/>).container.querySelector("[data-science-state=poster]")).toBeTruthy();

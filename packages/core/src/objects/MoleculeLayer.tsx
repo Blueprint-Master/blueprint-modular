@@ -14,7 +14,7 @@ export function projectMolecule(graph: MoleculeGraph, yaw = 0, pitch = 0) {
     const [x, y, z] = atom.position.map((n, i) => n - centre[i]) as Position3;
     const horizontal = y * Math.cos(a) + z * Math.sin(a), vertical = z * Math.cos(a) - y * Math.sin(a);
     return { ...atom, x: horizontal * scale, y: -(vertical * Math.cos(b) + x * Math.sin(b)) * scale,
-      depth: x * Math.cos(b) - vertical * Math.sin(b), radius: atom.element === "H" ? 25 : 39 };
+      depth: x * Math.cos(b) - vertical * Math.sin(b), radius: (atom.element === "H" ? 25 : 39)*Math.min(1,Math.max(.22,scale/110)) };
   });
 }
 /** Background-free SVG group centred at (0,0). Extent ≤ 350 × 350.
@@ -32,9 +32,10 @@ export function MoleculeLayer({ graph, layers, yaw = 0, pitch = 0 }: MoleculeLay
       const trimA = visible.atoms ? Math.min(bond.a.radius * .86, length * .36) : 0;
       const trimB = visible.atoms ? Math.min(bond.b.radius * .86, length * .36) : 0;
       return <g data-molecule-bond={`${bond.from}-${bond.to}`} data-bond-order={bond.order}>{Array.from({ length: bond.order }, (_, i) => {
-        const offset = (i - (bond.order - 1) / 2) * 9, ox = -dy / length * offset, oy = dx / length * offset;
+        const weight=Math.min(1,Math.min(bond.a.radius,bond.b.radius)/25);
+        const offset = (i - (bond.order - 1) / 2) * 9*weight, ox = -dy / length * offset, oy = dx / length * offset;
         const x1 = bond.a.x + dx / length * trimA + ox, y1 = bond.a.y + dy / length * trimA + oy, x2 = bond.b.x - dx / length * trimB + ox, y2 = bond.b.y - dy / length * trimB + oy, mx = (x1 + x2) / 2, my = (y1 + y2) / 2;
-        return <g key={i} strokeLinecap="round"><path d={`M${x1} ${y1}L${x2} ${y2}`} stroke="#597087" strokeWidth="9"/><path d={`M${x1} ${y1}L${mx} ${my}`} stroke={MOLECULE_COLORS[bond.a.element]} strokeWidth="6"/><path d={`M${mx} ${my}L${x2} ${y2}`} stroke={MOLECULE_COLORS[bond.b.element]} strokeWidth="6"/><path d={`M${x1 - 1} ${y1 - 1}L${x2 - 1} ${y2 - 1}`} stroke="#fff" strokeOpacity=".28" strokeWidth="1"/></g>;
+        return <g key={i} strokeLinecap="round"><path d={`M${x1} ${y1}L${x2} ${y2}`} stroke="#597087" strokeWidth={9*weight}/><path d={`M${x1} ${y1}L${mx} ${my}`} stroke={MOLECULE_COLORS[bond.a.element]} strokeWidth={6*weight}/><path d={`M${mx} ${my}L${x2} ${y2}`} stroke={MOLECULE_COLORS[bond.b.element]} strokeWidth={6*weight}/><path d={`M${x1 - 1} ${y1 - 1}L${x2 - 1} ${y2 - 1}`} stroke="#fff" strokeOpacity=".28" strokeWidth={weight}/></g>;
       })}</g>;
     } })),
   ].sort((a, b) => a.depth - b.depth);

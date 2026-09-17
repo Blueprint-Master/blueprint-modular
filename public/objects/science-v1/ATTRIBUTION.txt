@@ -20,3 +20,11 @@ references and geometric conventions are recorded in docs/scientific-composition
 NIST source material is not relicensed under the renderer's Apache licence.
 Colour convention: CPK/Jmol https://jmol.sourceforge.net/jscolors/
 Only colour-convention facts are used, no Jmol code or third-party model.
+
+Molecular library extension (2026-09-16): PubChem / NCBI-generated 3D conformers.
+Numeric structures only; no depositor descriptions, artwork or OpenEye software.
+https://pubchem.ncbi.nlm.nih.gov/docs/pubchem3d (distribution statement + caveats).
+Per-record CID, conformer and response SHA-256: docs/previews/science/molecular-sources.json.
+Electron configurations: NIST ASD (1–108), PubChem (109–118, theoretical).
+Per-source hashes: docs/previews/science/electron-configuration-source.json.
+Orbital basis mathematics: NIST DLMF 18.39(ii), 14.30; renderer is original.

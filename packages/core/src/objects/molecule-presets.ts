@@ -1,8 +1,15 @@
 import { DEFAULT_MOLECULE_SETTINGS, type MoleculeGraph, type MoleculeSettings } from "./molecules";
-export interface MoleculePreset { name: { fr: string; en: string }; formula: string; graph: MoleculeGraph; source: string; geometry: { fr: string; en: string }; }
+import { MOLECULE_LIBRARY_DATA } from "./molecule-library.generated";
+import { displayFormula, moleculeFormula } from "./molecule-formula";
+export interface MoleculePreset { name: { fr: string; en: string }; formula: string; graph: MoleculeGraph; source: string; geometry: { fr: string; en: string }; method?: "computed"; cid?: number; }
+const computed = Object.fromEntries(MOLECULE_LIBRARY_DATA.map(([id, fr, en, cid, atoms, bonds]) => {
+  const graph: MoleculeGraph = { atoms: atoms.map(([element,x,y,z],i):MoleculeGraph["atoms"][number] => ({ id: `A${i+1}`,element,position:[x,y,z] })), bonds: bonds.map(([a,b,order]) => ({ from: `A${a+1}`, to: `A${b+1}`, order })) };
+  return [id, { name:{fr,en},formula:displayFormula(moleculeFormula(graph)),graph,source:`https://pubchem.ncbi.nlm.nih.gov/compound/${cid}#section=3D-Conformer`,geometry:{fr:"Conformère calculé",en:"Computed conformer"},method:"computed",cid }];
+})) as Record<Exclude<MoleculeSettings["preset"], "custom" | "water" | "carbon-dioxide" | "methane" | "ammonia">, MoleculePreset>;
 /** Individual experimental geometry facts transcribed from NIST CCCBDB, 2026-09-16.
  * No NIST artwork/database is bundled. Reference coordinates retain their source axes. */
 export const MOLECULE_PRESETS: Record<Exclude<MoleculeSettings["preset"], "custom">, MoleculePreset> = {
+  ...computed,
   water: { name: { fr: "Eau", en: "Water" }, formula: "H₂O", geometry: { fr: "Coudée", en: "Bent" }, source: "https://cccbdb.nist.gov/exp2x.asp?casno=7732185&charge=0", graph: {
     atoms: [{ id: "O1", element: "O", position: [0, 0, .1173] }, { id: "H2", element: "H", position: [0, .7572, -.4692] }, { id: "H3", element: "H", position: [0, -.7572, -.4692] }],
     bonds: [{ from: "O1", to: "H2", order: 1 }, { from: "O1", to: "H3", order: 1 }],
@@ -33,5 +40,5 @@ export function moleculeGraph(settings: MoleculeSettings = DEFAULT_MOLECULE_SETT
 }
 /** Initial views keep all atoms legible; orientation is presentation, not geometry. */
 export function moleculePresetSettings(preset: Exclude<MoleculeSettings["preset"], "custom">): MoleculeSettings {
-  return { ...DEFAULT_MOLECULE_SETTINGS, preset, layers: { ...DEFAULT_MOLECULE_SETTINGS.layers }, yaw: preset === "carbon-dioxide" ? 90 : 0, pitch: preset === "methane" ? 22 : preset === "ammonia" ? 45 : 0 };
+  return { ...DEFAULT_MOLECULE_SETTINGS, preset, layers: { ...DEFAULT_MOLECULE_SETTINGS.layers }, yaw: preset === "carbon-dioxide" ? 90 : 0, pitch: MOLECULE_PRESETS[preset].method === "computed" ? 78 : preset === "methane" ? 22 : preset === "ammonia" ? 45 : 0 };
 }

@@ -52,3 +52,12 @@ export type {AtomicLayerSettings} from "./atomic-settings";
 export {MOLECULE_PRESETS,moleculeGraph,moleculePresetSettings} from "./molecule-presets";
 export {DEFAULT_MOLECULE_SETTINGS,MOLECULE_ELEMENTS,MOLECULE_COLORS,parseMoleculeGraph,parseMoleculeSettings,bondLength,bondAngle,moleculeWarnings} from "./molecules";
 export type {MoleculeSettings,MoleculeGraph,MoleculeAtom,MoleculeBond,MoleculeLayers,MolecularElement,Position3} from "./molecules";
+
+export {AtomicOrbitalLayer} from "./AtomicOrbitalLayer";
+export type {AtomicOrbitalLayerProps} from "./AtomicOrbitalLayer";
+export {electronConfiguration,selectedSubshell,hydrogenicRadial,orbitalAmplitude} from "./atomic-orbitals";
+export {recognizeMolecule,sameMoleculeConnectivity} from "./molecule-recognition";
+export {moleculeFormula,displayFormula} from "./molecule-formula";
+export {MOLECULE_PRESET_IDS} from "./molecule-ids.generated";
+export {MAX_MOLECULE_ATOMS,MAX_MOLECULE_BONDS} from "./molecules";
+export type {MoleculePresetId} from "./molecules";
