@@ -1,0 +1,1362 @@
+{
+  "retrieved": "2026-09-16",
+  "scope": "PubChem-generated numeric conformers and factual atom/bond graphs only. No third-party descriptions or imagery.",
+  "policy": "https://pubchem.ncbi.nlm.nih.gov/pcfe/docs/markdown/pubchem3d.md",
+  "records": [
+    {
+      "id": "oxygen",
+      "cid": 977,
+      "conformer": "000003D100000001",
+      "request": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/name/oxygen/record/JSON?record_type=3d",
+      "sha256": "93c0d95c31d28937f208a7cfde2eced6a97ef0adc218f362c7f500202ea8ae49",
+      "author": "PubChem / NCBI",
+      "method": "PubChem3D computed conformer; not experimental or guaranteed energy minimum"
+    },
+    {
+      "id": "nitrogen",
+      "cid": 947,
+      "conformer": "000003B300000001",
+      "request": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/name/nitrogen/record/JSON?record_type=3d",
+      "sha256": "91af34930f59acf58994950e82e74f50193ae7ed39b79d35b385c37f820b0185",
+      "author": "PubChem / NCBI",
+      "method": "PubChem3D computed conformer; not experimental or guaranteed energy minimum"
+    },
+    {
+      "id": "hydrogen-peroxide",
+      "cid": 784,
+      "conformer": "0000031000000001",
+      "request": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/name/hydrogen%20peroxide/record/JSON?record_type=3d",
+      "sha256": "271a8d6e320aed7d668ed5ac844c780c16f3afccaf6bda5868bb6169cdcbe9b8",
+      "author": "PubChem / NCBI",
+      "method": "PubChem3D computed conformer; not experimental or guaranteed energy minimum"
+    },
+    {
+      "id": "hydrogen-chloride",
+      "cid": 313,
+      "conformer": "0000013900000001",
+      "request": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/name/hydrogen%20chloride/record/JSON?record_type=3d",
+      "sha256": "9a2c0d920365bb6008978a431a9e4a48b23f1cecdc75a7ff1f5bc84341df5299",
+      "author": "PubChem / NCBI",
+      "method": "PubChem3D computed conformer; not experimental or guaranteed energy minimum"
+    },
+    {
+      "id": "hydrogen-fluoride",
+      "cid": 14917,
+      "conformer": "00003A4500000001",
+      "request": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/name/hydrogen%20fluoride/record/JSON?record_type=3d",
+      "sha256": "4fbc182da103e8f6438348e3246f1cd7d05932e0e80751d385e8d41149582833",
+      "author": "PubChem / NCBI",
+      "method": "PubChem3D computed conformer; not experimental or guaranteed energy minimum"
+    },
+    {
+      "id": "hydrogen-sulfide",
+      "cid": 402,
+      "conformer": "0000019200000001",
+      "request": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/name/hydrogen%20sulfide/record/JSON?record_type=3d",
+      "sha256": "82b8fdf349806eb77a9dc8b7dc93c919959003aa186a725dd0067b80aba2d6e7",
+      "author": "PubChem / NCBI",
+      "method": "PubChem3D computed conformer; not experimental or guaranteed energy minimum"
+    },
+    {
+      "id": "carbon-disulfide",
+      "cid": 6348,
+      "conformer": "000018CC00000001",
+      "request": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/name/carbon%20disulfide/record/JSON?record_type=3d",
+      "sha256": "61cbe89e8c9835bd1c14e006fb28a44dfb029f6f22d492ba83896020519bb354",
+      "author": "PubChem / NCBI",
+      "method": "PubChem3D computed conformer; not experimental or guaranteed energy minimum"
+    },
+    {
+      "id": "sulfur-dioxide",
+      "cid": 1119,
+      "conformer": "0000045F00000001",
+      "request": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/name/sulfur%20dioxide/record/JSON?record_type=3d",
+      "sha256": "684d6176b0844e68a933013786c88badc3a5e330ffe3d46c2f5145f8f9d0add0",
+      "author": "PubChem / NCBI",
+      "method": "PubChem3D computed conformer; not experimental or guaranteed energy minimum"
+    },
+    {
+      "id": "ethane",
+      "cid": 6324,
+      "conformer": "000018B400000001",
+      "request": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/name/ethane/record/JSON?record_type=3d",
+      "sha256": "5e7c39f685e228d6fcb1b61de4d059489e18c6ba9f15a5a6290ed6556d656f3f",
+      "author": "PubChem / NCBI",
+      "method": "PubChem3D computed conformer; not experimental or guaranteed energy minimum"
+    },
+    {
+      "id": "propane",
+      "cid": 6334,
+      "conformer": "000018BE00000001",
+      "request": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/name/propane/record/JSON?record_type=3d",
+      "sha256": "871f626ebadac5725c94ca5bb6a325009df7167d558d9d40b6b4ab701ea61baf",
+      "author": "PubChem / NCBI",
+      "method": "PubChem3D computed conformer; not experimental or guaranteed energy minimum"
+    },
+    {
+      "id": "butane",
+      "cid": 7843,
+      "conformer": "00001EA300000001",
+      "request": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/name/butane/record/JSON?record_type=3d",
+      "sha256": "ae7044e3c0fab643ee85e99584724ba6cab10f312d4e82faec2603594a97f2d2",
+      "author": "PubChem / NCBI",
+      "method": "PubChem3D computed conformer; not experimental or guaranteed energy minimum"
+    },
+    {
+      "id": "isobutane",
+      "cid": 6360,
+      "conformer": "000018D800000001",
+      "request": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/name/isobutane/record/JSON?record_type=3d",
+      "sha256": "794312509b5741b388950ba2686f09ad6344d6aaacbdeb21348283f5a04df58c",
+      "author": "PubChem / NCBI",
+      "method": "PubChem3D computed conformer; not experimental or guaranteed energy minimum"
+    },
+    {
+      "id": "pentane",
+      "cid": 8003,
+      "conformer": "00001F4300000001",
+      "request": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/name/pentane/record/JSON?record_type=3d",
+      "sha256": "61b3729c2200dc373791974b594792e21425289d3afb9b9ca08d71647d76f791",
+      "author": "PubChem / NCBI",
+      "method": "PubChem3D computed conformer; not experimental or guaranteed energy minimum"
+    },
+    {
+      "id": "isopentane",
+      "cid": 6556,
+      "conformer": "0000199C00000001",
+      "request": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/name/isopentane/record/JSON?record_type=3d",
+      "sha256": "2b0f40a5658b8b5bbfdc1a3b008d2b8fce44d1107862cb74edb4af95dea7bc45",
+      "author": "PubChem / NCBI",
+      "method": "PubChem3D computed conformer; not experimental or guaranteed energy minimum"
+    },
+    {
+      "id": "neopentane",
+      "cid": 10041,
+      "conformer": "0000273900000001",
+      "request": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/name/neopentane/record/JSON?record_type=3d",
+      "sha256": "57dbefcdaf3dfcda8e327b3e1eabd98751ea1443f9c512a261ddf0cad0321581",
+      "author": "PubChem / NCBI",
+      "method": "PubChem3D computed conformer; not experimental or guaranteed energy minimum"
+    },
+    {
+      "id": "hexane",
+      "cid": 8058,
+      "conformer": "00001F7A00000001",
+      "request": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/name/hexane/record/JSON?record_type=3d",
+      "sha256": "bab7d4c512a091befe490c455b4cdba5b96c7af56f9850dbceb9088ad11bfb89",
+      "author": "PubChem / NCBI",
+      "method": "PubChem3D computed conformer; not experimental or guaranteed energy minimum"
+    },
+    {
+      "id": "heptane",
+      "cid": 8900,
+      "conformer": "000022C400000001",
+      "request": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/name/heptane/record/JSON?record_type=3d",
+      "sha256": "d9dd5c6aacfaf23cda23561bf10ee3803507e4800600e3e90c4540ea8131f20e",
+      "author": "PubChem / NCBI",
+      "method": "PubChem3D computed conformer; not experimental or guaranteed energy minimum"
+    },
+    {
+      "id": "octane",
+      "cid": 356,
+      "conformer": "0000016400000001",
+      "request": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/name/octane/record/JSON?record_type=3d",
+      "sha256": "1d033906831ed6bd7c8368ea239e30cb520f83b436f4de07d624a7da734c89d8",
+      "author": "PubChem / NCBI",
+      "method": "PubChem3D computed conformer; not experimental or guaranteed energy minimum"
+    },
+    {
+      "id": "nonane",
+      "cid": 8141,
+      "conformer": "00001FCD00000001",
+      "request": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/name/nonane/record/JSON?record_type=3d",
+      "sha256": "c230e1033ddd4682fac92dd0bd578fb4d34221057dff1b0e54ea9a9a55840949",
+      "author": "PubChem / NCBI",
+      "method": "PubChem3D computed conformer; not experimental or guaranteed energy minimum"
+    },
+    {
+      "id": "decane",
+      "cid": 15600,
+      "conformer": "00003CF000000001",
+      "request": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/name/decane/record/JSON?record_type=3d",
+      "sha256": "1601a3c4034d0b1bfe1e89f8c1085d7951e7acd0df1a54258798173dabaaee3c",
+      "author": "PubChem / NCBI",
+      "method": "PubChem3D computed conformer; not experimental or guaranteed energy minimum"
+    },
+    {
+      "id": "ethylene",
+      "cid": 6325,
+      "conformer": "000018B500000001",
+      "request": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/name/ethylene/record/JSON?record_type=3d",
+      "sha256": "e792141888af61091f740abaaccaf13cf80f1b8ba029f6d68fd1121bd887d014",
+      "author": "PubChem / NCBI",
+      "method": "PubChem3D computed conformer; not experimental or guaranteed energy minimum"
+    },
+    {
+      "id": "propylene",
+      "cid": 8252,
+      "conformer": "0000203C00000001",
+      "request": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/name/propylene/record/JSON?record_type=3d",
+      "sha256": "2a60804a6aefcfec7fe502a3e76adea243ad7172e2ab37d50b3bc4cd86bad97b",
+      "author": "PubChem / NCBI",
+      "method": "PubChem3D computed conformer; not experimental or guaranteed energy minimum"
+    },
+    {
+      "id": "1-butene",
+      "cid": 7844,
+      "conformer": "00001EA400000001",
+      "request": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/name/1-butene/record/JSON?record_type=3d",
+      "sha256": "cba40b926bfa986106f99d05c0dd54c3284382a2907426aac5871da862c3e8b7",
+      "author": "PubChem / NCBI",
+      "method": "PubChem3D computed conformer; not experimental or guaranteed energy minimum"
+    },
+    {
+      "id": "cis-2-butene",
+      "cid": 5287573,
+      "conformer": "0050AE9500000001",
+      "request": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/name/cis-2-butene/record/JSON?record_type=3d",
+      "sha256": "a70dca91cbd175b9f2254936c1debda78fe49a06b996f60194ab808aafd1ef74",
+      "author": "PubChem / NCBI",
+      "method": "PubChem3D computed conformer; not experimental or guaranteed energy minimum"
+    },
+    {
+      "id": "trans-2-butene",
+      "cid": 62695,
+      "conformer": "0000F4E700000001",
+      "request": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/name/trans-2-butene/record/JSON?record_type=3d",
+      "sha256": "645938b5f9b34699c5d88544b8eedcee0613bdb4b1410c3f71b51d4a7eabf583",
+      "author": "PubChem / NCBI",
+      "method": "PubChem3D computed conformer; not experimental or guaranteed energy minimum"
+    },
+    {
+      "id": "isobutene",
+      "cid": 8255,
+      "conformer": "0000203F00000001",
+      "request": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/name/isobutene/record/JSON?record_type=3d",
+      "sha256": "a399415154c05c40bb6e03f3462281aa13d11d87531558777cb61cd3731df3d2",
+      "author": "PubChem / NCBI",
+      "method": "PubChem3D computed conformer; not experimental or guaranteed energy minimum"
+    },
+    {
+      "id": "1-3-butadiene",
+      "cid": 7845,
+      "conformer": "00001EA500000001",
+      "request": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/name/1%2C3-butadiene/record/JSON?record_type=3d",
+      "sha256": "b6f7ab527d576a24485c7e9c7b809f72dd17cb04606b4f05f999e6f363015eb2",
+      "author": "PubChem / NCBI",
+      "method": "PubChem3D computed conformer; not experimental or guaranteed energy minimum"
+    },
+    {
+      "id": "isoprene",
+      "cid": 6557,
+      "conformer": "0000199D00000001",
+      "request": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/name/isoprene/record/JSON?record_type=3d",
+      "sha256": "6a7795a31a0c7a3e6430c5a1f7230050eb7f22553ce007ee4688dab30e21c19e",
+      "author": "PubChem / NCBI",
+      "method": "PubChem3D computed conformer; not experimental or guaranteed energy minimum"
+    },
+    {
+      "id": "acetylene",
+      "cid": 6326,
+      "conformer": "000018B600000001",
+      "request": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/name/acetylene/record/JSON?record_type=3d",
+      "sha256": "42fd3b6bf990ca6d1d53b3ee8a9ab8ecf14fd9387b071dc5199f9c55b57ec09f",
+      "author": "PubChem / NCBI",
+      "method": "PubChem3D computed conformer; not experimental or guaranteed energy minimum"
+    },
+    {
+      "id": "propyne",
+      "cid": 6335,
+      "conformer": "000018BF00000001",
+      "request": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/name/propyne/record/JSON?record_type=3d",
+      "sha256": "cec65b271b65011fd5fb58f5962df7cce1ce54cde3f51a0d1c79750974a421b3",
+      "author": "PubChem / NCBI",
+      "method": "PubChem3D computed conformer; not experimental or guaranteed energy minimum"
+    },
+    {
+      "id": "1-butyne",
+      "cid": 7846,
+      "conformer": "00001EA600000001",
+      "request": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/name/1-butyne/record/JSON?record_type=3d",
+      "sha256": "325ce6df6d8bc3ffb24fd8f1753b420fbe33f1336fc31ea1b317aa24e6989eb6",
+      "author": "PubChem / NCBI",
+      "method": "PubChem3D computed conformer; not experimental or guaranteed energy minimum"
+    },
+    {
+      "id": "2-butyne",
+      "cid": 10419,
+      "conformer": "000028B300000001",
+      "request": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/name/2-butyne/record/JSON?record_type=3d",
+      "sha256": "5af6caa8cf8bffc4f740f65cc5c81c8ed51c5bc9a9c5687169a8792b85d4f771",
+      "author": "PubChem / NCBI",
+      "method": "PubChem3D computed conformer; not experimental or guaranteed energy minimum"
+    },
+    {
+      "id": "cyclopropane",
+      "cid": 6351,
+      "conformer": "000018CF00000001",
+      "request": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/name/cyclopropane/record/JSON?record_type=3d",
+      "sha256": "c1ad4369ac49d243f67e70734a55599a95d64ebee638c110821d78e50a770a60",
+      "author": "PubChem / NCBI",
+      "method": "PubChem3D computed conformer; not experimental or guaranteed energy minimum"
+    },
+    {
+      "id": "cyclobutane",
+      "cid": 9250,
+      "conformer": "0000242200000001",
+      "request": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/name/cyclobutane/record/JSON?record_type=3d",
+      "sha256": "b40f0c3b056b95ec6fed92d89002ecd4b2674489eb60beb57ef2fe24df1092b2",
+      "author": "PubChem / NCBI",
+      "method": "PubChem3D computed conformer; not experimental or guaranteed energy minimum"
+    },
+    {
+      "id": "cyclopentane",
+      "cid": 9253,
+      "conformer": "0000242500000001",
+      "request": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/name/cyclopentane/record/JSON?record_type=3d",
+      "sha256": "d26ce4593440ed7b9ea76554c6345d9ff7a7619f7dcb6fd4f13e70cffb6c65f1",
+      "author": "PubChem / NCBI",
+      "method": "PubChem3D computed conformer; not experimental or guaranteed energy minimum"
+    },
+    {
+      "id": "cyclohexane",
+      "cid": 8078,
+      "conformer": "00001F8E00000001",
+      "request": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/name/cyclohexane/record/JSON?record_type=3d",
+      "sha256": "2580ba62204ecf7a909bd5dc2f7542162e01ec5903db7a44de194c5c9c4aa957",
+      "author": "PubChem / NCBI",
+      "method": "PubChem3D computed conformer; not experimental or guaranteed energy minimum"
+    },
+    {
+      "id": "cycloheptane",
+      "cid": 9265,
+      "conformer": "0000243100000001",
+      "request": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/name/cycloheptane/record/JSON?record_type=3d",
+      "sha256": "62679cfaeadd666b0cb00b49695cb41ba334056e5e6c935401bc9ce53d4f95b4",
+      "author": "PubChem / NCBI",
+      "method": "PubChem3D computed conformer; not experimental or guaranteed energy minimum"
+    },
+    {
+      "id": "cyclooctane",
+      "cid": 9266,
+      "conformer": "0000243200000001",
+      "request": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/name/cyclooctane/record/JSON?record_type=3d",
+      "sha256": "31e229d848efb0e0af46ec46db8a5d97f9ec5b6259d6fa4b2829b63bbe8a5259",
+      "author": "PubChem / NCBI",
+      "method": "PubChem3D computed conformer; not experimental or guaranteed energy minimum"
+    },
+    {
+      "id": "cyclohexene",
+      "cid": 8079,
+      "conformer": "00001F8F00000001",
+      "request": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/name/cyclohexene/record/JSON?record_type=3d",
+      "sha256": "d1a85a915ad0da87433e148313f0ed6fe2b1cce3116925fbaab688f22b9e71bc",
+      "author": "PubChem / NCBI",
+      "method": "PubChem3D computed conformer; not experimental or guaranteed energy minimum"
+    },
+    {
+      "id": "benzene",
+      "cid": 241,
+      "conformer": "000000F100000001",
+      "request": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/name/benzene/record/JSON?record_type=3d",
+      "sha256": "22bf570fa422636e0137635c4c84db527d78f2dab671c0589b6008ebe5d97be6",
+      "author": "PubChem / NCBI",
+      "method": "PubChem3D computed conformer; not experimental or guaranteed energy minimum"
+    },
+    {
+      "id": "toluene",
+      "cid": 1140,
+      "conformer": "0000047400000001",
+      "request": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/name/toluene/record/JSON?record_type=3d",
+      "sha256": "a063de9c207ebf2aabf481563076941ee63357b7a5e8dd203662e181c67378d7",
+      "author": "PubChem / NCBI",
+      "method": "PubChem3D computed conformer; not experimental or guaranteed energy minimum"
+    },
+    {
+      "id": "ethylbenzene",
+      "cid": 7500,
+      "conformer": "00001D4C00000001",
+      "request": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/name/ethylbenzene/record/JSON?record_type=3d",
+      "sha256": "682dead2f74ba901257b287414a46b85549c42a7e8d77e5c805a733fa22bfb74",
+      "author": "PubChem / NCBI",
+      "method": "PubChem3D computed conformer; not experimental or guaranteed energy minimum"
+    },
+    {
+      "id": "styrene",
+      "cid": 7501,
+      "conformer": "00001D4D00000001",
+      "request": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/name/styrene/record/JSON?record_type=3d",
+      "sha256": "99d25ad78551f6c38a8d80e2de9acc20d8b0313b03a027bf7399e25b66a59a19",
+      "author": "PubChem / NCBI",
+      "method": "PubChem3D computed conformer; not experimental or guaranteed energy minimum"
+    },
+    {
+      "id": "o-xylene",
+      "cid": 7237,
+      "conformer": "00001C4500000001",
+      "request": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/name/o-xylene/record/JSON?record_type=3d",
+      "sha256": "330ece704e70cecef9ea26b431dce967f53d314c87e4c5993e499357de1874ac",
+      "author": "PubChem / NCBI",
+      "method": "PubChem3D computed conformer; not experimental or guaranteed energy minimum"
+    },
+    {
+      "id": "m-xylene",
+      "cid": 7929,
+      "conformer": "00001EF900000001",
+      "request": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/name/m-xylene/record/JSON?record_type=3d",
+      "sha256": "80e19116742ae9a6c94d4c003f8e806a66fe78f7589202164e798e34bb9c87cb",
+      "author": "PubChem / NCBI",
+      "method": "PubChem3D computed conformer; not experimental or guaranteed energy minimum"
+    },
+    {
+      "id": "p-xylene",
+      "cid": 7809,
+      "conformer": "00001E8100000001",
+      "request": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/name/p-xylene/record/JSON?record_type=3d",
+      "sha256": "e7177287af04d33737591c0d05bc2a45cfee8d8d221e12882cb31a0d70475209",
+      "author": "PubChem / NCBI",
+      "method": "PubChem3D computed conformer; not experimental or guaranteed energy minimum"
+    },
+    {
+      "id": "naphthalene",
+      "cid": 931,
+      "conformer": "000003A300000001",
+      "request": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/name/naphthalene/record/JSON?record_type=3d",
+      "sha256": "c99ccfe50777f9dcd62658b61ff07646cb77064604edc626d4f9ea023c576b61",
+      "author": "PubChem / NCBI",
+      "method": "PubChem3D computed conformer; not experimental or guaranteed energy minimum"
+    },
+    {
+      "id": "biphenyl",
+      "cid": 7095,
+      "conformer": "00001BB700000001",
+      "request": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/name/biphenyl/record/JSON?record_type=3d",
+      "sha256": "f00f963eb2ba7c53565b3de2f993794cad95ebe0045767694b0f09eeb6fb9549",
+      "author": "PubChem / NCBI",
+      "method": "PubChem3D computed conformer; not experimental or guaranteed energy minimum"
+    },
+    {
+      "id": "methanol",
+      "cid": 887,
+      "conformer": "0000037700000001",
+      "request": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/name/methanol/record/JSON?record_type=3d",
+      "sha256": "62ce4657b1bd857e830db0c296bd533bb3e4d1f50f9fbf276b704a5869cfe64c",
+      "author": "PubChem / NCBI",
+      "method": "PubChem3D computed conformer; not experimental or guaranteed energy minimum"
+    },
+    {
+      "id": "ethanol",
+      "cid": 702,
+      "conformer": "000002BE00000001",
+      "request": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/name/ethanol/record/JSON?record_type=3d",
+      "sha256": "8314c0b5c301f06dd3e8d662ddb5d431cd99b69a41811c9bb64f8461326fac78",
+      "author": "PubChem / NCBI",
+      "method": "PubChem3D computed conformer; not experimental or guaranteed energy minimum"
+    },
+    {
+      "id": "1-propanol",
+      "cid": 1031,
+      "conformer": "0000040700000001",
+      "request": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/name/1-propanol/record/JSON?record_type=3d",
+      "sha256": "4d25be2f5817f848c6b241f5e860a98ba4dbc84f909c4e3cccdbbd705feb0a18",
+      "author": "PubChem / NCBI",
+      "method": "PubChem3D computed conformer; not experimental or guaranteed energy minimum"
+    },
+    {
+      "id": "2-propanol",
+      "cid": 3776,
+      "conformer": "00000EC000000001",
+      "request": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/name/2-propanol/record/JSON?record_type=3d",
+      "sha256": "dd887c96d288668d5c6c530283da1598d42367bb2a6900a4bef84c9e259d0962",
+      "author": "PubChem / NCBI",
+      "method": "PubChem3D computed conformer; not experimental or guaranteed energy minimum"
+    },
+    {
+      "id": "1-butanol",
+      "cid": 263,
+      "conformer": "0000010700000001",
+      "request": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/name/1-butanol/record/JSON?record_type=3d",
+      "sha256": "d884bff3d8f7d26067985ab7293f133456c43e441090b64eba8482e345903fbe",
+      "author": "PubChem / NCBI",
+      "method": "PubChem3D computed conformer; not experimental or guaranteed energy minimum"
+    },
+    {
+      "id": "2-butanol",
+      "cid": 6568,
+      "conformer": "000019A800000002",
+      "request": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/name/2-butanol/record/JSON?record_type=3d",
+      "sha256": "844187f1d0d60ded82d224e40e8d4a18d965046224f9e9839cb1659fbed23689",
+      "author": "PubChem / NCBI",
+      "method": "PubChem3D computed conformer; not experimental or guaranteed energy minimum"
+    },
+    {
+      "id": "tert-butanol",
+      "cid": 6386,
+      "conformer": "000018F200000001",
+      "request": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/name/tert-butanol/record/JSON?record_type=3d",
+      "sha256": "34b0ec6270572b0786535774a26a7a917e5a5d3a07b282fa3788992b1e63b936",
+      "author": "PubChem / NCBI",
+      "method": "PubChem3D computed conformer; not experimental or guaranteed energy minimum"
+    },
+    {
+      "id": "ethylene-glycol",
+      "cid": 174,
+      "conformer": "000000AE00000001",
+      "request": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/name/ethylene%20glycol/record/JSON?record_type=3d",
+      "sha256": "ac49dcb789372f33c8dabadbff5d0777c3e1d920709df26a8753a4ad211a06e7",
+      "author": "PubChem / NCBI",
+      "method": "PubChem3D computed conformer; not experimental or guaranteed energy minimum"
+    },
+    {
+      "id": "glycerol",
+      "cid": 753,
+      "conformer": "000002F100000001",
+      "request": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/name/glycerol/record/JSON?record_type=3d",
+      "sha256": "bea8a1605ba9d95369d62e2badd72d0563efabdd63db47e7df3b1912d37ae632",
+      "author": "PubChem / NCBI",
+      "method": "PubChem3D computed conformer; not experimental or guaranteed energy minimum"
+    },
+    {
+      "id": "phenol",
+      "cid": 996,
+      "conformer": "000003E400000001",
+      "request": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/name/phenol/record/JSON?record_type=3d",
+      "sha256": "ef5a6620f2aa7dd0a7f0ad4d0a02694bd76e3280d334a8d314294198b416db8b",
+      "author": "PubChem / NCBI",
+      "method": "PubChem3D computed conformer; not experimental or guaranteed energy minimum"
+    },
+    {
+      "id": "benzyl-alcohol",
+      "cid": 244,
+      "conformer": "000000F400000001",
+      "request": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/name/benzyl%20alcohol/record/JSON?record_type=3d",
+      "sha256": "c93322a28597f3585f66e81b82dd094b9b8f51a834403237f3d53247a9cc25f8",
+      "author": "PubChem / NCBI",
+      "method": "PubChem3D computed conformer; not experimental or guaranteed energy minimum"
+    },
+    {
+      "id": "dimethyl-ether",
+      "cid": 8254,
+      "conformer": "0000203E00000001",
+      "request": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/name/dimethyl%20ether/record/JSON?record_type=3d",
+      "sha256": "eff4269c321d6e447d6998b7e092c37951805f00ad5e4985f8dae10ff733cb48",
+      "author": "PubChem / NCBI",
+      "method": "PubChem3D computed conformer; not experimental or guaranteed energy minimum"
+    },
+    {
+      "id": "diethyl-ether",
+      "cid": 3283,
+      "conformer": "00000CD300000001",
+      "request": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/name/diethyl%20ether/record/JSON?record_type=3d",
+      "sha256": "747d051108fa76a9b49cdc0ae545bca54b5d2ad8f1884e96628f5674bc68a3df",
+      "author": "PubChem / NCBI",
+      "method": "PubChem3D computed conformer; not experimental or guaranteed energy minimum"
+    },
+    {
+      "id": "methyl-ethyl-ether",
+      "cid": 10903,
+      "conformer": "00002A9700000001",
+      "request": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/name/methyl%20ethyl%20ether/record/JSON?record_type=3d",
+      "sha256": "a480047743eec251853c9e7d65310f7cf15b28a93a713b369986ec01afc95bb9",
+      "author": "PubChem / NCBI",
+      "method": "PubChem3D computed conformer; not experimental or guaranteed energy minimum"
+    },
+    {
+      "id": "tetrahydrofuran",
+      "cid": 8028,
+      "conformer": "00001F5C00000001",
+      "request": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/name/tetrahydrofuran/record/JSON?record_type=3d",
+      "sha256": "9de3da9f209cc0b3165db0f13dd1130b46d394dfc0d94ae85efcbb5702609609",
+      "author": "PubChem / NCBI",
+      "method": "PubChem3D computed conformer; not experimental or guaranteed energy minimum"
+    },
+    {
+      "id": "1-4-dioxane",
+      "cid": 31275,
+      "conformer": "00007A2B00000001",
+      "request": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/name/1%2C4-dioxane/record/JSON?record_type=3d",
+      "sha256": "dba64e4404c2ab0792685c796254d6c55baf4ff43ee9d367548e6ea7be2aaea8",
+      "author": "PubChem / NCBI",
+      "method": "PubChem3D computed conformer; not experimental or guaranteed energy minimum"
+    },
+    {
+      "id": "anisole",
+      "cid": 7519,
+      "conformer": "00001D5F00000001",
+      "request": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/name/anisole/record/JSON?record_type=3d",
+      "sha256": "d4020e8271a358fd5aa809478fc498cbd38251340793e2e45c87fc06c3cac522",
+      "author": "PubChem / NCBI",
+      "method": "PubChem3D computed conformer; not experimental or guaranteed energy minimum"
+    },
+    {
+      "id": "formaldehyde",
+      "cid": 712,
+      "conformer": "000002C800000001",
+      "request": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/name/formaldehyde/record/JSON?record_type=3d",
+      "sha256": "3c299104402dac0b9000e048c361a33018eb4c84c1403ab7da14b8b64eccadd0",
+      "author": "PubChem / NCBI",
+      "method": "PubChem3D computed conformer; not experimental or guaranteed energy minimum"
+    },
+    {
+      "id": "acetaldehyde",
+      "cid": 177,
+      "conformer": "000000B100000001",
+      "request": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/name/acetaldehyde/record/JSON?record_type=3d",
+      "sha256": "faaa3fa352b22990c6420fbe7b3637d14f2cee3b16316708660da6730465bab2",
+      "author": "PubChem / NCBI",
+      "method": "PubChem3D computed conformer; not experimental or guaranteed energy minimum"
+    },
+    {
+      "id": "propanal",
+      "cid": 527,
+      "conformer": "0000020F00000001",
+      "request": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/name/propanal/record/JSON?record_type=3d",
+      "sha256": "942ece5fa8c3bfb5a0518dc2eb79a17c8281e127fa00b436e0cc90c44e1ba992",
+      "author": "PubChem / NCBI",
+      "method": "PubChem3D computed conformer; not experimental or guaranteed energy minimum"
+    },
+    {
+      "id": "butanal",
+      "cid": 261,
+      "conformer": "0000010500000001",
+      "request": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/name/butanal/record/JSON?record_type=3d",
+      "sha256": "f0263fab294355c78ef7cfca66a3cc4db448e02b956b75e0ae81e826bc6f2b77",
+      "author": "PubChem / NCBI",
+      "method": "PubChem3D computed conformer; not experimental or guaranteed energy minimum"
+    },
+    {
+      "id": "benzaldehyde",
+      "cid": 240,
+      "conformer": "000000F000000001",
+      "request": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/name/benzaldehyde/record/JSON?record_type=3d",
+      "sha256": "acce1b00134b4b0526ad571b6f831251553ab5d0f6d79ae1516ba16eb8da2919",
+      "author": "PubChem / NCBI",
+      "method": "PubChem3D computed conformer; not experimental or guaranteed energy minimum"
+    },
+    {
+      "id": "acetone",
+      "cid": 180,
+      "conformer": "000000B400000001",
+      "request": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/name/acetone/record/JSON?record_type=3d",
+      "sha256": "bc9cbd2801955b01f3d54a17fcf8236aa69e86cec782c1b895dc636ab2288762",
+      "author": "PubChem / NCBI",
+      "method": "PubChem3D computed conformer; not experimental or guaranteed energy minimum"
+    },
+    {
+      "id": "2-butanone",
+      "cid": 6569,
+      "conformer": "000019A900000001",
+      "request": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/name/2-butanone/record/JSON?record_type=3d",
+      "sha256": "be5cf4261e88672f8250c12938a168241b2ec6ec8ed3cdf2d515a15f60c8d2a1",
+      "author": "PubChem / NCBI",
+      "method": "PubChem3D computed conformer; not experimental or guaranteed energy minimum"
+    },
+    {
+      "id": "cyclohexanone",
+      "cid": 7967,
+      "conformer": "00001F1F00000001",
+      "request": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/name/cyclohexanone/record/JSON?record_type=3d",
+      "sha256": "a7d2a8d25208113296c89ea263255bc85c754feade83608ebb0030eeecdc75d9",
+      "author": "PubChem / NCBI",
+      "method": "PubChem3D computed conformer; not experimental or guaranteed energy minimum"
+    },
+    {
+      "id": "acetophenone",
+      "cid": 7410,
+      "conformer": "00001CF200000001",
+      "request": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/name/acetophenone/record/JSON?record_type=3d",
+      "sha256": "df7be7da0d144ab6d9722b91fe58d861f2809e792ba910fe911aa867f79a6182",
+      "author": "PubChem / NCBI",
+      "method": "PubChem3D computed conformer; not experimental or guaranteed energy minimum"
+    },
+    {
+      "id": "formic-acid",
+      "cid": 284,
+      "conformer": "0000011C00000001",
+      "request": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/name/formic%20acid/record/JSON?record_type=3d",
+      "sha256": "a7f974006476a22a80331bd18b32432cd96c1c00b1f5dbd207bb7eb8641c9793",
+      "author": "PubChem / NCBI",
+      "method": "PubChem3D computed conformer; not experimental or guaranteed energy minimum"
+    },
+    {
+      "id": "acetic-acid",
+      "cid": 176,
+      "conformer": "000000B000000001",
+      "request": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/name/acetic%20acid/record/JSON?record_type=3d",
+      "sha256": "35fc4d02e28fdfba140ae0ef14a9549b0dfba450beafcc49206694ae6cbcd5ec",
+      "author": "PubChem / NCBI",
+      "method": "PubChem3D computed conformer; not experimental or guaranteed energy minimum"
+    },
+    {
+      "id": "benzoic-acid",
+      "cid": 243,
+      "conformer": "000000F300000001",
+      "request": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/name/benzoic%20acid/record/JSON?record_type=3d",
+      "sha256": "e87d2770861b1ae198dd05dbc29828b8d2f45547e466f82f0cfee68e6023c31b",
+      "author": "PubChem / NCBI",
+      "method": "PubChem3D computed conformer; not experimental or guaranteed energy minimum"
+    },
+    {
+      "id": "oxalic-acid",
+      "cid": 971,
+      "conformer": "000003CB00000001",
+      "request": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/name/oxalic%20acid/record/JSON?record_type=3d",
+      "sha256": "f7dea4d15bfd9bf75d06334cbd6219a92c96d219e4000092411314e3dead17ce",
+      "author": "PubChem / NCBI",
+      "method": "PubChem3D computed conformer; not experimental or guaranteed energy minimum"
+    },
+    {
+      "id": "succinic-acid",
+      "cid": 1110,
+      "conformer": "0000045600000001",
+      "request": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/name/succinic%20acid/record/JSON?record_type=3d",
+      "sha256": "899c407288cd77e06e6ef52795c0f019f111592f0910c48268adf4f0abd4c693",
+      "author": "PubChem / NCBI",
+      "method": "PubChem3D computed conformer; not experimental or guaranteed energy minimum"
+    },
+    {
+      "id": "citric-acid",
+      "cid": 311,
+      "conformer": "0000013700000001",
+      "request": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/name/citric%20acid/record/JSON?record_type=3d",
+      "sha256": "ff2fb88dc1ae1f04ad7132c674e5e9f295b66b748670b0224bb208abc0695bc4",
+      "author": "PubChem / NCBI",
+      "method": "PubChem3D computed conformer; not experimental or guaranteed energy minimum"
+    },
+    {
+      "id": "salicylic-acid",
+      "cid": 338,
+      "conformer": "0000015200000001",
+      "request": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/name/salicylic%20acid/record/JSON?record_type=3d",
+      "sha256": "5ba2bbc831e24e9f30da3f4fea4105f16629be4fe28efbedf398b9b4a2b160f6",
+      "author": "PubChem / NCBI",
+      "method": "PubChem3D computed conformer; not experimental or guaranteed energy minimum"
+    },
+    {
+      "id": "methyl-formate",
+      "cid": 7865,
+      "conformer": "00001EB900000001",
+      "request": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/name/methyl%20formate/record/JSON?record_type=3d",
+      "sha256": "116c1a7c1af1b87a1820e1aa2f0237b176499e5493f986ca241eeb39baddcb53",
+      "author": "PubChem / NCBI",
+      "method": "PubChem3D computed conformer; not experimental or guaranteed energy minimum"
+    },
+    {
+      "id": "ethyl-formate",
+      "cid": 8025,
+      "conformer": "00001F5900000001",
+      "request": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/name/ethyl%20formate/record/JSON?record_type=3d",
+      "sha256": "2a84b97ddff3636a8ee44ef988c5592575514df00c577bd027463418e5a8b49a",
+      "author": "PubChem / NCBI",
+      "method": "PubChem3D computed conformer; not experimental or guaranteed energy minimum"
+    },
+    {
+      "id": "methyl-acetate",
+      "cid": 6584,
+      "conformer": "000019B800000001",
+      "request": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/name/methyl%20acetate/record/JSON?record_type=3d",
+      "sha256": "9540e2ab2ea8d3f9131190e396c9a14870b99aa506cbe8cbe8733ba25143f13d",
+      "author": "PubChem / NCBI",
+      "method": "PubChem3D computed conformer; not experimental or guaranteed energy minimum"
+    },
+    {
+      "id": "ethyl-acetate",
+      "cid": 8857,
+      "conformer": "0000229900000001",
+      "request": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/name/ethyl%20acetate/record/JSON?record_type=3d",
+      "sha256": "7eaf9f6c149187c7152dc8be821c8f8d0ebe6114bbde6d5d41c94644744941f3",
+      "author": "PubChem / NCBI",
+      "method": "PubChem3D computed conformer; not experimental or guaranteed energy minimum"
+    },
+    {
+      "id": "butyl-acetate",
+      "cid": 31272,
+      "conformer": "00007A2800000001",
+      "request": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/name/butyl%20acetate/record/JSON?record_type=3d",
+      "sha256": "9c948b78a159d81cf56b48be2a47a5d425bffc44d1a8ae85789114b7ddc08164",
+      "author": "PubChem / NCBI",
+      "method": "PubChem3D computed conformer; not experimental or guaranteed energy minimum"
+    },
+    {
+      "id": "methyl-benzoate",
+      "cid": 7150,
+      "conformer": "00001BEE00000001",
+      "request": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/name/methyl%20benzoate/record/JSON?record_type=3d",
+      "sha256": "e0a40434f01b5ba4b191b5031bcc086a70c324c2faa7d09d66a77756635f1c2f",
+      "author": "PubChem / NCBI",
+      "method": "PubChem3D computed conformer; not experimental or guaranteed energy minimum"
+    },
+    {
+      "id": "methylamine",
+      "cid": 6329,
+      "conformer": "000018B900000001",
+      "request": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/name/methylamine/record/JSON?record_type=3d",
+      "sha256": "5dd736f50d40ce00323ea579eedfce5ec5835113d498c1e428966b93d05bb51c",
+      "author": "PubChem / NCBI",
+      "method": "PubChem3D computed conformer; not experimental or guaranteed energy minimum"
+    },
+    {
+      "id": "ethylamine",
+      "cid": 6341,
+      "conformer": "000018C500000001",
+      "request": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/name/ethylamine/record/JSON?record_type=3d",
+      "sha256": "1f869113eeb7218e8db8efaf9f112c27a041376c72beaa56f7823969e0df900d",
+      "author": "PubChem / NCBI",
+      "method": "PubChem3D computed conformer; not experimental or guaranteed energy minimum"
+    },
+    {
+      "id": "dimethylamine",
+      "cid": 674,
+      "conformer": "000002A200000001",
+      "request": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/name/dimethylamine/record/JSON?record_type=3d",
+      "sha256": "3ddf63f9e6539896df0f3025517ad2f996cb0fdf1eae261f781f90aed8018597",
+      "author": "PubChem / NCBI",
+      "method": "PubChem3D computed conformer; not experimental or guaranteed energy minimum"
+    },
+    {
+      "id": "trimethylamine",
+      "cid": 1146,
+      "conformer": "0000047A00000001",
+      "request": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/name/trimethylamine/record/JSON?record_type=3d",
+      "sha256": "2432b28561cf3c23560c524f718ad530f2e8a169ae2eceb406f9c3793d55bdf2",
+      "author": "PubChem / NCBI",
+      "method": "PubChem3D computed conformer; not experimental or guaranteed energy minimum"
+    },
+    {
+      "id": "triethylamine",
+      "cid": 8471,
+      "conformer": "0000211700000002",
+      "request": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/name/triethylamine/record/JSON?record_type=3d",
+      "sha256": "b8ec6df2ef5323bc6dee947246ca0277df49fa7bcf8873835d3afb473ed12d21",
+      "author": "PubChem / NCBI",
+      "method": "PubChem3D computed conformer; not experimental or guaranteed energy minimum"
+    },
+    {
+      "id": "aniline",
+      "cid": 6115,
+      "conformer": "000017E300000001",
+      "request": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/name/aniline/record/JSON?record_type=3d",
+      "sha256": "e771d9af4f516751aa2041f58d77a78fa2bf3147a4aec8e54f1b141505ad4d66",
+      "author": "PubChem / NCBI",
+      "method": "PubChem3D computed conformer; not experimental or guaranteed energy minimum"
+    },
+    {
+      "id": "ethylenediamine",
+      "cid": 3301,
+      "conformer": "00000CE500000001",
+      "request": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/name/ethylenediamine/record/JSON?record_type=3d",
+      "sha256": "66f02fe44a072e385c30895510ed226a9f48ef816487daac98c4dd5a236b9144",
+      "author": "PubChem / NCBI",
+      "method": "PubChem3D computed conformer; not experimental or guaranteed energy minimum"
+    },
+    {
+      "id": "formamide",
+      "cid": 713,
+      "conformer": "000002C900000001",
+      "request": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/name/formamide/record/JSON?record_type=3d",
+      "sha256": "f0eac13438561aa01bace3152deed7a864426d96b5080125a608c7caeb959bea",
+      "author": "PubChem / NCBI",
+      "method": "PubChem3D computed conformer; not experimental or guaranteed energy minimum"
+    },
+    {
+      "id": "acetamide",
+      "cid": 178,
+      "conformer": "000000B200000001",
+      "request": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/name/acetamide/record/JSON?record_type=3d",
+      "sha256": "562cfbb130a94b8f2df2ec1392a7341ecc04a0468b86b65d8c342aac91c1f14f",
+      "author": "PubChem / NCBI",
+      "method": "PubChem3D computed conformer; not experimental or guaranteed energy minimum"
+    },
+    {
+      "id": "urea",
+      "cid": 1176,
+      "conformer": "0000049800000001",
+      "request": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/name/urea/record/JSON?record_type=3d",
+      "sha256": "5a91e19816c4ba44cabf36dbb63747c74ffb5669e7ea94a82eb286de521ef0b5",
+      "author": "PubChem / NCBI",
+      "method": "PubChem3D computed conformer; not experimental or guaranteed energy minimum"
+    },
+    {
+      "id": "acetonitrile",
+      "cid": 6342,
+      "conformer": "000018C600000001",
+      "request": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/name/acetonitrile/record/JSON?record_type=3d",
+      "sha256": "22f987cd7f4d2782462834b9557e2214f94b60a649c6ab53fff6342ac7f184bf",
+      "author": "PubChem / NCBI",
+      "method": "PubChem3D computed conformer; not experimental or guaranteed energy minimum"
+    },
+    {
+      "id": "benzonitrile",
+      "cid": 7505,
+      "conformer": "00001D5100000001",
+      "request": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/name/benzonitrile/record/JSON?record_type=3d",
+      "sha256": "4edddc4a8873f69f3aec9a880b5d039fbb5aaceb6e474276bbc0de5770458316",
+      "author": "PubChem / NCBI",
+      "method": "PubChem3D computed conformer; not experimental or guaranteed energy minimum"
+    },
+    {
+      "id": "pyridine",
+      "cid": 1049,
+      "conformer": "0000041900000001",
+      "request": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/name/pyridine/record/JSON?record_type=3d",
+      "sha256": "e8aee49b40b753c8fea42d2f70b08cf5bef9923a6a11ab1e9d2c5028f8bc551a",
+      "author": "PubChem / NCBI",
+      "method": "PubChem3D computed conformer; not experimental or guaranteed energy minimum"
+    },
+    {
+      "id": "pyrrole",
+      "cid": 8027,
+      "conformer": "00001F5B00000001",
+      "request": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/name/pyrrole/record/JSON?record_type=3d",
+      "sha256": "e9e80ad7c00db932600a89b053b949ef5b30a5250e2fe4755cbbbffb26228a94",
+      "author": "PubChem / NCBI",
+      "method": "PubChem3D computed conformer; not experimental or guaranteed energy minimum"
+    },
+    {
+      "id": "furan",
+      "cid": 8029,
+      "conformer": "00001F5D00000001",
+      "request": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/name/furan/record/JSON?record_type=3d",
+      "sha256": "e61b10816c95790fdc38225f0a05ec7b73795d23e731bb0184a630f3b27be322",
+      "author": "PubChem / NCBI",
+      "method": "PubChem3D computed conformer; not experimental or guaranteed energy minimum"
+    },
+    {
+      "id": "thiophene",
+      "cid": 8030,
+      "conformer": "00001F5E00000001",
+      "request": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/name/thiophene/record/JSON?record_type=3d",
+      "sha256": "bc17eee929c2ee61697e48635bbb917223ee2f58cdccaa657338752e611b64a2",
+      "author": "PubChem / NCBI",
+      "method": "PubChem3D computed conformer; not experimental or guaranteed energy minimum"
+    },
+    {
+      "id": "imidazole",
+      "cid": 795,
+      "conformer": "0000031B00000001",
+      "request": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/name/imidazole/record/JSON?record_type=3d",
+      "sha256": "580a3db9863577abb29c6a8c00021a3c1169d22f7a4f922c2d9be5c41adc412c",
+      "author": "PubChem / NCBI",
+      "method": "PubChem3D computed conformer; not experimental or guaranteed energy minimum"
+    },
+    {
+      "id": "pyrimidine",
+      "cid": 9260,
+      "conformer": "0000242C00000001",
+      "request": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/name/pyrimidine/record/JSON?record_type=3d",
+      "sha256": "699c927de02d8251b107a4d81914fd8ef5981e17f6f3b3cda37eb381283d9ed7",
+      "author": "PubChem / NCBI",
+      "method": "PubChem3D computed conformer; not experimental or guaranteed energy minimum"
+    },
+    {
+      "id": "pyrazine",
+      "cid": 9261,
+      "conformer": "0000242D00000001",
+      "request": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/name/pyrazine/record/JSON?record_type=3d",
+      "sha256": "694cb992cf9ed1097ac0f00e9c842f9873f603bcf1ff741108873da5e2dd3e1b",
+      "author": "PubChem / NCBI",
+      "method": "PubChem3D computed conformer; not experimental or guaranteed energy minimum"
+    },
+    {
+      "id": "indole",
+      "cid": 798,
+      "conformer": "0000031E00000001",
+      "request": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/name/indole/record/JSON?record_type=3d",
+      "sha256": "3a98f7ddc9a13663cedb73c81d675e7d510912970f661090e7d678617a909934",
+      "author": "PubChem / NCBI",
+      "method": "PubChem3D computed conformer; not experimental or guaranteed energy minimum"
+    },
+    {
+      "id": "quinoline",
+      "cid": 7047,
+      "conformer": "00001B8700000001",
+      "request": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/name/quinoline/record/JSON?record_type=3d",
+      "sha256": "afae379e371707445f1015cfec29e081f8693376a0d297303ff9085d03ea82e0",
+      "author": "PubChem / NCBI",
+      "method": "PubChem3D computed conformer; not experimental or guaranteed energy minimum"
+    },
+    {
+      "id": "purine",
+      "cid": 1044,
+      "conformer": "0000041400000001",
+      "request": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/name/purine/record/JSON?record_type=3d",
+      "sha256": "04c7bdcf5dc89876379352c24ef6b0d48378f192f07eb2802a3099dd63693a43",
+      "author": "PubChem / NCBI",
+      "method": "PubChem3D computed conformer; not experimental or guaranteed energy minimum"
+    },
+    {
+      "id": "adenine",
+      "cid": 190,
+      "conformer": "000000BE00000001",
+      "request": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/name/adenine/record/JSON?record_type=3d",
+      "sha256": "f40ade420cf755906fb67050aa6dcb2df189891974297c06cff6106b5a39750d",
+      "author": "PubChem / NCBI",
+      "method": "PubChem3D computed conformer; not experimental or guaranteed energy minimum"
+    },
+    {
+      "id": "guanine",
+      "cid": 135398634,
+      "conformer": "081204EA00000001",
+      "request": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/name/guanine/record/JSON?record_type=3d",
+      "sha256": "c183df3ebb55cac164ca64fc9d50be27b138c76a582a478e48f82095694f29cc",
+      "author": "PubChem / NCBI",
+      "method": "PubChem3D computed conformer; not experimental or guaranteed energy minimum"
+    },
+    {
+      "id": "cytosine",
+      "cid": 597,
+      "conformer": "0000025500000001",
+      "request": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/name/cytosine/record/JSON?record_type=3d",
+      "sha256": "e9c671848b779ae004b1b7f360ae20e2e38e93b404440fcbe46f156d3fa64e30",
+      "author": "PubChem / NCBI",
+      "method": "PubChem3D computed conformer; not experimental or guaranteed energy minimum"
+    },
+    {
+      "id": "thymine",
+      "cid": 1135,
+      "conformer": "0000046F00000001",
+      "request": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/name/thymine/record/JSON?record_type=3d",
+      "sha256": "75bf8d8b29c10d4ad8923f4410ed9b5aa08fb76616a5efa80befe16562483893",
+      "author": "PubChem / NCBI",
+      "method": "PubChem3D computed conformer; not experimental or guaranteed energy minimum"
+    },
+    {
+      "id": "uracil",
+      "cid": 1174,
+      "conformer": "0000049600000001",
+      "request": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/name/uracil/record/JSON?record_type=3d",
+      "sha256": "30e0b21205dad6560caa8a90cdb53bb31a8046ff2850bac57a6228a371770b16",
+      "author": "PubChem / NCBI",
+      "method": "PubChem3D computed conformer; not experimental or guaranteed energy minimum"
+    },
+    {
+      "id": "glycine",
+      "cid": 750,
+      "conformer": "000002EE00000001",
+      "request": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/name/glycine/record/JSON?record_type=3d",
+      "sha256": "1b42821c6f48ea9526d63204a9f55a84475f392933ef51de1d51a03b023b55c9",
+      "author": "PubChem / NCBI",
+      "method": "PubChem3D computed conformer; not experimental or guaranteed energy minimum"
+    },
+    {
+      "id": "l-alanine",
+      "cid": 5950,
+      "conformer": "0000173E00000001",
+      "request": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/name/L-alanine/record/JSON?record_type=3d",
+      "sha256": "b7de0002ebac6094d1e37d8605f27281c9389170092b51456a78179538b1d9ad",
+      "author": "PubChem / NCBI",
+      "method": "PubChem3D computed conformer; not experimental or guaranteed energy minimum"
+    },
+    {
+      "id": "l-valine",
+      "cid": 6287,
+      "conformer": "0000188F00000002",
+      "request": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/name/L-valine/record/JSON?record_type=3d",
+      "sha256": "d741b136176c020c8b962f343731be6e24c1cc018bdddef2cff2b505a2684724",
+      "author": "PubChem / NCBI",
+      "method": "PubChem3D computed conformer; not experimental or guaranteed energy minimum"
+    },
+    {
+      "id": "l-serine",
+      "cid": 5951,
+      "conformer": "0000173F00000001",
+      "request": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/name/L-serine/record/JSON?record_type=3d",
+      "sha256": "feb397ab7b18cfd0006dc5f391817cd2f8769bab547040aedcadf108ce6fe802",
+      "author": "PubChem / NCBI",
+      "method": "PubChem3D computed conformer; not experimental or guaranteed energy minimum"
+    },
+    {
+      "id": "l-cysteine",
+      "cid": 5862,
+      "conformer": "000016E600000001",
+      "request": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/name/L-cysteine/record/JSON?record_type=3d",
+      "sha256": "2bc7e2a2b82f82ae456a9997ef79027b8847b4de996cf861a3886882dad5520b",
+      "author": "PubChem / NCBI",
+      "method": "PubChem3D computed conformer; not experimental or guaranteed energy minimum"
+    },
+    {
+      "id": "l-leucine",
+      "cid": 6106,
+      "conformer": "000017DA00000001",
+      "request": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/name/L-leucine/record/JSON?record_type=3d",
+      "sha256": "83616318b900363835dfb62fd0bf4f8496bbc1c672d8598bfb6a51d8710aca40",
+      "author": "PubChem / NCBI",
+      "method": "PubChem3D computed conformer; not experimental or guaranteed energy minimum"
+    },
+    {
+      "id": "l-isoleucine",
+      "cid": 6306,
+      "conformer": "000018A200000001",
+      "request": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/name/L-isoleucine/record/JSON?record_type=3d",
+      "sha256": "d091749f83a247763a1e3fb15e9f4332b5d236f8c45ae728d6a40b9f51b9b723",
+      "author": "PubChem / NCBI",
+      "method": "PubChem3D computed conformer; not experimental or guaranteed energy minimum"
+    },
+    {
+      "id": "l-proline",
+      "cid": 145742,
+      "conformer": "0002394E00000001",
+      "request": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/name/L-proline/record/JSON?record_type=3d",
+      "sha256": "d06080cc978c9819604a87c18759f8605125d08acc4f172901ce25135b895b13",
+      "author": "PubChem / NCBI",
+      "method": "PubChem3D computed conformer; not experimental or guaranteed energy minimum"
+    },
+    {
+      "id": "l-phenylalanine",
+      "cid": 6140,
+      "conformer": "000017FC00000001",
+      "request": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/name/L-phenylalanine/record/JSON?record_type=3d",
+      "sha256": "c75f809fe00f6a23d16bd48477a21dfac7a01c12bd77d6a4c19cd93a0bd6e6b2",
+      "author": "PubChem / NCBI",
+      "method": "PubChem3D computed conformer; not experimental or guaranteed energy minimum"
+    },
+    {
+      "id": "l-tyrosine",
+      "cid": 6057,
+      "conformer": "000017A900000001",
+      "request": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/name/L-tyrosine/record/JSON?record_type=3d",
+      "sha256": "6a964743e7b36a92303f71c95feb894f75b8e0c4a5f0f665702ab3c8529da677",
+      "author": "PubChem / NCBI",
+      "method": "PubChem3D computed conformer; not experimental or guaranteed energy minimum"
+    },
+    {
+      "id": "l-aspartic-acid",
+      "cid": 5960,
+      "conformer": "0000174800000001",
+      "request": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/name/L-aspartic%20acid/record/JSON?record_type=3d",
+      "sha256": "4b1004b9052e314f576dbf19be49c34cc9a900411b06e1150c1980f14c9e8474",
+      "author": "PubChem / NCBI",
+      "method": "PubChem3D computed conformer; not experimental or guaranteed energy minimum"
+    },
+    {
+      "id": "l-glutamic-acid",
+      "cid": 33032,
+      "conformer": "0000810800000001",
+      "request": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/name/L-glutamic%20acid/record/JSON?record_type=3d",
+      "sha256": "c939497e1ce0ac81a82f6ad010e7044b42ddb488487c5e76bec8ae8d890ed66d",
+      "author": "PubChem / NCBI",
+      "method": "PubChem3D computed conformer; not experimental or guaranteed energy minimum"
+    },
+    {
+      "id": "d-glucose",
+      "cid": 5793,
+      "conformer": "000016A100000001",
+      "request": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/name/D-glucose/record/JSON?record_type=3d",
+      "sha256": "3556bd5a1277ab8306719f1f7330b6a2c9f600603870addad87f742be6169a33",
+      "author": "PubChem / NCBI",
+      "method": "PubChem3D computed conformer; not experimental or guaranteed energy minimum"
+    },
+    {
+      "id": "d-fructose",
+      "cid": 2723872,
+      "conformer": "0029902000000001",
+      "request": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/name/D-fructose/record/JSON?record_type=3d",
+      "sha256": "69ebd63d67c959068bc7ef33ed3caae4d2310e69fb6ceb2f66b558377d57595b",
+      "author": "PubChem / NCBI",
+      "method": "PubChem3D computed conformer; not experimental or guaranteed energy minimum"
+    },
+    {
+      "id": "d-ribose",
+      "cid": 10975657,
+      "conformer": "00A779A900000003",
+      "request": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/name/D-ribose/record/JSON?record_type=3d",
+      "sha256": "aa0c33c976c3d820b6bdff433cca0bfc308927ed827d744265aa51714c1504c5",
+      "author": "PubChem / NCBI",
+      "method": "PubChem3D computed conformer; not experimental or guaranteed energy minimum"
+    },
+    {
+      "id": "sucrose",
+      "cid": 5988,
+      "conformer": "0000176400000001",
+      "request": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/name/sucrose/record/JSON?record_type=3d",
+      "sha256": "d89a5307c4c7916bda69ddc9bf077e71f3d69a3dd0d309cb84fefb85c5bf6fcf",
+      "author": "PubChem / NCBI",
+      "method": "PubChem3D computed conformer; not experimental or guaranteed energy minimum"
+    },
+    {
+      "id": "ascorbic-acid",
+      "cid": 54670067,
+      "conformer": "034232F300000001",
+      "request": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/name/ascorbic%20acid/record/JSON?record_type=3d",
+      "sha256": "5645d165449d97a349c8bd7e67a6bc943c014c6d7294519a5bfdeb797396f6b6",
+      "author": "PubChem / NCBI",
+      "method": "PubChem3D computed conformer; not experimental or guaranteed energy minimum"
+    },
+    {
+      "id": "caffeine",
+      "cid": 2519,
+      "conformer": "000009D700000001",
+      "request": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/name/caffeine/record/JSON?record_type=3d",
+      "sha256": "47431d2119cac4bf9230e0f7838b2dd731ca7840958c4f2f2a44d9276944bacc",
+      "author": "PubChem / NCBI",
+      "method": "PubChem3D computed conformer; not experimental or guaranteed energy minimum"
+    },
+    {
+      "id": "theobromine",
+      "cid": 5429,
+      "conformer": "0000153500000001",
+      "request": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/name/theobromine/record/JSON?record_type=3d",
+      "sha256": "e46673338b4ece9af081530f08e6bd5320847ba500b1a679dd4cc17dcfab67df",
+      "author": "PubChem / NCBI",
+      "method": "PubChem3D computed conformer; not experimental or guaranteed energy minimum"
+    },
+    {
+      "id": "aspirin",
+      "cid": 2244,
+      "conformer": "000008C400000001",
+      "request": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/name/aspirin/record/JSON?record_type=3d",
+      "sha256": "6a62dd95ad768e9a56a3954de468de1e2cfe62361040520d6f343083ed762f75",
+      "author": "PubChem / NCBI",
+      "method": "PubChem3D computed conformer; not experimental or guaranteed energy minimum"
+    },
+    {
+      "id": "paracetamol",
+      "cid": 1983,
+      "conformer": "000007BF00000001",
+      "request": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/name/paracetamol/record/JSON?record_type=3d",
+      "sha256": "22d94ec6f459e9c790e6e9a2338257141429950f5955430ad6c44875f726d111",
+      "author": "PubChem / NCBI",
+      "method": "PubChem3D computed conformer; not experimental or guaranteed energy minimum"
+    },
+    {
+      "id": "chloromethane",
+      "cid": 6327,
+      "conformer": "000018B700000001",
+      "request": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/name/chloromethane/record/JSON?record_type=3d",
+      "sha256": "7ecd46f12cd5b709f7f07824c52b3155b3fd4d8ddf24f2d61c748bf5ec05a437",
+      "author": "PubChem / NCBI",
+      "method": "PubChem3D computed conformer; not experimental or guaranteed energy minimum"
+    },
+    {
+      "id": "dichloromethane",
+      "cid": 6344,
+      "conformer": "000018C800000001",
+      "request": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/name/dichloromethane/record/JSON?record_type=3d",
+      "sha256": "79963f94c69abc057882c864c940b14d24c483b0bd397295713264940fa5f234",
+      "author": "PubChem / NCBI",
+      "method": "PubChem3D computed conformer; not experimental or guaranteed energy minimum"
+    },
+    {
+      "id": "chloroform",
+      "cid": 6212,
+      "conformer": "0000184400000001",
+      "request": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/name/chloroform/record/JSON?record_type=3d",
+      "sha256": "c5a9cfd2889b4a9a1263c5a425c563adb166ebd5b22fbc316cf05b39b8af53ca",
+      "author": "PubChem / NCBI",
+      "method": "PubChem3D computed conformer; not experimental or guaranteed energy minimum"
+    },
+    {
+      "id": "carbon-tetrachloride",
+      "cid": 5943,
+      "conformer": "0000173700000001",
+      "request": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/name/carbon%20tetrachloride/record/JSON?record_type=3d",
+      "sha256": "7663b549aa73ce7ce80aa3fe9e24657dde5ddd9ae76506f2e39f3676376ae818",
+      "author": "PubChem / NCBI",
+      "method": "PubChem3D computed conformer; not experimental or guaranteed energy minimum"
+    },
+    {
+      "id": "fluoromethane",
+      "cid": 11638,
+      "conformer": "00002D7600000001",
+      "request": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/name/fluoromethane/record/JSON?record_type=3d",
+      "sha256": "d4316152a636895590b465ba3508030a330cca50caaf8985e379d5989f21707d",
+      "author": "PubChem / NCBI",
+      "method": "PubChem3D computed conformer; not experimental or guaranteed energy minimum"
+    },
+    {
+      "id": "bromomethane",
+      "cid": 6323,
+      "conformer": "000018B300000001",
+      "request": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/name/bromomethane/record/JSON?record_type=3d",
+      "sha256": "c892119c38b761193cd2990e24c624d28fdef738228201593086534913061b67",
+      "author": "PubChem / NCBI",
+      "method": "PubChem3D computed conformer; not experimental or guaranteed energy minimum"
+    },
+    {
+      "id": "iodomethane",
+      "cid": 6328,
+      "conformer": "000018B800000001",
+      "request": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/name/iodomethane/record/JSON?record_type=3d",
+      "sha256": "0760f4875699186af708a7a5a589f8b04d16d28fbb9d266e31e037c92748509d",
+      "author": "PubChem / NCBI",
+      "method": "PubChem3D computed conformer; not experimental or guaranteed energy minimum"
+    },
+    {
+      "id": "methanethiol",
+      "cid": 878,
+      "conformer": "0000036E00000001",
+      "request": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/name/methanethiol/record/JSON?record_type=3d",
+      "sha256": "0fac5fa9829806bb4afdc37e5e88e8e6f4df703cd1b32411c2f6da73c0393b09",
+      "author": "PubChem / NCBI",
+      "method": "PubChem3D computed conformer; not experimental or guaranteed energy minimum"
+    },
+    {
+      "id": "ethanethiol",
+      "cid": 6343,
+      "conformer": "000018C700000001",
+      "request": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/name/ethanethiol/record/JSON?record_type=3d",
+      "sha256": "73c5e3dfb5496cdc467ef05c79fe4d9c4e8680a71403c480df02fdbc0fdab1a4",
+      "author": "PubChem / NCBI",
+      "method": "PubChem3D computed conformer; not experimental or guaranteed energy minimum"
+    },
+    {
+      "id": "dimethyl-sulfide",
+      "cid": 1068,
+      "conformer": "0000042C00000001",
+      "request": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/name/dimethyl%20sulfide/record/JSON?record_type=3d",
+      "sha256": "6a8c008ee196041dfb9ca9ed62a9b4de92a2bf54d3ca21afd1c3fa5b6b609894",
+      "author": "PubChem / NCBI",
+      "method": "PubChem3D computed conformer; not experimental or guaranteed energy minimum"
+    },
+    {
+      "id": "dimethyl-sulfoxide",
+      "cid": 679,
+      "conformer": "000002A700000001",
+      "request": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/name/dimethyl%20sulfoxide/record/JSON?record_type=3d",
+      "sha256": "fe1d529000bb4799d95b63450e06f28b9de1acedd9c2bfb517e8bc2ab988f7d9",
+      "author": "PubChem / NCBI",
+      "method": "PubChem3D computed conformer; not experimental or guaranteed energy minimum"
+    },
+    {
+      "id": "dimethyl-sulfone",
+      "cid": 6213,
+      "conformer": "0000184500000001",
+      "request": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/name/dimethyl%20sulfone/record/JSON?record_type=3d",
+      "sha256": "57edf92c5684711a1ea7e88ded45ea55de5c4babb0e8b48e64a4177a55708731",
+      "author": "PubChem / NCBI",
+      "method": "PubChem3D computed conformer; not experimental or guaranteed energy minimum"
+    },
+    {
+      "id": "phosphine",
+      "cid": 24404,
+      "conformer": "00005F5400000001",
+      "request": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/name/phosphine/record/JSON?record_type=3d",
+      "sha256": "ff41198e45fd51144cca0df9f3b59c3371b54f0cecb75e20d6069cdbba8545b4",
+      "author": "PubChem / NCBI",
+      "method": "PubChem3D computed conformer; not experimental or guaranteed energy minimum"
+    },
+    {
+      "id": "phosphoric-acid",
+      "cid": 1004,
+      "conformer": "000003EC00000001",
+      "request": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/name/phosphoric%20acid/record/JSON?record_type=3d",
+      "sha256": "7d91d791ed7220709c125d20aa0c12a414f9275ee626366126537607ec3050ec",
+      "author": "PubChem / NCBI",
+      "method": "PubChem3D computed conformer; not experimental or guaranteed energy minimum"
+    }
+  ],
+  "excluded": [
+    {
+      "id": "hydrogen",
+      "reason": "HTTP Error 404: PUGREST.NotFound"
+    },
+    {
+      "id": "propionic-acid",
+      "reason": "<urlopen error Tunnel connection failed: 403 Forbidden>"
+    },
+    {
+      "id": "butyric-acid",
+      "reason": "<urlopen error Tunnel connection failed: 403 Forbidden>"
+    }
+  ]
+}

@@ -5,18 +5,18 @@ Pas une publication npm, un calcul quantique, ni une validation chimique.
 
 ## Calques réutilisables
 
-Les trois composants publics retournent un groupe SVG sans fond ni carte.
+Les quatre composants publics retournent un groupe SVG sans fond ni carte.
 Le parent choisit position, superposition, clip, taille et couleur héritée.
 
 ```tsx
 import {
-  AtomicDensityLayer, AtomSphereLayer, MoleculeLayer,
+  AtomicOrbitalLayer, AtomicDensityLayer, AtomSphereLayer, MoleculeLayer,
   MOLECULE_PRESETS
 } from '@blueprint-modular/core/objects';
 
 <svg viewBox="0 0 800 420" style={{color: '#193043'}}>
   <g transform="translate(210 210)">
-    <AtomicDensityLayer settings={{density: true, nucleus: false, opacity: .6}} />
+    <AtomicOrbitalLayer n={2} l={1} opacity={.8} nucleus={false} />
   </g>
   <g transform="translate(610 210)">
     <MoleculeLayer graph={MOLECULE_PRESETS.water.graph}
@@ -72,9 +72,11 @@ Les champs `source`, URLs, scripts, HTML et toutes clés inconnues sont refusés
 Le solveur de valence n’existe pas : les quelques alertes de recouvrement et
 de valence inhabituelle ne prouvent **jamais** la stabilité ou la faisabilité.
 
-Limites explicites : 24 atomes, 48 liaisons, coordonnées finies ±50 Å ;
+Limites explicites : 48 atomes, 96 liaisons, coordonnées finies ±50 Å ;
 éléments H, C, N, O, F, P, S, Cl, Br, I pour le compositeur. Pas de charges,
-d’isotopes, de stéréochimie nommée, de liaisons aromatiques ou d’optimisation.
+d’isotopes, de reconnaissance stéréochimique ni d’optimisation. Les cycles aromatiques sont
+stockés sous forme de liaisons simples/doubles de Kekulé ; les deux écritures
+mésomères ne sont pas canonicalisées par la reconnaissance locale.
 Le tableau conserve les 118 éléments ; cette liste réduite ne modifie pas
 leurs identités. Une formule seule ne détermine ni connectivité ni isomère.
 
@@ -115,14 +117,90 @@ ci-dessus sont transcrits : pas d’illustration, de logiciel, de fichier de bas
 NIST ni d’extrait rédigé redistribué. La licence du moteur ne s’applique pas
 aux sources NIST. Le manifeste conserve les empreintes SHA-256 des aperçus.
 
+## Bibliothèque étendue et recherche inverse
+
+Le catalogue généré dans `molecule-library.generated.ts` contient uniquement
+les graphes factuels et les coordonnées 3D produites par PubChem. Les quatre
+presets NIST précédents restent inchangés. Recherche par nom français/anglais
+ou formule, y compris `C2H6O`. Les molécules, identifiants CID, conformères,
+requêtes, empreintes SHA-256 et exclusions sont consignés dans
+[molecular-sources.json](previews/science/molecular-sources.json).
+
+`moleculeFormula(graph)` calcule une formule de Hill depuis les atomes explicites.
+`recognizeMolecule(graph)` retourne `candidates` (même formule), `connectivity`
+(mêmes éléments et ordres de liaison, indépendamment des identifiants,
+coordonnées et ordre des atomes) et `unresolved` (limite de calcul atteinte).
+Aucune correspondance n’est une preuve de stabilité, de charge, d’isotopie ou
+de stéréochimie. Les formes cis/trans restent plusieurs candidats. Une absence
+signifie seulement « absent du catalogue ». Le budget de comparaison est borné ;
+un dépassement n’est pas transformé en résultat négatif.
+
+Les graphes personnalisés ne prennent pas automatiquement la provenance d’un
+candidat. Le bouton de candidat charge explicitement la géométrie sourcée.
+L’éditeur accepte jusqu’à 48 atomes et 96 liaisons ; les références Maker restent
+bornées à 32 K caractères et cinq objets par création.
+
+### Sources, méthode et réutilisation
+
+[PubChem3D](https://pubchem.ncbi.nlm.nih.gov/pcfe/docs/markdown/pubchem3d.md)
+produit des conformères calculés avec OMEGA/MMFF94s. Ils ne sont ni des mesures
+expérimentales, ni nécessairement des minima d’énergie. Le moteur les affiche
+comme **conformères calculés**. Les acides aminés représentés sous forme neutre
+ne prétendent pas représenter leur forme dominante dans l’eau à un pH donné.
+
+Le même document indique que NCBI ne restreint pas la distribution de ses données
+moléculaires, tout en réservant les droits éventuels des déposants. Ici seuls
+les faits structuraux et les conformères numériques **générés par PubChem** sont
+repris, avec auteur, CID, source et empreinte. Aucun texte de déposant, image,
+logiciel OpenEye ou fichier de fournisseur n’est redistribué. Le code et les
+illustrations vectorielles sont originaux et restent Apache-2.0 ; cette licence
+ne prétend pas couvrir les sources. L’importeur refuse charges formelles,
+isotopes explicites, coordonnées absentes et graphes hors limites.
+
+Reproduction : `python scripts/import-science-data.py --cache /chemin/cache`.
+Requêtes séquentielles, moins de cinq par seconde, conformément au
+[contrat PUG REST](https://pubchem.ncbi.nlm.nih.gov/docs/pug-rest).
+Aucun appel distant à PubChem n’est fait dans une application consommatrice.
+
+## Analyseur atomique : une lecture inspectable
+
+La vue par défaut présente la configuration de référence de l’atome neutre,
+les populations par couche et une sous-couche sélectionnable. NIST ASD fournit
+les configurations 1–108 ; PubChem fournit les références théoriques 109–118.
+Les éléments Z ≥ 104 sont explicitement marqués comme prédits. L’entrée Lr
+utilise 7p¹ du NIST, et non l’ancienne entrée 6d¹ de PubChem. Les 118 sommes
+électroniques et capacités sont vérifiées. Sources et empreintes dans
+[electron-configuration-source.json](previews/science/electron-configuration-source.json).
+
+`AtomicOrbitalLayer` trace une coupe xz de la base hydrogénoïde à un électron,
+Z = 1, m = 0 : polynômes de Laguerre pour R(n,l), polynômes de Legendre pour
+la partie angulaire. Références : [NIST DLMF 18.39(ii)](https://dlmf.nist.gov/18.39#ii)
+et [14.30](https://dlmf.nist.gov/14.30). Le rayon est réduit pour l’affichage.
+Les six contours sont des niveaux relatifs de |ψ|² dans une coupe, pas des
+surfaces contenant un pourcentage donné de probabilité. Bleu/ambre codent les
+signes de ψ, pas des charges ni deux catégories d’électrons.
+
+Ce modèle n’est **pas** la densité totale calculée d’un atome polyélectronique.
+Il ne déduit pas la forme de cette densité de son seul bloc périodique. La
+configuration factuelle et la base mathématique illustrée restent distinctes.
+Les anciens calques `density` et `sphere` restent disponibles ; les références
+explicites existantes ne changent pas de représentation. Un isotope est toujours
+requis avant d’annoncer un nombre de neutrons.
+
+Reproduction : `python scripts/import-electron-configurations.py` ; les options
+`--nist-csv` et `--pubchem-json` permettent de régénérer depuis des réponses
+archivées. Les données sources ne sont jamais exécutées.
+
 ## Mouvement, poids et validation
 
-Aucune pulsation ou rotation automatique : une densité stationnaire n’a pas
-à « respirer » pour paraître vivante. On manipule l’orientation et la composition
-sans inventer de mouvement physique. Zéro boucle CSS/JavaScript, aucune texture,
-aucun chargement scientifique distant. Pause et reduced-motion n’ont donc
-aucun mouvement à arrêter. Les anciens champs playing/speed restent lisibles
-pour compatibilité ; les commandes inutiles sont retirées des vues scientifiques.
+`molecule.motion` est optionnel, désactivé par défaut. `motionSpeed` va de 0,25
+à 2. Le mouvement oscille de ±9° en orientation et ±4° en inclinaison, dans une
+boucle de 20 secondes à vitesse 1. Il modifie uniquement le point de vue :
+aucune liaison, distance ni géométrie ne change. Ce n’est pas une simulation
+thermique ou une vibration moléculaire.
 
-Voir [preuves et limites](previews/science/README.md), la démonstration hors
-ligne, les trois styles et les mesures reproductibles.
+`playing={false}` fige la phase. `thumbnail`, `prefers-reduced-motion`, l’absence
+d’intersection ou un onglet masqué empêchent la boucle. Un seul objet sélectionné
+est animé dans les interfaces livrées ; 12 fps sous 640 px, 18 fps ailleurs.
+Pas de boucle pour l’analyseur atomique : une orbitale stationnaire n’a pas à
+« respirer ». Voir les preuves et limites dans [les aperçus](previews/science/README.md).

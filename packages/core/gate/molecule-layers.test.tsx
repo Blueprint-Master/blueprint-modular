@@ -44,7 +44,7 @@ describe("scientifically explicit composable layers",()=>{
  });
  it("rejects executable/unknown keys, fake provenance, malformed graphs and unbounded input",()=>{
   const g=MOLECULE_PRESETS.water.graph, a=g.atoms[0];
-  for(const bad of [{...g,script:"alert(1)"},{...g,atoms:[...g.atoms,a]},{...g,atoms:[{...a,element:"Xx"}]},{...g,atoms:[{...a,position:[NaN,0,0]}]},{...g,atoms:[{...a,position:[51,0,0]}]},{...g,bonds:[{from:"O1",to:"evil",order:1}]},{...g,bonds:[{from:"O1",to:"O1",order:1}]},{...g,bonds:[g.bonds[0],g.bonds[0]]},{...g,atoms:Array.from({length:25},(_,i)=>({...a,id:"A"+i}))}])expect(parseMoleculeGraph(bad)).toBeUndefined();
+  for(const bad of [{...g,script:"alert(1)"},{...g,atoms:[...g.atoms,a]},{...g,atoms:[{...a,element:"Xx"}]},{...g,atoms:[{...a,position:[NaN,0,0]}]},{...g,atoms:[{...a,position:[51,0,0]}]},{...g,bonds:[{from:"O1",to:"evil",order:1}]},{...g,bonds:[{from:"O1",to:"O1",order:1}]},{...g,bonds:[g.bonds[0],g.bonds[0]]},{...g,atoms:Array.from({length:49},(_,i)=>({...a,id:"A"+i}))}])expect(parseMoleculeGraph(bad)).toBeUndefined();
   expect(parseMoleculeSettings({...DEFAULT_MOLECULE_SETTINGS,graph:g})).toBeUndefined();
   expect(parseMoleculeSettings({...DEFAULT_MOLECULE_SETTINGS,preset:"custom"})).toBeUndefined();
   expect(parseMoleculeSettings({...DEFAULT_MOLECULE_SETTINGS,yaw:181})).toBeUndefined();

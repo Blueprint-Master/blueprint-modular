@@ -1,0 +1,22 @@
+[
+ ["hydrogen","Dihydrogène"],["oxygen","Dioxygène"],["nitrogen","Diazote"],["hydrogen peroxide","Peroxyde d’hydrogène"],
+ ["hydrogen chloride","Chlorure d’hydrogène"],["hydrogen fluoride","Fluorure d’hydrogène"],["hydrogen sulfide","Sulfure d’hydrogène"],["carbon disulfide","Disulfure de carbone"],["sulfur dioxide","Dioxyde de soufre"],
+ ["ethane","Éthane"],["propane","Propane"],["butane","Butane"],["isobutane","Isobutane"],["pentane","Pentane"],["isopentane","Isopentane"],["neopentane","Néopentane"],["hexane","Hexane"],["heptane","Heptane"],["octane","Octane"],["nonane","Nonane"],["decane","Décane"],
+ ["ethylene","Éthylène"],["propylene","Propylène"],["1-butene","But-1-ène"],["cis-2-butene","cis-But-2-ène"],["trans-2-butene","trans-But-2-ène"],["isobutene","Isobutène"],["1,3-butadiene","Buta-1,3-diène"],["isoprene","Isoprène"],
+ ["acetylene","Acétylène"],["propyne","Propyne"],["1-butyne","But-1-yne"],["2-butyne","But-2-yne"],
+ ["cyclopropane","Cyclopropane"],["cyclobutane","Cyclobutane"],["cyclopentane","Cyclopentane"],["cyclohexane","Cyclohexane"],["cycloheptane","Cycloheptane"],["cyclooctane","Cyclooctane"],["cyclohexene","Cyclohexène"],
+ ["benzene","Benzène"],["toluene","Toluène"],["ethylbenzene","Éthylbenzène"],["styrene","Styrène"],["o-xylene","o-Xylène"],["m-xylene","m-Xylène"],["p-xylene","p-Xylène"],["naphthalene","Naphtalène"],["biphenyl","Biphényle"],
+ ["methanol","Méthanol"],["ethanol","Éthanol"],["1-propanol","Propan-1-ol"],["2-propanol","Propan-2-ol"],["1-butanol","Butan-1-ol"],["2-butanol","Butan-2-ol"],["tert-butanol","tert-Butanol"],["ethylene glycol","Éthylène glycol"],["glycerol","Glycérol"],["phenol","Phénol"],["benzyl alcohol","Alcool benzylique"],
+ ["dimethyl ether","Éther diméthylique"],["diethyl ether","Éther diéthylique"],["methyl ethyl ether","Éther méthyléthylique"],["tetrahydrofuran","Tétrahydrofurane"],["1,4-dioxane","1,4-Dioxane"],["anisole","Anisole"],
+ ["formaldehyde","Méthanal"],["acetaldehyde","Éthanal"],["propanal","Propanal"],["butanal","Butanal"],["benzaldehyde","Benzaldéhyde"],["acetone","Acétone"],["2-butanone","Butan-2-one"],["cyclohexanone","Cyclohexanone"],["acetophenone","Acétophénone"],
+ ["formic acid","Acide formique"],["acetic acid","Acide acétique"],["propionic acid","Acide propionique"],["butyric acid","Acide butyrique"],["benzoic acid","Acide benzoïque"],["oxalic acid","Acide oxalique"],["succinic acid","Acide succinique"],["citric acid","Acide citrique"],["salicylic acid","Acide salicylique"],
+ ["methyl formate","Formiate de méthyle"],["ethyl formate","Formiate d’éthyle"],["methyl acetate","Acétate de méthyle"],["ethyl acetate","Acétate d’éthyle"],["butyl acetate","Acétate de butyle"],["methyl benzoate","Benzoate de méthyle"],
+ ["methylamine","Méthylamine"],["ethylamine","Éthylamine"],["dimethylamine","Diméthylamine"],["trimethylamine","Triméthylamine"],["triethylamine","Triéthylamine"],["aniline","Aniline"],["ethylenediamine","Éthylènediamine"],
+ ["formamide","Formamide"],["acetamide","Acétamide"],["urea","Urée"],["acetonitrile","Acétonitrile"],["benzonitrile","Benzonitrile"],
+ ["pyridine","Pyridine"],["pyrrole","Pyrrole"],["furan","Furane"],["thiophene","Thiophène"],["imidazole","Imidazole"],["pyrimidine","Pyrimidine"],["pyrazine","Pyrazine"],["indole","Indole"],["quinoline","Quinoléine"],["purine","Purine"],
+ ["adenine","Adénine"],["guanine","Guanine"],["cytosine","Cytosine"],["thymine","Thymine"],["uracil","Uracile"],
+ ["glycine","Glycine"],["L-alanine","L-Alanine"],["L-valine","L-Valine"],["L-serine","L-Sérine"],["L-cysteine","L-Cystéine"],["L-leucine","L-Leucine"],["L-isoleucine","L-Isoleucine"],["L-proline","L-Proline"],["L-phenylalanine","L-Phénylalanine"],["L-tyrosine","L-Tyrosine"],["L-aspartic acid","Acide L-aspartique"],["L-glutamic acid","Acide L-glutamique"],
+ ["D-glucose","D-Glucose"],["D-fructose","D-Fructose"],["D-ribose","D-Ribose"],["sucrose","Saccharose"],["ascorbic acid","Acide ascorbique"],["caffeine","Caféine"],["theobromine","Théobromine"],["aspirin","Aspirine"],["paracetamol","Paracétamol"],
+ ["chloromethane","Chlorométhane"],["dichloromethane","Dichlorométhane"],["chloroform","Chloroforme"],["carbon tetrachloride","Tétrachlorure de carbone"],["fluoromethane","Fluorométhane"],["bromomethane","Bromométhane"],["iodomethane","Iodométhane"],
+ ["methanethiol","Méthanethiol"],["ethanethiol","Éthanethiol"],["dimethyl sulfide","Sulfure de diméthyle"],["dimethyl sulfoxide","Diméthylsulfoxyde"],["dimethyl sulfone","Diméthylsulfone"],["phosphine","Phosphine"],["phosphoric acid","Acide phosphorique"]
+]

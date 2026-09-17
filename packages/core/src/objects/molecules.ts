@@ -1,4 +1,8 @@
+import { MOLECULE_PRESET_IDS } from "./molecule-ids.generated";
 /** Data-only molecular compositions. Coordinates are Cartesian, in ångströms. */
+export type MoleculePresetId = typeof MOLECULE_PRESET_IDS[number];
+export const MAX_MOLECULE_ATOMS = 48;
+export const MAX_MOLECULE_BONDS = 96;
 export const MOLECULE_ELEMENTS = ["H", "C", "N", "O", "F", "P", "S", "Cl", "Br", "I"] as const;
 export type MolecularElement = typeof MOLECULE_ELEMENTS[number];
 export type Position3 = [number, number, number];
@@ -7,10 +11,13 @@ export interface MoleculeBond { from: string; to: string; order: 1 | 2 | 3; }
 export interface MoleculeGraph { atoms: MoleculeAtom[]; bonds: MoleculeBond[]; }
 export interface MoleculeLayers { atoms: boolean; bonds: boolean; labels: boolean; measurements: boolean; }
 export interface MoleculeSettings {
-  preset: "water" | "carbon-dioxide" | "methane" | "ammonia" | "custom";
+  preset: MoleculePresetId | "custom";
   graph?: MoleculeGraph;
   yaw: number; pitch: number;
   layers: MoleculeLayers;
+  /** Display orientation only, not a vibration/temperature simulation. Off by default. */
+  motion?: boolean;
+  motionSpeed?: number;
 }
 export const DEFAULT_MOLECULE_SETTINGS: Readonly<MoleculeSettings> = Object.freeze({
   preset: "water", yaw: 0, pitch: 0,
@@ -27,7 +34,7 @@ const identifier = (v: unknown): v is string => typeof v === "string" && /^[A-Za
 const finite = (v: unknown, limit: number): v is number => typeof v === "number" && Number.isFinite(v) && Math.abs(v) <= limit;
 export function parseMoleculeGraph(raw: unknown): MoleculeGraph | undefined {
   if (!record(raw) || !keys(raw, ["atoms", "bonds"]) || !Array.isArray(raw.atoms) || !Array.isArray(raw.bonds)) return;
-  if (!raw.atoms.length || raw.atoms.length > 24 || raw.bonds.length > 48) return;
+  if (!raw.atoms.length || raw.atoms.length > MAX_MOLECULE_ATOMS || raw.bonds.length > MAX_MOLECULE_BONDS) return;
   const ids = new Set<string>(), pairs = new Set<string>(), atoms: MoleculeAtom[] = [], bonds: MoleculeBond[] = [];
   for (const a of raw.atoms) {
     if (!record(a) || !keys(a, ["id", "element", "position"]) || !identifier(a.id) || ids.has(a.id) || !(MOLECULE_ELEMENTS as readonly unknown[]).includes(a.element)) return;
@@ -43,12 +50,14 @@ export function parseMoleculeGraph(raw: unknown): MoleculeGraph | undefined {
   return { atoms, bonds };
 }
 export function parseMoleculeSettings(raw: unknown): MoleculeSettings | undefined {
-  if (!record(raw) || !keys(raw, ["preset", "graph", "yaw", "pitch", "layers"])) return;
-  if (!["water", "carbon-dioxide", "methane", "ammonia", "custom"].includes(raw.preset as string) || !finite(raw.yaw, 180) || !finite(raw.pitch, 90)) return;
+  if (!record(raw) || !keys(raw, ["preset", "graph", "yaw", "pitch", "layers", "motion", "motionSpeed"])) return;
+  if (![...MOLECULE_PRESET_IDS, "custom"].includes(raw.preset as MoleculeSettings["preset"]) || !finite(raw.yaw, 180) || !finite(raw.pitch, 90)) return;
+  if (raw.motion !== undefined && typeof raw.motion !== "boolean") return;
+  if (raw.motionSpeed !== undefined && (!finite(raw.motionSpeed, 2) || raw.motionSpeed < .25)) return;
   if (!record(raw.layers) || !keys(raw.layers, ["atoms", "bonds", "labels", "measurements"]) || Object.keys(DEFAULT_MOLECULE_SETTINGS.layers).some(k => typeof (raw.layers as Record<string, unknown>)[k] !== "boolean")) return;
   const graph = raw.preset === "custom" ? parseMoleculeGraph(raw.graph) : undefined;
   if (raw.preset === "custom" ? !graph : raw.graph !== undefined) return;
-  return { preset: raw.preset as MoleculeSettings["preset"], ...(graph ? { graph } : {}), yaw: raw.yaw, pitch: raw.pitch, layers: { ...raw.layers } as unknown as MoleculeLayers };
+  return { preset: raw.preset as MoleculeSettings["preset"], ...(graph ? { graph } : {}), yaw: raw.yaw, pitch: raw.pitch, layers: { ...raw.layers } as unknown as MoleculeLayers, ...(raw.motion === undefined ? {} : { motion: raw.motion as boolean }), ...(raw.motionSpeed === undefined ? {} : { motionSpeed: raw.motionSpeed as number }) };
 }
 export function bondLength(a: Position3, b: Position3) { return Math.hypot(...a.map((v, i) => v - b[i])); }
 export function bondAngle(a: Position3, centre: Position3, b: Position3) {

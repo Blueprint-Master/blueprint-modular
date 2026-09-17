@@ -1,0 +1,56 @@
+{
+  "environment": {
+    "cpu": "INTEL(R) XEON(R) PLATINUM 8573C",
+    "platform": "linux",
+    "arch": "x64",
+    "node": "v24.19.0",
+    "renderer": "React server + sharp/libvips; not browser/GPU/mobile",
+    "pixelSize": 224
+  },
+  "catalogueCount": 153,
+  "bytes": [
+    {
+      "file": "packages/core/src/objects/molecule-library.generated.ts",
+      "rawBytes": 77579,
+      "gzipBytes": 23711
+    },
+    {
+      "file": "docs/previews/science/layers.html",
+      "rawBytes": 282880,
+      "gzipBytes": 94374
+    }
+  ],
+  "timings": [
+    {
+      "id": "water",
+      "atoms": 3,
+      "medianServerReactAndRasterMs": 10.43,
+      "p95Ms": 15.08
+    },
+    {
+      "id": "ethanol",
+      "atoms": 9,
+      "medianServerReactAndRasterMs": 14,
+      "p95Ms": 17.7
+    },
+    {
+      "id": "caffeine",
+      "atoms": 24,
+      "medianServerReactAndRasterMs": 24.73,
+      "p95Ms": 31.9
+    },
+    {
+      "id": "sucrose",
+      "atoms": 45,
+      "medianServerReactAndRasterMs": 37.1,
+      "p95Ms": 41.98
+    }
+  ],
+  "loops": "one rAF per selected visible motion-enabled molecule; zero in thumbnail/pause/offscreen/hidden/reduced motion (mocked lifecycle test)",
+  "notMeasured": [
+    "actual network transfer",
+    "mounted-browser frame time",
+    "physical phone",
+    "battery"
+  ]
+}
