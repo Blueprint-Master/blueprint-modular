@@ -1,46 +1,54 @@
 # Sciences : catalogue moléculaire et analyseur
 
-## Passe du 16 septembre 2026 — 153 molécules, composition inverse, mouvement optionnel
+## Nouvelle PR après #236 — 17 septembre 2026
 
-- **153 structures** : quatre géométries expérimentales NIST inchangées et 149 conformères calculés PubChem3D. Trois entrées exclues (dihydrogène sans conformère récupérable, deux acides bloqués à la récupération) sont consignées dans le manifeste.
-- Recherche par noms FR/EN ou formule ; éditeur inverse par nombres d’atomes et reconnaissance des liaisons. Les isomères restent plusieurs candidats lorsque les seules informations disponibles ne les distinguent pas. La stéréochimie n’est pas déduite.
-- Orientation douce optionnelle, cycle de 20 s ; arrêt/pause, vitesse 0,25–2, vignettes fixes et arrêt hors écran/onglet masqué/reduced-motion. Aucun changement de géométrie ni simulation thermique.
-- Analyseur : configuration neutre sourcée, populations par couche, sous-couche sélectionnable. La forme est une base **hydrogénoïde à un électron**, pas la densité totale de l’élément. Les signes de ψ sont distincts des charges.
-- Trois fonds conservés : nuit, papier et transparent ; quatre calques SVG publics indépendants, paramètres transportables jusqu’à Maker.
+- **340 molécules, soit 187 ajouts** : quatre géométries expérimentales NIST et 336 conformères calculés PubChem3D. Les coordonnées et identifiants des 153 molécules du socle sont conservés. Les trois exclusions sont consignées : dihydrogène sans conformère récupérable, squalène au-delà des limites de l’éditeur et alias de l’aspirine déjà présente.
+- La recherche inverse ne remplace plus le modèle affiché par des atomes sans liaisons. Le choix d’un candidat charge sa géométrie ; les réglages de mouvement et de calques restent conservés.
+- « Analyser la composition affichée » compare les liaisons existantes. « Vider les quantités » réinitialise seulement le formulaire ; un changement des quantités efface les résultats précédents.
+- Champs adaptatifs et cibles de 44 px ; sous-couches atomiques regroupées par niveau et sélectionnables au clavier. Configuration électronique sur sa propre ligne, couche sélectionnée mise en évidence, orbitale et légendes séparées.
+- Démonstration autonome corrigée : une seule copie de React, vérifiée au build. Les contrôles utilisent les composants réels.
+- Importeur extensible : `--extend --workers 4` conserve les structures archivées ; débit global limité, refus des coordonnées non finies ou hors limites, exclusions consignées.
 
-### Aperçus consultables
+## Comportements et limites conservés
 
-- [Démonstration autonome](layers.html) : télécharger puis ouvrir localement ; vrais composants React et contrôles, aucune requête scientifique distante. Le petit aperçu est fixe.
-- [Analyseur, O/Fe/Lr, trois fonds](atom-orbitals-review.png).
-- [Six molécules représentatives](molecular-library-review.png).
-- [Transparence à 180/520 px, fonds clair et sombre](library-transparent-review.png).
-- [Vidéo de la projection animée](molecule-motion.mp4), 20 secondes ; [quatre instants](molecule-motion-instants.png). La vidéo est un rendu du même moteur et de la même fonction d’orientation, **pas une capture du navigateur**.
-- SVG individuels `atom-O-*`, `atom-Fe-*`, `atom-Lr-*` et `molecule-*-*` : inspectables et transparents lorsqu’indiqué.
-- [Provenance moléculaire](molecular-sources.json), [configurations électroniques](electron-configuration-source.json), [budget mesuré](library-budget.json), [API et limites scientifiques](../../scientific-composition.md).
+Recherche FR/EN/formule et reconnaissance par composition puis connectivité ; plusieurs isomères restent proposés lorsque la stéréochimie les distingue. L’absence de résultat signifie seulement « absent de ce catalogue ». Aucun calcul de stabilité n’est revendiqué.
 
-### Contrôles réellement exécutés
+Mouvement optionnel du point de vue, cycle de 20 s et vitesse 0,25–2 ; arrêt hors écran, onglet masqué ou préférence de réduction des animations. Les mesures 3D ne changent pas. Ce comportement provient de #236 ; cette passe préserve ses réglages lors du choix d’un candidat.
 
-Rendus O/Fe/Lr et six molécules inspectés sur les planches à 360 px ; transparence atomique et moléculaire vérifiée à 180/520 px sur fond clair et sombre ; projection de l’eau, de l’éthanol et du saccharose inspectée à 0/5/10/15 s. Tests React montés sous JSDOM : sélection d’atomes, candidats, choix de géométrie, modifications, une boucle active, arrêt hors écran, onglet masqué, pause et reduced-motion. Tests des 118 comptes électroniques, nœuds analytiques des bases 1s/2s/2p, graphes bornés et imports du paquet construit.
+L’analyseur conserve les configurations électroniques sourcées des 118 éléments. Les contours sont une base **hydrogénoïde à un électron**, pas la densité totale de l’élément. Les signes de ψ ne sont pas des charges. Nuit/Papier/Transparent et les calques indépendants restent disponibles.
 
-**Limite persistante :** la navigation du navigateur distant vers la démonstration locale a retourné `ERR_BLOCKED_BY_CLIENT`. La manipulation visuelle live, le temps de rendu DOM/GPU, un téléphone physique, le réseau mobile et la batterie ne sont pas validés. Les tests JSDOM et les planches ne remplacent pas cette revue. Toutes les 153 molécules sont vérifiées structurellement ; leur rendu n’a pas été inspecté individuellement dans un navigateur.
+## Aperçus
 
-Poids : bibliothèque de données ~77 Ko bruts / ~24 Ko gzip ; démonstration autonome avec React ~283 Ko / ~94 Ko gzip. Ce sont des tailles de fichiers, **pas un transfert réseau mesuré**. Rendu serveur React + sharp à 224 px : médianes 10.4–37.1 ms sur Intel Xeon Platinum 8573C virtualisé, Linux x64, Node 24.19. Ces nombres comprennent sérialisation et rasterisation CPU, avec charge partagée ; ce ne sont pas des coûts par frame navigateur. Aucune mesure de batterie n’est extrapolée.
+- [Démonstration autonome](layers.html) : télécharger puis ouvrir localement ; composants React et contrôles, sans requête scientifique distante.
+- [Analyseur O/Fe/Lr sur trois fonds](atom-orbitals-review.png).
+- [Douze molécules, dont six ajouts](molecular-library-review.png) : lysine, adénosine, vanilline, cubane, camphre et tréhalose.
+- [Transparence à 180/520 px](library-transparent-review.png).
+- [Vidéo du mouvement](molecule-motion.mp4), [quatre instants](molecule-motion-instants.png) : rendus de la fonction de projection, pas des captures navigateur.
+- [Provenance et exclusions](molecular-sources.json), [configurations électroniques](electron-configuration-source.json), [budget mesuré](library-budget.json), [API et limites scientifiques](../../scientific-composition.md).
 
-### Régénération
+## Validation
+
+501 tests Core et 267 tests racine, contrôle TypeScript, compilation Core et site. Tests de non-régression sur la préservation de la composition pendant la recherche, la conservation des réglages et la sélection des sous-couches. Les 340 graphes sont vérifiés structurellement ; les 149 anciens enregistrements PubChem sont comparés intégralement à la base fusionnée et sont identiques. Régénération `--offline --extend` effectuée. Installation du véritable paquet construit dans un consommateur isolé : 1 020 combinaisons molécule/fond, références et assets distribués vérifiés.
+
+La démonstration générée se monte dans JSDOM sans erreur de runtime. Les rendus SVG sont inspectés séparément. L’accès du navigateur à la démonstration locale retourne encore `ERR_BLOCKED_BY_CLIENT` : **validation visuelle interactive, temps de frame DOM/GPU et téléphone physique non vérifiés**. Les 340 molécules n’ont pas toutes été inspectées visuellement.
+
+La commande historique `npm run lint` utilise `next lint`, non pris en charge par la version de Next installée ; elle échoue avant analyse des fichiers. Ce problème préexistant n’est pas modifié dans cette PR.
+
+Le budget décrit les tailles brutes/gzip et le rendu React serveur + rasterisation CPU à 224 px, dans l’environnement indiqué. Il ne mesure ni réseau réel, ni coût par frame navigateur, ni batterie.
+
+## Régénération
 
 ```sh
-python scripts/import-science-data.py --cache /chemin/cache
-python scripts/import-electron-configurations.py
+python scripts/import-science-data.py --extend --workers 4 --cache /chemin/cache
 node --import tsx scripts/render-science-previews.tsx
 node scripts/build-science-layer-demo.mjs
 npx esbuild scripts/render-science-library-evidence.tsx --bundle --platform=node --packages=external --format=esm --outfile=scripts/.science-library-evidence.mjs
 node scripts/.science-library-evidence.mjs
 python scripts/assemble-molecule-motion.py
-npm run generate:llms
 ```
 
-Le mode `--offline` du premier importeur régénère depuis son cache et conserve les exclusions. Pour les configurations, `--nist-csv` / `--pubchem-json` acceptent les réponses déjà archivées. Pillow et ffmpeg sont nécessaires pour la planche multi-instants et la vidéo. Les images sont dérivées du code SVG ; aucun raster génératif ni asset tiers n’est utilisé.
+`--offline --extend` utilise les réponses en cache pour les ajouts tout en conservant les structures archivées. Le mode sans `--extend` reconstruit l’ensemble depuis les sources/cache. Aucun raster génératif ou artwork tiers n’est utilisé.
 
-### État d’intégration
+## Intégration
 
-Le socle des calques et des quatre molécules (Modular #235) est fusionné. Cette extension est en [PR Modular #236](https://github.com/Blueprint-Master/blueprint-modular/pull/236) ; [Maker #2012](https://github.com/Blueprint-Master/blueprint-maker/pull/2012) reste la PR liée. Aucun déploiement, fusion de ces correctifs ou publication npm n’est effectué dans cette passe.
+Cette passe part de [Modular #236 fusionnée](https://github.com/Blueprint-Master/blueprint-modular/pull/236) et doit être relue dans une **nouvelle PR**. [Maker #2012](https://github.com/Blueprint-Master/blueprint-maker/pull/2012) reste une intégration distincte, épinglée à la version antérieure ; elle n’est pas synchronisée par cette PR. Aucun déploiement ni publication npm n’est effectué ici.

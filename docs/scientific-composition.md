@@ -137,6 +137,10 @@ un dépassement n’est pas transformé en résultat négatif.
 
 Les graphes personnalisés ne prennent pas automatiquement la provenance d’un
 candidat. Le bouton de candidat charge explicitement la géométrie sourcée.
+La recherche par quantités ne modifie pas la molécule affichée. « Analyser la
+composition affichée » utilise son graphe et ses liaisons ; « Vider les quantités »
+ne touche qu’au formulaire de recherche. Les réglages de calques et de mouvement
+sont conservés lors du chargement d’un candidat.
 L’éditeur accepte jusqu’à 48 atomes et 96 liaisons ; les références Maker restent
 bornées à 32 K caractères et cinq objets par création.
 
@@ -158,6 +162,12 @@ ne prétend pas couvrir les sources. L’importeur refuse charges formelles,
 isotopes explicites, coordonnées absentes et graphes hors limites.
 
 Reproduction : `python scripts/import-science-data.py --cache /chemin/cache`.
+Pour enrichir sans remplacer les structures archivées : ajouter des graines à
+`scripts/molecule-seeds.json`, puis lancer avec `--extend --workers 4`. Les requêtes
+partagent une limite globale inférieure à cinq départs par seconde. Le mode
+`--offline --extend` conserve les données déjà publiées et utilise les réponses
+en cache pour les ajouts ; aucune géométrie absente n’est inventée. Les coordonnées
+non finies ou hors des bornes de l’éditeur sont rejetées.
 Requêtes séquentielles, moins de cinq par seconde, conformément au
 [contrat PUG REST](https://pubchem.ncbi.nlm.nih.gov/docs/pug-rest).
 Aucun appel distant à PubChem n’est fait dans une application consommatrice.

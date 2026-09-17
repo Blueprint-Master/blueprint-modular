@@ -20,10 +20,10 @@ for(const [row,element] of ["O","Fe","Lr"].entries())for(const [col,style] of ([
  contact.push({input:await raster(text),left:col*360,top:row*360});
 }
 await sharp({create:{width:1080,height:1080,channels:4,background:"#e9eef1"}}).composite(contact).png().toFile(new URL("atom-orbitals-review.png",folder).pathname);
-const examples=["water","ethanol","dimethyl-ether","benzene","caffeine","sucrose"] as const;
+const examples=["water","ethanol","dimethyl-ether","benzene","caffeine","sucrose","l-lysine","adenosine","vanillin","cubane","camphor","trehalose"] as const;
 const cards:Array<{input:Buffer;left:number;top:number}>=[];
 for(const [i,id] of examples.entries())cards.push({input:await raster(svg(<ScienceObject id="science-molecule" label={id} molecule={moleculePresetSettings(id)} style={i%2?"paper":"midnight"} thumbnail/>)),left:i%3*360,top:Math.floor(i/3)*360});
-await sharp({create:{width:1080,height:720,channels:4,background:"#e9eef1"}}).composite(cards).png().toFile(new URL("molecular-library-review.png",folder).pathname);
+await sharp({create:{width:1080,height:Math.ceil(examples.length/3)*360,channels:4,background:"#e9eef1"}}).composite(cards).png().toFile(new URL("molecular-library-review.png",folder).pathname);
 const transparent:Array<{input:Buffer;left:number;top:number}>=[];
 for(const [row,id] of ["science-atom","science-molecule"].entries())for(const [col,dark] of [false,true].entries())for(const [i,size] of [180,520].entries()){
  const markup=readFileSync(new URL(`${id}-transparent.svg`,folder),"utf8");

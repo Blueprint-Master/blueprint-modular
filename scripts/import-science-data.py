@@ -9,12 +9,19 @@ import json
 import pathlib
 import re
 import time
+import datetime
+import math
+import urllib.parse
 import urllib.request
+import threading
+from concurrent.futures import ThreadPoolExecutor
 
 ROOT = pathlib.Path(__file__).resolve().parents[1]
 parser = argparse.ArgumentParser()
 parser.add_argument('--cache', default='/tmp/blueprint-pubchem-records')
 parser.add_argument('--offline', action='store_true', help='Use cached responses and retain recorded exclusions; no network')
+parser.add_argument('--extend', action='store_true', help='Keep archived records unchanged; fetch only new seeds')
+parser.add_argument('--workers', type=int, choices=range(1,5), default=1)
 args = parser.parse_args()
 cache = pathlib.Path(args.cache)
 cache.mkdir(parents=True, exist_ok=True)
@@ -22,6 +29,8 @@ out = ROOT / 'packages/core/src/objects'
 elements = {1:'H',6:'C',7:'N',8:'O',9:'F',15:'P',16:'S',17:'Cl',35:'Br',53:'I'}
 old_manifest=ROOT/'docs/previews/science/molecular-sources.json'
 old_exclusions={e['id']:e['reason'] for e in json.loads(old_manifest.read_text()).get('excluded',[])} if old_manifest.exists() else {}
+request_lock = threading.Lock()
+last_request = 0.
 
 def download(url, key):
     file = cache / (key + '.json')
@@ -30,7 +39,10 @@ def download(url, key):
     if not file.exists():
         for attempt in range(3):
             try:
-                time.sleep(.3)  # strictly sequential, below PubChem's 5 requests/s
+                global last_request
+                with request_lock:
+                    time.sleep(max(0, .3 - (time.monotonic() - last_request)))
+                    last_request = time.monotonic()  # global rate below 5 requests/s
                 request = urllib.request.Request(url, headers={'User-Agent':'BlueprintModular-data-import/1.0'})
                 with urllib.request.urlopen(request, timeout=40) as response:
                     raw = response.read(2_000_001)
@@ -46,11 +58,41 @@ def download(url, key):
     return json.loads(raw), hashlib.sha256(raw).hexdigest()
 
 records, provenance, excluded, seen = [], [], [], set()
-for en, fr in json.loads((ROOT/'scripts/molecule-seeds.json').read_text()):
+if args.extend:
+    source = (out/'molecule-library.generated.ts').read_text()
+    records = json.loads(source.split('export const MOLECULE_LIBRARY_DATA: readonly LibraryRecord[] = ', 1)[1].rstrip().removesuffix(';'))
+    manifest = json.loads(old_manifest.read_text())
+    provenance = manifest['records']
+    excluded = manifest.get('excluded', [])
+    if {r[0] for r in records} != {p['id'] for p in provenance}:
+        raise ValueError('Archived records and provenance disagree')
+    seen = {r[3] for r in records}
+archived_ids = {r[0] for r in records}
+seeds = json.loads((ROOT/'scripts/molecule-seeds.json').read_text())
+def retrieve(seed):
+    en, _ = seed
     key = re.sub(r'[^a-z0-9]+', '-', en.lower()).strip('-')
+    if key in archived_ids:
+        return None
     url = 'https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/name/' + urllib.parse.quote(en, safe='') + '/record/JSON?record_type=3d'
     try:
-        data, digest = download(url, key)
+        result = download(url, key)
+        print('CACHED', key, flush=True)
+        return result
+    except Exception as error:
+        return error
+with ThreadPoolExecutor(max_workers=args.workers) as executor:
+    retrieved = list(executor.map(retrieve, seeds))
+for (en, fr), response in zip(seeds, retrieved):
+    key = re.sub(r'[^a-z0-9]+', '-', en.lower()).strip('-')
+    if key in archived_ids:
+        continue
+    excluded = [entry for entry in excluded if entry['id'] != key]
+    url = 'https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/name/' + urllib.parse.quote(en, safe='') + '/record/JSON?record_type=3d'
+    try:
+        if isinstance(response, Exception):
+            raise response
+        data, digest = response
         if len(data['PC_Compounds']) != 1:
             raise ValueError('ambiguous name; use a specific CID')
         p = data['PC_Compounds'][0]
@@ -66,6 +108,8 @@ for en, fr in json.loads((ROOT/'scripts/molecule-seeds.json').read_text()):
             raise ValueError('missing 3D conformer')
         positions = dict(zip(c['aid'], zip(xyz['x'],xyz['y'],xyz['z'])))
         atoms = [[elements[e], *positions[i]] for i,e in zip(a['aid'],a['element'])]
+        if any(not math.isfinite(v) or abs(v)>50 for atom in atoms for v in atom[1:]):
+            raise ValueError('unsupported coordinates')
         ids = {aid:i for i,aid in enumerate(a['aid'])}
         b = p.get('bonds',{})
         bonds = [[ids[i],ids[j],o] for i,j,o in zip(b.get('aid1',[]),b.get('aid2',[]),b.get('order',[]))]
@@ -87,7 +131,7 @@ record_type='import type {MolecularElement} from "./molecules";\ntype LibraryRec
 (out/'molecule-library.generated.ts').write_text(header + record_type + 'export const MOLECULE_LIBRARY_DATA: readonly LibraryRecord[] = ' + json.dumps(records,ensure_ascii=False,separators=(',',':')) + ';\n')
 ids = ['water','carbon-dioxide','methane','ammonia'] + [r[0] for r in records]
 (out/'molecule-ids.generated.ts').write_text(header + 'export const MOLECULE_PRESET_IDS = ' + json.dumps(ids) + ' as const;\n')
-manifest = {'retrieved':'2026-09-16','scope':'PubChem-generated numeric conformers and factual atom/bond graphs only. No third-party descriptions or imagery.', 'policy':'https://pubchem.ncbi.nlm.nih.gov/pcfe/docs/markdown/pubchem3d.md','records':provenance,'excluded':excluded}
+manifest = {'retrieved':datetime.date.today().isoformat(),'scope':'PubChem-generated numeric conformers and factual atom/bond graphs only. No third-party descriptions or imagery.', 'policy':'https://pubchem.ncbi.nlm.nih.gov/pcfe/docs/markdown/pubchem3d.md','records':provenance,'excluded':excluded}
 (ROOT/'docs/previews/science/molecular-sources.json').write_text(json.dumps(manifest,ensure_ascii=False,indent=2)+'\n')
 print('IMPORTED',len(records),'EXCLUDED',len(excluded),flush=True)
 
