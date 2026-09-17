@@ -43,4 +43,4 @@ Le mode `--offline` du premier importeur régénère depuis son cache et conserv
 
 ### État d’intégration
 
-Le socle des calques et des quatre molécules (Modular #235) est fusionné. Cette extension est en branche/PR ; Maker #2012 reste la PR liée. Aucun déploiement, fusion de ces correctifs ou publication npm n’est effectué dans cette passe.
+Le socle des calques et des quatre molécules (Modular #235) est fusionné. Cette extension est en [PR Modular #236](https://github.com/Blueprint-Master/blueprint-modular/pull/236) ; [Maker #2012](https://github.com/Blueprint-Master/blueprint-maker/pull/2012) reste la PR liée. Aucun déploiement, fusion de ces correctifs ou publication npm n’est effectué dans cette passe.

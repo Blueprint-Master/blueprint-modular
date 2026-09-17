@@ -1,6 +1,6 @@
 # Index des familles de visuels
 
-Mis à jour le **2026-09-16**. Cet index décrit le code et sa validation, pas une
+Mis à jour le **2026-09-17**. Cet index décrit le code et sa validation, pas une
 disponibilité automatiquement déduite d’un numéro de package.
 
 | Famille | Objets et variantes | État vérifié |
@@ -12,7 +12,9 @@ disponibilité automatiquement déduite d’un numéro de package.
 | Eau & phénomènes naturels | `water-wave`, `water-ripple`, `water-waterfall`, `water-whirlpool` ; matière studio + gouache ; 1.0.0 | Modular #227 et Maker #1964 fusionnées le 2026-09-13. [Preuves et limites](previews/water/README.md). Publication npm et disponibilité en production non vérifiées |
 | Végétation | flora-fern, flora-blossom, flora-meadow, flora-branch ; 1.0.0 | Fusionnée puis **retirée de la découverte le 2026-09-14** après revue visuelle insuffisante. Identifiants conservés pour compatibilité |
 | Cristaux & matières | material-crystal, material-geode, material-liquid-metal, material-dichroic-glass, material-obsidian ; 1.0.0 | Fusionnée via Modular #229 et Maker #1973 puis **retirée de la découverte le 2026-09-14** après revue visuelle insuffisante. Identifiants conservés pour compatibilité |
-| Sciences & éléments | science-periodic-table, science-atom, science-element-card, science-comparator ; nuit + papier + transparent ; 1.0.0 ; science-molecule ; 153 molécules proposées | Socle Modular #230/#234 et Maker #1982/#2010 fusionné. Calques atomiques et compositeur moléculaire : Modular #235 fusionnée ; extension du catalogue et de l’analyseur dans feat/science-library-recognition-20260916, Maker #2012 en brouillon. [Preuves et limites](previews/science/README.md). Revue live/mobile encore requise |
+| Sciences & éléments | science-periodic-table, science-atom, science-element-card, science-comparator ; nuit + papier + transparent ; 1.0.0 ; science-molecule ; 153 molécules proposées | Socle Modular #230/#234 et Maker #1982/#2010 fusionné. Calques atomiques et compositeur moléculaire : Modular #235 fusionnée ; extension du catalogue et de l’analyseur dans Modular #236, Maker #2012 en brouillon. [Preuves et limites](previews/science/README.md). Revue live/mobile encore requise |
+
+| Drapeaux — prochaine priorité | Tous les pays ; tissu photoréaliste + dessin ; fixe + flottant ; calques modifiables et transparence | Demande confirmée le 2026-09-17. Planifié, aucun objet de cette famille livré dans la passe Sciences. Couverture des pays, sources/licences et variantes à inventorier explicitement ; territoires distingués |
 
 ## Continuité
 
@@ -112,3 +114,16 @@ prétendue. Les sources, exclusions et hashes sont versionnés. Modular #235
 est fusionnée ; extension en branche feat/science-library-recognition-20260916,
 adaptateur repris dans Maker #2012. Pas de publication npm ni de déploiement
 effectués ici. Revue visuelle live toujours bloquée ; détails dans les aperçus.
+
+## 2026-09-17 — prochaine famille choisie par l’utilisateur
+
+La prochaine création porte sur les **drapeaux de tous les pays**, en quatre
+déclinaisons : tissu photoréaliste fixe, tissu photoréaliste flottant, dessin fixe
+et dessin flottant. Le motif, le tissu, l’éclairage et le mouvement doivent
+rester composables ; proportions, couleurs, orientation et emblèmes exacts.
+Maintenir une matrice pays × style × mouvement, avec sources/licences et statut
+de validation par entrée. Le flottement doit déformer le tissu avec sobriété,
+respecter pause/reduced-motion et rester arrêté en vignette/hors écran.
+Cette priorité remplace le choix libre d’une nouvelle famille après clôture des
+correctifs bloquants de Sciences. Elle ne vaut ni création ni publication de
+drapeaux à ce stade.
