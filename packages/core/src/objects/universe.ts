@@ -1,3 +1,4 @@
+import {parseFlagSettings,type FlagSettings} from "./flags";
 import {parseEarthLayers, type EarthLayers} from "./earth-layers";
 import {isWeatherId,WEATHER_VERSION,type WeatherId} from "./weather";
 import {isFormId,FORMS_VERSION,type FormId} from "./forms";
@@ -56,7 +57,8 @@ export interface WaterObjectAttachment {schemaVersion:1;kind:"modular-object";id
 export interface FloraObjectAttachment {schemaVersion:1;kind:"modular-object";id:FloraId;version:typeof FLORA_VERSION;style:PlanetStyle;animation:{playing:boolean;speed:number}}
 export interface MaterialObjectAttachment {schemaVersion:1;kind:"modular-object";id:MaterialId;version:typeof MATERIAL_VERSION;style:PlanetStyle;animation:{playing:boolean;speed:number}}
 export interface ScienceObjectAttachment {schemaVersion:1;kind:"modular-object";id:ScienceId;version:typeof SCIENCE_VERSION;style:ScienceStyle;animation:{playing:boolean;speed:number};science:ScienceSettings}
-export type ModularObjectAttachment = BuiltinObjectAttachment | CommunityObjectAttachment | VectorObjectAttachment | WeatherObjectAttachment | FormObjectAttachment | WaterObjectAttachment | FloraObjectAttachment | MaterialObjectAttachment | ScienceObjectAttachment;
+export interface FlagObjectAttachment {schemaVersion:1;kind:"modular-object";id:"flag-banner";version:"1.0.0";style:PlanetStyle;animation:{playing:boolean;speed:number};flag:FlagSettings}
+export type ModularObjectAttachment = FlagObjectAttachment | BuiltinObjectAttachment | CommunityObjectAttachment | VectorObjectAttachment | WeatherObjectAttachment | FormObjectAttachment | WaterObjectAttachment | FloraObjectAttachment | MaterialObjectAttachment | ScienceObjectAttachment;
 export function parseModularObjectAttachment(raw:unknown):ModularObjectAttachment|undefined {
   if(!raw||typeof raw!=="object")return;
   const o=raw as Record<string,unknown>,a=o.animation as Record<string,unknown>|undefined;
@@ -67,6 +69,7 @@ export function parseModularObjectAttachment(raw:unknown):ModularObjectAttachmen
   if(o.schemaVersion===1&&o.kind==="modular-object"&&typeof o.id==="string"&&isScienceId(o.id)&&o.version===SCIENCE_VERSION&&(o.style==="midnight"||o.style==="paper"||o.style==="transparent")&&a&&typeof a.playing==="boolean"&&typeof a.speed==="number"&&Number.isFinite(a.speed)&&a.speed>=.1&&a.speed<=3&&science)return {schemaVersion:1,kind:"modular-object",id:o.id,version:SCIENCE_VERSION,style:o.style,animation:{playing:a.playing,speed:a.speed},science};
   if(o.schemaVersion!==1||o.kind!=="modular-object"||typeof o.id!=="string"||
     (o.style!=="photorealistic"&&o.style!=="illustration")||!a||typeof a.playing!=="boolean"||typeof a.speed!=="number"||!Number.isFinite(a.speed)||a.speed<.1||a.speed>3)return;
+  if(o.id==="flag-banner"&&o.version==="1.0.0"){const flag=parseFlagSettings(o.flag);if(flag)return {schemaVersion:1,kind:"modular-object",id:"flag-banner",version:"1.0.0",style:o.style,animation:{playing:a.playing,speed:a.speed},flag};return;}
   if(isPlanetId(o.id)&&o.version===UNIVERSE_VERSION)return {schemaVersion:1,kind:"modular-object",id:o.id,version:UNIVERSE_VERSION,style:o.style,animation:{playing:a.playing,speed:a.speed},...(earth?{earth}:{})};
   if(isWeatherId(o.id)&&o.version===WEATHER_VERSION)return {schemaVersion:1,kind:"modular-object",id:o.id,version:WEATHER_VERSION,style:o.style,animation:{playing:a.playing,speed:a.speed}};
   if(isFormId(o.id)&&o.version===FORMS_VERSION)return {schemaVersion:1,kind:"modular-object",id:o.id,version:FORMS_VERSION,style:o.style,animation:{playing:a.playing,speed:a.speed}};

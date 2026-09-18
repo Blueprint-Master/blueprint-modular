@@ -61,3 +61,10 @@ export {moleculeFormula,displayFormula} from "./molecule-formula";
 export {MOLECULE_PRESET_IDS} from "./molecule-ids.generated";
 export {MAX_MOLECULE_ATOMS,MAX_MOLECULE_BONDS} from "./molecules";
 export type {MoleculePresetId} from "./molecules";
+
+export {FlagObject,FlagArtworkLayer} from "./FlagObject";
+export type {FlagObjectProps} from "./FlagObject";
+export {FlagControls} from "./FlagControls";
+export {FLAG_DESIGNS,DEFAULT_FLAG_SETTINGS,flagDesign,flagAssetPaths,parseFlagSettings} from "./flags";
+export type {FlagSettings,FlagStyle,FlagDesignId} from "./flags";
+export {FLAG_OBJECTS} from "./catalog";

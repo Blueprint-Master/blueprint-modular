@@ -3,6 +3,8 @@ import type {AtomicLayerSettings} from "./atomic-settings";
 import type {MoleculeSettings} from "./molecules";
 import type {EarthLayers} from "./earth-layers";
 import React from "react";
+import {FlagObject} from "./FlagObject";
+import type {FlagSettings} from "./flags";
 import { PlanetObject } from "./PlanetObject";
 import { WeatherObject } from "./WeatherObject";
 import {FormObject} from "./FormObject";
@@ -36,6 +38,7 @@ export interface ModularObjectProps {
   interactive?: boolean;
   assetBaseUrl?: string;
   thumbnail?: boolean;
+  flag?: FlagSettings;
   earth?: Partial<EarthLayers>;
   atomic?: AtomicLayerSettings;
   molecule?: MoleculeSettings;
@@ -91,7 +94,8 @@ function BuiltObject({ item, color }: { item: ModularObjectDefinition; color: st
 }
 
 /** Version 1 renders stable vectors; Universe version 2 renders interactive textured spheres. */
-export function ModularObject({ id, version = OBJECT_CATALOG_VERSION, label, locale = "fr", size = 240, angle = 0, color, className, variant="photorealistic",playing=true,speed=1,interactive=true,assetBaseUrl,thumbnail=false,earth,element,compareElement,colorMode,layers,atomic,molecule,onElementChange }: ModularObjectProps) {
+export function ModularObject({ id, version = OBJECT_CATALOG_VERSION, label, locale = "fr", size = 240, angle = 0, color, className, variant="photorealistic",playing=true,speed=1,interactive=true,assetBaseUrl,thumbnail=false,flag,earth,element,compareElement,colorMode,layers,atomic,molecule,onElementChange }: ModularObjectProps) {
+  if(id==="flag-banner"&&version==="1.0.0"&&(variant==="photorealistic"||variant==="illustration"))return <FlagObject flag={flag} label={label} size={size} style={variant} playing={playing} speed={speed} assetBaseUrl={assetBaseUrl} thumbnail={thumbnail}/>;
   if(version===SCIENCE_VERSION&&isScienceId(id)&&(variant==="midnight"||variant==="paper"||variant==="transparent"))return <span className={className} data-modular-object={`${id}@${version}`}><ScienceObject id={id} label={label??SCIENCE_NAMES[id][locale]} locale={locale} size={size} style={variant} playing={playing} speed={speed} interactive={interactive} thumbnail={thumbnail} element={element} compareElement={compareElement} colorMode={colorMode} layers={layers} atomic={atomic} molecule={molecule} onElementChange={onElementChange}/></span>;
   if(version===MATERIAL_VERSION&&isMaterialId(id)&&(variant==="photorealistic"||variant==="illustration"))return <span className={className} data-modular-object={`${id}@${version}`}><MaterialObject id={id} label={label??MATERIAL_NAMES[id][locale]} size={size} style={variant} playing={playing} speed={speed} assetBaseUrl={assetBaseUrl} thumbnail={thumbnail}/></span>;
   if(version===FLORA_VERSION&&isFloraId(id)&&(variant==="photorealistic"||variant==="illustration"))return <span className={className} data-modular-object={`${id}@${version}`}><FloraObject id={id} label={label??FLORA_NAMES[id][locale]} size={size} style={variant} playing={playing} speed={speed} assetBaseUrl={assetBaseUrl} thumbnail={thumbnail}/></span>;
@@ -104,7 +108,7 @@ export function ModularObject({ id, version = OBJECT_CATALOG_VERSION, label, loc
   }
   const item = resolveModularObject(id, version);
   const safeSize = Number.isFinite(size) ? Math.max(48, Math.min(1000,size)) : 240;
-  if (!item || version===UNIVERSE_VERSION || item.family==="weather" || item.family==="forms" || item.family==="water" || item.family==="flora" || item.family==="materials" || item.family==="science") return <span role="status" data-object-unavailable={`${id}@${version}`}>{locale === "fr" ? "Objet indisponible" : "Object unavailable"}</span>;
+  if (!item || version===UNIVERSE_VERSION || item.family==="weather" || item.family==="forms" || item.family==="water" || item.family==="flora" || item.family==="materials" || item.family==="science" || item.family==="flags") return <span role="status" data-object-unavailable={`${id}@${version}`}>{locale === "fr" ? "Objet indisponible" : "Object unavailable"}</span>;
   const title = label ?? item.name[locale];
   // Reject URL paint servers and arbitrary CSS; the host may supply a hex theme token value.
   const paint = color && /^#[0-9a-f]{6}$/i.test(color) ? color : item.color;

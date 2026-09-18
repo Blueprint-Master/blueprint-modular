@@ -1,0 +1,1 @@
+{"schemaVersion":1,"kind":"modular-object","id":"flag-banner","version":"1.0.0","style":"photorealistic","animation":{"playing":true,"speed":1},"flag":{"design":"fr","mode":"waving","background":"transparent","wind":0.55,"layers":{"artwork":true,"fabric":true,"lighting":true,"pole":false}}}
