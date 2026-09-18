@@ -7,8 +7,8 @@ import {MATERIAL_IDS,MATERIAL_NAMES,MATERIAL_VERSION} from "./materials";
 import {SCIENCE_IDS,SCIENCE_NAMES,SCIENCE_VERSION} from "./science";
 /** Versioned, data-only objects. No remote assets, arbitrary code or user data. */
 export const OBJECT_CATALOG_VERSION = "1.0.0" as const;
-export type ObjectFamily = "space" | "weather" | "forms" | "water" | "flora" | "materials" | "science" | "buildings" | "mobility" | "logistics";
-export type ObjectShape = "planet" | "star" | "moon" | "atmosphere" | "sculpture" | "water" | "plant" | "material" | "scientific-view" | "house" | "building" | "warehouse" | "factory" | "car" | "van" | "truck" | "pallet" | "parcel" | "container";
+export type ObjectFamily = "flags" | "space" | "weather" | "forms" | "water" | "flora" | "materials" | "science" | "buildings" | "mobility" | "logistics";
+export type ObjectShape = "flag" | "planet" | "star" | "moon" | "atmosphere" | "sculpture" | "water" | "plant" | "material" | "scientific-view" | "house" | "building" | "warehouse" | "factory" | "car" | "van" | "truck" | "pallet" | "parcel" | "container";
 export interface ModularObjectDefinition {
   readonly id: string;
   readonly version: string;
@@ -18,8 +18,8 @@ export interface ModularObjectDefinition {
   readonly color: string;
   readonly rings: boolean;
   readonly parent?: string;
-  readonly license: "Apache-2.0" | "CC-BY-4.0" | "LicenseRef-NASA-Media" | "CC-BY-3.0" | "CC-BY-SA-4.0";
-  readonly fidelity: "stylized-illustration" | "textured-sphere" | "living-atmosphere" | "deforming-surface" | "living-botanical" | "living-material" | "data-visualization";
+  readonly license: "LicenseRef-Flag-Assets" | "Apache-2.0" | "CC-BY-4.0" | "LicenseRef-NASA-Media" | "CC-BY-3.0" | "CC-BY-SA-4.0";
+  readonly fidelity: "cloth-surface" | "stylized-illustration" | "textured-sphere" | "living-atmosphere" | "deforming-surface" | "living-botanical" | "living-material" | "data-visualization";
 }
 function object(id: string, fr: string, en: string, family: ObjectFamily, shape: ObjectShape, color: string, rings = false): ModularObjectDefinition {
   return Object.freeze({ id, version: OBJECT_CATALOG_VERSION, name: Object.freeze({ fr, en }), family, shape, color, rings,
@@ -77,20 +77,21 @@ export const SCIENCE_OBJECTS:readonly ModularObjectDefinition[]=Object.freeze(SC
   ...object(id,SCIENCE_NAMES[id].fr,SCIENCE_NAMES[id].en,"science","scientific-view","#6fd5cc"),
   version:SCIENCE_VERSION,fidelity:"data-visualization" as const,
 })));
+export const FLAG_OBJECTS:readonly ModularObjectDefinition[]=Object.freeze([{...object("flag-banner","Drapeaux · aperçu","Flags · preview","flags","flag","#365d91"),license:"LicenseRef-Flag-Assets",fidelity:"cloth-surface"}]);
 /** Flora and materials remain resolvable for compatibility, but are withdrawn from discovery pending a real visual review. */
 export const DISCOVERABLE_OBJECTS=Object.freeze([...MODULAR_OBJECTS,...MOON_OBJECTS,...WEATHER_OBJECTS,...FORM_OBJECTS,...WATER_OBJECTS,...SCIENCE_OBJECTS]);
 
 /** Exact resolution only. An unknown ID/version must never pick a lookalike. */
 export const MODULAR_OBJECT_VERSIONS:readonly ModularObjectDefinition[]=Object.freeze([
-  ...MODULAR_OBJECTS,...MOON_OBJECTS,...WEATHER_OBJECTS,...FORM_OBJECTS,...WATER_OBJECTS,...FLORA_OBJECTS,...MATERIAL_OBJECTS,...SCIENCE_OBJECTS,
+  ...MODULAR_OBJECTS,...MOON_OBJECTS,...WEATHER_OBJECTS,...FORM_OBJECTS,...WATER_OBJECTS,...FLORA_OBJECTS,...MATERIAL_OBJECTS,...SCIENCE_OBJECTS,...FLAG_OBJECTS,
   ...MODULAR_OBJECTS.filter(item=>item.family==="space").map(item=>Object.freeze({...item,version:"2.0.0",license:"CC-BY-4.0" as const,fidelity:"textured-sphere" as const})),
 ]);
 export function resolveModularObject(id: string, version: string = OBJECT_CATALOG_VERSION): ModularObjectDefinition | undefined {
   return MODULAR_OBJECT_VERSIONS.find(item => item.id === id && item.version === version);
 }
-export function searchModularObjects(query = "", family?: ObjectFamily): readonly ModularObjectDefinition[] {
+export function searchModularObjects(query = "", family?: ObjectFamily,includeCandidates=false): readonly ModularObjectDefinition[] {
   const normalize = (text: string) => text.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
   const words = normalize(query).trim().split(/\s+/).filter(Boolean);
-  return DISCOVERABLE_OBJECTS.filter(item => (!family || item.family === family) &&
+  return (includeCandidates?[...DISCOVERABLE_OBJECTS,...FLAG_OBJECTS]:DISCOVERABLE_OBJECTS).filter(item => (!family || item.family === family) &&
     words.every(word => normalize(`${item.id} ${item.name.fr} ${item.name.en} ${item.parent??""}`).includes(word)));
 }

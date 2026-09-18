@@ -258,3 +258,8 @@ Boucle exacte de 12 s ; pause, vitesse 0,1–3, onglet caché, arrêt hors écra
 vue active uniquement. Plafonds : 320 px/18 fps, ou 224 px/12 fps sur appareil
 contraint. Copier `dist/assets/objects/materials-v1` avec le package. Voir
 `docs/previews/materials/README.md` pour les planches, la vidéo et les mesures.
+
+
+## Flags (candidate, 1.0.0)
+
+`FlagObject`, `FlagControls`, `FlagArtworkLayer`, `FLAG_DESIGNS`, `DEFAULT_FLAG_SETTINGS` and `parseFlagSettings` are exported from `/objects`. Pass `flag` to `ModularObject` with `id="flag-banner"`, version `1.0.0`, and variant `photorealistic` or `illustration`. `FlagArtworkLayer` is an SVG group for composition; the cloth renderer is lazy WebGL. Copy `dist/assets/objects/flags-v1` to `public/objects/flags-v1`; retain all notices. The source manifest controls provenance and derivative license per motif. Coverage and exclusions: `docs/flags.md`. Candidates require explicit selection and are not in `DISCOVERABLE_OBJECTS`.
