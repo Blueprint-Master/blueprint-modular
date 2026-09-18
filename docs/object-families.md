@@ -126,3 +126,11 @@ respecter pause/reduced-motion et rester arrêté en vignette/hors écran.
 Cette priorité remplace le choix libre d’une nouvelle famille après clôture des
 correctifs bloquants de Sciences. Elle ne vaut ni création ni publication de
 drapeaux à ce stade.
+
+## 2026-09-19 — réparation du candidat Drapeaux
+
+311 motifs conservés. Shader GLSL ES corrigé (`flat` réservé), tissu et dessin
+différenciés ; preuve du shader et compilation en CI ajoutées. Trois instants
+inspectés dans les deux styles. Validation React/WebGL en navigateur et qualité
+photoréaliste encore requises. Correctif en branche, sans publication npm ni
+déploiement. Voir `docs/flags.md` pour les limites exactes.
