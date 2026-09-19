@@ -55,3 +55,24 @@ Depuis la racine : `npx vite --host 127.0.0.1 --port 4173`, puis
 `http://127.0.0.1:4173/docs/previews/flags/`. Cette page monte le véritable composant
 avec choix du motif, style, taille, calques, fond, vent et pause. Il ne s'agit pas
 d'une preuve animée inspectée. Référence portable : `examples/objects/flag-fr.modular.json`.
+
+## Correctif du 19 septembre 2026
+
+La compilation GLSL ES 1.00 échouait : `flat` est réservé. Renommage en
+`flatMode`, plis diagonaux et déformation du bord libre, éclairage continu avec
+ourlets pour le tissu ; contours, ombres en aplats et hachures pour le dessin.
+La légende du catalogue distingue désormais les deux rendus.
+
+`python scripts/verify-flag-shaders.py` compile les véritables shaders et vérifie
+rendu non figé, différence de styles, alpha, immobilité à plat et raccord de
+boucle (tolérance moyenne < 0,1/255 pour l’arrondi flottant). Exécuté avec
+Mesa llvmpipe LLVM 20.1.2, EGL Linux, rendu logiciel. Les planches à 0, 2 et 4 s
+ont été inspectées ; une preuve de 48 images couvre les 12 secondes.
+[Aperçu comparatif](previews/flags/render-check/comparison.webp) ·
+[Animation du shader](previews/flags/render-check/cloth.webp).
+
+Ce contrôle est désormais dans la CI. Il ne monte pas React et ne valide ni
+l’import dynamique du navigateur, ni le chargement de texture par Image, ni
+pause/hors écran/reduced-motion dans le DOM. Aucun coût GPU ou téléphone mesuré.
+L’aspect obtenu est un tissu synthétique amélioré ; le niveau photoréaliste
+reste à valider, et le candidat reste exclu de la découverte générale.
