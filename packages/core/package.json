@@ -2,6 +2,11 @@
   "name": "@blueprint-modular/core",
   "version": "0.3.16",
   "description": "Blueprint Modular — composants React pour apps de données",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Blueprint-Master/blueprint-modular.git",
+    "directory": "packages/core"
+  },
   "main": "./dist/index.js",
   "module": "./dist/index.mjs",
   "types": "./dist/packages/core/src/index.d.ts",
