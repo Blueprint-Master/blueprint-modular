@@ -1,25 +1,27 @@
 # Publication npm de @blueprint-modular/core (le paquet JS consommé par
 # blueprint-maker et les apps générées).
 #
-# Même mécanisme que manual-deploy.yml : AUCUNE connexion distante — le job
-# s'exécute sur le runner self-hosted installé sur bpm-prod (`runs-on:
-# [self-hosted, bpm-prod]`), qui EST le serveur.
+# AUTHENTIFICATION : publication de CONFIANCE npm (OIDC), sans aucun jeton.
+# GitHub atteste auprès de npm que c'est CE workflow de CE dépôt qui publie ;
+# npm n'accepte que l'éditeur de confiance déclaré dans les réglages du paquet
+# (npmjs.com → @blueprint-modular/core → Settings → Trusted Publisher →
+# GitHub Actions : Blueprint-Master / blueprint-modular / publish-core.yml).
+# Rien à stocker, rien à renouveler.
 #
-# AUTHENTIFICATION (13/11) : le job supposait npm authentifié sur la machine
-# (npm login / ~/.npmrc). Ce n'était plus vrai : les runs 1, 2 (06/08) et 3
-# (13/11) ont tous échoué en `E404 Not Found - PUT …@blueprint-modular%2fcore`,
-# la réponse de npm à un émetteur non authentifié. Les versions 0.3.10 à 0.3.15
-# ont été publiées hors de ce workflow. Le jeton vient désormais du secret
-# GitHub `NPM_TOKEN` (jeton granulaire npm, lecture-écriture sur le scope
-# @blueprint-modular), écrit dans un .npmrc TEMPORAIRE propre au job et effacé
-# en sortie : rien dans le dépôt, rien qui survive au job sur la machine.
-# Secret absent : le job le DIT et s'arrête, il ne tente pas une publication
-# vouée au 404.
+# Pourquoi plus le runner de bpm-prod : les trois lancements précédents (06/08 ×2,
+# 13/11) ont échoué en `E404 Not Found - PUT …@blueprint-modular%2fcore`, la
+# réponse de npm à un émetteur non authentifié — le job supposait un `npm login`
+# sur la machine qui n'existait pas, et 0.3.10 à 0.3.15 ont été publiées à la
+# main. Et npm n'accepte la publication de confiance que depuis les runners
+# HÉBERGÉS par GitHub (documentation npm, 13/11 : « Self-hosted runners are not
+# currently supported »). Le job tourne donc sur ubuntu-latest, depuis un
+# checkout propre de master.
 #
 # Déclenchement : onglet « Actions » → « Publish core to npm » → « Run
-# workflow » (tappable depuis mobile). Publie la version telle qu'elle est
-# dans packages/core/package.json ; npm REFUSE de republier une version déjà
-# existante — c'est le garde-fou : bumper packages/core/package.json AVANT.
+# workflow », ou par un agent (workflow_dispatch). Publie la version telle
+# qu'elle est dans packages/core/package.json ; npm REFUSE de republier une
+# version déjà existante — c'est le garde-fou : bumper packages/core/package.json
+# AVANT.
 #
 # Séquence identique au script local `npm run publish:core`
 # (cd packages/core && npm install && npm run build && npm publish).
@@ -29,27 +31,31 @@ name: Publish core to npm
 on:
   workflow_dispatch:
 
+permissions:
+  contents: read
+  id-token: write # OIDC : requis par la publication de confiance npm
+
 jobs:
   publish:
     name: Publish @blueprint-modular/core
-    runs-on: [self-hosted, bpm-prod]
+    runs-on: ubuntu-latest
     steps:
-      - name: Publish
-        env:
-          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
+      - uses: actions/checkout@v4
+        with:
+          ref: master
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "24"
+          registry-url: "https://registry.npmjs.org"
+
+      - name: npm assez récent pour la publication de confiance (>= 11.5.1)
         run: |
-          if [ -z "${NPM_TOKEN}" ]; then
-            echo "✖ Secret NPM_TOKEN absent : ajoute-le dans Settings → Secrets and variables → Actions (jeton granulaire npm, lecture-écriture sur @blueprint-modular)."
-            exit 1
-          fi
-          NPMRC="$(mktemp)"
-          trap 'rm -f "$NPMRC"' EXIT
-          printf '//registry.npmjs.org/:_authToken=%s\n' "$NPM_TOKEN" > "$NPMRC"
-          export NPM_CONFIG_USERCONFIG="$NPMRC"
-          npm whoami >/dev/null || { echo "✖ Jeton NPM_TOKEN refusé par npm (expiré ou sans droit) : le renouveler."; exit 1; }
-          cd ~/blueprint-modular
-          git fetch origin
-          git reset --hard origin/master  # prod reflète origin/master exactement (cf. manual-deploy)
+          npm install -g npm@^11.5.1
+          npm --version
+
+      - name: Version absente du registre
+        run: |
           VERSION="$(node -p "require('./packages/core/package.json').version")"
           echo "→ Publication de @blueprint-modular/core@${VERSION}"
           if npm view "@blueprint-modular/core@${VERSION}" version >/dev/null 2>&1; then
@@ -57,5 +63,24 @@ jobs:
             echo "  Bumpe packages/core/package.json puis relance ce workflow."
             exit 1
           fi
-          npm run publish:core
-          echo "✅ @blueprint-modular/core@${VERSION} publié."
+
+      # Les composants vivent à la RACINE du dépôt (components/bpm/) : TypeScript y
+      # résout `react` depuis le node_modules racine pour émettre leurs .d.ts (#240).
+      - name: Dépendances racine
+        run: npm ci
+
+      - name: Publication
+        run: npm run publish:core
+
+      - name: Vérification sur le registre
+        run: |
+          VERSION="$(node -p "require('./packages/core/package.json').version")"
+          for i in 1 2 3 4 5 6; do
+            if npm view "@blueprint-modular/core@${VERSION}" version >/dev/null 2>&1; then
+              echo "✅ @blueprint-modular/core@${VERSION} publié et visible sur le registre."
+              exit 0
+            fi
+            sleep 10
+          done
+          echo "✖ Publication annoncée mais version introuvable sur le registre après 60 s."
+          exit 1
