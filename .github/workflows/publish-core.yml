@@ -69,8 +69,17 @@ jobs:
       - name: Dépendances racine
         run: npm ci
 
+      # Journal bavard : npm journalise en verbose la tentative d'échange OIDC et la
+      # raison d'un refus ; sans lui, un échec d'échange retombe EN SILENCE sur le
+      # jeton factice que pose setup-node et finit en 404 (runs 4 et 5, 13/11).
       - name: Publication
+        env:
+          NPM_CONFIG_LOGLEVEL: verbose
         run: npm run publish:core
+
+      - name: Échange OIDC (journal npm)
+        if: failure()
+        run: grep -hiE "oidc|trusted|provenance|auth" ~/.npm/_logs/*.log | tail -40 || true
 
       - name: Vérification sur le registre
         run: |
