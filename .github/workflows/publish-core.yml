@@ -3,9 +3,18 @@
 #
 # Même mécanisme que manual-deploy.yml : AUCUNE connexion distante — le job
 # s'exécute sur le runner self-hosted installé sur bpm-prod (`runs-on:
-# [self-hosted, bpm-prod]`), qui EST le serveur. On y suppose npm authentifié
-# pour publier (npm login / ~/.npmrc présent sur la machine) — aucun token
-# n'est stocké dans le dépôt (BPM-SEC : jamais de secret committé).
+# [self-hosted, bpm-prod]`), qui EST le serveur.
+#
+# AUTHENTIFICATION (13/11) : le job supposait npm authentifié sur la machine
+# (npm login / ~/.npmrc). Ce n'était plus vrai : les runs 1, 2 (06/08) et 3
+# (13/11) ont tous échoué en `E404 Not Found - PUT …@blueprint-modular%2fcore`,
+# la réponse de npm à un émetteur non authentifié. Les versions 0.3.10 à 0.3.15
+# ont été publiées hors de ce workflow. Le jeton vient désormais du secret
+# GitHub `NPM_TOKEN` (jeton granulaire npm, lecture-écriture sur le scope
+# @blueprint-modular), écrit dans un .npmrc TEMPORAIRE propre au job et effacé
+# en sortie : rien dans le dépôt, rien qui survive au job sur la machine.
+# Secret absent : le job le DIT et s'arrête, il ne tente pas une publication
+# vouée au 404.
 #
 # Déclenchement : onglet « Actions » → « Publish core to npm » → « Run
 # workflow » (tappable depuis mobile). Publie la version telle qu'elle est
@@ -26,7 +35,18 @@ jobs:
     runs-on: [self-hosted, bpm-prod]
     steps:
       - name: Publish
+        env:
+          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
         run: |
+          if [ -z "${NPM_TOKEN}" ]; then
+            echo "✖ Secret NPM_TOKEN absent : ajoute-le dans Settings → Secrets and variables → Actions (jeton granulaire npm, lecture-écriture sur @blueprint-modular)."
+            exit 1
+          fi
+          NPMRC="$(mktemp)"
+          trap 'rm -f "$NPMRC"' EXIT
+          printf '//registry.npmjs.org/:_authToken=%s\n' "$NPM_TOKEN" > "$NPMRC"
+          export NPM_CONFIG_USERCONFIG="$NPMRC"
+          npm whoami >/dev/null || { echo "✖ Jeton NPM_TOKEN refusé par npm (expiré ou sans droit) : le renouveler."; exit 1; }
           cd ~/blueprint-modular
           git fetch origin
           git reset --hard origin/master  # prod reflète origin/master exactement (cf. manual-deploy)
