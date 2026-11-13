@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useId, useState } from "react";
 import { createPortal } from "react-dom";
 import { useBpmLocale } from "./i18n";
 
@@ -62,6 +62,7 @@ export function Modal({
   const bpmLocale = useBpmLocale();
   const t = STRINGS[bpmLocale];
   const [mounted, setMounted] = useState(false);
+  const titleId = useId();
 
   useEffect(() => {
     setMounted(true);
@@ -103,6 +104,12 @@ export function Modal({
       onClick={handleBackdropClick}
     >
       <div
+        /* Le rôle n'est porté que fenêtre OUVERTE : le voile reste dans le DOM
+           fermé (invisible), et un lecteur d'écran comme un outil de test
+           compteraient sinon un dialogue qui n'existe pas. */
+        role={isOpen ? "dialog" : undefined}
+        aria-modal={isOpen ? true : undefined}
+        aria-labelledby={isOpen && title != null ? titleId : undefined}
         className={`bpm-modal flex flex-col max-h-[90vh] overflow-hidden transition-all ${sizeClasses[size]} ${
           !isOpen ? "opacity-0 scale-95 pointer-events-none" : ""
         }`}
@@ -127,7 +134,7 @@ export function Modal({
           }}
         >
           {title != null && (
-            <h3 className="bpm-modal-title m-0" style={{ color: "var(--bpm-text)", fontWeight: 600, fontSize: "var(--bpm-font-size-lg)" }}>
+            <h3 id={titleId} className="bpm-modal-title m-0" style={{ color: "var(--bpm-text)", fontWeight: 600, fontSize: "var(--bpm-font-size-lg)" }}>
               {title}
             </h3>
           )}
