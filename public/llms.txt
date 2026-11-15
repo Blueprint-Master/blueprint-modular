@@ -1,7 +1,7 @@
 # Blueprint Modular — Agent Context File
 # Version React (@blueprint-modular/core, npm) : 0.3.16
 # Version Python (blueprint-modular, PyPI)      : 0.1.54
-# Date    : 2026-09-19
+# Date    : 2026-11-15
 # URL canonique : https://blueprint-modular.com/llms.txt
 #
 # Ce fichier est la référence machine de @blueprint-modular/core.
@@ -1929,7 +1929,7 @@ Conteneur page (core) — props : children.
 ```
 
 ## bpm.statusTracker
-@component bpm.statusTracker @description Historique réel d'un objet : étapes completed / current / pending / error. @example bpm.statusTracker({ stages: [{ label: "Reçu", state: "completed" }, { label: "En cours", state: "current" }, { label: "Livré", state: "pending" }] }) @props - stages (StatusTrackerStage[], obligatoire) — Étapes { label, state: completed|current|pending|error }. - direction ("horizontal"|"vertical", optionnel) — Orientation. Default: "horizontal". - compact (boolean, optionnel) — Affichage condensé. Default: false. - className (string, optionnel) — Classes CSS additionnelles. @parent bpm.card, bpm.masterDetail, bpm.page @associated bpm.stepper, bpm.timeline, bpm.badge @forbidden Saisie multi-étapes — utiliser bpm.stepper/wizardForm
+@component bpm.statusTracker @description Historique réel d'un objet : étapes completed / current / pending / error. @example bpm.statusTracker({ stages: [{ label: "Reçu", status: "completed" }, { label: "En cours", status: "current" }, { label: "Livré", status: "pending" }] }) @props - stages (StatusTrackerStage[], obligatoire) — Étapes { label, status: completed|current|pending|error } — la clé est `status` (pas `state`). - direction ("horizontal"|"vertical", optionnel) — Orientation. Default: "horizontal". - compact (boolean, optionnel) — Affichage condensé. Default: false. - className (string, optionnel) — Classes CSS additionnelles. @parent bpm.card, bpm.masterDetail, bpm.page @associated bpm.stepper, bpm.timeline, bpm.badge @forbidden Saisie multi-étapes — utiliser bpm.stepper/wizardForm
 @semantic role=indicateur frame=workflow type=progression,statut direction=borne-cible temporalite=instantane status=proposed
 @guidance Position réelle d'une instance dans un processus à étapes normées (commande, dossier) : completed/current/pending/error. Associer : bpm.timeline, bpm.badge, bpm.card. Éviter : Parcours de saisie piloté par l'utilisateur (bpm.stepper) ou pourcentage continu (bpm.progress).
 ```

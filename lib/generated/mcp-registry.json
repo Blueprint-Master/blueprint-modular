@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-09-15T20:07:36.168Z",
+  "generatedAt": "2026-11-15T20:48:12.893Z",
   "source": "lib/generated/bpm-components.json + public/llms.txt + lib/semantics/bpm-semantics.json",
   "total": 172,
   "categories": [
@@ -2245,7 +2245,7 @@
       "status": "curated",
       "fullDescription": "Historique réel d'un objet : étapes completed / current / pending / error.",
       "props": "  stages*: StatusTrackerStage[]\n  direction?: \"horizontal\" | \"vertical\"\n  compact?: boolean\n  className?: string",
-      "example": "bpm.statusTracker({ stages: [{ label: \"Reçu\", state: \"completed\" }, { label: \"En cours\", state: \"current\" }, { label: \"Livré\", state: \"pending\" }] })",
+      "example": "bpm.statusTracker({ stages: [{ label: \"Reçu\", status: \"completed\" }, { label: \"En cours\", status: \"current\" }, { label: \"Livré\", status: \"pending\" }] })",
       "associated": [
         "bpm.stepper",
         "bpm.timeline",
