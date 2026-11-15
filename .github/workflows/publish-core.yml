@@ -75,12 +75,14 @@ jobs:
       - name: Vérification sur le registre
         run: |
           VERSION="$(node -p "require('./packages/core/package.json').version")"
-          for i in 1 2 3 4 5 6; do
+          # Le registre a mis ~3 min à exposer 0.3.16 (15/11) : 60 s faisaient
+          # échouer un run dont la publication avait RÉUSSI. Fenêtre de 5 min.
+          for i in $(seq 1 30); do
             if npm view "@blueprint-modular/core@${VERSION}" version >/dev/null 2>&1; then
               echo "✅ @blueprint-modular/core@${VERSION} publié et visible sur le registre."
               exit 0
             fi
             sleep 10
           done
-          echo "✖ Publication annoncée mais version introuvable sur le registre après 60 s."
+          echo "✖ Publication annoncée mais version introuvable sur le registre après 5 min."
           exit 1
