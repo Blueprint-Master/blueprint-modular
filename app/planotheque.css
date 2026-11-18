@@ -938,3 +938,172 @@ html:not([data-theme="dark"]) .plano-state[aria-pressed="true"] .plano-state-fra
   background: color-mix(in srgb, var(--plano-bg) 92%, transparent) !important;
   backdrop-filter: blur(10px);
 }
+
+/* --------------------------------------------------------------------------
+   Rail fermé / ouvert (18/11, retour de Rémi) : pas de logo en mode fermé, le
+   chevron tient la ligne du haut, et les icônes ne bougent pas d'un pixel quand
+   on ouvre ou ferme. Deux pas fixés, communs aux deux états : la ligne du haut
+   (52 px) et la hauteur d'une entrée (36 px).
+   -------------------------------------------------------------------------- */
+.bpm-app-sidebar .bpm-sidebar-toggle-row {
+  height: 52px;
+  min-height: 52px;
+  padding: 8px 0;
+  box-sizing: border-box;
+}
+.bpm-app-sidebar .bpm-sidebar-title {
+  line-height: 1;
+}
+.bpm-app-sidebar .bpm-sidebar-nav .bpm-sidebar-item {
+  height: 36px;
+  box-sizing: border-box;
+}
+.app-layout-root[data-sidebar-collapsed="true"] .bpm-app-sidebar .bpm-sidebar-nav .bpm-sidebar-item {
+  width: 36px;
+  min-width: 36px;
+  height: 36px;
+}
+/* Le chevron n'apparaissait qu'au survol (opacity 0 + pointer-events none) :
+   invisible au clavier et au toucher, et la ligne du haut paraissait vide. Il
+   reste visible, sur la ligne du titre ouvert, centré dans le rail fermé. */
+.bpm-app-sidebar .bpm-sidebar-toggle-btn {
+  opacity: 1;
+  pointer-events: auto;
+  color: var(--plano-muted);
+}
+.bpm-app-sidebar .bpm-sidebar-toggle-btn:hover {
+  color: var(--plano-text);
+}
+
+/* ==========================================================================
+   Gabarit commun aligné sur « La planothèque » (18/11, retour de Rémi :
+   « pourquoi ne pas avoir aligné toutes les pages au design de la page accueil
+   planothèque ? »). Trois briques partagées portent toutes les pages :
+   - .site-hero (+ .site-eyebrow, .site-lead) : catalogues (Objets, Modules,
+     Connecteurs, Sandbox, Galerie) et pages éditoriales de la vitrine ;
+   - .doc-page-header : en-têtes des pages de l'app (modules, wiki, documents) ;
+   - .catalogue-grid .bpm-card : les cartes de catalogue.
+   Même sur-titre Geist Mono, même titre Instrument Serif, même chapô et mêmes
+   surfaces que la référence ; aucune règle par page.
+   ========================================================================== */
+.site-hero {
+  padding: 56px 0 36px;
+}
+.site-hero h1,
+.doc-page-header h1,
+.app-main .doc-page-header h1,
+.site-shell .doc-page .doc-page-header h1 {
+  font-family: var(--font-display);
+  font-weight: 400;
+  font-size: clamp(38px, 5.2vw, 54px);
+  line-height: 1.04;
+  letter-spacing: -0.01em;
+  color: var(--plano-text);
+  max-width: 22ch;
+  margin: 0 0 14px;
+  text-wrap: balance;
+}
+.site-eyebrow,
+.app-main .doc-page-header .doc-breadcrumb {
+  font-family: var(--font-code);
+  font-size: 11.5px;
+  font-weight: 400;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--plano-muted);
+}
+.app-main .doc-page-header .doc-breadcrumb a {
+  color: var(--plano-link);
+}
+.site-lead,
+.doc-page-header .doc-description {
+  color: var(--plano-muted);
+  font-size: 16px;
+  line-height: 1.6;
+  max-width: 64ch;
+}
+.site-section h2 {
+  font-family: var(--font-display);
+  font-weight: 400;
+  font-size: clamp(26px, 3.2vw, 34px);
+  line-height: 1.12;
+  letter-spacing: -0.005em;
+  color: var(--plano-text);
+}
+.site-section-bordered {
+  border-color: var(--plano-line-ui);
+}
+.catalogue-grid .bpm-card {
+  background: var(--plano-panel);
+  border: 1px solid var(--plano-line-ui);
+  border-radius: 14px;
+  transition: border-color 140ms ease;
+}
+.catalogue-grid .bpm-card:hover,
+.catalogue-grid .bpm-card:focus-within {
+  border-color: var(--plano-trait);
+}
+html:not([data-theme="dark"]) .catalogue-grid .bpm-card:hover,
+html:not([data-theme="dark"]) .catalogue-grid .bpm-card:focus-within {
+  border-color: var(--plano-prusse);
+}
+.catalogue-grid .bpm-card .bpm-card-title {
+  font-size: 15px;
+  font-weight: 600;
+}
+@media (prefers-reduced-motion: reduce) {
+  .catalogue-grid .bpm-card {
+    transition: none;
+  }
+}
+.site-legal h1 {
+  font-family: var(--font-display);
+  font-weight: 400;
+  font-size: clamp(36px, 5vw, 50px);
+  line-height: 1.06;
+  color: var(--plano-text);
+}
+.site-legal h2 {
+  font-family: var(--font-display);
+  font-weight: 400;
+  font-size: 24px;
+  color: var(--plano-text);
+}
+.site-legal-meta {
+  font-family: var(--font-code);
+  font-size: 12px;
+  color: var(--plano-muted);
+}
+/* 404 : la même tête que la planothèque, rien d'autre. */
+.plano-notfound {
+  min-height: 100vh;
+  display: grid;
+  place-content: center;
+  justify-items: start;
+  gap: 14px;
+  padding: 32px max(16px, env(safe-area-inset-left, 0px));
+}
+.plano-notfound-title {
+  margin: 0;
+  font-family: var(--font-display);
+  font-weight: 400;
+  font-size: clamp(40px, 7vw, 64px);
+  line-height: 1.02;
+  color: var(--plano-text);
+}
+.plano-notfound-back {
+  margin-top: 10px;
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+  padding: 0 18px;
+  border-radius: 10px;
+  background: var(--bpm-accent);
+  color: var(--bpm-accent-contrast);
+  font-weight: 600;
+  text-decoration: none;
+}
+.plano-notfound-back:focus-visible {
+  outline: 2px solid var(--plano-trait);
+  outline-offset: 3px;
+}

@@ -138,3 +138,25 @@ describe("mobile : barre de l'app installée et fiche composant (18/11)", () => 
     expect(css).toMatch(/grid-template-columns: minmax\(0, 1fr\);/);
   });
 });
+
+describe("rail et gabarit commun (18/11)", () => {
+  const css = readFileSync(resolve(process.cwd(), "app/planotheque.css"), "utf8").replace(/\/\*[\s\S]*?\*\//g, "");
+  it("rail fermé sans logo, chevron toujours visible et cliquable", () => {
+    const side = readFileSync(resolve(process.cwd(), "components/Sidebar/Sidebar.tsx"), "utf8");
+    expect(side).not.toContain("plano-rail-brand");
+    expect(css).toMatch(/\.bpm-app-sidebar \.bpm-sidebar-toggle-btn \{\s*opacity: 1;\s*pointer-events: auto;/);
+  });
+  it("même ligne du haut et même pas d'entrée, rail fermé comme ouvert", () => {
+    expect(css).toMatch(/\.bpm-app-sidebar \.bpm-sidebar-toggle-row \{\s*height: 52px;/);
+    expect(css).toMatch(/\.bpm-app-sidebar \.bpm-sidebar-nav \.bpm-sidebar-item \{\s*height: 36px;/);
+    expect(css).toMatch(/data-sidebar-collapsed="true"\] \.bpm-app-sidebar \.bpm-sidebar-nav \.bpm-sidebar-item \{\s*width: 36px;\s*min-width: 36px;\s*height: 36px;/);
+  });
+  it("toutes les pages : titres en Instrument Serif, sur-titres en Geist Mono", () => {
+    const block = /\.site-hero h1,\s*\.doc-page-header h1,[^{]*\{([^}]*)\}/.exec(css)?.[1] ?? "";
+    expect(block).toContain("font-family: var(--font-display);");
+    const eyebrow = /\.site-eyebrow,[^{]*\{([^}]*)\}/.exec(css)?.[1] ?? "";
+    expect(eyebrow).toContain("font-family: var(--font-code);");
+    const nf = readFileSync(resolve(process.cwd(), "app/not-found.tsx"), "utf8");
+    expect(nf).toContain('className="plano-notfound-title"');
+  });
+});

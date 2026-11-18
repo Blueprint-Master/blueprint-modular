@@ -16,18 +16,10 @@ export default function manifest(): MetadataRoute.Manifest {
     theme_color: "#0a1626",
     lang: "fr",
     icons: [
-      {
-        src: `/img/icon-pwa-192.png${FAVICON_V}`,
-        sizes: "192x192",
-        type: "image/png",
-        purpose: "any",
-      },
-      {
-        src: `/img/icon-pwa-512.png${FAVICON_V}`,
-        sizes: "512x512",
-        type: "image/png",
-        purpose: "maskable",
-      },
+      { src: `/img/icon-pwa-192.png${FAVICON_V}`, sizes: "192x192", type: "image/png", purpose: "any" },
+      { src: `/img/icon-pwa-512.png${FAVICON_V}`, sizes: "512x512", type: "image/png", purpose: "any" },
+      { src: `/img/icon-maskable-192.png${FAVICON_V}`, sizes: "192x192", type: "image/png", purpose: "maskable" },
+      { src: `/img/icon-maskable-512.png${FAVICON_V}`, sizes: "512x512", type: "image/png", purpose: "maskable" },
     ],
     categories: ["developer-tools", "productivity", "business"],
     shortcuts: [
