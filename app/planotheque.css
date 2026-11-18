@@ -965,13 +965,21 @@ html:not([data-theme="dark"]) .plano-state[aria-pressed="true"] .plano-state-fra
   min-width: 36px;
   height: 36px;
 }
-/* Le chevron n'apparaissait qu'au survol (opacity 0 + pointer-events none) :
-   invisible au clavier et au toucher, et la ligne du haut paraissait vide. Il
-   reste visible, sur la ligne du titre ouvert, centré dans le rail fermé. */
+/* Chevron d'ouverture/fermeture du rail : visible au SURVOL du rail seulement
+   (retour de Rémi, 18/11 : « le chevron ne doit apparaître qu'au survol »).
+   Il reste atteignable au clavier : le focus le fait apparaître. La ligne du
+   haut garde sa hauteur (52 px), les icônes ne bougent pas. */
 .bpm-app-sidebar .bpm-sidebar-toggle-btn {
+  opacity: 0;
+  pointer-events: none;
+  color: var(--plano-muted);
+  transition: opacity 0.15s ease;
+}
+.bpm-app-sidebar:hover .bpm-sidebar-toggle-btn,
+.bpm-app-sidebar .bpm-sidebar-toggle-btn.bpm-sidebar-toggle-btn-visible,
+.bpm-app-sidebar .bpm-sidebar-toggle-btn:focus-visible {
   opacity: 1;
   pointer-events: auto;
-  color: var(--plano-muted);
 }
 .bpm-app-sidebar .bpm-sidebar-toggle-btn:hover {
   color: var(--plano-text);
