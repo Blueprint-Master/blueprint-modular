@@ -73,7 +73,10 @@ else
 
   mkdir -p public/img
   if [ -f "Logo-BPM-nom.jpg" ]; then cp -f Logo-BPM-nom.jpg public/img/logo-bpm-nom.jpg; fi
-  if [ -f "Logo BPM.png" ]; then cp -f "Logo BPM.png" public/img/logo-bpm-nom.png; cp -f "Logo BPM.png" public/img/logo-bpm.png; fi
+  # Ne JAMAIS réécrire public/img/logo-bpm.png ici : ce fichier est versionné (logo du dépôt).
+  # Le recopier depuis un « Logo BPM.png » local le modifiait hors Git et bloquait le
+  # `git pull` du déploiement suivant (18/11, deux fois).
+  if [ -f "Logo BPM.png" ]; then cp -f "Logo BPM.png" public/img/logo-bpm-nom.png; fi
 
   npm install
   # Build du paquet @blueprint-modular/core AVANT le build de l'app.
