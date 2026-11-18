@@ -31,7 +31,7 @@ python3 -m http.server 8765 --bind 127.0.0.1 --directory "$RACINE" >/dev/null 2>
 SERVEUR=$!
 trap 'kill "$SERVEUR" 2>/dev/null || true; rm -rf "$WORK"' EXIT
 for _ in $(seq 1 50); do
-  curl -fsS -o /dev/null "http://127.0.0.1:8765/android/twa-manifest.json" && break
+  curl -fsS -o /dev/null "http://127.0.0.1:8765/android/twa-manifest.json" 2>/dev/null && break
   sleep 0.2
 done
 curl -fsS -o /dev/null "http://127.0.0.1:8765/android/twa-manifest.json" || { echo "serveur d'icônes injoignable" >&2; exit 1; }
