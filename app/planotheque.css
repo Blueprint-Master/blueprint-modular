@@ -938,3 +938,28 @@ html:not([data-theme="dark"]) .plano-state[aria-pressed="true"] .plano-state-fra
   background: color-mix(in srgb, var(--plano-bg) 92%, transparent) !important;
   backdrop-filter: blur(10px);
 }
+
+/* --------------------------------------------------------------------------
+   Rail fermé / ouvert (18/11, retour de Rémi) : pas de logo en mode fermé, le
+   chevron tient la ligne du haut, et les icônes ne bougent pas d'un pixel quand
+   on ouvre ou ferme. Deux pas fixés, communs aux deux états : la ligne du haut
+   (52 px) et la hauteur d'une entrée (36 px).
+   -------------------------------------------------------------------------- */
+.bpm-app-sidebar .bpm-sidebar-toggle-row {
+  height: 52px;
+  min-height: 52px;
+  padding: 8px 0;
+  box-sizing: border-box;
+}
+.bpm-app-sidebar .bpm-sidebar-title {
+  line-height: 1;
+}
+.bpm-app-sidebar .bpm-sidebar-nav .bpm-sidebar-item {
+  height: 36px;
+  box-sizing: border-box;
+}
+.app-layout-root[data-sidebar-collapsed="true"] .bpm-app-sidebar .bpm-sidebar-nav .bpm-sidebar-item {
+  width: 36px;
+  min-width: 36px;
+  height: 36px;
+}

@@ -9,7 +9,6 @@ import { Sun } from "lucide-react";
 import { useState } from "react";
 import { SandboxIcon } from "@/components/icons/SandboxIcon";
 import { useSidebar } from "@/contexts/SidebarContext";
-import { BRAND_MARK_SRC } from "@/lib/brandMark";
 import { useI18n } from "@/lib/i18n/LocaleProvider";
 import type { Locale } from "@/lib/i18n";
 
@@ -222,12 +221,6 @@ export function Sidebar() {
         onMouseEnter={() => setSidebarHovered(true)}
         onMouseLeave={() => setSidebarHovered(false)}
       >
-        {collapsed && (
-          <Link href="/" className="plano-rail-brand" aria-label="Blueprint Modular">
-            {/* eslint-disable-next-line @next/next/no-img-element -- marque embarquée (data URI) */}
-            <img src={BRAND_MARK_SRC} alt="" width={28} height={28} />
-          </Link>
-        )}
         <div className="bpm-sidebar-toggle-row shrink-0">
           {!collapsed && (
             <Link href="/" className="bpm-sidebar-title">
