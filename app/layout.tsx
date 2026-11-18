@@ -50,10 +50,11 @@ export const metadata: Metadata = {
   // propre canonical (self-référentiel par défaut).
   icons: {
     icon: [
+      { url: `/img/favicon.svg${FAVICON_QUERY}`, type: "image/svg+xml" },
       { url: `/img/icon-pwa-192.png${FAVICON_QUERY}`, type: "image/png", sizes: "192x192" },
       { url: `/img/icon-pwa-512.png${FAVICON_QUERY}`, type: "image/png", sizes: "512x512" },
     ],
-    apple: `/img/icon-pwa-512.png${FAVICON_QUERY}`,
+    apple: `/img/apple-touch-icon.png${FAVICON_QUERY}`,
   },
   appleWebApp: { capable: true, statusBarStyle: "default", title: "BPM" },
   openGraph: {
