@@ -59,3 +59,6 @@ blueprint-modular/
 # temporary i18n fragment staging (merged into i18n/{fr,en}.json, not committed)
 frontend/static/i18n/_fragments/
 frontend/static/i18n/_frag2/
+
+# APK Android construit localement (android/build-twa.sh)
+android/out/
