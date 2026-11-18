@@ -20,13 +20,13 @@ const DEMO_USER_EMAIL = "demo@blueprint-modular.local";
  * Retourne l'utilisateur courant (session) ou, si SKIP_AUTH_FOR_TEST=true et pas de session,
  * le premier utilisateur en base, ou un utilisateur démo créé à la volée si la base est vide.
  */
-export async function getSessionOrTestUser(): Promise<{ user: User } | null> {
+export async function getSessionOrTestUser({ allowTestUser = true } = {}): Promise<{ user: User } | null> {
   const session = await getServerSession(authOptions);
   if (session?.user?.email) {
     const user = await prisma.user.findUnique({ where: { email: session.user.email } });
     if (user) return { user };
   }
-  if (SKIP_AUTH_FOR_TEST) {
+  if (allowTestUser && SKIP_AUTH_FOR_TEST) {
     let testUser = await prisma.user.findFirst({ orderBy: { createdAt: "asc" } });
     if (!testUser) {
       testUser = await prisma.user.upsert({
@@ -42,6 +42,11 @@ export async function getSessionOrTestUser(): Promise<{ user: User } | null> {
     return { user: testUser };
   }
   return null;
+}
+
+/** Personal module data must never resolve to a shared demo account on a production build. */
+export function getPersonalModuleSession() {
+  return getSessionOrTestUser({ allowTestUser: process.env.NODE_ENV !== "production" });
 }
 
 /** Liste d'emails autorisés (optionnel). Si défini, seuls ces emails peuvent se connecter (Google ou credentials). */

@@ -21,6 +21,17 @@ jobs:
   gate:
     name: npm run gate
     runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:16
+        env:
+          POSTGRES_USER: modular
+          POSTGRES_PASSWORD: test_only
+          POSTGRES_DB: modular_test
+        ports:
+          - 5432/tcp
+        options: >-
+          --health-cmd pg_isready --health-interval 5s --health-timeout 5s --health-retries 10
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -37,6 +48,13 @@ jobs:
 
       - name: Run convergence gate
         run: npm run gate
+
+      - name: Exercise personal modules on a migrated database
+        env:
+          DATABASE_URL: postgresql://modular:test_only@127.0.0.1:${{ job.services.postgres.ports[5432] }}/modular_test
+        run: |
+          npx prisma migrate deploy
+          MODULAR_TEST_DATABASE_URL="$DATABASE_URL" npx vitest run tests/modules-postgres.test.ts
 
       - name: Compile and render flag shaders (GLSL ES 1.00 / Mesa EGL)
         run: |

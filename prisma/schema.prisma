@@ -30,6 +30,7 @@ model User {
   assignmentsAsTech    Assignment[]      @relation("AssignmentTechnician")
   notifications        Notification[]
   calendarEvents       CalendarEvent[]
+  workflowTransitions  WorkflowTransition[]
   objectContributions  ObjectContribution[]
 }
 
@@ -682,4 +683,16 @@ model StatusCheck {
   @@index([service, checkedAt])
   @@index([checkedAt])
   @@map("status_check")
+}
+
+model WorkflowTransition {
+  userId    String   @map("user_id")
+  entityId  String   @map("entity_id")
+  revision  Int
+  fromState String   @map("from_state")
+  toState   String   @map("to_state")
+  createdAt DateTime @default(now()) @map("created_at")
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@id([userId, entityId, revision])
 }

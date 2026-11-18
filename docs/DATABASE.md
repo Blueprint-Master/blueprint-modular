@@ -86,6 +86,9 @@ Variables optionnelles selon les modules : clés API (IA, etc.), stockage fichie
 | Wiki | WikiArticle, WikiRevision, WikiComment, WikiBacklink | — |
 | Documents | Document | — |
 | Base contractuelle | Contract | — |
+| Workflow personnel | WorkflowTransition | Session utilisateur, API `/api/workflow/entity/{id}` |
+| Calendrier | CalendarEvent | Session utilisateur, API `/api/calendar` |
+| Notifications | Notification | Session utilisateur, API `/api/notifications` |
 | Newsletter | NewsletterSettings, NewsletterArticle | — |
 | IA | AiConversation, AiMessage | — |
 | Gestion de parc | Asset, AssetAttribute, AssetMovement, Ticket, Assignment, AssetContract, KnowledgeArticle, ChangeRequest, CIRelation, AuditLog, Permission | `lib/asset-manager/config/domain.*.json` |
