@@ -367,7 +367,7 @@ body {
 
 /* PWA Window Controls Overlay : barre de titre dans la zone système (env + app-region) */
 :root {
-  --bpm-sidebar-width: 0;
+  --bpm-sidebar-width: 0px; /* AVEC unité : `calc(0 + 16px)` est invalide et annulait la gouttière du titre en mode app (18/11) */
 }
 /* Sidebar en overlay : le corps garde toujours la place de la sidebar fermée (56px), la sidebar ouverte s’affiche par-dessus */
 @media (min-width: 768px) {
