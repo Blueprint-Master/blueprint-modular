@@ -38,7 +38,6 @@ const STRINGS = {
     fallback: "Le connecteur n'a pas répondu : voici une composition de démonstration enregistrée.",
     nothing: "Aucune pièce ne correspond. Essayez de décrire ce que l'écran doit montrer.",
     error: "La composition a échoué. Réessayez dans un instant.",
-    because: "répond à",
     developed: (a: number, b: number) => `${a} / ${b}`,
     developedLabel: "pièces développées",
   },
@@ -62,7 +61,6 @@ const STRINGS = {
     fallback: "The connector did not answer: here is a recorded demo composition.",
     nothing: "No component matches. Try describing what the screen should show.",
     error: "Composition failed. Try again in a moment.",
-    because: "answers",
     developed: (a: number, b: number) => `${a} / ${b}`,
     developedLabel: "components developed",
   },
@@ -223,7 +221,7 @@ export function PlanoHome() {
                   category={s.category}
                   preview={livePreviewFor(s.slug)}
                   developed={i < developed}
-                  note={s.why ? `${t.because} : ${s.why}` : undefined}
+                  note={s.why || undefined}
                 />
               ))}
             </ul>

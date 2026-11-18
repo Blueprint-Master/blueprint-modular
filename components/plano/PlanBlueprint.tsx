@@ -10,15 +10,27 @@ const L = "var(--plano-line)";
 const S = "var(--plano-line-soft)";
 const A = "var(--plano-line-accent)";
 
-function Drawing({ family }: { family: PlanFamily }) {
+/** Variation déterministe d'un plan par composant (même famille, proportions propres). */
+function vary(seed: number, slot: number, span: number): number {
+  return Math.floor(seed / Math.pow(7, slot)) % span;
+}
+
+export function seedOf(slug: string): number {
+  let h = 2166136261;
+  for (let i = 0; i < slug.length; i++) h = Math.imul(h ^ slug.charCodeAt(i), 16777619) >>> 0;
+  return h;
+}
+
+function Drawing({ family, seed }: { family: PlanFamily; seed: number }) {
+  const v = (slot: number, span: number) => vary(seed, slot, span);
   switch (family) {
     case "donnees":
       return (
         <>
           <rect x="1" y="1" width="148" height="68" fill="none" stroke={L} strokeWidth="1.2" />
-          <path d="M14 18H70" stroke={L} strokeWidth="1.2" />
-          <path d="M14 40H104" stroke={L} strokeWidth="4" />
-          <path d="M14 56H50" stroke={A} strokeWidth="1.6" />
+          <path d={`M14 18H${52 + v(0, 4) * 10}`} stroke={L} strokeWidth="1.2" />
+          <path d={`M14 40H${80 + v(1, 5) * 10}`} stroke={L} strokeWidth="4" />
+          <path d={`M14 56H${36 + v(2, 4) * 8}`} stroke={A} strokeWidth="1.6" />
         </>
       );
     case "mise-en-page":
@@ -26,8 +38,8 @@ function Drawing({ family }: { family: PlanFamily }) {
         <>
           <rect x="1" y="1" width="148" height="68" fill="none" stroke={L} strokeWidth="1.2" />
           <path d="M1 16H149M50 16V69" stroke={L} strokeWidth="1.2" />
-          <rect x="60" y="24" width="38" height="18" fill="none" stroke={S} />
-          <rect x="104" y="24" width="38" height="18" fill="none" stroke={S} />
+          <rect x="60" y="24" width={26 + v(0, 4) * 6} height="18" fill="none" stroke={S} />
+          <rect x={92 + v(0, 4) * 6} y="24" width={50 - v(0, 4) * 6} height="18" fill="none" stroke={S} />
           <rect x="60" y="48" width="82" height="14" fill="none" stroke={S} />
           <path d="M8 26H40M8 36H34M8 46H38" stroke={S} />
           <path d="M8 8H22" stroke={A} strokeWidth="1.6" />
@@ -37,7 +49,7 @@ function Drawing({ family }: { family: PlanFamily }) {
       return (
         <>
           <rect x="1" y="10" width="104" height="22" rx="3" fill="none" stroke={L} strokeWidth="1.2" />
-          <path d="M10 21H52" stroke={S} />
+          <path d={`M10 21H${36 + v(0, 4) * 8}`} stroke={S} />
           <path d="M60 15V27" stroke={L} strokeWidth="1.2" />
           <rect x="1" y="44" width="66" height="22" rx="3" fill="none" stroke={L} strokeWidth="1.2" />
           <rect x="78" y="44" width="70" height="22" rx="3" fill="none" stroke={A} strokeWidth="1.6" />
@@ -50,7 +62,7 @@ function Drawing({ family }: { family: PlanFamily }) {
         <>
           <rect x="1" y="6" width="148" height="58" rx="6" fill="none" stroke={L} strokeWidth="1.2" />
           <rect x="14" y="18" width="4" height="34" fill={A} />
-          <path d="M30 24H100" stroke={L} strokeWidth="3" />
+          <path d={`M30 24H${84 + v(0, 4) * 10}`} stroke={L} strokeWidth="3" />
           <path d="M30 38H136M30 48H112" stroke={L} strokeWidth="1.2" />
         </>
       );
@@ -79,7 +91,12 @@ function Drawing({ family }: { family: PlanFamily }) {
         <>
           <path d="M8 4V62H148" fill="none" stroke={L} strokeWidth="1.2" />
           <path d="M8 46H148M8 30H148M8 14H148" stroke={S} strokeDasharray="3 3" />
-          <path d="M12 54L40 40L66 46L94 24L120 30L144 12" fill="none" stroke={L} strokeWidth="1.6" />
+          <path
+            d={`M12 54L40 ${30 + v(0, 4) * 6}L66 ${36 + v(1, 4) * 5}L94 ${18 + v(2, 4) * 7}L120 ${22 + v(3, 4) * 6}L144 12`}
+            fill="none"
+            stroke={L}
+            strokeWidth="1.6"
+          />
           <circle cx="144" cy="12" r="3.5" fill={A} />
         </>
       );
@@ -108,7 +125,7 @@ function Drawing({ family }: { family: PlanFamily }) {
       return (
         <>
           <rect x="1" y="4" width="100" height="22" rx="10" fill="none" stroke={L} strokeWidth="1.2" />
-          <path d="M14 15H80" stroke={S} />
+          <path d={`M14 15H${58 + v(0, 4) * 8}`} stroke={S} />
           <rect x="48" y="34" width="100" height="22" rx="10" fill="none" stroke={L} strokeWidth="1.2" />
           <path d="M62 45H124" stroke={S} />
           <path d="M22 50L25 58L33 61L25 64L22 70L19 64L11 61L19 58Z" fill="none" stroke={A} strokeWidth="1.4" />
@@ -124,7 +141,17 @@ function Drawing({ family }: { family: PlanFamily }) {
   }
 }
 
-export function PlanBlueprint({ family, width = 150, height = 70 }: { family: PlanFamily; width?: number; height?: number }) {
+export function PlanBlueprint({
+  family,
+  seed = 0,
+  width = 150,
+  height = 70,
+}: {
+  family: PlanFamily;
+  seed?: number;
+  width?: number;
+  height?: number;
+}) {
   return (
     <svg
       aria-hidden="true"
@@ -135,7 +162,7 @@ export function PlanBlueprint({ family, width = 150, height = 70 }: { family: Pl
       viewBox="0 0 150 70"
       overflow="visible"
     >
-      <Drawing family={family} />
+      <Drawing family={family} seed={seed} />
     </svg>
   );
 }

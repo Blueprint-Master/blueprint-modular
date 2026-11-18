@@ -9,22 +9,12 @@ import { Sun } from "lucide-react";
 import { useState } from "react";
 import { SandboxIcon } from "@/components/icons/SandboxIcon";
 import { useSidebar } from "@/contexts/SidebarContext";
+import { BRAND_MARK_SRC } from "@/lib/brandMark";
 import { useI18n } from "@/lib/i18n/LocaleProvider";
 import type { Locale } from "@/lib/i18n";
 
 const vb = "0 -960 960 960";
 
-/** Marque de la planothèque : trois pièces sur un tirage bleu de Prusse. */
-export function PlanoMark({ size = 28 }: { size?: number }) {
-  return (
-    <svg width={size} height={size} viewBox="0 0 28 28" aria-hidden="true" focusable="false">
-      <rect width="28" height="28" rx="5" fill="#12355e" />
-      <rect x="6" y="6" width="7" height="7" fill="none" stroke="#8fb8e3" strokeWidth="1.4" />
-      <rect x="15" y="6" width="7" height="7" fill="#8fb8e3" />
-      <rect x="6" y="15" width="16" height="7" fill="none" stroke="#8fb8e3" strokeWidth="1.4" />
-    </svg>
-  );
-}
 
 function IconAccueil({ className }: { className?: string }) {
   return (
@@ -233,7 +223,8 @@ export function Sidebar() {
       >
         {collapsed && (
           <Link href="/" className="plano-rail-brand" aria-label="Blueprint Modular">
-            <PlanoMark />
+            {/* eslint-disable-next-line @next/next/no-img-element -- marque embarquée (data URI) */}
+            <img src={BRAND_MARK_SRC} alt="" width={28} height={28} />
           </Link>
         )}
         <div className="bpm-sidebar-toggle-row shrink-0">

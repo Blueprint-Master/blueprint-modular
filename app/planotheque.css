@@ -438,12 +438,28 @@ html:not([data-theme="dark"]) :focus-visible {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 }
-.plano-tile-link {
+.plano-tile {
+  position: relative;
   display: grid;
   gap: 6px;
+  align-content: start;
+}
+.plano-tile-link {
+  display: grid;
+  gap: 4px;
   color: inherit;
   text-decoration: none;
+  outline: none;
+}
+.plano-tile-link::after {
+  content: "";
+  position: absolute;
+  inset: 0;
   border-radius: 10px;
+}
+.plano-tile-link:focus-visible::after {
+  outline: 2px solid var(--plano-trait);
+  outline-offset: 3px;
 }
 .plano-frame {
   position: relative;
@@ -457,8 +473,8 @@ html:not([data-theme="dark"]) :focus-visible {
 .plano-composition .plano-frame {
   border-color: rgb(234 242 251 / 0.35);
 }
-.plano-tile-link:hover .plano-frame,
-.plano-tile-link:focus-visible .plano-frame {
+.plano-tile:hover .plano-frame,
+.plano-tile:focus-within .plano-frame {
   border-color: var(--plano-trait);
 }
 .plano-plan,
@@ -498,14 +514,14 @@ html:not([data-theme="dark"]) :focus-visible {
 .plano-live > * {
   max-width: 100%;
 }
-.plano-frame--live:hover .plano-live,
-.plano-tile-link:focus-visible .plano-frame--live .plano-live,
+.plano-tile:hover .plano-frame--live .plano-live,
+.plano-tile:focus-within .plano-frame--live .plano-live,
 .plano-frame--developed .plano-live {
   opacity: 1;
   transform: none;
 }
-.plano-frame--live:hover .plano-plan,
-.plano-tile-link:focus-visible .plano-frame--live .plano-plan,
+.plano-tile:hover .plano-frame--live .plano-plan,
+.plano-tile:focus-within .plano-frame--live .plano-plan,
 .plano-frame--developed .plano-plan {
   opacity: 0;
 }
@@ -722,4 +738,37 @@ html:not([data-theme="dark"]) :focus-visible {
 }
 .plano-dashboard-install {
   margin: 8px auto 48px;
+}
+
+/* Le rail et la barre basse : chacun à sa taille d'écran, dans les deux shells. */
+@media (max-width: 767px) {
+  .bpm-app-sidebar {
+    display: none !important;
+  }
+}
+@media (min-width: 768px) {
+  .bpm-mobile-nav-bar {
+    display: none !important;
+  }
+}
+
+/* La pièce reste sous les yeux pendant qu'on règle ses props. */
+@media (min-width: 901px) {
+  .sandbox-preview {
+    align-self: start;
+    position: sticky;
+    top: 64px;
+    height: min(72vh, 600px);
+  }
+}
+.app-main .plano-catalogue-title,
+.app-main .plano-greeting {
+  font-family: var(--font-display);
+  font-weight: 400;
+}
+.app-main .plano-catalogue-title {
+  font-size: clamp(36px, 5vw, 50px);
+}
+.app-main .plano-greeting {
+  font-size: clamp(38px, 6vw, 56px);
 }
