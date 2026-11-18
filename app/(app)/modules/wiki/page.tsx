@@ -350,8 +350,8 @@ export default function WikiPage() {
                 onClick={() => { setTagFilter(tagFilter === tag ? null : tag); setPage(1); }}
                 className={`text-xs px-2 py-1 rounded ${tagFilter === tag ? "opacity-100 font-medium" : "opacity-70"}`}
                 style={{
-                  background: tagFilter === tag ? "var(--bpm-accent-cyan)" : "var(--bpm-bg-secondary)",
-                  color: tagFilter === tag ? "#fff" : "var(--bpm-text-primary)",
+                  background: tagFilter === tag ? "var(--bpm-accent)" : "var(--bpm-bg-secondary)",
+                  color: tagFilter === tag ? "var(--bpm-accent-contrast)" : "var(--bpm-text-primary)",
                 }}
               >
                 {tag}
@@ -451,7 +451,7 @@ export default function WikiPage() {
                         <h3 className="flex items-center gap-2 flex-wrap">
                           {article.title}
                           {a.pinned && (
-                            <span className="text-xs px-2 py-0.5 rounded" style={{ background: "var(--bpm-accent)", color: "#fff" }}>{t.common.pinned}</span>
+                            <span className="text-xs px-2 py-0.5 rounded" style={{ background: "var(--bpm-accent)", color: "var(--bpm-accent-contrast)" }}>{t.common.pinned}</span>
                           )}
                           {!article.isPublished ? (
                             <Badge variant="warning" className="text-xs">{t.common.draft}</Badge>

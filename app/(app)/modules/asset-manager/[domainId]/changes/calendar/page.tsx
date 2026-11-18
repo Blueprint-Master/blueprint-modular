@@ -146,7 +146,7 @@ export default function AssetManagerChangesCalendarPage() {
                         key={c.id}
                         href={`/modules/asset-manager/${domainId}/changes/${c.id}`}
                         className="block text-xs truncate rounded px-1 py-0.5 hover:underline"
-                        style={{ background: "var(--bpm-accent-cyan)", color: "#fff" }}
+                        style={{ background: "var(--bpm-accent)", color: "var(--bpm-accent-contrast)" }}
                         title={`${c.reference} — ${c.title}`}
                       >
                         {c.reference}

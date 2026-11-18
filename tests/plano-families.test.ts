@@ -7,7 +7,7 @@
  * - les paires texte / fond de `app/planotheque.css` sont LUES dans le fichier
  *   (jamais recopiées) et tenues au seuil WCAG AA, dans les deux thèmes.
  */
-import { readFileSync } from "node:fs";
+import { readFileSync, readdirSync, statSync } from "node:fs";
 import { resolve } from "node:path";
 import { describe, expect, it } from "vitest";
 import registry from "@/lib/generated/bpm-components.json";
@@ -89,5 +89,38 @@ describe.each([
 
   it("le texte des plans (papier) se lit sur le bleu de Prusse", () => {
     expect(ratio(t["--plano-paper"], t["--plano-prusse"])).toBeGreaterThanOrEqual(4.5);
+  });
+});
+
+/* ---------- Encre sur l'accent ---------- */
+
+
+function tsxFiles(dir: string, out: string[] = []): string[] {
+  for (const name of readdirSync(dir)) {
+    if (name === "node_modules" || name.startsWith(".")) continue;
+    const p = resolve(dir, name);
+    if (statSync(p).isDirectory()) tsxFiles(p, out);
+    else if (p.endsWith(".tsx")) out.push(p);
+  }
+  return out;
+}
+
+describe("aucun texte blanc posé sur l'accent", () => {
+  /* Le vermillon de la nuit de Prusse ne porte pas le blanc (2,9:1) : l'encre
+     de l'accent est `--bpm-accent-contrast`. Un « #fff » à côté d'un fond
+     d'accent rougit ici. */
+  it("les fonds d'accent lisent --bpm-accent-contrast", () => {
+    const fautes: string[] = [];
+    for (const dir of ["app", "components"]) {
+      for (const f of tsxFiles(resolve(__dirname, "..", dir))) {
+        const lines = readFileSync(f, "utf8").split("\n");
+        lines.forEach((l, i) => {
+          if (!/background[^,]*var\(--bpm-accent(-cyan)?\)/.test(l) || /couleur|\+ "/.test(l)) return;
+          const fenetre = [l, lines[i + 1] ?? "", lines[i + 2] ?? ""].join("\n");
+          if (/color:[^,\n]*"(#fff|#ffffff|white)"/.test(fenetre)) fautes.push(`${f}:${i + 1}`);
+        });
+      }
+    }
+    expect(fautes).toEqual([]);
   });
 });

@@ -80,7 +80,7 @@ export function StartBuildingBlock() {
           className={`shrink-0 p-2 rounded-md transition ${copied ? "opacity-100" : "opacity-0 group-hover:opacity-100"}`}
           style={{
             background: copied ? "var(--bpm-accent)" : "transparent",
-            color: copied ? "#fff" : "var(--bpm-text-secondary)",
+            color: copied ? "var(--bpm-accent-contrast)" : "var(--bpm-text-secondary)",
           }}
           title={copied ? t.copied : t.copy}
           aria-label={copied ? t.copied : t.copyCommand}

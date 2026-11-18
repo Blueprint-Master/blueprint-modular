@@ -268,7 +268,7 @@ export function Sidebar() {
                 {session.user.image ? (
                   <Image src={session.user.image} alt="" width={32} height={32} className="w-8 h-8 rounded-full shrink-0 border-2" style={{ borderColor: "var(--bpm-sidebar-border)" }} />
                 ) : (
-                  <div className="w-8 h-8 rounded-full flex items-center justify-center font-semibold text-white shrink-0" style={{ background: "var(--bpm-accent-cyan)" }}>
+                  <div className="w-8 h-8 rounded-full flex items-center justify-center font-semibold shrink-0" style={{ background: "var(--bpm-accent)", color: "var(--bpm-accent-contrast)" }}>
                     {(session.user.name ?? session.user.email ?? "?").slice(0, 1).toUpperCase()}
                   </div>
                 )}
