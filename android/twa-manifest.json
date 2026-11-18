@@ -21,8 +21,8 @@
     "path": "./android.keystore",
     "alias": "modular"
   },
-  "appVersionCode": 2,
-  "appVersion": "1.0.1",
+  "appVersionCode": 3,
+  "appVersion": "1.0.2",
   "shortcuts": [],
   "generatorApp": "bubblewrap-cli",
   "fallbackType": "customtabs",
