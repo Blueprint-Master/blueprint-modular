@@ -50,6 +50,9 @@ jobs:
           "$SDKM" --install "build-tools;36.1.0" "platforms;android-36" > /dev/null
           test -d "$ANDROID_HOME/build-tools/36.1.0"
           test -d "$ANDROID_HOME/platforms/android-36"
+          # Bubblewrap reconnaît un SDK à la présence de tools/ ou bin/ à sa racine ;
+          # le SDK du runner range sdkmanager sous cmdline-tools/latest/bin.
+          [ -e "$ANDROID_HOME/bin" ] || ln -s "$ANDROID_HOME/cmdline-tools/latest/bin" "$ANDROID_HOME/bin"
 
       - name: Construire
         env:
@@ -58,6 +61,17 @@ jobs:
           ANDROID_KEY_PASSWORD: ${{ secrets.ANDROID_KEY_PASSWORD }}
           TWA_OUT_DIR: ${{ runner.temp }}/apk
         run: bash android/build-twa.sh
+
+      - name: Vérifier l'APK (paquet, versions, taille)
+        run: |
+          AAPT2="$ANDROID_HOME/build-tools/36.1.0/aapt2"
+          APKSIGNER="$ANDROID_HOME/build-tools/36.1.0/apksigner"
+          for apk in "$RUNNER_TEMP"/apk/*.apk; do
+            echo "== $apk ($(stat -c %s "$apk") octets)"
+            "$AAPT2" dump badging "$apk" | grep -E "^(package|sdkVersion|targetSdkVersion|application-label|launchable-activity)"
+            "$ANDROID_HOME/build-tools/36.1.0/zipalign" -c -P 16 -v 4 "$apk" | tail -1
+            "$APKSIGNER" verify --print-certs "$apk" || echo "(APK non signé : à signer hors CI)"
+          done
 
       - name: Publier l'APK
         uses: actions/upload-artifact@v4
