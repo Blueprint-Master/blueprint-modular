@@ -3327,30 +3327,8 @@ body.contract-detail-panel-open .pwa-title-bar {
   white-space: nowrap;
 }
 
-/* Icône de marque (asset transparent : public/img/icon-pwa-192.png).
-   Fond transparent — aucun chip : lisible en thème clair comme sombre.
-   Traitement partagé entre nav site, sidebar et barre de titre de l'app. */
-.site-brand-logo,
-.bpm-brand-logo {
-  flex: 0 0 auto;
-  object-fit: contain;
-}
-
-.site-brand-logo {
-  width: 30px;
-  height: 30px;
-}
-
-.app-titlebar-brand .bpm-brand-logo {
-  width: 28px;
-  height: 28px;
-}
-
-.bpm-sidebar-title .bpm-brand-logo {
-  width: 24px;
-  height: 24px;
-}
-
+/* Marque : le logo n'apparaît plus dans l'interface (décision du 18/11) ;
+   il ne sert qu'à l'icône d'application et au favicon. Seul le nom reste. */
 /* Marque dans la barre de titre de l'app (mobile uniquement) */
 .app-titlebar-brand {
   display: inline-flex;

@@ -5,7 +5,6 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useI18n } from "@/lib/i18n/LocaleProvider";
 import { LOCALES } from "@/lib/i18n";
-import { BRAND_MARK_SRC } from "@/lib/brandMark";
 
 // "Composants" et "Modules" sont volontairement absents : ces vues font partie
 // de l'app et restent accessibles via « Ouvrir l'app », les Ressources et le MCP
@@ -48,9 +47,6 @@ export function SiteNav() {
     <header className="site-nav" data-menu-open={menuOpen ? "true" : undefined}>
       <div className="site-container site-nav-inner">
         <Link href="/" className="site-wordmark" aria-label={dict.nav.ariaHome}>
-          {/* Marque embarquée (data URI) : jamais de 404 si l'asset statique manque. */}
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img src={BRAND_MARK_SRC} alt="" className="site-brand-logo" width={30} height={30} />
           <span className="site-wordmark-text">
             <span className="site-wordmark-strong">Blueprint</span> Modular
           </span>
