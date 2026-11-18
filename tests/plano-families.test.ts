@@ -161,3 +161,12 @@ describe("rail et gabarit commun (18/11)", () => {
     expect(nf).toContain('className="plano-notfound-title"');
   });
 });
+
+describe("accueil : même fond et même gouttière que les autres pages (19/11)", () => {
+  it("aucun dégradé ni gouttière propre sur .plano-home", () => {
+    const css = readFileSync(resolve(process.cwd(), "app/planotheque.css"), "utf8").replace(/\/\*[\s\S]*?\*\//g, "");
+    const rule = css.match(/\.plano-home \{([^}]*)\}/)?.[1] ?? "";
+    expect(rule).not.toMatch(/gradient/);
+    expect(css).toMatch(/\.app-main > \.plano-home \{\s*padding-left: 0;\s*padding-right: 0;/);
+  });
+});
