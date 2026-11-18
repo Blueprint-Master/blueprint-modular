@@ -25,7 +25,6 @@ html:root {
   --plano-accent-hover: #9c3013;
   --plano-on-accent: #ffffff;
   --plano-link: #12355e;
-  --plano-halo: rgb(18 53 94 / 0.10);
   --plano-workbench: color-mix(in srgb, #12355e 7%, #f3f6fa);
   --plano-workbench-dot: rgb(18 53 94 / 0.20);
   --plano-ok: #1f7a52;
@@ -116,7 +115,6 @@ html[data-theme="dark"] {
   --plano-accent-hover: #ff8460;
   --plano-on-accent: #1a0a05;
   --plano-link: #b9d2ec;
-  --plano-halo: rgb(18 53 94 / 0.75);
   --plano-workbench: #07101d;
   --plano-workbench-dot: rgb(143 184 227 / 0.16);
   --plano-ok: #4fb487;
@@ -237,9 +235,17 @@ html:not([data-theme="dark"]) :focus-visible {
   flex-direction: column;
   align-items: center;
   gap: 22px;
+  /* Ni dégradé ni gouttière propre (retour de Rémi, 19/11) : le halo n'existait
+     que sur l'accueil et s'arrêtait aux gouttières de .app-main, d'où un bloc plus
+     clair entre deux marges plus sombres. L'accueil prend le fond et la gouttière
+     de toutes les pages (gouttière : celle de .app-main dans l'app, 16px en vitrine). */
   padding: clamp(40px, 11vh, 96px) 16px 72px;
-  background: radial-gradient(1100px 460px at 50% -10%, var(--plano-halo), transparent 70%);
   min-height: 100%;
+}
+/* Dans l'app, la gouttière vient de .app-main : pas de seconde gouttière. */
+.app-main > .plano-home {
+  padding-left: 0;
+  padding-right: 0;
 }
 .app-main:has(> .plano-home) {
   padding-top: 0;
