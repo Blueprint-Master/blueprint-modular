@@ -315,8 +315,17 @@ html:not([data-theme="dark"]) :focus-visible {
   background: var(--plano-accent-hover);
 }
 .plano-send:disabled {
-  opacity: 0.45;
-  cursor: not-allowed;
+  cursor: progress;
+}
+.plano-send[aria-busy="true"] svg {
+  animation: plano-pulse 1s ease-in-out infinite alternate;
+}
+@keyframes plano-pulse {
+  from { transform: translateX(-2px); }
+  to { transform: translateX(2px); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .plano-send[aria-busy="true"] svg { animation: none; }
 }
 .plano-chips {
   list-style: none;
@@ -640,8 +649,9 @@ html:not([data-theme="dark"]) :focus-visible {
   grid-template-columns: minmax(260px, 340px) minmax(0, 1fr);
   grid-template-areas:
     "controls preview"
-    "code preview";
-  grid-template-rows: auto 1fr;
+    "code preview"
+    "states states";
+  grid-template-rows: auto 1fr auto;
   gap: 0;
   border-color: var(--plano-line-ui);
   border-radius: 14px;
@@ -700,6 +710,7 @@ html:not([data-theme="dark"]) :focus-visible {
     grid-template-columns: 1fr;
     grid-template-areas:
       "preview"
+      "states"
       "controls"
       "code";
     grid-template-rows: auto;
@@ -755,10 +766,8 @@ html:not([data-theme="dark"]) :focus-visible {
 /* La pièce reste sous les yeux pendant qu'on règle ses props. */
 @media (min-width: 901px) {
   .sandbox-preview {
-    align-self: start;
-    position: sticky;
-    top: 64px;
-    height: min(72vh, 600px);
+    align-self: stretch;
+    min-height: 320px;
   }
 }
 .app-main .plano-catalogue-title,
@@ -776,4 +785,150 @@ html:not([data-theme="dark"]) :focus-visible {
   .plano-grid--composition {
     grid-template-columns: repeat(3, minmax(0, 1fr));
   }
+}
+
+/* Bande des états (fiche) : les valeurs réelles du réglage à choix + le plan */
+.plano-states {
+  grid-area: states;
+  border-top: 1px solid var(--plano-line-ui);
+  background: var(--plano-panel);
+  padding: 12px 14px;
+  overflow-x: auto;
+}
+.plano-states:empty {
+  display: none;
+}
+.plano-states-inner {
+  display: flex;
+  gap: 12px;
+}
+.plano-state {
+  flex: none;
+  width: 118px;
+  display: grid;
+  gap: 6px;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: var(--plano-muted);
+  font: inherit;
+  font-size: 11.5px;
+  text-align: left;
+  cursor: pointer;
+}
+.plano-state--plan {
+  cursor: default;
+}
+.plano-state-frame {
+  height: 56px;
+  border-radius: 8px;
+  border: 1px solid var(--plano-line-ui);
+  background: var(--plano-bg);
+  display: grid;
+  place-items: center;
+  overflow: hidden;
+}
+.plano-state-frame--plan {
+  background-color: var(--plano-prusse);
+  background-image: linear-gradient(var(--plano-grid-line) 1px, transparent 1px),
+    linear-gradient(90deg, var(--plano-grid-line) 1px, transparent 1px);
+  background-size: 12px 12px;
+}
+.plano-state-value {
+  font-family: var(--font-code);
+  font-size: 12.5px;
+  color: var(--plano-text);
+}
+.plano-state-label {
+  font-family: var(--font-code);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.plano-state[aria-pressed="true"] .plano-state-frame {
+  border: 2px solid var(--plano-trait);
+}
+html:not([data-theme="dark"]) .plano-state[aria-pressed="true"] .plano-state-frame {
+  border-color: var(--plano-prusse);
+}
+.plano-state[aria-pressed="true"] {
+  color: var(--plano-text);
+}
+.plano-state:hover .plano-state-frame {
+  border-color: var(--plano-control-border);
+}
+
+/* Bascule Python / React du code */
+.plano-code-slot {
+  display: contents;
+}
+.plano-lang {
+  display: inline-flex;
+  margin: 10px 14px 0;
+  border: 1px solid var(--plano-line-ui);
+  border-radius: 8px;
+  overflow: hidden;
+}
+.plano-lang button {
+  padding: 5px 12px;
+  border: 0;
+  background: transparent;
+  color: var(--plano-muted);
+  font: inherit;
+  font-size: 12.5px;
+  cursor: pointer;
+}
+.plano-lang button[aria-pressed="true"] {
+  background: var(--plano-raised);
+  color: var(--plano-text);
+}
+.plano-code--react > .sandbox-code-header,
+.plano-code--react > pre {
+  display: none;
+}
+.plano-react-code {
+  padding: 10px 16px 16px;
+}
+.plano-react-note {
+  display: block;
+  margin-bottom: 6px;
+  font-size: 11.5px;
+  color: var(--plano-muted);
+}
+.plano-react-code pre {
+  margin: 0;
+  padding: 12px 14px;
+  border-radius: 8px;
+  background: var(--bpm-code-bg);
+  color: var(--plano-text);
+  font-family: var(--font-code);
+  font-size: 12.5px;
+  line-height: 1.7;
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+
+/* Barre basse (téléphone) : icônes seules, l'actif marqué par un trait d'accent */
+.bpm-mobile-nav-bar .bpm-sidebar-item {
+  position: relative;
+  min-height: 44px;
+  color: var(--plano-muted);
+}
+.bpm-mobile-nav-bar .bpm-sidebar-item[aria-current="page"] {
+  color: var(--plano-text);
+}
+.bpm-mobile-nav-bar .bpm-sidebar-item[aria-current="page"]::after {
+  content: "";
+  position: absolute;
+  bottom: 2px;
+  left: 50%;
+  width: 18px;
+  height: 2px;
+  margin-left: -9px;
+  border-radius: 1px;
+  background: var(--plano-accent);
+}
+.bpm-mobile-nav-bar {
+  background: color-mix(in srgb, var(--plano-bg) 92%, transparent) !important;
+  backdrop-filter: blur(10px);
 }

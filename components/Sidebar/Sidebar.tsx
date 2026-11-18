@@ -170,14 +170,15 @@ export function Sidebar() {
         href={href}
         className={`bpm-sidebar-item ${compact ? "flex-col gap-0.5 py-2 min-w-[64px] rounded-lg flex-1 basis-0 justify-center items-center" : ""}`}
         aria-current={isActive ? "page" : undefined}
-        aria-label={showLabel ? undefined : label}
+        aria-label={showLabel && !compact ? undefined : label}
         style={compact ? undefined : { background: isActive ? "var(--bpm-sidebar-active-bg)" : "transparent" }}
         title={compact || !showLabel ? label : undefined}
       >
         <span className={compact ? "shrink-0 inline-flex items-center justify-center w-5 h-5" : "bpm-sidebar-icon-wrap"}>
           <Icon className="w-5 h-5" style={{ width: 20, height: 20 }} />
         </span>
-        {showLabel && <span className={compact ? "text-xs font-normal truncate max-w-full text-center" : "bpm-sidebar-item-label"}>{label}</span>}
+        {/* Barre basse : icônes seules (sept libellés tronquaient à 390 px), nom porté par aria-label. */}
+        {showLabel && !compact && <span className="bpm-sidebar-item-label">{label}</span>}
       </Link>
     );
   };

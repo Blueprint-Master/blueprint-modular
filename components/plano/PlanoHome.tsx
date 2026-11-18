@@ -132,8 +132,15 @@ export function PlanoHome() {
     return () => window.clearInterval(id);
   }, [state]);
 
+  const inputRef = useRef<HTMLTextAreaElement>(null);
+
   function onSubmit(e: FormEvent) {
     e.preventDefault();
+    if (!need.trim()) {
+      // Vide : l'envoi reste l'accent plein (comme la planche) et ramène au champ.
+      inputRef.current?.focus();
+      return;
+    }
     void compose(need);
   }
 
@@ -149,6 +156,7 @@ export function PlanoHome() {
         </label>
         <textarea
           id="plano-need"
+          ref={inputRef}
           className="plano-composer-input"
           value={need}
           rows={3}
@@ -165,7 +173,7 @@ export function PlanoHome() {
           <Link href="/composants" className="plano-pill">
             {t.pieces(total)}
           </Link>
-          <button type="submit" className="plano-send" aria-label={t.send} disabled={!need.trim() || state.kind === "loading"}>
+          <button type="submit" className="plano-send" aria-label={t.send} aria-busy={state.kind === "loading"} disabled={state.kind === "loading"}>
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" aria-hidden="true">
               <path d="M5 12h14M13 6l6 6-6 6" />
             </svg>
