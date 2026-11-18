@@ -1,0 +1,43 @@
+{
+  "packageId": "com.blueprintmodular.app",
+  "host": "blueprint-modular.com",
+  "name": ".modular",
+  "launcherName": ".modular",
+  "display": "standalone",
+  "orientation": "default",
+  "themeColor": "#FFFFFF",
+  "themeColorDark": "#FFFFFF",
+  "navigationColor": "#FFFFFF",
+  "navigationColorDark": "#FFFFFF",
+  "navigationDividerColor": "#FFFFFF",
+  "navigationDividerColorDark": "#FFFFFF",
+  "backgroundColor": "#FFFFFF",
+  "enableNotifications": false,
+  "startUrl": "/dashboard",
+  "iconUrl": "http://127.0.0.1:8765/public/img/icon-pwa-512.png",
+  "maskableIconUrl": "http://127.0.0.1:8765/android/icon-maskable-512.png",
+  "splashScreenFadeOutDuration": 300,
+  "signingKey": {
+    "path": "./android.keystore",
+    "alias": "modular"
+  },
+  "appVersionCode": 1,
+  "appVersion": "1.0.0",
+  "shortcuts": [],
+  "generatorApp": "bubblewrap-cli",
+  "fallbackType": "customtabs",
+  "features": {},
+  "alphaDependencies": {
+    "enabled": false
+  },
+  "enableSiteSettingsShortcut": true,
+  "isChromeOSOnly": false,
+  "isMetaQuest": false,
+  "fullScopeUrl": "https://blueprint-modular.com/",
+  "minSdkVersion": 21,
+  "fingerprints": [],
+  "additionalTrustedOrigins": [
+    "app.blueprint-modular.com"
+  ],
+  "retainedBundles": []
+}
