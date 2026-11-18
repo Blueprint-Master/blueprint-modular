@@ -22,7 +22,7 @@ export default async function NotFound() {
       <Link
         href="/"
         className="px-4 py-2 rounded-lg font-medium"
-        style={{ background: "var(--bpm-accent)", color: "#fff" }}
+        style={{ background: "var(--bpm-accent)", color: "var(--bpm-accent-contrast)" }}
       >
         {dict.legal.backHome}
       </Link>

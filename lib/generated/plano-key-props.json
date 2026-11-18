@@ -1,0 +1,790 @@
+{
+  "accordion": [
+    "sections",
+    "allowMultiple",
+    "defaultOpenIds"
+  ],
+  "activityfeed": [
+    "activities",
+    "maxItems",
+    "emptyMessage"
+  ],
+  "addressinput": [
+    "mode",
+    "value",
+    "line1"
+  ],
+  "aiquerybar": [
+    "placeholder",
+    "suggestions",
+    "loading"
+  ],
+  "aircraftmarker": [
+    "kind",
+    "heading",
+    "size"
+  ],
+  "airportboard": [
+    "flights",
+    "title",
+    "timezoneLabel"
+  ],
+  "alarmpanel": [
+    "alarms"
+  ],
+  "altairchart": [
+    "spec",
+    "iframeSrc",
+    "width"
+  ],
+  "anomalyalert": [
+    "expected",
+    "actual",
+    "title"
+  ],
+  "approvalflow": [
+    "steps",
+    "direction",
+    "showCommentInput"
+  ],
+  "areachart": [
+    "data",
+    "width",
+    "height"
+  ],
+  "assistantpanel": [
+    "demoAnswers",
+    "title",
+    "demo"
+  ],
+  "audio": [
+    "src",
+    "controls",
+    "loop"
+  ],
+  "autocomplete": [
+    "options",
+    "label",
+    "placeholder"
+  ],
+  "avatar": [
+    "src",
+    "alt",
+    "initials"
+  ],
+  "badge": [
+    "variant",
+    "size"
+  ],
+  "barchart": [
+    "data",
+    "width",
+    "height"
+  ],
+  "barcode": [
+    "value",
+    "format",
+    "height"
+  ],
+  "breadcrumb": [
+    "items",
+    "separator"
+  ],
+  "breadcrumbs": [
+    "items",
+    "separator",
+    "maxItems"
+  ],
+  "button": [
+    "variant",
+    "size",
+    "raised"
+  ],
+  "card": [
+    "title",
+    "subtitle",
+    "image"
+  ],
+  "cartographicmap": [
+    "layers",
+    "groups",
+    "center"
+  ],
+  "celestialbody": [
+    "label",
+    "kind",
+    "color"
+  ],
+  "celestialscene": [
+    "objects",
+    "paths",
+    "particles"
+  ],
+  "changelog": [
+    "changes",
+    "groupByDate",
+    "maxItems"
+  ],
+  "chat": [
+    "model",
+    "placeholder"
+  ],
+  "chatinterface": [
+    "messages",
+    "isLoading",
+    "typing"
+  ],
+  "checkbox": [
+    "label",
+    "checked",
+    "disabled"
+  ],
+  "chip": [
+    "label",
+    "variant",
+    "disabled"
+  ],
+  "codeblock": [
+    "code",
+    "language"
+  ],
+  "codeeditor": [
+    "value",
+    "language",
+    "readOnly"
+  ],
+  "colorpicker": [
+    "label",
+    "value",
+    "help"
+  ],
+  "column": [
+    "columns",
+    "gap"
+  ],
+  "commandpalette": [
+    "commands",
+    "isOpen",
+    "placeholder"
+  ],
+  "commentthread": [
+    "comments",
+    "currentUser",
+    "maxDepth"
+  ],
+  "comparison": [
+    "items",
+    "dimensions",
+    "labels"
+  ],
+  "confirmmodal": [
+    "isOpen",
+    "title",
+    "message"
+  ],
+  "contextmenu": [
+    "items",
+    "trigger",
+    "triggerOn"
+  ],
+  "crud": [
+    "title",
+    "endpoint",
+    "columns"
+  ],
+  "dateinput": [
+    "label",
+    "value",
+    "disabled"
+  ],
+  "daterangepicker": [
+    "label",
+    "start",
+    "end"
+  ],
+  "decisiontree": [
+    "rootId",
+    "nodes",
+    "currentNodeId"
+  ],
+  "diffviewer": [
+    "original",
+    "modified",
+    "language"
+  ],
+  "divider": [
+    "label",
+    "orientation",
+    "thickness"
+  ],
+  "drawer": [
+    "open",
+    "title",
+    "side"
+  ],
+  "drilldown": [
+    "levels",
+    "currentLevel",
+    "breadcrumbs"
+  ],
+  "emailcomposer": [
+    "to",
+    "subject",
+    "body"
+  ],
+  "emptystate": [
+    "title",
+    "description",
+    "icon"
+  ],
+  "expander": [
+    "title",
+    "defaultExpanded"
+  ],
+  "exportbutton": [
+    "data",
+    "filename",
+    "formats"
+  ],
+  "fab": [
+    "icon",
+    "label",
+    "position"
+  ],
+  "filepreview": [
+    "url",
+    "filename",
+    "mimeType"
+  ],
+  "fileuploader": [
+    "accept",
+    "multiple",
+    "maxSizeBytes"
+  ],
+  "filterpanel": [
+    "filters",
+    "values",
+    "orientation"
+  ],
+  "flightinstruments": [
+    "pitch",
+    "roll",
+    "heading"
+  ],
+  "flightmap": [
+    "flights",
+    "airports",
+    "routes"
+  ],
+  "flightprofile": [
+    "points",
+    "title",
+    "xLabel"
+  ],
+  "flowdiagram": [
+    "states",
+    "transitions",
+    "currentState"
+  ],
+  "funnelchart": [
+    "stages",
+    "showPercentage",
+    "horizontal"
+  ],
+  "galaxyview": [
+    "morphology",
+    "arms",
+    "starCount"
+  ],
+  "gantt": [
+    "tasks",
+    "viewMode",
+    "showDependencies"
+  ],
+  "geofence": [
+    "zones",
+    "center",
+    "zoom"
+  ],
+  "gps": [
+    "label",
+    "showMap",
+    "height"
+  ],
+  "grid": [
+    "cols",
+    "gap"
+  ],
+  "groupedlist": [
+    "items",
+    "groupBy",
+    "renderItem"
+  ],
+  "heatmap": [
+    "data",
+    "xLabels",
+    "yLabels"
+  ],
+  "highlightbox": [
+    "value",
+    "label",
+    "title"
+  ],
+  "html": [
+    "html"
+  ],
+  "image": [
+    "src",
+    "alt",
+    "title"
+  ],
+  "inlineedit": [
+    "value",
+    "type",
+    "options"
+  ],
+  "input": [
+    "label",
+    "value",
+    "placeholder"
+  ],
+  "invoicetemplate": [
+    "issuer",
+    "client",
+    "lines"
+  ],
+  "jsoneditor": [
+    "value",
+    "readOnly",
+    "height"
+  ],
+  "jsonviewer": [
+    "data",
+    "defaultExpandedLevel",
+    "maxHeight"
+  ],
+  "labelvalue": [
+    "label",
+    "value",
+    "orientation"
+  ],
+  "linechart": [
+    "data",
+    "width",
+    "height"
+  ],
+  "livechart": [
+    "data",
+    "bufferDuration",
+    "thresholds"
+  ],
+  "livegauge": [
+    "value",
+    "min",
+    "max"
+  ],
+  "loadingbar": [
+    "variant",
+    "value",
+    "size"
+  ],
+  "locationfield": [
+    "value",
+    "defaultCenter",
+    "height"
+  ],
+  "machinestatus": [
+    "title",
+    "state",
+    "detail"
+  ],
+  "map": [
+    "iframeSrc",
+    "lat",
+    "lng"
+  ],
+  "maplayercontrol": [
+    "layers",
+    "groups",
+    "state"
+  ],
+  "maplegend": [
+    "layers",
+    "groups",
+    "state"
+  ],
+  "mapview": [
+    "center",
+    "zoom",
+    "height"
+  ],
+  "markdown": [
+    "text"
+  ],
+  "masterdetail": [
+    "items",
+    "columns",
+    "renderDetail"
+  ],
+  "message": [
+    "type"
+  ],
+  "metric": [
+    "label",
+    "value",
+    "delta"
+  ],
+  "modal": [
+    "isOpen",
+    "title",
+    "size"
+  ],
+  "modelselector": [
+    "models",
+    "selected",
+    "showCapabilities"
+  ],
+  "moonphase": [
+    "phase",
+    "hemisphere",
+    "label"
+  ],
+  "nfcbadge": [
+    "label",
+    "variant"
+  ],
+  "notificationcenter": [
+    "notifications",
+    "maxVisible",
+    "emptyMessage"
+  ],
+  "numberinput": [
+    "label",
+    "value",
+    "min"
+  ],
+  "offlineindicator": [
+    "demo"
+  ],
+  "orbitalsystem": [
+    "bodies",
+    "time",
+    "defaultTime"
+  ],
+  "orgchart": [
+    "nodes",
+    "direction",
+    "expandable"
+  ],
+  "pagelayout": [
+    "title",
+    "items",
+    "currentItem"
+  ],
+  "pagination": [
+    "page",
+    "totalPages",
+    "pageSize"
+  ],
+  "panel": [
+    "variant",
+    "title",
+    "icon"
+  ],
+  "pdfviewer": [
+    "src",
+    "title",
+    "width"
+  ],
+  "pivottable": [
+    "data",
+    "rowKey",
+    "colKey"
+  ],
+  "plotlychart": [
+    "data",
+    "layout",
+    "config"
+  ],
+  "popover": [
+    "trigger",
+    "placement"
+  ],
+  "predictivechart": [
+    "historical",
+    "predicted",
+    "confidenceUpper"
+  ],
+  "printlayout": [
+    "orientation",
+    "header",
+    "footer"
+  ],
+  "progress": [
+    "value",
+    "max",
+    "label"
+  ],
+  "progressring": [
+    "value",
+    "max",
+    "size"
+  ],
+  "promptinput": [
+    "value",
+    "placeholder",
+    "isLoading"
+  ],
+  "qrcode": [
+    "value",
+    "size",
+    "fgColor"
+  ],
+  "radarchart": [
+    "axes",
+    "values",
+    "max"
+  ],
+  "radiogroup": [
+    "name",
+    "label",
+    "options"
+  ],
+  "rating": [
+    "value",
+    "max",
+    "disabled"
+  ],
+  "relationgraph": [
+    "nodes",
+    "edges",
+    "layout"
+  ],
+  "reportpage": [
+    "title",
+    "sections",
+    "subtitle"
+  ],
+  "richtexteditor": [
+    "defaultHtml",
+    "value",
+    "format"
+  ],
+  "routeplanner": [
+    "stops",
+    "showDistance",
+    "mapHeight"
+  ],
+  "scatterchart": [
+    "data",
+    "width",
+    "height"
+  ],
+  "scheduler": [
+    "view",
+    "events",
+    "resources"
+  ],
+  "scrollcontainer": [
+    "height",
+    "maxHeight",
+    "direction"
+  ],
+  "seatmap": [
+    "rows",
+    "selectedSeatIds",
+    "defaultSelectedSeatIds"
+  ],
+  "selectbox": [
+    "label",
+    "options",
+    "value"
+  ],
+  "sensorgrid": [
+    "sensors",
+    "columns"
+  ],
+  "signaturepad": [
+    "width",
+    "height",
+    "lineColor"
+  ],
+  "skeleton": [
+    "variant",
+    "width",
+    "height"
+  ],
+  "skymap": [
+    "points",
+    "raUnit",
+    "height"
+  ],
+  "slider": [
+    "value",
+    "min",
+    "max"
+  ],
+  "solarsystem": [
+    "bodies",
+    "distanceScale",
+    "region"
+  ],
+  "sparkline": [
+    "values",
+    "width",
+    "height"
+  ],
+  "spinner": [
+    "text",
+    "size",
+    "variant"
+  ],
+  "spinnerdot": [
+    "size"
+  ],
+  "splitview": [
+    "left",
+    "right",
+    "defaultSplit"
+  ],
+  "statemachine": [
+    "states",
+    "transitions",
+    "currentState"
+  ],
+  "statusbox": [
+    "label",
+    "state",
+    "defaultExpanded"
+  ],
+  "statustracker": [
+    "stages",
+    "direction",
+    "compact"
+  ],
+  "stepper": [
+    "steps",
+    "currentStep",
+    "direction"
+  ],
+  "streamingtext": [
+    "content",
+    "isStreaming",
+    "renderMarkdown"
+  ],
+  "suggestioncard": [
+    "title",
+    "description",
+    "actions"
+  ],
+  "table": [
+    "columns",
+    "data",
+    "striped"
+  ],
+  "tabs": [
+    "tabs",
+    "defaultTab"
+  ],
+  "text": [
+    "mono"
+  ],
+  "textarea": [
+    "label",
+    "value",
+    "placeholder"
+  ],
+  "theme": [
+    "variant",
+    "label",
+    "lightLabel"
+  ],
+  "timeinput": [
+    "label",
+    "value",
+    "disabled"
+  ],
+  "timeline": [
+    "events",
+    "items",
+    "maxItems"
+  ],
+  "title1": [
+    "level",
+    "size",
+    "bold"
+  ],
+  "title2": [
+    "level",
+    "size",
+    "bold"
+  ],
+  "title3": [
+    "level",
+    "size",
+    "bold"
+  ],
+  "title4": [
+    "level",
+    "size",
+    "bold"
+  ],
+  "titlebpm": [
+    "level",
+    "size",
+    "bold"
+  ],
+  "toast": [
+    "message",
+    "type",
+    "title"
+  ],
+  "toggle": [
+    "label",
+    "value",
+    "disabled"
+  ],
+  "tooltip": [
+    "text",
+    "position",
+    "backgroundColor"
+  ],
+  "topnav": [
+    "title",
+    "titleHref",
+    "items"
+  ],
+  "tour": [
+    "steps",
+    "isActive"
+  ],
+  "transition": [
+    "activeIndex",
+    "variant",
+    "duration"
+  ],
+  "treemap": [
+    "data",
+    "width",
+    "height"
+  ],
+  "treeview": [
+    "nodes",
+    "selectedId"
+  ],
+  "video": [
+    "src",
+    "controls",
+    "loop"
+  ],
+  "waterfall": [
+    "data",
+    "width",
+    "height"
+  ],
+  "wizardform": [
+    "steps",
+    "submitLabel",
+    "showSummary"
+  ]
+}

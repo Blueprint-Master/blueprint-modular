@@ -387,8 +387,8 @@ export default function CalendrierSimulateurPage() {
               className="flex items-center gap-1.5 px-2 py-1 rounded-full text-xs border transition-colors"
               style={{
                 borderColor: filterCouleur === c ? c : "var(--bpm-border)",
-                background: filterCouleur === c ? (c.startsWith("var") ? "var(--bpm-accent-cyan)" : c) : "var(--bpm-bg-primary)",
-                color: filterCouleur === c ? "#fff" : "var(--bpm-text-primary)",
+                background: filterCouleur === c ? (c.startsWith("var") ? "var(--bpm-accent)" : c) : "var(--bpm-bg-primary)",
+                color: filterCouleur === c ? "var(--bpm-accent-contrast)" : "var(--bpm-text-primary)",
               }}
             >
               <span className="w-2 h-2 rounded-full shrink-0" style={{ background: filterCouleur === c ? "#fff" : c }} />
@@ -415,7 +415,7 @@ export default function CalendrierSimulateurPage() {
                 className="text-xs font-medium mb-2 px-3 py-2 rounded-lg"
                 style={
                   focusKey === todayKey
-                    ? { background: "var(--bpm-accent)", color: "#fff" }
+                    ? { background: "var(--bpm-accent)", color: "var(--bpm-accent-contrast)" }
                     : { color: "var(--bpm-text-secondary)" }
                 }
               >
@@ -505,7 +505,7 @@ export default function CalendrierSimulateurPage() {
                       style={{
                         gridColumn: dayOffset + 2,
                         borderColor: "var(--bpm-border)",
-                        ...(isToday ? { background: "var(--bpm-accent)", color: "#fff" } : { color: "var(--bpm-text-secondary)" }),
+                        ...(isToday ? { background: "var(--bpm-accent)", color: "var(--bpm-accent-contrast)" } : { color: "var(--bpm-text-secondary)" }),
                       }}
                       title={`${WEEKDAYS_FULL[dayOffset]} ${d.getDate()}`}
                     >
@@ -590,7 +590,7 @@ export default function CalendrierSimulateurPage() {
                       className="p-1.5 rounded-md text-sm text-center hover:bg-[var(--bpm-bg-secondary)] transition-colors"
                       style={{
                         background: isToday ? "var(--bpm-accent)" : hasEvent ? "rgba(0,163,226,0.1)" : "transparent",
-                        color: isToday ? "#fff" : "var(--bpm-text-primary)",
+                        color: isToday ? "var(--bpm-accent-contrast)" : "var(--bpm-text-primary)",
                         fontWeight: isToday ? 600 : undefined,
                       }}
                       onClick={() => { setFocusDate(new Date(year, month, d)); setView("jour"); }}

@@ -14,14 +14,15 @@ type ThemeContextType = {
 const ThemeContext = createContext<ThemeContextType | null>(null);
 
 export function ThemeProvider({ children }: { children: React.ReactNode }) {
-  const [theme, setTheme] = useState<Theme>("light");
+  const [theme, setTheme] = useState<Theme>("dark");
   const [mounted, setMounted] = useState(false);
 
-  const themeColorHex = theme === "dark" ? "#1a1a1a" : "#ffffff";
+  // Planothèque : nuit de Prusse par défaut, papier de Prusse en clair.
+  const themeColorHex = theme === "dark" ? "#0a1626" : "#f3f6fa";
 
   useEffect(() => {
     const stored = localStorage.getItem("bpm-theme") as Theme | null;
-    const value = stored === "dark" || stored === "light" ? stored : "light";
+    const value = stored === "dark" || stored === "light" ? stored : "dark";
     setTheme(value);
     document.documentElement.setAttribute("data-theme", value);
     setMounted(true);
@@ -57,7 +58,7 @@ export function useTheme() {
   const ctx = useContext(ThemeContext);
   if (!ctx) {
     return {
-      theme: "light" as Theme,
+      theme: "dark" as Theme,
       toggleTheme: () => {},
       hasProvider: false,
     };

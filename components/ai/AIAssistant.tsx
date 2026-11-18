@@ -187,8 +187,8 @@ export function AIAssistant() {
         onClick={() => setIsOpen(true)}
         className="fixed bottom-20 right-6 z-50 flex h-12 w-12 items-center justify-center rounded-full shadow-lg md:bottom-6"
         style={{
-          background: "var(--bpm-accent-cyan)",
-          color: "#fff",
+          background: "var(--bpm-accent)",
+          color: "var(--bpm-accent-contrast)",
         }}
         aria-label={t.openAssistant}
       >

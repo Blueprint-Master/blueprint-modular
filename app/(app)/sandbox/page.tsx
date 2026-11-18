@@ -1584,8 +1584,8 @@ function SandboxContent() {
             onClick={() => setMode("code")}
             className="px-3 py-1.5 rounded-lg text-sm font-medium transition"
             style={{
-              background: mode === "code" ? "var(--bpm-accent-cyan)" : "var(--bpm-bg-primary)",
-              color: mode === "code" ? "#fff" : "var(--bpm-text-primary)",
+              background: mode === "code" ? "var(--bpm-accent)" : "var(--bpm-bg-primary)",
+              color: mode === "code" ? "var(--bpm-accent-contrast)" : "var(--bpm-text-primary)",
               border: "1px solid var(--bpm-border)",
             }}
           >
@@ -1596,8 +1596,8 @@ function SandboxContent() {
             onClick={() => setMode("selector")}
             className="px-3 py-1.5 rounded-lg text-sm font-medium transition"
             style={{
-              background: mode === "selector" ? "var(--bpm-accent-cyan)" : "var(--bpm-bg-primary)",
-              color: mode === "selector" ? "#fff" : "var(--bpm-text-primary)",
+              background: mode === "selector" ? "var(--bpm-accent)" : "var(--bpm-bg-primary)",
+              color: mode === "selector" ? "var(--bpm-accent-contrast)" : "var(--bpm-text-primary)",
               border: "1px solid var(--bpm-border)",
             }}
           >
@@ -1608,8 +1608,8 @@ function SandboxContent() {
             onClick={() => setMode("ai")}
             className="px-3 py-1.5 rounded-lg text-sm font-medium transition"
             style={{
-              background: mode === "ai" ? "var(--bpm-accent-cyan)" : "var(--bpm-bg-primary)",
-              color: mode === "ai" ? "#fff" : "var(--bpm-text-primary)",
+              background: mode === "ai" ? "var(--bpm-accent)" : "var(--bpm-bg-primary)",
+              color: mode === "ai" ? "var(--bpm-accent-contrast)" : "var(--bpm-text-primary)",
               border: "1px solid var(--bpm-border)",
             }}
           >
@@ -1664,8 +1664,8 @@ function SandboxContent() {
                         }}
                         className="px-3 py-1.5 cursor-pointer font-mono text-sm"
                         style={{
-                          background: i === completionIndex ? "var(--bpm-accent-cyan)" : "transparent",
-                          color: i === completionIndex ? "#fff" : "var(--bpm-text-primary)",
+                          background: i === completionIndex ? "var(--bpm-accent)" : "transparent",
+                          color: i === completionIndex ? "var(--bpm-accent-contrast)" : "var(--bpm-text-primary)",
                         }}
                       >
                         {item.label}

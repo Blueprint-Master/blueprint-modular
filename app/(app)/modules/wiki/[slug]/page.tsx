@@ -283,7 +283,7 @@ export default function WikiArticlePage() {
           <h1 className="text-xl font-bold" style={{ color: "var(--bpm-text-primary)" }}>
             {article.title}
             {article.pinned && (
-              <span className="ml-2 text-xs px-2 py-0.5 rounded font-normal" style={{ background: "var(--bpm-accent)", color: "#fff" }}>{t.common.pinned}</span>
+              <span className="ml-2 text-xs px-2 py-0.5 rounded font-normal" style={{ background: "var(--bpm-accent)", color: "var(--bpm-accent-contrast)" }}>{t.common.pinned}</span>
             )}
             {!article.isPublished && <span className="wiki-draft ml-2">{t.common.draft}</span>}
           </h1>

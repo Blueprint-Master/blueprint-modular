@@ -9,10 +9,12 @@ import { Sun } from "lucide-react";
 import { useState } from "react";
 import { SandboxIcon } from "@/components/icons/SandboxIcon";
 import { useSidebar } from "@/contexts/SidebarContext";
+import { BRAND_MARK_SRC } from "@/lib/brandMark";
 import { useI18n } from "@/lib/i18n/LocaleProvider";
 import type { Locale } from "@/lib/i18n";
 
 const vb = "0 -960 960 960";
+
 
 function IconAccueil({ className }: { className?: string }) {
   return (
@@ -168,13 +170,15 @@ export function Sidebar() {
         href={href}
         className={`bpm-sidebar-item ${compact ? "flex-col gap-0.5 py-2 min-w-[64px] rounded-lg flex-1 basis-0 justify-center items-center" : ""}`}
         aria-current={isActive ? "page" : undefined}
+        aria-label={showLabel && !compact ? undefined : label}
         style={compact ? undefined : { background: isActive ? "var(--bpm-sidebar-active-bg)" : "transparent" }}
-        title={compact ? label : undefined}
+        title={compact || !showLabel ? label : undefined}
       >
         <span className={compact ? "shrink-0 inline-flex items-center justify-center w-5 h-5" : "bpm-sidebar-icon-wrap"}>
           <Icon className="w-5 h-5" style={{ width: 20, height: 20 }} />
         </span>
-        {showLabel && <span className={compact ? "text-xs font-normal truncate max-w-full text-center" : "bpm-sidebar-item-label"}>{label}</span>}
+        {/* Barre basse : icônes seules (sept libellés tronquaient à 390 px), nom porté par aria-label. */}
+        {showLabel && !compact && <span className="bpm-sidebar-item-label">{label}</span>}
       </Link>
     );
   };
@@ -218,6 +222,12 @@ export function Sidebar() {
         onMouseEnter={() => setSidebarHovered(true)}
         onMouseLeave={() => setSidebarHovered(false)}
       >
+        {collapsed && (
+          <Link href="/" className="plano-rail-brand" aria-label="Blueprint Modular">
+            {/* eslint-disable-next-line @next/next/no-img-element -- marque embarquée (data URI) */}
+            <img src={BRAND_MARK_SRC} alt="" width={28} height={28} />
+          </Link>
+        )}
         <div className="bpm-sidebar-toggle-row shrink-0">
           {!collapsed && (
             <Link href="/" className="bpm-sidebar-title">
@@ -245,6 +255,8 @@ export function Sidebar() {
             type="button"
             className="bpm-sidebar-item w-full"
             onClick={toggleTheme}
+            aria-label={S.theme}
+            title={collapsed ? S.theme : undefined}
           >
             <span className="bpm-sidebar-icon-wrap">
               {theme === "dark" ? <Sun className="w-5 h-5" /> : <IconThemeDark className="w-5 h-5" />}
@@ -257,7 +269,7 @@ export function Sidebar() {
                 {session.user.image ? (
                   <Image src={session.user.image} alt="" width={32} height={32} className="w-8 h-8 rounded-full shrink-0 border-2" style={{ borderColor: "var(--bpm-sidebar-border)" }} />
                 ) : (
-                  <div className="w-8 h-8 rounded-full flex items-center justify-center font-semibold text-white shrink-0" style={{ background: "var(--bpm-accent-cyan)" }}>
+                  <div className="w-8 h-8 rounded-full flex items-center justify-center font-semibold shrink-0" style={{ background: "var(--bpm-accent)", color: "var(--bpm-accent-contrast)" }}>
                     {(session.user.name ?? session.user.email ?? "?").slice(0, 1).toUpperCase()}
                   </div>
                 )}

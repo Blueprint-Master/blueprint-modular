@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { FicheWorkbench } from "@/components/plano/FicheWorkbench";
 
 /**
  * Vue app du catalogue — référence canonique et indexable des composants. Les
@@ -14,5 +15,10 @@ export const metadata: Metadata = {
 };
 
 export default function ComposantsLayout({ children }: { children: React.ReactNode }) {
-  return <>{children}</>;
+  return (
+    <>
+      {children}
+      <FicheWorkbench />
+    </>
+  );
 }

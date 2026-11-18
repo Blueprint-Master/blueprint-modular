@@ -85,8 +85,8 @@ export function DemoAlertsClient({ initialAlerts }: { initialAlerts: DemoAlert[]
               onClick={() => setSeverity(s)}
               className="rounded px-2 py-1 text-xs font-medium"
               style={{
-                background: severity === s ? "var(--bpm-accent-cyan)" : "var(--bpm-bg-secondary)",
-                color: severity === s ? "#fff" : "var(--bpm-text-primary)",
+                background: severity === s ? "var(--bpm-accent)" : "var(--bpm-bg-secondary)",
+                color: severity === s ? "var(--bpm-accent-contrast)" : "var(--bpm-text-primary)",
               }}
             >
               {s === "all" ? t.severityAll : s}
@@ -102,8 +102,8 @@ export function DemoAlertsClient({ initialAlerts }: { initialAlerts: DemoAlert[]
               onClick={() => setStatus(s)}
               className="rounded px-2 py-1 text-xs font-medium"
               style={{
-                background: status === s ? "var(--bpm-accent-cyan)" : "var(--bpm-bg-secondary)",
-                color: status === s ? "#fff" : "var(--bpm-text-primary)",
+                background: status === s ? "var(--bpm-accent)" : "var(--bpm-bg-secondary)",
+                color: status === s ? "var(--bpm-accent-contrast)" : "var(--bpm-text-primary)",
               }}
             >
               {s === "active" ? t.statusActive : t.statusAllPlural}

@@ -57,8 +57,8 @@ export class ChunkErrorBoundary extends React.Component<Props, State> {
               onClick={() => window.location.reload()}
               style={{
                 padding: "10px 20px",
-                background: "var(--bpm-accent-cyan)",
-                color: "#fff",
+                background: "var(--bpm-accent)",
+                color: "var(--bpm-accent-contrast)",
                 border: "none",
                 borderRadius: 8,
                 fontSize: 14,

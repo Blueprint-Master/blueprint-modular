@@ -89,7 +89,7 @@ import {
 import registry from "@/lib/generated/bpm-components.json";
 import { useI18n } from "@/lib/i18n/LocaleProvider";
 import { fmt } from "@/lib/i18n";
-import { CatalogueHero, CatalogueSection } from "@/components/site/CatalogueLayout";
+import { PlanoTile } from "@/components/plano/PlanoTile";
 
 /**
  * Catalogue des composants, rendu dans le shell App (/composants, sidebar +
@@ -111,7 +111,7 @@ function PreviewBox({ children }: { children: React.ReactNode }) {
 }
 
 /** Previews par slug (React) — les données nom/description/catégorie viennent du registry Python. */
-const PREVIEW_BY_SLUG: Record<string, React.ReactNode> = {
+export const PREVIEW_BY_SLUG: Record<string, React.ReactNode> = {
   metric: <Metric value={142500} label="CA" delta={3200} />,
   table: <Table columns={[{ key: "A", label: "A" }, { key: "B", label: "B" }]} data={[{ A: "1", B: "2" }]} />,
   title: <Title level={2}>Titre</Title>,
@@ -198,6 +198,21 @@ const PREVIEW_BY_SLUG: Record<string, React.ReactNode> = {
   modelselector: <PreviewBox><ModelSelector models={[{ id: "m1", label: "Modèle 1", provider: "Provider" }]} selected="m1" onChange={() => {}} /></PreviewBox>,
 };
 
+/**
+ * Aperçus qui ne montrent PAS la pièce (simple libellé, faute de rendu statique
+ * possible) : la planothèque garde le plan plutôt que d'afficher un faux aperçu.
+ */
+const NON_LIVE_PREVIEWS = new Set([
+  "audio", "video", "modal", "drawer", "altairchart", "plotlychart", "pdfviewer",
+  "confirmmodal", "pagelayout", "filepreview", "chatinterface", "crud", "gps",
+]);
+
+/** Pièce vivante d'un composant, ou `undefined` s'il n'a pas d'aperçu réel. */
+export function livePreviewFor(slug: string): React.ReactNode | undefined {
+  if (NON_LIVE_PREVIEWS.has(slug)) return undefined;
+  return PREVIEW_BY_SLUG[slug] ?? undefined;
+}
+
 function groupByCategory(components: ComponentEntry[]): { name: string; items: ComponentEntry[] }[] {
   const byCat = new Map<string, ComponentEntry[]>();
   for (const c of components) {
@@ -212,15 +227,17 @@ function groupByCategory(components: ComponentEntry[]): { name: string; items: C
 const CATALOGUE_LABELS = {
   fr: {
     eyebrow: "Catalogue",
+    title: "La planothèque",
     count: (n: number) => `${n} composants`,
-    viewCard: "Voir la fiche",
-    playground: "Essayer le playground — éditez les props en direct →",
+    none: "Aucun composant ne correspond à cette recherche.",
+    playground: "Régler les props en direct dans le playground",
   },
   en: {
     eyebrow: "Catalog",
+    title: "The plan library",
     count: (n: number) => `${n} components`,
-    viewCard: "View component",
-    playground: "Try the playground — edit props live →",
+    none: "No component matches this search.",
+    playground: "Tune props live in the playground",
   },
 } as const;
 
@@ -254,83 +271,61 @@ export function ComponentsCatalogue() {
   }, [categories, keywords]);
 
   return (
-    <>
-      <CatalogueHero
-        eyebrow={L.eyebrow}
-        title={dict.catalog.title}
-        lead={fmt(dict.catalog.lead, { count: registry.components.length })}
-        meta={L.count(registry.components.length)}
-      >
-        <Input
-          type="search"
-          value={searchQuery}
-          onChange={setSearchQuery}
-          placeholder={dict.catalog.searchPlaceholder}
-          aria-label={dict.catalog.searchAria}
-        />
-        <Link
-          href="/playground"
-          style={{
-            display: "inline-block",
-            marginTop: 12,
-            fontSize: 14,
-            fontWeight: 600,
-            color: "var(--bpm-accent-cyan)",
-            textDecoration: "none",
-          }}
-        >
-          {L.playground}
-        </Link>
-      </CatalogueHero>
+    <div className="plano-catalogue">
+      <header className="plano-catalogue-head">
+        <p className="plano-eyebrow">{L.eyebrow}</p>
+        <h1 className="plano-catalogue-title">{L.title}</h1>
+        <p className="plano-catalogue-lead">{fmt(dict.catalog.lead, { count: registry.components.length })}</p>
+        <div className="plano-catalogue-tools">
+          <div className="plano-search">
+            <Input
+              type="search"
+              value={searchQuery}
+              onChange={setSearchQuery}
+              placeholder={dict.catalog.searchPlaceholder}
+              aria-label={dict.catalog.searchAria}
+            />
+          </div>
+          <Link href="/playground" className="plano-link">
+            {L.playground}
+          </Link>
+        </div>
+        <p className="plano-catalogue-count" aria-live="polite">
+          {L.count(filteredCategories.reduce((n, c) => n + c.items.length, 0))}
+        </p>
+      </header>
 
       {filteredCategories.map((cat) => (
-        <CatalogueSection key={cat.name} title={cat.name}>
-          {cat.items.map((item) => (
-            <Link
-              key={item.slug}
-              href={"/composants/" + item.slug}
-              style={{ textDecoration: "none", display: "block" }}
-              aria-label={`${item.name} — ${L.viewCard}`}
-            >
-              <Card
-                title={
-                  <span
-                    className="font-mono"
-                    style={{ fontSize: 14, fontWeight: 500, color: "var(--bpm-accent-cyan)" }}
-                  >
-                    {item.name}
-                  </span>
-                }
-                variant="outlined"
-              >
-                <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
-                  <p style={{ margin: 0, fontSize: 14, lineHeight: 1.6, color: "var(--bpm-text-secondary)" }}>
-                    {item.description}
-                  </p>
-                  <div
-                    style={{
-                      minHeight: 60,
-                      display: "flex",
-                      alignItems: "center",
-                      justifyContent: "center",
-                      padding: 12,
-                      borderRadius: 8,
-                      background: "var(--bpm-bg-secondary)",
-                    }}
-                  >
-                    {PREVIEW_BY_SLUG[item.slug] ?? null}
-                  </div>
-                  <span style={{ fontSize: 13, fontWeight: 600, color: "var(--bpm-accent-cyan)" }}>
-                    {L.viewCard} →
-                  </span>
-                </div>
-              </Card>
-            </Link>
-          ))}
-        </CatalogueSection>
+        <section key={cat.name} className="plano-family" aria-labelledby={`fam-${slugify(cat.name)}`}>
+          <h2 id={`fam-${slugify(cat.name)}`} className="plano-family-title">
+            {cat.name}
+            <span className="plano-family-count">{cat.items.length}</span>
+          </h2>
+          <ul className="plano-grid">
+            {cat.items.map((item) => (
+              <PlanoTile
+                key={item.slug}
+                slug={item.slug}
+                name={item.name}
+                category={cat.name}
+                preview={livePreviewFor(item.slug)}
+              />
+            ))}
+          </ul>
+        </section>
       ))}
-    </>
+      {filteredCategories.length === 0 ? <p className="plano-empty">{L.none}</p> : null}
+    </div>
   );
+}
+
+function slugify(s: string): string {
+  return s
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-|-$/g, "");
 }
 
 export default ComponentsCatalogue;

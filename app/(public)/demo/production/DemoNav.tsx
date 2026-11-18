@@ -48,8 +48,8 @@ export function DemoNav() {
               href={href}
               className="rounded px-3 py-2 text-sm font-medium transition"
               style={{
-                background: isActive ? "var(--bpm-accent-cyan)" : "transparent",
-                color: isActive ? "#fff" : "var(--bpm-text-primary)",
+                background: isActive ? "var(--bpm-accent)" : "transparent",
+                color: isActive ? "var(--bpm-accent-contrast)" : "var(--bpm-text-primary)",
               }}
             >
               {tab.label}
@@ -65,8 +65,8 @@ export function DemoNav() {
             onClick={() => setPeriod(p)}
             className="rounded px-2 py-1.5 text-xs font-medium transition"
             style={{
-              background: period === p ? "var(--bpm-accent-cyan)" : "var(--bpm-bg-secondary)",
-              color: period === p ? "#fff" : "var(--bpm-text-primary)",
+              background: period === p ? "var(--bpm-accent)" : "var(--bpm-bg-secondary)",
+              color: period === p ? "var(--bpm-accent-contrast)" : "var(--bpm-text-primary)",
             }}
           >
             {PERIOD_LABELS[p]}

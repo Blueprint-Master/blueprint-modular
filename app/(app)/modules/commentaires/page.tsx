@@ -32,7 +32,7 @@ function SimuContent() {
         <h3 className="text-sm font-semibold m-0 mb-3" style={{ color: "var(--bpm-text-primary)" }}>{t.previewCount(2)}</h3>
         <div className="space-y-3 text-sm">
           <div className="flex gap-3 p-2 rounded-lg" style={{ background: "var(--bpm-sidebar-bg)" }}>
-            <span className="w-8 h-8 rounded-full flex items-center justify-center text-xs font-medium shrink-0" style={{ background: "var(--bpm-accent-cyan)", color: "#fff" }}>AM</span>
+            <span className="w-8 h-8 rounded-full flex items-center justify-center text-xs font-medium shrink-0" style={{ background: "var(--bpm-accent)", color: "var(--bpm-accent-contrast)" }}>AM</span>
             <div>
               <strong style={{ color: "var(--bpm-text-primary)" }}>Alice Martin</strong>
               <span className="ml-2 text-xs" style={{ color: "var(--bpm-text-secondary)" }}>{t.previewDate1}</span>
