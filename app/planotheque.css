@@ -207,7 +207,9 @@ html:not([data-theme="dark"]) :focus-visible {
 }
 @media (min-width: 768px) {
   .plano-site-column {
-    margin-left: 56px;
+    /* Même retrait que la colonne de l'app (md:ml-16, 64 px) : la vitrine et
+       l'app ont leur contenu au même pixel. */
+    margin-left: 64px;
   }
 }
 @media (max-width: 767px) {
@@ -1106,4 +1108,156 @@ html:not([data-theme="dark"]) .catalogue-grid .bpm-card:focus-within {
 .plano-notfound-back:focus-visible {
   outline: 2px solid var(--plano-trait);
   outline-offset: 3px;
+}
+
+/* ==========================================================================
+   Une gouttière, une colonne, un rythme (18/11, retour de Rémi sur le site
+   déployé : « des sujets de marge, d'alignement, d'occupation de l'espace »).
+   Mesuré avant : contenu à 12, 24 ou 36 px du bord sur téléphone selon la
+   page, logo à 0 px dans l'app installée ; sur bureau, contenu à 145 px sur la
+   planothèque et 205 à 385 px ailleurs ; 24 à 96 px entre la barre et le
+   sur-titre. Désormais :
+   - téléphone : 16 px (zone sûre comprise) pour la barre ET le contenu ;
+   - bureau : la colonne de la planothèque (1200 px centrés) partout ;
+   - en-tête : 32 px barre → sur-titre, 12 px sur-titre → titre, 12 px titre →
+     chapô, sur toutes les pages ; filets posés dans la colonne, jamais au bord.
+   tests/plano-layout.test.ts relit ces mesures sur un build réel.
+   ========================================================================== */
+:root {
+  --plano-gutter-l: max(16px, env(safe-area-inset-left, 0px));
+  --plano-gutter-r: max(16px, env(safe-area-inset-right, 0px));
+  --plano-column: 1200px;
+  --plano-head-top: 32px;
+  --plano-head-step: 12px;
+}
+
+/* Barre du haut (app) et nav (vitrine) : la même gouttière que le contenu. */
+.app-layout-root .pwa-title-bar {
+  padding-left: var(--plano-gutter-l);
+  padding-right: var(--plano-gutter-r);
+}
+@media (display-mode: standalone) {
+  .app-layout-root .pwa-title-bar {
+    padding-left: calc(var(--bpm-sidebar-width, 0px) + var(--plano-gutter-l));
+  }
+}
+.site-shell .site-nav .site-container,
+.site-nav .site-nav-inner {
+  padding-left: var(--plano-gutter-l);
+  padding-right: var(--plano-gutter-r);
+}
+
+/* Contenu de l'app : la gouttière vient de .app-main, les conteneurs internes
+   n'en rajoutent pas et prennent la colonne de la planothèque. */
+.app-layout-root .app-main {
+  padding-left: var(--plano-gutter-l);
+  padding-right: var(--plano-gutter-r);
+  padding-top: 0;
+}
+.app-main .site-container,
+.app-main .doc-page,
+.app-main .plano-catalogue {
+  max-width: var(--plano-column);
+  margin-inline: auto;
+  padding-left: 0;
+  padding-right: 0;
+}
+.app-main .plano-catalogue {
+  padding-top: var(--plano-head-top);
+}
+.app-main .doc-page {
+  padding-top: var(--plano-head-top);
+}
+
+/* Vitrine : même colonne, la gouttière est portée par le conteneur. */
+.site-shell .site-container,
+.site-shell .doc-page {
+  max-width: calc(var(--plano-column) + 32px);
+  padding-left: var(--plano-gutter-l);
+  padding-right: var(--plano-gutter-r);
+}
+.site-shell .doc-page {
+  padding-top: var(--plano-head-top);
+}
+.site-container.site-legal {
+  max-width: calc(var(--plano-column) + 32px);
+}
+.site-legal > * {
+  max-width: 72ch;
+}
+
+/* Rythme d'en-tête unique. */
+.site-hero {
+  padding: var(--plano-head-top) 0 28px;
+}
+.app-main .site-hero {
+  padding-top: var(--plano-head-top);
+}
+.plano-catalogue-head {
+  gap: var(--plano-head-step);
+}
+.site-eyebrow,
+.plano-eyebrow,
+.app-main .doc-page-header .doc-breadcrumb {
+  display: block;
+  margin: 0 0 var(--plano-head-step);
+  line-height: 1.3;
+}
+.plano-catalogue-head .plano-eyebrow {
+  margin: 0;
+}
+.site-hero h1,
+.doc-page-header h1,
+.app-main .doc-page-header h1,
+.site-shell .doc-page .doc-page-header h1,
+.site-legal h1 {
+  margin: 0 0 var(--plano-head-step);
+}
+.site-lead {
+  margin: 0 0 20px;
+}
+.site-hero .site-eyebrow + .site-eyebrow,
+.site-hero .site-lead + .site-eyebrow {
+  margin-top: 0;
+}
+
+/* Sections : un pas unique, le filet dans la colonne (il partait du bord). */
+.site-section {
+  padding: 28px 0;
+}
+.site-section-bordered {
+  border-top: 0;
+  padding-top: 0;
+}
+/* Le filet est dessiné DANS la colonne (pseudo-élément après la gouttière),
+   pour commencer au même pixel que le texte dans l'app comme dans la vitrine. */
+.site-section-bordered > .site-container::before {
+  content: "";
+  display: block;
+  height: 1px;
+  margin-bottom: 28px;
+  background: var(--plano-line-ui);
+}
+
+/* Titres de section : UNE règle sur tout le site, Instrument Serif. */
+/* :is() prend la spécificité de son argument le plus fort (0,2,0) : la règle
+   passe devant `.app-main h2` (0,1,1) de globals.css sans !important. */
+:is(.app-main, .site-shell, .plano-site) :is(.plano-family-title, .site-section h2, [class*="collectionHeading"] h2, .doc-page h2) {
+  font-family: var(--font-display);
+  font-weight: 400;
+  font-size: 26px;
+  line-height: 1.15;
+  letter-spacing: -0.005em;
+  color: var(--plano-text);
+}
+
+/* Démo : un seul filet sous les onglets, sans ascenseur visible. */
+.plano-demo .bpm-tabs-header {
+  scrollbar-width: none;
+}
+.plano-demo .bpm-tabs-header::-webkit-scrollbar {
+  display: none;
+}
+.site-section:has(> .site-legal) {
+  padding-top: var(--plano-head-top);
 }

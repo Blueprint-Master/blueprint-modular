@@ -4,7 +4,8 @@
 
 const fr = {
   // En-tête
-  pageTitle: "Demo - Suivi commercial",
+  eyebrow: "Démo",
+  pageTitle: "Suivi commercial",
   pageDescription:
     "Démo d’une petite application de suivi commercial : tableau de bord, clients, commandes, produits et équipe. Tout est construit avec les composants bpm.*.",
 
@@ -76,7 +77,8 @@ const fr = {
 
 const en: typeof fr = {
   // Header
-  pageTitle: "Demo - Sales Tracking",
+  eyebrow: "Demo",
+  pageTitle: "Sales tracking",
   pageDescription:
     "Demo of a small sales-tracking application: dashboard, clients, orders, products and team. Everything is built with the bpm.* components.",
 
