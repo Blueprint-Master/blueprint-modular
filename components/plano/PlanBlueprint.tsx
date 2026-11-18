@@ -1,7 +1,10 @@
 import type { PlanFamily } from "@/lib/plano/families";
+import type { Archetype } from "@/lib/plano/archetypes";
+import { ArchetypeDrawing } from "@/components/plano/ArchetypeDrawing";
 
 /**
- * Plan cyanotype d'une FAMILLE de composants : un dessin technique au trait,
+ * Plan cyanotype d'une pièce : le dessin de son ARCHÉTYPE de forme, ou à défaut
+ * celui de sa FAMILLE de composants : un dessin technique au trait,
  * blanc sur bleu de Prusse, avec une seule touche vermillon (ce qui « parle »
  * dans la pièce : delta, seuil, alerte, action). Décoratif : la tuile porte le
  * nom, donc le dessin est `aria-hidden`.
@@ -143,11 +146,14 @@ function Drawing({ family, seed }: { family: PlanFamily; seed: number }) {
 
 export function PlanBlueprint({
   family,
+  archetype = null,
   seed = 0,
   width = 150,
   height = 70,
 }: {
   family: PlanFamily;
+  /** Forme de la pièce ; à défaut, le plan de sa famille. */
+  archetype?: Archetype | null;
   seed?: number;
   width?: number;
   height?: number;
@@ -162,7 +168,11 @@ export function PlanBlueprint({
       viewBox="0 0 150 70"
       overflow="visible"
     >
-      <Drawing family={family} seed={seed} />
+      {archetype ? (
+        <ArchetypeDrawing archetype={archetype} v={(slot, span) => vary(seed, slot, span)} />
+      ) : (
+        <Drawing family={family} seed={seed} />
+      )}
     </svg>
   );
 }

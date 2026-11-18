@@ -2,6 +2,10 @@ import Link from "next/link";
 import type { ReactNode } from "react";
 import { PlanBlueprint, seedOf } from "@/components/plano/PlanBlueprint";
 import { callOf, familyOf, humanName } from "@/lib/plano/families";
+import { archetypeOf } from "@/lib/plano/archetypes";
+import keyProps from "@/lib/generated/plano-key-props.json";
+
+const KEY_PROPS = keyProps as Record<string, string[]>;
 
 /**
  * Tuile de la planothèque : le PLAN de la famille au repos, la PIÈCE vivante
@@ -36,8 +40,8 @@ export function PlanoTile({
     <li className="plano-tile">
       <span className={`plano-frame${preview ? " plano-frame--live" : ""}${preview && developed ? " plano-frame--developed" : ""}`}>
         <span className="plano-plan">
-          <PlanBlueprint family={familyOf(category)} seed={seedOf(slug)} />
-          <span className="plano-cote">{category.toLowerCase()}</span>
+          <PlanBlueprint family={familyOf(category)} archetype={archetypeOf(slug)} seed={seedOf(slug)} />
+          <span className="plano-cote">{KEY_PROPS[slug]?.join(" · ") ?? category.toLowerCase()}</span>
         </span>
         {preview ? (
           <span className="plano-live" aria-hidden="true" {...INERT}>
