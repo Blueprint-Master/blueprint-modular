@@ -705,9 +705,15 @@ html:not([data-theme="dark"]) :focus-visible {
 .sandbox-preview > * {
   max-width: 100%;
 }
+/* Une piste en « 1fr » vaut minmax(auto, 1fr) : elle s'élargit à la largeur
+   minimale de son contenu (bande des états, champs), et la fiche débordait à
+   droite sur téléphone, pièce décentrée et coupée (retour de Rémi du 18/11). */
+.sandbox-container > * {
+  min-width: 0;
+}
 @media (max-width: 900px) {
   .sandbox-container {
-    grid-template-columns: 1fr;
+    grid-template-columns: minmax(0, 1fr);
     grid-template-areas:
       "preview"
       "states"

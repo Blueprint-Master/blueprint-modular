@@ -603,7 +603,9 @@ html[data-theme="dark"] .bpm-app-sidebar .bpm-sidebar-footer-wrap {
     overflow: visible;
     -webkit-app-region: drag;
     app-region: drag;
-    background: #fff !important;
+    /* Le fond du thème (nuit de Prusse ou papier) : le blanc figé ici rendait la
+       barre blanche et le logotype illisible dans l'app installée (18/11). */
+    background: var(--bpm-bg-primary, #0a1626) !important;
   }
   .pwa-title-bar button,
   .pwa-title-bar a,

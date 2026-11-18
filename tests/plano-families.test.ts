@@ -124,3 +124,17 @@ describe("aucun texte blanc posé sur l'accent", () => {
     expect(fautes).toEqual([]);
   });
 });
+
+describe("mobile : barre de l'app installée et fiche composant (18/11)", () => {
+  it("la barre de titre de l'app installée prend le fond du thème, plus le blanc figé", () => {
+    const g = readFileSync(resolve(process.cwd(), "app/globals.css"), "utf8");
+    const block = /@media \(display-mode: standalone\) \{\s*\.pwa-title-bar \{([^}]*)\}/.exec(g)?.[1] ?? "";
+    expect(block).not.toMatch(/background:\s*#fff/i);
+    expect(block).toContain("background: var(--bpm-bg-primary, #0a1626) !important;");
+  });
+  it("la fiche ne s'élargit plus au contenu sur téléphone", () => {
+    const css = readFileSync(resolve(process.cwd(), "app/planotheque.css"), "utf8");
+    expect(css).toMatch(/\.sandbox-container > \* \{\s*min-width: 0;/);
+    expect(css).toMatch(/grid-template-columns: minmax\(0, 1fr\);/);
+  });
+});
