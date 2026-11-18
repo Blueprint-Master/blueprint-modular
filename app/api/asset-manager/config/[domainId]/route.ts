@@ -12,7 +12,7 @@ async function resolveParams(params: Params): Promise<{ domainId: string }> {
     : (params as { domainId: string });
 }
 
-export async function GET(_request: Request, context: { params: Params }) {
+export async function GET(_request: Request, context: { params: Promise<Awaited<Params>> }) {
   const result = await getSessionOrTestUser();
   if (!result) return NextResponse.json({ error: "Non autorisé" }, { status: 401 });
 

@@ -13,7 +13,7 @@ async function resolveParams(params: Params): Promise<{ slug: string }> {
 
 export async function GET(
   _request: Request,
-  context: { params: Params }
+  context: { params: Promise<Awaited<Params>> }
 ) {
   const result = await getSessionOrTestUser();
   const user = result?.user ?? null;

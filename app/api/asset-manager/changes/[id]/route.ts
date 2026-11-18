@@ -13,7 +13,7 @@ async function resolveParams(params: Params): Promise<{ id: string }> {
     : (params as { id: string });
 }
 
-export async function GET(_request: Request, context: { params: Params }) {
+export async function GET(_request: Request, context: { params: Promise<Awaited<Params>> }) {
   const result = await getSessionOrTestUser();
   if (!result) return NextResponse.json({ error: "Non autorisé" }, { status: 401 });
 
@@ -23,7 +23,7 @@ export async function GET(_request: Request, context: { params: Params }) {
   return NextResponse.json(change);
 }
 
-export async function PUT(request: Request, context: { params: Params }) {
+export async function PUT(request: Request, context: { params: Promise<Awaited<Params>> }) {
   const result = await getSessionOrTestUser();
   if (!result) return NextResponse.json({ error: "Non autorisé" }, { status: 401 });
   const forbidden = requireWriteRole(result.user);
@@ -77,7 +77,7 @@ export async function PUT(request: Request, context: { params: Params }) {
   return NextResponse.json(updated);
 }
 
-export async function DELETE(_request: Request, context: { params: Params }) {
+export async function DELETE(_request: Request, context: { params: Promise<Awaited<Params>> }) {
   const result = await getSessionOrTestUser();
   if (!result) return NextResponse.json({ error: "Non autorisé" }, { status: 401 });
   const forbidden = requireWriteRole(result.user);

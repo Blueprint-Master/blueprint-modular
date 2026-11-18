@@ -22,7 +22,7 @@ async function getArticleAndCheckAuth(id: string) {
   return { article, user: result.user };
 }
 
-export async function GET(_request: Request, context: { params: Params }) {
+export async function GET(_request: Request, context: { params: Promise<Awaited<Params>> }) {
   const { id } = await resolveParams(context.params);
   if (!id) return NextResponse.json({ error: "ID requis" }, { status: 400 });
   const result = await getArticleAndCheckAuth(id);
@@ -30,7 +30,7 @@ export async function GET(_request: Request, context: { params: Params }) {
   return NextResponse.json(result.article);
 }
 
-export async function PUT(request: Request, context: { params: Params }) {
+export async function PUT(request: Request, context: { params: Promise<Awaited<Params>> }) {
   const { id } = await resolveParams(context.params);
   if (!id) return NextResponse.json({ error: "ID requis" }, { status: 400 });
   const result = await getArticleAndCheckAuth(id);
@@ -64,7 +64,7 @@ export async function PUT(request: Request, context: { params: Params }) {
   return NextResponse.json(article);
 }
 
-export async function DELETE(_request: Request, context: { params: Params }) {
+export async function DELETE(_request: Request, context: { params: Promise<Awaited<Params>> }) {
   const { id } = await resolveParams(context.params);
   if (!id) return NextResponse.json({ error: "ID requis" }, { status: 400 });
   const result = await getArticleAndCheckAuth(id);

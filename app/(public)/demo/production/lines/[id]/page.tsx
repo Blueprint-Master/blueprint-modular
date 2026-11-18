@@ -28,16 +28,12 @@ export default async function DemoLineDetailPage({
   searchParams,
 }: {
   params: Promise<{ id: string }>;
-  searchParams?: Promise<{ period?: string }> | { period?: string };
+  searchParams?: Promise<{ period?: string }>;
 }) {
   const locale = await getLocale();
   const t = STR[locale];
   const { id: lineCode } = await params;
-  const rawSp = searchParams != null
-    ? typeof (searchParams as Promise<unknown>).then === "function"
-      ? await (searchParams as Promise<{ period?: string }>)
-      : (searchParams as { period?: string })
-    : {};
+  const rawSp = (await searchParams) ?? {};
   const period = parsePeriod(rawSp?.period ?? null);
   let detail;
   try {

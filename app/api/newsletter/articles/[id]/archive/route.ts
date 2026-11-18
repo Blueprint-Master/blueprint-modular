@@ -12,7 +12,7 @@ async function resolveParams(params: Params): Promise<{ id: string }> {
     : (params as { id: string });
 }
 
-export async function PATCH(request: Request, context: { params: Params }) {
+export async function PATCH(request: Request, context: { params: Promise<Awaited<Params>> }) {
   const result = await getSessionOrTestUser();
   if (!result) return NextResponse.json({ error: "Non autorisé" }, { status: 401 });
 

@@ -13,7 +13,7 @@ async function resolveParams(params: Params): Promise<{ slug: string }> {
 
 export async function GET(
   _request: Request,
-  context: { params: Params }
+  context: { params: Promise<Awaited<Params>> }
 ) {
   const result = await getSessionOrTestUser();
   const user = result?.user ?? null;
@@ -50,7 +50,7 @@ export async function GET(
 
 export async function POST(
   request: Request,
-  context: { params: Params }
+  context: { params: Promise<Awaited<Params>> }
 ) {
   const result = await getSessionOrTestUser();
   if (!result) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });

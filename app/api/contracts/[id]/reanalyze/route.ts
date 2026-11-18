@@ -9,15 +9,13 @@ export const dynamic = "force-dynamic";
 
 export async function POST(
   _request: Request,
-  context: { params: Promise<{ id: string }> | { id: string } }
+  context: { params: Promise<{ id: string }> }
 ) {
   const result = await getSessionOrTestUser();
   if (!result) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   const { user } = result;
   const params = context.params;
-  const resolved = typeof (params as Promise<{ id: string }>)?.then === "function"
-    ? await (params as Promise<{ id: string }>)
-    : (params as { id: string });
+  const resolved = await params;
   const id = resolved?.id;
   if (!id) return NextResponse.json({ error: "Bad request" }, { status: 400 });
   const contract = await prisma.contract.findUnique({ where: { id } });

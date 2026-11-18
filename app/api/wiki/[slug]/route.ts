@@ -16,7 +16,7 @@ async function resolveParams(params: Params): Promise<{ slug: string }> {
 
 export async function GET(
   request: Request,
-  context: { params: Params }
+  context: { params: Promise<Awaited<Params>> }
 ) {
   const result = await getSessionOrTestUser();
   const user = result?.user ?? null;
@@ -68,7 +68,7 @@ export async function GET(
 
 export async function PUT(
   request: Request,
-  context: { params: Params }
+  context: { params: Promise<Awaited<Params>> }
 ) {
   const result = await getSessionOrTestUser();
   if (!result) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
@@ -179,14 +179,14 @@ export async function PUT(
 
 export async function PATCH(
   request: Request,
-  context: { params: Params }
+  context: { params: Promise<Awaited<Params>> }
 ) {
   return PUT(request, context);
 }
 
 export async function DELETE(
   _request: Request,
-  context: { params: Params }
+  context: { params: Promise<Awaited<Params>> }
 ) {
   const result = await getSessionOrTestUser();
   if (!result) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
