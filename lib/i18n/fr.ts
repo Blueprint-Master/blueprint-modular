@@ -25,7 +25,7 @@ const fr = {
     gettingStarted: "Démarrage",
     ariaMain: "Navigation principale",
     ariaLocale: "Langue du site",
-    ariaHome: "Blueprint Modular — accueil",
+    ariaHome: "Blueprint Modular, accueil",
     openMenu: "Ouvrir le menu",
     closeMenu: "Fermer le menu",
   },
@@ -42,7 +42,7 @@ const fr = {
     docs: "Documentation",
     resourcesHub: "Ressources & guides",
     mcp: "Connecteur MCP",
-    llms: "llms.txt — référence machine",
+    llms: "llms.txt : référence machine",
     llmsCore: "llms-core.txt",
     pypi: "Package PyPI",
     npm: "Package npm",
@@ -55,7 +55,7 @@ const fr = {
     reactSurface: "React",
   },
   status: {
-    metaTitle: "Statut — Blueprint Modular",
+    metaTitle: "Statut · Blueprint Modular",
     metaDescription: "Disponibilité de la vitrine et du connecteur MCP Blueprint Modular.",
     brand: ".Modular",
     suffix: "Statut",
@@ -75,7 +75,7 @@ const fr = {
     ninetyDaysAgo: "Il y a 90 jours",
     today: "Aujourd'hui",
     uptimeSuffix: "% de disponibilité",
-    collectingNote: "Collecte en cours — l'historique se remplit à chaque mesure.",
+    collectingNote: "Collecte en cours : l'historique se remplit à chaque mesure.",
     todayTitle: "Aujourd'hui",
     metricChecks: "Mesures",
     metricUptime: "Disponibilité",
@@ -86,20 +86,20 @@ const fr = {
     incidentResolved: "Résolu",
     incidentOngoing: "En cours",
     footerNote: "Disponibilité mesurée toutes les 5 minutes",
-    none: "—",
+    none: "Non mesurée",
   },
   home: {
-    metaTitle: "Blueprint Modular — composez des interfaces vérifiées par IA",
+    metaTitle: "Blueprint Modular · composez des interfaces vérifiées par IA",
     metaDescription:
-      "Décrivez un besoin, obtenez une composition de composants sémantiques vérifiés — appelables en React comme en Python, lisibles par les agents via MCP.",
+      "Décrivez un besoin, obtenez une composition de composants sémantiques vérifiés, appelables en React comme en Python, lisibles par les agents via MCP.",
     hero: {
       title: "Décrivez un besoin. Obtenez une composition d'interface vérifiée.",
       lead:
-        "{count} composants sémantiques qu'une IA sait assembler — et appeler en React comme en Python.",
+        "{count} composants sémantiques qu'une IA sait assembler, et appeler en React comme en Python.",
       ctaPrimary: "Commencer",
       ctaSecondary: "Voir les composants",
       ctaDemo: "Voir la démo IA",
-      demoCaption: "Rendu réel — ces composants sont ceux du package, pas des captures d'écran.",
+      demoCaption: "Rendu réel : ces composants sont ceux du package, pas des captures d'écran.",
     },
     why: {
       title: "Conçu pour les applications métier, pas pour les démos.",
@@ -112,7 +112,7 @@ const fr = {
         {
           title: "Python ou React, au choix",
           body:
-            "Un même composant, deux façons de l'appeler : comme une fonction Python ou comme une balise React/JSX. Pas de HTML ni de build front à maintenir — et le rendu reste du vrai React, thémable, clair et sombre.",
+            "Un même composant, deux façons de l'appeler : comme une fonction Python ou comme une balise React/JSX. Pas de HTML ni de build front à maintenir, et le rendu reste du vrai React, thémable, clair et sombre.",
         },
         {
           title: "Documenté pour les agents",
@@ -129,7 +129,7 @@ const fr = {
     agents: {
       title: "Votre agent connaît déjà cette bibliothèque.",
       body:
-        "llms.txt expose chaque composant — props, types, valeurs par défaut, exemples — dans un format pensé pour le contexte d'un LLM. C'est la même source générée depuis le code qui alimente ce site : une seule vérité, zéro divergence.",
+        "llms.txt expose chaque composant (props, types, valeurs par défaut, exemples) dans un format pensé pour le contexte d'un LLM. C'est la même source générée depuis le code qui alimente ce site : une seule vérité, zéro divergence.",
       cta: "Lire llms.txt",
     },
     catalog: {
@@ -145,14 +145,14 @@ const fr = {
       steps: [
         { title: "Installer", body: "Le package embarque les composants React compilés : aucun outillage front requis." },
         { title: "Créer une app", body: "bpm init génère la structure du projet, prête à éditer." },
-        { title: "Lancer", body: "bpm run sert votre application — rechargée à chaque sauvegarde." },
+        { title: "Lancer", body: "bpm run sert votre application, rechargée à chaque sauvegarde." },
       ],
       cta: "Suivre le guide de démarrage",
     },
     showcase: {
       liveTitle: "Le rendu réel, pas des captures.",
       liveBody:
-        "Chaque tuile est un composant du package, exécuté en direct dans votre navigateur — et sous chacune, la ligne exacte qui la produit. Le code que vous lisez est le code qui tourne. C'est ce que votre application affichera, au pixel près.",
+        "Chaque tuile est un composant du package, exécuté en direct dans votre navigateur, et sous chacune, la ligne exacte qui la produit. Le code que vous lisez est le code qui tourne. C'est ce que votre application affichera, au pixel près.",
       copy: "Copier",
       copied: "Copié",
       families: {
@@ -191,7 +191,7 @@ const fr = {
     modules: {
       title: "{count} modules métier prêts à brancher.",
       body:
-        "Au-delà des composants, Blueprint Modular livre des modules complets — assemblés, documentés et testables en ligne. Chacun dispose d'une page avec documentation et simulateur.",
+        "Au-delà des composants, Blueprint Modular livre des modules complets : assemblés, documentés et testables en ligne. Chacun dispose d'une page avec documentation et simulateur.",
       cta: "Explorer les modules",
       categories: {
         auth: "Authentification",
@@ -256,7 +256,7 @@ const fr = {
         },
         {
           q: "Est-ce prêt pour la production ?",
-          a: "Oui. Les modules métier sont assemblés et documentés, avec authentification, audit et déploiement décrits — ce site tourne sur ses propres composants.",
+          a: "Oui. Les modules métier sont assemblés et documentés, avec authentification, audit et déploiement décrits ; ce site tourne sur ses propres composants.",
         },
       ],
     },
@@ -264,7 +264,7 @@ const fr = {
       eyebrow: "Model Context Protocol",
       title: "Vos agents lisent le catalogue, en direct.",
       body:
-        "Le connecteur MCP expose les {count} composants à Claude et à tout hôte MCP — props, exemples, compositions — en lecture seule, sans authentification ni donnée personnelle.",
+        "Le connecteur MCP expose les {count} composants à Claude et à tout hôte MCP (props, exemples, compositions) en lecture seule, sans authentification ni donnée personnelle.",
       cta: "Découvrir le connecteur MCP",
     },
     resourcesTeaser: {
@@ -277,12 +277,12 @@ const fr = {
     cta: {
       title: "Prêt à écrire votre première interface ?",
       body:
-        "Installez le package, lancez bpm run, et servez une application métier complète — sans toucher au HTML.",
+        "Installez le package, lancez bpm run, et servez une application métier complète, sans toucher au HTML.",
       primary: "Commencer",
       secondary: "Voir les composants",
       contact: "Nous contacter",
       offer:
-        "Open-source sous licence Apache-2.0 — gratuit, sans verrou propriétaire. Une question, un besoin entreprise ? Écrivez-nous.",
+        "Open-source sous licence Apache-2.0 : gratuit, sans verrou propriétaire. Une question, un besoin entreprise ? Écrivez-nous.",
     },
   },
   homeDemo: {
@@ -296,13 +296,13 @@ const fr = {
     statusOk: "Opérationnel",
   },
   presentationPage: {
-    metaTitle: "Présentation — Blueprint Modular",
+    metaTitle: "Présentation · Blueprint Modular",
     metaDescription:
       "Blueprint Modular en un coup d'œil : composants en rendu réel, modules métier prêts à brancher, connecteur MCP pour vos agents, doc générée depuis le code.",
     eyebrow: "Présentation",
     title: "Blueprint Modular, en un coup d'œil.",
     lead:
-      "Une bibliothèque d'interfaces métier, appelable en Python comme en React : {components} composants en rendu réel, {modules} modules prêts à brancher, un connecteur MCP pour vos agents — une seule source de vérité, du code au catalogue.",
+      "Une bibliothèque d'interfaces métier, appelable en Python comme en React : {components} composants en rendu réel, {modules} modules prêts à brancher, un connecteur MCP pour vos agents : une seule source de vérité, du code au catalogue.",
     ctaPrimary: "Commencer",
     ctaSecondary: "Ouvrir l'app",
     ecosystem: {
@@ -316,7 +316,7 @@ const fr = {
         },
         modules: {
           title: "Modules métier",
-          body: "{modules} modules prêts à brancher — auth, wiki, veille, contrats, tableaux de bord — chacun avec sa doc et son simulateur.",
+          body: "{modules} modules prêts à brancher (auth, wiki, veille, contrats, tableaux de bord), chacun avec sa doc et son simulateur.",
         },
         mcp: {
           title: "Connecteur MCP",
@@ -328,13 +328,13 @@ const fr = {
         },
         resources: {
           title: "Ressources",
-          body: "Guides, changelog, package PyPI et llms.txt — tout pour construire, réunis en un point d'entrée.",
+          body: "Guides, changelog, package PyPI et llms.txt : tout pour construire, réunis en un point d'entrée.",
         },
       },
     },
   },
   manifestePage: {
-    metaTitle: "Manifeste — Blueprint Modular",
+    metaTitle: "Manifeste · Blueprint Modular",
     metaDescription:
       "Le Manifeste Blueprint : des instruments, pas des contraintes. Un logiciel qui traverse les cadres, sent le réel et en restitue le sens.",
     eyebrow: "Le Manifeste",
@@ -347,45 +347,45 @@ const fr = {
     ],
     sections: [
       {
-        h: "Un — On part d'un but. Non d'une spécification.",
+        h: "Un. On part d'un but. Non d'une spécification.",
         p: "On exprime un objectif ; l'instrument se construit pour le servir. L'objectif descend, l'instrument remonte.",
       },
       {
-        h: "Deux — La cognition est transverse.",
+        h: "Deux. La cognition est transverse.",
         p: "L'instrument n'appartient à aucune fonction. C'est ce qui l'autorise à poser la question qu'aucune ne pose. Là où l'organisation sépare, il relie.",
       },
       {
-        h: "Trois — Le sens naît avec la mesure.",
+        h: "Trois. Le sens naît avec la mesure.",
         p: "Une grandeur isolée ne signifie rien. Elle devient connaissance lorsqu'elle porte son contexte, son repère et sa direction. L'intelligence se tient au point du signal, non dans une lecture d'après-coup.",
       },
       {
-        h: "Quatre — La représentation choisit ce qu'elle révèle.",
+        h: "Quatre. La représentation choisit ce qu'elle révèle.",
         p: "Aucune forme n'est neutre : elle donne à voir ou elle dissimule. Nous retenons celle qui expose le mouvement, l'écart et la structure, non l'état inerte.",
       },
       {
-        h: "Cinq — Le logiciel sent, il ne lit pas.",
+        h: "Cinq. Le logiciel sent, il ne lit pas.",
         p: "Nous le relions au monde, à ses systèmes comme à sa réalité physique. La donnée vivante prime sur la donnée stockée. On habite le réel par contact, non par description.",
       },
       {
-        h: "Six — Le composant porte l'intelligence ; le monde l'élargit.",
+        h: "Six. Le composant porte l'intelligence ; le monde l'élargit.",
         p: "Chaque brique est conçue pour recevoir de la profondeur. Elle est d'abord configurée par ce que la machine a lu du monde, puis affinée par ce qu'elle en ressent. Une seule surface, deux sources : la lecture, puis le ressenti.",
       },
       {
-        h: "Sept — L'application est vivante.",
+        h: "Sept. L'application est vivante.",
         p: "Elle se re-dérive d'une intention qui évolue. Elle change quand le réel change, sans dette ni rupture.",
       },
       {
-        h: "Huit — La confiance précède l'audace.",
+        h: "Huit. La confiance précède l'audace.",
         p: "Une intuition transverse n'a de valeur que si l'on peut agir sur elle. Nous l'étayons avant de l'avancer. Un instrument auquel on ne peut se fier n'en est pas un.",
       },
     ],
     signature:
-      "Blueprint n'est pas un générateur d'applications. C'est un fabricant d'instruments pour comprendre et agir sur le réel — pour penser à travers ce que l'organisation tient séparé.",
+      "Blueprint n'est pas un générateur d'applications. C'est un fabricant d'instruments pour comprendre et agir sur le réel, pour penser à travers ce que l'organisation tient séparé.",
     ctaPrimary: "Commencer",
     ctaSecondary: "Explorer les composants",
   },
   galleryPage: {
-    metaTitle: "Apps créées avec Modular — Galerie",
+    metaTitle: "Apps créées avec Modular · Galerie",
     metaDescription:
       "Une sélection d'applications conçues avec Blueprint Modular et validées par leur auteur : titre, capture et prompt d'origine.",
     eyebrow: "La galerie",
@@ -404,14 +404,14 @@ const fr = {
     next: "Carte suivante",
     viewDetail: "Voir la chaîne de génération",
     // Vue détail /galerie/[id] — chaîne prompt → structure → app
-    detailMetaTitle: "{title} — Galerie Modular",
+    detailMetaTitle: "{title} · Galerie Modular",
     detailBack: "← Retour à la galerie",
-    detailLead: "Une phrase a produit cette structure — de façon déterministe.",
+    detailLead: "Une phrase a produit cette structure, de façon déterministe.",
     stepPromptTitle: "La demande",
     stepStructureTitle: "La structure générée",
     stepAppTitle: "L'application",
     narrative:
-      "À partir de la phrase ci-dessus, Modular a dérivé cette structure — entités, modules et indicateurs — de façon déterministe.",
+      "À partir de la phrase ci-dessus, Modular a dérivé cette structure (entités, modules et indicateurs) de façon déterministe.",
     entitiesTitle: "Entités",
     modulesTitle: "Modules",
     kpisTitle: "Indicateurs",
@@ -423,7 +423,7 @@ const fr = {
     fieldsCount: "{n} champs",
     moduleColLabel: "Module",
     moduleColEntity: "Entité",
-    noEntity: "—",
+    noEntity: "Aucune",
   },
   changelogPage: {
     title: "Changelog",
@@ -461,8 +461,8 @@ const fr = {
     demo: {
       staticPreview: "aperçu statique",
       uploaded: "Sélectionné : {files}",
-      wizardDone: "Parcours terminé — onComplete appelé.",
-      loggedOut: "Déconnexion (démo) — onLogout appelé.",
+      wizardDone: "Parcours terminé : onComplete appelé.",
+      loggedOut: "Déconnexion (démo) : onLogout appelé.",
       toastReplay: "Rejouer la notification",
     },
   },
@@ -474,7 +474,7 @@ const fr = {
     cards: {
       gettingStarted: {
         title: "Démarrage",
-        body: "Installation, première app, premier composant — en trois étapes.",
+        body: "Installation, première app, premier composant, en trois étapes.",
       },
       catalog: {
         title: "Catalogue des composants",
@@ -494,7 +494,7 @@ const fr = {
       },
       database: {
         title: "Prérequis production",
-        body: "Tables Prisma par module, variables d'environnement, déploiement — voir docs/DATABASE.md dans le dépôt.",
+        body: "Tables Prisma par module, variables d'environnement, déploiement : voir docs/DATABASE.md dans le dépôt.",
       },
     },
   },
@@ -502,11 +502,11 @@ const fr = {
     title: "Démarrage",
     lead: "Deux chemins de démarrage réels, tous deux publiés et fonctionnels. Pilotez votre app en Python (pip + bpm run), ou composez les mêmes composants en React/JSX.",
     pythonTrack: {
-      label: "Python — pip install + bpm run",
-      body: "Le paquet PyPI blueprint-modular fournit l'objet bpm et le CLI (bpm init / run / build). Pilotez une application de données complète depuis un simple script Python — sans toucher au HTML.",
+      label: "Python : pip install + bpm run",
+      body: "Le paquet PyPI blueprint-modular fournit l'objet bpm et le CLI (bpm init / run / build). Pilotez une application de données complète depuis un simple script Python, sans toucher au HTML.",
     },
     reactTrack: {
-      label: "React / JSX — @blueprint-modular/core",
+      label: "React / JSX : @blueprint-modular/core",
       body: "Le paquet npm @blueprint-modular/core expose le même objet bpm et les composants en JSX. C'est la surface lue par le connecteur MCP. Installez, importez la feuille de style, composez.",
       usageNote: "N'oubliez pas la feuille de style : import '@blueprint-modular/core/dist/style.css'.",
     },
@@ -536,7 +536,7 @@ const fr = {
   catalog: {
     title: "Catalogue",
     lead:
-      "Référence des {count} composants, alimentée par le registre du package : noms, descriptions et catégories proviennent de la source générée — jamais saisis à la main. Cliquez sur une carte pour la fiche du composant.",
+      "Référence des {count} composants, alimentée par le registre du package : noms, descriptions et catégories proviennent de la source générée, jamais saisis à la main. Cliquez sur une carte pour la fiche du composant.",
     searchPlaceholder: "Rechercher un composant…",
     searchAria: "Rechercher un composant par mots-clés",
     breadcrumb: "Catalogue",
@@ -563,10 +563,10 @@ const fr = {
   componentPage: {
     apiTitle: "Référence d'API",
     apiNote:
-      "Extrait de llms.txt, généré depuis les sources TypeScript — la même référence que lisent les agents.",
+      "Extrait de llms.txt, généré depuis les sources TypeScript : la même référence que lisent les agents.",
     semanticTitle: "Couche sémantique",
     semanticNote:
-      "Ce que le composant signifie pour un agent — valeurs proposées par la boucle, ontologie curée par l'humain. Exposée par le connecteur MCP (get_component).",
+      "Ce que le composant signifie pour un agent : valeurs proposées par la boucle, ontologie curée par l'humain. Exposée par le connecteur MCP (get_component).",
     semanticRole: "Rôle",
     semanticFrame: "Frame Ω",
     semanticIndicatorType: "Type d'indicateur",
@@ -581,7 +581,7 @@ const fr = {
     semanticCurationQuestion: "Question de curation",
   },
   mcp: {
-    metaTitle: "Connecteur MCP — Blueprint Modular",
+    metaTitle: "Connecteur MCP · Blueprint Modular",
     metaDescription:
       "Serveur MCP public et read-only qui expose le catalogue de composants Blueprint Modular à Claude et à tout hôte MCP. Sans authentification, sans donnée personnelle.",
     eyebrow: "Model Context Protocol",
@@ -593,7 +593,7 @@ const fr = {
     ctaDocs: "Lire la documentation",
     whatTitle: "Un connecteur en lecture seule",
     whatBody:
-      "Le serveur expose le registre @blueprint-modular/core via JSON-RPC 2.0 sur un transport Streamable HTTP/SSE. Vos agents interrogent le catalogue — noms, descriptions, props, exemples — sans jamais écrire ni accéder à des données privées.",
+      "Le serveur expose le registre @blueprint-modular/core via JSON-RPC 2.0 sur un transport Streamable HTTP/SSE. Vos agents interrogent le catalogue (noms, descriptions, props, exemples) sans jamais écrire ni accéder à des données privées.",
     propsTitle: "Ce que garantit le connecteur",
     props: {
       readonly: {
@@ -630,7 +630,7 @@ const fr = {
       steps: [
         "Ouvrez Réglages → Connecteurs.",
         "Choisissez « Ajouter un connecteur personnalisé ».",
-        "Collez l'URL de l'endpoint ci-dessus — aucune authentification à configurer.",
+        "Collez l'URL de l'endpoint ci-dessus : aucune authentification à configurer.",
         "Validez : les quatre outils apparaissent dans vos conversations.",
       ],
     },
@@ -649,7 +649,7 @@ const fr = {
     linkGallery: "Galerie live",
   },
   builtForAI: {
-    metaTitle: "Built for AI — Blueprint Modular consommable par les agents",
+    metaTitle: "Built for AI · Blueprint Modular consommable par les agents",
     metaDescription:
       "Consommable nativement par les agents via MCP. Décrivez un écran : suggest_composition renvoie des composants bpm.* réels, vérifiés, puis rendus.",
     eyebrow: "Built for AI",
@@ -663,7 +663,7 @@ const fr = {
     toolsBody:
       "Read-only, sans authentification. Un agent déclare le serveur MCP distant à l'URL ci-dessus, liste les outils via tools/list, puis les appelle via tools/call.",
     toolsConnectNote:
-      "Ajoutez l'endpoint comme connecteur MCP distant (Claude : Réglages → Connecteurs) — les quatre outils apparaissent aussitôt.",
+      "Ajoutez l'endpoint comme connecteur MCP distant (Claude : Réglages → Connecteurs) : les quatre outils apparaissent aussitôt.",
     demoTitle: "Démonstration : du langage naturel aux composants",
     demoBody:
       "Décrivez l'écran voulu. La page appelle suggest_composition (la même logique d'outil que le serveur MCP), affiche la réponse brute reçue par un agent, vérifie chaque composant via get_component, puis rend les composants bpm.* correspondants.",
@@ -695,22 +695,22 @@ const fr = {
     sourceLive: "Source : logique d'outil en direct (lib/mcp/registry).",
     sourceFallback: "Source : réponse pré-capturée (repli hors-ligne).",
     fallbackNotice:
-      "Le connecteur live est momentanément indisponible — affichage d'une réponse pré-capturée. La démo reste fidèle à la sortie réelle de l'outil.",
+      "Le connecteur live est momentanément indisponible : affichage d'une réponse pré-capturée. La démo reste fidèle à la sortie réelle de l'outil.",
     errorTitle: "Besoin non interprété",
     errorBody: "Décrivez l'écran ou la fonctionnalité à construire, puis relancez.",
     retry: "Réessayer",
     diffTitle: "Le différenciateur",
     diffBody:
-      "Un design system documenté pour les humains se consulte. Blueprint Modular se consomme : un agent interroge le catalogue, obtient des composants réels et vérifiés, et compose une interface — sans intervention humaine. Read-only, sans donnée personnelle.",
+      "Un design system documenté pour les humains se consulte. Blueprint Modular se consomme : un agent interroge le catalogue, obtient des composants réels et vérifiés, et compose une interface, sans intervention humaine. Read-only, sans donnée personnelle.",
   },
   resources: {
-    metaTitle: "Ressources & guides — Blueprint Modular",
+    metaTitle: "Ressources & guides · Blueprint Modular",
     metaDescription:
       "Documentation, guides de démarrage, catalogue de composants, référence machine et connecteur MCP : tout pour construire avec Blueprint Modular.",
     eyebrow: "Ressources",
     title: "Tout pour construire avec Blueprint Modular.",
     lead:
-      "Documentation, guides pas à pas, catalogue de composants, référence machine pour vos agents et connecteur MCP — rassemblés en un seul point d'entrée.",
+      "Documentation, guides pas à pas, catalogue de composants, référence machine pour vos agents et connecteur MCP, rassemblés en un seul point d'entrée.",
     externalLabel: "Lien externe",
     groups: {
       documentation: "Documentation",
@@ -732,7 +732,7 @@ const fr = {
       },
       pypi: {
         title: "Package PyPI",
-        body: "pip install blueprint-modular — le package et son interface en ligne de commande.",
+        body: "pip install blueprint-modular : le package et son interface en ligne de commande.",
       },
       catalog: {
         title: "Catalogue des composants",
@@ -744,7 +744,7 @@ const fr = {
       },
       modules: {
         title: "Modules métier",
-        body: "Des briques complètes — wiki, devis, gestion de parc — documentées et simulables.",
+        body: "Des briques complètes (wiki, devis, gestion de parc), documentées et simulables.",
       },
       mcp: {
         title: "Connecteur MCP",
@@ -765,7 +765,7 @@ const fr = {
       terms: "Conditions d'utilisation",
     },
     notice: {
-      metaTitle: "Mentions légales — Blueprint Modular",
+      metaTitle: "Mentions légales · Blueprint Modular",
       metaDescription:
         "Mentions légales de Blueprint Modular : éditeur, hébergement, propriété intellectuelle et licence open-source du package.",
       title: "Mentions légales",
@@ -778,7 +778,7 @@ const fr = {
         },
         {
           h: "Hébergement",
-          p: "OVH SAS, 2 rue Kellermann, 59100 Roubaix, France — RCS Lille Métropole 424 761 419.",
+          p: "OVH SAS, 2 rue Kellermann, 59100 Roubaix, France. RCS Lille Métropole 424 761 419.",
         },
         {
           h: "Propriété intellectuelle",
@@ -795,7 +795,7 @@ const fr = {
       ],
     },
     privacy: {
-      metaTitle: "Politique de confidentialité — Blueprint Modular",
+      metaTitle: "Politique de confidentialité · Blueprint Modular",
       metaDescription:
         "Politique de confidentialité de Blueprint Modular : aucune donnée personnelle collectée, aucun cookie de suivi, lectures stateless d'un catalogue public. Conforme au RGPD.",
       title: "Politique de confidentialité",
@@ -827,7 +827,7 @@ const fr = {
         "Aucune donnée personnelle n'étant collectée, il n'existe pas de traitement au sens du RGPD nécessitant un consentement. Si vous estimez néanmoins qu'une donnée vous concernant a été traitée, vous disposez d'un droit d'accès, de rectification et d'effacement que vous pouvez exercer à l'adresse de l'éditeur indiquée dans les mentions légales.",
     },
     terms: {
-      metaTitle: "Conditions d'utilisation — Blueprint Modular",
+      metaTitle: "Conditions d'utilisation · Blueprint Modular",
       metaDescription:
         "Conditions d'utilisation du site Blueprint Modular et de son connecteur MCP : objet, licence du package, disponibilité du service, limitation de responsabilité.",
       title: "Conditions d'utilisation",

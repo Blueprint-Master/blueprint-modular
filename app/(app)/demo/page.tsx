@@ -2,7 +2,6 @@
 
 import React, { useState, useMemo } from "react";
 import {
-  Title,
   Caption,
   Metric,
   Button,
@@ -313,13 +312,14 @@ export default function DemoPage() {
   ];
 
   return (
-    <div className="doc-page" style={{ maxWidth: 1000, margin: "0 auto" }}>
-      <Title level={1}>{S.pageTitle}</Title>
-      <p className="doc-description" style={{ marginTop: 8, marginBottom: 24 }}>
-        {S.pageDescription}
-      </p>
-
-      <Divider />
+    <div className="plano-catalogue plano-demo">
+      {/* En-tête dans la langue de la planothèque ; seul le CONTENU de la démo
+          garde le thème des composants bpm.* (retour de Rémi du 18/11). */}
+      <header className="plano-catalogue-head">
+        <p className="plano-eyebrow">{S.eyebrow}</p>
+        <h1 className="plano-catalogue-title">{S.pageTitle}</h1>
+        <p className="plano-catalogue-lead">{S.pageDescription}</p>
+      </header>
 
       <Tabs tabs={tabs} defaultTab={activeTab} onChange={setActiveTab} />
     </div>
