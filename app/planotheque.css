@@ -1,0 +1,725 @@
+/* ==========================================================================
+   Planothèque — la langue de l'Atelier de .maker appliquée à Modular
+   (direction validée par Rémi le 18/11/2026).
+
+   Ce fichier est chargé APRÈS globals.css. Il ne réécrit pas les règles
+   existantes : il redéfinit les JETONS (--bpm-*, --site-*) que toutes les
+   pages lisent déjà, puis ajoute les surfaces propres à la planothèque
+   (accueil, tuiles, plans cyanotypes, plan de travail des fiches).
+
+   Spécificité : `html:root` (0,1,1) passe devant `:root` (0,1,0) de
+   globals.css ; le bloc sombre `html[data-theme="dark"]` (0,1,1) vient après
+   le clair, à spécificité égale, donc il gagne.
+   ========================================================================== */
+
+html:root {
+  /* « Papier de Prusse » (thème clair, dérivé de .maker) */
+  --plano-bg: #f3f6fa;
+  --plano-panel: #ffffff;
+  --plano-raised: #e8eef5;
+  --plano-line-ui: #d3dce8;
+  --plano-control-border: #7a8ca6;
+  --plano-text: #0a1626;
+  --plano-muted: #4b5f7d;
+  --plano-accent: #b83a18;
+  --plano-accent-hover: #9c3013;
+  --plano-on-accent: #ffffff;
+  --plano-link: #12355e;
+  --plano-halo: rgb(18 53 94 / 0.10);
+  --plano-workbench: color-mix(in srgb, #12355e 7%, #f3f6fa);
+  --plano-workbench-dot: rgb(18 53 94 / 0.20);
+  --plano-ok: #1f7a52;
+
+  /* Cyanotype : identique dans les deux thèmes (c'est un tirage) */
+  --plano-prusse: #12355e;
+  --plano-prusse-deep: #07101d;
+  --plano-trait: #8fb8e3;
+  --plano-paper: #eaf2fb;
+  --plano-line: #eaf2fb;
+  --plano-line-soft: #9fbbd9;
+  --plano-line-accent: #ff8a66;
+  --plano-grid-line: rgb(207 226 245 / 0.08);
+
+  --font-ui: var(--font-geist), "Geist", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --font-code: var(--font-geist-mono), "Geist Mono", ui-monospace, monospace;
+  --font-display: var(--font-instrument-serif), "Instrument Serif", Georgia, serif;
+
+  /* Jetons BPM lus par toutes les pages et par les composants rendus */
+  --bpm-bg-primary: var(--plano-bg);
+  --bpm-bg-secondary: var(--plano-raised);
+  --bpm-bg-tertiary: #dde5ef;
+  --bpm-bg-app: var(--plano-bg);
+  --bpm-surface: var(--plano-panel);
+  --bpm-surface-raised: var(--plano-raised);
+  --bpm-text-primary: var(--plano-text);
+  --bpm-text: var(--plano-text);
+  --bpm-text-secondary: var(--plano-muted);
+  --bpm-text-muted: var(--plano-muted);
+  --bpm-accent: var(--plano-accent);
+  --bpm-accent-hover: var(--plano-accent-hover);
+  --bpm-accent-active: var(--plano-accent-hover);
+  --bpm-accent-contrast: var(--plano-on-accent);
+  --bpm-accent-cyan: var(--plano-link);
+  --bpm-accent-border: var(--plano-control-border);
+  --bpm-accent-light: var(--plano-raised);
+  --bpm-accent-soft: rgb(184 58 24 / 0.10);
+  --bpm-color-link: var(--plano-link);
+  --bpm-color-link-hover: var(--plano-text);
+  --bpm-border: var(--plano-line-ui);
+  --bpm-border-strong: var(--plano-control-border);
+  --bpm-code-bg: #eef2f8;
+  --bpm-code-border: var(--plano-line-ui);
+  --bpm-table-stripe: #f7f9fc;
+  --bpm-focus-ring: 0 0 0 3px rgb(18 53 94 / 0.35);
+  --bpm-sidebar-bg: var(--plano-bg);
+  --bpm-sidebar-text: var(--plano-text);
+  --bpm-sidebar-text-muted: var(--plano-muted);
+  --bpm-sidebar-border: var(--plano-line-ui);
+  --bpm-sidebar-active-bg: var(--plano-raised);
+  --bpm-sidebar-hover-bg: #edf2f8;
+  --bpm-sidebar-logout-border: var(--plano-line-ui);
+  --bpm-radius: 10px;
+  --bpm-radius-md: 10px;
+  --bpm-radius-lg: 14px;
+
+  /* Vitrine : la palette « instrument » du site public suit la même langue */
+  --site-font-display: var(--font-ui);
+  --site-font-mono: var(--font-code);
+  --site-ink: var(--plano-text);
+  --site-ink-soft: var(--plano-muted);
+  --site-muted: var(--plano-muted);
+  --site-cyan: var(--plano-accent);
+  --site-cyan-deep: var(--plano-link);
+  --site-mint: var(--plano-ok);
+  --site-mist: var(--plano-raised);
+  --site-hairline: var(--plano-line-ui);
+  --site-hairline-strong: var(--plano-control-border);
+  --site-code: var(--plano-prusse-deep);
+  --site-code-line: #1a2f4a;
+  --site-code-ink: #d7e3f1;
+  --site-code-kw: var(--plano-trait);
+  --site-code-str: #c9d98a;
+  --site-code-fn: #ffb08f;
+  --site-code-com: #6d86a6;
+}
+
+html[data-theme="dark"] {
+  /* Nuit de Prusse (thème sombre, maquettes validées) */
+  --plano-bg: #0a1626;
+  --plano-panel: #0f2036;
+  --plano-raised: #152b47;
+  --plano-line-ui: #21406a;
+  --plano-control-border: #4f73a3;
+  --plano-text: #e8eef6;
+  --plano-muted: #8fa6c2;
+  --plano-accent: #ff6a42;
+  --plano-accent-hover: #ff8460;
+  --plano-on-accent: #1a0a05;
+  --plano-link: #b9d2ec;
+  --plano-halo: rgb(18 53 94 / 0.75);
+  --plano-workbench: #07101d;
+  --plano-workbench-dot: rgb(143 184 227 / 0.16);
+  --plano-ok: #4fb487;
+
+  --bpm-bg-tertiary: #1a3354;
+  --bpm-code-bg: #07101d;
+  --bpm-table-stripe: #0d1c30;
+  --bpm-accent-soft: rgb(255 106 66 / 0.14);
+  --bpm-focus-ring: 0 0 0 3px rgb(143 184 227 / 0.45);
+  --bpm-sidebar-hover-bg: #12253d;
+  --bpm-shadow: 0 8px 28px rgb(0 0 0 / 0.45);
+  --bpm-overlay-bg: rgb(3 8 15 / 0.7);
+  --site-code-line: #1a2f4a;
+  color-scheme: dark;
+}
+
+html,
+body {
+  background: var(--plano-bg);
+  color: var(--plano-text);
+  font-family: var(--font-ui);
+}
+code,
+pre,
+kbd,
+.font-mono {
+  font-family: var(--font-code);
+}
+:focus-visible {
+  outline: 2px solid var(--plano-trait);
+  outline-offset: 2px;
+}
+html:not([data-theme="dark"]) :focus-visible {
+  outline-color: var(--plano-prusse);
+}
+
+/* --------------------------------------------------------------------------
+   Vitrine : plus de rythme « site web » (alternance de bandes), un seul fond
+   -------------------------------------------------------------------------- */
+.site-shell {
+  background: var(--plano-bg) !important;
+}
+.site-shell main > section:nth-of-type(2n):not(.site-cta-band) {
+  background: transparent;
+}
+.site-nav {
+  background: color-mix(in srgb, var(--plano-bg) 86%, transparent);
+  border-bottom: 1px solid var(--plano-line-ui);
+}
+
+/* --------------------------------------------------------------------------
+   Rail : la barre latérale repliée de l'app, partagée par la vitrine
+   -------------------------------------------------------------------------- */
+.bpm-app-sidebar {
+  background: var(--plano-bg) !important;
+  border-right: 1px solid var(--plano-line-ui) !important;
+}
+.plano-rail-brand {
+  display: grid;
+  place-items: center;
+  width: 40px;
+  height: 40px;
+  margin: 2px auto 8px;
+  border-radius: 8px;
+}
+.bpm-app-sidebar .bpm-sidebar-item {
+  border-radius: 8px;
+  color: var(--plano-muted);
+}
+.bpm-app-sidebar .bpm-sidebar-item[aria-current="page"] {
+  background: var(--plano-raised) !important;
+  color: var(--plano-text);
+}
+.bpm-app-sidebar .bpm-sidebar-item:hover {
+  color: var(--plano-text);
+}
+
+/* Colonne de contenu à côté du rail (vitrine) */
+.plano-site {
+  display: flex;
+  min-height: 100vh;
+}
+.plano-site-column {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+}
+@media (min-width: 768px) {
+  .plano-site-column {
+    margin-left: 56px;
+  }
+}
+@media (max-width: 767px) {
+  .plano-site-column {
+    padding-bottom: calc(64px + env(safe-area-inset-bottom, 0px));
+  }
+}
+
+/* --------------------------------------------------------------------------
+   Accueil
+   -------------------------------------------------------------------------- */
+.plano-sr {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+.plano-home {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 22px;
+  padding: clamp(40px, 11vh, 96px) 16px 72px;
+  background: radial-gradient(1100px 460px at 50% -10%, var(--plano-halo), transparent 70%);
+  min-height: 100%;
+}
+.app-main:has(> .plano-home) {
+  padding-top: 0;
+}
+.plano-greeting {
+  margin: 0;
+  font-family: var(--font-display);
+  font-weight: 400;
+  font-size: clamp(38px, 6vw, 56px);
+  line-height: 1.02;
+  letter-spacing: 0;
+  text-align: center;
+  color: var(--plano-text);
+}
+.plano-composer {
+  width: min(720px, 100%);
+  display: grid;
+  gap: 10px;
+  padding: 12px;
+  border: 1px solid var(--plano-line-ui);
+  background: var(--plano-panel);
+  border-radius: 14px;
+  box-shadow: 0 0 0 4px rgb(143 184 227 / 0.05);
+}
+.plano-composer:focus-within {
+  border-color: var(--plano-control-border);
+}
+.plano-composer-input {
+  width: 100%;
+  min-height: 64px;
+  resize: vertical;
+  border: 0;
+  outline: none;
+  background: transparent;
+  color: var(--plano-text);
+  font: inherit;
+  font-size: 15.5px;
+  line-height: 1.5;
+}
+.plano-composer-input::placeholder {
+  color: var(--plano-muted);
+}
+.plano-composer-bar {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.plano-pill {
+  height: 32px;
+  padding: 0 12px;
+  border-radius: 8px;
+  border: 1px solid var(--plano-line-ui);
+  display: inline-flex;
+  align-items: center;
+  font-size: 13px;
+  color: var(--plano-text);
+  text-decoration: none;
+}
+.plano-pill:hover {
+  border-color: var(--plano-control-border);
+}
+.plano-send {
+  margin-left: auto;
+  width: 40px;
+  height: 40px;
+  border-radius: 10px;
+  border: 0;
+  background: var(--plano-accent);
+  color: var(--plano-on-accent);
+  display: grid;
+  place-items: center;
+  cursor: pointer;
+}
+.plano-send:hover:not(:disabled) {
+  background: var(--plano-accent-hover);
+}
+.plano-send:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+.plano-chips {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  width: min(720px, 100%);
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+.plano-chip {
+  min-height: 36px;
+  padding: 6px 14px;
+  border-radius: 18px;
+  border: 1px dashed var(--plano-line-ui);
+  background: transparent;
+  color: var(--plano-muted);
+  font: inherit;
+  font-size: 13px;
+  cursor: pointer;
+}
+.plano-chip:hover {
+  border-style: solid;
+  border-color: var(--plano-control-border);
+  color: var(--plano-text);
+}
+.plano-composition {
+  width: min(1000px, 100%);
+  padding: 22px;
+  border-radius: 14px;
+  background-color: var(--plano-prusse);
+  background-image: linear-gradient(var(--plano-grid-line) 1px, transparent 1px),
+    linear-gradient(90deg, var(--plano-grid-line) 1px, transparent 1px);
+  background-size: 24px 24px;
+  color: var(--plano-paper);
+  outline: none;
+}
+.plano-composition[hidden] {
+  display: none;
+}
+.plano-composition-head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 8px 18px;
+  margin-bottom: 18px;
+}
+.plano-composition-count {
+  margin: 0;
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+  font-size: 13px;
+  color: var(--plano-trait);
+}
+.plano-numeral {
+  font-family: var(--font-display);
+  font-size: 44px;
+  line-height: 1;
+  color: var(--plano-paper);
+}
+.plano-status {
+  margin: 0;
+  font-size: 13.5px;
+  color: #cfe2f5;
+}
+.plano-status--error {
+  color: #ffc2b2;
+}
+.plano-composition .plano-tile-name {
+  color: var(--plano-paper);
+}
+.plano-composition .plano-tile-call,
+.plano-composition .plano-tile-note {
+  color: #b9d2ec;
+}
+.plano-library {
+  width: min(1000px, 100%);
+  display: grid;
+  gap: 12px;
+  margin-top: 18px;
+}
+.plano-library-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+}
+.plano-library-head h2 {
+  margin: 0;
+  font-size: 13.5px;
+  font-weight: 500;
+  color: var(--plano-muted);
+}
+.plano-link {
+  color: var(--plano-link);
+  font-size: 13.5px;
+  text-decoration: none;
+}
+.plano-link:hover {
+  text-decoration: underline;
+}
+
+/* --------------------------------------------------------------------------
+   Tuiles : le plan au repos, la pièce vivante au survol / développée
+   -------------------------------------------------------------------------- */
+.plano-grid {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 18px;
+  grid-template-columns: repeat(auto-fill, minmax(min(210px, 100%), 1fr));
+}
+.plano-grid--four {
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+}
+@media (max-width: 900px) {
+  .plano-grid--four {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+.plano-tile-link {
+  display: grid;
+  gap: 6px;
+  color: inherit;
+  text-decoration: none;
+  border-radius: 10px;
+}
+.plano-frame {
+  position: relative;
+  display: block;
+  height: 132px;
+  border-radius: 10px;
+  overflow: hidden;
+  border: 1px solid var(--plano-line-ui);
+  background: var(--plano-panel);
+}
+.plano-composition .plano-frame {
+  border-color: rgb(234 242 251 / 0.35);
+}
+.plano-tile-link:hover .plano-frame,
+.plano-tile-link:focus-visible .plano-frame {
+  border-color: var(--plano-trait);
+}
+.plano-plan,
+.plano-live {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  transition: opacity 0.32s ease, transform 0.32s ease;
+}
+.plano-plan {
+  background-color: var(--plano-prusse);
+  background-image: linear-gradient(var(--plano-grid-line) 1px, transparent 1px),
+    linear-gradient(90deg, var(--plano-grid-line) 1px, transparent 1px);
+  background-size: 16px 16px;
+}
+.plano-cote {
+  position: absolute;
+  left: 10px;
+  right: 10px;
+  bottom: 8px;
+  font-family: var(--font-code);
+  font-size: 10.5px;
+  color: #9fbbd9;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.plano-live {
+  background: var(--plano-panel);
+  padding: 10px;
+  opacity: 0;
+  transform: scale(0.98);
+  pointer-events: none;
+  overflow: hidden;
+}
+.plano-live > * {
+  max-width: 100%;
+}
+.plano-frame--live:hover .plano-live,
+.plano-tile-link:focus-visible .plano-frame--live .plano-live,
+.plano-frame--developed .plano-live {
+  opacity: 1;
+  transform: none;
+}
+.plano-frame--live:hover .plano-plan,
+.plano-tile-link:focus-visible .plano-frame--live .plano-plan,
+.plano-frame--developed .plano-plan {
+  opacity: 0;
+}
+.plano-blueprint {
+  max-width: 78%;
+  height: auto;
+}
+.plano-tile-name {
+  font-size: 14.5px;
+  font-weight: 500;
+  color: var(--plano-text);
+}
+.plano-tile-call {
+  font-family: var(--font-code);
+  font-size: 12px;
+  color: var(--plano-muted);
+}
+.plano-tile-note {
+  font-size: 12px;
+  color: var(--plano-muted);
+  line-height: 1.4;
+}
+@media (prefers-reduced-motion: reduce) {
+  .plano-plan,
+  .plano-live {
+    transition: none;
+  }
+}
+
+/* --------------------------------------------------------------------------
+   Catalogue = la planothèque
+   -------------------------------------------------------------------------- */
+.plano-catalogue {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 8px 0 48px;
+}
+.plano-catalogue-head {
+  display: grid;
+  gap: 10px;
+  margin-bottom: 28px;
+}
+.plano-eyebrow {
+  margin: 0;
+  font-family: var(--font-code);
+  font-size: 11.5px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--plano-muted);
+}
+.plano-catalogue-title {
+  margin: 0;
+  font-family: var(--font-display);
+  font-weight: 400;
+  font-size: clamp(36px, 5vw, 50px);
+  line-height: 1.04;
+  color: var(--plano-text);
+}
+.plano-catalogue-lead {
+  margin: 0;
+  max-width: 720px;
+  color: var(--plano-muted);
+  line-height: 1.6;
+}
+.plano-catalogue-tools {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 12px 20px;
+}
+.plano-search {
+  flex: 1 1 320px;
+  max-width: 520px;
+}
+.plano-catalogue-count {
+  margin: 0;
+  font-family: var(--font-code);
+  font-size: 12px;
+  color: var(--plano-muted);
+}
+.plano-family {
+  margin-top: 34px;
+}
+.plano-family-title {
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+  margin: 0 0 14px;
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--plano-text);
+}
+.plano-family-count {
+  font-family: var(--font-code);
+  font-size: 12px;
+  font-weight: 400;
+  color: var(--plano-muted);
+}
+.plano-empty {
+  color: var(--plano-muted);
+}
+
+/* --------------------------------------------------------------------------
+   Fiche composant : le plan de travail (structure commune des 109 fiches)
+   Réglages et code à gauche, la pièce au centre sur un plan pointillé.
+   -------------------------------------------------------------------------- */
+.doc-page-header h1 {
+  font-family: var(--font-code);
+  font-weight: 500;
+  letter-spacing: -0.01em;
+}
+.app-main .doc-page-header .doc-breadcrumb a {
+  color: var(--plano-link);
+}
+.sandbox-container {
+  grid-template-columns: minmax(260px, 340px) minmax(0, 1fr);
+  grid-template-areas:
+    "controls preview"
+    "code preview";
+  grid-template-rows: auto 1fr;
+  gap: 0;
+  border-color: var(--plano-line-ui);
+  border-radius: 14px;
+  background: var(--plano-panel);
+}
+.sandbox-controls {
+  grid-area: controls;
+  border-left: 0;
+  border-right: 1px solid var(--plano-line-ui);
+  background: var(--plano-panel);
+}
+.sandbox-controls label {
+  font-family: var(--font-code);
+  font-weight: 400;
+  text-transform: none;
+  letter-spacing: 0;
+  font-size: 12px;
+}
+.sandbox-controls input,
+.sandbox-controls select {
+  min-height: 34px;
+  border-color: var(--plano-control-border);
+  border-radius: 8px;
+  background: var(--plano-bg);
+  color: var(--plano-text);
+}
+.sandbox-code {
+  grid-area: code;
+  grid-column: auto;
+  border-top: 1px solid var(--plano-line-ui);
+  border-right: 1px solid var(--plano-line-ui);
+  align-self: stretch;
+}
+.sandbox-code-header,
+.sandbox-code pre {
+  background: var(--bpm-code-bg);
+}
+.sandbox-code pre {
+  font-family: var(--font-code);
+  font-size: 12.5px;
+  line-height: 1.75;
+}
+.sandbox-preview {
+  grid-area: preview;
+  min-height: 360px;
+  padding: 40px 32px;
+  background-color: var(--plano-workbench);
+  background-image: radial-gradient(var(--plano-workbench-dot) 1px, transparent 1px);
+  background-size: 20px 20px;
+}
+.sandbox-preview > * {
+  max-width: 100%;
+}
+@media (max-width: 900px) {
+  .sandbox-container {
+    grid-template-columns: 1fr;
+    grid-template-areas:
+      "preview"
+      "controls"
+      "code";
+    grid-template-rows: auto;
+  }
+  .sandbox-preview {
+    min-height: 220px;
+  }
+  .sandbox-controls,
+  .sandbox-code {
+    border-right: 0;
+  }
+}
+.props-table th {
+  font-family: var(--font-code);
+  font-weight: 500;
+}
+
+/* Nav du site : une ligne discrète au-dessus du contenu ; sur bureau le rail
+   porte déjà la marque. */
+.plano-site .site-nav-inner {
+  max-width: none;
+}
+@media (min-width: 768px) {
+  .plano-site .site-wordmark {
+    visibility: hidden;
+    width: 0;
+    overflow: hidden;
+  }
+}
+.plano-site .site-nav-link {
+  color: var(--plano-muted);
+}
+.plano-site .site-nav-link[aria-current="page"],
+.plano-site .site-nav-link:hover {
+  color: var(--plano-text);
+}
+.plano-dashboard-install {
+  margin: 8px auto 48px;
+}

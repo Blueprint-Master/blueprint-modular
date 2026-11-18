@@ -10,7 +10,9 @@ type SidebarContextValue = {
 const SidebarContext = createContext<SidebarContextValue | null>(null);
 
 export function SidebarProvider({ children }: { children: ReactNode }) {
-  const [collapsed, setCollapsed] = useState(false);
+  // Planothèque : le rail (barre repliée, 56 px) est l'état par défaut ; le
+  // bouton de la barre la déplie toujours.
+  const [collapsed, setCollapsed] = useState(true);
   return (
     <SidebarContext.Provider value={{ collapsed, setCollapsed }}>
       {children}

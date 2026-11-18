@@ -14,6 +14,18 @@ import type { Locale } from "@/lib/i18n";
 
 const vb = "0 -960 960 960";
 
+/** Marque de la planothèque : trois pièces sur un tirage bleu de Prusse. */
+export function PlanoMark({ size = 28 }: { size?: number }) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 28 28" aria-hidden="true" focusable="false">
+      <rect width="28" height="28" rx="5" fill="#12355e" />
+      <rect x="6" y="6" width="7" height="7" fill="none" stroke="#8fb8e3" strokeWidth="1.4" />
+      <rect x="15" y="6" width="7" height="7" fill="#8fb8e3" />
+      <rect x="6" y="15" width="16" height="7" fill="none" stroke="#8fb8e3" strokeWidth="1.4" />
+    </svg>
+  );
+}
+
 function IconAccueil({ className }: { className?: string }) {
   return (
     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 -960 960 960" fill="currentColor" className={className}>
@@ -168,8 +180,9 @@ export function Sidebar() {
         href={href}
         className={`bpm-sidebar-item ${compact ? "flex-col gap-0.5 py-2 min-w-[64px] rounded-lg flex-1 basis-0 justify-center items-center" : ""}`}
         aria-current={isActive ? "page" : undefined}
+        aria-label={showLabel ? undefined : label}
         style={compact ? undefined : { background: isActive ? "var(--bpm-sidebar-active-bg)" : "transparent" }}
-        title={compact ? label : undefined}
+        title={compact || !showLabel ? label : undefined}
       >
         <span className={compact ? "shrink-0 inline-flex items-center justify-center w-5 h-5" : "bpm-sidebar-icon-wrap"}>
           <Icon className="w-5 h-5" style={{ width: 20, height: 20 }} />
@@ -218,6 +231,11 @@ export function Sidebar() {
         onMouseEnter={() => setSidebarHovered(true)}
         onMouseLeave={() => setSidebarHovered(false)}
       >
+        {collapsed && (
+          <Link href="/" className="plano-rail-brand" aria-label="Blueprint Modular">
+            <PlanoMark />
+          </Link>
+        )}
         <div className="bpm-sidebar-toggle-row shrink-0">
           {!collapsed && (
             <Link href="/" className="bpm-sidebar-title">
@@ -245,6 +263,8 @@ export function Sidebar() {
             type="button"
             className="bpm-sidebar-item w-full"
             onClick={toggleTheme}
+            aria-label={S.theme}
+            title={collapsed ? S.theme : undefined}
           >
             <span className="bpm-sidebar-icon-wrap">
               {theme === "dark" ? <Sun className="w-5 h-5" /> : <IconThemeDark className="w-5 h-5" />}

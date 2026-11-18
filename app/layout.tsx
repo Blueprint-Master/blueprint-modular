@@ -1,5 +1,7 @@
 import type { Metadata, Viewport } from "next";
+import { Geist, Geist_Mono, Instrument_Serif } from "next/font/google";
 import "./globals.css";
+import "./planotheque.css";
 import { APP_VERSION } from "@/lib/version";
 import { getLocale } from "@/lib/i18n/server";
 import { LocaleProvider } from "@/lib/i18n/LocaleProvider";
@@ -15,10 +17,25 @@ const BASE_URL = process.env.NEXT_PUBLIC_APP_URL ?? "https://blueprint-modular.c
 const DEFAULT_DESC = "Briques Python/React pour vos interfaces métier. Sans HTML ni JavaScript.";
 const FAVICON_QUERY = `?v=${process.env.NEXT_PUBLIC_FAVICON_V ?? APP_VERSION}`;
 
+// Langue de la planothèque (Atelier de .maker) : Geist pour l'interface,
+// Geist Mono pour les appels et le code, Instrument Serif pour les grands titres.
+const geist = Geist({ subsets: ["latin"], variable: "--font-geist", display: "swap" });
+const geistMono = Geist_Mono({ subsets: ["latin"], variable: "--font-geist-mono", display: "swap" });
+const instrumentSerif = Instrument_Serif({
+  subsets: ["latin"],
+  weight: "400",
+  variable: "--font-instrument-serif",
+  display: "swap",
+});
+
+/** Fond de la nuit de Prusse (sombre, défaut) et du papier de Prusse (clair). */
+const PLANO_THEME_COLOR_DARK = "#0a1626";
+const PLANO_THEME_COLOR_LIGHT = "#f3f6fa";
+
 export const viewport: Viewport = {
   themeColor: [
-    { media: "(prefers-color-scheme: light)", color: "#ffffff" },
-    { media: "(prefers-color-scheme: dark)", color: "#1a1a1a" },
+    { media: "(prefers-color-scheme: light)", color: PLANO_THEME_COLOR_LIGHT },
+    { media: "(prefers-color-scheme: dark)", color: PLANO_THEME_COLOR_DARK },
   ],
 };
 
@@ -63,7 +80,13 @@ export default async function RootLayout({
 }>) {
   const locale = await getLocale();
   return (
-    <html lang={locale} dir="ltr" suppressHydrationWarning>
+    <html
+      lang={locale}
+      dir="ltr"
+      data-theme="dark"
+      className={`${geist.variable} ${geistMono.variable} ${instrumentSerif.variable}`}
+      suppressHydrationWarning
+    >
       <head>
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="" />
@@ -75,10 +98,10 @@ export default async function RootLayout({
         <meta charSet="utf-8" />
         <meta name="apple-mobile-web-app-capable" content="yes" />
         <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
-        <meta name="theme-color" content="#ffffff" />
+        <meta name="theme-color" content={PLANO_THEME_COLOR_DARK} />
         <script
           dangerouslySetInnerHTML={{
-            __html: `(function(){var t=localStorage.getItem('bpm-theme');document.documentElement.setAttribute('data-theme',t==='dark'?'dark':'light');var a=localStorage.getItem('bpm-accent-color');if(!a||a==='#1379e7'||a==='#00a3e2'){a='#048dc3';try{localStorage.setItem('bpm-accent-color','#048dc3');}catch(e){}}if(/^#[0-9A-Fa-f]{6}$/.test(a))document.documentElement.style.setProperty('--bpm-accent',a);})();`,
+            __html: `(function(){var t=localStorage.getItem('bpm-theme');var d=t==='light'?'light':'dark';document.documentElement.setAttribute('data-theme',d);var m=document.querySelector('meta[name=theme-color]');if(m)m.setAttribute('content',d==='dark'?'#0a1626':'#f3f6fa');var a=localStorage.getItem('bpm-accent-color');if(a&&/^#[0-9A-Fa-f]{6}$/.test(a)&&['#048dc3','#1379e7','#00a3e2'].indexOf(a.toLowerCase())<0)document.documentElement.style.setProperty('--bpm-accent',a);})();`,
           }}
         />
       </head>

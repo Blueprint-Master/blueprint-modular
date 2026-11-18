@@ -1,7 +1,8 @@
 import type { Metadata } from "next";
 import { getDict } from "@/lib/i18n/server";
 import { JsonLd } from "@/components/site/JsonLd";
-import { HomeContent } from "./home-content";
+import { PlanoHome } from "@/components/plano/PlanoHome";
+import { HomeFaq } from "./home-content";
 
 export async function generateMetadata(): Promise<Metadata> {
   const { locale, dict } = await getDict();
@@ -53,7 +54,8 @@ export default async function HomePage() {
     <>
       <JsonLd data={softwareApplication} />
       <JsonLd data={faqPage} />
-      <HomeContent />
+      <PlanoHome />
+      <HomeFaq />
     </>
   );
 }
