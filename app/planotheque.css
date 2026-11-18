@@ -772,3 +772,8 @@ html:not([data-theme="dark"]) :focus-visible {
 .app-main .plano-greeting {
   font-size: clamp(38px, 6vw, 56px);
 }
+@media (min-width: 900px) {
+  .plano-grid--composition {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
