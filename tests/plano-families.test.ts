@@ -141,10 +141,11 @@ describe("mobile : barre de l'app installée et fiche composant (18/11)", () => 
 
 describe("rail et gabarit commun (18/11)", () => {
   const css = readFileSync(resolve(process.cwd(), "app/planotheque.css"), "utf8").replace(/\/\*[\s\S]*?\*\//g, "");
-  it("rail fermé sans logo, chevron toujours visible et cliquable", () => {
+  it("rail fermé sans logo, chevron visible au survol et au focus seulement", () => {
     const side = readFileSync(resolve(process.cwd(), "components/Sidebar/Sidebar.tsx"), "utf8");
     expect(side).not.toContain("plano-rail-brand");
-    expect(css).toMatch(/\.bpm-app-sidebar \.bpm-sidebar-toggle-btn \{\s*opacity: 1;\s*pointer-events: auto;/);
+    expect(css).toMatch(/\.bpm-app-sidebar \.bpm-sidebar-toggle-btn \{\s*opacity: 0;/);
+    expect(css).toMatch(/\.bpm-app-sidebar:hover \.bpm-sidebar-toggle-btn,[\s\S]*?:focus-visible \{\s*opacity: 1;\s*pointer-events: auto;/);
   });
   it("même ligne du haut et même pas d'entrée, rail fermé comme ouvert", () => {
     expect(css).toMatch(/\.bpm-app-sidebar \.bpm-sidebar-toggle-row \{\s*height: 52px;/);
