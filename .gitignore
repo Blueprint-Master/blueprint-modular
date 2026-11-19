@@ -38,6 +38,7 @@ uploads/
 
 # Bundle modules (généré par scripts/build-modules-bundle.cjs, déployé sur la doc)
 frontend/static/downloads/*.zip
+public/downloads/blueprint-modules-*.zip
 
 # Python
 __pycache__/

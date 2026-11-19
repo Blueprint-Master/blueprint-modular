@@ -137,6 +137,7 @@ export default defineConfig({
         index: resolve(__dirname, 'src/index.ts'),
         'schema/index': resolve(__dirname, 'src/schema/index.ts'),
         'connectors/index': resolve(__dirname, 'src/connectors/index.ts'),
+        'keep-screen-on/index': resolve(repoRoot, 'components/bpm/useScreenWakeLock.ts'),
         'objects/index': resolve(__dirname, 'src/objects/index.ts'),
       },
       name: 'BlueprintModular',

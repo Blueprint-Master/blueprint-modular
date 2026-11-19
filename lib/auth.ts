@@ -4,14 +4,17 @@ import { PrismaAdapter } from "@auth/prisma-adapter";
 import GoogleProvider from "next-auth/providers/google";
 import CredentialsProvider from "next-auth/providers/credentials";
 import { prisma } from "./prisma";
+import { hasWriteRole } from "./auth/roles";
+export { hasWriteRole } from "./auth/roles";
+import { authenticatePassword } from "./auth/credentials";
 import type { User } from "@prisma/client";
 
 /** Si true, les modules Contrats / Documents / Wiki acceptent les requêtes sans session (utilisateur de test en base). Pour tests uniquement. */
-const SKIP_AUTH_FOR_TEST = process.env.SKIP_AUTH_FOR_TEST === "true";
+
 
 /** Pour la Sandbox « Par IA » : si true, la génération est autorisée même sans session ni utilisateur en base (évite 401 en démo). */
 export function isSkipAuthForTest(): boolean {
-  return SKIP_AUTH_FOR_TEST;
+  return process.env.NODE_ENV !== "production" && process.env.SKIP_AUTH_FOR_TEST === "true";
 }
 
 const DEMO_USER_EMAIL = "demo@blueprint-modular.local";
@@ -20,13 +23,13 @@ const DEMO_USER_EMAIL = "demo@blueprint-modular.local";
  * Retourne l'utilisateur courant (session) ou, si SKIP_AUTH_FOR_TEST=true et pas de session,
  * le premier utilisateur en base, ou un utilisateur démo créé à la volée si la base est vide.
  */
-export async function getSessionOrTestUser(): Promise<{ user: User } | null> {
+export async function getSessionOrTestUser({ allowTestUser = true } = {}): Promise<{ user: User } | null> {
   const session = await getServerSession(authOptions);
   if (session?.user?.email) {
     const user = await prisma.user.findUnique({ where: { email: session.user.email } });
     if (user) return { user };
   }
-  if (SKIP_AUTH_FOR_TEST) {
+  if (allowTestUser && isSkipAuthForTest()) {
     let testUser = await prisma.user.findFirst({ orderBy: { createdAt: "asc" } });
     if (!testUser) {
       testUser = await prisma.user.upsert({
@@ -42,6 +45,11 @@ export async function getSessionOrTestUser(): Promise<{ user: User } | null> {
     return { user: testUser };
   }
   return null;
+}
+
+/** Personal module data must never resolve to a shared demo account on a production build. */
+export function getPersonalModuleSession() {
+  return getSessionOrTestUser({ allowTestUser: process.env.NODE_ENV !== "production" });
 }
 
 /** Liste d'emails autorisés (optionnel). Si défini, seuls ces emails peuvent se connecter (Google ou credentials). */
@@ -76,18 +84,15 @@ export const authOptions: AuthOptions = {
         if (!credentials?.email) return null;
         const email = credentials.email.trim().toLowerCase();
         if (AUTHORIZED_EMAILS.length > 0 && !AUTHORIZED_EMAILS.includes(email)) return null;
-        const demoPassword = process.env.CREDENTIALS_DEMO_PASSWORD;
-        if (demoPassword && credentials.password === demoPassword) {
-          return { id: email, email, name: email, image: null } as { id: string; email: string; name: string; image: string | null };
-        }
-        return null;
+        return authenticatePassword(email, credentials.password ?? "");
       },
     }),
   ],
   session: { strategy: "jwt", maxAge: 30 * 24 * 60 * 60 },
   pages: { signIn: "/login" },
   callbacks: {
-    async signIn({ user, account }) {
+    async signIn({ user, account, profile }) {
+      if (account?.provider === "google" && !(profile as { email_verified?: boolean } | undefined)?.email_verified) return false;
       if (account?.provider === "google" && AUTHORIZED_EMAILS.length > 0) {
         const email = user.email?.trim().toLowerCase();
         if (!email || !AUTHORIZED_EMAILS.includes(email)) return false;
@@ -98,10 +103,18 @@ export const authOptions: AuthOptions = {
       if (user) {
         token.role = (user as { role?: string }).role;
         token.id = user.id;
+        if ("credentialRevision" in user) token.credentialRevision = user.credentialRevision;
+        else token.oauthSession = true;
       }
       return token;
     },
     async session({ session, token }) {
+      if (!token.oauthSession) {
+        const credential = typeof token.id === "string" ? await prisma.userCredential.findUnique({
+          where: { userId: token.id }, select: { revision: true },
+        }) : null;
+        if (!credential || credential.revision !== (token.credentialRevision ?? 0)) return null;
+      }
       if (session.user) {
         (session.user as { id?: string }).id = token.id as string;
         (session.user as { role?: string }).role = token.role as string;
@@ -117,16 +130,6 @@ export function requireRole(role: Role): Role[] {
   const order: Role[] = ["USER", "ADMIN", "OWNER"];
   const i = order.indexOf(role);
   return order.slice(i);
-}
-
-/**
- * Politique d'écriture par défaut (mono-tenant, calquée sur `canContributeToWiki`).
- * Écriture (create/update/delete) réservée à OWNER/ADMIN ; USER = lecture seule.
- * Les actifs appartiennent à l'org, pas à un utilisateur : pas de filtrage par ownership.
- */
-export function hasWriteRole(user: { role?: string } | null | undefined): boolean {
-  const r = user?.role ?? "USER";
-  return r === "OWNER" || r === "ADMIN";
 }
 
 export function canEdit(user: { role?: string }, _resource?: unknown): boolean {

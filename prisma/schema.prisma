@@ -8,10 +8,14 @@ datasource db {
 }
 
 model User {
+  knowledgeReads KnowledgeReader[]
   id        String   @id @default(cuid())
   email     String   @unique
   name      String?
-  picture   String?
+  image         String?   @map("picture")
+  emailVerified DateTime?
+  accounts      Account[]
+  credential    UserCredential?
   role      Role     @default(USER)
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -22,6 +26,7 @@ model User {
   documents            Document[]
   contracts            Contract[]
   aiConversations      AiConversation[]
+  newsletterSettings   NewsletterSettings?
   newsletterArticles   NewsletterArticle[]
   assetsCreated        Asset[]           @relation("AssetCreatedBy")
   ticketsRequested     Ticket[]          @relation("TicketRequester")
@@ -30,6 +35,7 @@ model User {
   assignmentsAsTech    Assignment[]      @relation("AssignmentTechnician")
   notifications        Notification[]
   calendarEvents       CalendarEvent[]
+  workflowTransitions  WorkflowTransition[]
   objectContributions  ObjectContribution[]
 }
 
@@ -94,6 +100,7 @@ model Organization {
   createdAt   DateTime  @default(now()) @map("created_at")
   updatedAt   DateTime  @updatedAt @map("updated_at")
 
+  whiteboardNotes  WhiteboardNote[]
   members         OrgMember[]
   workspaces      Workspace[]
   wikis           WikiArticle[]
@@ -115,6 +122,8 @@ model OrgMember {
 
   user         User         @relation(fields: [userId], references: [id], onDelete: Cascade)
   organization Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+
+  roomReservations RoomReservation[]
 
   @@unique([userId, organizationId])
   @@index([organizationId])
@@ -176,6 +185,7 @@ model ApiKey {
 }
 
 model WikiArticle {
+  revision Int @default(0)
   id                 String    @id @default(cuid())
   title              String
   content            String    @db.Text
@@ -221,6 +231,16 @@ model WikiRevision {
 }
 
 model WikiComment {
+  kind       String @default("commentaire")
+  parentId   String?
+  requestId  String?
+  revision   Int @default(0)
+  resolved   Boolean @default(false)
+  deleted    Boolean @default(false)
+  parent     WikiComment? @relation("WikiReplies", fields: [articleId,parentId], references: [articleId,id], onDelete: NoAction, onUpdate: NoAction, map: "WikiComment_parent_article_fkey")
+  replies    WikiComment[] @relation("WikiReplies")
+  @@unique([articleId,authorId,requestId])
+  @@unique([articleId,id])
   id         String     @id @default(cuid())
   articleId  String     @map("article_id")
   content    String     @db.Text
@@ -310,12 +330,19 @@ model AiMessage {
 }
 
 model NewsletterSettings {
+  ownerId        String? @unique @map("owner_id")
+  owner          User? @relation(fields: [ownerId], references: [id], onDelete: Cascade)
+  revision       Int @default(0)
   id             String   @id @default("default")
   headerImageUrl String?  @map("header_image_url") @db.Text
   updatedAt      DateTime @updatedAt @map("updated_at")
 }
 
 model NewsletterArticle {
+  removed     Boolean @default(false)
+  revision    Int @default(0)
+  requestId   String? @unique
+  creationDigest String?
   id          String    @id @default(cuid())
   title       String
   content     String    @db.Text
@@ -375,6 +402,7 @@ model AssetAttribute {
 }
 
 model Ticket {
+  knowledgeArticles KnowledgeArticle[]
   id                String    @id @default(cuid())
   domainId          String    @map("domain_id")
   workspaceId       String?   @map("workspace_id")
@@ -468,6 +496,11 @@ model AssetContract {
 }
 
 model AssetMovement {
+  requestKey    String?  @map("request_key")
+  requestHash   String?  @map("request_hash")
+  revision      Int      @default(0)
+  removedAt     DateTime? @map("removed_at")
+  @@unique([assetId, requestKey])
   id            String    @id @default(cuid())
   assetId       String    @map("asset_id")
   movementType  String    @map("movement_type") // reception | deployment | transfer | return | repair_out | repair_in | disposal
@@ -487,6 +520,9 @@ model AssetMovement {
 }
 
 model KnowledgeArticle {
+  readers KnowledgeReader[]
+  sourceTicket Ticket? @relation(fields: [sourceTicketId], references: [id], onDelete: SetNull)
+  @@index([sourceTicketId])
   id               String    @id @default(cuid())
   domainId         String    @map("domain_id")
   workspaceId      String?   @map("workspace_id")
@@ -527,6 +563,10 @@ model ChangeRequest {
   ticketsLinked           String?   @map("tickets_linked") @db.Text // JSON array
   requesterId             String    @map("requester_id")
   implementerId           String?   @map("implementer_id")
+  cabRound                 Int @default(0) @map("cab_round")
+  cabElectorate            String[] @default([]) @map("cab_electorate")
+  cabRequiredVotes         Int? @map("cab_required_votes")
+  cabRejections            String[] @default([]) @map("cab_rejections")
   cabReviewerIds         String?   @map("cab_reviewer_ids") @db.Text // JSON array
   status                  String    // draft | submitted | cab_review | approved | rejected | scheduled | in_progress | completed | failed | cancelled
   plannedStart            DateTime? @map("planned_start")
@@ -682,4 +722,99 @@ model StatusCheck {
   @@index([service, checkedAt])
   @@index([checkedAt])
   @@map("status_check")
+}
+
+model WorkflowTransition {
+  userId    String   @map("user_id")
+  entityId  String   @map("entity_id")
+  revision  Int
+  fromState String   @map("from_state")
+  toState   String   @map("to_state")
+  createdAt DateTime @default(now()) @map("created_at")
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@id([userId, entityId, revision])
+}
+
+model RoomReservation {
+  id             String @id @default(cuid())
+  organizationId String
+  ownerId        String
+  room           String
+  day            String
+  startHour      Int
+  duration       Int
+  title          String
+  member         OrgMember @relation(fields: [ownerId, organizationId], references: [userId, organizationId], onDelete: Cascade)
+
+  @@index([organizationId, day, room])
+}
+
+model Account {
+  id                       String @id @default(cuid())
+  userId                   String
+  type                     String
+  provider                 String
+  providerAccountId        String
+  refresh_token            String?
+  access_token             String?
+  expires_at               Int?
+  token_type               String?
+  scope                    String?
+  id_token                 String?
+  session_state            String?
+  refresh_token_expires_in Int?
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerAccountId])
+  @@index([userId])
+}
+
+model UserCredential {
+  userId       String @id
+  revision Int @default(0)
+  passwordHash String
+  failures Int @default(0)
+  windowStart DateTime?
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model EnrollmentChallenge {
+  email     String
+  purpose   String @default("register")
+  @@id([email, purpose])
+  id        String @unique
+  codeHash  String
+  attempts  Int @default(0)
+  sentAt    DateTime
+  expiresAt DateTime
+  @@index([sentAt])
+}
+
+model WhiteboardNote {
+  id             String @id
+  organizationId String
+  board          String
+  authorId       String
+  authorName     String
+  content        String
+  column         String
+  creationDigest String
+  revision       Int @default(0)
+  removed        Boolean @default(false)
+  createdAt      DateTime @default(now())
+  positionAt     DateTime @default(now())
+  organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+
+  @@index([organizationId, board, removed, positionAt])
+}
+
+
+model KnowledgeReader {
+  articleId String @map("article_id")
+  userId String @map("user_id")
+  helpful Boolean?
+  article KnowledgeArticle @relation(fields: [articleId], references: [id], onDelete: Cascade)
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  @@id([articleId, userId])
 }

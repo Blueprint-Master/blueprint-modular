@@ -1,12 +1,12 @@
 import { NextResponse } from "next/server";
-import { getSessionOrTestUser } from "@/lib/auth";
+import { getPersonalModuleSession } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { unlink } from "fs/promises";
 
 export const dynamic = "force-dynamic";
 
 async function getContractAndCheckAuth(id: string) {
-  const result = await getSessionOrTestUser();
+  const result = await getPersonalModuleSession();
   if (!result) return { error: NextResponse.json({ error: "Unauthorized" }, { status: 401 }) };
   const { user } = result;
   const contract = await prisma.contract.findUnique({ where: { id } });
@@ -27,13 +27,11 @@ function safeJsonClone(value: unknown): unknown {
 
 export async function GET(
   _request: Request,
-  context: { params: Promise<{ id: string }> | { id: string } }
+  context: { params: Promise<{ id: string }> }
 ) {
   try {
     const params = context.params;
-    const resolved = typeof (params as Promise<{ id: string }>)?.then === "function"
-      ? await (params as Promise<{ id: string }>)
-      : (params as { id: string });
+    const resolved = await params;
     const id = resolved?.id;
     if (!id) return NextResponse.json({ error: "Bad request" }, { status: 400 });
     const result = await getContractAndCheckAuth(id);
@@ -60,13 +58,11 @@ export async function GET(
 
 export async function PUT(
   request: Request,
-  context: { params: Promise<{ id: string }> | { id: string } }
+  context: { params: Promise<{ id: string }> }
 ) {
   try {
     const params = context.params;
-    const resolved = typeof (params as Promise<{ id: string }>)?.then === "function"
-      ? await (params as Promise<{ id: string }>)
-      : (params as { id: string });
+    const resolved = await params;
     const id = resolved?.id;
     if (!id) return NextResponse.json({ error: "Bad request" }, { status: 400 });
     const result = await getContractAndCheckAuth(id);
@@ -104,13 +100,11 @@ export async function PUT(
 
 export async function DELETE(
   _request: Request,
-  context: { params: Promise<{ id: string }> | { id: string } }
+  context: { params: Promise<{ id: string }> }
 ) {
   try {
     const params = context.params;
-    const resolved = typeof (params as Promise<{ id: string }>)?.then === "function"
-      ? await (params as Promise<{ id: string }>)
-      : (params as { id: string });
+    const resolved = await params;
     const id = resolved?.id;
     if (!id) return NextResponse.json({ error: "Bad request" }, { status: 400 });
     const result = await getContractAndCheckAuth(id);

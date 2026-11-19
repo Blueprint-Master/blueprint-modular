@@ -9,6 +9,7 @@ import { useI18n } from "@/lib/i18n/LocaleProvider";
 import { STR } from "./strings";
 
 interface NewsletterArticle {
+  revision: number;
   id: string;
   title: string;
   content: string;
@@ -28,51 +29,67 @@ export default function NewsletterPage() {
   const [loading, setLoading] = useState(true);
   const [archivedFilter, setArchivedFilter] = useState("");
   const [archivingId, setArchivingId] = useState<string | null>(null);
+  const [signIn, setSignIn] = useState(false);
+  const [error, setError] = useState("");
   const [deletingId, setDeletingId] = useState<string | null>(null);
 
   const fetchArticles = useCallback(() => {
     const params = new URLSearchParams();
     if (archivedFilter !== "") params.set("archived", archivedFilter);
     fetch(`/api/newsletter/articles?${params}`, { credentials: "include" })
-      .then((r) => (r.ok ? r.json() : []))
+      .then(r => {
+        setSignIn(r.status === 401);
+        if (r.status === 401) return [];
+        if (!r.ok) throw new Error("load");
+        return r.json();
+      })
       .then((data) => {
         setArticles(Array.isArray(data) ? data : []);
         setLoading(false);
       })
       .catch(() => {
+        setError(str.networkError);
         setArticles([]);
         setLoading(false);
       });
-  }, [archivedFilter]);
+  }, [archivedFilter, str.networkError]);
 
   useEffect(() => {
     setLoading(true);
     fetchArticles();
   }, [fetchArticles]);
 
-  const handleArchive = async (id: string, currentArchived: boolean) => {
+  const handleArchive = async (id: string, currentArchived: boolean, revision: number) => {
     if (archivingId) return;
+    setError("");
     setArchivingId(id);
     try {
       const res = await fetch(`/api/newsletter/articles/${id}/archive`, {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ archived: !currentArchived }),
+        body: JSON.stringify({ archived: !currentArchived, revision }),
         credentials: "include",
       });
-      if (res.ok) fetchArticles();
+      if (!res.ok) setError((await res.json()).error || str.saveError);
+      fetchArticles();
+    } catch {
+      setError(str.networkError);
     } finally {
       setArchivingId(null);
     }
   };
 
-  const handleDelete = async (id: string, title: string) => {
+  const handleDelete = async (id: string, title: string, revision: number) => {
     if (deletingId) return;
     if (!confirm(str.deleteConfirm(title))) return;
+    setError("");
     setDeletingId(id);
     try {
-      const res = await fetch(`/api/newsletter/articles/${id}`, { method: "DELETE", credentials: "include" });
+      const res = await fetch(`/api/newsletter/articles/${id}?revision=${revision}`, { method: "DELETE", credentials: "include" });
       if (res.ok) setArticles((prev) => prev.filter((a) => a.id !== id));
+      else { setError((await res.json()).error || str.saveError); fetchArticles(); }
+    } catch {
+      setError(str.networkError);
     } finally {
       setDeletingId(null);
     }
@@ -132,7 +149,7 @@ export default function NewsletterPage() {
               size="small"
               variant="secondary"
               disabled={!!archivingId}
-              onClick={() => handleArchive(id, archived)}
+              onClick={() => handleArchive(id, archived, Number(row.revision))}
             >
               {isArchiving ? str.ellipsis : archived ? str.actionUnarchive : str.actionArchive}
             </Button>
@@ -140,7 +157,7 @@ export default function NewsletterPage() {
               size="small"
               variant="secondary"
               disabled={!!deletingId}
-              onClick={() => handleDelete(id, title)}
+              onClick={() => handleDelete(id, title, Number(row.revision))}
             >
               {isDeleting ? str.ellipsis : str.actionDelete}
             </Button>
@@ -153,6 +170,7 @@ export default function NewsletterPage() {
   const data = articles.map((a) => ({
     id: a.id,
     title: a.title,
+    revision: a.revision,
     publishedAt: a.publishedAt,
     createdAt: a.createdAt,
     archived: a.archived,
@@ -182,7 +200,10 @@ export default function NewsletterPage() {
         />
       </div>
 
-      {loading ? (
+      {error && <p role="alert">{error} <button className="underline" onClick={() => { setError(""); fetchArticles(); }}>{locale === "en" ? "Retry" : "Réessayer"}</button></p>}
+      {signIn ? <Link className="underline" href="/login?callbackUrl=%2Fmodules%2Fnewsletter">
+        {locale === "en" ? "Sign in to manage your newsletter" : "Se connecter pour gérer sa newsletter"}
+      </Link> : loading ? (
         <div className="flex justify-center py-12">
           <Spinner size="medium" />
         </div>

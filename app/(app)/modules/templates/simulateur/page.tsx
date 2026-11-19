@@ -2,8 +2,9 @@
 
 import React, { useState } from "react";
 import Link from "next/link";
-import { Selectbox, Input, Button, useToast } from "@/components/bpm";
+import { Selectbox, Input, Textarea, Button } from "@/components/bpm";
 import { useI18n } from "@/lib/i18n/LocaleProvider";
+import { useTemplateDownload } from "../useTemplateDownload";
 import { STR } from "../strings";
 
 export default function TemplatesSimulateurPage() {
@@ -11,22 +12,13 @@ export default function TemplatesSimulateurPage() {
   const s = STR[locale];
   const [selectedModel, setSelectedModel] = useState<string | null>(null);
   const [documentName, setDocumentName] = useState("");
-  const [formError, setFormError] = useState<string | null>(null);
+  const { formError, setFormError, busy, download } = useTemplateDownload();
   const [fieldValues, setFieldValues] = useState<Record<string, string>>({});
-  const { showToast } = useToast();
 
   const canCreate = Boolean(selectedModel && documentName.trim());
   const fields = selectedModel ? s.simulatorFields[selectedModel] ?? [] : [];
 
-  const handleCreate = () => {
-    if (!selectedModel || !documentName.trim()) {
-      setFormError(s.validationError);
-      return;
-    }
-    setFormError(null);
-    const modelLabel = s.templateOptions.find((o) => o.value === selectedModel)?.label ?? selectedModel;
-    showToast(s.toastCreated(documentName.trim(), modelLabel), "success", 5000, s.toastTitle, s.moduleName, null);
-  };
+  const handleCreate = () => download(selectedModel, documentName, fieldValues);
 
   const updateField = (key: string, value: string) => {
     setFieldValues((prev) => ({ ...prev, [key]: value }));
@@ -79,6 +71,8 @@ export default function TemplatesSimulateurPage() {
             {fields.length > 0 && (
               <div className="space-y-3 mt-4">
                 {fields.map((f) => (
+                  f.key === "corps" ? <Textarea key={f.key} label={f.label} aria-label={f.label} value={fieldValues[f.key] ?? ""} rows={4}
+                    onChange={v => updateField(f.key, v)} /> :
                   <Input
                     key={f.key}
                     label={f.label}
@@ -91,12 +85,12 @@ export default function TemplatesSimulateurPage() {
             )}
 
             {formError && (
-              <p className="text-sm mt-3" style={{ color: "#e74c3c" }}>
+              <p role="alert" className="text-sm mt-3" style={{ color: "#e74c3c" }}>
                 {formError}
               </p>
             )}
             <div className="mt-4">
-              <Button onClick={handleCreate} disabled={!canCreate}>
+              <Button onClick={handleCreate} disabled={!canCreate || busy}>
                 {s.createButton}
               </Button>
             </div>

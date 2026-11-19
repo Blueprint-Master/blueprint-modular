@@ -67,7 +67,7 @@ function DemoUnavailableFallback({ t }: { t: (typeof STR)["fr"] }) {
 export default async function DemoProductionPage({
   searchParams,
 }: {
-  searchParams?: Promise<{ period?: string }> | { period?: string };
+  searchParams?: Promise<{ period?: string }>;
 }) {
   const locale = await getLocale();
   const t = STR[locale];
@@ -75,11 +75,7 @@ export default async function DemoProductionPage({
   let data: Awaited<ReturnType<typeof getCachedDemoProductionData>>;
 
   try {
-    const raw = searchParams != null
-      ? typeof (searchParams as Promise<unknown>).then === "function"
-        ? await (searchParams as Promise<{ period?: string }>)
-        : (searchParams as { period?: string })
-      : {};
+    const raw = (await searchParams) ?? {};
     period = parsePeriod(raw?.period ?? null);
     data = await getCachedDemoProductionData(period);
   } catch {

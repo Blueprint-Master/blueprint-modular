@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useRef, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { Button, Card, Input, Textarea } from "@/components/bpm";
@@ -11,6 +11,7 @@ export default function NewsletterNouveauPage() {
   const router = useRouter();
   const { locale } = useI18n();
   const str = STR[locale];
+  const attempt = useRef<{ key: string; id: string } | null>(null);
   const [title, setTitle] = useState("");
   const [content, setContent] = useState("");
   const [excerpt, setExcerpt] = useState("");
@@ -28,14 +29,17 @@ export default function NewsletterNouveauPage() {
     }
     setSaving(true);
     try {
+      const key = JSON.stringify([t, content, excerpt, publishedAt]);
+      if (!attempt.current || attempt.current.key !== key) attempt.current = { key, id: crypto.randomUUID() };
       const res = await fetch("/api/newsletter/articles", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
+          requestId: attempt.current.id,
           title: t,
           content: content,
           excerpt: excerpt.trim() || null,
-          publishedAt: publishedAt.trim() ? publishedAt.trim() : null,
+          publishedAt: publishedAt ? new Date(publishedAt).toISOString() : null,
         }),
         credentials: "include",
       });

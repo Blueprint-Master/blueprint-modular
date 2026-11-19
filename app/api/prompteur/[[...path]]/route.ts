@@ -32,6 +32,7 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ path
       method: "GET",
       headers,
       cache: "no-store",
+      signal: req.signal,
     });
     const data = await res.json().catch(() => ({}));
     return NextResponse.json(data, { status: res.status });
@@ -67,6 +68,7 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ pat
       headers: Object.keys(headers).length ? headers : undefined,
       body,
       cache: "no-store",
+      signal: req.signal,
       duplex: "half",
     } as RequestInit);
 

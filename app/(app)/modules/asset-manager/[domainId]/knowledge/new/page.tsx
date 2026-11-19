@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import { readResponse } from "../../../lib/read-response";
 import Link from "next/link";
 import { useParams, useRouter, useSearchParams } from "next/navigation";
 import { Card, Caption, Divider, Button, Spinner, Input, Selectbox } from "@/components/bpm";
@@ -19,6 +20,7 @@ export default function AssetManagerKnowledgeNewPage() {
   const fromTicketId = searchParams.get("fromTicket");
   const [config, setConfig] = useState<{ asset_types?: { id: string; label: string }[] } | null>(null);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
   const [saving, setSaving] = useState(false);
   const [title, setTitle] = useState("");
   const [content, setContent] = useState("");
@@ -30,26 +32,28 @@ export default function AssetManagerKnowledgeNewPage() {
   useEffect(() => {
     if (!domainId) return;
     fetch(`/api/asset-manager/config/${domainId}`, { credentials: "include" })
-      .then((r) => (r.ok ? r.json() : null))
+      .then(readResponse)
       .then(setConfig)
+      .catch(err => setError(err instanceof Error ? err.message : String(err)))
       .finally(() => setLoading(false));
   }, [domainId]);
 
   useEffect(() => {
     if (!fromTicketId || !domainId) return;
     fetch(`/api/asset-manager/tickets/${fromTicketId}`, { credentials: "include" })
-      .then((r) => (r.ok ? r.json() : null))
+      .then(readResponse)
       .then((ticket: { title?: string; solution?: string | null; description?: string } | null) => {
         if (ticket) {
           setTitle(ticket.title ?? "");
           setContent([ticket.solution, ticket.description].filter(Boolean).join("\n\n---\n\n") || "");
         }
-      });
+      }).catch(err => setError(err instanceof Error ? err.message : String(err)));
   }, [fromTicketId, domainId]);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (!title.trim() || !content.trim() || saving) return;
+    setError("");
     setSaving(true);
     const tags = tagsStr.trim() ? tagsStr.split(/[\s,]+/).map((tag) => tag.trim()).filter(Boolean) : [];
     fetch("/api/asset-manager/knowledge", {
@@ -58,6 +62,7 @@ export default function AssetManagerKnowledgeNewPage() {
       credentials: "include",
       body: JSON.stringify({
         domainId,
+        sourceTicketId: fromTicketId,
         title: title.trim(),
         content: content.trim(),
         categoryId,
@@ -66,10 +71,11 @@ export default function AssetManagerKnowledgeNewPage() {
         visibility,
       }),
     })
-      .then((r) => (r.ok ? r.json() : null))
+      .then(readResponse)
       .then((created) => {
         if (created?.id) router.push(`/modules/asset-manager/${domainId}/knowledge/${created.id}`);
       })
+      .catch(err => setError(err instanceof Error ? err.message : String(err)))
       .finally(() => setSaving(false));
   };
 
@@ -96,6 +102,7 @@ export default function AssetManagerKnowledgeNewPage() {
         </Caption>
       </div>
 
+      {error && <p role="alert">{error}</p>}
       <Card variant="outlined">
         <form onSubmit={handleSubmit} className="space-y-0">
           <section className="space-y-4" aria-label={tk.sectionArticle}>

@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 import Link from "next/link";
+import { documentPoints } from "@/lib/documents/formats";
 import { Panel, Card, Spinner, Message, Button } from "@/components/bpm";
 import { useI18n } from "@/lib/i18n/LocaleProvider";
 import { strings, fmtDate, uploadedOn } from "../strings";
@@ -78,8 +79,8 @@ export default function DocumentDetailPage() {
     );
   }
 
-  const keyPointsArr = doc.keyPoints ? (JSON.parse(doc.keyPoints) as string[]) : [];
-  const commitmentsArr = doc.commitments ? (JSON.parse(doc.commitments) as string[]) : [];
+  const keyPointsArr = documentPoints(doc.keyPoints);
+  const commitmentsArr = documentPoints(doc.commitments);
 
   return (
     <div>

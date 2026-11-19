@@ -297,7 +297,7 @@ function evalCondition(cond: Condition, values: FormValues): boolean {
   if (cond.operator === "equals") return current === cond.value;
   if (cond.operator === "greaterThan") {
     const n =
-      typeof current === "string" ? parseFloat(current.replace(",", ".")) : typeof current === "number" ? current : NaN;
+      typeof current === "string" ? Number(current.trim().replace(",", ".")) : typeof current === "number" ? current : NaN;
     return Number.isFinite(n) && n > Number(cond.value);
   }
   return false;
@@ -331,7 +331,7 @@ function validateSchema(schema: FormSchema, values: FormValues): Record<string, 
       continue;
     }
     if (field.type === "number" && typeof value === "string" && value.trim() !== "") {
-      const n = parseFloat(value.replace(",", "."));
+      const n = Number(value.trim().replace(",", "."));
       if (!Number.isFinite(n) || n < 0) {
         errors[field.id] = "number";
       }

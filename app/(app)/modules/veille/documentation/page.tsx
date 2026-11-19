@@ -91,21 +91,27 @@ export default function VeilleDocumentationPage() {
         <strong>{s.loadStrongUse}</strong>
         {s.load3}
         <code>/modules/veille</code>
-        {s.load4}
       </p>
 
-      <h2 className="text-lg font-semibold mt-8 mb-2" style={{ color: "var(--bpm-text-primary)" }}>
-        {s.envHeading}
+      <h2 className="text-lg font-semibold mt-8 mb-2">
+        {locale === "fr" ? "Collecter les sources de votre application" : "Collect sources for your application"}
       </h2>
-      <p className="mb-4 text-sm" style={{ color: "var(--bpm-text-secondary)" }}>
-        {s.envBody}
+      <p className="mb-4 text-sm">
+        {locale === "fr"
+          ? "Le paquet Python blueprint-modular inclut le collecteur bpm.watch. Choisissez une base SQLite persistante par application ou organisation. Enregistrez les URL autorisées par votre équipe, puis planifiez la commande poll. Chaque source conserve son dernier succès et sa dernière erreur."
+          : "The blueprint-modular Python package includes bpm.watch. Choose a persistent SQLite database per application or organization. Register the URLs approved by your team and schedule the poll command. Each source records its last success and error."}
       </p>
-
-      <h2 className="text-lg font-semibold mt-8 mb-2" style={{ color: "var(--bpm-text-primary)" }}>
-        {s.evolHeading}
-      </h2>
-      <p className="mb-4" style={{ color: "var(--bpm-text-secondary)" }}>
-        {s.evolBody}
+      <CodeBlock language="bash" code={`python -m bpm.watch --db watch.sqlite add industry feed https://example.org/feed.xml
+python -m bpm.watch --db watch.sqlite add capacity json https://example.org/metrics/capacity --threshold 90
+python -m bpm.watch --db watch.sqlite add terms page https://example.org/terms
+python -m bpm.watch --db watch.sqlite poll
+python -m bpm.watch --db watch.sqlite sources
+python -m bpm.watch --db watch.sqlite items
+python -m bpm.watch --db watch.sqlite alerts`} />
+      <p className="my-4 text-sm">
+        {locale === "fr"
+          ? 'Les flux RSS et Atom utilisent les identifiants des articles. Les pages web conservent les versions distinctes du texte visible. Une API JSON peut renvoyer un objet ou une liste d’objets. Pour activer un seuil, elle doit renvoyer un objet tel que {"value": 92}. Une alerte est émise à chaque passage au seuil ou au-dessus après une observation inférieure. Le premier relevé déclenche aussi une alerte s’il atteint le seuil.'
+          : 'RSS and Atom use article identifiers. Web pages retain distinct versions of visible text. JSON APIs may return an object or an array of objects. Threshold sources must return an object such as {"value": 92}. An alert is recorded when the value reaches or exceeds the threshold after being below it, including a first observation at or above the threshold.'}
       </p>
 
       <nav className="doc-pagination mt-10">

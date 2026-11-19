@@ -18,3 +18,7 @@ export type {
   MapTileLayer, MapWmsLayer, MapImageLayer, MapRasterLayer, MapCustomLayer, CartographicLayer, MapLayerState,
   MapFeatureSelection, CartographicTheme, ResolvedMapLayer,
 } from "../../../components/bpm";
+
+export { SkeletonLayout, type SkeletonAssembly } from "../../../components/bpm/SkeletonLayout";
+
+export { useScreenWakeLock, type ScreenWakeDuration } from "../../../components/bpm/useScreenWakeLock";

@@ -1,5 +1,7 @@
+import { ticketDetails, ticketEdit, ticketOptions } from "@/lib/asset-manager/ticket-input";
+import { Prisma } from "@prisma/client";
 import { NextResponse } from "next/server";
-import { getSessionOrTestUser } from "@/lib/auth";
+import { getPersonalModuleSession } from "@/lib/auth";
 import { requireWriteRole } from "@/lib/asset-manager/authz";
 import { prisma } from "@/lib/prisma";
 
@@ -13,8 +15,8 @@ async function resolveParams(params: Params): Promise<{ id: string }> {
     : (params as { id: string });
 }
 
-export async function GET(_request: Request, context: { params: Params }) {
-  const result = await getSessionOrTestUser();
+export async function GET(_request: Request, context: { params: Promise<Awaited<Params>> }) {
+  const result = await getPersonalModuleSession();
   if (!result) return NextResponse.json({ error: "Non autorisé" }, { status: 401 });
 
   const { id } = await resolveParams(context.params);
@@ -30,8 +32,8 @@ export async function GET(_request: Request, context: { params: Params }) {
   return NextResponse.json(ticket);
 }
 
-export async function PUT(request: Request, context: { params: Params }) {
-  const result = await getSessionOrTestUser();
+export async function PUT(request: Request, context: { params: Promise<Awaited<Params>> }) {
+  const result = await getPersonalModuleSession();
   if (!result) return NextResponse.json({ error: "Non autorisé" }, { status: 401 });
   const forbidden = requireWriteRole(result.user);
   if (forbidden) return forbidden;
@@ -40,43 +42,37 @@ export async function PUT(request: Request, context: { params: Params }) {
   const ticket = await prisma.ticket.findUnique({ where: { id } });
   if (!ticket) return NextResponse.json({ error: "Ticket introuvable" }, { status: 404 });
 
-  const body = (await request.json()) as {
-    title?: string;
-    description?: string;
-    status?: string;
-    priorityId?: string;
-    categoryId?: string;
-    subcategory?: string | null;
-    assetId?: string | null;
-    assigneeId?: string | null;
-    solution?: string | null;
-  };
-
-  const data: Record<string, unknown> = {};
-  if (typeof body.title === "string") data.title = body.title.trim();
-  if (typeof body.description === "string") data.description = body.description.trim();
-  if (typeof body.status === "string") data.status = body.status;
-  if (typeof body.priorityId === "string") data.priorityId = body.priorityId;
-  if (typeof body.categoryId === "string") data.categoryId = body.categoryId;
-  if (body.subcategory !== undefined) data.subcategory = body.subcategory?.trim() || null;
-  if (body.assetId !== undefined) data.assetId = body.assetId || null;
-  if (body.assigneeId !== undefined) data.assigneeId = body.assigneeId || null;
-  if (body.solution !== undefined) data.solution = body.solution?.trim() || null;
-
-  if (body.status === "resolved" || body.status === "closed") {
-    if (!ticket.takenAt) data.takenAt = new Date();
-    if (body.status === "resolved" && !ticket.resolvedAt) data.resolvedAt = new Date();
-    if (body.status === "closed") data.closedAt = new Date();
+  const parsed = ticketEdit.safeParse(await request.json().catch(() => null));
+  if (!parsed.success) return NextResponse.json({ error: "Champs du ticket invalides." }, { status: 400 });
+  const { expectedUpdatedAt, ...data } = parsed.data;
+  const conflict = () => NextResponse.json({ error: "Le ticket a changé. Rechargez la fiche." }, { status: 409 });
+  if (expectedUpdatedAt && expectedUpdatedAt !== ticket.updatedAt.toISOString()) return conflict();
+  if (data.categoryId && data.categoryId !== ticket.categoryId && data.subcategory === undefined) data.subcategory = null;
+  const options = ticketOptions(ticket.domainId, { ...ticket, ...data });
+  if (!options && [data.categoryId, data.typeId, data.priorityId, data.subcategory].some(value => value !== undefined))
+    return NextResponse.json({ error: "Options inconnues dans ce domaine." }, { status: 400 });
+  if (data.assetId && !await prisma.asset.count({ where: { id: data.assetId, domainId: ticket.domainId } }))
+    return NextResponse.json({ error: "Actif introuvable dans ce domaine." }, { status: 400 });
+  const now = new Date(Math.max(Date.now(), ticket.updatedAt.getTime() + 1));
+  const status = data.status ?? ticket.status;
+  const closed = status === "closed";
+  const resolved = status === "resolved" || closed;
+  try {
+    const updated = await prisma.ticket.update({
+      where: { id, updatedAt: ticket.updatedAt },
+      data: { ...data, updatedAt: now,
+        takenAt: ticket.takenAt ?? (["in_progress", "assigned", "on_hold", "resolved", "closed"].includes(status) ? now : null),
+        resolvedAt: resolved ? ticket.resolvedAt ?? now : null, closedAt: closed ? ticket.closedAt ?? now : null,
+        slaDueAt: options && (data.priorityId || !ticket.slaDueAt)
+          ? new Date(ticket.openedAt.getTime() + options.priority.sla_hours * 3_600_000) : undefined },
+      include: ticketDetails,
+    });
+    return NextResponse.json(updated);
+  } catch (error) {
+    if (error instanceof Prisma.PrismaClientKnownRequestError) {
+      if (error.code === "P2025") return conflict();
+      if (error.code === "P2003") return NextResponse.json({ error: "Actif ou technicien introuvable." }, { status: 400 });
+    }
+    throw error;
   }
-
-  const updated = await prisma.ticket.update({
-    where: { id },
-    data: data as never,
-    include: {
-      requester: { select: { id: true, name: true, email: true } },
-      assignee: { select: { id: true, name: true, email: true } },
-      asset: { select: { id: true, reference: true, label: true } },
-    },
-  });
-  return NextResponse.json(updated);
 }

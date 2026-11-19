@@ -10,7 +10,7 @@ import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import rehypeRaw from "rehype-raw";
 import rehypeHighlight from "rehype-highlight";
-import { getGuestArticleBySlug, updateGuestArticle } from "@/lib/wiki-guest";
+import { GuestEditConflict, getGuestArticleBySlug, updateGuestArticle } from "@/lib/wiki-guest";
 import { WIKI_TEMPLATE_IDS, WIKI_TEMPLATE_LABELS, getWikiTemplateContent, type WikiTemplateId } from "@/lib/wiki-templates";
 import { useI18n } from "@/lib/i18n/LocaleProvider";
 import { STR } from "../../strings";
@@ -32,6 +32,7 @@ export default function WikiEditPage() {
   const router = useRouter();
   const { data: session, status } = useSession();
   const slug = params.slug as string;
+  const sessionEmail = session?.user?.email;
   const [title, setTitle] = useState("");
   const [content, setContent] = useState("");
   const [isPublished, setIsPublished] = useState(false);
@@ -80,49 +81,50 @@ export default function WikiEditPage() {
     };
   }, []);
 
-  const markDirty = useCallback(() => setDirty(true), []);
+  const revision = useRef<number | undefined>(undefined);
+  const pending = useRef(false);
+  const edits = useRef(0);
+  const [saveError, setSaveError] = useState("");
+  const [conflict, setConflict] = useState<{revision: number; title: string; content: string} | null>(null);
+  const markDirty = useCallback(() => { edits.current++; setDirty(true); }, []);
 
   const performSave = useCallback(async () => {
-    if (isGuestArticle) {
-      const updated = updateGuestArticle(slug, { title, content, isPublished });
-      if (updated) {
-        setLastSavedAt(new Date());
-        setDirty(false);
-        if (!session) setLocalSaveMessage(t.edit.localSaved);
-      }
-      return;
-    }
+    if (pending.current || conflict || (!isGuestArticle && revision.current === undefined)) return false;
+    pending.current = true;
+    const submitted = edits.current;
     setSaving(true);
-    setError(null);
+    setSaveError("");
     try {
-      const res = await fetch(`/api/wiki/${encodeURIComponent(slug)}`, {
-        method: "PUT",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          title,
-          content,
-          isPublished,
-          excerpt: excerpt.trim() || null,
-          tags,
-          pinned,
-          template: template || null,
-          coverImage: coverImage.trim() || null,
-          changeNote: changeNote.trim() || null,
-        }),
-        credentials: "include",
-      });
-      if (res.ok) {
-        setLastSavedAt(new Date());
-        setDirty(false);
+      if (isGuestArticle) {
+        const updated = await updateGuestArticle(slug, { title, content, isPublished, excerpt, pinned, tags, template, coverImage }, revision.current);
+        if (!updated) throw new Error(t.edit.errorCannotSaveGuest);
+        revision.current = updated.revision;
+        if (!session) setLocalSaveMessage(t.edit.localSaved);
       } else {
-        setError(t.edit.errorSaving);
+        const url = `/api/wiki/${encodeURIComponent(slug)}`;
+        const res = await fetch(url, { method: "PUT", headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ revision: revision.current, title, content, isPublished, excerpt: excerpt.trim() || null,
+            tags, pinned, template: template || null, coverImage: coverImage.trim() || null, changeNote: changeNote.trim() || null }) });
+        if (res.status === 409) {
+          const current = await fetch(url, { cache: "no-store" });
+          if (current.ok) setConflict(await current.json());
+        }
+        if (!res.ok) throw new Error(t.edit.errorSaving);
+        revision.current = (await res.json()).revision;
       }
-    } catch {
-      setError(t.edit.errorCannotSave);
+      setLastSavedAt(new Date());
+      if (edits.current !== submitted) return false;
+      setDirty(false);
+      return true;
+    } catch (error) {
+      if (error instanceof GuestEditConflict) setConflict({ ...error.article, revision: error.article.revision ?? 0 });
+      setSaveError(t.edit.errorCannotSave);
+      return false;
     } finally {
+      pending.current = false;
       setSaving(false);
     }
-  }, [slug, title, content, isPublished, excerpt, tags, pinned, template, coverImage, changeNote, isGuestArticle, session, t]);
+  }, [slug, title, content, isPublished, excerpt, tags, pinned, template, coverImage, changeNote, isGuestArticle, session, conflict, t]);
 
   useEffect(() => {
     if (!dirty || isGuestArticle) return;
@@ -132,11 +134,12 @@ export default function WikiEditPage() {
 
   const streamWikiGenerate = async (body: Record<string, unknown>) => {
     setAiLoading(true);
-    setError(null);
+    setSaveError("");
     let accumulated = "";
     const updateContent = (chunk: string) => {
       accumulated += chunk;
       setContent(accumulated);
+      markDirty();
     };
     try {
       const res = await fetch("/api/wiki/generate", {
@@ -172,7 +175,7 @@ export default function WikiEditPage() {
         }
       }
     } catch (e) {
-      setError(e instanceof Error ? e.message : t.edit.genError);
+      setSaveError(e instanceof Error ? e.message : t.edit.genError);
     } finally {
       setAiLoading(false);
     }
@@ -194,6 +197,7 @@ export default function WikiEditPage() {
 
     const loadFromGuest = (guest: ReturnType<typeof getGuestArticleBySlug>) => {
       if (!guest) return false;
+      revision.current = guest.revision ?? 0;
       setTitle(guest.title);
       setContent(guest.content ?? "");
       setIsPublished(guest.isPublished ?? false);
@@ -213,7 +217,7 @@ export default function WikiEditPage() {
 
     if (status === "loading") return;
 
-    if (!session) {
+    if (status === "unauthenticated") {
       const guest = getGuestArticleBySlug(slug);
       if (loadFromGuest(guest)) {
         setLoading(false);
@@ -240,8 +244,9 @@ export default function WikiEditPage() {
         }
         throw new Error("Not found");
       })
-      .then((a: { title: string; content?: string; isPublished?: boolean; excerpt?: string | null; tags?: string[]; pinned?: boolean; template?: string | null; coverImage?: string | null } | void) => {
+      .then((a: { revision: number; title: string; content?: string; isPublished?: boolean; excerpt?: string | null; tags?: string[]; pinned?: boolean; template?: string | null; coverImage?: string | null } | void) => {
         if (!a) return;
+        revision.current = a.revision;
         setTitle(a.title);
         setContent(a.content ?? "");
         setIsPublished(a.isPublished ?? false);
@@ -253,11 +258,11 @@ export default function WikiEditPage() {
       })
       .catch(() => setError(t.common.articleNotFound))
       .finally(() => setLoading(false));
-  }, [slug, session, status, t]);
+  }, [slug, sessionEmail, status, t]);
 
   const handleSaveToDb = async () => {
     if (!session || !isGuestArticle) return;
-    setError(null);
+    setSaveError("");
     setSaveToDbLoading(true);
     try {
       const res = await fetch("/api/wiki", {
@@ -283,7 +288,7 @@ export default function WikiEditPage() {
       const created = await res.json() as { slug: string };
       router.push(`/modules/wiki/${created.slug}`);
     } catch (err) {
-      setError(err instanceof Error ? err.message : t.edit.errorCannotSaveDb);
+      setSaveError(err instanceof Error ? err.message : t.edit.errorCannotSaveDb);
     } finally {
       setSaveToDbLoading(false);
     }
@@ -291,43 +296,7 @@ export default function WikiEditPage() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setError(null);
-    setLocalSaveMessage(null);
-    setSaving(true);
-    try {
-      if (isGuestArticle) {
-        const updated = updateGuestArticle(slug, { title, content, isPublished });
-        if (updated) {
-          if (!session) setLocalSaveMessage(t.edit.localSaved);
-          router.push(`/modules/wiki/${slug}`);
-        } else setError(t.edit.errorCannotSaveGuest);
-        return;
-      }
-      const res = await fetch(`/api/wiki/${encodeURIComponent(slug)}`, {
-        method: "PUT",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          title,
-          content,
-          isPublished,
-          excerpt: excerpt.trim() || null,
-          tags,
-          pinned,
-          template: template || null,
-          coverImage: coverImage.trim() || null,
-          changeNote: changeNote.trim() || null,
-        }),
-        credentials: "include",
-      });
-      if (!res.ok) throw new Error(t.edit.genericError);
-      setLastSavedAt(new Date());
-      setDirty(false);
-      router.push(`/modules/wiki/${slug}`);
-    } catch {
-      setError(t.edit.errorCannotSave);
-    } finally {
-      setSaving(false);
-    }
+    if (await performSave()) router.push(`/modules/wiki/${slug}`);
   };
 
   if (loading) return <p style={{ color: "var(--bpm-text-secondary)" }}>{t.common.loading}</p>;
@@ -342,7 +311,7 @@ export default function WikiEditPage() {
 
   const handleContentChange = (v: string) => {
     setContent(v);
-    setDirty(true);
+    markDirty();
   };
 
   const toggleViewMode = () => {
@@ -356,6 +325,14 @@ export default function WikiEditPage() {
 
   return (
     <div className="flex flex-col min-h-0">
+      {saveError && <p role="alert">{saveError}</p>}
+      {conflict && <section aria-live="polite">
+        <strong>{locale === "en" ? "Current version" : "Version actuelle"} · {conflict.title}</strong>
+        <pre className="whitespace-pre-wrap">{conflict.content}</pre>
+        <button className="underline" type="button" onClick={() => { revision.current = conflict.revision; setConflict(null); setSaveError(""); }}>
+          {locale === "en" ? "Resume my draft" : "Reprendre mon brouillon"}
+        </button>
+      </section>}
       <div className="flex flex-wrap items-center justify-between gap-4 mb-4">
         <h1 className="text-2xl font-bold" style={{ color: "var(--bpm-accent)" }}>
           {t.edit.title}
@@ -431,24 +408,24 @@ export default function WikiEditPage() {
           <input
             type="text"
             value={title}
-            onChange={(e) => { setTitle(e.target.value); setDirty(true); }}
+            onChange={(e) => { setTitle(e.target.value); markDirty(); }}
             required
             className="bpm-input w-full px-3 py-2 rounded border"
             style={{ borderColor: "var(--bpm-border)", background: "var(--bpm-surface)", color: "var(--bpm-text-primary)" }}
           />
         </label>
         <div>
-          <Toggle label={t.edit.labelPublished} value={isPublished} onChange={(v) => { setIsPublished(v); setDirty(true); }} />
+          <Toggle label={t.edit.labelPublished} value={isPublished} onChange={(v) => { setIsPublished(v); markDirty(); }} />
         </div>
         <div>
-          <Toggle label={t.edit.labelPin} value={pinned} onChange={(v) => { setPinned(v); setDirty(true); }} />
+          <Toggle label={t.edit.labelPin} value={pinned} onChange={(v) => { setPinned(v); markDirty(); }} />
         </div>
         <div className="flex flex-wrap items-end gap-2">
           <label className="block min-w-[180px]">
             <span className="block text-sm mb-1" style={{ color: "var(--bpm-text-secondary)" }}>{t.edit.labelTemplate}</span>
             <select
               value={template}
-              onChange={(e) => { setTemplate(e.target.value as WikiTemplateId); setDirty(true); }}
+              onChange={(e) => { setTemplate(e.target.value as WikiTemplateId); markDirty(); }}
               className="w-full px-3 py-2 rounded border text-sm"
               style={{ borderColor: "var(--bpm-border)", background: "var(--bpm-surface)", color: "var(--bpm-text-primary)" }}
             >
@@ -464,7 +441,7 @@ export default function WikiEditPage() {
               size="small"
               onClick={() => {
                 const t = getWikiTemplateContent(template as Exclude<WikiTemplateId, "">);
-                if (t) { setContent(t); setDirty(true); }
+                if (t) { setContent(t); markDirty(); }
               }}
             >
               {t.edit.applyTemplate}
@@ -476,7 +453,7 @@ export default function WikiEditPage() {
           <input
             type="url"
             value={coverImage}
-            onChange={(e) => { setCoverImage(e.target.value); setDirty(true); }}
+            onChange={(e) => { setCoverImage(e.target.value); markDirty(); }}
             placeholder="https://..."
             className="bpm-input w-full px-3 py-2 rounded border"
             style={{ borderColor: "var(--bpm-border)", background: "var(--bpm-surface)", color: "var(--bpm-text-primary)" }}
@@ -487,7 +464,7 @@ export default function WikiEditPage() {
           <input
             type="text"
             value={excerpt}
-            onChange={(e) => { setExcerpt(e.target.value); setDirty(true); }}
+            onChange={(e) => { setExcerpt(e.target.value); markDirty(); }}
             placeholder={t.edit.excerptPlaceholder}
             className="bpm-input w-full px-3 py-2 rounded border"
             style={{ borderColor: "var(--bpm-border)", background: "var(--bpm-surface)", color: "var(--bpm-text-primary)" }}
@@ -499,7 +476,7 @@ export default function WikiEditPage() {
             {tags.map((t) => (
               <span key={t} className="inline-flex items-center gap-1 px-2 py-0.5 rounded text-sm" style={{ background: "var(--bpm-border)", color: "var(--bpm-text-primary)" }}>
                 {t}
-                <button type="button" onClick={() => { setTags((prev) => prev.filter((x) => x !== t)); setDirty(true); }} className="opacity-70 hover:opacity-100" aria-label={STR[locale].edit.removeTag}>×</button>
+                <button type="button" onClick={() => { setTags((prev) => prev.filter((x) => x !== t)); markDirty(); }} className="opacity-70 hover:opacity-100" aria-label={STR[locale].edit.removeTag}>×</button>
               </span>
             ))}
             <input
@@ -510,7 +487,7 @@ export default function WikiEditPage() {
                 if (e.key === "Enter" || e.key === ",") {
                   e.preventDefault();
                   const v = (e.key === "," ? tagInput.replace(/,/g, "") : tagInput).trim();
-                  if (v && !tags.includes(v)) { setTags((prev) => [...prev, v]); setDirty(true); }
+                  if (v && !tags.includes(v)) { setTags((prev) => [...prev, v]); markDirty(); }
                   setTagInput("");
                 }
               }}

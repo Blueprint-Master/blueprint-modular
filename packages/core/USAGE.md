@@ -87,3 +87,7 @@ bpm.modal({ title: string, isOpen: boolean, onClose: () => void, children: React
 ```ts
 bpm.plotlyChart({ data: Plotly.Data[], layout?: Partial<Plotly.Layout> })
 ```
+
+### Maintenir l’écran allumé
+
+Dans un composant React côté client, importer `useScreenWakeLock` depuis `@blueprint-modular/core/keep-screen-on`. Une action utilisateur appelle `chooseDuration(5)`, `chooseDuration(15)`, `chooseDuration(30)`, `chooseDuration(60)` ou `chooseDuration(-1)` pour une séance sans limite de temps. `chooseDuration(0)` arrête la séance. Le hook expose `supported`, `active`, `duration`, `remainingSeconds` et `error`. L’écran est libéré quand le composant est démonté. Chaque ouverture commence en mode éteint.

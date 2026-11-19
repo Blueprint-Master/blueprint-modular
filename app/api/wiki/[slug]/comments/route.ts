@@ -1,81 +1,66 @@
-import { NextResponse } from "next/server";
-import { getSessionOrTestUser } from "@/lib/auth";
+import { z } from "zod";
+import { getPersonalModuleSession } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { normalizeSlug } from "@/lib/slug";
 
-type Params = Promise<{ slug: string }> | { slug: string };
+type Context = { params: Promise<{ slug: string }> };
+const fields = { id: true, parentId: true, kind: true, authorId: true, authorName: true, content: true,
+  createdAt: true, updatedAt: true, revision: true, resolved: true, deleted: true } as const;
+const content = z.string().trim().min(1).max(10000);
+const create = z.object({ content, kind: z.enum(["commentaire", "annotation", "décision", "blocage"]).default("commentaire"),
+  parentId: z.string().min(1).max(128).nullable().optional(), requestId: z.string().uuid().optional() });
+const base = z.object({ id: z.string().min(1).max(128), revision: z.number().int().nonnegative() });
+const edit = z.union([base.extend({ content }).strict(), base.extend({ resolved: z.boolean() }).strict()]);
+const error = (status: number) => Response.json({ error: status }, { status });
 
-async function resolveParams(params: Params): Promise<{ slug: string }> {
-  return typeof (params as Promise<{ slug: string }>)?.then === "function"
-    ? await (params as Promise<{ slug: string }>)
-    : (params as { slug: string });
-}
-
-export async function GET(
-  _request: Request,
-  context: { params: Params }
-) {
-  const result = await getSessionOrTestUser();
-  const user = result?.user ?? null;
-  const { slug: rawSlug } = await resolveParams(context.params);
-  const slug = normalizeSlug(rawSlug);
-  const article = await prisma.wikiArticle.findFirst({
-    where: { slug },
-    select: { id: true, authorId: true, isPublished: true },
-  });
-  if (!article) return NextResponse.json({ error: "Not found" }, { status: 404 });
-  if (article.isPublished) {
-    // Lecture publique des commentaires pour articles publiés.
-  } else if (!user) {
-    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-  } else {
-    const canSee = user.id === article.authorId || user.role === "ADMIN" || user.role === "OWNER";
-    if (!canSee) return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+async function access(context: Context, writing: boolean) {
+  const user = (await getPersonalModuleSession())?.user;
+  if (writing && !user) return error(401);
+  const article = await prisma.wikiArticle.findUnique({ where: { slug: normalizeSlug((await context.params).slug) },
+    select: { id: true, isPublished: true, authorId: true } });
+  if (!article) return error(404);
+  if (!article.isPublished && user?.id !== article.authorId && user?.role !== "ADMIN" && user?.role !== "OWNER") {
+    return error(user ? 403 : 401);
   }
-
-  const comments = await prisma.wikiComment.findMany({
-    where: { articleId: article.id },
-    orderBy: { createdAt: "asc" },
-    select: {
-      id: true,
-      content: true,
-      authorId: true,
-      authorName: true,
-      createdAt: true,
-      updatedAt: true,
-    },
-  });
-  return NextResponse.json(comments);
+  return { articleId: article.id, user };
 }
 
-export async function POST(
-  request: Request,
-  context: { params: Params }
-) {
-  const result = await getSessionOrTestUser();
-  if (!result) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-  const { user } = result;
-  const { slug: rawSlug } = await resolveParams(context.params);
-  const slug = normalizeSlug(rawSlug);
-  const article = await prisma.wikiArticle.findFirst({
-    where: { slug },
-    select: { id: true, authorId: true, isPublished: true },
-  });
-  if (!article) return NextResponse.json({ error: "Not found" }, { status: 404 });
-  const canSee = user.id === article.authorId || user.role === "ADMIN" || user.role === "OWNER" || article.isPublished;
-  if (!canSee) return NextResponse.json({ error: "Forbidden" }, { status: 403 });
-
-  const body = (await request.json()) as { content?: string };
-  const content = typeof body.content === "string" ? body.content.trim() : "";
-  if (!content) return NextResponse.json({ error: "content required" }, { status: 400 });
-
-  const comment = await prisma.wikiComment.create({
-    data: {
-      articleId: article.id,
-      content,
-      authorId: user.id,
-      authorName: user.name ?? undefined,
-    },
-  });
-  return NextResponse.json(comment);
+export async function GET(_request: Request, context: Context) {
+  const scope = await access(context, false);
+  if (scope instanceof Response) return scope;
+  return Response.json(await prisma.wikiComment.findMany({ where: { articleId: scope.articleId },
+    select: fields, orderBy: [{ createdAt: "asc" }, { id: "asc" }] }));
 }
+
+export async function POST(request: Request, context: Context) {
+  const scope = await access(context, true);
+  if (scope instanceof Response) return scope;
+  const input = create.safeParse(await request.json().catch(() => null));
+  if (!input.success) return error(400);
+  const { requestId, parentId, kind, content } = input.data;
+  const { articleId, user } = scope;
+  if (parentId && !await prisma.wikiComment.findFirst({ where: { articleId, id: parentId }, select: { id: true } })) return error(404);
+  const data = { articleId, authorId: user.id, authorName: user.name, kind, content, parentId, requestId };
+  if (!requestId) return Response.json(await prisma.wikiComment.create({ data, select: fields }));
+  const saved = await prisma.wikiComment.createMany({ data: [data], skipDuplicates: true });
+  const row = await prisma.wikiComment.findUnique({ where: { articleId_authorId_requestId: { articleId, authorId: user.id, requestId } }, select: fields });
+  if (!row || row.content !== content || row.kind !== kind || row.parentId !== (parentId ?? null)) return error(409);
+  return Response.json(row, { status: saved.count ? 201 : 200 });
+}
+
+async function modify(request: Request, context: Context, remove: boolean) {
+  const scope = await access(context, true);
+  if (scope instanceof Response) return scope;
+  const input = (remove ? base.strict() : edit).safeParse(await request.json().catch(() => null));
+  if (!input.success) return error(400);
+  const { id, revision } = input.data;
+  const where = { articleId: scope.articleId, id, authorId: scope.user.id, deleted: false };
+  const data = remove ? { content: "", deleted: true } : "content" in input.data ? { content: input.data.content as string }
+    : { resolved: (input.data as { resolved: boolean }).resolved };
+  const result = await prisma.wikiComment.updateMany({ where: { ...where, revision }, data: { ...data, revision: { increment: 1 } } });
+  if (result.count) return new Response(null, { status: 204 });
+  return error(await prisma.wikiComment.count({ where }) ? 409 : 404);
+}
+
+export const PATCH = (request: Request, context: Context) => modify(request, context, false);
+export const DELETE = (request: Request, context: Context) => modify(request, context, true);

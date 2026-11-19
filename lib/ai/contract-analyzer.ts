@@ -82,31 +82,14 @@ function parseAndValidate(raw: string): ExtractedData {
     out.overall_risk_level = data.overall_risk_level;
   }
 
-  // Champs critiques : on assure au minimum des valeurs par défaut pour ne pas planter l'UI
-  if (!out.executive_summary) out.executive_summary = "Résumé non extrait.";
-  if (!out.overall_risk_level) out.overall_risk_level = "medium";
-
+  if (!out.executive_summary?.trim()) throw new Error("Résumé du contrat absent de la réponse");
   return out;
 }
 
-/** Objet minimal retourné en cas d'erreur de parsing — ne jamais faire planter l'app */
-const FALLBACK_EXTRACTED: ExtractedData = {
-  executive_summary: "Résumé non extrait (réponse du modèle invalide ou incomplète).",
-  overall_risk_level: "medium",
-};
-
-export async function analyzeContract(
-  contractText: string,
-  contractType: ContractType
-): Promise<ExtractedData> {
-  const truncated = contractText.slice(0, MAX_TEXT_CHARS);
+export async function analyzeContract(contractText: string, contractType: ContractType): Promise<ExtractedData> {
+  const truncated = contractText.trim().slice(0, MAX_TEXT_CHARS);
+  if (!truncated) throw new Error("Aucun texte à analyser");
   const prompt = TEMPLATE_ANALYSE_CONTRAT({ contractText: truncated, contractType });
-
-  try {
-    const { content } = await vllmClient.chat([{ role: "user", content: prompt }], { max_tokens: 4096 });
-    return parseAndValidate(content);
-  } catch (err) {
-    console.warn("[contract-analyzer] parse or chat failed:", err instanceof Error ? err.message : String(err));
-    return FALLBACK_EXTRACTED;
-  }
+  const { content } = await vllmClient.chat([{ role: "user", content: prompt }], { max_tokens: 4096 });
+  return parseAndValidate(content);
 }

@@ -59,6 +59,8 @@ const fr = {
   statusTentative: "Tentative",
 
   // Récurrence
+  invalidDates: (max: number) => `Vérifiez les dates. Chaque série accepte au maximum ${max} occurrences.`,
+  invalidDuration: "Indiquez une durée en minutes entières positives.",
   recurNone: "Aucune",
   recurDaily: "Tous les jours",
   recurWeekly: "Toutes les semaines",
@@ -133,7 +135,7 @@ const fr = {
   docCompatBookingBody: "partage de la notion de plage horaire et de disponibilité.",
   docIntegTitle: "Intégration côté app",
   docIntegBody:
-    "Le module est une page Next.js (/modules/calendrier). Pour alimenter les événements depuis votre backend, exposez une API (ex. GET /api/calendar/events) et appelez-la depuis la page ou un hook. Aucune variable d'environnement spécifique n'est requise pour le module Calendrier.",
+    "Le simulateur utilise des événements locaux. Pour un agenda persistant, GET /api/calendar liste les événements de la session, POST les crée et GET, PUT ou DELETE /api/calendar/{id} permettent de consulter, modifier ou supprimer un événement. Configurez PostgreSQL et NextAuth puis appliquez les migrations Prisma.",
   docExampleLabel: "Exemple — récupérer les événements :",
   docSimuTitle: "Simulateur",
   docSimuBody:
@@ -188,6 +190,8 @@ const en: ModuleStrings = {
   statusCancelled: "Cancelled",
   statusTentative: "Tentative",
 
+  invalidDates: (max: number) => `Check the dates. Each series supports up to ${max} occurrences.`,
+  invalidDuration: "Enter a positive whole number of minutes.",
   recurNone: "None",
   recurDaily: "Every day",
   recurWeekly: "Every week",
@@ -255,7 +259,7 @@ const en: ModuleStrings = {
   docCompatBookingBody: "shares the notion of time range and availability.",
   docIntegTitle: "Integration in the app",
   docIntegBody:
-    "The module is a Next.js page (/modules/calendrier). To feed events from your backend, expose an API (e.g. GET /api/calendar/events) and call it from the page or a hook. No specific environment variable is required for the Calendar module.",
+    "The simulator uses local events. For a persistent calendar, GET /api/calendar lists session events, POST creates one, and GET, PUT or DELETE /api/calendar/{id} reads, updates or removes it. Configure PostgreSQL and NextAuth and apply the Prisma migrations.",
   docExampleLabel: "Example — fetch the events:",
   docSimuTitle: "Simulator",
   docSimuBody:

@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import { readResponse } from "../../../lib/read-response";
 import Link from "next/link";
 import { useParams, useRouter } from "next/navigation";
 import { Card, Caption, Divider, Button, Spinner, Selectbox } from "@/components/bpm";
@@ -8,7 +9,7 @@ import { useI18n } from "@/lib/i18n/LocaleProvider";
 import { STR } from "../../../strings";
 
 type Asset = { id: string; reference: string; label: string };
-type User = { id: string; name: string | null; email: string | null };
+type Beneficiary = { id: string; label: string };
 
 export default function AssetManagerAssignmentNewPage() {
   const { locale } = useI18n();
@@ -18,8 +19,9 @@ export default function AssetManagerAssignmentNewPage() {
   const router = useRouter();
   const domainId = typeof params?.domainId === "string" ? params.domainId : "";
   const [assets, setAssets] = useState<Asset[]>([]);
-  const [currentUser, setCurrentUser] = useState<User | null>(null);
+  const [beneficiaries, setBeneficiaries] = useState<Beneficiary[]>([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
   const [saving, setSaving] = useState(false);
   const [assetId, setAssetId] = useState("");
   const [assigneeId, setAssigneeId] = useState("");
@@ -31,20 +33,23 @@ export default function AssetManagerAssignmentNewPage() {
   useEffect(() => {
     if (!domainId) return;
     Promise.all([
-      fetch(`/api/asset-manager/assets?domainId=${encodeURIComponent(domainId)}`, { credentials: "include" }).then((r) => (r.ok ? r.json() : [])),
-      fetch("/api/asset-manager/me", { credentials: "include" }).then((r) => (r.ok ? r.json() : null)),
+      fetch(`/api/asset-manager/assets?domainId=${encodeURIComponent(domainId)}`, { credentials: "include" }).then(readResponse),
+      fetch("/api/asset-manager/assignments/beneficiaries", { credentials: "include" }).then(readResponse),
+      fetch("/api/asset-manager/me", { credentials: "include" }).then(readResponse),
     ])
-      .then(([aList, me]) => {
+      .then(([aList, users, me]) => {
         setAssets(Array.isArray(aList) ? aList : []);
-        setCurrentUser(me);
+        setBeneficiaries(users);
         if (me?.id) setAssigneeId(me.id);
       })
+      .catch(err => setError(err instanceof Error ? err.message : String(err)))
       .finally(() => setLoading(false));
   }, [domainId]);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (!assetId || !assigneeId || !startDate || saving) return;
+    setError("");
     setSaving(true);
     fetch("/api/asset-manager/assignments", {
       method: "POST",
@@ -60,10 +65,11 @@ export default function AssetManagerAssignmentNewPage() {
         reason: reason.trim() || null,
       }),
     })
-      .then((r) => (r.ok ? r.json() : null))
+      .then(readResponse)
       .then((created) => {
         if (created?.id) router.push(`/modules/asset-manager/${domainId}/assignments/${created.id}`);
       })
+      .catch(err => setError(err instanceof Error ? err.message : String(err)))
       .finally(() => setSaving(false));
   };
 
@@ -89,6 +95,7 @@ export default function AssetManagerAssignmentNewPage() {
         <Caption>{ta.newCaption}</Caption>
       </div>
 
+      {error && <p role="alert">{error}</p>}
       <Card variant="outlined">
         <form onSubmit={handleSubmit} className="space-y-0">
           <section className="space-y-4" aria-label={ta.sectionAssignment}>
@@ -99,11 +106,8 @@ export default function AssetManagerAssignmentNewPage() {
               options={[{ value: "", label: ta.selectAssetPlaceholder }, ...assetOptions]}
               required
             />
-            <div>
-              <label className="block text-sm font-medium mb-1" style={{ color: "var(--bpm-text-secondary)" }}>{ta.fieldAssignee}</label>
-              <p className="text-sm m-0" style={{ color: "var(--bpm-text-primary)" }}>{currentUser?.name ?? currentUser?.email ?? ta.assigneeSelfFallback}</p>
-              <input type="hidden" name="assigneeId" value={assigneeId} />
-            </div>
+            <Selectbox label={ta.fieldAssignee} value={assigneeId} onChange={setAssigneeId}
+              options={beneficiaries.map(user => ({ value: user.id, label: user.label }))} required />
             <Selectbox
               label={t.common.type}
               value={assignmentType}

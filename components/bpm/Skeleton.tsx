@@ -1,6 +1,7 @@
 "use client";
 
 import React from "react";
+import "./Skeleton.css";
 
 export type SkeletonVariant = "rectangular" | "circular" | "text";
 
@@ -59,11 +60,11 @@ export function Skeleton({
   rounded = "md",
   lines = 1,
 }: SkeletonProps) {
-  const style: React.CSSProperties = { width: "100%", maxWidth: "100%", display: "block" };
+  const style: React.CSSProperties = { width: variant === "circular" ? (height ?? 32) : "100%", height: height ?? (variant === "circular" ? undefined : 16), aspectRatio: variant === "circular" ? "1 / 1" : undefined, maxWidth: "100%", display: "block" };
   if (width != null) style.width = typeof width === "number" ? `${width}px` : width;
   if (height != null) style.height = typeof height === "number" ? `${height}px` : height;
   const roundClass = variant === "circular" ? "rounded-full" : roundedClass[rounded];
-  const animationClass = shimmer ? "bpm-skeleton--shimmer" : animated ? "animate-pulse" : "";
+  const animationClass = !animated ? "" : shimmer ? "bpm-skeleton--shimmer" : "bpm-skeleton--pulse";
   const single = (
     <span
       className={`bpm-skeleton block ${animationClass} ${roundClass} ${className}`.trim()}
@@ -74,12 +75,13 @@ export function Skeleton({
       aria-hidden
     />
   );
-  if (lines <= 1) return single;
+  const lineCount = Number.isFinite(lines) ? Math.min(256, Math.max(1, Math.trunc(lines))) : 1;
+  if (lineCount <= 1) return single;
   const lineHeight = height ?? 16;
   const lineStyle = { ...style, height: typeof lineHeight === "number" ? `${lineHeight}px` : lineHeight };
   return (
-    <span className="bpm-skeleton-lines block" style={{ display: "flex", flexDirection: "column", gap: 8, width: "100%", maxWidth: "100%" }}>
-      {Array.from({ length: lines }, (_, i) => (
+    <span className={`bpm-skeleton-lines block ${className}`} style={{ display: "flex", flexDirection: "column", gap: 8, width: "100%", maxWidth: "100%" }}>
+      {Array.from({ length: lineCount }, (_, i) => (
         <span
           key={i}
           className={`bpm-skeleton block ${animationClass} ${roundClass}`.trim()}

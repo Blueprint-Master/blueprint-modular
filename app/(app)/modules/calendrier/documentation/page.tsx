@@ -71,15 +71,14 @@ export default async function CalendrierDocumentationPage() {
 
       <p className="mb-2 text-sm font-medium" style={{ color: "var(--bpm-text-primary)" }}>{s.docExampleLabel}</p>
       <CodeBlock
-        code={`# Côté Python BPM (si vous générez la page via BPM)
-bpm.title("Agenda")
-# Les événements sont passés en data (date, titre, heure, durée)
-# Exemple de structure :
-# events = [
-#   {"date": "2025-02-25", "titre": "Réunion équipe", "heure": "10h"},
-#   {"date": "2025-02-26", "titre": "Revue livrables", "heure": "14h"},
-# ]`}
-        language="python"
+        code={`const range = new URLSearchParams({
+  start: "2026-11-01T00:00:00Z",
+  end: "2026-11-30T23:59:59.999Z",
+});
+const response = await fetch("/api/calendar?" + range);
+if (!response.ok) throw new Error("Calendar HTTP " + response.status);
+const events = await response.json();`}
+        language="javascript"
       />
 
       <h2 className="text-lg font-semibold mt-8 mb-2" style={{ color: "var(--bpm-text-primary)" }}>

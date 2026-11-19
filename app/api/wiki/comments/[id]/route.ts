@@ -12,7 +12,7 @@ async function resolveParams(params: Params): Promise<{ id: string }> {
 
 export async function DELETE(
   _request: Request,
-  context: { params: Params }
+  context: { params: Promise<Awaited<Params>> }
 ) {
   const result = await getSessionOrTestUser();
   if (!result) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });

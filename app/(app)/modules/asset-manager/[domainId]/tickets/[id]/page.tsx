@@ -1,7 +1,10 @@
 "use client";
 
+import { ticketSla } from "@/lib/asset-manager/ticket-sla";
 import { useState, useEffect } from "react";
+import { readResponse } from "../../../lib/read-response";
 import Link from "next/link";
+import { useAuditAccess } from "../../../lib/useAuditAccess";
 import { useParams } from "next/navigation";
 import { Panel, Button, Spinner, Selectbox, Badge, Card, Divider, Progress } from "@/components/bpm";
 import { FicheHeader, FicheSectionCard, FicheFieldGrid, FicheNav, FicheSkeleton } from "@/components/fiche";
@@ -11,6 +14,7 @@ import { STR, dateLocale } from "../../../strings";
 type Ticket = {
   id: string;
   reference: string;
+  updatedAt: string;
   typeId: string;
   title: string;
   description: string;
@@ -19,6 +23,7 @@ type Ticket = {
   categoryId: string;
   subcategory: string | null;
   openedAt: string;
+  slaDueAt: string | null;
   resolvedAt: string | null;
   closedAt: string | null;
   solution: string | null;
@@ -44,6 +49,7 @@ function statusBadgeVariant(s: string): "primary" | "success" | "warning" | "err
 export default function AssetManagerTicketDetailPage() {
   const params = useParams();
   const { locale } = useI18n();
+  const canViewAudit = useAuditAccess();
   const t = STR[locale];
   const tt = t.tickets;
   const STATUS_OPTIONS = STATUS_VALUES.map((value) => ({ value, label: tt.statusLabels[value] ?? value }));
@@ -52,6 +58,8 @@ export default function AssetManagerTicketDetailPage() {
   const [config, setConfig] = useState<DomainConfig | null>(null);
   const [ticket, setTicket] = useState<Ticket | null>(null);
   const [loading, setLoading] = useState(true);
+  const [conflict, setConflict] = useState<Ticket | null>(null);
+  const [error, setError] = useState("");
   const [saving, setSaving] = useState(false);
   const [editStatus, setEditStatus] = useState("");
   const [editSolution, setEditSolution] = useState("");
@@ -59,8 +67,8 @@ export default function AssetManagerTicketDetailPage() {
   useEffect(() => {
     if (!domainId || !id) return;
     Promise.all([
-      fetch(`/api/asset-manager/config/${domainId}`, { credentials: "include" }).then((r) => (r.ok ? r.json() : null)),
-      fetch(`/api/asset-manager/tickets/${id}`, { credentials: "include" }).then((r) => (r.ok ? r.json() : null)),
+      fetch(`/api/asset-manager/config/${domainId}`, { credentials: "include" }).then(readResponse),
+      fetch(`/api/asset-manager/tickets/${id}`, { credentials: "include" }).then(readResponse),
     ])
       .then(([cfg, tk]) => {
         setConfig(cfg);
@@ -70,24 +78,33 @@ export default function AssetManagerTicketDetailPage() {
           setEditSolution(tk.solution ?? "");
         }
       })
+      .catch(err => setError(err instanceof Error ? err.message : String(err)))
       .finally(() => setLoading(false));
   }, [domainId, id]);
 
   const handleSave = () => {
-    if (!ticket || saving) return;
+    if (!ticket || saving || conflict) return;
+    setError("");
     setSaving(true);
     fetch(`/api/asset-manager/tickets/${id}`, {
       method: "PUT",
       headers: { "Content-Type": "application/json" },
       credentials: "include",
-      body: JSON.stringify({ status: editStatus, solution: editSolution || null }),
+      body: JSON.stringify({ expectedUpdatedAt: ticket.updatedAt, status: editStatus, solution: editSolution || null }),
     })
-      .then((r) => (r.ok ? r.json() : null))
+      .then(async response => {
+        if (response.status === 409) {
+          const current = await fetch(`/api/asset-manager/tickets/${id}`, { credentials: "include", cache: "no-store" }).then(readResponse);
+          setConflict(current);
+        }
+        return readResponse(response);
+      })
       .then((updated) => {
         if (updated) setTicket(updated);
         setEditStatus(updated?.status ?? editStatus);
         setEditSolution(updated?.solution ?? editSolution);
       })
+      .catch(err => setError(err instanceof Error ? err.message : String(err)))
       .finally(() => setSaving(false));
   };
 
@@ -98,7 +115,7 @@ export default function AssetManagerTicketDetailPage() {
   if (!ticket) {
     return (
       <div className="doc-page">
-        <Panel variant="warning" title={tt.notFoundTitle}>{tt.notFoundDescription}</Panel>
+        <Panel variant="warning" title={tt.notFoundTitle}>{error || tt.notFoundDescription}</Panel>
         <FicheNav backLink={`/modules/asset-manager/${domainId}/tickets`} backLabel={tt.backToList} />
       </div>
     );
@@ -107,17 +124,19 @@ export default function AssetManagerTicketDetailPage() {
   const getPriorityLabel = (pid: string) => config?.priorities?.find((p) => p.id === pid)?.label ?? pid;
   const getCategoryLabel = (cid: string) => config?.ticket_categories?.find((c) => c.id === cid)?.label ?? cid;
 
-  const openStatuses = ["new", "open", "pending", "in_progress", "on_hold", "assigned"];
-  const isOpen = openStatuses.includes(ticket.status);
-  const slaHours = config?.priorities?.find((p) => p.id === ticket.priorityId)?.sla_hours ?? 48;
-  const elapsedHours = (Date.now() - new Date(ticket.openedAt).getTime()) / (1000 * 60 * 60);
-  const slaPercent = isOpen && slaHours > 0 ? Math.min(150, Math.round((elapsedHours / slaHours) * 100)) : 0;
-  const slaExceeded = isOpen && slaPercent >= 100;
-
+  const sla = ticketSla(ticket, config?.priorities ?? []);
   const statusLabel = STATUS_OPTIONS.find((o) => o.value === ticket.status)?.label ?? ticket.status;
 
   return (
     <div className="doc-page">
+      {error && <p role="alert">{error}</p>}
+      {conflict && <div role="status">
+        <strong>{locale === "fr" ? "Version actuelle" : "Current version"} · {tt.statusLabels[conflict.status] || conflict.status}</strong>
+        <p className="whitespace-pre-wrap">{conflict.solution}</p>
+        <Button variant="outline" onClick={() => { setTicket(conflict); setConflict(null); setError(""); }}>
+          {locale === "fr" ? "Reprendre ma saisie" : "Resume my edits"}
+        </Button>
+      </div>}
       <FicheHeader
         breadcrumb={
           <>
@@ -138,17 +157,17 @@ export default function AssetManagerTicketDetailPage() {
         }
       />
 
-      {isOpen && (
+      {sla.open && (
         <>
           <FicheSectionCard title={tt.slaTitle} className="mt-4">
             <Progress
-              value={Math.min(100, slaPercent)}
+              value={Math.min(100, Math.floor(sla.percent))}
               max={100}
-              label={tt.slaConsumed(slaHours)}
+              label={tt.slaConsumed(Number(sla.hours.toFixed(2)))}
               showValue
             />
             <div className="mt-2">
-              {slaExceeded ? (
+              {sla.overdue ? (
                 <Badge variant="error">{tt.slaExceeded}</Badge>
               ) : (
                 <Badge variant="success">{tt.slaOk}</Badge>
@@ -159,6 +178,9 @@ export default function AssetManagerTicketDetailPage() {
         </>
       )}
 
+      {canViewAudit && <Link href={`/modules/asset-manager/${domainId}/audit?resourceType=ticket&action=escalate&resourceId=${encodeURIComponent(ticket.id)}`}>
+        {locale === "fr" ? "Historique des escalades" : "Escalation history"}
+      </Link>}
       <FicheSectionCard title={tt.sectionInformation} className="mt-4">
         <FicheFieldGrid
           withDividers

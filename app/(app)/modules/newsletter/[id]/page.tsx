@@ -8,6 +8,7 @@ import { useI18n } from "@/lib/i18n/LocaleProvider";
 import { STR } from "../strings";
 
 interface Article {
+  revision: number;
   id: string;
   title: string;
   content: string;
@@ -27,6 +28,14 @@ export default function NewsletterArticlePage() {
   const id = typeof params?.id === "string" ? params.id : "";
   const [article, setArticle] = useState<Article | null>(null);
   const [loading, setLoading] = useState(true);
+  const [header, setHeader] = useState<string | null>(null);
+  useEffect(() => {
+    const control = new AbortController();
+    fetch("/api/newsletter/settings", { signal: control.signal }).then(r => r.ok ? r.json() : null)
+      .then(data => setHeader(data?.headerImageUrl ?? null)).catch(() => {});
+    return () => control.abort();
+  }, []);
+  const [error, setError] = useState("");
   const [archiving, setArchiving] = useState(false);
 
   useEffect(() => {
@@ -46,17 +55,22 @@ export default function NewsletterArticlePage() {
   const handleArchive = async () => {
     if (!article || archiving) return;
     setArchiving(true);
+    setError("");
     try {
       const res = await fetch(`/api/newsletter/articles/${id}/archive`, {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ archived: !article.archived }),
+        body: JSON.stringify({ archived: !article.archived, revision: article.revision }),
         credentials: "include",
       });
       if (res.ok) {
         const updated = await res.json();
         setArticle(updated);
+      } else {
+        setError((await res.json()).error || str.saveError);
       }
+    } catch {
+      setError(str.networkError);
     } finally {
       setArchiving(false);
     }
@@ -113,6 +127,7 @@ export default function NewsletterArticlePage() {
         </p>
       </div>
 
+      {header && <img src={header} alt="" referrerPolicy="no-referrer" className="mb-6 w-full max-h-48 object-cover rounded-lg" />}
       {article.excerpt && (
         <p className="mb-6 text-lg" style={{ color: "var(--bpm-text-secondary)" }}>
           {article.excerpt}
@@ -128,6 +143,7 @@ export default function NewsletterArticlePage() {
         </div>
       </Card>
 
+      {error && <p role="alert">{error} <button className="underline" onClick={() => window.location.reload()}>{locale === "en" ? "Reload" : "Recharger"}</button></p>}
       <div className="flex flex-wrap gap-2 mt-6">
         <Button variant="primary" onClick={() => router.push(`/modules/newsletter/${id}/edit`)}>
           {str.actionEdit}

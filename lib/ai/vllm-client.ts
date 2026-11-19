@@ -2,13 +2,9 @@
  * Client HTTP vers Ollama (zéro dépendance OpenAI).
  * Utilisé côté serveur (API routes Next.js uniquement).
  * En dev avec AI_MOCK=true, retourne des réponses mockées réalistes.
- * Si Ollama est injoignable, fallback automatique en mode démo (sans erreur côté utilisateur).
  */
 
 import { AI_CONFIG } from "./config";
-
-/** Activer le mock quand le health check échoue (Ollama injoignable). */
-let useMockFallback = false;
 
 export type ChatMessage = { role: "user" | "assistant" | "system"; content: string };
 
@@ -34,12 +30,6 @@ async function sleep(ms: number): Promise<void> {
 function mockChatResponse(messages: ChatMessage[]): string {
   const lastUser = [...messages].reverse().find((m) => m.role === "user");
   const question = lastUser?.content ?? "";
-  if (question.includes("module") || question.includes("disponible")) {
-    return `Voici les modules actuellement disponibles dans l'application : **Wiki** (documentation interne), **Documents** (contrats et analyses), **IA** (assistant conversationnel). Vous pouvez poser des questions sur les données de ces modules en les sélectionnant dans le panneau de contexte.`;
-  }
-  if (question.includes("contrat") || question.includes("contract")) {
-    return `En mode mock, les données de contrats ne sont pas chargées. En production, l'assistant a accès aux métadonnées des contrats (fournisseur, dates, engagements, niveau de risque) pour répondre à vos questions.`;
-  }
   // Extraction de documents (Analyse de documents) : retourner un JSON valide pour que l'UI affiche des données en mode démo
   if (
     question.includes('"supplier"') &&
@@ -76,6 +66,12 @@ function mockChatResponse(messages: ChatMessage[]): string {
       signatories: [],
     });
   }
+  if (question.includes("module") || question.includes("disponible")) {
+    return `Voici les modules actuellement disponibles dans l'application : **Wiki** (documentation interne), **Documents** (contrats et analyses), **IA** (assistant conversationnel). Vous pouvez poser des questions sur les données de ces modules en les sélectionnant dans le panneau de contexte.`;
+  }
+  if (question.includes("contrat") || question.includes("contract")) {
+    return `En mode mock, les données de contrats ne sont pas chargées. En production, l'assistant a accès aux métadonnées des contrats (fournisseur, dates, engagements, niveau de risque) pour répondre à vos questions.`;
+  }
   return `Réponse mockée (AI_MOCK=true). Vous avez demandé : « ${question.slice(0, 80)}${question.length > 80 ? "…" : ""} ». Configurez AI_MOCK=false et pointez AI_SERVER_URL vers Ollama pour des réponses réelles.`;
 }
 
@@ -107,7 +103,7 @@ export class VLLMClient {
   ): Promise<{ content: string }> {
     const timeout = opts.timeout ?? this.timeout;
 
-    if (this.mock || useMockFallback) {
+    if (this.mock) {
       await sleep(1200);
       return { content: mockChatResponse(messages) };
     }
@@ -115,23 +111,21 @@ export class VLLMClient {
     // Format Ollama : /api/chat
     const url = `${this.baseUrl}/api/chat`;
     const body = {
-      model: AI_CONFIG.model,
+      model: opts.model ?? AI_CONFIG.model,
       messages: messages.map((m) => ({ role: m.role, content: m.content })),
       stream: false,
+      options: { num_predict: opts.max_tokens },
     };
 
     let lastError: Error | null = null;
     for (let attempt = 0; attempt <= this.maxRetries; attempt++) {
       try {
-        const controller = new AbortController();
-        const id = setTimeout(() => controller.abort(), timeout);
         const res = await fetch(url, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify(body),
-          signal: controller.signal,
+          signal: AbortSignal.timeout(timeout),
         });
-        clearTimeout(id);
 
         if (!res.ok) {
           const text = await res.text();
@@ -147,19 +141,11 @@ export class VLLMClient {
           done?: boolean;
         };
         const content = data.message?.content ?? "";
+        if (!content.trim()) throw new Error("Ollama returned an empty response");
         return { content };
       } catch (err) {
         lastError = err instanceof Error ? err : new Error(String(err));
         if (attempt < this.maxRetries) await sleep(1000 * (attempt + 1));
-      }
-    }
-    // Fallback démo : Ollama injoignable → réponse mockée au lieu d'erreur
-    if (!useMockFallback) {
-      const raw = lastError?.message ?? "";
-      if (/fetch|ECONNREFUSED|timeout|ETIMEDOUT|network|abort/i.test(raw)) {
-        useMockFallback = true;
-        await sleep(800);
-        return { content: mockChatResponse(messages) };
       }
     }
     throw lastError ?? new Error("Ollama chat failed");
@@ -177,7 +163,7 @@ export class VLLMClient {
   ): Promise<string> {
     const timeout = opts.timeout ?? this.timeout;
 
-    if (this.mock || useMockFallback) {
+    if (this.mock) {
       await sleep(800);
       const content = mockChatResponse(messages);
       for (const word of content.split(/(\s+)/)) {
@@ -193,81 +179,49 @@ export class VLLMClient {
       model: opts.model ?? AI_CONFIG.model,
       messages: messages.map((m) => ({ role: m.role, content: m.content })),
       stream: true,
+      options: { num_predict: opts.max_tokens },
     };
 
-    const controller = new AbortController();
-    const id = setTimeout(() => controller.abort(), timeout);
-
-    let res: Response;
-    try {
-      res = await fetch(url, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(body),
-        signal: controller.signal,
-      });
-    } catch (streamErr) {
-      clearTimeout(id);
-      const raw = streamErr instanceof Error ? streamErr.message : String(streamErr);
-      if (/fetch|ECONNREFUSED|timeout|ETIMEDOUT|network|abort/i.test(raw)) {
-        useMockFallback = true;
-        await sleep(800);
-        const content = mockChatResponse(messages);
-        for (const word of content.split(/(\s+)/)) {
-          onChunk(word);
-          await sleep(20);
-        }
-        return content;
-      }
-      throw streamErr;
-    }
-    clearTimeout(id);
-
-    if (!res.ok) throw new Error(`Ollama ${res.status}`);
-
-    const reader = res.body?.getReader();
+    const res = await fetch(url, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(body),
+      signal: AbortSignal.timeout(timeout),
+    });
+    if (!res.ok || !res.body) throw new Error(`Ollama stream unavailable (HTTP ${res.status})`);
+    const reader = res.body.getReader();
     const decoder = new TextDecoder();
     let full = "";
     let buffer = "";
-
-    if (reader) {
+    try {
       while (true) {
         const { done, value } = await reader.read();
-        if (done) break;
-
-        buffer += decoder.decode(value, { stream: true });
+        buffer += decoder.decode(value, { stream: !done });
         const lines = buffer.split("\n");
-
-        // Garder la dernière ligne incomplète dans le buffer
-        buffer = lines.pop() ?? "";
-
+        buffer = done ? "" : lines.pop() ?? "";
         for (const line of lines) {
           if (!line.trim()) continue;
-          try {
-            // Ollama stream : JSON pur, pas de préfixe "data: "
-            const json = JSON.parse(line) as {
-              message?: { content?: string };
-              done?: boolean;
-            };
-            const text = json.message?.content ?? "";
-            if (text) {
-              full += text;
-              onChunk(text);
-            }
-            if (json.done) break;
-          } catch {
-            // ignore les lignes non-JSON
+          const chunk = JSON.parse(line);
+          if (chunk.error) throw new Error("Ollama reported a stream error");
+          const text = chunk.message?.content;
+          if (typeof text === "string" && text.length) {
+            full += text;
+            onChunk(text);
           }
+          if (chunk.done === true) return full;
         }
+        if (done) throw new Error("Ollama stream ended before completion");
       }
+    } finally {
+      await reader.cancel().catch(() => {});
+      reader.releaseLock();
     }
-    return full;
   }
 
   /**
    * GET /api/tags — vérifie qu'Ollama est disponible et liste les modèles.
    */
-  async healthCheck(): Promise<VLLMHealthResult> {
+  async healthCheck(configuredModel: string = AI_CONFIG.model): Promise<VLLMHealthResult> {
     if (this.mock) {
       return { available: true, model: "mock (AI_MOCK=true)", latencyMs: 0 };
     }
@@ -280,32 +234,16 @@ export class VLLMClient {
       });
       const latencyMs = Date.now() - start;
 
-      if (!res.ok) {
-        useMockFallback = true;
-        return { available: true, model: "mock (démo)", latencyMs: 0 };
-      }
+      if (!res.ok) return { available: false, error: `Ollama HTTP ${res.status}`, latencyMs };
 
-      // Ollama retourne { models: [{ name, model, ... }] }
-      const data = (await res.json()) as {
-        models?: Array<{ name: string; model: string }>;
-      };
-
-      useMockFallback = false;
-      // Trouver le modèle configuré dans la liste
-      const configuredModel = AI_CONFIG.model;
-      const found = data.models?.find(
-        (m) => m.name === configuredModel || m.model === configuredModel
+      const data = (await res.json()) as { models?: Array<{ name?: string; model?: string }> };
+      const normalize = (name: string) => name.includes(":") ? name : `${name}:latest`;
+      const found = data.models?.some(entry =>
+        [entry.name, entry.model].some(name => name && normalize(name) === normalize(configuredModel))
       );
-      const model = found?.name ?? configuredModel;
-
-      return { available: true, model, latencyMs };
-    } catch (err) {
-      useMockFallback = true;
-      return {
-        available: true,
-        model: "mock (démo)",
-        latencyMs: Date.now() - start,
-      };
+      return { available: Boolean(found), model: configuredModel, latencyMs };
+    } catch {
+      return { available: false, model: configuredModel, latencyMs: Date.now() - start };
     }
   }
 }

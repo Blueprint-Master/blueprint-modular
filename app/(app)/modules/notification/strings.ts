@@ -142,6 +142,7 @@ const fr = {
   docImplLi2d: ".",
 
   configHeading: "Paramétrage",
+  inboxApi: "La cloche du simulateur conserve son historique dans le navigateur. Pour une boîte de réception persistante par utilisateur, configurez PostgreSQL et NextAuth et appliquez les migrations Prisma. POST /api/notifications crée une notification pour la session, GET /api/notifications?read=false liste les non lues et PATCH /api/notifications/{id}/read enregistre la première lecture.",
   cfg1Strong: "Filtre d'affichage",
   cfg1a: " : dans ",
   cfg1b:
@@ -296,6 +297,7 @@ const en: typeof fr = {
   docImplLi2d: ".",
 
   configHeading: "Configuration",
+  inboxApi: "The simulator bell stores its history in the browser. For a persistent per-user inbox, configure PostgreSQL and NextAuth and apply the Prisma migrations. POST /api/notifications creates a notification for the session, GET /api/notifications?read=false lists unread items, and PATCH /api/notifications/{id}/read records the first read.",
   cfg1Strong: "Display filter",
   cfg1a: ": in ",
   cfg1b:

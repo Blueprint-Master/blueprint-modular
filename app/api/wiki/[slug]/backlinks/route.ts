@@ -1,3 +1,4 @@
+import { visibleWikiArticles } from "@/lib/wiki/visibility";
 import { NextResponse } from "next/server";
 import { getSessionOrTestUser } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
@@ -13,7 +14,7 @@ async function resolveParams(params: Params): Promise<{ slug: string }> {
 
 export async function GET(
   _request: Request,
-  context: { params: Params }
+  context: { params: Promise<Awaited<Params>> }
 ) {
   const result = await getSessionOrTestUser();
   const user = result?.user ?? null;
@@ -29,7 +30,7 @@ export async function GET(
   }
 
   const backlinks = await prisma.wikiBacklink.findMany({
-    where: { targetArticleId: article.id },
+    where: { targetArticleId: article.id, source: visibleWikiArticles(user?.id) },
     include: {
       source: { select: { id: true, title: true, slug: true, excerpt: true } },
     },
