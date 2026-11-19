@@ -6,11 +6,27 @@ Le ZIP historique omettait les routes API, les contextes React et les dépendanc
 
 Le job d’installation du run GitHub Actions 44477641273 a construit le ZIP, extrait le projet hors du dépôt, installé les dépendances, compilé le serveur et migré PostgreSQL. Il a ouvert la documentation et l’entrée de chacun des 32 modules, écrit un rendez-vous avec une vraie session et retrouvé le rendez-vous après redémarrage. La recette locale sur PostgreSQL 16.15 a également réussi. La vérification Android du même run attendait une ancienne commande shell littérale. Elle exécute désormais la copie dans les deux dispositions standalone et vérifie le contenu du fichier réellement servi. Le contrôle des 64 routes mesure la livraison technique. Les recettes métier, leurs prérequis et leurs limites restent consignés séparément.
 
+Les treize parcours de démonstration restants possèdent aussi une recette Chromium sur le serveur installé. Elle manipule des formulaires et filtres, télécharge les exports, contrôle la personnalisation du tableau de bord après rechargement et vérifie le verrouillage du devis payé. Ces contrôles utilisent les jeux d’exemple du simulateur. L’intégration des données de l’application est vérifiée séparément.
+
 ## IA, analyse documentaire et base contractuelle
 
 Une panne du fournisseur Ollama remonte comme indisponibilité. La requête suivante peut reprendre dès le retour du fournisseur. Seul le réglage explicite AI_MOCK active les réponses d’exemple. Une réponse interrompue en streaming, une extraction vide ou une réponse contractuelle sans synthèse donne un échec exploitable. Le risque d’un contrat reste indéterminé si le fournisseur ne le renseigne pas.
 
 Documents accepte PDF, DOCX et TXT depuis l’interface et par API. Les nouvelles pièces des deux modules peuvent être placées sur un volume externe avec MODULAR_UPLOAD_DIR. Les anciens chemins restent lisibles. Un import contractuel concurrent du même fichier pour le même utilisateur conserve une seule fiche. Les routes de ces modules utilisent la session personnelle en production. Les tests de régression du client IA couvrent le modèle absent, la coupure réseau, le rétablissement, la limite de génération, la dernière ligne de flux et l’extraction invalide.
+
+## Rapports sur les données d’une application
+
+Le paquet Python et le ZIP embarquent `bpm.reports`. Les trois modèles lisent les données réelles fournies par le développeur ou par CSV. Les montants sont agrégés en décimal dans une même devise. Les commandes se comptent à raison d’une ligne par commande. Les effectifs correspondent à la dernière observation de chaque salarié à la clôture. La génération conserve les résultats, l’auteur, la période et l’heure dans la base de l’application. Une réexécution avec la même clé et un contenu différent signale un conflit. Le test de concurrence a produit un seul instantané pour deux générations simultanées. Le CSV relu après réouverture de la base a conservé l’avoir, la moyenne et le libellé de région. Le navigateur a aussi téléchargé le rapport mensuel du simulateur.
+
+## Veille — collecter des sources configurées
+
+Le collecteur installé `python -m bpm.watch` lit des flux RSS et Atom, des API JSON et des pages HTML par HTTP. Un exploitant déclare les sources et programme les passages. Le stockage par application conserve les articles, les versions des pages, la dernière collecte réussie et les alertes de franchissement de seuil. Un flux invalide ou en panne conserve ses résultats précédents. Deux collectes simultanées de la même version ne doublent ni les articles ni les alertes. La recette a interrogé un serveur HTTP isolé, relu la base après réouverture et vérifié une réponse 304, une panne 503, un flux invalide, la reprise et deux franchissements distincts.
+
+## Référentiels et journal d’audit
+
+Les applications peuvent créer, relire, modifier, désactiver et supprimer leurs propres devises, pays, taux de TVA et unités dans une base dédiée. Chaque modification des référentiels et son événement d’audit sont dans la même transaction. Les usages sont enregistrés par identifiant métier. Une référence utilisée ne peut pas être supprimée. Les révisions restent croissantes après suppression et recréation du même code. Les tests ont rejoué deux retraits simultanés, rouvert la base et vérifié que la désactivation masquait le choix tout en préservant la lecture de la commande existante.
+
+Le journal permet également à une application d’inscrire ses propres événements, de filtrer par acteur/action/entité, de paginer et d’exporter en CSV. Une clé d’événement stable rend la réémission idempotente. La recette contrôle un rollback métier, un conflit de clé, le rejet des modifications et suppressions ordinaires, et la lecture d’un export. La protection de l’historique contre un administrateur disposant du fichier repose sur les mesures de sauvegarde et d’exploitation du déploiement.
 
 ## Point de départ
 
