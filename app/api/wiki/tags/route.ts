@@ -1,3 +1,4 @@
+import { visibleWikiArticles } from "@/lib/wiki/visibility";
 import { NextResponse } from "next/server";
 import { getSessionOrTestUser } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
@@ -7,9 +8,7 @@ export async function GET() {
   const user = result?.user ?? null;
 
   const articles = await prisma.wikiArticle.findMany({
-    where: user
-      ? { OR: [{ isPublished: true }, { authorId: user.id }] }
-      : { isPublished: true },
+    where: visibleWikiArticles(user?.id),
     select: { tags: true },
   });
 

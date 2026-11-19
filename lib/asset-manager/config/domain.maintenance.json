@@ -83,5 +83,12 @@
     { "id": "maintenance", "label": "Maintenance" },
     { "id": "renouvellement", "label": "Renouvellement" },
     { "id": "reforme", "label": "Réforme", "terminal": true }
+  ],
+  "ci_relation_types": [
+    { "id": "fed_by", "label": "Alimenté par" },
+    { "id": "controls", "label": "Contrôle" },
+    { "id": "upstream_of", "label": "En amont de" },
+    { "id": "backed_up_by", "label": "Secouru par" },
+    { "id": "shares_utility", "label": "Utilité commune" }
   ]
 }

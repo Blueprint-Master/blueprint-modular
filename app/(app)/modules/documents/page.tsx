@@ -1,5 +1,7 @@
 "use client";
 
+import { documentAccept, documentMime } from "@/lib/documents/formats";
+
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import { Table, Message, Spinner } from "@/components/bpm";
@@ -65,14 +67,13 @@ export default function DocumentsPage() {
   }, [documents]);
 
   const handleAnalyze = async (files: File[]) => {
-    const pdfs = files.filter((f) => f.type === "application/pdf");
-    if (pdfs.length === 0) {
-      alert(t.onlyPdf);
+    if (!files.length || files.some(file => !documentMime(file))) {
+      alert(t.unsupportedFormat);
       return;
     }
     setUploading(true);
     try {
-      for (const file of pdfs) {
+      for (const file of files) {
         const formData = new FormData();
         formData.append("file", file);
         const res = await fetch("/api/documents", { method: "POST", body: formData, credentials: "include" });
@@ -144,7 +145,7 @@ export default function DocumentsPage() {
       <DocumentAnalysisImport
         title={t.importTitle}
         description={t.importDescription}
-        accept=".pdf"
+        accept={documentAccept}
         maxFiles={10}
         dropLabel={t.dropLabel}
         buttonLabel={t.analyzeButton}

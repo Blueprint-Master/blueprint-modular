@@ -45,6 +45,23 @@ export default function AuditLogDocumentationPage() {
         <p className="doc-description">{s.docPage.description}</p>
       </div>
 
+      <h2 className="text-lg font-semibold mt-6 mb-2">
+        {locale === "fr" ? "Journaliser les opérations de votre application" : "Record operations in your application"}
+      </h2>
+      <p className="mb-4 text-sm">
+        {locale === "fr"
+          ? "Le paquet Python blueprint-modular fournit un journal SQLite. Utilisez l’identité validée par votre application. Sur la même connexion, l’événement peut être inscrit dans la transaction métier et disparaît si celle-ci échoue. La lecture accepte des filtres acteur, action et entité, et un curseur de pagination."
+          : "The blueprint-modular Python package provides a SQLite journal. Supply the identity verified by your application. On the same connection, the event can participate in the business transaction and is rolled back if it fails. Filter by actor, action and entity, and paginate by cursor."}
+      </p>
+      <CodeBlock language="python" code={`from contextlib import closing
+from bpm import audit
+
+with closing(audit.open_store("application.sqlite")) as db:
+    audit.record(db, "import-svc", "creation", "order/42",
+                 {"currency": "EUR"}, source="import", event_id="order-42-created")
+    history = audit.events(db, entity="order/42")
+    csv_text = audit.export_csv(db, action="creation")`} />
+
       <h2 className="text-lg font-semibold mt-6 mb-2" style={{ color: "var(--bpm-text-primary)" }}>
         {s.docPage.eventModelTitle}
       </h2>

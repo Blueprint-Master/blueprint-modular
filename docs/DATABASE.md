@@ -86,6 +86,9 @@ Variables optionnelles selon les modules : clés API (IA, etc.), stockage fichie
 | Wiki | WikiArticle, WikiRevision, WikiComment, WikiBacklink | — |
 | Documents | Document | — |
 | Base contractuelle | Contract | — |
+| Workflow personnel | WorkflowTransition | Session utilisateur, API `/api/workflow/entity/{id}` |
+| Calendrier | CalendarEvent | Session utilisateur, API `/api/calendar` |
+| Notifications | Notification | Session utilisateur, API `/api/notifications` |
 | Newsletter | NewsletterSettings, NewsletterArticle | — |
 | IA | AiConversation, AiMessage | — |
 | Gestion de parc | Asset, AssetAttribute, AssetMovement, Ticket, Assignment, AssetContract, KnowledgeArticle, ChangeRequest, CIRelation, AuditLog, Permission | `lib/asset-manager/config/domain.*.json` |
@@ -169,3 +172,19 @@ npx tsx prisma/seed-organizations.ts
 ```
 
 Sur le **VPS**, après un déploiement réussi (`.\scripts\deploy-vps-remote.ps1`), le fichier `prisma/seed-organizations.ts` est présent ; on peut lancer le seed depuis le serveur si la migration n’a pas encore été faite (en général `deploy-from-git.sh` exécute `prisma migrate deploy`).
+
+## Sauvegarder la base et restaurer une copie
+
+Installer les clients PostgreSQL de la version majeure du serveur. Depuis le répertoire de l’application, planifier une exécution quotidienne de la commande de sauvegarde. Configurer `PGHOST`, `PGPORT`, `PGUSER` et le fichier privé `.pgpass` pour le compte de sauvegarde. `PGDATABASE` contient le nom de la base. Le répertoire de destination doit être privé, sur stockage persistant indépendant du serveur de l’application.
+
+```bash
+PGDATABASE=modular bash deploy/backup-postgres.sh backup /sauvegardes
+```
+
+Le chemin affiché désigne l’archive complète et décodée. Les sauvegardes terminées du même répertoire de base sont conservées trente jours. Les fichiers téléversés, le routage local, les secrets d’instance et les rôles du serveur PostgreSQL ont leur propre sauvegarde. Prévoir une copie cohérente du volume des fichiers et les rôles nécessaires avant une remise en service.
+
+Pour une répétition de restauration, provisionner une base vide distincte, puis utiliser ses paramètres de connexion. La restauration s’effectue en une transaction. Démarrer ensuite une instance de recette en la pointant sur cette base, avec les intégrations externes désactivées et les volumes de fichiers de recette. Relire un actif, ses attributs et son journal.
+
+```bash
+PGDATABASE=modular_recette bash deploy/backup-postgres.sh restore /sauvegardes/modular/ARCHIVE.dump
+```

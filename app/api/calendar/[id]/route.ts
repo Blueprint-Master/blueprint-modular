@@ -1,137 +1,60 @@
 import { NextResponse } from "next/server";
-import { getSessionOrTestUser } from "@/lib/auth";
+import { Prisma } from "@prisma/client";
+import { getPersonalModuleSession } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
+import { calendarEventPatch, eventFields } from "@/lib/calendar/event-input";
 
 export const dynamic = "force-dynamic";
+type Context = { params: Promise<{ id: string }> };
+const missing = () => NextResponse.json({ error: "Not found" }, { status: 404 });
+const unauthorized = () => NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
-type Params = Promise<{ id: string }> | { id: string };
-
-async function resolveParams(params: Params): Promise<{ id: string }> {
-  return typeof (params as Promise<{ id: string }>)?.then === "function"
-    ? await (params as Promise<{ id: string }>)
-    : (params as { id: string });
-}
-
-/**
- * GET /api/calendar/[id]
- * Détail d'un événement.
- */
-export async function GET(_request: Request, context: { params: Params }) {
-  const result = await getSessionOrTestUser();
-  if (!result) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-  const { user } = result;
-  const { id } = await resolveParams(context.params);
-  if (!id) return NextResponse.json({ error: "Missing id" }, { status: 400 });
-
+export async function GET(_request: Request, { params }: Context) {
+  const session = await getPersonalModuleSession();
+  if (!session) return unauthorized();
+  const { id } = await params;
   const event = await prisma.calendarEvent.findFirst({
-    where: { id, userId: user.id },
-    select: {
-      id: true,
-      title: true,
-      startAt: true,
-      endAt: true,
-      allDay: true,
-      description: true,
-      color: true,
-      createdAt: true,
-      updatedAt: true,
-    },
+    where: { id, userId: session.user.id },
+    select: { ...eventFields, createdAt: true, updatedAt: true },
   });
-  if (!event) return NextResponse.json({ error: "Not found" }, { status: 404 });
-
-  return NextResponse.json({
-    id: event.id,
-    title: event.title,
-    startAt: event.startAt.toISOString(),
-    endAt: event.endAt.toISOString(),
-    allDay: event.allDay,
-    description: event.description ?? null,
-    color: event.color ?? null,
-    createdAt: event.createdAt.toISOString(),
-    updatedAt: event.updatedAt.toISOString(),
-  });
+  return event ? NextResponse.json(event) : missing();
 }
 
-/**
- * PUT /api/calendar/[id]
- * Met à jour un événement. Body: title?, startAt?, endAt?, allDay?, description?, color?
- */
-export async function PUT(request: Request, context: { params: Params }) {
-  const result = await getSessionOrTestUser();
-  if (!result) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-  const { user } = result;
-  const { id } = await resolveParams(context.params);
-  if (!id) return NextResponse.json({ error: "Missing id" }, { status: 400 });
+/** Partial edits preserve all omitted fields, including dates changed by another request. */
+export async function PUT(request: Request, { params }: Context) {
+  const session = await getPersonalModuleSession();
+  if (!session) return unauthorized();
+  const { id } = await params;
+  const owner = { id, userId: session.user.id };
+  const patch = calendarEventPatch.safeParse(await request.json().catch(() => null));
+  if (!patch.success) return NextResponse.json({ error: "Invalid calendar event" }, { status: 400 });
+  const { startAt, endAt } = patch.data;
+  const invalidRange = () => NextResponse.json({ error: "endAt must be >= startAt" }, { status: 400 });
+  if (startAt && endAt && endAt < startAt) return invalidRange();
 
-  const existing = await prisma.calendarEvent.findFirst({
-    where: { id, userId: user.id },
-  });
-  if (!existing) return NextResponse.json({ error: "Not found" }, { status: 404 });
-
-  let body: { title?: string; startAt?: string; endAt?: string; allDay?: boolean; description?: string | null; color?: string | null };
   try {
-    body = await request.json();
-  } catch {
-    return NextResponse.json({ error: "Invalid JSON" }, { status: 400 });
+    const event = await prisma.calendarEvent.update({
+      // A one-sided edit must be valid against the OTHER endpoint at write time.
+      where: {
+        ...owner,
+        ...(startAt && !endAt && { endAt: { gte: startAt } }),
+        ...(endAt && !startAt && { startAt: { lte: endAt } }),
+      },
+      data: patch.data,
+      select: { ...eventFields, updatedAt: true },
+    });
+    return NextResponse.json(event);
+  } catch (error) {
+    if (!(error instanceof Prisma.PrismaClientKnownRequestError) || error.code !== "P2025") throw error;
+    const exists = await prisma.calendarEvent.findFirst({ where: owner, select: { id: true } });
+    return exists ? invalidRange() : missing();
   }
-
-  const startAt = body.startAt != null ? new Date(body.startAt) : existing.startAt;
-  const endAt = body.endAt != null ? new Date(body.endAt) : existing.endAt;
-  if (Number.isNaN(startAt.getTime()) || Number.isNaN(endAt.getTime())) {
-    return NextResponse.json({ error: "Invalid startAt or endAt" }, { status: 400 });
-  }
-  if (endAt < startAt) {
-    return NextResponse.json({ error: "endAt must be >= startAt" }, { status: 400 });
-  }
-
-  const event = await prisma.calendarEvent.update({
-    where: { id },
-    data: {
-      ...(body.title !== undefined && { title: body.title.trim() }),
-      startAt,
-      endAt,
-      ...(body.allDay !== undefined && { allDay: body.allDay }),
-      ...(body.description !== undefined && { description: body.description?.trim() || null }),
-      ...(body.color !== undefined && { color: body.color?.trim() || null }),
-    },
-    select: {
-      id: true,
-      title: true,
-      startAt: true,
-      endAt: true,
-      allDay: true,
-      description: true,
-      color: true,
-      updatedAt: true,
-    },
-  });
-
-  return NextResponse.json({
-    id: event.id,
-    title: event.title,
-    startAt: event.startAt.toISOString(),
-    endAt: event.endAt.toISOString(),
-    allDay: event.allDay,
-    description: event.description ?? null,
-    color: event.color ?? null,
-    updatedAt: event.updatedAt.toISOString(),
-  });
 }
 
-/**
- * DELETE /api/calendar/[id]
- */
-export async function DELETE(_request: Request, context: { params: Params }) {
-  const result = await getSessionOrTestUser();
-  if (!result) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-  const { user } = result;
-  const { id } = await resolveParams(context.params);
-  if (!id) return NextResponse.json({ error: "Missing id" }, { status: 400 });
-
-  const deleted = await prisma.calendarEvent.deleteMany({
-    where: { id, userId: user.id },
-  });
-  if (deleted.count === 0) return NextResponse.json({ error: "Not found" }, { status: 404 });
-
-  return new NextResponse(null, { status: 204 });
+export async function DELETE(_request: Request, { params }: Context) {
+  const session = await getPersonalModuleSession();
+  if (!session) return unauthorized();
+  const { id } = await params;
+  const deleted = await prisma.calendarEvent.deleteMany({ where: { id, userId: session.user.id } });
+  return deleted.count ? new NextResponse(null, { status: 204 }) : missing();
 }

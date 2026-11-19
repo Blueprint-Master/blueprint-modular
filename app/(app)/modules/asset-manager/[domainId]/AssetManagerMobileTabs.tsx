@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { useAuditAccess } from "../lib/useAuditAccess";
 import { usePathname } from "next/navigation";
 import { useI18n } from "@/lib/i18n/LocaleProvider";
 import { STR } from "../strings";
@@ -31,6 +32,7 @@ function getSectionFromPath(pathname: string): string {
 export function AssetManagerMobileTabs({ domainId }: { domainId: string }) {
   const pathname = usePathname();
   const { locale } = useI18n();
+  const canViewAudit = useAuditAccess();
   const t = STR[locale].nav;
   const current = getSectionFromPath(pathname ?? "");
   const basePath = `/modules/asset-manager/${domainId}`;
@@ -45,7 +47,7 @@ export function AssetManagerMobileTabs({ domainId }: { domainId: string }) {
         className="bpm-tabs-header flex items-stretch gap-0 overflow-x-auto overflow-y-hidden border-b"
         style={{ borderColor: "var(--bpm-border)" }}
       >
-        {ITEMS.map((item) => {
+        {ITEMS.filter(item => item.key !== "audit" || canViewAudit).map((item) => {
           const href = item.path ? `${basePath}${item.path}` : basePath;
           const isActive = current === item.key;
           return (

@@ -1,6 +1,7 @@
 "use client";
 
-import { useState, useEffect, useCallback } from "react";
+import { readHistory } from "../../lib/read-response";
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import { useParams, useRouter } from "next/navigation";
 import { Download, UserCheck, ChevronDown, ChevronUp } from "lucide-react";
@@ -38,25 +39,17 @@ export default function AssetManagerAssignmentsPage() {
   const [filterStatus, setFilterStatus] = useState("");
   const [filtersOpen, setFiltersOpen] = useState(false);
 
-  const fetchAssignments = useCallback(() => {
-    if (!domainId) return;
-    fetch(`/api/asset-manager/assignments?domainId=${encodeURIComponent(domainId)}`, { credentials: "include" })
-      .then((r) => (r.ok ? r.json() : []))
-      .then((data) => {
-        setAssignments(Array.isArray(data) ? data : []);
-        setLoading(false);
-      })
-      .catch(() => setLoading(false));
-  }, [domainId]);
-
+  const [error, setError] = useState("");
   useEffect(() => {
-    if (!domainId) {
-      setLoading(false);
-      return;
-    }
-    setLoading(true);
-    fetchAssignments();
-  }, [domainId, fetchAssignments]);
+    if (!domainId) return;
+    const controller = new AbortController();
+    const signal = controller.signal;
+    setLoading(true); setError("");
+    readHistory<Assignment>(`/api/asset-manager/assignments?domainId=${encodeURIComponent(domainId)}`, signal).then(setAssignments)
+      .catch(err => { if (!signal.aborted) setError(err.message); })
+      .finally(() => { if (!signal.aborted) setLoading(false); });
+    return () => controller.abort();
+  }, [domainId]);
 
   const filtered = assignments.filter((a) => !filterStatus || a.status === filterStatus);
 
@@ -198,7 +191,7 @@ export default function AssetManagerAssignmentsPage() {
         </div>
       </div>
 
-      {loading ? (
+      {error ? <p role="alert">{error}</p> : loading ? (
         <div className="flex justify-center py-12">
           <Spinner size="medium" />
         </div>

@@ -138,15 +138,16 @@ const fr = {
   docConnWorkflowBody:
     "— un commentaire de type « blocage » peut conditionner une transition d’état (ex. blocage levé → passage à « En revue »)",
   docIntegHeading: "Intégration côté app",
-  docIntegBody: (
-    "La page du module est /modules/commentaires. Pour alimenter et enregistrer les commentaires, " +
-    "exposez par exemple GET /api/comments?entityId=...&entityType=... et POST /api/comments. La " +
-    "session utilisateur (NextAuth) fournit l’auteur du commentaire. Aucune variable " +
-    "d’environnement spécifique n’est requise."
-  ),
-  docExampleLabel: "Exemple — afficher et ajouter un commentaire :",
-  docExampleCode:
-    'bpm.title("Commentaires")\n# Conteneur épuré (sans bpm.panel) : fil + zone "Nouveau commentaire" (textarea + Envoyer)\n# GET /api/comments?entityId=... & POST /api/comments',
+  docIntegBody: "Ouvrez un article du Wiki pour commenter. Son fil hérite de sa visibilité. Un auteur peut modifier, résoudre, rouvrir ou supprimer ses contributions. Une suppression conserve les réponses. L’API accepte une clé de requête pour les créations et exige la révision lue pour les modifications.",
+  docExampleLabel: "Ajouter une annotation depuis une application connectée",
+  docExampleCode: `const url = "/api/wiki/" + encodeURIComponent(slug) + "/comments";
+const response = await fetch(url, {
+  method: "POST",
+  headers: { "Content-Type": "application/json" },
+  body: JSON.stringify({ content: message, kind: "annotation", requestId }),
+});
+if (!response.ok) throw new Error(String(response.status));
+const comment = await response.json();`,
   docSimHeading: "Simulateur",
   docSimBody: (
     "Le simulateur propose un fil long (20+ commentaires) avec types variés (commentaire, annotation, " +
@@ -277,14 +278,16 @@ const en: Strings = {
   docConnWorkflowBody:
     "— a comment of type “blocker” can gate a state transition (e.g. blocker cleared → move to “In review”)",
   docIntegHeading: "App-side integration",
-  docIntegBody: (
-    "The module page is /modules/commentaires. To feed and store comments, expose for example " +
-    "GET /api/comments?entityId=...&entityType=... and POST /api/comments. The user session " +
-    "(NextAuth) provides the comment author. No specific environment variable is required."
-  ),
-  docExampleLabel: "Example — show and add a comment:",
-  docExampleCode:
-    'bpm.title("Comments")\n# Clean container (no bpm.panel): thread + "New comment" area (textarea + Send)\n# GET /api/comments?entityId=... & POST /api/comments',
+  docIntegBody: "Open a Wiki article to comment. The thread inherits the visibility of its article. Authors can edit, resolve, reopen or delete their contributions. Replies survive deletion. The API accepts a request ID on creation and requires the current revision for updates.",
+  docExampleLabel: "Add an annotation from a signed-in application",
+  docExampleCode: `const url = "/api/wiki/" + encodeURIComponent(slug) + "/comments";
+const response = await fetch(url, {
+  method: "POST",
+  headers: { "Content-Type": "application/json" },
+  body: JSON.stringify({ content: message, kind: "annotation", requestId }),
+});
+if (!response.ok) throw new Error(String(response.status));
+const comment = await response.json();`,
   docSimHeading: "Simulator",
   docSimBody: (
     "The simulator provides a long thread (20+ comments) with varied types (comment, annotation, " +

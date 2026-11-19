@@ -1,0 +1,53 @@
+name: Install the 32 modules from their release archive
+on:
+  workflow_call:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  install:
+    runs-on: ubuntu-24.04
+    services:
+      postgres:
+        image: postgres:16
+        env:
+          POSTGRES_USER: modular
+          POSTGRES_PASSWORD: fixture
+          POSTGRES_DB: modules_test
+        ports:
+          - 5432/tcp
+        options: --health-cmd pg_isready --health-interval 5s --health-timeout 5s --health-retries 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Package and extract outside the repository
+        run: |
+          npm run build:modules-bundle -- --output "$RUNNER_TEMP/release"
+          unzip -q "$RUNNER_TEMP/release/blueprint-modules-latest.zip" -d "$RUNNER_TEMP/install"
+      - name: Install, migrate and exercise the extracted application
+        env:
+          DATABASE_URL: postgresql://modular:fixture@127.0.0.1:${{ job.services.postgres.ports[5432] }}/modules_test
+          MODULAR_QA_EMAIL: release@example.test
+          MODULAR_QA_PASSWORD: isolated-install-fixture
+          NEXT_TELEMETRY_DISABLED: '1'
+        run: |
+          cd "$RUNNER_TEMP/install/application"
+          npm ci --no-audit --no-fund
+          npm ci --prefix packages/core --no-audit --no-fund
+          npm run build --prefix packages/core
+          npm run build:standalone
+          npx --no-install prisma migrate deploy
+          node "$GITHUB_WORKSPACE/scripts/seed-module-install-fixture.cjs" "$PWD"
+          python3 -m venv "$RUNNER_TEMP/module-browser"
+          "$RUNNER_TEMP/module-browser/bin/pip" install playwright==1.56.0
+          export MODULAR_TEST_CHROMIUM="$(command -v google-chrome)"
+          "$RUNNER_TEMP/module-browser/bin/python" "$GITHUB_WORKSPACE/scripts/verify-modules-install.py" "$PWD"
+      - uses: actions/upload-artifact@v4
+        with:
+          name: blueprint-modules-${{ github.sha }}
+          path: ${{ runner.temp }}/release/blueprint-modules-v*.zip
+          if-no-files-found: error

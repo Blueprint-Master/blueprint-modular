@@ -56,6 +56,7 @@ type LoginPageProps = {
   logoSrc?: string | null;
   callbackUrl?: string | null;
   showEmailOption?: boolean;
+  googleEnabled?: boolean;
   /** Si false, affiche le formulaire en carte centrée (modèle historique) au lieu du layout split. */
   useSplitLayout?: boolean;
 };
@@ -77,6 +78,7 @@ export function LoginPage({
   logoSrc = null,
   callbackUrl = null,
   showEmailOption = true,
+  googleEnabled = true,
   useSplitLayout = false,
 }: LoginPageProps) {
   const { locale } = useI18n();
@@ -91,10 +93,7 @@ export function LoginPage({
 
   const handleGoogleLogin = () => {
     setError(null);
-    const url = callbackUrl
-      ? `/api/auth/signin/google?callbackUrl=${encodeURIComponent(callbackUrl)}`
-      : "/api/auth/signin/google";
-    window.location.href = url;
+    void signIn("google", { callbackUrl: callbackUrl ?? "/dashboard" });
   };
 
   const handleEmailSubmit = async (e: React.FormEvent) => {
@@ -143,19 +142,18 @@ export function LoginPage({
 
         {!loginMethod && (
           <div className={styles.methods}>
-            <button
+            {googleEnabled && <button
               type="button"
               className={`${styles.methodButton} ${styles.methodButtonGoogle}`}
               onClick={handleGoogleLogin}
             >
               <GoogleIcon />
               Google
-            </button>
+            </button>}
+            {!googleEnabled && !showEmailOption && <p>{locale === "fr" ? "Google n’est pas configuré sur cette instance." : "Google is not configured on this instance."}</p>}
             {showEmailOption && (
               <>
-                <div className={styles.divider}>
-                  <span>{S.or}</span>
-                </div>
+                {googleEnabled && <div className={styles.divider}><span>{S.or}</span></div>}
                 <button
                   type="button"
                   className={styles.methodButton}
@@ -222,7 +220,10 @@ export function LoginPage({
 
         <footer className={styles.footer}>
           <div className={styles.footerLinks}>
-            <Link href="/register" className={styles.footerLink}>
+            <Link className={styles.footerLink} href={"/register?mode=recover" + (callbackUrl ? "&callbackUrl=" + encodeURIComponent(callbackUrl) : "")}>
+              {locale === "fr" ? "Mot de passe oublié ?" : "Forgot password?"}
+            </Link>
+            <Link href={callbackUrl ? "/register?callbackUrl=" + encodeURIComponent(callbackUrl) : "/register"} className={styles.footerLink}>
               {S.createAccount}
             </Link>
             <span className={styles.footerSep}>·</span>

@@ -1,14 +1,20 @@
+import { z } from "zod";
+import { getDomainConfig } from "@/lib/asset-manager/get-domain-config";
+import { relationTypes, symmetricRelation } from "@/lib/asset-manager/relation-types";
 import { NextResponse } from "next/server";
-import { getSessionOrTestUser } from "@/lib/auth";
+import { getPersonalModuleSession, hasWriteRole } from "@/lib/auth";
 import { requireWriteRole } from "@/lib/asset-manager/authz";
 import { prisma } from "@/lib/prisma";
 
 export const dynamic = "force-dynamic";
 
-const RELATION_TYPES = ["depends_on", "connected_to", "hosted_on", "fed_by", "controls"] as const;
+const id = z.string().trim().min(1);
+const relationInput = z.object({ domainId: id, sourceAssetId: id, targetAssetId: id, relationType: id, description: z.string().trim().nullish() });
+const assetSummary = { select: { id: true, reference: true, label: true } };
+const include = { sourceAsset: assetSummary, targetAsset: assetSummary };
 
 export async function GET(request: Request) {
-  const result = await getSessionOrTestUser();
+  const result = await getPersonalModuleSession();
   if (!result) return NextResponse.json({ error: "Non autorisé" }, { status: 401 });
 
   const { searchParams } = new URL(request.url);
@@ -19,74 +25,51 @@ export async function GET(request: Request) {
 
   if (!domainId) return NextResponse.json({ error: "domainId requis" }, { status: 400 });
 
-  type WhereInput = { domainId: string; sourceAssetId?: string; targetAssetId?: string; OR?: Array<{ sourceAssetId: string } | { targetAssetId: string }> };
-  let where: WhereInput = { domainId };
-  if (assetId) {
-    where = { domainId, OR: [{ sourceAssetId: assetId }, { targetAssetId: assetId }] };
-  } else if (sourceAssetId) {
-    where.sourceAssetId = sourceAssetId;
-  } else if (targetAssetId) {
-    where.targetAssetId = targetAssetId;
-  }
+  const where = {
+    domainId,
+    sourceAssetId: sourceAssetId || undefined,
+    targetAssetId: targetAssetId || undefined,
+    OR: assetId ? [{ sourceAssetId: assetId }, { targetAssetId: assetId }] : undefined,
+  };
 
   const relations = await prisma.cIRelation.findMany({
     where,
     orderBy: { createdAt: "desc" },
-    include: {
-      sourceAsset: { select: { id: true, reference: true, label: true } },
-      targetAsset: { select: { id: true, reference: true, label: true } },
-    },
+    include,
   });
-  return NextResponse.json(relations);
+  return NextResponse.json(relations, { headers: { "X-Can-Edit": String(hasWriteRole(result.user)) } });
 }
 
 export async function POST(request: Request) {
-  const result = await getSessionOrTestUser();
+  const result = await getPersonalModuleSession();
   if (!result) return NextResponse.json({ error: "Non autorisé" }, { status: 401 });
   const forbidden = requireWriteRole(result.user);
   if (forbidden) return forbidden;
 
-  const body = (await request.json()) as {
-    domainId: string;
-    sourceAssetId: string;
-    targetAssetId: string;
-    relationType: string;
-    description?: string | null;
-  };
+  const parsed = relationInput.safeParse(await request.json().catch(() => null));
+  if (!parsed.success) return NextResponse.json({ error: "Relation invalide." }, { status: 400 });
+  const { domainId, sourceAssetId, targetAssetId, relationType, description } = parsed.data;
+  const config = getDomainConfig(domainId);
+  if (!config || !relationTypes(config).includes(relationType)) return NextResponse.json({ error: "Type de relation inconnu dans ce domaine." }, { status: 400 });
+  if (sourceAssetId === targetAssetId) return NextResponse.json({ error: "Source et cible doivent être différentes." }, { status: 400 });
 
-  if (!body.domainId?.trim()) return NextResponse.json({ error: "domainId requis" }, { status: 400 });
-  if (!body.sourceAssetId?.trim()) return NextResponse.json({ error: "sourceAssetId requis" }, { status: 400 });
-  if (!body.targetAssetId?.trim()) return NextResponse.json({ error: "targetAssetId requis" }, { status: 400 });
-  if (!RELATION_TYPES.includes(body.relationType as (typeof RELATION_TYPES)[number])) {
-    return NextResponse.json({ error: "relationType invalide" }, { status: 400 });
-  }
-  if (body.sourceAssetId === body.targetAssetId) {
-    return NextResponse.json({ error: "Source et cible doivent être différents" }, { status: 400 });
-  }
-
-  const [source, target] = await Promise.all([
-    prisma.asset.findUnique({ where: { id: body.sourceAssetId }, select: { id: true, domainId: true } }),
-    prisma.asset.findUnique({ where: { id: body.targetAssetId }, select: { id: true, domainId: true } }),
-  ]);
-  if (!source || !target) return NextResponse.json({ error: "Actif source ou cible introuvable" }, { status: 404 });
-  if (source.domainId !== body.domainId || target.domainId !== body.domainId) {
-    return NextResponse.json({ error: "Les deux actifs doivent appartenir au même domaine" }, { status: 400 });
-  }
-
-  const userId = result.user.id;
-  const relation = await prisma.cIRelation.create({
-    data: {
-      domainId: body.domainId,
-      sourceAssetId: body.sourceAssetId,
-      targetAssetId: body.targetAssetId,
-      relationType: body.relationType,
-      description: body.description?.trim() || null,
-      createdById: userId,
-    },
-    include: {
-      sourceAsset: { select: { id: true, reference: true, label: true } },
-      targetAsset: { select: { id: true, reference: true, label: true } },
-    },
+  return prisma.$transaction(async tx => {
+    const assets = await tx.$queryRaw<{ domain_id: string }[]>`
+      SELECT domain_id FROM "Asset" WHERE id IN (${sourceAssetId}, ${targetAssetId}) ORDER BY id FOR UPDATE
+    `;
+    if (assets.length !== 2) return NextResponse.json({ error: "Actif source ou cible introuvable." }, { status: 404 });
+    if (assets.some(asset => asset.domain_id !== domainId)) return NextResponse.json({ error: "Les actifs doivent appartenir au même domaine." }, { status: 400 });
+    const directions = [{ sourceAssetId, targetAssetId }];
+    if (symmetricRelation(relationType)) directions.push({ sourceAssetId: targetAssetId, targetAssetId: sourceAssetId });
+    const existing = await tx.cIRelation.findFirst({ where: { domainId, relationType, OR: directions } });
+    if (existing) return NextResponse.json({ error: "Cette relation existe déjà.", id: existing.id }, { status: 409 });
+    const relation = await tx.cIRelation.create({ data: {
+      domainId, sourceAssetId, targetAssetId, relationType, description: description || null, createdById: result.user.id,
+    }, include });
+    await tx.auditLog.create({ data: {
+      domainId, resourceType: "relation", resourceId: relation.id, userId: result.user.id, action: "create",
+      afterState: JSON.stringify({ sourceAssetId, targetAssetId, relationType }),
+    } });
+    return NextResponse.json(relation);
   });
-  return NextResponse.json(relation);
 }

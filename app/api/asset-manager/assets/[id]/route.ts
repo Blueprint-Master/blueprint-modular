@@ -1,7 +1,9 @@
 import { NextResponse } from "next/server";
-import { getSessionOrTestUser } from "@/lib/auth";
+import { getPersonalModuleSession, hasWriteRole } from "@/lib/auth";
 import { requireWriteRole } from "@/lib/asset-manager/authz";
 import { prisma } from "@/lib/prisma";
+import { inventoryEdit, inventoryDetails } from "@/lib/asset-manager/inventory-input";
+import { getDomainConfig } from "@/lib/asset-manager/get-domain-config";
 import { writeAuditLog, getClientIpAndAgent } from "@/lib/asset-manager/audit";
 
 export const dynamic = "force-dynamic";
@@ -14,8 +16,8 @@ async function resolveParams(params: Params): Promise<{ id: string }> {
     : (params as { id: string });
 }
 
-export async function GET(_request: Request, context: { params: Params }) {
-  const result = await getSessionOrTestUser();
+export async function GET(_request: Request, context: { params: Promise<Awaited<Params>> }) {
+  const result = await getPersonalModuleSession();
   if (!result) return NextResponse.json({ error: "Non autorisé" }, { status: 401 });
 
   const { id } = await resolveParams(context.params);
@@ -29,109 +31,67 @@ export async function GET(_request: Request, context: { params: Params }) {
     },
   });
   if (!asset) return NextResponse.json({ error: "Actif introuvable" }, { status: 404 });
-  return NextResponse.json(asset);
+  return NextResponse.json({ ...asset, canEdit: hasWriteRole(result.user) });
 }
 
-export async function PUT(request: Request, context: { params: Params }) {
-  const result = await getSessionOrTestUser();
+export async function PUT(request: Request, context: { params: Promise<Awaited<Params>> }) {
+  const result = await getPersonalModuleSession();
   if (!result) return NextResponse.json({ error: "Non autorisé" }, { status: 401 });
   const forbidden = requireWriteRole(result.user);
   if (forbidden) return forbidden;
 
   const { id } = await resolveParams(context.params);
-  const asset = await prisma.asset.findUnique({ where: { id } });
-  if (!asset) return NextResponse.json({ error: "Actif introuvable" }, { status: 404 });
-
-  const body = (await request.json()) as {
-    label?: string;
-    brand?: string;
-    model?: string;
-    serialNumber?: string;
-    statusId?: string;
-    lifecycleStage?: string | null;
-    locationId?: string;
-    ownerUserId?: string;
-    purchaseDate?: string | null;
-    warrantyEndDate?: string | null;
-    supplierId?: string | null;
-    purchasePrice?: number | null;
-    notes?: string | null;
-    attributes?: { key: string; valueText?: string; valueNumber?: number; valueDate?: string; valueBool?: boolean }[];
-  };
-
-  const data: Record<string, unknown> = {};
-  if (typeof body.label === "string") data.label = body.label.trim();
-  if (typeof body.brand === "string") data.brand = body.brand.trim() || null;
-  if (typeof body.model === "string") data.model = body.model.trim() || null;
-  if (typeof body.serialNumber === "string") data.serialNumber = body.serialNumber.trim() || null;
-  if (typeof body.statusId === "string") data.statusId = body.statusId;
-  if (body.lifecycleStage !== undefined) data.lifecycleStage = body.lifecycleStage?.trim() || null;
-  if (body.locationId !== undefined) data.locationId = body.locationId || null;
-  if (body.ownerUserId !== undefined) data.ownerUserId = body.ownerUserId || null;
-  if (body.purchaseDate !== undefined) data.purchaseDate = body.purchaseDate ? new Date(body.purchaseDate) : null;
-  if (body.warrantyEndDate !== undefined) data.warrantyEndDate = body.warrantyEndDate ? new Date(body.warrantyEndDate) : null;
-  if (body.supplierId !== undefined) data.supplierId = body.supplierId || null;
-  if (body.purchasePrice !== undefined) data.purchasePrice = body.purchasePrice;
-  if (body.notes !== undefined) data.notes = body.notes?.trim() || null;
-
-  const updated = await prisma.asset.update({ where: { id }, data: data as never });
-  const { ipAddress, userAgent } = getClientIpAndAgent(request);
-  await writeAuditLog({
-    domainId: asset.domainId,
-    userId: result.user.id,
-    action: "update",
-    resourceType: "asset",
-    resourceId: id,
-    beforeState: asset,
-    afterState: updated,
-    changedFields: Object.keys(data) as string[],
-    ipAddress,
-    userAgent,
-  });
-
-  if (Array.isArray(body.attributes)) {
-    await prisma.assetAttribute.deleteMany({ where: { assetId: id } });
-    if (body.attributes.length) {
-      await prisma.assetAttribute.createMany({
-        data: body.attributes.map((a) => ({
-          assetId: id,
-          key: a.key,
-          valueText: a.valueText ?? null,
-          valueNumber: a.valueNumber ?? null,
-          valueDate: a.valueDate ? new Date(a.valueDate) : null,
-          valueBool: a.valueBool ?? null,
-        })),
-      });
+  const parsed = inventoryEdit.safeParse(await request.json().catch(() => null));
+  if (!parsed.success) return NextResponse.json({ error: "Vérifiez les champs de la fiche." }, { status: 400 });
+  const { attributes, expectedUpdatedAt, ...fields } = parsed.data;
+  return prisma.$transaction(async tx => {
+    await tx.$queryRaw`SELECT id FROM "Asset" WHERE id = ${id} FOR UPDATE`;
+    const before = await tx.asset.findUnique({ where: { id }, include: inventoryDetails });
+    if (!before) return NextResponse.json({ error: "Actif introuvable." }, { status: 404 });
+    if (expectedUpdatedAt && expectedUpdatedAt !== before.updatedAt.toISOString())
+      return NextResponse.json({ error: "L’actif a été modifié. Rechargez la fiche avant de confirmer." }, { status: 409 });
+    const config = getDomainConfig(before.domainId);
+    const nextStatus = fields.statusId === undefined ? before.statusId : fields.statusId;
+    if (nextStatus !== before.statusId && !config?.statuses.some(status => status.id === nextStatus))
+      return NextResponse.json({ error: "Statut inconnu dans ce domaine." }, { status: 400 });
+    if (fields.lifecycleStage && fields.lifecycleStage !== before.lifecycleStage && !config?.lifecycle_stages?.some(stage => stage.id === fields.lifecycleStage))
+      return NextResponse.json({ error: "Étape de cycle de vie inconnue." }, { status: 400 });
+    if (nextStatus !== before.statusId && before.domainId === "it" && nextStatus === "in_stock"
+        && await tx.assignment.count({ where: { assetId: id, status: { in: ["active", "overdue"] } } }))
+      return NextResponse.json({ error: "Restituez le prêt avant la remise en stock." }, { status: 409 });
+    if (attributes && new Set(attributes.map(attr => attr.key)).size !== attributes.length)
+      return NextResponse.json({ error: "Un attribut est présent deux fois." }, { status: 400 });
+    if (attributes) {
+      await tx.assetAttribute.deleteMany({ where: { assetId: id } });
+      if (attributes.length) await tx.assetAttribute.createMany({ data: attributes.map(attr => ({ ...attr, key: attr.key, assetId: id })) });
     }
-  }
-
-  const withRelations = await prisma.asset.findUnique({
-    where: { id },
-    include: { attributes: true, createdBy: { select: { id: true, name: true, email: true } } },
+    const updated = await tx.asset.update({ where: { id }, data: {
+      ...fields, updatedAt: new Date(Math.max(Date.now(), before.updatedAt.getTime() + 1)),
+    }, include: inventoryDetails });
+    await writeAuditLog({ domainId: before.domainId, userId: result.user.id, action: "update", resourceType: "asset", resourceId: id,
+      beforeState: before, afterState: updated, changedFields: [...Object.keys(fields), ...(attributes ? ["attributes"] : [])],
+      ...getClientIpAndAgent(request) }, tx);
+    return NextResponse.json({ ...updated, canEdit: true });
   });
-  return NextResponse.json(withRelations);
 }
 
-export async function DELETE(_request: Request, context: { params: Params }) {
-  const result = await getSessionOrTestUser();
-  if (!result) return NextResponse.json({ error: "Non autorisé" }, { status: 401 });
-  const forbidden = requireWriteRole(result.user);
+export async function DELETE(request: Request, { params }: { params: Promise<{ id: string }> }) {
+  const session = await getPersonalModuleSession();
+  if (!session) return NextResponse.json({ error: "Non autorisé" }, { status: 401 });
+  const forbidden = requireWriteRole(session.user);
   if (forbidden) return forbidden;
-
-  const { id } = await resolveParams(context.params);
-  const asset = await prisma.asset.findUnique({ where: { id } });
-  if (!asset) return NextResponse.json({ error: "Actif introuvable" }, { status: 404 });
-  const { ipAddress, userAgent } = getClientIpAndAgent(_request);
-  await writeAuditLog({
-    domainId: asset.domainId,
-    userId: result.user.id,
-    action: "delete",
-    resourceType: "asset",
-    resourceId: id,
-    beforeState: asset,
-    ipAddress,
-    userAgent,
+  const { id } = await params;
+  const version = new URL(request.url).searchParams.get("expectedUpdatedAt");
+  return prisma.$transaction(async tx => {
+    await tx.$queryRaw`SELECT id FROM "Asset" WHERE id = ${id} FOR UPDATE`;
+    const row = await tx.asset.findUnique({ where: { id }, include: inventoryDetails });
+    if (!row) return NextResponse.json({ error: "Actif introuvable." }, { status: 404 });
+    if (version && version !== row.updatedAt.toISOString()) return NextResponse.json({ error: "La fiche a été modifiée." }, { status: 409 });
+    if (await tx.assignment.count({ where: { assetId: id, status: { in: ["active", "overdue"] } } }))
+      return NextResponse.json({ error: "Restituez les prêts ouverts avant la suppression." }, { status: 409 });
+    await tx.asset.delete({ where: { id } });
+    await writeAuditLog({ domainId: row.domainId, userId: session.user.id, action: "delete", resourceType: "asset",
+      resourceId: id, beforeState: row, ...getClientIpAndAgent(request) }, tx);
+    return NextResponse.json({ ok: true });
   });
-  await prisma.asset.delete({ where: { id } });
-  return NextResponse.json({ ok: true });
 }

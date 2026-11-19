@@ -67,7 +67,7 @@ export default function CommentairesModulePage() {
         title={t.title}
         description={t.description}
         category={t.category}
-        links={[{ href: "/modules/commentaires/simulateur", label: t.openSimulator }]}
+        links={[{ href: "/modules/wiki", label: locale === "en" ? "Comment on an article" : "Commenter un article" }, { href: "/modules/commentaires/simulateur", label: t.openSimulator }]}
       />
       <Tabs tabs={[{ label: t.tabDocumentation, content: <DocContent /> }, { label: t.tabSimulator, content: <SimuContent /> }]} defaultTab={0} />
     </div>

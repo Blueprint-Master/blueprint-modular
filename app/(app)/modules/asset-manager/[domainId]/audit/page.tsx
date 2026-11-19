@@ -1,10 +1,11 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
+import { readResponse } from "../../lib/read-response";
 import Link from "next/link";
-import { useParams } from "next/navigation";
+import { useParams, useSearchParams } from "next/navigation";
 import { ClipboardList, ChevronDown, ChevronUp } from "lucide-react";
-import { Panel, Spinner, Chip, Table, EmptyState } from "@/components/bpm";
+import { Input, Button, Panel, Spinner, Chip, Table, EmptyState } from "@/components/bpm";
 import { useI18n } from "@/lib/i18n/LocaleProvider";
 import { STR, dateLocale } from "../../strings";
 
@@ -12,6 +13,7 @@ type AuditEntry = {
   id: string;
   domainId: string | null;
   userId: string;
+  userName?: string;
   action: string;
   resourceType: string;
   resourceId: string | null;
@@ -23,6 +25,7 @@ type AuditEntry = {
 
 export default function AssetManagerAuditPage() {
   const params = useParams();
+  const search = useSearchParams();
   const { locale } = useI18n();
   const t = STR[locale];
   const ta = t.audit;
@@ -31,21 +34,50 @@ export default function AssetManagerAuditPage() {
   const domainId = typeof params?.domainId === "string" ? params.domainId : "";
   const [logs, setLogs] = useState<AuditEntry[]>([]);
   const [loading, setLoading] = useState(true);
-  const [filterType, setFilterType] = useState("");
-  const [filterAction, setFilterAction] = useState("");
+  const [filterType, setFilterType] = useState(search.get("resourceType") ?? "");
+  const [filterAction, setFilterAction] = useState(search.get("action") ?? "");
   const [filtersOpen, setFiltersOpen] = useState(false);
 
+  const [from, setFrom] = useState("");
+  const [to, setTo] = useState("");
+  const [resource, setResource] = useState(search.get("resourceId") ?? "");
   useEffect(() => {
-    if (!domainId) return;
-    setLoading(true);
-    const sp = new URLSearchParams({ domainId, limit: "100" });
-    if (filterType) sp.set("resourceType", filterType);
-    if (filterAction) sp.set("action", filterAction);
-    fetch(`/api/asset-manager/audit-log?${sp}`, { credentials: "include" })
-      .then((r) => (r.ok ? r.json() : []))
-      .then((data) => setLogs(Array.isArray(data) ? data : []))
-      .finally(() => setLoading(false));
-  }, [domainId, filterType, filterAction]);
+    setFilterType(search.get("resourceType") ?? ""); setFilterAction(search.get("action") ?? "");
+    setResource(search.get("resourceId") ?? "");
+  }, [search]);
+  const [error, setError] = useState("");
+  const [next, setNext] = useState("");
+  const [more, setMore] = useState(false);
+  const [selected, setSelected] = useState<AuditEntry | null>(null);
+  const version = useRef(0);
+  const query = new URLSearchParams({ domainId, limit: "100", resourceType: filterType, action: filterAction,
+    resourceId: resource, from, to }).toString();
+  useEffect(() => {
+    const current = ++version.current;
+    setLoading(true); setSelected(null); setError(""); setNext(""); setMore(false);
+    fetch("/api/asset-manager/audit-log?" + query).then(async response => {
+      const rows = await readResponse(response);
+      if (version.current === current) { setLogs(rows); setNext(response.headers.get("X-Next-Cursor") ?? ""); }
+    }).catch(err => { if (version.current === current) setError(err.message); })
+      .finally(() => { if (version.current === current) setLoading(false); });
+    return () => { version.current++; };
+  }, [query]);
+
+  async function loadMore() {
+    if (!next || more) return;
+    const current = version.current;
+    setMore(true); setError("");
+    try {
+      const response = await fetch("/api/asset-manager/audit-log?" + query + "&cursor=" + encodeURIComponent(next));
+      const rows = await readResponse(response);
+      if (version.current === current) { setLogs(previous => [...previous, ...rows]); setNext(response.headers.get("X-Next-Cursor") ?? ""); }
+    } catch (err) { if (version.current === current) setError(err instanceof Error ? err.message : String(err)); }
+    finally { if (version.current === current) setMore(false); }
+  }
+  function display(value: string | null) {
+    if (!value) return t.common.dash;
+    try { return JSON.stringify(JSON.parse(value), null, 2); } catch { return value; }
+  }
 
   const typeOptions = [
     { value: "", label: ta.allTypes },
@@ -62,7 +94,7 @@ export default function AssetManagerAuditPage() {
       label: ta.colDate,
       render: (val: unknown) => (val ? new Date(String(val)).toLocaleString(dateLocale(locale)) : t.common.dash),
     },
-    { key: "userId", label: ta.colUser },
+    { key: "userId", label: ta.colUser, render: (id: unknown, row: unknown) => (row as AuditEntry).userName || String(id) },
     {
       key: "action",
       label: ta.colAction,
@@ -78,21 +110,7 @@ export default function AssetManagerAuditPage() {
       label: ta.colDetail,
       render: (val: unknown, row: unknown) => {
         const log = row as AuditEntry;
-        if (!log?.resourceId) return t.common.dash;
-        const href =
-          log.resourceType === "asset"
-            ? `/modules/asset-manager/${domainId}/assets/${log.resourceId}`
-            : log.resourceType === "ticket"
-              ? `/modules/asset-manager/${domainId}/tickets/${log.resourceId}`
-              : log.resourceType === "change"
-                ? `/modules/asset-manager/${domainId}/changes/${log.resourceId}`
-                : null;
-        if (!href) return log.resourceId.slice(0, 12) + "…";
-        return (
-          <Link href={href} className="hover:underline" style={{ color: "var(--bpm-accent-cyan)" }}>
-            {log.resourceId.slice(0, 12)}…
-          </Link>
-        );
+        return <Button variant="outline" size="small" onClick={() => setSelected(log)}>{locale === "fr" ? "Consulter" : "View"}</Button>;
       },
     },
   ];
@@ -134,6 +152,11 @@ export default function AssetManagerAuditPage() {
           {filtersOpen ? <ChevronUp size={18} aria-hidden /> : <ChevronDown size={18} aria-hidden />}
         </button>
         <div id="asset-manager-filters-audit" role="region" aria-labelledby="asset-manager-filters-toggle-audit" hidden={!filtersOpen}>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-3 mb-4">
+            <Input type="date" label={locale === "fr" ? "Du" : "From"} value={from} onChange={setFrom} />
+            <Input type="date" label={locale === "fr" ? "Au" : "To"} value={to} onChange={setTo} />
+            <Input label={locale === "fr" ? "Identifiant de la ressource" : "Resource ID"} value={resource} onChange={setResource} />
+          </div>
           <div className="asset-manager-equipment-filters__row">
             <span className="asset-manager-equipment-filters__label">{ta.filterResourceType}</span>
             <div className="asset-manager-equipment-filters__chips">
@@ -173,11 +196,12 @@ export default function AssetManagerAuditPage() {
         </div>
       </div>
 
+      {error && <p role="alert">{error}</p>}
       {loading ? (
         <div className="flex justify-center py-12">
           <Spinner size="medium" />
         </div>
-      ) : logs.length === 0 ? (
+      ) : error && !next ? null : logs.length === 0 ? (
         <div className="rounded-xl border bg-[var(--bpm-surface)] p-4" style={{ border: "1px solid #E5E7EB", borderRadius: 12 }}>
           <EmptyState
             title={ta.emptyTitle}
@@ -196,6 +220,13 @@ export default function AssetManagerAuditPage() {
         </div>
       )}
 
+      {next && <Button variant="outline" disabled={more} onClick={loadMore}>{locale === "fr" ? "Afficher la suite" : "Load more"}</Button>}
+      {selected && <Panel title={RESOURCE_LABELS[selected.resourceType] ?? selected.resourceType}>
+        <p>{selected.resourceId} · {ACTION_LABELS[selected.action] ?? selected.action} · {selected.userName || selected.userId}</p>
+        {[[locale === "fr" ? "Avant" : "Before", selected.beforeState], [locale === "fr" ? "Après" : "After", selected.afterState]].map(([label, value]) =>
+          <details key={label} open><summary>{label}</summary><pre className="overflow-auto">{display(value)}</pre></details>)}
+        <Button size="small" variant="outline" onClick={() => setSelected(null)}>{locale === "fr" ? "Fermer" : "Close"}</Button>
+      </Panel>}
       <nav className="doc-pagination mt-8 flex flex-wrap gap-4">
         <Link href={`/modules/asset-manager/${domainId}`} style={{ color: "var(--bpm-accent-cyan)" }}>{ta.backToDashboard}</Link>
       </nav>

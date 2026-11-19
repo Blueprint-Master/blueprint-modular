@@ -4,7 +4,8 @@ import type { Locale } from "@/lib/i18n";
  * Internal (technical) status values — kept as-is so behavior does not change.
  * Display labels are resolved per locale via `statusBadge` / `statusInline`.
  */
-export type Status = "brouillon" | "validé" | "archivé";
+export type { WorkflowStatus as Status } from "@/lib/workflow/transitions";
+import type { WorkflowStatus as Status } from "@/lib/workflow/transitions";
 
 /** Structured history entry; display is resolved at render time. */
 export type HistoryEntry = {
@@ -186,13 +187,7 @@ export const STR: Record<Locale, WorkflowStrings> = {
     ],
     integrationHeading: "Intégration côté app",
     integrationBody: [
-      { text: "Page " },
-      { text: "/modules/workflow", code: true },
-      { text: ". Exposez " },
-      { text: "GET /api/workflow/entity/:id", code: true },
-      { text: " (statut + historique) et " },
-      { text: "POST /api/workflow/entity/:id/transition", code: true },
-      { text: " (body : to). Session NextAuth pour l'auteur. Aucune variable d'environnement spécifique." },
+      { text: "Chaque utilisateur suit ses propres dossiers. Utilisez une référence stable, par exemple contrat-42. GET /api/workflow/entity/:id retourne le statut, la révision et le journal. Un nouveau dossier commence en brouillon à la révision 0. POST /api/workflow/entity/:id/transition attend la révision lue et le statut cible. Un conflit renvoie HTTP 409. Rechargez alors le dossier. PostgreSQL conserve le journal avec l’identité de la session." },
     ],
     simulatorHeading: "Simulateur",
     simulatorBody: "Le simulateur permet de tester les transitions et l'historique sans backend.",
@@ -288,13 +283,7 @@ export const STR: Record<Locale, WorkflowStrings> = {
     ],
     integrationHeading: "App-side integration",
     integrationBody: [
-      { text: "Page " },
-      { text: "/modules/workflow", code: true },
-      { text: ". Expose " },
-      { text: "GET /api/workflow/entity/:id", code: true },
-      { text: " (status + history) and " },
-      { text: "POST /api/workflow/entity/:id/transition", code: true },
-      { text: " (body: to). NextAuth session provides the author. No specific environment variables." },
+      { text: "Each user tracks their own records. Use a stable key such as contract-42. GET /api/workflow/entity/:id returns the status, revision and history. New records start in brouillon at revision 0. POST /api/workflow/entity/:id/transition accepts the last observed revision and target status. On HTTP 409, reload the record. PostgreSQL stores the history and session identity." },
     ],
     simulatorHeading: "Simulator",
     simulatorBody: "The simulator lets you try out transitions and the history without a backend.",

@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import { readResponse } from "../../../lib/read-response";
 import Link from "next/link";
 import { useParams, useRouter } from "next/navigation";
 import { Card, Caption, Divider, Button, Spinner, Input, Selectbox } from "@/components/bpm";
@@ -22,6 +23,7 @@ export default function AssetManagerTicketNewPage() {
   const domainId = typeof params?.domainId === "string" ? params.domainId : "";
   const [config, setConfig] = useState<DomainConfig | null>(null);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
   const [saving, setSaving] = useState(false);
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
@@ -36,7 +38,7 @@ export default function AssetManagerTicketNewPage() {
   useEffect(() => {
     if (!domainId) return;
     Promise.all([
-      fetch(`/api/asset-manager/config/${domainId}`, { credentials: "include" }).then((r) => (r.ok ? r.json() : null)),
+      fetch(`/api/asset-manager/config/${domainId}`, { credentials: "include" }).then(readResponse),
       fetch(`/api/asset-manager/assets?domainId=${encodeURIComponent(domainId)}`, { credentials: "include" }).then((r) => (r.ok ? r.json() : [])),
     ])
       .then(([cfg, list]) => {
@@ -46,6 +48,7 @@ export default function AssetManagerTicketNewPage() {
         if (cfg?.ticket_categories?.length) setCategoryId(cfg.ticket_categories[0].id);
         if (cfg?.ticket_types?.length) setTypeId(cfg.ticket_types[0]);
       })
+      .catch(err => setError(err instanceof Error ? err.message : String(err)))
       .finally(() => setLoading(false));
   }, [domainId]);
 
@@ -54,15 +57,19 @@ export default function AssetManagerTicketNewPage() {
       setSuggestedArticles([]);
       return;
     }
-    const params = new URLSearchParams({ domainId, categoryId });
+    let active = true;
+    const params = new URLSearchParams({ domainId, ticketCategoryId: categoryId });
     fetch(`/api/asset-manager/knowledge?${params}`, { credentials: "include" })
       .then((r) => (r.ok ? r.json() : []))
-      .then((list: { id: string; title: string; slug: string }[]) => setSuggestedArticles(Array.isArray(list) ? list.slice(0, 5) : []));
+      .then((list: { id: string; title: string; slug: string }[]) => { if (active) setSuggestedArticles(list); })
+      .catch(() => { if (active) setSuggestedArticles([]); });
+    return () => { active = false; };
   }, [domainId, categoryId]);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (!title.trim() || !description.trim() || saving) return;
+    setError("");
     setSaving(true);
     fetch("/api/asset-manager/tickets", {
       method: "POST",
@@ -79,10 +86,11 @@ export default function AssetManagerTicketNewPage() {
         assetId: assetId.trim() || null,
       }),
     })
-      .then((r) => (r.ok ? r.json() : null))
+      .then(readResponse)
       .then((created) => {
         if (created?.id) router.push(`/modules/asset-manager/${domainId}/tickets/${created.id}`);
       })
+      .catch(err => setError(err instanceof Error ? err.message : String(err)))
       .finally(() => setSaving(false));
   };
 
@@ -112,6 +120,7 @@ export default function AssetManagerTicketNewPage() {
         <Caption>{tt.fillBelow}</Caption>
       </div>
 
+      {error && <p role="alert">{error}</p>}
       <Card variant="outlined">
         <form onSubmit={handleSubmit} className="space-y-0">
           <section className="space-y-4" aria-label={tt.sectionRequest}>
@@ -141,7 +150,7 @@ export default function AssetManagerTicketNewPage() {
                   <Selectbox label={tt.fieldPriority} value={priorityId} onChange={(v) => setPriorityId(String(v))} options={priorityOptions} />
                 )}
                 {categoryOptions.length > 0 && (
-                  <Selectbox label={tt.fieldCategory} value={categoryId} onChange={(v) => setCategoryId(String(v))} options={categoryOptions} />
+                  <Selectbox label={tt.fieldCategory} value={categoryId} onChange={(v) => { setCategoryId(String(v)); setSubcategory(""); }} options={categoryOptions} />
                 )}
                 {subcategoryOptions.length > 0 && (
                   <Selectbox label={tt.fieldSubcategory} value={subcategory} onChange={(v) => setSubcategory(String(v))} options={[{ value: "", label: t.common.dash }, ...subcategoryOptions]} />

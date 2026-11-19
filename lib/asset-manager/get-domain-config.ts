@@ -30,6 +30,8 @@ export type DomainConfig = {
   priorities: { id: string; label: string; sla_hours: number; color: string }[];
   assignment_requires_signature?: boolean;
   assignment_condition_tracking?: boolean;
+  ci_relation_types?: { id: string; label: string }[];
+  change_management?: { approval_mode?: "unanimous" | "majority"; standard_change_types?: string[] };
   numbering?: {
     asset: string;
     ticket: string;

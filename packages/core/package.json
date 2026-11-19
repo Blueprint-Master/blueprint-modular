@@ -48,7 +48,12 @@
       "import": "./dist/maps/index.mjs",
       "require": "./dist/maps/index.js"
     },
-    "./standalone/bpm.min.js": "./dist/standalone/bpm.min.js"
+    "./standalone/bpm.min.js": "./dist/standalone/bpm.min.js",
+    "./keep-screen-on": {
+      "types": "./dist/components/bpm/useScreenWakeLock.d.ts",
+      "import": "./dist/keep-screen-on/index.mjs",
+      "require": "./dist/keep-screen-on/index.js"
+    }
   },
   "files": [
     "dist/",

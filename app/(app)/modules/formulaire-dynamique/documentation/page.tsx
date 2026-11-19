@@ -74,6 +74,25 @@ export default function FormulaireDynamiqueDocumentationPage() {
         {rich(t.doc.productionBody)}
       </p>
 
+      <p className="mb-4 text-sm">
+        {locale === "fr"
+          ? "Dans une application Python, bpm.forms versionne le schéma, contrôle les réponses visibles et conserve la demande dans SQLite. Utilisez une base par organisation. L’application fournit l’identité de session et autorise le responsable avant la décision."
+          : "In a Python application, bpm.forms versions the schema, validates visible answers and stores the request in SQLite. Use a database per organization. The host supplies the session identity and authorizes the reviewer before the decision."}
+      </p>
+      <CodeBlock language="python" code={`from bpm import forms
+from contextlib import closing
+import json
+from pathlib import Path
+
+schema = json.loads(Path("purchase.json").read_text(encoding="utf-8"))
+with closing(forms.open_store("requests.sqlite")) as db:
+    version = forms.publish(db, schema, expected_version=0)
+    request = forms.submit(db, schema["id"], version,
+        {"categorie": "mobilier", "montant": "450,50", "description": "Table"},
+        requester="ops", request_id="purchase-42")
+    forms.review(db, request, "approved", reviewer="finance")
+    result = forms.get(db, request)`} />
+
       <p className="mt-6 text-sm" style={{ color: "var(--bpm-text-secondary)" }}>
         <Link
           href="/modules/formulaire-dynamique/simulateur"

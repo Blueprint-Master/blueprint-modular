@@ -5,6 +5,8 @@ Page projet : https://pypi.org/project/blueprint-modular/
 
 ---
 
+Pour construire depuis un checkout Git, exécuter `bash scripts/build-python-runtime.sh` avant `python -m build` ou `pip install .`. Le build nécessite Node.js 22 et npm. L’installation de la roue compilée ne nécessite que Python. La CI joint la roue de la branche à l’exécution de la PR sous le nom `blueprint-modular-wheel`.
+
 ## Option 1 : Trusted Publishing (en place, sans token)
 
 1. **Sur PyPI** : section **Publishing** → Trusted publisher configuré avec :

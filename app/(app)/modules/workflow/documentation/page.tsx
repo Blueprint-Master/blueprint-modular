@@ -51,7 +51,18 @@ export default function WorkflowDocumentationPage() {
       <p className="mb-4" style={{ color: "var(--bpm-text-secondary)" }}>
         <Rich segments={s.integrationBody} />
       </p>
-      <CodeBlock code={'bpm.title("Workflow")\n# États : brouillon, validé, archivé. Boutons : Valider, Archiver selon état'} language="python" />
+      <CodeBlock language="javascript" code={`const path = "/api/workflow/entity/contrat-42";
+const read = await fetch(path);
+if (!read.ok) throw new Error("HTTP " + read.status);
+const dossier = await read.json();
+if (dossier.status === "brouillon") {
+  const update = await fetch(path + "/transition", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ to: "validé", revision: dossier.revision }),
+  });
+  if (!update.ok) throw new Error("HTTP " + update.status);
+}`} />
       <h2 className="text-lg font-semibold mt-8 mb-2" style={{ color: "var(--bpm-text-primary)" }}>{s.simulatorHeading}</h2>
       <p className="mb-4" style={{ color: "var(--bpm-text-secondary)" }}>{s.simulatorBody}</p>
       <p className="mt-6 text-sm" style={{ color: "var(--bpm-text-secondary)" }}>

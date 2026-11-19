@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import { readResponse } from "../../../lib/read-response";
 import Link from "next/link";
 import { useParams, useRouter } from "next/navigation";
 import { Card, Caption, Divider, Button, Spinner, Input, Selectbox } from "@/components/bpm";
@@ -16,6 +17,7 @@ export default function AssetManagerChangeNewPage() {
   const domainId = typeof params?.domainId === "string" ? params.domainId : "";
   const [config, setConfig] = useState<unknown>(null);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
   const [saving, setSaving] = useState(false);
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
@@ -29,14 +31,16 @@ export default function AssetManagerChangeNewPage() {
   useEffect(() => {
     if (!domainId) return;
     fetch(`/api/asset-manager/config/${domainId}`, { credentials: "include" })
-      .then((r) => (r.ok ? r.json() : null))
+      .then(readResponse)
       .then(setConfig)
+      .catch(err => setError(err.message))
       .finally(() => setLoading(false));
   }, [domainId]);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (!title.trim() || !description.trim() || !impact.trim() || !rollbackPlan.trim() || saving) return;
+    setError("");
     setSaving(true);
     fetch("/api/asset-manager/changes", {
       method: "POST",
@@ -54,10 +58,11 @@ export default function AssetManagerChangeNewPage() {
         plannedEnd: plannedEnd.trim() || null,
       }),
     })
-      .then((r) => (r.ok ? r.json() : null))
+      .then(readResponse)
       .then((created) => {
         if (created?.id) router.push(`/modules/asset-manager/${domainId}/changes/${created.id}`);
       })
+      .catch(err => setError(err.message))
       .finally(() => setSaving(false));
   };
 
@@ -79,6 +84,7 @@ export default function AssetManagerChangeNewPage() {
         <Caption>{tch.fillBelow}</Caption>
       </div>
 
+      {error && <p role="alert">{error}</p>}
       <Card variant="outlined">
         <form onSubmit={handleSubmit} className="space-y-0">
           <section className="space-y-4" aria-label={tch.sectionTypeRisk}>

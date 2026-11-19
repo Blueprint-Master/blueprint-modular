@@ -88,43 +88,14 @@ else
   echo "    Build du paquet @blueprint-modular/core (dist consommé par l'app)..."
   ( cd packages/core && npm install && npm run build )
   echo "    Génération du bundle blueprint-modules (zip pour devs sans accès Git)..."
-  node scripts/build-modules-bundle.cjs 2>/dev/null || true
-  # Constat (2026-06) : le zip est généré dans frontend/static/downloads/ mais n'est
-  # consommé par personne — l'app Next ne le sert ni depuis public/ ni via une route,
-  # et son unique copie vivait dans $DOCS_DIR/downloads (/var/www, mort, retiré ici).
-  # On conserve la génération (artefact attendu) ; sa diffusion sera traitée à part.
+  node scripts/build-modules-bundle.cjs --output public/downloads
   npx prisma generate
   npx prisma migrate deploy
   # Seed non critique : ne doit pas faire echouer le deploiement.
   node prisma/seed-wiki-procedures.cjs || true
   rm -rf .next
   npm run build
-  # En mode standalone, Next.js génère dans .next/standalone/blueprint-modular/
-  # Il faut copier static et public dans le bon endroit
-  if [ -d ".next/standalone/blueprint-modular" ]; then
-    mkdir -p .next/standalone/blueprint-modular/.next
-    # Obligatoire en mode standalone : CSS et assets (sans ça, le CSS n'est pas servi)
-    cp -r .next/static .next/standalone/blueprint-modular/.next/static
-    cp -r .next/server .next/standalone/blueprint-modular/.next/
-    # Le build standalone crée déjà .next/standalone/blueprint-modular/public/
-    # (ex. llms.txt). Un « cp -r public DEST/public » copierait alors le dossier
-    # public DANS ce dossier existant → DEST/public/public/ (assets servis en 404).
-    # On copie donc le CONTENU de public/ (dotfiles inclus) dans le public/ existant
-    # pour que les assets atterrissent bien à la racine servie.
-    mkdir -p .next/standalone/blueprint-modular/public
-    cp -r public/. .next/standalone/blueprint-modular/public/
-    # Config domaines Gestion de parc (getDomainConfig lit depuis process.cwd()/lib/asset-manager/config)
-    mkdir -p .next/standalone/blueprint-modular/lib
-    cp -r lib/asset-manager .next/standalone/blueprint-modular/lib/
-  else
-    # Fallback pour ancienne structure (si standalone n'est pas activé)
-    mkdir -p .next/standalone/.next
-    cp -r .next/static .next/standalone/.next/static
-    cp -r .next/server .next/standalone/.next/
-    cp -r public .next/standalone/public
-    mkdir -p .next/standalone/lib
-    cp -r lib/asset-manager .next/standalone/lib/
-  fi
+  bash deploy/copy-standalone-assets.sh
   chmod +x deploy/run-app.sh
   if command -v pm2 >/dev/null 2>&1; then
     if pm2 describe "$APP_PM2_NAME" >/dev/null 2>&1; then

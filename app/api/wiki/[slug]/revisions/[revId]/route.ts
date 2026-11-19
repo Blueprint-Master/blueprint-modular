@@ -14,7 +14,7 @@ async function resolveParams(params: Params): Promise<{ slug: string; revId: str
 
 export async function GET(
   _request: Request,
-  context: { params: Params }
+  context: { params: Promise<Awaited<Params>> }
 ) {
   const result = await getSessionOrTestUser();
   if (!result) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });

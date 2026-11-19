@@ -8,6 +8,7 @@ import { useI18n } from "@/lib/i18n/LocaleProvider";
 import { STR } from "../../strings";
 
 interface Article {
+  revision: number;
   id: string;
   title: string;
   content: string;
@@ -26,6 +27,8 @@ export default function NewsletterEditPage() {
   const [content, setContent] = useState("");
   const [excerpt, setExcerpt] = useState("");
   const [publishedAt, setPublishedAt] = useState("");
+  const [conflict, setConflict] = useState<Article | null>(null);
+  const [revision, setRevision] = useState<number | null>(null);
   const [archived, setArchived] = useState(false);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
@@ -40,10 +43,14 @@ export default function NewsletterEditPage() {
       .then((r) => (r.ok ? r.json() : null))
       .then((data: Article | null) => {
         if (data) {
+          setRevision(data.revision);
           setTitle(data.title);
           setContent(data.content);
           setExcerpt(data.excerpt ?? "");
-          setPublishedAt(data.publishedAt ? data.publishedAt.slice(0, 16) : "");
+          if (data.publishedAt) {
+            const instant = new Date(data.publishedAt);
+            setPublishedAt(new Date(+instant - instant.getTimezoneOffset() * 60000).toISOString().slice(0, 16));
+          }
           setArchived(data.archived);
         }
         setLoading(false);
@@ -65,15 +72,20 @@ export default function NewsletterEditPage() {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
+          revision,
           title: t,
           content,
           excerpt: excerpt.trim() || null,
-          publishedAt: publishedAt.trim() ? publishedAt : null,
+          publishedAt: publishedAt ? new Date(publishedAt).toISOString() : null,
           archived,
         }),
         credentials: "include",
       });
       if (!res.ok) {
+        if (res.status === 409) {
+          const current = await fetch(`/api/newsletter/articles/${id}`, { cache: "no-store" });
+          if (current.ok) setConflict(await current.json());
+        }
         const data = await res.json().catch(() => ({}));
         setError((data && typeof data.error === "string") ? data.error : str.saveError);
         return;
@@ -167,13 +179,22 @@ export default function NewsletterEditPage() {
               {str.archivedCheckboxLabel}
             </label>
           </div>
+          {conflict && <div role="status">
+            <p className="font-semibold">{locale === "en" ? "Current version" : "Version actuelle"} · {conflict.title}</p>
+            <p className="whitespace-pre-wrap">{conflict.excerpt}</p>
+            <p className="whitespace-pre-wrap">{conflict.content}</p>
+            <p>{conflict.publishedAt} · {conflict.archived ? str.statusArchived : str.statusActive}</p>
+            <button className="underline" type="button" onClick={() => { setRevision(conflict.revision); setConflict(null); setError(null); }}>
+              {locale === "en" ? "Continue with my draft" : "Reprendre mon brouillon"}
+            </button>
+          </div>}
           {error && (
             <p className="text-sm" style={{ color: "var(--bpm-accent)" }}>
               {error}
             </p>
           )}
           <div className="flex items-center gap-2">
-            <Button type="submit" variant="primary" disabled={saving}>
+            <Button type="submit" variant="primary" disabled={saving || revision === null || !!conflict}>
               {saving ? str.saving : str.save}
             </Button>
             <Link href={`/modules/newsletter/${id}`}>

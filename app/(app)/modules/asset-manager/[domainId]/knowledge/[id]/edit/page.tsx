@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import { readResponse } from "../../../../lib/read-response";
 import Link from "next/link";
 import { useParams, useRouter } from "next/navigation";
 import { Button, Card, Input, Selectbox, Spinner } from "@/components/bpm";
@@ -17,8 +18,9 @@ export default function AssetManagerKnowledgeEditPage() {
   const domainId = typeof params?.domainId === "string" ? params.domainId : "";
   const id = typeof params?.id === "string" ? params.id : "";
   const [config, setConfig] = useState<{ asset_types?: { id: string; label: string }[] } | null>(null);
-  const [article, setArticle] = useState<{ title: string; content: string; categoryId: string; assetTypeId: string | null; tags: string[]; visibility: string } | null>(null);
+  const [article, setArticle] = useState<{ updatedAt: string; title: string; content: string; categoryId: string; assetTypeId: string | null; tags: string[]; visibility: string } | null>(null);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
   const [saving, setSaving] = useState(false);
   const [title, setTitle] = useState("");
   const [content, setContent] = useState("");
@@ -30,8 +32,8 @@ export default function AssetManagerKnowledgeEditPage() {
   useEffect(() => {
     if (!domainId || !id) return;
     Promise.all([
-      fetch(`/api/asset-manager/config/${domainId}`, { credentials: "include" }).then((r) => (r.ok ? r.json() : null)),
-      fetch(`/api/asset-manager/knowledge/${id}`, { credentials: "include" }).then((r) => (r.ok ? r.json() : null)),
+      fetch(`/api/asset-manager/config/${domainId}`, { credentials: "include" }).then(readResponse),
+      fetch(`/api/asset-manager/knowledge/${id}`, { credentials: "include" }).then(readResponse),
     ])
       .then(([cfg, a]) => {
         setConfig(cfg);
@@ -45,12 +47,14 @@ export default function AssetManagerKnowledgeEditPage() {
           setVisibility(a.visibility === "public" ? "public" : "technicians_only");
         }
       })
+      .catch(err => setError(err instanceof Error ? err.message : String(err)))
       .finally(() => setLoading(false));
   }, [domainId, id]);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (!article || saving) return;
+    setError("");
     setSaving(true);
     const tags = tagsStr.trim() ? tagsStr.split(/[\s,]+/).map((tag) => tag.trim()).filter(Boolean) : [];
     fetch(`/api/asset-manager/knowledge/${id}`, {
@@ -58,6 +62,7 @@ export default function AssetManagerKnowledgeEditPage() {
       headers: { "Content-Type": "application/json" },
       credentials: "include",
       body: JSON.stringify({
+        expectedUpdatedAt: article.updatedAt,
         title: title.trim(),
         content: content.trim(),
         categoryId,
@@ -66,13 +71,15 @@ export default function AssetManagerKnowledgeEditPage() {
         visibility,
       }),
     })
-      .then((r) => (r.ok ? r.json() : null))
+      .then(readResponse)
       .then((updated) => {
         if (updated) router.push(`/modules/asset-manager/${domainId}/knowledge/${id}`);
       })
+      .catch(err => setError(err instanceof Error ? err.message : String(err)))
       .finally(() => setSaving(false));
   };
 
+  if (!loading && !article) return <p role="alert">{error || tk.notFoundDescription}</p>;
   if (loading || !article) {
     return (
       <div className="doc-page flex justify-center py-12">
@@ -90,6 +97,7 @@ export default function AssetManagerKnowledgeEditPage() {
         <h1 className="text-2xl font-bold" style={{ color: "var(--bpm-text-primary)" }}>{tk.editArticleHeading}</h1>
       </div>
 
+      {error && <p role="alert">{error}</p>}
       <Card variant="outlined" title={tk.editPanelTitle}>
         <form onSubmit={handleSubmit} className="space-y-4">
           <Input label={tk.fieldTitleRequired} value={title} onChange={setTitle} required />

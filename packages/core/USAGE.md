@@ -107,3 +107,7 @@ Une question de suivi peut relire le contexte de la page avec `bpm-artifact --in
 Le build fournit également `dist/standalone/bpm.min.js` (IIFE, React inclus, styles injectés et limités à la vue). `BlueprintModular.mount(element, spec)` monte la même vue que la commande. `view.update(spec)` et `view.refresh(load)` acceptent respectivement une valeur locale et un chargeur asynchrone. Le chargeur peut appeler une API, vérifier le statut HTTP et adapter le résultat avec `applyResponseMapping` de `/connectors`. `view.unmount()` libère la racine. La documentation et un exemple se trouvent dans `/artifacts/instructions.md`.
 
 Les exports nommés `Metric`, `Badge`, `LineChart`, `BarChart` et `MetricRow` de `/artifact` permettent au bundler de ne retenir que les composants utilisés.
+
+### Maintenir l’écran allumé
+
+Dans un composant React côté client, importer `useScreenWakeLock` depuis `@blueprint-modular/core/keep-screen-on`. Une action utilisateur appelle `chooseDuration(5)`, `chooseDuration(15)`, `chooseDuration(30)`, `chooseDuration(60)` ou `chooseDuration(-1)` pour une séance sans limite de temps. `chooseDuration(0)` arrête la séance. Le hook expose `supported`, `active`, `duration`, `remainingSeconds` et `error`. L’écran est libéré quand le composant est démonté. Chaque ouverture commence en mode éteint.

@@ -1,18 +1,18 @@
+import type { Prisma } from "@prisma/client";
+import { parseCalendarDate } from "@/lib/calendar/event-input";
 import { NextResponse } from "next/server";
-import { getSessionOrTestUser } from "@/lib/auth";
+import { getPersonalModuleSession } from "@/lib/auth";
 import { requireWriteRole } from "@/lib/asset-manager/authz";
 import { prisma } from "@/lib/prisma";
 import { getDomainConfig } from "@/lib/asset-manager/get-domain-config";
-import { generateChangeReference } from "@/lib/asset-manager/numbering";
+import { changeInput } from "@/lib/asset-manager/change-input";
+import { checkChangeLinks } from "@/lib/asset-manager/change-workflow";
+import { nextInventoryReference } from "@/lib/asset-manager/numbering";
 
 export const dynamic = "force-dynamic";
 
-const CHANGE_TYPES = ["standard", "normal", "emergency"] as const;
-const RISK_LEVELS = ["low", "medium", "high", "critical"] as const;
-const STATUSES = ["draft", "submitted", "cab_review", "approved", "rejected", "scheduled", "in_progress", "completed", "failed", "cancelled"] as const;
-
 export async function GET(request: Request) {
-  const result = await getSessionOrTestUser();
+  const result = await getPersonalModuleSession();
   if (!result) return NextResponse.json({ error: "Non autorisé" }, { status: 401 });
 
   const { searchParams } = new URL(request.url);
@@ -23,66 +23,47 @@ export async function GET(request: Request) {
     return NextResponse.json({ error: "domainId invalide" }, { status: 400 });
   }
 
-  const where: { domainId: string; status?: string } = { domainId };
+  const where: Prisma.ChangeRequestWhereInput = { domainId };
+  const month = searchParams.get("month");
+  if (month !== null) {
+    const start = parseCalendarDate(month + "-01");
+    if (!/^\d{4}-\d{2}$/.test(month) || !start) return NextResponse.json({ error: "Mois invalide." }, { status: 400 });
+    const end = new Date(start);
+    end.setUTCMonth(end.getUTCMonth() + 1);
+    where.plannedStart = { lt: end };
+    where.OR = [{ plannedEnd: { gte: start } }, { plannedEnd: null, plannedStart: { gte: start } }];
+  }
   if (status) where.status = status;
 
   const changes = await prisma.changeRequest.findMany({
     where,
     orderBy: [{ plannedStart: "desc" }, { createdAt: "desc" }],
-    take: 100,
   });
   return NextResponse.json(changes);
 }
 
 export async function POST(request: Request) {
-  const result = await getSessionOrTestUser();
+  const result = await getPersonalModuleSession();
   if (!result) return NextResponse.json({ error: "Non autorisé" }, { status: 401 });
   const forbidden = requireWriteRole(result.user);
   if (forbidden) return forbidden;
 
-  const body = (await request.json()) as {
-    domainId: string;
-    type?: string;
-    title: string;
-    description: string;
-    impact: string;
-    riskLevel: string;
-    rollbackPlan: string;
-    plannedStart?: string | null;
-    plannedEnd?: string | null;
-    assetsImpacted?: string[] | null;
-    ticketsLinked?: string[] | null;
-  };
-
-  if (!body.domainId?.trim()) return NextResponse.json({ error: "domainId requis" }, { status: 400 });
-  if (!getDomainConfig(body.domainId)) return NextResponse.json({ error: "Domaine invalide" }, { status: 400 });
-  if (!body.title?.trim()) return NextResponse.json({ error: "title requis" }, { status: 400 });
-  if (!body.description?.trim()) return NextResponse.json({ error: "description requis" }, { status: 400 });
-  if (!body.impact?.trim()) return NextResponse.json({ error: "impact requis" }, { status: 400 });
-  if (!CHANGE_TYPES.includes(body.type as (typeof CHANGE_TYPES)[number])) return NextResponse.json({ error: "type invalide" }, { status: 400 });
-  if (!RISK_LEVELS.includes(body.riskLevel as (typeof RISK_LEVELS)[number])) return NextResponse.json({ error: "riskLevel invalide" }, { status: 400 });
-  if (!body.rollbackPlan?.trim()) return NextResponse.json({ error: "rollbackPlan requis" }, { status: 400 });
-
-  const userId = result.user.id;
-  const reference = await generateChangeReference(body.domainId);
-
-  const change = await prisma.changeRequest.create({
-    data: {
-      domainId: body.domainId,
-      reference,
-      type: body.type ?? "normal",
-      title: body.title.trim(),
-      description: body.description.trim(),
-      impact: body.impact.trim(),
-      riskLevel: body.riskLevel,
-      rollbackPlan: body.rollbackPlan.trim(),
-      plannedStart: body.plannedStart ? new Date(body.plannedStart) : null,
-      plannedEnd: body.plannedEnd ? new Date(body.plannedEnd) : null,
-      assetsImpacted: body.assetsImpacted?.length ? JSON.stringify(body.assetsImpacted) : null,
-      ticketsLinked: body.ticketsLinked?.length ? JSON.stringify(body.ticketsLinked) : null,
-      requesterId: userId,
-      status: "draft",
-    },
+  const parsed = changeInput.safeParse(await request.json().catch(() => null));
+  if (!parsed.success) return NextResponse.json({ error: parsed.error.issues[0].message }, { status: 400 });
+  const body = parsed.data;
+  if (!getDomainConfig(body.domainId)) return NextResponse.json({ error: "Domaine invalide." }, { status: 400 });
+  return prisma.$transaction(async tx => {
+    const domainId = body.domainId;
+    const invalid = await checkChangeLinks(tx, domainId, body.assetsImpacted, body.ticketsLinked);
+    if (invalid) return invalid;
+    const reference = await nextInventoryReference(tx, "ChangeRequest", `CHG-${new Date().getFullYear()}-`);
+    const change = await tx.changeRequest.create({ data: {
+      domainId, reference, type: body.type, riskLevel: body.riskLevel, status: "draft", title: body.title,
+      description: body.description, impact: body.impact, rollbackPlan: body.rollbackPlan, requesterId: result.user.id,
+      plannedStart: body.plannedStart, plannedEnd: body.plannedEnd,
+      assetsImpacted: body.assetsImpacted.length ? JSON.stringify(body.assetsImpacted) : null,
+      ticketsLinked: body.ticketsLinked.length ? JSON.stringify(body.ticketsLinked) : null,
+    } });
+    return NextResponse.json(change);
   });
-  return NextResponse.json(change);
 }

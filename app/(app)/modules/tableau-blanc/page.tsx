@@ -14,7 +14,7 @@ function DocContent() {
       <p className="mb-6" style={{ color: "var(--bpm-text-secondary)", maxWidth: "60ch" }}>
         {t.aboutBefore}<strong>{t.aboutStrong}</strong>{t.aboutAfter}
       </p>
-      <CodeBlock code={'# bpm — tableau blanc : post-it par colonnes\nbpm.title("Rétro")\n# Conteneur épuré (sans bpm.panel) : zone idées + colonnes + formulaire'} language="python" />
+      <CodeBlock code={'const url = "/api/whiteboards/" + organizationId + "/retro";\nconst notes = await fetch(url).then(r => r.json());'} language="javascript" />
     </>
   );
 }
@@ -64,7 +64,7 @@ export default function TableauBlancModulePage() {
         title={t.moduleName}
         description={t.moduleDescription}
         category={t.categoryBadge}
-        links={[{ href: "/modules/tableau-blanc/simulateur", label: t.openSimulator }]}
+        links={[{ href: "/modules/tableau-blanc/atelier", label: locale === "en" ? "Open the team board" : "Ouvrir le tableau d’équipe" }, { href: "/modules/tableau-blanc/simulateur", label: t.openSimulator }]}
       />
       <Tabs tabs={[{ label: t.tabDocumentation, content: <DocContent /> }, { label: t.tabSimulator, content: <SimuContent /> }]} defaultTab={0} />
     </div>

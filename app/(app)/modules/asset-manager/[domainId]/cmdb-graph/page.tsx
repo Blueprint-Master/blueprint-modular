@@ -1,8 +1,11 @@
 "use client";
 
 import { useState, useEffect, useMemo, useRef, useCallback } from "react";
+import { relationNeighbours } from "@/lib/asset-manager/relation-neighbours";
+import { symmetricRelation } from "@/lib/asset-manager/relation-types";
+import { readResponse } from "../../lib/read-response";
 import Link from "next/link";
-import { useParams, useRouter } from "next/navigation";
+import { useParams, useSearchParams } from "next/navigation";
 import { Panel, EmptyState, Spinner, Button } from "@/components/bpm";
 import { useI18n } from "@/lib/i18n/LocaleProvider";
 import { STR } from "../../strings";
@@ -22,6 +25,7 @@ function runForceLayout(
   const radius = Math.min(width, height) * 0.4;
   const byId = new Map(nodes.map((n) => [n.id, { ...n }]));
   const nodeList = Array.from(byId.values());
+  const positions = new Map(nodeList.map((node, index) => [node.id, index]));
 
   for (let i = 0; i < nodeList.length; i++) {
     const angle = (2 * Math.PI * i) / Math.max(1, nodeList.length);
@@ -38,9 +42,8 @@ function runForceLayout(
       const s = byId.get(e.sourceAssetId);
       const t = byId.get(e.targetAssetId);
       if (!s || !t) continue;
-      const si = nodeList.findIndex((n) => n.id === s.id);
-      const ti = nodeList.findIndex((n) => n.id === t.id);
-      if (si < 0 || ti < 0) continue;
+      const si = positions.get(s.id)!;
+      const ti = positions.get(t.id)!;
       const dx = t.x - s.x;
       const dy = t.y - s.y;
       const dist = Math.hypot(dx, dy) || 1;
@@ -79,14 +82,17 @@ function runForceLayout(
 
 export default function AssetManagerCmdbGraphPage() {
   const params = useParams();
-  const router = useRouter();
   const { locale } = useI18n();
   const t = STR[locale];
   const tc = t.cmdb;
-  const RELATION_LABELS = tc.relationLabels;
+  const RELATION_LABELS = t.assets.relationTypes;
   const domainId = typeof params?.domainId === "string" ? params.domainId : "";
+  const search = useSearchParams();
+  const rootId = search.get("rootAssetId");
+  const depth = search.get("depth") === "3" ? 3 : search.get("depth") === "2" ? 2 : 1;
   const [assets, setAssets] = useState<{ id: string; reference: string; label: string }[]>([]);
   const [relations, setRelations] = useState<RelationEdge[]>([]);
+  const [error, setError] = useState("");
   const [loading, setLoading] = useState(true);
   const [size, setSize] = useState({ w: 900, h: 600 });
   const [pan, setPan] = useState({ x: 0, y: 0 });
@@ -104,25 +110,18 @@ export default function AssetManagerCmdbGraphPage() {
 
   useEffect(() => {
     if (!domainId) return;
-    setLoading(true);
+    let active = true;
+    setLoading(true); setError("");
     Promise.all([
-      fetch(`/api/asset-manager/assets?domainId=${encodeURIComponent(domainId)}`, { credentials: "include" }).then((r) => (r.ok ? r.json() : [])),
-      fetch(`/api/asset-manager/ci-relations?domainId=${encodeURIComponent(domainId)}`, { credentials: "include" }).then((r) => (r.ok ? r.json() : [])),
+      fetch(`/api/asset-manager/assets?domainId=${encodeURIComponent(domainId)}`, { credentials: "include" }).then(readResponse),
+      fetch(`/api/asset-manager/ci-relations?domainId=${encodeURIComponent(domainId)}`, { credentials: "include" }).then(readResponse),
     ])
       .then(([a, r]) => {
-        setAssets(Array.isArray(a) ? a : []);
-        setRelations(
-          Array.isArray(r)
-            ? r.map((x: { id: string; sourceAssetId: string; targetAssetId: string; relationType: string }) => ({
-                id: x.id,
-                sourceAssetId: x.sourceAssetId,
-                targetAssetId: x.targetAssetId,
-                relationType: x.relationType,
-              }))
-            : []
-        );
+        if (active) { setAssets(a); setRelations(r); }
       })
-      .finally(() => setLoading(false));
+      .catch(err => { if (active) setError(err.message); })
+      .finally(() => { if (active) setLoading(false); });
+    return () => { active = false; };
   }, [domainId]);
 
   const assetIdsInRelations = useMemo(() => {
@@ -134,14 +133,20 @@ export default function AssetManagerCmdbGraphPage() {
     return set;
   }, [relations]);
 
+  const reachable = useMemo(() => rootId ? relationNeighbours(rootId, depth, relations) : null, [rootId, depth, relations]);
+  const visibleEdges = useMemo(() => reachable
+    ? relations.filter(edge => reachable.has(edge.sourceAssetId) && reachable.has(edge.targetAssetId))
+    : relations, [reachable, relations]);
+
   const nodesForGraph = useMemo(() => {
+    if (reachable) return assets.filter(asset => reachable.has(asset.id));
     const withRelations = assets.filter((a) => assetIdsInRelations.has(a.id));
     return withRelations.length > 0 ? withRelations : assets.slice(0, 20);
-  }, [assets, assetIdsInRelations]);
+  }, [assets, assetIdsInRelations, reachable]);
 
   const nodes = useMemo(
-    () => runForceLayout(nodesForGraph.map((a) => ({ ...a, x: 0, y: 0 })), relations, size.w, size.h, 80),
-    [nodesForGraph, relations, size.w, size.h]
+    () => runForceLayout(nodesForGraph.map((a) => ({ ...a, x: 0, y: 0 })), visibleEdges, size.w, size.h, 80),
+    [nodesForGraph, visibleEdges, size.w, size.h]
   );
   const nodeById = useMemo(() => new Map(nodes.map((n) => [n.id, n])), [nodes]);
 
@@ -229,7 +234,15 @@ export default function AssetManagerCmdbGraphPage() {
         </p>
       </div>
 
-      {loading ? (
+      {rootId && <nav className="mb-4 flex flex-wrap items-center gap-3">
+        <span>{locale === "fr" ? "Niveaux de relations" : "Relationship depth"}</span>
+        {[1, 2, 3].map(level => <Link key={level} aria-current={depth === level ? "page" : undefined}
+          href={`/modules/asset-manager/${domainId}/cmdb-graph?rootAssetId=${encodeURIComponent(rootId)}&depth=${level}`}>
+          <Button size="small" variant={level === depth ? "primary" : "outline"}>{level}</Button>
+        </Link>)}
+        <Link href={`/modules/asset-manager/${domainId}/cmdb-graph`}>{locale === "fr" ? "Tout le parc" : "All assets"}</Link>
+      </nav>}
+      {error ? <Panel variant="warning" title={tc.title}>{error}</Panel> : loading ? (
         <div className="flex justify-center py-12">
           <Spinner size="medium" />
         </div>
@@ -263,7 +276,7 @@ export default function AssetManagerCmdbGraphPage() {
                 style={{ cursor: isPanning ? "grabbing" : "grab" }}
               />
               <g transform={`translate(${pan.x}, ${pan.y}) scale(${zoom})`} style={{ pointerEvents: "none" }}>
-              {relations.map((e) => {
+              {visibleEdges.map((e) => {
                 const s = nodeById.get(e.sourceAssetId);
                 const tgt = nodeById.get(e.targetAssetId);
                 if (!s || !tgt) return null;
@@ -276,7 +289,7 @@ export default function AssetManagerCmdbGraphPage() {
                       y2={tgt.y}
                       stroke="var(--bpm-border)"
                       strokeWidth="1.5"
-                      markerEnd="url(#arrow)"
+                      markerEnd={symmetricRelation(e.relationType) ? undefined : "url(#arrow)"}
                     />
                     <text
                       x={(s.x + tgt.x) / 2}
@@ -290,7 +303,8 @@ export default function AssetManagerCmdbGraphPage() {
                 );
               })}
               {nodes.map((n) => (
-                <g key={n.id}>
+                <a key={n.id} href={`/modules/asset-manager/${domainId}/assets/${n.id}`} aria-label={`${n.reference} — ${n.label}`}>
+                  <title>{n.label}</title>
                   <circle
                     cx={n.x}
                     cy={n.y}
@@ -299,7 +313,6 @@ export default function AssetManagerCmdbGraphPage() {
                     stroke="var(--bpm-bg)"
                     strokeWidth="2"
                     style={{ cursor: "pointer", pointerEvents: "auto" }}
-                    onClick={() => router.push(`/modules/asset-manager/${domainId}/assets/${n.id}`)}
                   />
                   <text
                     x={n.x}
@@ -309,13 +322,13 @@ export default function AssetManagerCmdbGraphPage() {
                   >
                     {n.reference}
                   </text>
-                </g>
+                </a>
               ))}
               </g>
             </svg>
           </div>
           <p className="text-xs mt-2 px-4 pb-4" style={{ color: "var(--bpm-text-secondary)" }}>
-            {tc.counts(nodes.length, relations.length)}
+            {tc.counts(nodes.length, visibleEdges.length)}
           </p>
         </div>
       )}
