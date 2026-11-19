@@ -81,6 +81,8 @@ export interface MetricProps {
   context?: InterpretContext;
   /** Rend la carte CLIQUABLE — ex. « voir les factures impayées » depuis le KPI qui les compte. Ajoute le rôle bouton, le focus clavier et Entrée/Espace : une carte cliquable à la souris seulement serait inatteignable au clavier et muette pour un lecteur d'écran. Absent = rendu et sémantique inchangés. */
   onClick?: (() => void) | null;
+  /** Unité de l'écart au repère quand elle ne se déduit pas de `currency` (ex. « pt », « € », « h »). Absent = déduite de `currency`. */
+  judgmentUnit?: string | null;
 }
 
 // A formatted delta is display text. Read a complete quantity for its
@@ -121,6 +123,7 @@ export function Metric({
   trackContext = false,
   context,
   onClick = null,
+  judgmentUnit = null,
 }: MetricProps) {
   /* Carte cliquable : on n'ajoute JAMAIS le curseur seul. Une affordance visuelle
      sans affordance clavier fabrique un piège — visible pour la souris, invisible
@@ -161,7 +164,7 @@ export function Metric({
   const sym = currency && currency !== "%" ? (symbols[currency] ?? currency) : "";
   const locale = valueLocale ?? "fr-FR";
   // Écart au repère : en points pour un taux, dans la devise sinon (cf. differenceUnit de l'artefact).
-  const judgmentFormat = { locale, unit: currency === "%" ? "pt" : sym || undefined };
+  const judgmentFormat = { locale, unit: judgmentUnit || (currency === "%" ? "pt" : sym || undefined) };
   const formatWithLocale = (n: number, decimals: number) =>
     n.toLocaleString(locale, {
       minimumFractionDigits: decimals,

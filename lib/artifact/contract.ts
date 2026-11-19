@@ -6,6 +6,8 @@ const context = z.object({
   reference: number,
   referenceLabel: text.optional(),
   direction: z.enum(["higher_is_better", "lower_is_better"]),
+  // Zone neutre relative autour du repère (défaut d'interpret : 0.02 = ±2 %).
+  neutralBand: z.number().min(0).max(0.5).optional(),
 }).strict();
 
 const metric = z.object({
