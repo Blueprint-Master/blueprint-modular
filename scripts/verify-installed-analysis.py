@@ -17,6 +17,8 @@ from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from playwright.sync_api import sync_playwright
 import requests
 
+from module_team_fixture import seed_team, open_task, finish_task, check_audit, clear_team
+
 APP = Path(sys.argv[1]).resolve()
 DB = os.environ["MODULAR_TEST_DATABASE_URL"]
 EMAIL = f"qa-{secrets.token_hex(8)}@example.test"
@@ -96,13 +98,15 @@ def run():
             process.terminate()
             process.wait(timeout=20)
 
-    def login():
+    def login(email=EMAIL):
+        http.cookies.clear()
         csrf = checked(http.get(origin + "/api/auth/csrf")).json()["csrfToken"]
         checked(http.post(origin + "/api/auth/callback/credentials", data={
-            "csrfToken": csrf, "email": EMAIL, "password": PASSWORD, "callbackUrl": origin, "json": "true",
+            "csrfToken": csrf, "email": email, "password": PASSWORD, "callbackUrl": origin, "json": "true",
         }))
-        assert checked(http.get(origin + "/api/auth/session")).json()["user"]["email"] == EMAIL
+        assert checked(http.get(origin + "/api/auth/session")).json()["user"]["email"] == email
 
+    team = seed_team(APP, env, EMAIL)
     try:
         with sync_playwright() as pw:
             browser = pw.chromium.launch(executable_path=os.environ.get("MODULAR_TEST_CHROMIUM"), args=json.loads(os.environ.get("MODULAR_TEST_CHROMIUM_ARGS", '["--no-sandbox"]')))
@@ -112,6 +116,7 @@ def run():
             with server():
                 checked(http.get(origin + "/api/contracts"), 401)
                 login()
+                task_id = open_task(http, origin, team)
                 def upload_contract(_):
                     with requests.Session() as request:
                         request.trust_env = False
@@ -155,6 +160,9 @@ def run():
             with server():
                 http.cookies.clear()
                 login()
+                login(team["email"])
+                finish_task(http, origin, team, task_id)
+                login()
                 Model.outage = False
                 assert checked(http.post(contract_url + "/reanalyze")).json()["status"] == "done"
                 assert checked(http.get(origin + "/api/documents/" + doc["id"])).json()["summary"] == "Bon de livraison Saphir."
@@ -182,13 +190,19 @@ def run():
                 page.get_by_role("button", name="Générer le rapport").click()
                 page.get_by_text("Aucun enregistrement sur cette période.", exact=True).wait_for()
                 assert len(checked(http.get(reports_url)).json()) == 2
+                page.goto(origin + "/modules/taches/equipe")
+                page.get_by_text("Réceptionner un lot", exact=True).first.wait_for()
+                check_audit(http, origin, team, task_id)
+                page.goto(origin + "/modules/audit-log/equipe")
+                page.get_by_text("Réceptionner un lot", exact=True).first.wait_for()
                 checked(http.delete(messages_url + conversation), 204)
             browser.close()
     finally:
+        clear_team(APP, env, team)
         receiver.shutdown()
         receiver.server_close()
         subprocess.run(["node", "-e", "const db=new(require('@prisma/client').PrismaClient)();db.user.delete({where:{email:process.env.MODULAR_QA_EMAIL}}).finally(()=>db.$disconnect())"], cwd=APP, env=env, check=True)
-    print("Contracts, Documents, AI, Reports and Dashboards passed on the installed server across restart.")
+    print("Contracts, Documents, AI, Reports, Dashboards, Team Tasks and Audit passed on the installed server across restart.")
 
 
 if __name__ == "__main__":

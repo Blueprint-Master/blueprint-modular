@@ -136,7 +136,7 @@ export default function AuditLogModulePage() {
         title={s.modulePage.title}
         description={s.modulePage.description}
         category={s.modulePage.category}
-        links={[{ href: "/modules/audit-log/simulateur", label: s.modulePage.openSimulator }]}
+        links={[{ href: "/modules/audit-log/equipe", label: locale === "fr" ? "Journal des tâches" : "Team task history" }, { href: "/modules/audit-log/simulateur", label: s.modulePage.openSimulator }]}
       />
       <Tabs
         tabs={[

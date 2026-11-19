@@ -103,6 +103,7 @@ model Organization {
   updatedAt   DateTime  @updatedAt @map("updated_at")
 
   whiteboardNotes  WhiteboardNote[]
+  teamTasks       TeamTask[]
   members         OrgMember[]
   workspaces      Workspace[]
   wikis           WikiArticle[]
@@ -839,4 +840,36 @@ model PersonalDashboard {
   user     User   @relation(fields: [userId], references: [id], onDelete: Cascade)
   revision Int    @default(1)
   widgets  Json
+}
+
+model TeamTask {
+  id             String       @id @db.Uuid
+  organizationId String
+  organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  creatorId      String
+  assigneeId     String
+  title          String
+  due            DateTime     @db.Date
+  priority       String
+  status         String       @default("todo")
+  revision       Int          @default(1)
+  createdAt      DateTime     @default(now())
+  removed        Boolean      @default(false)
+  events         TeamTaskEvent[]
+
+  @@index([organizationId, removed, due])
+}
+
+model TeamTaskEvent {
+  id        String   @id @default(cuid())
+  taskId    String   @db.Uuid
+  task      TeamTask @relation(fields: [taskId], references: [id], onDelete: Cascade)
+  revision  Int
+  actorId   String
+  actorName String
+  action    String
+  details   Json
+  createdAt DateTime @default(now())
+
+  @@unique([taskId, revision])
 }
