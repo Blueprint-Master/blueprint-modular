@@ -556,8 +556,10 @@ class Notification(Parcours):
               "lecture ou message perdus après redémarrage")
         unread = qa.expect("GET", "/api/notifications?read=false", 200).json()["notifications"]
         check(self.id not in [n["id"] for n in unread], "notification redevenue non lue")
-        self.done.append("relue après redémarrage avec sa date de première lecture — CONSTAT : la cloche de la page "
-                         "du module garde son historique dans le navigateur et ne lit pas /api/notifications")
+        # Aucun constat sur la cloche ici : ce parcours ne l'observe pas. L'affichage de la
+        # boîte serveur dans la cloche est prouvé par le test Chromium de Modular #277.
+        self.done.append("relue après redémarrage avec sa date de première lecture (boîte serveur ; "
+                         "l'affichage dans la cloche n'est pas observé par ce parcours)")
 
 
 class Reservations(Parcours):
