@@ -473,7 +473,7 @@ Les 32 parcours, leurs prérequis et la surface à installer sont recensés dans
 
 **Décisions** :
 - un module est déclaré « livré » au sens métier seulement s'il a un parcours prouvé avec relecture après redémarrage ; les 32 en ont un sur ce commit ;
-- les modules dont la page est une démonstration le restent et le documentation doit le dire : Export planifié et Webhooks (le moteur réel est un worker Python, sans écran connecté), Commentaires (persistance via le wiki uniquement), Notification (la cloche ne lit pas la boîte serveur), Newsletter (rédaction et archivage, sans envoi), Monitor (stockage navigateur, IA via service externe) ; `/api/templates` répond sans session ;
+- les modules dont la page est une démonstration le restent et la documentation doit le dire : Export planifié et Webhooks (le moteur réel est un worker Python, sans écran connecté), Commentaires (persistance via le wiki uniquement), Notification (la cloche ne lit pas la boîte serveur), Newsletter (rédaction et archivage, sans envoi), Monitor (stockage navigateur, IA via service externe) ; `/api/templates` répond sans session ;
 - les migrations écrites à la main sont comparées au schéma par `prisma migrate diff --exit-code` avant toute bascule ;
 - la préproduction s'installe hors de `/home/ubuntu` et la racine Next est explicite (`next.config.mjs`) : un `package-lock.json` parent imbriquait la sortie standalone.
 
