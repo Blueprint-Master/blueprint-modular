@@ -97,7 +97,7 @@ export default function DemoPage() {
         <div className="space-y-6">
           <div className="grid gap-4" style={{ gridTemplateColumns: "repeat(auto-fill, minmax(180px, 1fr))" }}>
             <Metric label={S.metricRevenue} value={142} delta={8.2} />
-            <Metric label={S.metricOrders} value={24} delta={2} />
+            <Metric label={S.metricOrders} value={24} delta={2} currency="" />
             <Metric label={S.metricConversion} value="3,4 %" />
             <Metric label={S.metricQuarterGoal} value="85 %" />
           </div>
