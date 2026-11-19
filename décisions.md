@@ -12,6 +12,10 @@ Une panne du fournisseur Ollama remonte comme indisponibilité. La requête suiv
 
 Documents accepte PDF, DOCX et TXT depuis l’interface et par API. Les nouvelles pièces des deux modules peuvent être placées sur un volume externe avec MODULAR_UPLOAD_DIR. Les anciens chemins restent lisibles. Un import contractuel concurrent du même fichier pour le même utilisateur conserve une seule fiche. Les routes de ces modules utilisent la session personnelle en production. Les tests de régression du client IA couvrent le modèle absent, la coupure réseau, le rétablissement, la limite de génération, la dernière ligne de flux et l’extraction invalide.
 
+## Rapports sur les données d’une application
+
+Le paquet Python et le ZIP embarquent `bpm.reports`. Les trois modèles lisent les données réelles fournies par le développeur ou par CSV. Les montants sont agrégés en décimal dans une même devise. Les commandes se comptent à raison d’une ligne par commande. Les effectifs correspondent à la dernière observation de chaque salarié à la clôture. La génération conserve les résultats, l’auteur, la période et l’heure dans la base de l’application. Une réexécution avec la même clé et un contenu différent signale un conflit. Le test de concurrence a produit un seul instantané pour deux générations simultanées. Le CSV relu après réouverture de la base a conservé l’avoir, la moyenne et le libellé de région. Le navigateur a aussi téléchargé le rapport mensuel du simulateur.
+
 ## Point de départ
 
 Le catalogue public de Blueprint Modular présente 32 modules et 64 liens de documentation ou de démonstration. Sur le passage HTTP complet, 63 destinations répondaient en 200. Le lien Documentation du calendrier ajoutait `/documentation` à l’URL du simulateur et donnait une 404. La recette de la branche retrouve les 64 destinations depuis le HTML du catalogue et vérifie leur réponse sur le serveur compilé.
