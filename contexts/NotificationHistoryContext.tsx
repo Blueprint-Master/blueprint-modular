@@ -1,6 +1,6 @@
 "use client";
 
-import React, { createContext, useContext, useState, useCallback } from "react";
+import React, { createContext, useContext, useState, useEffect, useCallback } from "react";
 
 export type StoredNotification = {
   id: number;
@@ -37,18 +37,24 @@ function cleanNotification(notif: StoredNotification): StoredNotification {
   return out;
 }
 
+const EMPTY_HISTORY: StoredNotification[] = [];
+
+function readHistory(): StoredNotification[] {
+  try {
+    const saved = localStorage.getItem("notification_history");
+    return saved ? (JSON.parse(saved) as StoredNotification[]).map(cleanNotification) : [];
+  } catch {
+    return [];
+  }
+}
+
 export function NotificationHistoryProvider({ children }: { children: React.ReactNode }) {
-  const [notifications, setNotifications] = useState<StoredNotification[]>(() => {
-    if (typeof window === "undefined") return [];
-    try {
-      const saved = localStorage.getItem("notification_history");
-      if (!saved) return [];
-      const parsed = JSON.parse(saved) as StoredNotification[];
-      return parsed.map(cleanNotification);
-    } catch {
-      return [];
-    }
-  });
+  const [history, setNotifications] = useState<StoredNotification[] | null>(null);
+  const notifications = history ?? EMPTY_HISTORY;
+
+  useEffect(() => {
+    setNotifications((current) => current ?? readHistory());
+  }, []);
 
   const saveToStorage = useCallback((list: StoredNotification[]) => {
     try {
@@ -61,7 +67,8 @@ export function NotificationHistoryProvider({ children }: { children: React.Reac
 
   const addNotification = useCallback(
     (notification: Partial<StoredNotification> & { message: string }) => {
-      setNotifications((prev) => {
+      setNotifications((current) => {
+        const prev = current ?? readHistory();
         const now = Date.now();
         const type = notification.type ?? "info";
         const title = notification.title ?? null;
