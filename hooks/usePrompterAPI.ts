@@ -20,32 +20,40 @@ function headersWithKey(apiKey: string | null, init: Record<string, string> = {}
   return h;
 }
 
-async function readSSEStream(
+export async function readSSEStream(
   response: Response,
   onChunk: (text: string) => void
 ): Promise<void> {
   if (!response.ok) {
-    const error = await response.text();
-    throw new Error(`API error ${response.status}: ${error}`);
+    const error = await response.json().catch(() => ({}));
+    throw new Error(typeof error.detail === "string" ? error.detail : `API HTTP ${response.status}`);
   }
   const reader = response.body?.getReader();
   if (!reader) throw new Error("No response body");
   const decoder = new TextDecoder();
   let buffer = "";
-  while (true) {
-    const { done, value } = await reader.read();
-    if (done) break;
-    buffer += decoder.decode(value, { stream: true });
-    const lines = buffer.split("\n");
-    buffer = lines.pop() ?? "";
-    for (const line of lines) {
-      if (!line.startsWith("data: ")) continue;
-      const payload = line.slice(6);
-      if (payload === "[DONE]") return;
-      if (payload.startsWith("[ERROR]")) throw new Error(payload);
-      const text = payload.replace(/\\n/g, "\n");
-      onChunk(text);
+  let jsonText = false;
+  try {
+    while (true) {
+      const { done, value } = await reader.read();
+      buffer += decoder.decode(value, { stream: !done });
+      const lines = buffer.split("\n");
+      buffer = done ? "" : lines.pop() ?? "";
+      for (const raw of lines) {
+        const line = raw.replace(/\r$/, "");
+        if (!line) jsonText = false;
+        if (line === "event: text") jsonText = true;
+        if (!line.startsWith("data: ")) continue;
+        const payload = line.slice(6);
+        if (payload === "[DONE]") return;
+        if (payload.startsWith("[ERROR]")) throw new Error(payload.slice(7).trim());
+        onChunk(jsonText ? JSON.parse(payload) : payload.replace(/\\n/g, "\n"));
+      }
+      if (done) throw new Error("Flux de réponse interrompu.");
     }
+  } finally {
+    await reader.cancel().catch(() => {});
+    reader.releaseLock();
   }
 }
 
@@ -154,7 +162,10 @@ export function usePrompterAPI(apiKey: string | null = null) {
     const response = await fetch(`${BASE_URL}/health`, {
       headers: headersWithKey(apiKey),
     });
-    return response.json() as Promise<{ status: string; anthropic_key_set: boolean }>;
+    if (!response.ok) throw new Error(`Service HTTP ${response.status}`);
+    const data = await response.json();
+    if (data.status !== "ok") throw new Error("Service indisponible");
+    return data as { status: string; anthropic_key_set: boolean };
   }, [apiKey]);
 
   return { suggestAnswer, translate, summarize, importPptx, checkHealth };

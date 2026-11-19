@@ -71,6 +71,12 @@ jobs:
       - name: Exercise Python workers with local SMTP and HTTPS receivers
         run: python -m unittest discover -s tests/python -v
 
+      - name: Install and exercise Monitor with an isolated AI provider
+        run: |
+          python -m pip install -r deploy/prompteur-api-requirements.txt
+          python -m unittest discover -s tests/monitor -v
+          npx vitest run tests/monitor-stream.test.ts tests/monitor-session.test.ts tests/wiki-guest.test.ts
+
       - name: Exercise personal modules on a migrated database
         env:
           DATABASE_URL: postgresql://modular:test_only@127.0.0.1:${{ job.services.postgres.ports[5432] }}/modular_test

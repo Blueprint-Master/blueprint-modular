@@ -4,6 +4,7 @@
  * Script, Q&R suggérées, traduction, résumé post-séance. API: /api/prompteur
  */
 import React, { useState, useEffect, useRef, useCallback } from "react";
+import { loadMonitorSession, saveMonitorSession } from "@/lib/monitor-session";
 import { usePrompterAPI } from "@/hooks/usePrompterAPI";
 import { useI18n } from "@/lib/i18n/LocaleProvider";
 
@@ -139,7 +140,7 @@ const T = {
 
 // ─── MARKDOWN MINIMAL ─────────────────────────────────────────────────────────
 function md(text: string) {
-  return text
+  return text.replaceAll("&", "&amp;").replaceAll("<", "&lt;").replaceAll(">", "&gt;")
     .replace(/\*\*(.+?)\*\*/g, "<strong>$1</strong>")
     .replace(/^## (.+)$/gm, `<p style="font-weight:600;color:${T.bleu};margin:12px 0 4px;font-size:13px">$1</p>`)
     .replace(/^- \[ \] (.+)$/gm, `<div style="display:flex;gap:6px;padding:3px 0;color:${T.fg};font-size:13px">☐ <span>$1</span></div>`)
@@ -383,43 +384,8 @@ const DEFAULT_PRES_EN: PresState = {
 
 const defaultPresFor = (locale: "fr" | "en"): PresState => (locale === "en" ? DEFAULT_PRES_EN : DEFAULT_PRES_FR);
 
-const STORAGE_KEYS = { pres: "bpm-monitor-pres", cur: "bpm-monitor-cur", logged: "bpm-monitor-logged" };
-
-function loadPres(locale: "fr" | "en"): PresState {
-  const fallback = defaultPresFor(locale);
-  if (typeof window === "undefined") return fallback;
-  try {
-    const raw = localStorage.getItem(STORAGE_KEYS.pres);
-    if (!raw) return fallback;
-    const parsed = JSON.parse(raw) as PresState;
-    if (!parsed?.title || !Array.isArray(parsed?.slides) || parsed.slides.length === 0) return fallback;
-    return parsed;
-  } catch {
-    return fallback;
-  }
-}
-
-function loadCur(): number {
-  if (typeof window === "undefined") return 0;
-  try {
-    const v = localStorage.getItem(STORAGE_KEYS.cur);
-    const n = v != null ? parseInt(v, 10) : 0;
-    return Number.isFinite(n) && n >= 0 ? n : 0;
-  } catch {
-    return 0;
-  }
-}
-
-function loadLogged(): { question: string; answer: string; slide_title: string }[] {
-  if (typeof window === "undefined") return [];
-  try {
-    const raw = localStorage.getItem(STORAGE_KEYS.logged);
-    if (!raw) return [];
-    const parsed = JSON.parse(raw);
-    return Array.isArray(parsed) ? parsed.filter((e: unknown) => e && typeof e === "object" && "question" in e && "answer" in e && "slide_title" in e) : [];
-  } catch {
-    return [];
-  }
+function preference(key: string) {
+  try { return localStorage.getItem(key); } catch { return null; }
 }
 
 // ─── MAIN COMPONENT ───────────────────────────────────────────────────────────
@@ -431,8 +397,10 @@ export default function Monitor() {
   // du contenu utilisateur : elle n'est jamais retraduite au changement de langue.
   const { locale } = useI18n();
   const S = MSTR[locale] ?? MSTR.fr;
-  const [pres, setPres] = useState<PresState>(() => loadPres(locale));
-  const [cur, setCur] = useState(loadCur);
+  const [initial] = useState(() => loadMonitorSession(defaultPresFor(locale)));
+  const baseline = useRef(initial.stored);
+  const [pres, setPres] = useState<PresState>(initial.data.pres);
+  const [cur, setCur] = useState(initial.data.cur);
   const [tab, setTab] = useState("script");
 
   // Questions IA (Q&R)
@@ -441,8 +409,13 @@ export default function Monitor() {
   const [aiResp, setAiResp] = useState("");
   const [aiErr, setAiErr] = useState("");
   const [loadAI, setLoadAI] = useState(false);
-  const [logged, setLogged] = useState<{ question: string; answer: string; slide_title: string }[]>(loadLogged);
-  const abortRef = useRef<AbortController | null>(null);
+  const [logged, setLogged] = useState<{ question: string; answer: string; slide_title: string }[]>(initial.data.logged);
+  const streams = useRef(new Map<string, AbortController>());
+  const cancelStreams = useCallback(() => {
+    for (const controller of streams.current.values()) controller.abort();
+    streams.current.clear();
+  }, []);
+  useEffect(() => cancelStreams, [cancelStreams]);
 
   // Traduction
   const [tInput, setTInput] = useState("");
@@ -458,17 +431,19 @@ export default function Monitor() {
 
   // UI
   const [importing, setImporting] = useState(false);
+  const [storageError, setStorageError] = useState(false);
+  const [storageConflict, setStorageConflict] = useState(false);
   const [mini, setMini] = useState(false);
   const [editing, setEditing] = useState(false);
   const [copied, setCopied] = useState(false);
   const [showKeys, setShowKeys] = useState(false);
   const [showApiKeyPanel, setShowApiKeyPanel] = useState(false);
   // Clé API Claude : uniquement saisie utilisateur ou localStorage, jamais en dur dans le code.
-  const [apiKey, setApiKey] = useState(() => (typeof window !== "undefined" ? (localStorage.getItem("bpm-monitor-anthropic-key") ?? "") : ""));
+  const [apiKey, setApiKey] = useState(() => (typeof window !== "undefined" ? (preference("bpm-monitor-anthropic-key") ?? "") : ""));
   // Transparence du fond du panneau (50–95 %, réglable en live depuis la fenêtre principale)
   const [panelOpacity, setPanelOpacity] = useState(() => {
     if (typeof window === "undefined") return 0.78;
-    const v = localStorage.getItem("bpm-monitor-panel-opacity");
+    const v = preference("bpm-monitor-panel-opacity");
     const n = v != null ? parseFloat(v) : 0.78;
     return Number.isFinite(n) ? Math.max(0.5, Math.min(0.95, n)) : 0.78;
   });
@@ -480,25 +455,28 @@ export default function Monitor() {
 
   useEffect(() => {
     if (typeof window === "undefined") return;
-    if (apiKey) localStorage.setItem("bpm-monitor-anthropic-key", apiKey);
-    else localStorage.removeItem("bpm-monitor-anthropic-key");
+    try {
+      if (apiKey) localStorage.setItem("bpm-monitor-anthropic-key", apiKey);
+      else localStorage.removeItem("bpm-monitor-anthropic-key");
+    } catch { setStorageError(true); }
   }, [apiKey]);
 
   useEffect(() => {
     if (typeof window === "undefined") return;
-    localStorage.setItem("bpm-monitor-panel-opacity", String(panelOpacity));
+    try { localStorage.setItem("bpm-monitor-panel-opacity", String(panelOpacity)); } catch { setStorageError(true); }
   }, [panelOpacity]);
 
-  // Persistance état présentation / slide courante / questions loggées (P0 audit)
   useEffect(() => {
-    if (typeof window === "undefined") return;
-    try {
-      localStorage.setItem(STORAGE_KEYS.pres, JSON.stringify(pres));
-      localStorage.setItem(STORAGE_KEYS.cur, String(cur));
-      localStorage.setItem(STORAGE_KEYS.logged, JSON.stringify(logged));
-    } catch {
-      // quota exceeded or disabled
-    }
+    let active = true;
+    saveMonitorSession({ pres, cur, logged }, baseline).then(() => {
+      if (active) { setStorageError(false); setStorageConflict(false); }
+    }).catch(error => {
+      if (active) {
+        setStorageConflict(error instanceof Error && error.message === "conflict");
+        setStorageError(true);
+      }
+    });
+    return () => { active = false; };
   }, [pres, cur, logged]);
 
   const slides = pres.slides;
@@ -581,17 +559,25 @@ export default function Monitor() {
   const next = useCallback(() => setCur(s => Math.min(s + 1, slides.length - 1)), [slides.length]);
   const prev = useCallback(() => setCur(s => Math.max(s - 1, 0)), []);
 
+  function replacePresentation(nextPresentation: PresState) {
+    cancelStreams();
+    setLoadAI(false); setLoadT(false); setLoadSum(false);
+    setAiErr(""); setTErr(""); setSumErr("");
+    setAiResp(""); setTResp(""); setSumResp("");
+    setQInput(""); setTInput(""); setLogged([]);
+    setCur(0); setTab("script"); setEditing(false);
+    setPres(nextPresentation);
+  }
+
   // Import PPTX
   const handleImport = async (file: File) => {
     setImporting(true);
     try {
       const data = await importPptx(file);
-      setPres({
+      replacePresentation({
         title: data.title,
         slides: data.slides.map((s) => ({ ...s, notes: s.notes ?? "", kpis: s.kpis ?? [] })),
       });
-      setCur(0); setLogged([]);
-      setAiResp(""); setTResp(""); setSumResp("");
     } catch (e) { alert(`${S.importError} ${e instanceof Error ? e.message : String(e)}`); }
     finally { setImporting(false); }
   };
@@ -599,6 +585,9 @@ export default function Monitor() {
   // Suggest answer
   const suggest = async () => {
     if (!qInput.trim()) return;
+    if (streams.current.has("ai")) return;
+    const controller = new AbortController();
+    streams.current.set("ai", controller);
     setLoadAI(true); setAiResp(""); setAiErr(""); setTab("ai");
     let full = "";
     try {
@@ -606,26 +595,44 @@ export default function Monitor() {
         qInput,
         { id: slide.id, title: slide.title, script: slide.script, notes: slide.notes, kpis: slide.kpis ?? [] },
         qLang,
-        (c) => { full += c; setAiResp(full); }
+        (c) => { if (controller.signal.aborted) return; full += c; setAiResp(full); }, controller.signal
       );
-      if (full) setLogged(p => [...p, { question: qInput, answer: full, slide_title: slide.title }]);
-    } catch (e) { setAiErr(e instanceof Error ? e.message : String(e)); }
-    setLoadAI(false);
+      if (full && !controller.signal.aborted) setLogged(p => [...p, { question: qInput, answer: full, slide_title: slide.title }]);
+    } catch (e) {
+      if (!controller.signal.aborted) setAiErr(e instanceof Error ? e.message : String(e));
+    } finally {
+      if (streams.current.get("ai") === controller) {
+        streams.current.delete("ai");
+        setLoadAI(false);
+      }
+    }
   };
 
   // Translate
   const doTranslate = async () => {
     if (!tInput.trim()) return;
+    if (streams.current.has("translation")) return;
+    const controller = new AbortController();
+    streams.current.set("translation", controller);
     setLoadT(true); setTResp(""); setTErr("");
     let full = "";
     try {
-      await translateAPI(tInput, tDir, (c) => { full += c; setTResp(full); });
-    } catch (e) { setTErr(e instanceof Error ? e.message : String(e)); }
-    setLoadT(false);
+      await translateAPI(tInput, tDir, (c) => { if (controller.signal.aborted) return; full += c; setTResp(full); }, controller.signal);
+    } catch (e) {
+      if (!controller.signal.aborted) setTErr(e instanceof Error ? e.message : String(e));
+    } finally {
+      if (streams.current.get("translation") === controller) {
+        streams.current.delete("translation");
+        setLoadT(false);
+      }
+    }
   };
 
   // Summarize
   const summarize = async () => {
+    if (streams.current.has("summary")) return;
+    const controller = new AbortController();
+    streams.current.set("summary", controller);
     setLoadSum(true); setSumResp(""); setSumErr(""); setTab("summary");
     let full = "";
     try {
@@ -633,10 +640,16 @@ export default function Monitor() {
         pres.title,
         slides.map(s => ({ id: s.id, title: s.title, script: s.script, notes: s.notes, kpis: s.kpis ?? [] })),
         logged,
-        (c) => { full += c; setSumResp(full); }
+        (c) => { if (controller.signal.aborted) return; full += c; setSumResp(full); }, controller.signal
       );
-    } catch (e) { setSumErr(e instanceof Error ? e.message : String(e)); }
-    setLoadSum(false);
+    } catch (e) {
+      if (!controller.signal.aborted) setSumErr(e instanceof Error ? e.message : String(e));
+    } finally {
+      if (streams.current.get("summary") === controller) {
+        streams.current.delete("summary");
+        setLoadSum(false);
+      }
+    }
   };
 
   // Keyboard shortcuts
@@ -747,7 +760,7 @@ export default function Monitor() {
               {importing ? <><Spinner size={12}/> {S.importing}</> : "↑ PPTX"}
             </Btn>
             {/* Présentation de démonstration embarquée (version de la locale active) */}
-            <Btn onClick={() => { setPres(defaultPresFor(locale)); setCur(0); }} disabled={importing} variant="ghost" size="sm">
+            <Btn onClick={() => replacePresentation(defaultPresFor(locale))} disabled={importing} variant="ghost" size="sm">
               {S.demo}
             </Btn>
             {/* Slide counter */}
@@ -767,6 +780,9 @@ export default function Monitor() {
           </div>
         </div>
 
+        {storageError && <div role="alert"><Message variant="error" text={storageConflict
+          ? (locale === "fr" ? "Une autre séance est enregistrée. Votre brouillon reste dans cet onglet. Rechargez pour ouvrir la séance enregistrée." : "Another session has been saved. Your draft remains in this tab. Reload to open the saved session.")
+          : (locale === "fr" ? "Espace navigateur indisponible. La séance reste ouverte dans cet onglet." : "Browser storage unavailable. This session remains open in this tab.")}/></div>}
         {/* Transparence du fond (réglable en live depuis la fenêtre principale) */}
         {showOpacityPanel && (
           <div style={{ background:T.bgCard, borderBottom:`1px solid ${T.border}`, padding:"10px 14px", animation:"bpm-in .15s ease" }}>
@@ -923,7 +939,7 @@ export default function Monitor() {
                       style={{ padding:"8px 10px", marginBottom:"5px", background:T.bg, border:`1px solid ${T.border}`, borderRadius:T.radius, fontSize:"12.5px", cursor:"default", transition:"background .15s" }}>
                       <div style={{ display:"flex", alignItems:"baseline", gap:"6px" }}>
                         <Badge label={`Q${i+1}`} variant="info"/>
-                        <span style={{ color:T.fg }}>{l.question}</span>
+                        <details><summary style={{ cursor:"pointer", color:T.fg }}>{l.question}</summary><p style={{ whiteSpace:"pre-wrap" }}>{l.answer}</p></details>
                       </div>
                       <div style={{ color:T.muted, fontSize:"11px", marginTop:"4px", fontFamily:T.mono }}>{l.slide_title}</div>
                     </div>
