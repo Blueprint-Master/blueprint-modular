@@ -220,6 +220,9 @@ export function LoginPage({
 
         <footer className={styles.footer}>
           <div className={styles.footerLinks}>
+            <Link className={styles.footerLink} href={"/register?mode=recover" + (callbackUrl ? "&callbackUrl=" + encodeURIComponent(callbackUrl) : "")}>
+              {locale === "fr" ? "Mot de passe oublié ?" : "Forgot password?"}
+            </Link>
             <Link href={callbackUrl ? "/register?callbackUrl=" + encodeURIComponent(callbackUrl) : "/register"} className={styles.footerLink}>
               {S.createAccount}
             </Link>

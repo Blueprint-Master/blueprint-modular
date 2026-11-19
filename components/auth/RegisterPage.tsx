@@ -58,6 +58,7 @@ const en: typeof fr = {
 
 type RegisterPageProps = {
   title?: string;
+  recovery?: boolean;
   emailEnabled?: boolean;
   googleEnabled?: boolean;
   logoSrc?: string | null;
@@ -79,6 +80,7 @@ function GoogleIcon() {
 
 export function RegisterPage({
   title = "Blueprint Modular",
+  recovery = false,
   emailEnabled = true,
   googleEnabled = true,
   logoSrc = null,
@@ -96,6 +98,11 @@ export function RegisterPage({
   const [error, setError] = useState<string | null>(null);
   const [logoError, setLogoError] = useState(false);
 
+  const purpose = recovery ? "recover" : "register";
+  const recoverTitle = locale === "fr" ? "Réinitialiser le mot de passe" : "Reset password";
+  const recoverHint = locale === "fr" ? "Saisissez votre adresse et le nouveau mot de passe souhaité." : "Enter your email address and the new password you want to use.";
+  const recoverSent = locale === "fr" ? "Si ce compte utilise un mot de passe, un code a été envoyé à" : "If this account uses a password, a code has been sent to";
+
   const handleGoogleSignUp = () => {
     setError(null);
     void signIn("google", { callbackUrl: callbackUrl ?? "/dashboard" });
@@ -111,8 +118,8 @@ export function RegisterPage({
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(challenge
-          ? { email: email.trim(), name: fullName.trim() || undefined, password, code, id: challenge }
-          : { email: email.trim(), locale }),
+          ? { purpose, email: email.trim(), name: fullName.trim() || undefined, password, code, id: challenge }
+          : { purpose, email: email.trim(), locale }),
       });
       const data = await res.json().catch(() => ({}));
       if (res.status === 202 && data.id) {
@@ -146,20 +153,20 @@ export function RegisterPage({
             />
           </div>
         )}
-        <h1 className={styles.title}>{S.heading}</h1>
-        <p className={styles.subtitle}>{S.subtitle}</p>
+        <h1 className={styles.title}>{recovery ? recoverTitle : S.heading}</h1>
+        <p className={styles.subtitle}>{recovery ? recoverHint : S.subtitle}</p>
 
         {error && <div className={styles.error} role="alert">{error}</div>}
 
-        {googleEnabled && <div className={styles.methods}>
+        {!recovery && googleEnabled && <div className={styles.methods}>
           <button type="button" className={`${styles.methodButton} ${styles.methodButtonGoogle}`} onClick={handleGoogleSignUp}>
             <GoogleIcon /> Google
           </button>
         </div>}
-        {googleEnabled && emailEnabled && <div className={styles.divider}><span>{S.or}</span></div>}
+        {!recovery && googleEnabled && emailEnabled && <div className={styles.divider}><span>{S.or}</span></div>}
 
         {emailEnabled ? <form className={styles.form} onSubmit={handleSubmit}>
-          <div className={styles.formGroup}>
+          {!recovery && <div className={styles.formGroup}>
             <label htmlFor="register-name">{S.fullName}</label>
             <input
               id="register-name"
@@ -171,7 +178,7 @@ export function RegisterPage({
               autoComplete="name"
               disabled={loading}
             />
-          </div>
+          </div>}
           <div className={styles.formGroup}>
             <label htmlFor="register-email">{S.emailLabel}</label>
             <input
@@ -202,7 +209,7 @@ export function RegisterPage({
             />
           </div>
           {challenge && <div className={styles.formGroup}>
-            <p role="status">{S.sent} {email}.</p>
+            <p role="status">{recovery ? recoverSent : S.sent} {email}.</p>
             <label htmlFor="register-code">{S.code}</label>
             <input id="register-code" value={code} onChange={e => setCode(e.target.value)} required
               inputMode="numeric" autoComplete="one-time-code" pattern="[0-9]{8}" maxLength={8} />
@@ -232,13 +239,13 @@ export function RegisterPage({
               {S.backToHome}
             </Link>
           </div>
-          <p className={styles.terms}>
+          {!recovery && <p className={styles.terms}>
             {S.termsPrefix}
             <Link href="/terms">{S.termsLink}</Link>
             {S.termsMiddle}
             <Link href="/privacy">{S.privacyLink}</Link>
             {S.termsSuffix}
-          </p>
+          </p>}
         </footer>
       </div>
   );

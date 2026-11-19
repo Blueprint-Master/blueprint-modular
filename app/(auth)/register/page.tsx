@@ -5,7 +5,7 @@ import { redirect } from "next/navigation";
 import { authOptions } from "@/lib/auth";
 import { RegisterPage } from "@/components/auth";
 
-type Props = { searchParams: Promise<{ callbackUrl?: string; layout?: string }> };
+type Props = { searchParams: Promise<{ callbackUrl?: string; layout?: string; mode?: string }> };
 
 export default async function RegisterPageRoute({ searchParams }: Props) {
   const params = await searchParams;
@@ -19,6 +19,7 @@ export default async function RegisterPageRoute({ searchParams }: Props) {
       title="Blueprint Modular"
       logoSrc="/Logo-BPM-nom.jpg"
       googleEnabled={Boolean(process.env.GOOGLE_CLIENT_ID && process.env.GOOGLE_CLIENT_SECRET)}
+      recovery={params?.mode === "recover"}
       emailEnabled={registrationEnabled()}
       callbackUrl={callbackUrl}
       useSplitLayout={useSplitLayout}

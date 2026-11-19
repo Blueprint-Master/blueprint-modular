@@ -52,6 +52,33 @@ describe.skipIf(!url)("installed account adapter and verified email registration
     expect(await authenticatePassword(email, password)).toEqual(identity);
   });
 
+  it("changes an existing password once, requires a recovery code and revokes its old session", async () => {
+    const address = randomUUID() + "@example.test";
+    let code = "";
+    const send = async (_address: string, value: string) => { code = value; };
+    try {
+      const registration = await beginEnrollment(address, false, send);
+      expect(await completeEnrollment(address, registration, code, undefined, "different-new-password", "recover")).toBe(false);
+      expect(await completeEnrollment(address, registration, code, "Fixture", "old-fixture-password")).toBe(true);
+      const oldUser = await authenticatePassword(address, "old-fixture-password");
+      const recovery = await beginEnrollment(address, false, send, "recover");
+      expect(await completeEnrollment(address, recovery, code, undefined, "different-new-password")).toBe(false);
+      const results = await Promise.all([1, 2].map(() =>
+        completeEnrollment(address, recovery, code, undefined, "different-new-password", "recover")));
+      expect(results.sort()).toEqual([false, true]);
+      expect(await authenticatePassword(address, "old-fixture-password")).toBeNull();
+      const restored = await authenticatePassword(address, "different-new-password");
+      expect(restored).toMatchObject({ id: oldUser.id, credentialRevision: oldUser.credentialRevision + 1 });
+      const { authOptions } = await import("@/lib/auth");
+      const session = { user: { email: address }, expires: "" };
+      expect(await authOptions.callbacks.session({ session, token: { id: oldUser.id, credentialRevision: oldUser.credentialRevision } } as never)).toBeNull();
+      expect(await authOptions.callbacks.session({ session, token: { id: restored.id, credentialRevision: restored.credentialRevision } } as never)).toBeTruthy();
+    } finally {
+      await postgres.enrollmentChallenge.deleteMany({ where: { email: address } });
+      await postgres.user.deleteMany({ where: { email: address } });
+    }
+  });
+
   it("expires a challenge and permits a new request after relay failure", async () => {
     const fail = async () => { throw new Error("relay offline"); };
     await expect(beginEnrollment(email, true, fail)).rejects.toThrow();

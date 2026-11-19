@@ -58,4 +58,8 @@ La migration conserve les photos existantes et crée la relation entre compte Mo
 
 **Déploiement.** Appliquer la migration avant le remplacement du serveur. Configurer un relais SMTP pour l’inscription et/ou un client Google pour OAuth. Le mot de passe partagé de démonstration est retiré et les identités de test sont désactivées en production. Pour une instance qui utilisait le mot de passe partagé, prévoir la création des identifiants individuels et la rotation de `NEXTAUTH_SECRET` au basculement pour fermer les anciennes sessions.
 
-**Suite du catalogue.** Continuer la récupération de compte, puis Commentaires. Les parcours des autres modules sont à vérifier individuellement.
+**Récupération de compte.** Le lien « Mot de passe oublié ? » ouvre le formulaire de récupération. Sa preuve SMTP a une finalité distincte de celle de l’inscription. Une transaction remplace le mot de passe, remet à zéro les échecs et incrémente la révision des sessions par mot de passe. Un compte Google sans identifiant local conserve sa méthode de connexion. La migration conserve les codes d’inscription en cours et initialise la révision des comptes existants. Les anciennes sessions OAuth sans indication de fournisseur peuvent nécessiter une reconnexion.
+
+**Recette de récupération.** Dix tests PostgreSQL ont réussi, dont une course entre deux confirmations du même code. Sur le serveur standalone, un second navigateur a demandé le code à un relais SMTP local puis remplacé le mot de passe. La session ouverte avant la récupération est devenue invalide. La connexion avec le nouveau mot de passe fonctionne après redémarrage.
+
+**Suite du catalogue.** Commentaires. Les parcours des autres modules sont à vérifier individuellement.

@@ -738,6 +738,7 @@ model Account {
 
 model UserCredential {
   userId       String @id
+  revision Int @default(0)
   passwordHash String
   failures Int @default(0)
   windowStart DateTime?
@@ -745,7 +746,9 @@ model UserCredential {
 }
 
 model EnrollmentChallenge {
-  email     String @id
+  email     String
+  purpose   String @default("register")
+  @@id([email, purpose])
   id        String @unique
   codeHash  String
   attempts  Int @default(0)

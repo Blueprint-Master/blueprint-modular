@@ -21,7 +21,7 @@ export async function authenticatePassword(email: string, password: string) {
   if (!email || email.length > 254 || !password || Buffer.byteLength(password) > 1024) return null;
   const user = await prisma.user.findUnique({
     where: { email }, select: { id: true, email: true, name: true, role: true, image: true,
-      credential: { select: { passwordHash: true, failures: true, windowStart: true } } },
+      credential: { select: { passwordHash: true, revision: true, failures: true, windowStart: true } } },
   });
   const start = user?.credential?.windowStart;
   if (start && user.credential.failures >= 10 && +start > Date.now() - 15 * 60000) return null;
@@ -40,5 +40,5 @@ export async function authenticatePassword(email: string, password: string) {
   }
   await prisma.userCredential.updateMany({ where: { userId: user.id, failures: { gt: 0 } }, data: { failures: 0, windowStart: null } });
   const { credential: _private, ...identity } = user!;
-  return identity;
+  return { ...identity, credentialRevision: user.credential.revision };
 }

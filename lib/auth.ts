@@ -101,10 +101,18 @@ export const authOptions: AuthOptions = {
       if (user) {
         token.role = (user as { role?: string }).role;
         token.id = user.id;
+        if ("credentialRevision" in user) token.credentialRevision = user.credentialRevision;
+        else token.oauthSession = true;
       }
       return token;
     },
     async session({ session, token }) {
+      if (!token.oauthSession) {
+        const credential = typeof token.id === "string" ? await prisma.userCredential.findUnique({
+          where: { userId: token.id }, select: { revision: true },
+        }) : null;
+        if (!credential || credential.revision !== (token.credentialRevision ?? 0)) return null;
+      }
       if (session.user) {
         (session.user as { id?: string }).id = token.id as string;
         (session.user as { role?: string }).role = token.role as string;
