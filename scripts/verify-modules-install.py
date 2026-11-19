@@ -101,6 +101,9 @@ def main(application, model_url):
         event = json.dumps({"title": record, "startAt": "2026-11-19T08:00:00Z", "endAt": "2026-11-19T09:00:00Z"}).encode()
         event_id = json.loads(read("/api/calendar", data=event, mime="application/json"))["id"]
         analyses = create_records(read)
+        if os.environ.get("MODULAR_TEST_CHROMIUM"):
+            from module_catalogue_browser import verify
+            verify(origin)
     with server():
         verify_after_restart(read, analyses)
         assert json.loads(read("/api/calendar/" + event_id))["title"] == record

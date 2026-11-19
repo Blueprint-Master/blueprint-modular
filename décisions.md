@@ -6,6 +6,8 @@ Le ZIP historique omettait les routes API, les contextes React et les dépendanc
 
 Le job d’installation du run GitHub Actions 44477641273 a construit le ZIP, extrait le projet hors du dépôt, installé les dépendances, compilé le serveur et migré PostgreSQL. Il a ouvert la documentation et l’entrée de chacun des 32 modules, écrit un rendez-vous avec une vraie session et retrouvé le rendez-vous après redémarrage. La recette locale sur PostgreSQL 16.15 a également réussi. La vérification Android du même run attendait une ancienne commande shell littérale. Elle exécute désormais la copie dans les deux dispositions standalone et vérifie le contenu du fichier réellement servi. Le contrôle des 64 routes mesure la livraison technique. Les recettes métier, leurs prérequis et leurs limites restent consignés séparément.
 
+Les treize parcours de démonstration restants possèdent aussi une recette Chromium sur le serveur installé. Elle manipule des formulaires et filtres, télécharge les exports, contrôle la personnalisation du tableau de bord après rechargement et vérifie le verrouillage du devis payé. Ces contrôles utilisent les jeux d’exemple du simulateur. L’intégration des données de l’application est vérifiée séparément.
+
 ## IA, analyse documentaire et base contractuelle
 
 Une panne du fournisseur Ollama remonte comme indisponibilité. La requête suivante peut reprendre dès le retour du fournisseur. Seul le réglage explicite AI_MOCK active les réponses d’exemple. Une réponse interrompue en streaming, une extraction vide ou une réponse contractuelle sans synthèse donne un échec exploitable. Le risque d’un contrat reste indéterminé si le fournisseur ne le renseigne pas.
@@ -15,6 +17,10 @@ Documents accepte PDF, DOCX et TXT depuis l’interface et par API. Les nouvelle
 ## Rapports sur les données d’une application
 
 Le paquet Python et le ZIP embarquent `bpm.reports`. Les trois modèles lisent les données réelles fournies par le développeur ou par CSV. Les montants sont agrégés en décimal dans une même devise. Les commandes se comptent à raison d’une ligne par commande. Les effectifs correspondent à la dernière observation de chaque salarié à la clôture. La génération conserve les résultats, l’auteur, la période et l’heure dans la base de l’application. Une réexécution avec la même clé et un contenu différent signale un conflit. Le test de concurrence a produit un seul instantané pour deux générations simultanées. Le CSV relu après réouverture de la base a conservé l’avoir, la moyenne et le libellé de région. Le navigateur a aussi téléchargé le rapport mensuel du simulateur.
+
+## Veille — collecter des sources configurées
+
+Le collecteur installé `python -m bpm.watch` lit des flux RSS et Atom, des API JSON et des pages HTML par HTTP. Un exploitant déclare les sources et programme les passages. Le stockage par application conserve les articles, les versions des pages, la dernière collecte réussie et les alertes de franchissement de seuil. Un flux invalide ou en panne conserve ses résultats précédents. Deux collectes simultanées de la même version ne doublent ni les articles ni les alertes. La recette a interrogé un serveur HTTP isolé, relu la base après réouverture et vérifié une réponse 304, une panne 503, un flux invalide, la reprise et deux franchissements distincts.
 
 ## Point de départ
 

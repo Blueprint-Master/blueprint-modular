@@ -42,7 +42,10 @@ jobs:
           npm run build:standalone
           npx --no-install prisma migrate deploy
           node "$GITHUB_WORKSPACE/scripts/seed-module-install-fixture.cjs" "$PWD"
-          python3 "$GITHUB_WORKSPACE/scripts/verify-modules-install.py" "$PWD"
+          python3 -m venv "$RUNNER_TEMP/module-browser"
+          "$RUNNER_TEMP/module-browser/bin/pip" install playwright==1.56.0
+          export MODULAR_TEST_CHROMIUM="$(command -v google-chrome)"
+          "$RUNNER_TEMP/module-browser/bin/python" "$GITHUB_WORKSPACE/scripts/verify-modules-install.py" "$PWD"
       - uses: actions/upload-artifact@v4
         with:
           name: blueprint-modules-${{ github.sha }}
