@@ -246,6 +246,11 @@ html:not([data-theme="dark"]) :focus-visible {
 .app-main > .plano-home {
   padding-left: 0;
   padding-right: 0;
+  /* min-height: 100% du parent, qui contient AUSSI le bloc d'installation : la
+     hauteur se mesurait sur elle-même et laissait un grand vide sous la
+     bibliothèque (retour de Rémi, 19/11). Dans l'app, la hauteur suit le contenu. */
+  min-height: 0;
+  padding-bottom: 24px;
 }
 .app-main:has(> .plano-home) {
   padding-top: 0;
