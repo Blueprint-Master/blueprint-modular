@@ -11,7 +11,10 @@ model User {
   id        String   @id @default(cuid())
   email     String   @unique
   name      String?
-  picture   String?
+  image         String?   @map("picture")
+  emailVerified DateTime?
+  accounts      Account[]
+  credential    UserCredential?
   role      Role     @default(USER)
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -711,4 +714,42 @@ model RoomReservation {
   member         OrgMember @relation(fields: [ownerId, organizationId], references: [userId, organizationId], onDelete: Cascade)
 
   @@index([organizationId, day, room])
+}
+
+model Account {
+  id                       String @id @default(cuid())
+  userId                   String
+  type                     String
+  provider                 String
+  providerAccountId        String
+  refresh_token            String?
+  access_token             String?
+  expires_at               Int?
+  token_type               String?
+  scope                    String?
+  id_token                 String?
+  session_state            String?
+  refresh_token_expires_in Int?
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerAccountId])
+  @@index([userId])
+}
+
+model UserCredential {
+  userId       String @id
+  passwordHash String
+  failures Int @default(0)
+  windowStart DateTime?
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model EnrollmentChallenge {
+  email     String @id
+  id        String @unique
+  codeHash  String
+  attempts  Int @default(0)
+  sentAt    DateTime
+  expiresAt DateTime
+  @@index([sentAt])
 }

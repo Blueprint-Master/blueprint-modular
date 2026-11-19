@@ -1,5 +1,6 @@
 "use client";
 
+import { signIn } from "next-auth/react";
 import { useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
@@ -9,12 +10,15 @@ import styles from "./AuthForm.module.css";
 
 const fr = {
   heading: "Créer un compte",
-  subtitle: "Utilisez Google ou Apple pour vous inscrire, ou créez un compte avec votre e-mail.",
-  appleSoon: "Inscription avec Apple bientôt disponible. Utilisez Google.",
+  request: "Recevoir le code", code: "Code reçu par e-mail", changeEmail: "Modifier l’adresse ou demander un nouveau code",
+  sent: "Un code valable dix minutes a été envoyé à", invalidCode: "Code expiré ou incorrect, ou compte déjà inscrit.",
+  restricted: "Cette adresse ne peut pas s’inscrire sur cette instance.",
+  emailOff: "L’inscription par e-mail est désactivée sur cette instance.",
+  subtitle: "Inscrivez-vous avec une méthode disponible sur cette instance.",
   or: "ou",
   fullName: "Nom complet",
   emailLabel: "Email",
-  passwordLabel: "Mot de passe",
+  passwordLabel: "Mot de passe (12 caractères minimum)",
   creatingAccount: "Création du compte…",
   submit: "Valider",
   signIn: "Se connecter",
@@ -30,12 +34,15 @@ const fr = {
 
 const en: typeof fr = {
   heading: "Create an account",
-  subtitle: "Use Google or Apple to sign up, or create an account with your email.",
-  appleSoon: "Apple sign-up coming soon. Use Google.",
+  request: "Send verification code", code: "Code from your email", changeEmail: "Change address or request a new code",
+  sent: "A code valid for ten minutes has been sent to", invalidCode: "Code expired or incorrect, or account already registered.",
+  restricted: "This address cannot register on this instance.",
+  emailOff: "Email registration is disabled on this instance.",
+  subtitle: "Register with a method available on this instance.",
   or: "or",
   fullName: "Full name",
   emailLabel: "Email",
-  passwordLabel: "Password",
+  passwordLabel: "Password (at least 12 characters)",
   creatingAccount: "Creating account…",
   submit: "Submit",
   signIn: "Sign in",
@@ -51,6 +58,8 @@ const en: typeof fr = {
 
 type RegisterPageProps = {
   title?: string;
+  emailEnabled?: boolean;
+  googleEnabled?: boolean;
   logoSrc?: string | null;
   callbackUrl?: string | null;
   /** Si false, affiche le formulaire en carte centrée (modèle par défaut). */
@@ -68,16 +77,10 @@ function GoogleIcon() {
   );
 }
 
-function AppleIcon() {
-  return (
-    <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" style={{ marginRight: 12 }} aria-hidden>
-      <path d="M17.05 20.28c-.98.95-2.05.8-3.08.35-1.09-.46-2.09-.48-3.24 0-1.44.62-2.2.44-3.06-.35C2.79 15.25 3.51 7.59 9.05 7.31c1.35.07 2.29.74 3.08.8 1.18-.24 2.31-.93 3.57-.84 1.51.12 2.65.72 3.4 1.8-3.12 1.87-2.38 5.98.48 7.13-.57 1.5-1.31 2.99-2.54 4.09l.01-.01zM12.03 7.25c-.15-2.23 1.66-4.07 3.74-4.25.29 2.58-2.34 4.5-3.74 4.25z" />
-    </svg>
-  );
-}
-
 export function RegisterPage({
   title = "Blueprint Modular",
+  emailEnabled = true,
+  googleEnabled = true,
   logoSrc = null,
   callbackUrl = null,
   useSplitLayout = false,
@@ -88,15 +91,14 @@ export function RegisterPage({
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
+  const [challenge, setChallenge] = useState("");
+  const [code, setCode] = useState("");
   const [error, setError] = useState<string | null>(null);
   const [logoError, setLogoError] = useState(false);
 
   const handleGoogleSignUp = () => {
     setError(null);
-    const url = callbackUrl
-      ? `/api/auth/signin/google?callbackUrl=${encodeURIComponent(callbackUrl)}`
-      : "/api/auth/signin/google";
-    window.location.href = url;
+    void signIn("google", { callbackUrl: callbackUrl ?? "/dashboard" });
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -108,18 +110,20 @@ export function RegisterPage({
       const res = await fetch("/api/auth/register", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          name: fullName.trim() || undefined,
-          email: email.trim(),
-          password,
-        }),
+        body: JSON.stringify(challenge
+          ? { email: email.trim(), name: fullName.trim() || undefined, password, code, id: challenge }
+          : { email: email.trim(), locale }),
       });
       const data = await res.json().catch(() => ({}));
-      if (res.ok) {
-        window.location.href = data.redirectUrl ?? "/login";
+      if (res.status === 202 && data.id) {
+        setChallenge(data.id);
         return;
       }
-      setError((data as { error?: string }).error ?? S.errorRegister);
+      if (res.status === 201) {
+        window.location.href = callbackUrl ? "/login?callbackUrl=" + encodeURIComponent(callbackUrl) : "/login";
+        return;
+      }
+      setError(res.status === 403 ? S.restricted : data.error === "invalid_code" ? S.invalidCode : S.errorRegister);
     } catch {
       setError(S.errorNetwork);
     } finally {
@@ -145,32 +149,16 @@ export function RegisterPage({
         <h1 className={styles.title}>{S.heading}</h1>
         <p className={styles.subtitle}>{S.subtitle}</p>
 
-        {error && <div className={styles.error}>{error}</div>}
+        {error && <div className={styles.error} role="alert">{error}</div>}
 
-        <div className={styles.methods}>
-          <button
-            type="button"
-            className={`${styles.methodButton} ${styles.methodButtonApple}`}
-            onClick={() => setError(S.appleSoon)}
-          >
-            <AppleIcon />
-            Apple
+        {googleEnabled && <div className={styles.methods}>
+          <button type="button" className={`${styles.methodButton} ${styles.methodButtonGoogle}`} onClick={handleGoogleSignUp}>
+            <GoogleIcon /> Google
           </button>
-          <button
-            type="button"
-            className={`${styles.methodButton} ${styles.methodButtonGoogle}`}
-            onClick={handleGoogleSignUp}
-          >
-            <GoogleIcon />
-            Google
-          </button>
-        </div>
+        </div>}
+        {googleEnabled && emailEnabled && <div className={styles.divider}><span>{S.or}</span></div>}
 
-        <div className={styles.divider}>
-          <span>{S.or}</span>
-        </div>
-
-        <form className={styles.form} onSubmit={handleSubmit}>
+        {emailEnabled ? <form className={styles.form} onSubmit={handleSubmit}>
           <div className={styles.formGroup}>
             <label htmlFor="register-name">{S.fullName}</label>
             <input
@@ -179,6 +167,7 @@ export function RegisterPage({
               value={fullName}
               onChange={(e) => setFullName(e.target.value)}
               placeholder="Jean Dupont"
+              maxLength={100}
               autoComplete="name"
               disabled={loading}
             />
@@ -191,6 +180,7 @@ export function RegisterPage({
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               placeholder="vous@exemple.com"
+              readOnly={Boolean(challenge)}
               autoComplete="email"
               required
               disabled={loading}
@@ -206,10 +196,20 @@ export function RegisterPage({
               placeholder="••••••••"
               autoComplete="new-password"
               required
-              minLength={8}
+              minLength={12}
+              maxLength={256}
               disabled={loading}
             />
           </div>
+          {challenge && <div className={styles.formGroup}>
+            <p role="status">{S.sent} {email}.</p>
+            <label htmlFor="register-code">{S.code}</label>
+            <input id="register-code" value={code} onChange={e => setCode(e.target.value)} required
+              inputMode="numeric" autoComplete="one-time-code" pattern="[0-9]{8}" maxLength={8} />
+            <button type="button" disabled={loading} onClick={() => { setChallenge(""); setCode(""); setError(null); }}>
+              {S.changeEmail}
+            </button>
+          </div>}
           <div className={styles.formActions}>
             <button
               type="submit"
@@ -217,14 +217,14 @@ export function RegisterPage({
               disabled={loading || !email.trim() || !password}
               style={{ flex: "1 1 100%" }}
             >
-              {loading ? S.creatingAccount : S.submit}
+              {loading ? S.creatingAccount : challenge ? S.submit : S.request}
             </button>
           </div>
-        </form>
+        </form> : <p>{S.emailOff}</p>}
 
         <footer className={styles.footer}>
           <div className={styles.footerLinks}>
-            <Link href="/login" className={styles.footerLink}>
+            <Link href={callbackUrl ? "/login?callbackUrl=" + encodeURIComponent(callbackUrl) : "/login"} className={styles.footerLink}>
               {S.signIn}
             </Link>
             <span className={styles.footerSep}>·</span>

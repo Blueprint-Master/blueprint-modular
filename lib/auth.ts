@@ -4,14 +4,15 @@ import { PrismaAdapter } from "@auth/prisma-adapter";
 import GoogleProvider from "next-auth/providers/google";
 import CredentialsProvider from "next-auth/providers/credentials";
 import { prisma } from "./prisma";
+import { authenticatePassword } from "./auth/credentials";
 import type { User } from "@prisma/client";
 
 /** Si true, les modules Contrats / Documents / Wiki acceptent les requêtes sans session (utilisateur de test en base). Pour tests uniquement. */
-const SKIP_AUTH_FOR_TEST = process.env.SKIP_AUTH_FOR_TEST === "true";
+
 
 /** Pour la Sandbox « Par IA » : si true, la génération est autorisée même sans session ni utilisateur en base (évite 401 en démo). */
 export function isSkipAuthForTest(): boolean {
-  return SKIP_AUTH_FOR_TEST;
+  return process.env.NODE_ENV !== "production" && process.env.SKIP_AUTH_FOR_TEST === "true";
 }
 
 const DEMO_USER_EMAIL = "demo@blueprint-modular.local";
@@ -26,7 +27,7 @@ export async function getSessionOrTestUser({ allowTestUser = true } = {}): Promi
     const user = await prisma.user.findUnique({ where: { email: session.user.email } });
     if (user) return { user };
   }
-  if (allowTestUser && SKIP_AUTH_FOR_TEST) {
+  if (allowTestUser && isSkipAuthForTest()) {
     let testUser = await prisma.user.findFirst({ orderBy: { createdAt: "asc" } });
     if (!testUser) {
       testUser = await prisma.user.upsert({
@@ -81,18 +82,15 @@ export const authOptions: AuthOptions = {
         if (!credentials?.email) return null;
         const email = credentials.email.trim().toLowerCase();
         if (AUTHORIZED_EMAILS.length > 0 && !AUTHORIZED_EMAILS.includes(email)) return null;
-        const demoPassword = process.env.CREDENTIALS_DEMO_PASSWORD;
-        if (demoPassword && credentials.password === demoPassword) {
-          return { id: email, email, name: email, image: null } as { id: string; email: string; name: string; image: string | null };
-        }
-        return null;
+        return authenticatePassword(email, credentials.password ?? "");
       },
     }),
   ],
   session: { strategy: "jwt", maxAge: 30 * 24 * 60 * 60 },
   pages: { signIn: "/login" },
   callbacks: {
-    async signIn({ user, account }) {
+    async signIn({ user, account, profile }) {
+      if (account?.provider === "google" && !(profile as { email_verified?: boolean } | undefined)?.email_verified) return false;
       if (account?.provider === "google" && AUTHORIZED_EMAILS.length > 0) {
         const email = user.email?.trim().toLowerCase();
         if (!email || !AUTHORIZED_EMAILS.includes(email)) return false;

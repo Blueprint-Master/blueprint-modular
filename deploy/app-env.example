@@ -8,10 +8,10 @@
 NEXTAUTH_SECRET=    # openssl rand -hex 32
 NEXTAUTH_URL=https://app.blueprint-modular.com
 
-# Si les modules (Documents, Contrats, Wiki, Sandbox IA) renvoient 401 sans être connecté :
-# mettre SKIP_AUTH_FOR_TEST=true pour utiliser le 1er utilisateur en base (tests/démo).
-# Prérequis : au moins un utilisateur créé (inscription ou OAuth une fois).
-# SKIP_AUTH_FOR_TEST=true
+# Inscription e-mail avec preuve de possession. STARTTLS obligatoire hors relais local.
+# AUTH_SMTP_URL=smtps://utilisateur:mot-de-passe@relais.exemple.fr:465
+# AUTH_MAIL_FROM=Modular <inscription@exemple.fr>
+# SKIP_AUTH_FOR_TEST est réservé aux environnements de développement et de test.
 
 # OAuth (Google pour la connexion)
 GOOGLE_CLIENT_ID=

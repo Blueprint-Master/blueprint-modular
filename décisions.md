@@ -48,4 +48,14 @@ Le worker `bpm.webhooks` associe un événement à une intégration configurée 
 
 **Recette du 19 novembre.** Un destinataire HTTPS de recette a reçu une commande, répondu 503, puis 204 après redémarrage du worker. Les deux requêtes portaient le même identifiant et une signature valide. Deux processus concurrents ont traité une seule nouvelle tentative. Cinq tests couvrent aussi l’annulation de la transaction métier, la reprise après interruption, les délais, les alertes, la suspension et la rotation du secret. Pour déployer, configurer la destination, le secret et le disque privé, puis lancer `tick` chaque minute. Aucun destinataire client n’a été sollicité.
 
-**Suite du catalogue.** Prochain module : Authentification. Les contrôles d’ouverture du catalogue restent des contrôles HTTP. La recette de chaque parcours utilisateur est à consigner ici avec ses conditions de déploiement.
+## Authentification — inscription et connexion
+
+L’inscription par e-mail demandait un mot de passe puis retournait HTTP 501. Le nouveau parcours vérifie l’adresse via un code de huit chiffres envoyé par SMTP. Le code est valable dix minutes et consommé une seule fois. L’inscription concurrente conserve un seul compte et ne remplace pas le mot de passe existant. L’authentification utilise un secret individuel dérivé avec scrypt et un sel par compte. Le quota de codes et les compteurs de tentatives sont partagés entre processus en base. Le formulaire retrouve la page demandée après la connexion.
+
+La migration conserve les photos existantes et crée la relation entre compte Modular et identité du fournisseur OAuth. L’adaptateur Prisma livré a créé, associé, retrouvé et détaché un compte Google de recette. Le parcours en ligne sur les serveurs de Google reste à vérifier avec le client OAuth de l’exploitant.
+
+**Recette du 19 novembre.** Sur un build standalone et une base PostgreSQL 16 migrée depuis zéro, Chromium a suivi le lien de connexion du planning, créé un compte, récupéré le code envoyé à un serveur SMTP local, confirmé l’adresse, ouvert le planning et fermé la session. Un second processus serveur a accepté le même compte après redémarrage. Neuf tests PostgreSQL sont passés, dont trois sur les identités et l’inscription. Le comportement de récupération d’un mot de passe oublié reste à qualifier séparément.
+
+**Déploiement.** Appliquer la migration avant le remplacement du serveur. Configurer un relais SMTP pour l’inscription et/ou un client Google pour OAuth. Le mot de passe partagé de démonstration est retiré et les identités de test sont désactivées en production. Pour une instance qui utilisait le mot de passe partagé, prévoir la création des identifiants individuels et la rotation de `NEXTAUTH_SECRET` au basculement pour fermer les anciennes sessions.
+
+**Suite du catalogue.** Continuer la récupération de compte, puis Commentaires. Les parcours des autres modules sont à vérifier individuellement.

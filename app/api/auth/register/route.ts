@@ -1,28 +1,29 @@
-import { NextResponse } from "next/server";
+import { z } from "zod";
+import { isEmailAuthorized } from "@/lib/auth";
+import { beginEnrollment, completeEnrollment, registrationEnabled } from "@/lib/auth/enrollment";
 
-/**
- * Inscription par e-mail (stub).
- * Pour l’instant l’app utilise Google OAuth ; cette route retourne 501.
- * Quand un flux email/password sera implémenté (hash mot de passe, création User, etc.),
- * remplacer par la logique réelle et rediriger vers /login après création.
- */
+const email = z.string().trim().email().max(254).transform(value => value.toLowerCase());
+const requestCode = z.object({ email, locale: z.enum(["fr", "en"]).optional() }).strict();
+const confirmation = z.object({
+  email, id: z.string().uuid(), code: z.string().regex(/^\d{8}$/),
+  name: z.string().trim().max(100).optional(), password: z.string().min(12).max(256),
+}).strict();
+
 export async function POST(request: Request) {
-  const body = await request.json().catch(() => ({}));
-  const { email, password, name } = body as { email?: string; password?: string; name?: string };
-
-  if (!email || !password) {
-    return NextResponse.json(
-      { error: "Email et mot de passe requis." },
-      { status: 400 }
-    );
+  if (!registrationEnabled()) return Response.json({ error: "unavailable" }, { status: 503 });
+  const body = await request.json().catch(() => null);
+  const first = requestCode.safeParse(body);
+  if (first.success) {
+    if (!isEmailAuthorized(first.data.email)) return Response.json({ error: "restricted" }, { status: 403 });
+    try {
+      const id = await beginEnrollment(first.data.email, first.data.locale === "en");
+      return Response.json({ id }, { status: 202 });
+    } catch { return Response.json({ error: "unavailable" }, { status: 503 }); }
   }
-
-  // Stub : inscription par e-mail non implémentée
-  return NextResponse.json(
-    {
-      error:
-        "Inscription par e-mail non disponible. Utilisez Google pour créer un compte.",
-    },
-    { status: 501 }
-  );
+  const input = confirmation.safeParse(body);
+  if (!input.success) return Response.json({ error: "invalid" }, { status: 400 });
+  const { email: address, id, code, name, password } = input.data;
+  if (!isEmailAuthorized(address)) return Response.json({ error: "restricted" }, { status: 403 });
+  const ok = await completeEnrollment(address, id, code, name, password);
+  return ok ? new Response(null, { status: 201 }) : Response.json({ error: "invalid_code" }, { status: 400 });
 }
