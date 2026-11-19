@@ -1,6 +1,8 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import { contractNumber } from "@/lib/asset-manager/contract-terms";
+import { readResponse } from "../../../lib/read-response";
 import Link from "next/link";
 import { useParams, useRouter } from "next/navigation";
 import { Card, Caption, Divider, Button, Spinner, Selectbox, Input } from "@/components/bpm";
@@ -17,6 +19,9 @@ export default function AssetManagerContractNewPage() {
   const domainId = typeof params?.domainId === "string" ? params.domainId : "";
   const [config, setConfig] = useState<{ domain_label?: string } | null>(null);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
+  const [alertDays, setAlertDays] = useState("30");
+  const [documentUrl, setDocumentUrl] = useState("");
   const [saving, setSaving] = useState(false);
   const [reference, setReference] = useState("");
   const [type, setType] = useState("garantie");
@@ -34,13 +39,14 @@ export default function AssetManagerContractNewPage() {
   useEffect(() => {
     if (!domainId) return;
     Promise.all([
-      fetch(`/api/asset-manager/config/${domainId}`, { credentials: "include" }).then((r) => (r.ok ? r.json() : null)),
-      fetch(`/api/asset-manager/assets?domainId=${encodeURIComponent(domainId)}`, { credentials: "include" }).then((r) => (r.ok ? r.json() : [])),
+      fetch(`/api/asset-manager/config/${domainId}`, { credentials: "include" }).then(readResponse),
+      fetch(`/api/asset-manager/assets?domainId=${encodeURIComponent(domainId)}`, { credentials: "include" }).then(readResponse),
     ])
       .then(([cfg, list]) => {
         setConfig(cfg);
         setAssets(Array.isArray(list) ? list : []);
       })
+      .catch(err => setError(err.message))
       .finally(() => setLoading(false));
   }, [domainId]);
 
@@ -51,6 +57,10 @@ export default function AssetManagerContractNewPage() {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (!reference.trim() || !label.trim() || !startDate || !endDate || saving) return;
+    setError("");
+    if ([amount, noticeDays, alertDays].some(value => value.trim() && !Number.isFinite(contractNumber(value)))) {
+      setError(locale === "fr" ? "Montant ou délai invalide." : "Invalid amount or period."); return;
+    }
     setSaving(true);
     fetch("/api/asset-manager/contracts", {
       method: "POST",
@@ -64,17 +74,19 @@ export default function AssetManagerContractNewPage() {
         supplier: supplier.trim() || null,
         startDate,
         endDate,
-        amount: amount ? parseFloat(amount) : null,
-        noticeDays: parseInt(noticeDays, 10) || 30,
+        amount: amount ? contractNumber(amount) : null,
+        noticeDays: noticeDays.trim() ? contractNumber(noticeDays) : 30,
+        alertDaysBefore: alertDays.trim() ? contractNumber(alertDays) : 30, documentUrl: documentUrl.trim() || null,
         autoRenewal,
         notes: notes.trim() || null,
         assetIds: assetIds.length > 0 ? assetIds : null,
       }),
     })
-      .then((r) => (r.ok ? r.json() : null))
+      .then(readResponse)
       .then((created) => {
         if (created?.id) router.push(`/modules/asset-manager/${domainId}/contracts/${created.id}`);
       })
+      .catch(err => setError(err.message))
       .finally(() => setSaving(false));
   };
 
@@ -98,6 +110,7 @@ export default function AssetManagerContractNewPage() {
         <Caption>{tc.fillBelow}</Caption>
       </div>
 
+      {error && <p role="alert">{error}</p>}
       <Card variant="outlined">
         <form onSubmit={handleSubmit} className="space-y-0">
           <section className="space-y-4" aria-label={tc.sectionIdentification}>
@@ -134,6 +147,8 @@ export default function AssetManagerContractNewPage() {
               </div>
             </div>
             <Input label={tc.fieldAmount} value={amount} onChange={(v) => setAmount(v)} placeholder={t.common.optional} />
+            <Input label={locale === "fr" ? "Alerte avant échéance ou préavis (jours)" : "Alert before deadline (days)"} value={alertDays} onChange={setAlertDays} />
+            <Input label={locale === "fr" ? "Lien vers le contrat" : "Contract document URL"} value={documentUrl} onChange={setDocumentUrl} />
             <Input label={tc.fieldNoticeDays} value={noticeDays} onChange={(v) => setNoticeDays(v)} placeholder="30" />
             <Selectbox
               label={tc.fieldAutoRenewal}

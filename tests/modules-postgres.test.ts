@@ -22,6 +22,9 @@ import { POST as returnLoan } from "@/app/api/asset-manager/assignments/[id]/ret
 import * as changeItem from "@/app/api/asset-manager/changes/[id]/route";
 import { POST as approveChange } from "@/app/api/asset-manager/changes/[id]/approve/route";
 import { POST as rejectChange } from "@/app/api/asset-manager/changes/[id]/reject/route";
+import * as assetContracts from "@/app/api/asset-manager/contracts/route";
+import * as assetContract from "@/app/api/asset-manager/contracts/[id]/route";
+import { contractAlert } from "@/lib/asset-manager/contract-terms";
 import * as movements from "@/app/api/asset-manager/movements/route";
 import * as movementItem from "@/app/api/asset-manager/movements/[id]/route";
 import * as relations from "@/app/api/asset-manager/ci-relations/route";
@@ -65,6 +68,49 @@ describe.skipIf(!url)("module API handlers with PostgreSQL", () => {
   afterAll(async () => {
     await postgres.user.deleteMany({ where: { id: { in: [owner, other] } } });
     await postgres.$disconnect();
+  });
+
+  it("reserves contract references per domain and keeps deadlines, notice and coverage consistent across edits", async () => {
+    wikiRole = "ADMIN";
+    userId = owner;
+    const reference = "QA-contract-" + randomUUID();
+    const asset = await postgres.asset.create({ data: {
+      domainId: "it", reference: randomUUID(), assetTypeId: "laptop", label: reference, statusId: "in_stock", createdById: owner,
+    } });
+    const body = { domainId: "it", type: "garantie", label: reference, reference, startDate: "2026-01-01", endDate: "2026-12-31",
+      amount: 0, autoRenewal: true, noticeDays: 30, alertDaysBefore: 0, assetIds: [asset.id, asset.id] };
+    const add = (patch: object) => assetContracts.POST(request("/", "POST", { ...body, ...patch }));
+    try {
+      expect((await add({ endDate: "2026-02-30" })).status).toBe(400);
+      expect((await add({ amount: -1 })).status).toBe(400);
+      expect((await add({ domainId: "maintenance" })).status).toBe(400);
+      const race = await Promise.all([add({}), add({})]);
+      expect(race.map(r => r.status).sort()).toEqual([200, 409]);
+      const row = await race.find(r => r.ok)!.json();
+      const ctx = context(row.id);
+      const read = async () => (await assetContract.GET(request("/"), ctx)).json();
+      expect(await read()).toMatchObject({ coveredAssets: [{ id: asset.id }], amount: 0, alertDaysBefore: 0 });
+      expect(contractAlert(row, new Date("2026-11-30"))).toBe(false);
+      expect(contractAlert(row, new Date("2026-12-01"))).toBe(true);
+      expect(contractAlert(row, new Date("2027-01-01"))).toBe(false);
+      expect((await add({ domainId: "maintenance", assetIds: [] })).status).toBe(200);
+      const edit = (patch: object) => assetContract.PUT(request("/", "PUT", patch), ctx);
+      expect((await edit({ endDate: "2025-01-01" })).status).toBe(400);
+      expect((await Promise.all([edit({ noticeDays: 0, expectedUpdatedAt: row.updatedAt }),
+        edit({ supplier: "QA", expectedUpdatedAt: row.updatedAt })])).map(r => r.status).sort()).toEqual([200, 409]);
+      expect((await edit({ assetIds: null, noticeDays: 0 })).status).toBe(200);
+      const saved = await read();
+      expect(saved).toMatchObject({ coveredAssets: [], noticeDays: 0 });
+      const remove = (version: string) => assetContract.DELETE(request("/?expectedUpdatedAt=" + encodeURIComponent(version), "DELETE"), ctx);
+      expect((await remove(row.updatedAt)).status).toBe(409);
+      expect((await remove(saved.updatedAt)).status).toBe(200);
+      expect((await assetContract.GET(request("/"), ctx)).status).toBe(404);
+    } finally {
+      wikiRole = "USER";
+      await postgres.assetContract.deleteMany({ where: { reference } });
+      await postgres.auditLog.deleteMany({ where: { userId: owner, resourceType: "contract" } });
+      await postgres.asset.delete({ where: { id: asset.id } });
+    }
   });
 
   it("retries a physical move once, reconciles location in date order and guards revisions including withdrawal", async () => {
