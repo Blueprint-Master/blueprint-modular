@@ -33,5 +33,6 @@ jobs:
           cd ~/blueprint-modular
           git fetch origin
           git reset --hard origin/master  # reset --hard : prod doit refléter origin/master exactement, jamais avoir de commits locaux (cf. incident 04/06/2026 côté maker)
+          ./deploy/sauvegarde-avant-migration.sh
           chmod +x deploy/deploy-from-git.sh
           ./deploy/deploy-from-git.sh
