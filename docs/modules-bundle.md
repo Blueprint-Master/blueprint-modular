@@ -24,6 +24,10 @@ Conserver la base, le secret de session et les fichiers importés sur stockage p
 - Les workers Python Export planifié et Webhooks se trouvent sous `bpm/`. Leur configuration, les commandes de traitement et les règles de reprise figurent dans la documentation de chaque module. Pour construire le paquet Python avec son interface embarquée, utiliser `bash scripts/build-python-runtime.sh`, puis `python -m pip wheel --no-deps . -w dist`.
 - Les écrans intitulés « Simulateur » proposent une démonstration. Leur documentation précise le mode de stockage et les éventuels services à raccorder.
 
+## Vérifier la version servie
+
+Lire `/api/health` après démarrage de l’application. Les champs `applicationVersion` et `sourceCommit` indiquent la version de l’application et le commit source utilisé pour construire le serveur. L’archive contient ce même commit dans `application/BUILD-REVISION`. Une copie de sources dépourvue de Git et de ce fichier renvoie un commit nul.
+
 ## Escalades de la Gestion de parc
 
 Depuis `application/`, l’exploitant peut planifier toutes les cinq minutes la commande suivante avec Node.js 22.6 ou ultérieur. Le compte de service admin/owner est l’auteur technique au journal. Le fichier de routage désigne par identifiant les comptes internes qui assurent la permanence pour ce domaine. Pour un groupe, indiquer le compte admin/owner du technicien habilité à traiter les tickets. Sans `workspaceId`, seuls les tickets du domaine dépourvus d’espace de travail sont concernés. Pour un espace nommé, ajouter son `workspaceId` au routage et choisir le compte de service et les destinataires parmi les membres de son organisation. Exemple de structure à adapter sur chaque installation :

@@ -372,3 +372,65 @@ L’intégrateur conserve ses connexions authentifiées. Le worker lit des objet
 ## Thèmes et Multi-langue dans l’application consommatrice
 
 Le paquet npm expose le format JSON exporté par le simulateur de thèmes et limite son application au conteneur fourni par l’intégrateur. Une attribution supprimée reprend le thème par défaut. Les dictionnaires peuvent venir de fichiers ou de la base de l’application. Le pluriel suit la grammaire de la traduction utilisée, y compris en cas de repli, et les montants et dates suivent la locale de l’utilisateur. Une recette hors dépôt charge les entrées publiques CommonJS et ESM du paquet.
+## Rapprochement des 32 modules entre branches de revue
+
+Point du 19 novembre à 08 h 47, heure de Paris. La PR 260 porte les parcours ci-dessous sur `c23590ad`. La lecture de `décisions.md` sur les têtes `97f7a415` (PR 261) et `bcec095e` (PR 262) établit les apports des deux suites. Ces PR s’empilent et évoluent en parallèle. Un parcours Python installé dans une application et un parcours interactif Next.js peuvent couvrir deux usages du même module. Chaque module compte une fois. À ces révisions, vingt-neuf des trente-deux ont au moins une opération métier documentée au-delà de la démonstration. La qualification de bout en bout sur une version commune reste ouverte.
+
+| Module du catalogue | Recette métier identifiée | Branche de preuve |
+|---|---|---|
+| Gestion de parc | Fiche, prêt, retour, ticket, connaissances, CAB, CMDB, mouvements, contrats, escalade et journal. Restauration et droits suivis dans ce fichier. | 260 |
+| Journal d’audit | Filtrage et export du journal applicatif, événement transactionnel et relecture après suppression d’une tâche. | 261 et 262 |
+| Authentification | Inscription, courriel de recette, connexion et révocation. Le parcours avec le fournisseur Google de l’exploitant reste ouvert. | 260 |
+| Calendrier | Événement personnel, intervalle de dates et correction concurrente. | 260 |
+| Catalogue produits | SKU, EAN, mouvements et deux réservations de la dernière unité. | 261 |
+| Commentaires | Fil d’un article Wiki et opérations de ses auteurs. | 260 |
+| Connecteurs | Recette métier installée à rapprocher de la tête suivante. | À vérifier |
+| Base contractuelle | Import simultané, analyse du PDF, panne du fournisseur, reprise de la fiche. | 261 et 262 |
+| Devis-facturation | Acceptation concurrente, facture unique, deux règlements et pièce imprimable. | 261 |
+| Documents | Import de pièces PDF, DOCX et TXT, stockage persistant et extraction. | 261 et 262 |
+| Export planifié | Exécution concurrente, SMTP de recette, pièce jointe et reçus persistants. | 260 |
+| Formulaire dynamique | Schéma versionné, soumission, options et décisions concurrentes. | 261 |
+| IA | Fournisseur local, interruption et reprise, historique des seuls tours aboutis. | 261 et 262 |
+| Keep screen on | Verrou de veille, durée, visibilité et libération dans une application React installée. | 260 |
+| Monitor | Installation du prompteur et conduite d’une séance PowerPoint. | 260 |
+| Multi-langue | Recette métier installée à rapprocher de la tête suivante. | À vérifier |
+| Newsletter | Création, édition, photo et archivage d’un article personnel. | 260 |
+| Notifications | Boîte personnelle, filtre et première lecture idempotente. | 260 |
+| Notifications ciblées | Règles qui se recouvrent, destinataires dédupliqués, lectures individuelles et envoi en file. | 261 |
+| Rapports | Agrégats Python sur données fournies, instantanés personnels et exports CSV dans le site. | 261 et 262 |
+| Référentiels | Données de référence utilisées par une commande, désactivation et traçabilité. | 261 |
+| Réservation / Créneaux | Réunion partagée, conflit de créneau, confidentialité du titre et annulation. | 260 |
+| Skeleton | Six états de chargement vérifiés dans un paquet installé. | 260 |
+| Tableau blanc | Atelier partagé, déplacement, correction concurrente et relecture après redémarrage. | 260 |
+| Tableaux de bord | Indicateurs composés depuis les rapports du compte, ordre et révision concurrente. | 262 |
+| Tâches | Assignation, transitions, retard, notification et suppression avec journal. | 261 et 262 |
+| Templates | Rapport, fiche projet et brouillon EML téléchargés et relus. | 260 |
+| Thèmes | Recette métier installée à rapprocher de la tête suivante. | À vérifier |
+| Veille | Sources HTTP locales, collecte concurrente, contenu inchangé, panne et reprise. | 261 |
+| Webhooks | Livraison HTTPS signée, erreur 503 puis reprise avec le même identifiant. | 260 |
+| Wiki | Édition, versions, restauration, liens entrants et export ZIP. | 260 |
+| Workflow | Transitions personnelles et journal persistants. L’approbation partagée reste à qualifier. | 260 |
+
+**Production observée.** Le catalogue public de l’application et `/api/health` ont répondu HTTP 200. La valeur `1.0.0` exposée par la sonde correspond à la version du connecteur. Les deux adresses `/version.txt` sur le site et l’application ont répondu HTTP 404. Le commit du serveur reste indéterminé. Les PR ouvertes et les archives installées en recette ne constituent pas une preuve de publication du paquet ou du déploiement du commit.
+
+**Restauration observée en CI.** Dans le run 44481919451 de `c23590ad`, l’étape « Restore inventory and audit in a separate database » a réussi. Une base vide a retrouvé « Portable restauration », 32 Go, l’auteur de recette et son reçu de création. L’archive tronquée a laissé la cible vide et la restauration répétée sur une base occupée a été refusée. Le job distinct d’installation des 32 modules depuis le ZIP a également réussi.
+
+## Livraison — identifier la révision du serveur installé
+
+Le ZIP contient le commit source en clair dans `application/BUILD-REVISION`. La compilation lit ce fichier ou le HEAD d’un dépôt Git local. La sonde HTTP renvoie désormais `sourceCommit` et `applicationVersion` en plus de la version historique du connecteur. Une copie de sources sans indication d’origine peut démarrer avec un commit nul.
+
+**Preuve.** La recette « catalogue et session après redémarrage » a installé dans un répertoire neuf le ZIP de la révision de travail, réinstallé les paquets depuis le cache npm, compilé l’application et migré une base PostgreSQL isolée. Aux deux démarrages, la sonde a renvoyé exactement le SHA inscrit dans l’archive et la version 0.1.60 de son manifeste. Les 64 entrées de documentation et de démonstration ont répondu. Le rendez-vous du compte de recette et sa session ont survécu au redémarrage. Le guide de déploiement indique maintenant la sonde de l’application pour le rapprochement après mise en service.
+
+## Gestion de parc — ouvrir et enregistrer les incidents d’un équipement
+
+La fiche relit directement les tickets rattachés à l’équipement dans PostgreSQL. Elle peut afficher un incident ancien, même après la création de centaines de tickets pour d’autres équipements. « Nouveau ticket » est également disponible quand la fiche comporte déjà un incident. Le formulaire reprend l’actif consulté et vérifie sa présence dans le domaine avant de le présélectionner.
+
+**Preuves.** « finds an older on-hold SLA incident and pages equal-date tickets and loans beyond 200 » relit sur l’actif le seul incident lié parmi 202 tickets. Les 27 tests PostgreSQL ont réussi sur une installation migrée depuis zéro. Chromium a ouvert le portable de recette, retrouvé l’incident ancien et créé un second ticket avec l’actif déjà sélectionné. Après redémarrage, les deux incidents figuraient sur la fiche et le lien de l’ancien incident ouvrait son détail.
+
+**Reprise.** Le run 44481919451 a terminé avec ses deux jobs verts, restauration PostgreSQL incluse. Le nouveau lot Connecteurs des PR 261 (`9b337214`) et 262 (`b84c4d13`) documente respectivement les quatre opérations sortantes sur récepteur isolé et l’import entrant avec relecture de la dernière version complète. Cela porte à trente le nombre de modules ayant au moins un parcours métier documenté entre les trois branches aux révisions indiquées. Vérifier Thèmes et Multi-langue sur leurs têtes suivantes. Pour le parc, l’API expose déjà les champs communs marque, modèle, numéro de série, coût, dates et emplacement. Le formulaire partagé doit encore en permettre la saisie et la reprise concurrente. Poursuivre ensuite la vérification des droits par domaine.
+
+**Coordination des suites.** Les têtes `8e513a12` et `9b337214` ont pour ancêtre commun `84995c55`. Quatre fichiers ont changé des deux côtés. La fusion à trois versions a rapproché automatiquement le workflow, le journal de décisions et la vérification de l’archive. Dans le guide d’installation, les deux branches avaient modifié le même paragraphe pour documenter respectivement la sonde de version et le volume de fichiers. Déplacer la vérification de version dans sa propre section sur la branche 260 a permis de réunir également ce guide en conservant les deux consignes. La fusion a été répétée hors du dépôt publié.
+
+## Recette de la version candidate
+
+Les 32 parcours, leurs prérequis et la surface à installer sont recensés dans `docs/modules-bundle.md`, également distribué dans le ZIP. Le test de publication compare les livrables entre eux. Un projet consommateur installe le tarball avec npm, puis exécute les opérations de traduction, de choix du thème et de résolution des exports publics. La vérification du serveur installé contrôle également le commit déclaré par le point de santé.

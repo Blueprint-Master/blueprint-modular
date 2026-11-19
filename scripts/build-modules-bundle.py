@@ -64,6 +64,10 @@ def build(destination):
                             archive.writestr(info, data, compress_type=ZIP_DEFLATED)
                 if git.wait():
                     raise RuntimeError("git archive failed")
+            authored = int(subprocess.check_output(["git", "show", "-s", "--format=%ct", commit], cwd=ROOT))
+            stamp = ZipInfo("application/BUILD-REVISION", datetime.fromtimestamp(authored, timezone.utc).timetuple()[:6])
+            stamp.external_attr = 0o100644 << 16
+            archive.writestr(stamp, commit + "\n")
             archive.comment = f"Blueprint Modular {version} ({commit})".encode()
         latest = Path(staging) / "blueprint-modules-latest.zip"
         shutil.copyfile(candidate, latest)

@@ -31,6 +31,20 @@ class TasksAndNotices(unittest.TestCase):
                 self.assertEqual(tasks.board(db),[])
                 self.assertEqual(len(tasks.audit.events(db,entity="task/batch")),4)
 
+    def test_quote_thresholds_and_event_replay(self):
+        with closing(notices.open_store(":memory:")) as db:
+            notices.configure(db, "large", "quote", "sales", ["in-app"], amount_above="10000")
+            teams = {"sales": ["manager"]}
+            for identifier, amount in (("missing", None), ("equal", "10000.00"), ("large", "10000.01")):
+                notices.notify(db, identifier, "quote", "Review", "Quote", teams=teams, amount=amount)
+            notices.notify(db, "large", "quote", "Review", "Quote", teams=teams, amount="10000.010")
+            self.assertEqual([row["event_id"] for row in notices.inbox(db, "manager")], ["large"])
+            with self.assertRaises(ValueError):
+                notices.notify(db, "large", "quote", "Review", "Quote", teams=teams, amount="10001")
+            notices.configure(db, "large", "quote", "sales", ["in-app"])
+            notices.notify(db, "unfiltered", "quote", "Review", "Quote", teams=teams)
+            self.assertEqual(len(notices.inbox(db, "manager")), 2)
+
     def test_audience_overlap_replay_isolation_and_delivery_adapters(self):
         with tempfile.TemporaryDirectory() as tmp:
             path = Path(tmp)/"workspace.sqlite"

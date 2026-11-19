@@ -8,6 +8,8 @@ export async function GET() {
     status: "ok",
     service: CONNECTOR_NAME,
     version: CONNECTOR_VERSION,
+    applicationVersion: process.env.MODULAR_PACKAGE_VERSION,
+    sourceCommit: process.env.MODULAR_SOURCE_COMMIT || null,
     timestamp: new Date().toISOString(),
   });
 }
