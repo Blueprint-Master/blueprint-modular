@@ -5,7 +5,7 @@ import { relationTypes, symmetricRelation } from "@/lib/asset-manager/relation-t
 import { readResponse } from "../../../lib/read-response";
 import { MovementHistory } from "./MovementHistory";
 import Link from "next/link";
-import { useParams } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 import { Panel, Button, Spinner, Selectbox, Badge, Card, Divider, EmptyState, Metric } from "@/components/bpm";
 import { FicheHeader, FicheSectionCard, FicheFieldGrid, FicheNav, FicheSkeleton } from "@/components/fiche";
 import type { DomainConfig } from "@/lib/asset-manager/get-domain-config";
@@ -13,6 +13,7 @@ import { useI18n } from "@/lib/i18n/LocaleProvider";
 import { STR, dateLocale } from "../../../strings";
 
 type Asset = {
+  canEdit: boolean; updatedAt: string;
   id: string;
   reference: string;
   label: string;
@@ -45,6 +46,8 @@ type ContractSummary = { id: string; reference: string; label: string; type: str
 
 export default function AssetDetailPage() {
   const params = useParams();
+  const router = useRouter();
+  const [assetError, setAssetError] = useState("");
   const { locale } = useI18n();
   const t = STR[locale];
   const ta = t.assets;
@@ -188,23 +191,30 @@ export default function AssetDetailPage() {
 
   const handleLifecycleChange = async (value: string) => {
     if (!asset || savingLifecycle) return;
-    const stage = value || null;
-    setSavingLifecycle(true);
+    setSavingLifecycle(true); setAssetError("");
     try {
       const res = await fetch(`/api/asset-manager/assets/${asset.id}`, {
-        method: "PUT",
-        headers: { "Content-Type": "application/json" },
-        credentials: "include",
-        body: JSON.stringify({ lifecycleStage: stage }),
+        method: "PUT", headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ lifecycleStage: value || null, expectedUpdatedAt: asset.updatedAt }),
       });
-      if (res.ok) {
-        const updated = await res.json();
-        setAsset(updated);
-      }
-    } finally {
-      setSavingLifecycle(false);
-    }
+      if (res.status === 409) setAsset(await fetch(`/api/asset-manager/assets/${asset.id}`).then(readResponse));
+      setAsset(await readResponse(res));
+    } catch (err) { setAssetError(err instanceof Error ? err.message : String(err)); }
+    finally { setSavingLifecycle(false); }
   };
+
+  async function removeAsset() {
+    if (!asset || !window.confirm(locale === "fr" ? "Supprimer cet actif et son historique associé ?" : "Delete this asset and its associated history?")) return;
+    setSavingLifecycle(true); setAssetError("");
+    try {
+      const endpoint = "/api/asset-manager/assets/" + asset.id;
+      const response = await fetch(endpoint + "?expectedUpdatedAt=" + encodeURIComponent(asset.updatedAt), { method: "DELETE" });
+      if (response.status === 409) setAsset(await fetch(endpoint).then(readResponse));
+      await readResponse(response);
+      router.push(`/modules/asset-manager/${domainId}/assets`);
+    } catch (err) { setAssetError(err instanceof Error ? err.message : String(err)); }
+    finally { setSavingLifecycle(false); }
+  }
 
   if (loading) {
     return <FicheSkeleton sections={5} withMetrics withList withForm />;
@@ -245,6 +255,11 @@ export default function AssetDetailPage() {
         }
       />
 
+      {assetError && <p role="alert">{assetError}</p>}
+      {asset.canEdit && <div className="flex gap-2 mt-3">
+        <Link href={`/modules/asset-manager/${domainId}/assets/${asset.id}/edit`}><Button size="small" variant="outline">{t.common.edit}</Button></Link>
+        <Button size="small" variant="outline" disabled={savingLifecycle} onClick={removeAsset}>{t.common.delete}</Button>
+      </div>}
       <FicheSectionCard title={ta.sectionGeneral} className="mt-4">
         <FicheFieldGrid
           withDividers
@@ -258,6 +273,7 @@ export default function AssetDetailPage() {
                 <span className="flex items-center gap-2">
                   <Selectbox
                     label=""
+                    disabled={!asset.canEdit || savingLifecycle}
                     value={asset.lifecycleStage ?? ""}
                     onChange={(v) => handleLifecycleChange(String(v))}
                     options={[{ value: "", label: ta.lifecycleUndefined }, ...lifecycleStages.map((s) => ({ value: s.id, label: s.label }))]}

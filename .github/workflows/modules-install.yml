@@ -52,8 +52,20 @@ jobs:
         run: |
           export MODULAR_TEST_CHROMIUM="$(command -v google-chrome)"
           "$RUNNER_TEMP/module-browser/bin/python" scripts/verify-installed-analysis.py "$RUNNER_TEMP/install/application"
+      - name: Exercise the wheel and inspect the packed npm exports from the installed ZIP
+        run: |
+          cd "$RUNNER_TEMP/install/application"
+          bash scripts/build-python-runtime.sh
+          python3 -m pip wheel --no-deps . -w "$RUNNER_TEMP/release"
+          (cd packages/core && npm pack --pack-destination "$RUNNER_TEMP/release")
+          "$RUNNER_TEMP/module-browser/bin/pip" install --no-deps "$RUNNER_TEMP/release/"*.whl
+          "$RUNNER_TEMP/module-browser/bin/python" -I -m unittest discover -s "$GITHUB_WORKSPACE/tests/python" -v
+          python3 "$GITHUB_WORKSPACE/scripts/verify-module-distributions.py" "$RUNNER_TEMP/release/"blueprint-modules-v*.zip "$RUNNER_TEMP/release/"*.whl "$RUNNER_TEMP/release/"*.tgz
       - uses: actions/upload-artifact@v4
         with:
           name: blueprint-modules-${{ github.sha }}
-          path: ${{ runner.temp }}/release/blueprint-modules-v*.zip
+          path: |
+            ${{ runner.temp }}/release/blueprint-modules-v*.zip
+            ${{ runner.temp }}/release/*.whl
+            ${{ runner.temp }}/release/*.tgz
           if-no-files-found: error

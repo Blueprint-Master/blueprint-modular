@@ -1,8 +1,10 @@
 "use client";
 
-import { useState, useEffect, useCallback } from "react";
+import { ticketSla } from "@/lib/asset-manager/ticket-sla";
+import { readHistory, readResponse } from "../../lib/read-response";
+import { useState, useEffect } from "react";
 import Link from "next/link";
-import { useParams, useRouter } from "next/navigation";
+import { useParams, useRouter, useSearchParams } from "next/navigation";
 import { Download, Ticket as TicketIcon, ChevronDown, ChevronUp } from "lucide-react";
 import { Table, Spinner, Panel, Button, Chip, EmptyState } from "@/components/bpm";
 import { useI18n } from "@/lib/i18n/LocaleProvider";
@@ -16,6 +18,7 @@ type Ticket = {
   priorityId: string;
   categoryId: string;
   openedAt: string;
+  slaDueAt: string | null;
   requester: { id: string; name: string | null } | null;
   assignee: { id: string; name: string | null } | null;
   asset: { id: string; reference: string; label: string } | null;
@@ -30,6 +33,8 @@ type DomainConfig = {
 export default function AssetManagerTicketsPage() {
   const params = useParams();
   const router = useRouter();
+  const search = useSearchParams();
+  const filterSlaRisk = search.get("slaRisk") === "1";
   const { locale } = useI18n();
   const t = STR[locale];
   const tt = t.tickets;
@@ -40,32 +45,22 @@ export default function AssetManagerTicketsPage() {
   const [loading, setLoading] = useState(true);
   const [filterStatus, setFilterStatus] = useState("");
   const [filterPriority, setFilterPriority] = useState("");
-  const [filterSlaRisk, setFilterSlaRisk] = useState(false);
-  const [filtersOpen, setFiltersOpen] = useState(false);
+  const [filtersOpen, setFiltersOpen] = useState(filterSlaRisk);
 
-  const fetchTickets = useCallback(() => {
-    if (!domainId) return;
-    fetch(`/api/asset-manager/tickets?domainId=${encodeURIComponent(domainId)}`, { credentials: "include" })
-      .then((r) => (r.ok ? r.json() : []))
-      .then((data) => {
-        setTickets(Array.isArray(data) ? data : []);
-        setLoading(false);
-      })
-      .catch(() => setLoading(false));
-  }, [domainId]);
-
+  const [error, setError] = useState("");
   useEffect(() => {
-    if (!domainId) {
-      setLoading(false);
-      return;
-    }
-    setLoading(true);
-    fetch(`/api/asset-manager/config/${domainId}`, { credentials: "include" })
-      .then((r) => (r.ok ? r.json() : null))
-      .then(setConfig)
-      .catch(() => {});
-    fetchTickets();
-  }, [domainId, fetchTickets]);
+    if (!domainId) return;
+    const controller = new AbortController();
+    const signal = controller.signal;
+    setLoading(true); setError("");
+    Promise.all([
+      readHistory<Ticket>(`/api/asset-manager/tickets?domainId=${encodeURIComponent(domainId)}`, signal),
+      fetch(`/api/asset-manager/config/${domainId}`, { signal }).then(readResponse),
+    ]).then(([rows, configuration]) => { setTickets(rows); setConfig(configuration); })
+      .catch(err => { if (!signal.aborted) setError(err.message); })
+      .finally(() => { if (!signal.aborted) setLoading(false); });
+    return () => controller.abort();
+  }, [domainId]);
 
   const getPriorityLabel = (id: string) => config?.priorities?.find((p) => p.id === id)?.label ?? id;
   const getPriorityColor = (id: string) => {
@@ -83,15 +78,8 @@ export default function AssetManagerTicketsPage() {
   };
   const getCategoryLabel = (id: string) => config?.ticket_categories?.find((c) => c.id === id)?.label ?? id;
 
-  const openStatuses = ["new", "open", "pending", "in_progress", "on_hold", "assigned"];
-  const isTicketSlaRisk = (tk: Ticket) => {
-    if (!openStatuses.includes(tk.status)) return false;
-    const prio = config?.priorities?.find((p) => p.id === tk.priorityId);
-    const slaHours = prio?.sla_hours ?? 48;
-    const elapsed = (Date.now() - new Date(tk.openedAt).getTime()) / (1000 * 60 * 60);
-    const pct = (elapsed / slaHours) * 100;
-    return pct >= 80;
-  };
+  const now = Date.now();
+  const isTicketSlaRisk = (ticket: Ticket) => ticketSla(ticket, config?.priorities ?? [], now).atRisk;
   const slaRiskCount = tickets.filter(isTicketSlaRisk).length;
 
   const filtered = tickets.filter((tk) => {
@@ -257,14 +245,18 @@ export default function AssetManagerTicketsPage() {
               })}
             </div>
           </div>
-          {slaRiskCount > 0 && (
+          {(slaRiskCount > 0 || filterSlaRisk) && (
             <div className="asset-manager-equipment-filters__row">
               <span className="asset-manager-equipment-filters__label">{tt.filterSla}</span>
               <div className="asset-manager-equipment-filters__chips">
                 <Chip
                   label={tt.slaRiskChip(slaRiskCount)}
                   variant={filterSlaRisk ? "primary" : "default"}
-                  onClick={() => setFilterSlaRisk((v) => !v)}
+                  onClick={() => {
+                    const query = new URLSearchParams(search.toString());
+                    if (filterSlaRisk) query.delete("slaRisk"); else query.set("slaRisk", "1");
+                    router.replace("?" + query.toString(), { scroll: false });
+                  }}
                   className={filterSlaRisk ? "asset-manager-chip-active" : ""}
                 />
               </div>
@@ -273,7 +265,7 @@ export default function AssetManagerTicketsPage() {
         </div>
       </div>
 
-      {loading ? (
+      {error ? <p role="alert">{error}</p> : loading ? (
         <div className="flex justify-center py-12">
           <Spinner size="medium" />
         </div>

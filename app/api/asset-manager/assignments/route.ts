@@ -1,4 +1,5 @@
 import { issueLoan, createLoan } from "@/lib/asset-manager/assignments";
+import { readHistoryCursor, historyPage } from "@/lib/asset-manager/history-page";
 import { NextResponse } from "next/server";
 import { getPersonalModuleSession } from "@/lib/auth";
 import { requireWriteRole } from "@/lib/asset-manager/authz";
@@ -14,16 +15,19 @@ export async function GET(request: Request) {
   const domainId = searchParams.get("domainId") ?? "";
   if (!domainId) return NextResponse.json({ error: "domainId requis" }, { status: 400 });
 
+  const cursor = searchParams.get("cursor");
+  const point = cursor ? readHistoryCursor(cursor) : null;
+  if (cursor && !point) return NextResponse.json({ error: "Curseur invalide." }, { status: 400 });
   const assignments = await prisma.assignment.findMany({
-    where: { domainId },
-    orderBy: [{ startDate: "desc" }],
-    take: 200,
+    where: { domainId, OR: point ? [{ startDate: { lt: point.date } }, { startDate: point.date, id: { lt: point.id } }] : undefined },
+    orderBy: [{ startDate: "desc" }, { id: "desc" }],
+    take: 201,
     include: {
       asset: { select: { id: true, reference: true, label: true } },
       assignee: { select: { id: true, name: true } },
     },
   });
-  return NextResponse.json(assignments);
+  return historyPage(assignments, 200, row => row.startDate);
 }
 
 export async function POST(request: Request) {

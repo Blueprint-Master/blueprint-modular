@@ -28,6 +28,18 @@ Les applications peuvent créer, relire, modifier, désactiver et supprimer leur
 
 Le journal permet également à une application d’inscrire ses propres événements, de filtrer par acteur/action/entité, de paginer et d’exporter en CSV. Une clé d’événement stable rend la réémission idempotente. La recette contrôle un rollback métier, un conflit de clé, le rejet des modifications et suppressions ordinaires, et la lecture d’un export. La protection de l’historique contre un administrateur disposant du fichier repose sur les mesures de sauvegarde et d’exploitation du déploiement.
 
+## Formulaire dynamique — demandes versionnées
+
+L’API Python lit le schéma JSON documenté. La soumission conserve la version exacte et l’identité fournie par l’application. Elle revalide les options, les dates, les seuils et les champs requis côté serveur. Les réponses masquées sont omises. Le formulaire et le SDK traitent la virgule décimale et rejettent un suffixe non numérique. Le test de concurrence enregistre deux tentatives de décision opposées et un seul changement dans le journal. La base rouverte restitue le schéma initial après publication de sa version suivante.
+
+## Tâches et notifications ciblées
+
+Les tâches utilisent une échéance civile, un assigné et une révision qui protège les modifications concurrentes. Le test a vérifié la séquence à faire → en cours → terminé, le filtre de retard, la suppression et l’historique après réouverture. Une notification consulte les équipes fournies par l’application au premier enregistrement, déduplique les membres communs, conserve les boîtes individuelles et transmet les canaux externes au worker Webhooks. La recette a créé deux règles qui se recoupent, vérifié la séparation des lectures et attendu trois livraisons en file pour deux destinataires. L’accusé du prestataire final relève de l’adaptateur SMS ou e-mail configuré.
+
+## Catalogue produits et devis-facturation
+
+Le paquet Python gère les SKU et leurs variantes, les contrôles EAN-13 et les mouvements de stock idempotents. Deux réservations concurrentes de la dernière unité ont donné un seul retrait. Le devis et la facture gardent les coordonnées et montants historiques. Le passage en livraison attend un adaptateur configuré et l’état de l’envoi provient du journal du worker. Le test a fixé un prix hors taxe de 3,15 €, une TVA de 0,63 €, émis une seule facture pour deux acceptations et rapproché deux règlements de 2,00 € et 1,78 €. Le HTML imprimable a conservé le montant et échappé le libellé de l’article. La recette a utilisé un adaptateur isolé.
+
 ## Point de départ
 
 Le catalogue public de Blueprint Modular présente 32 modules et 64 liens de documentation ou de démonstration. Sur le passage HTTP complet, 63 destinations répondaient en 200. Le lien Documentation du calendrier ajoutait `/documentation` à l’URL du simulateur et donnait une 404. La recette de la branche retrouve les 64 destinations depuis le HTML du catalogue et vérifie leur réponse sur le serveur compilé.
@@ -297,3 +309,54 @@ Le parcours « Mes rapports » utilise les documents et les contrats appartenant
 ## Tâches d’équipe et journal d’audit
 
 Les membres d’une organisation peuvent consulter et créer des tâches dans son espace. Le responsable et le membre assigné peuvent faire avancer le travail. Chaque modification vérifie la révision et écrit son événement dans la même transaction. Une création rejouée avec la même clé conserve une seule tâche et une seule notification. Le journal conserve l’auteur, la date et le changement après la suppression de la tâche. La recette installée couvre deux comptes, une organisation étrangère, les révisions périmées, la notification, le redémarrage et la consultation du journal dans Chromium.
+
+## Versions et contenu des livrables
+
+Pour ce lot, le ZIP passe en 0.1.61, le paquet Python en 0.1.55 et le paquet React en 0.3.17. Les versions précédentes de Python et du core étaient déjà présentes sur leurs registres. La roue embarque le manifeste des 32 modules et le guide annoncé par la documentation. Le sous-chemin React `./schema` expose la déclaration effective de `validateAndEnrichSpec` et des types `AppSpec`. La recette compare les noms des 32 modules et les sources des workers entre ZIP et roue, puis contrôle les points d’entrée du tarball npm. Ces contrôles s’exécutent avant la mise à disposition des trois fichiers dans la CI.
+## Gestion de parc — édition et retrait d’un équipement
+
+La fiche d’inventaire permet de corriger les données et les attributs spécifiques au type d’équipement. Une sauvegarde conserve les attributs historiques inconnus du formulaire. Après une modification concurrente, l’opérateur peut reprendre ses propres champs sur la dernière révision. Un équipement prêté doit être rendu avant son retrait. Une transaction enregistre les données et leur trace avant/après.
+
+**Preuves.** « edits inventory and its attributes in one revision and records the complete lifecycle audit » figure parmi les 24 tests passés sur PostgreSQL 16.15 après installation depuis zéro. Dans Chromium, un opérateur a porté la mémoire d’un portable de 32 à 64 Go alors qu’un second client changeait son nom. Après résolution du conflit et redémarrage du serveur standalone, le nom, la mémoire et l’attribut historique ont été relus. Le retrait depuis la fiche a conservé la dernière version de l’équipement dans le journal. Le parcours a utilisé les données et le compte de recette uniquement.
+
+**Suite.** Reprendre la consultation et la pagination du journal sur la branche de la PR 260.
+
+## Gestion de parc — retrouver une opération dans le journal
+
+La liste est filtrable par période, action, type et identifiant de ressource. La date de fin inclut toute la journée UTC. Le curseur combine la date de l’opération et son identifiant pour départager des écritures simultanées. L’application peut récupérer la page suivante dans l’en-tête `X-Next-Cursor`. L’écran permet de relire l’auteur et les états avant et après, y compris pour une fiche supprimée.
+
+**Preuves.** « pages a filtered audit by timestamp and id while newer entries arrive » couvre trois écritures simultanées, l’arrivée d’une opération après la première page, les limites de date et de domaine, la date impossible, le curseur invalide et la session absente. Les 25 tests PostgreSQL 16.15 ont réussi après application des migrations sur une base vide. Sur le serveur standalone, Chromium a filtré l’historique d’un portable de recette, retrouvé ses deux opérations et ouvert le contenu conservé avant suppression. Après redémarrage et nouvelle connexion, la même opération et son auteur restaient consultables.
+
+**État.** La CI de la révision contrats `84995c55` a réussi, installation du ZIP comprise (run 44478656770). La révision inventaire `632aabd9` est en revue. Le chantier se poursuit avec la cohérence des échéances de tickets entre le tableau de bord, la liste et la fiche, ainsi que l’accès aux tickets anciens.
+
+## Gestion de parc — retrouver un incident ancien en dépassement de délai
+
+Le tableau de bord, la liste, la fiche et l’API d’alerte utilisent l’échéance enregistrée sur le ticket, y compris lorsqu’il est en attente. Un ticket ancien sans échéance conserve le calcul selon sa priorité. Le lien d’alerte du tableau de bord ouvre les tickets concernés. Les applications peuvent parcourir tickets et affectations par pages de 200 avec l’en-tête `X-Next-Cursor`. Les listes, leurs exports et les compteurs du domaine lisent les pages suivantes.
+
+**Preuves.** « finds an older on-hold SLA incident and pages equal-date tickets and loans beyond 200 » vérifie 202 tickets, 201 affectations, les dates identiques, les seuils à 80 % et 100 %, une ancienne priorité et la clôture. Les 26 tests de modules sont passés sur PostgreSQL 16.15 après migration depuis zéro. Chromium a ouvert l’alerte pour l’unique incident en attente parmi 202 tickets. La fiche affichait le délai contractuel dépassé malgré sa priorité basse. Après redémarrage du serveur standalone, la clôture de l’incident a retiré l’alerte du tableau de bord.
+
+**Coordination.** La PR 260 conserve la recette de Gestion de parc. La PR 261 travaille en parallèle sur IA, Documents et la Base contractuelle. La PR 262 complète ces travaux et traite Rapports et Tableaux de bord. Les trois PR étaient ouvertes à la vérification, avec des bases successives. Rapprocher leurs preuves et leurs têtes avant de reprendre ces modules ou de compter les modules qualifiés. Les jobs d’installation des versions inventaire `632aabd9` et audit `fd7c4a2e` ont réussi. Ces correctifs restent en revue.
+
+**Suite du parc.** Traiter l’exécution des escalades prévues dans le domaine informatique, avec des destinataires internes de recette, un contrôle de reprise et un journal des actions. Vérifier aussi les droits par domaine et les procédures de restauration sur installation isolée avant de clôturer ce module.
+
+## Gestion de parc — exécuter les escalades et vérifier leur réception
+
+Le domaine informatique livre des règles à 50 %, 80 % et 100 % pour les tickets critiques. La commande installable traite les seuils franchis, inscrit la notification personnelle et le reçu dans la même transaction et réaffecte le ticket au technicien de permanence pour le palier de 80 %. Un compte de service admin/owner identifié signe le journal. Les destinataires viennent du routage privé de l’installation. Avec un espace de travail, tous les comptes doivent appartenir à son organisation. Sans espace, le traitement se limite aux tickets du domaine sans espace. La fiche donne accès au journal filtré de l’incident.
+
+**Installation.** Le worker est inclus dans le ZIP, sous `application/lib/asset-manager/escalate-sla.mjs`. La commande, le routage et la planification toutes les cinq minutes sont documentés dans `docs/modules-bundle.md`. Le traitement fonctionne avec les tables existantes. Il peut reprendre sur le dernier état persistant.
+
+**Preuves.** « delivers SLA escalations once, routes reassignment and records the personal inbox receipts » a exercé les seuils, deux workers, la reprise, le ticket résolu, les limites d’espace, les droits du technicien, la configuration invalide, la répartition des notifications et les reçus. Les 27 tests PostgreSQL 16.15 ont réussi après migration depuis zéro. L’archive a été extraite et ses dépendances réinstallées par `npm ci`. Deux processus CLI lancés simultanément depuis cette installation ont produit trois actions au total. Après reprise, un nouveau processus a produit zéro doublon. Dans Chromium, le technicien a ouvert l’historique depuis la fiche, retrouvé les trois opérations et consulté leurs reçus. Une session personnelle a retrouvé la notification qui lui était destinée après redémarrage. Seuls des comptes locaux en example.test ont participé.
+
+**Livraison.** Les révisions inventaire et audit ont passé les deux jobs CI (44479589639 et 44479967765). L’activation du cron de l’exploitant et le déploiement de la branche restent à confirmer après intégration. La suite porte sur la portée administrative du journal, les droits du parc et la restauration isolée.
+
+## Gestion de parc — accès au journal des opérations
+
+Les instantanés avant/après restent accessibles aux administrateurs et propriétaires de l’installation. L’API relit le rôle du compte via la session personnelle. La navigation du parc et la fiche ticket proposent le journal aux rôles autorisés. Un lecteur peut continuer à parcourir les tickets et le tableau de bord.
+
+**Preuves.** « pages a filtered audit by timestamp and id while newer entries arrive » vérifie aussi les trois cas de lecture du journal. Une session administrative obtient ses lignes, un compte lecteur reçoit HTTP 403 et une requête sans session HTTP 401. Les 27 tests de modules sur PostgreSQL et les 10 tests de rôles ont réussi. Chromium a relu l’historique avec le compte admin. Après redémarrage, un lecteur de recette a retrouvé son tableau de bord et ses tickets, et l’ouverture du journal a affiché le message de restriction.
+
+## Gestion de parc — sauvegarde PostgreSQL et restauration isolée
+
+La commande distribuée `deploy/backup-postgres.sh` construit un dump PostgreSQL privé et le décode intégralement avant sa publication dans le répertoire de la base. Un dump incomplet ne prend pas la place d’une archive valide. Seuls les fichiers de sauvegarde nommés par le script atteignant trente jours dans ce répertoire sont soumis à la rétention. La restauration exige une base vide et utilise une transaction. Les fichiers téléversés et les paramètres d’installation doivent aussi être sauvegardés par l’exploitant. Les commandes figurent dans `docs/DATABASE.md`.
+
+**Recette de livraison.** Le test « Restore inventory and audit in a separate database » utilise les clients du conteneur PostgreSQL 16 de CI. Il couvre la restauration d’un portable, de sa mémoire, de l’auteur et du reçu d’audit, l’archive tronquée, la cible déjà occupée, les permissions du fichier et la rétention. Les scripts ont passé la vérification de syntaxe Bash. La restauration effective sur cette révision est à confirmer dans le job CI. Le cron quotidien de sauvegarde relève de l’installation.

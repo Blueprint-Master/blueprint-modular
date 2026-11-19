@@ -16,7 +16,10 @@ vi.mock("@/lib/auth", () => ({
   getSessionOrTestUser: async () => userId ? { user: { id: userId, role: wikiRole } } : null,
   getPersonalModuleSession: async () => userId ? { user: { id: userId, role: wikiRole } } : null,
 }));
-import { POST as issue } from "@/app/api/asset-manager/assignments/route";
+import { GET as auditPage } from "@/app/api/asset-manager/audit-log/route";
+import { runEscalations } from "@/lib/asset-manager/escalate-sla.mjs";
+import { ticketSla } from "@/lib/asset-manager/ticket-sla";
+import { GET as loans, POST as issue } from "@/app/api/asset-manager/assignments/route";
 import { PUT as editLoan } from "@/app/api/asset-manager/assignments/[id]/route";
 import { POST as returnLoan } from "@/app/api/asset-manager/assignments/[id]/return/route";
 import * as changeItem from "@/app/api/asset-manager/changes/[id]/route";
@@ -36,6 +39,7 @@ import { PUT as recordReading } from "@/app/api/asset-manager/knowledge/[id]/rea
 import * as tickets from "@/app/api/asset-manager/tickets/route";
 import * as ticketItem from "@/app/api/asset-manager/tickets/[id]/route";
 import { GET as warnings } from "@/app/api/asset-manager/sla-escalation/route";
+import * as assetItem from "@/app/api/asset-manager/assets/[id]/route";
 import * as inventory from "@/app/api/asset-manager/assets/route";
 import { GET as workflow } from "@/app/api/workflow/entity/[id]/route";
 import { POST as advance } from "@/app/api/workflow/entity/[id]/transition/route";
@@ -66,8 +70,134 @@ describe.skipIf(!url)("module API handlers with PostgreSQL", () => {
     await postgres.user.createMany({ data: [owner, other].map(id => ({ id, email: id + "@example.test" })) });
   });
   afterAll(async () => {
+    await postgres.auditLog.deleteMany({ where: { userId: { in: [owner, other] } } });
     await postgres.user.deleteMany({ where: { id: { in: [owner, other] } } });
     await postgres.$disconnect();
+  });
+
+  it("delivers SLA escalations once, routes reassignment and records the personal inbox receipts", async () => {
+    const job = await postgres.user.create({ data: { email: randomUUID() + "@example.test", role: "ADMIN" } });
+    const tech = await postgres.user.create({ data: { email: randomUUID() + "@example.test", role: "ADMIN" } });
+    const org = await postgres.organization.create({ data: { name: "QA", slug: randomUUID() } });
+    const workspace = await postgres.workspace.create({ data: { organizationId: org.id, name: "QA", slug: "qa" } });
+    await postgres.orgMember.createMany({ data: [job.id, tech.id, owner].map(userId => ({ userId, organizationId: org.id })) });
+    const prefix = randomUUID();
+    const now = new Date("2026-11-17T12:00:00Z");
+    const openedAt = new Date("2026-11-17T10:00:00Z");
+    const slaDueAt = new Date("2026-11-17T14:00:00Z");
+    const base = { workspaceId: workspace.id, domainId: "it", title: prefix, description: "QA", typeId: "incident", status: "on_hold", priorityId: "critical",
+      categoryId: "hardware", requesterId: owner, openedAt, slaDueAt };
+    const routing = { workspaceId: workspace.id, domainId: "it", actorId: job.id, targets: { notify_manager: owner, senior_tech: tech.id, notify_director: owner } };
+    try {
+      const incident = await postgres.ticket.create({ data: { ...base, reference: prefix } });
+      await postgres.ticket.create({ data: { ...base, reference: prefix + "-resolved", status: "resolved" } });
+      await expect(runEscalations(postgres, { ...routing, targets: { ...routing.targets, senior_tech: "unknown" } }, now)).rejects.toThrow();
+      await expect(runEscalations(postgres, { ...routing, actorId: other }, now)).rejects.toThrow();
+      await expect(runEscalations(postgres, { ...routing, targets: { ...routing.targets, senior_tech: owner } }, now)).rejects.toThrow();
+      await postgres.ticket.create({ data: { ...base, workspaceId: null, reference: prefix + "-other-scope" } });
+      const concurrent = await Promise.all([runEscalations(postgres, routing, now), runEscalations(postgres, routing, now)]);
+      expect(concurrent.map(result => result.actions).sort()).toEqual([0, 1]);
+      const later = await runEscalations(postgres, routing, slaDueAt);
+      expect(later.actions).toBe(2);
+      expect((await runEscalations(postgres, routing, slaDueAt)).actions).toBe(0);
+      expect(await postgres.ticket.findUnique({ where: { id: incident.id } })).toMatchObject({ assigneeId: tech.id });
+      userId = tech.id;
+      const inbox = await (await notifications.GET(request("/?read=false"))).json();
+      expect(inbox.notifications.filter((row: { title: string }) => row.title === prefix)).toHaveLength(1);
+      expect(await postgres.notification.count({ where: { userId: owner, title: prefix } })).toBe(2);
+      const logs = await postgres.auditLog.findMany({ where: { resourceId: incident.id, action: "escalate" } });
+      expect(logs).toHaveLength(3);
+      for (const log of logs) {
+        const action = JSON.parse(log.afterState!);
+        expect(log.userId).toBe(job.id);
+        expect(await postgres.notification.findUnique({ where: { id: action.notificationId } })).toMatchObject({ userId: action.recipientId });
+      }
+    } finally {
+      await postgres.ticket.deleteMany({ where: { title: prefix } });
+      await postgres.notification.deleteMany({ where: { title: prefix } });
+      await postgres.auditLog.deleteMany({ where: { userId: job.id } });
+      await postgres.organization.delete({ where: { id: org.id } });
+      await postgres.user.deleteMany({ where: { id: { in: [job.id, tech.id] } } });
+    }
+  });
+
+  it("finds an older on-hold SLA incident and pages equal-date tickets and loans beyond 200", async () => {
+    userId = owner;
+    const prefix = "SLA-" + randomUUID();
+    const start = new Date(Date.now() - 3_600_000);
+    const due = new Date(start.getTime() + 1_800_000);
+    const legacy = { openedAt: start, status: "on_hold", priorityId: "low" };
+    expect(ticketSla(legacy, [{ id: "low", sla_hours: 120 }]).atRisk).toBe(false);
+    const clock = { ...legacy, slaDueAt: due };
+    expect(ticketSla(clock, [], start.getTime() + 1_439_999).atRisk).toBe(false);
+    expect(ticketSla(clock, [], start.getTime() + 1_440_000).atRisk).toBe(true);
+    expect(ticketSla(clock, [], due.getTime() - 1).overdue).toBe(false);
+    expect(ticketSla(clock, [], due.getTime()).overdue).toBe(true);
+    expect(ticketSla({ ...clock, status: "closed" }, []).atRisk).toBe(false);
+    const asset = await postgres.asset.create({ data: {
+      reference: prefix, domainId: "it", assetTypeId: "laptop", statusId: "in_stock", label: prefix, createdById: owner,
+    } });
+    try {
+      const entries = Array.from({ length: 201 }, (_, i) => ({
+        domainId: "it", reference: prefix + i, title: prefix, description: "QA", typeId: "incident", status: "closed",
+        priorityId: "low", categoryId: "hardware", openedAt: new Date(start.getTime() + 1), requesterId: owner,
+      }));
+      await postgres.ticket.createMany({ data: entries });
+      const oldest = await postgres.ticket.create({ data: { ...entries[0], ...clock, reference: prefix } });
+      await postgres.assignment.createMany({ data: entries.map(row => ({
+        reference: row.reference, domainId: "it", assetId: asset.id, assigneeId: owner,
+        assignmentType: "temporary", status: "returned", startDate: start, actualEndDate: start,
+      })) });
+      for (const [read, count] of [[tickets.GET, 202], [loans, 201]] as const) {
+        const first = await read(request("/?domainId=it"));
+        const page = await first.json();
+        expect(page).toHaveLength(200);
+        const next = await read(request("/?domainId=it&cursor=" + first.headers.get("X-Next-Cursor")));
+        const rest = await next.json();
+        const fixtures = [...page, ...rest].filter(row => row.reference.startsWith(prefix));
+        expect(new Set(fixtures.map(row => row.id)).size).toBe(count);
+        expect(next.headers.get("X-Next-Cursor")).toBeNull();
+        expect((await read(request("/?domainId=it&cursor=invalid"))).status).toBe(400);
+      }
+      const report = await (await warnings(request("/?domainId=it"))).json();
+      expect(report.atRisk).toContainEqual(expect.objectContaining({ id: oldest.id, overdue: true, slaDueAt: due.toISOString() }));
+    } finally {
+      await postgres.ticket.deleteMany({ where: { reference: { startsWith: prefix } } });
+      await postgres.asset.delete({ where: { id: asset.id } });
+    }
+  });
+
+  it("pages a filtered audit by timestamp and id while newer entries arrive", async () => {
+    wikiRole = "ADMIN";
+    const resourceId = randomUUID();
+    const details = { resourceId, domainId: "it", resourceType: "asset", action: "delete", userId: owner, beforeState: '{"label":"QA"}' };
+    const timestamp = new Date("2026-11-17T16:00:00Z");
+    const search = "/?resourceId=" + resourceId + "&domainId=it&resourceType=asset&action=delete&from=2026-11-17&to=2026-11-17&limit=2";
+    userId = owner;
+    await postgres.auditLog.createMany({ data: [
+      ...Array.from({ length: 3 }, () => ({ ...details, timestamp })),
+      { ...details, timestamp: new Date("2026-11-18T00:00:00Z") },
+      { ...details, domainId: "maintenance", timestamp },
+    ] });
+    const expected = await postgres.auditLog.findMany({ where: { resourceId, domainId: "it", timestamp }, orderBy: { id: "desc" } });
+    const first = await auditPage(request(search));
+    const rows = await first.json();
+    expect(rows.map((row: { id: string }) => row.id)).toEqual(expected.slice(0, 2).map(row => row.id));
+    expect(rows[0]).toMatchObject({ userId: owner, beforeState: details.beforeState });
+    const cursor = first.headers.get("X-Next-Cursor");
+    expect(cursor).toBeTruthy();
+    await postgres.auditLog.create({ data: { ...details, timestamp: new Date("2026-11-17T23:59:59Z") } });
+    const last = await auditPage(request(search + "&cursor=" + cursor));
+    expect((await last.json()).map((row: { id: string }) => row.id)).toEqual([expected[2].id]);
+    expect(last.headers.get("X-Next-Cursor")).toBeNull();
+    for (const query of ["from=2026-02-30", "from=2026-11-18&to=2026-11-17", "cursor=invalid"]) {
+      expect((await auditPage(request("/?" + query))).status).toBe(400);
+    }
+    wikiRole = "USER";
+    expect((await auditPage(request(search))).status).toBe(403);
+    wikiRole = "ADMIN";
+    userId = null;
+    expect((await auditPage(request(search))).status).toBe(401);
   });
 
   it("reserves contract references per domain and keeps deadlines, notice and coverage consistent across edits", async () => {
@@ -420,6 +550,40 @@ describe.skipIf(!url)("module API handlers with PostgreSQL", () => {
     } finally {
       wikiRole = "USER";
       await postgres.asset.deleteMany({ where: { label } });
+    }
+  });
+
+  it("edits inventory and its attributes in one revision and records the complete lifecycle audit", async () => {
+    wikiRole = "ADMIN";
+    userId = owner;
+    const label = "QA-edit-" + randomUUID();
+    const result = await inventory.POST(request("/", "POST", { domainId: "it", assetTypeId: "laptop", label,
+      attributes: [{ key: "ram_go", valueNumber: 16 }, { key: "legacy-field", valueText: "ancienne valeur" }] }));
+    const row = await result.json();
+    const ctx = context(row.id);
+    const read = async () => (await assetItem.GET(request("/"), ctx)).json();
+    const edit = (data: object) => assetItem.PUT(request("/", "PUT", data), ctx);
+    try {
+      expect((await edit({ label: "autre", attributes: [{ key: "same" }, { key: "same" }] })).status).toBe(400);
+      expect(await read()).toMatchObject({ label, attributes: expect.arrayContaining([{ ...row.attributes[0] }]) });
+      expect((await edit({ lifecycleStage: "inconnu" })).status).toBe(400);
+      const changes = await Promise.all(["maintenance", "reforme"].map(lifecycleStage =>
+        edit({ expectedUpdatedAt: row.updatedAt, lifecycleStage })));
+      expect(changes.map(r => r.status).sort()).toEqual([200, 409]);
+      const updated = await (await edit({ label: "Corrigé", attributes: [{ key: "ram_go", valueNumber: 32 }] })).json();
+      expect(updated.attributes).toHaveLength(1);
+      expect(updated.attributes[0].valueNumber).toBe(32);
+      expect((await assetItem.DELETE(request("/?expectedUpdatedAt=" + row.updatedAt, "DELETE"), ctx)).status).toBe(409);
+      expect((await assetItem.DELETE(request("/?expectedUpdatedAt=" + updated.updatedAt, "DELETE"), ctx)).status).toBe(200);
+      const entries = await postgres.auditLog.findMany({ where: { resourceType: "asset", resourceId: row.id }, orderBy: { timestamp: "asc" } });
+      expect(entries.map(entry => entry.action)).toEqual(["create", "update", "update", "delete"]);
+      expect(JSON.parse(entries[2].beforeState!).attributes).toHaveLength(2);
+      expect(JSON.parse(entries[3].beforeState!).attributes[0].valueNumber).toBe(32);
+      expect((await assetItem.GET(request("/"), ctx)).status).toBe(404);
+    } finally {
+      wikiRole = "USER";
+      await postgres.asset.deleteMany({ where: { id: row.id } });
+      await postgres.auditLog.deleteMany({ where: { resourceId: row.id } });
     }
   });
 
