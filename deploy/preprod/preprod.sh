@@ -14,8 +14,8 @@ set -euo pipefail
 umask 027
 export LC_ALL=C.UTF-8
 
-SHA=a49127e90c2594dc8204c4763d5be89ac332e8b0
-BRANCHE=claude/preprod-modules-260-261
+SHA=${PREPROD_SHA:?PREPROD_SHA requis (commit validé par la CI)}
+BRANCHE=${PREPROD_BRANCHE:?PREPROD_BRANCHE requis (branche qui porte ce commit)}
 DOMAINE=preprod.blueprint-modular.com
 IP_SERVEUR=51.83.88.18
 PORT=3040
