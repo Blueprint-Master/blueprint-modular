@@ -149,7 +149,7 @@ if [ -x "$APP/deploy/sauvegarde-avant-migration.sh" ]; then
   pg_dump --schema-only --no-owner --no-acl -d $C | grep -vE '^--|^\s*$|^\\(un)?restrict ' > "$TRAVAIL/s266-restauree.sql"
   cmp -s "$TRAVAIL/c266-source.txt" "$TRAVAIL/c266-restauree.txt" && r "Restauration #266 : comptes de lignes identiques ($(awk '{s+=$2} END{print s+0}' "$TRAVAIL/c266-source.txt") lignes) : OUI" || r "Restauration #266 : comptes de lignes identiques : NON"
   if cmp -s "$TRAVAIL/s266-source.sql" "$TRAVAIL/s266-restauree.sql"; then r "Restauration #266 : schéma identique : OUI"
-  else r "Restauration #266 : schéma identique : NON (< source, > restaurée)"; diff "$TRAVAIL/s266-source.sql" "$TRAVAIL/s266-restauree.sql" | head -30 | tee -a "$RAPPORT"; fi
+  else r "Restauration #266 : schéma identique : NON (< source, > restaurée)"; { diff "$TRAVAIL/s266-source.sql" "$TRAVAIL/s266-restauree.sql" || true; } | head -30 | tee -a "$RAPPORT"; fi
 else
   r "Sauvegarde #266 : script absent de la préproduction, non testée"
 fi
