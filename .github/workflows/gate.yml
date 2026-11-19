@@ -49,5 +49,6 @@ jobs:
         run: |
           node scripts/artifact-qa/pack.mjs "$RUNNER_TEMP/bpm-consumer"
           python -m pip install playwright==1.56.0
-          python -m playwright install --with-deps chromium
+          export BPM_CHROMIUM="$(command -v google-chrome)"
+          "$BPM_CHROMIUM" --version
           python scripts/artifact-qa/browser.py "$RUNNER_TEMP/bpm-consumer"
