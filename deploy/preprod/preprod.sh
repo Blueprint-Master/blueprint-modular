@@ -81,8 +81,32 @@ git -C "$SRC" cat-file -e "$SHA^{commit}" || die "commit $SHA introuvable"
 
 # --- 2. Arrêt de l'instance précédente et extraction de l'archive exacte
 pm2 describe "$PM2_NOM" >/dev/null 2>&1 && pm2 delete "$PM2_NOM" >/dev/null
-rm -rf "$APP"; mkdir -p "$APP"
-git -C "$SRC" archive --format=tar "$SHA" | tar -x -C "$APP"
+SOURCE=$APP_BASE/source-$SHA
+rm -rf "$APP" "$SOURCE"; mkdir -p "$APP" "$SOURCE"
+git -C "$SRC" archive --format=tar "$SHA" | tar -x -C "$SOURCE"
+[ -s "$SOURCE/package.json" ] || die "archive vide"
+if [ "${PREPROD_ZIP:-0}" = 1 ]; then
+  # Mode ZIP : la distribution est construite par le bundler du dépôt (il appelle git,
+  # d'où un worktree détaché du commit exact), puis seule son application/ est installée.
+  WT=$APP_BASE/wt-$SHA ZIPDIR=$APP_BASE/zip-$SHA
+  git -C "$SRC" worktree remove --force "$WT" 2>/dev/null || true
+  rm -rf "$WT" "$ZIPDIR" "$APP_BASE/zipx-$SHA"
+  git -C "$SRC" worktree add -q --detach "$WT" "$SHA"
+  (cd "$WT" && python3 scripts/build-modules-bundle.py --output "$ZIPDIR") > "$RACINE/logs/bundle.log" 2>&1 || die "construction du ZIP"
+  ZIP=$(ls "$ZIPDIR"/blueprint-modules-v*.zip 2>/dev/null | head -1)
+  [ -n "$ZIP" ] && [ -s "$ZIP" ] || die "ZIP introuvable"
+  python3 -m zipfile -e "$ZIP" "$APP_BASE/zipx-$SHA"
+  [ -s "$APP_BASE/zipx-$SHA/application/package.json" ] || die "ZIP sans application/"
+  cp -a "$APP_BASE/zipx-$SHA/application/." "$APP/"
+  echo "  ZIP installé : $(basename "$ZIP") sha256 $(sha256sum "$ZIP" | cut -c1-16)…" >> "$RAPPORT"
+else
+  cp -a "$SOURCE/." "$APP/"
+fi
+# Fichiers d'hébergement (hors distribution) : lanceur PM2 et sauvegarde #266.
+mkdir -p "$APP/deploy"
+for f in run-app.sh sauvegarde-avant-migration.sh; do
+  [ -f "$APP/deploy/$f" ] || { [ -f "$SOURCE/deploy/$f" ] && cp "$SOURCE/deploy/$f" "$APP/deploy/$f"; } || true
+done
 [ -s "$APP/package.json" ] || die "archive vide"
 echo "$SHA" > "$APP/.preprod-sha"
 ln -sfn "$APP" "$RACINE/current"
@@ -161,7 +185,8 @@ export DATABASE_URL NEXT_TELEMETRY_DISABLED=1
   npm ci --no-audit --no-fund
   npm ci --prefix packages/core --no-audit --no-fund
   npm run build --prefix packages/core
-  node scripts/build-modules-bundle.cjs --output public/downloads
+  # Lien de téléchargement du site : en mode ZIP, l'archive installée elle-même.
+  if [ "${PREPROD_ZIP:-0}" = 1 ]; then mkdir -p public/downloads && cp "$ZIPDIR"/*.zip public/downloads/; else node scripts/build-modules-bundle.cjs --output public/downloads; fi
   npm run build:standalone
 } > "$RACINE/logs/build.log" 2>&1 || { tail -40 "$RACINE/logs/build.log" > "$PUBLIC/build-fin.log"; chmod 644 "$PUBLIC/build-fin.log"; die "build (fin du journal : $PUBLIC/build-fin.log)"; }
 [ -s .next/standalone/server.js ] || die "server.js standalone absent"
@@ -174,7 +199,7 @@ echo "  $(git -C "$SRC" ls-tree --name-only "$SHA" prisma/migrations/ | grep -c 
 
 # --- 7. Données de recette isolées (compte QA + procédures wiki, comme la prod)
 etape "Données de recette"
-MODULAR_QA_EMAIL=$QA_EMAIL MODULAR_QA_PASSWORD=$QA_PASSWORD node scripts/seed-module-install-fixture.cjs "$APP" \
+MODULAR_QA_EMAIL=$QA_EMAIL MODULAR_QA_PASSWORD=$QA_PASSWORD node "$SOURCE/scripts/seed-module-install-fixture.cjs" "$APP" \
   || die "compte de recette"
 node prisma/seed-wiki-procedures.cjs > "$RACINE/logs/seed-wiki.log" 2>&1 \
   && echo "  procédures wiki chargées" >> "$RAPPORT" \
@@ -182,9 +207,16 @@ node prisma/seed-wiki-procedures.cjs > "$RACINE/logs/seed-wiki.log" 2>&1 \
 
 # --- 8. Recette des 32 modules (script de la CI, sur la build installée)
 etape "Recette 32 modules (scripts/verify-modules-install.py)"
+# Environnement Python isolé + Chromium déjà en cache (navigateur de K-15 du Maker).
+VENV=$RACINE/venv
+[ -x "$VENV/bin/python" ] || python3 -m venv "$VENV"
+"$VENV/bin/pip" install -q 'playwright==1.56.0' 'requests>=2.32,<3' 'psycopg[binary]>=3.1,<4' > "$RACINE/logs/venv.log" 2>&1 || die "venv de recette"
+CHROME=$(ls -d "$HOME"/.cache/ms-playwright/chromium-*/chrome-linux*/chrome 2>/dev/null | sort -V | tail -1 || true)
+[ -n "$CHROME" ] && export MODULAR_TEST_CHROMIUM=$CHROME
+echo "  navigateur : ${CHROME:-aucun (contrôles navigateur sautés)}" >> "$RAPPORT"
 set +e
 MODULAR_QA_EMAIL=$QA_EMAIL MODULAR_QA_PASSWORD=$QA_PASSWORD \
-  python3 scripts/verify-modules-install.py "$APP" > "$PUBLIC/recette-32-modules.log" 2>&1
+  "$VENV/bin/python" "$SOURCE/scripts/verify-modules-install.py" "$APP" > "$PUBLIC/recette-32-modules.log" 2>&1
 RECETTE=$?
 set -e
 chmod 644 "$PUBLIC/recette-32-modules.log"
@@ -193,6 +225,20 @@ if [ "$RECETTE" = 0 ]; then
   echo "  VERT : $OK/32 modules (documentation + point d'entrée), session, agenda, analyses, survie au redémarrage" >> "$RAPPORT"
 else
   echo "  ROUGE (code $RECETTE) : $OK/32 modules passés avant l'arrêt — voir $PUBLIC/recette-32-modules.log" >> "$RAPPORT"
+fi
+
+# --- 8b. Parcours métier installés (#262) : analyses, rapports, tableaux de bord, équipes,
+# avec redémarrage. Joué seulement si le commit porte la suite.
+if [ -f "$SOURCE/scripts/verify-installed-analysis.py" ]; then
+  etape "Parcours métier installés (scripts/verify-installed-analysis.py)"
+  set +e
+  MODULAR_TEST_DATABASE_URL="${DATABASE_URL%%\?*}" \
+    "$VENV/bin/python" "$SOURCE/scripts/verify-installed-analysis.py" "$APP" > "$PUBLIC/parcours-metier.log" 2>&1
+  METIER=$?
+  set -e
+  chmod 644 "$PUBLIC/parcours-metier.log"
+  if [ "$METIER" = 0 ]; then echo "  VERT — détail : $PUBLIC/parcours-metier.log" >> "$RAPPORT"
+  else echo "  ROUGE (code $METIER) — voir $PUBLIC/parcours-metier.log" >> "$RAPPORT"; fi
 fi
 
 # --- 9. Service PM2
