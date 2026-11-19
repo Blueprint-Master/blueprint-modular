@@ -52,6 +52,22 @@ export default function CatalogueProduitsDocumentationPage() {
         <p className="doc-description">{T.docPageDescription}</p>
       </div>
 
+      <h2 className="text-lg font-semibold mt-6 mb-2">
+        {locale === "fr" ? "Utiliser le module dans votre application" : "Use the module in your application"}
+      </h2>
+      <p className="mb-4 text-sm">
+        {locale === "fr"
+          ? "Le SDK Python conserve les références et les déclinaisons de votre catalogue, avec leur devise, prix en unités monétaires mineures et stocks. Chaque mouvement est identifié par une clé stable. Un retrait concurrent ne peut pas rendre le stock négatif. Pour un EAN-13, fournissez les chiffres attribués au produit et contrôlez la clé."
+          : "The Python SDK stores your products and variants, currency, prices in minor currency units and inventory. Each movement has a stable ID. Concurrent withdrawals cannot create negative inventory. Use the digits assigned to your product when computing the EAN-13 check digit."}
+      </p>
+      <CodeBlock language="python" code={`from contextlib import closing
+from bpm import products
+
+with closing(products.open_store("shop.sqlite")) as db:
+    products.save(db, "A42", "Blue chair", "Furniture", "EUR", 12500, actor="ops")
+    available = products.adjust(db, "A42", 3, actor="ops", reason="receipt", movement_id="receipt-12")
+    matches = products.search(db, text="chair", category="Furniture")`} />
+
       <h2 className="text-lg font-semibold mt-6 mb-2" style={{ color: "var(--bpm-text-primary)" }}>
         {T.docDataModelTitle}
       </h2>

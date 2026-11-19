@@ -15,7 +15,7 @@ npx --no-install prisma migrate deploy
 node --env-file=.env .next/standalone/server.js
 ```
 
-Conserver la base, le secret de session et le répertoire `uploads/` du serveur standalone sur stockage persistant. Le service répond sur `/api/health`. Les chemins de fichiers enregistrés par les modules Documents et Contrats doivent rester accessibles au même emplacement après une mise à jour.
+Conserver la base, le secret de session et les fichiers importés sur stockage persistant. Configurer un chemin absolu stable dans `MODULAR_UPLOAD_DIR` pour les nouvelles pièces des modules Documents et Contrats. Le service répond sur `/api/health`. Les chemins de fichiers enregistrés par les modules Documents et Contrats doivent rester accessibles au même emplacement après une mise à jour.
 
 ## Services à configurer selon les modules
 

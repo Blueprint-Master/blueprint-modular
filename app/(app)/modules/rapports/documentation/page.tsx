@@ -81,11 +81,17 @@ export default function RapportsDocumentationPage() {
         {s.prodTitle}
       </h2>
       <p className="mb-4 text-sm" style={{ color: "var(--bpm-text-secondary)", maxWidth: "62ch" }}>
-        {s.prod1}
-        <code>generated_reports</code>
-        {s.prod2}
-        <code>SELECT</code>
-        {s.prod3}
+        {locale === "fr"
+          ? "Le paquet Python inclut bpm.reports. Chaque application dispose d’une base SQLite dédiée sur disque persistant. La commande generate enregistre les lignes calculées, la période et l’auteur. La commande export restitue le CSV de cet instantané après redémarrage."
+          : "The Python package includes bpm.reports. Use a dedicated SQLite file on persistent storage per application. The generate command stores the calculated rows, period and author. The export command returns that snapshot as CSV, including after restart."}
+      </p>
+      <CodeBlock language="bash" code={`python -m bpm.reports --db instance.sqlite generate --model monthly-revenue --start 2026-01-01 --end 2026-06-30 --author finance --input sales.csv --request-id h1
+python -m bpm.reports --db instance.sqlite list
+python -m bpm.reports --db instance.sqlite export h1 > h1.csv`} />
+      <p className="mb-4 text-sm">
+        {locale === "fr"
+          ? "Le CSV d’entrée est en UTF-8, séparé par des virgules, avec une ligne d’en-tête. Les dates sont au format AAAA-MM-JJ. Pour monthly-revenue, fournir date et amount dans une même devise. Pour regional-orders, ajouter region et fournir une ligne par commande. Pour department-headcount, fournir date, employee, department et fte. La dernière observation de chaque salarié à la clôture détermine son service. Une sortie se saisit avec fte égal à zéro."
+          : "Use a UTF-8 comma-separated input file with a header row and ISO dates. For monthly-revenue, provide date and amount in a single currency. For regional-orders, add region and supply one row per order. For department-headcount, provide date, employee, department and fte. The last observation at closing determines each employee’s department. Record a departure with zero fte."}
       </p>
 
       <p className="mt-6 text-sm" style={{ color: "var(--bpm-text-secondary)" }}>

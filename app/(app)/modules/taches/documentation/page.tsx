@@ -21,6 +21,22 @@ export default function TachesDocumentationPage() {
         <p className="doc-description">{d.description}</p>
       </div>
 
+      <h2 className="text-lg font-semibold mt-6 mb-2">
+        {locale === "fr" ? "Utiliser le module dans votre application" : "Use the module in your application"}
+      </h2>
+      <p className="mb-4 text-sm">
+        {locale === "fr"
+          ? "Le SDK Python conserve les tâches de votre équipe dans une base SQLite dédiée. L’application authentifie le demandeur et choisit les personnes autorisées. Chaque édition fournit la révision lue. Le tableau filtre par état, assigné et échéance. Le journal conserve l’historique après suppression."
+          : "The Python SDK keeps team tasks in a dedicated SQLite database. The host verifies identities and permissions. Each edit supplies the revision last read. Boards filter by state, assignee and due date. The audit journal retains the task history after deletion."}
+      </p>
+      <CodeBlock language="python" code={`from contextlib import closing
+from bpm import tasks
+
+with closing(tasks.open_store("team.sqlite")) as db:
+    task = tasks.create(db, "Inspect batch", "operations", "2026-11-25", actor="lead")
+    started = tasks.update(db, task["id"], actor="operations", revision=task["revision"], status="doing")
+    my_tasks = tasks.board(db, assignee="operations", status="doing")`} />
+
       <h2 className="text-lg font-semibold mt-6 mb-2" style={{ color: "var(--bpm-text-primary)" }}>
         {d.modelTitle}
       </h2>

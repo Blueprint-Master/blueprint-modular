@@ -1,5 +1,49 @@
 # Modules métier · décisions du 19 novembre 2026
 
+## Distribution commune des 32 modules
+
+Le ZIP historique omettait les routes API, les contextes React et les dépendances de construction. Le ZIP de la branche contient maintenant une application installable depuis les sources du commit, les migrations PostgreSQL, le paquet React local, les workers Python, le service Monitor et les notices Apache-2.0. Les chemins utilisés pour les intégrations par copie restent disponibles. Le déploiement VPS prépare le ZIP dans le répertoire de téléchargements servi par Next.
+
+Le job d’installation du run GitHub Actions 44477641273 a construit le ZIP, extrait le projet hors du dépôt, installé les dépendances, compilé le serveur et migré PostgreSQL. Il a ouvert la documentation et l’entrée de chacun des 32 modules, écrit un rendez-vous avec une vraie session et retrouvé le rendez-vous après redémarrage. La recette locale sur PostgreSQL 16.15 a également réussi. La vérification Android du même run attendait une ancienne commande shell littérale. Elle exécute désormais la copie dans les deux dispositions standalone et vérifie le contenu du fichier réellement servi. Le contrôle des 64 routes mesure la livraison technique. Les recettes métier, leurs prérequis et leurs limites restent consignés séparément.
+
+Les treize parcours de démonstration restants possèdent aussi une recette Chromium sur le serveur installé. Elle manipule des formulaires et filtres, télécharge les exports, contrôle la personnalisation du tableau de bord après rechargement et vérifie le verrouillage du devis payé. Ces contrôles utilisent les jeux d’exemple du simulateur. L’intégration des données de l’application est vérifiée séparément.
+
+## IA, analyse documentaire et base contractuelle
+
+Une panne du fournisseur Ollama remonte comme indisponibilité. La requête suivante peut reprendre dès le retour du fournisseur. Seul le réglage explicite AI_MOCK active les réponses d’exemple. Une réponse interrompue en streaming, une extraction vide ou une réponse contractuelle sans synthèse donne un échec exploitable. Le risque d’un contrat reste indéterminé si le fournisseur ne le renseigne pas.
+
+Documents accepte PDF, DOCX et TXT depuis l’interface et par API. Les nouvelles pièces des deux modules peuvent être placées sur un volume externe avec MODULAR_UPLOAD_DIR. Les anciens chemins restent lisibles. Un import contractuel concurrent du même fichier pour le même utilisateur conserve une seule fiche. Les routes de ces modules utilisent la session personnelle en production. Les tests de régression du client IA couvrent le modèle absent, la coupure réseau, le rétablissement, la limite de génération, la dernière ligne de flux et l’extraction invalide.
+
+## Rapports sur les données d’une application
+
+Le paquet Python et le ZIP embarquent `bpm.reports`. Les trois modèles lisent les données réelles fournies par le développeur ou par CSV. Les montants sont agrégés en décimal dans une même devise. Les commandes se comptent à raison d’une ligne par commande. Les effectifs correspondent à la dernière observation de chaque salarié à la clôture. La génération conserve les résultats, l’auteur, la période et l’heure dans la base de l’application. Une réexécution avec la même clé et un contenu différent signale un conflit. Le test de concurrence a produit un seul instantané pour deux générations simultanées. Le CSV relu après réouverture de la base a conservé l’avoir, la moyenne et le libellé de région. Le navigateur a aussi téléchargé le rapport mensuel du simulateur.
+
+## Veille — collecter des sources configurées
+
+Le collecteur installé `python -m bpm.watch` lit des flux RSS et Atom, des API JSON et des pages HTML par HTTP. Un exploitant déclare les sources et programme les passages. Le stockage par application conserve les articles, les versions des pages, la dernière collecte réussie et les alertes de franchissement de seuil. Un flux invalide ou en panne conserve ses résultats précédents. Deux collectes simultanées de la même version ne doublent ni les articles ni les alertes. La recette a interrogé un serveur HTTP isolé, relu la base après réouverture et vérifié une réponse 304, une panne 503, un flux invalide, la reprise et deux franchissements distincts.
+
+## Référentiels et journal d’audit
+
+Les applications peuvent créer, relire, modifier, désactiver et supprimer leurs propres devises, pays, taux de TVA et unités dans une base dédiée. Chaque modification des référentiels et son événement d’audit sont dans la même transaction. Les usages sont enregistrés par identifiant métier. Une référence utilisée ne peut pas être supprimée. Les révisions restent croissantes après suppression et recréation du même code. Les tests ont rejoué deux retraits simultanés, rouvert la base et vérifié que la désactivation masquait le choix tout en préservant la lecture de la commande existante.
+
+Le journal permet également à une application d’inscrire ses propres événements, de filtrer par acteur/action/entité, de paginer et d’exporter en CSV. Une clé d’événement stable rend la réémission idempotente. La recette contrôle un rollback métier, un conflit de clé, le rejet des modifications et suppressions ordinaires, et la lecture d’un export. La protection de l’historique contre un administrateur disposant du fichier repose sur les mesures de sauvegarde et d’exploitation du déploiement.
+
+## Formulaire dynamique — demandes versionnées
+
+L’API Python lit le schéma JSON documenté. La soumission conserve la version exacte et l’identité fournie par l’application. Elle revalide les options, les dates, les seuils et les champs requis côté serveur. Les réponses masquées sont omises. Le formulaire et le SDK traitent la virgule décimale et rejettent un suffixe non numérique. Le test de concurrence enregistre deux tentatives de décision opposées et un seul changement dans le journal. La base rouverte restitue le schéma initial après publication de sa version suivante.
+
+## Tâches et notifications ciblées
+
+Les tâches utilisent une échéance civile, un assigné et une révision qui protège les modifications concurrentes. Le test a vérifié la séquence à faire → en cours → terminé, le filtre de retard, la suppression et l’historique après réouverture. Une notification consulte les équipes fournies par l’application au premier enregistrement, déduplique les membres communs, conserve les boîtes individuelles et transmet les canaux externes au worker Webhooks. La recette a créé deux règles qui se recoupent, vérifié la séparation des lectures et attendu trois livraisons en file pour deux destinataires. L’accusé du prestataire final relève de l’adaptateur SMS ou e-mail configuré.
+
+## Catalogue produits et devis-facturation
+
+Le paquet Python gère les SKU et leurs variantes, les contrôles EAN-13 et les mouvements de stock idempotents. Deux réservations concurrentes de la dernière unité ont donné un seul retrait. Le devis et la facture gardent les coordonnées et montants historiques. Le passage en livraison attend un adaptateur configuré et l’état de l’envoi provient du journal du worker. Le test a fixé un prix hors taxe de 3,15 €, une TVA de 0,63 €, émis une seule facture pour deux acceptations et rapproché deux règlements de 2,00 € et 1,78 €. Le HTML imprimable a conservé le montant et échappé le libellé de l’article. La recette a utilisé un adaptateur isolé.
+
+## Connecteurs — appels du serveur de l’application
+
+Le serveur installé peut exécuter les quatre opérations déclarées par le catalogue. Le coffre est isolé par application et le fournisseur OAuth est injecté par l’exploitant. Les quatre requêtes ont été exécutées contre un récepteur local isolé via un transport de recette. Les tests ont contrôlé le mapping, l’accusé du webhook et le traitement d’une erreur HTTP. Aucun compte Stripe, Google ou Slack de production n’a été utilisé.
+
 ## Point de départ
 
 Le catalogue public de Blueprint Modular présente 32 modules et 64 liens de documentation ou de démonstration. Sur le passage HTTP complet, 63 destinations répondaient en 200. Le lien Documentation du calendrier ajoutait `/documentation` à l’URL du simulateur et donnait une 404. La recette de la branche retrouve les 64 destinations depuis le HTML du catalogue et vérifie leur réponse sur le serveur compilé.
