@@ -1,5 +1,14 @@
 # Modules métier · décisions du 19 novembre 2026
 
+## Recette complémentaire des 14 parcours — candidat de la PR 268
+
+Sur une installation isolée du ZIP 0.1.61 de `276962a7`, la migration réussit depuis une base PostgreSQL vierge et Prisma ne trouve aucune différence avec son schéma. Le script `deploy/preprod/parcours-modules.py` d’outillage `264be1dc` a passé neuf parcours sur quatorze. Les cinq parcours en navigateur rencontraient une divergence d’hydratation après l’enregistrement d’une notification. Le HTML du serveur omettait le badge que la cloche ajoutait dès le premier rendu côté client.
+
+La restauration de l’historique au montage préserve aussi une notification émise par un enfant durant ce montage. Deux tests de régression contrôlent la réutilisation du nœud serveur. Avec ce premier correctif (`9d78753b`), treize parcours passent. Le dernier échec est reproductible dans Webhooks au clic sur l’événement `facture.payee` : le menu ouvert sous le champ place l’option hors de la fenêtre. Selectbox choisit désormais le côté disponible et limite la hauteur défilante à l’espace visible. Le test de recette utilise le clic normal du navigateur.
+
+La recette s’exécute avec des utilisateurs et des destinataires de test, un relais SMTP et un récepteur HTTPS locaux. Le verrou d’écran utilise une doublure dans Chromium. Monitor relit la position et le script depuis le navigateur. Trois tests séparés du service Monitor couvrent l’import PowerPoint et les traitements avec un fournisseur IA isolé. Le résultat du rejeu sur le commit du correctif figure dans la PR de recette.
+
+
 ## Distribution commune des 32 modules
 
 Le ZIP historique omettait les routes API, les contextes React et les dépendances de construction. Le ZIP de la branche contient maintenant une application installable depuis les sources du commit, les migrations PostgreSQL, le paquet React local, les workers Python, le service Monitor et les notices Apache-2.0. Les chemins utilisés pour les intégrations par copie restent disponibles. Le déploiement VPS prépare le ZIP dans le répertoire de téléchargements servi par Next.
