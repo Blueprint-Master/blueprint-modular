@@ -36,6 +36,7 @@ import { PUT as recordReading } from "@/app/api/asset-manager/knowledge/[id]/rea
 import * as tickets from "@/app/api/asset-manager/tickets/route";
 import * as ticketItem from "@/app/api/asset-manager/tickets/[id]/route";
 import { GET as warnings } from "@/app/api/asset-manager/sla-escalation/route";
+import * as assetItem from "@/app/api/asset-manager/assets/[id]/route";
 import * as inventory from "@/app/api/asset-manager/assets/route";
 import { GET as workflow } from "@/app/api/workflow/entity/[id]/route";
 import { POST as advance } from "@/app/api/workflow/entity/[id]/transition/route";
@@ -66,6 +67,7 @@ describe.skipIf(!url)("module API handlers with PostgreSQL", () => {
     await postgres.user.createMany({ data: [owner, other].map(id => ({ id, email: id + "@example.test" })) });
   });
   afterAll(async () => {
+    await postgres.auditLog.deleteMany({ where: { userId: { in: [owner, other] } } });
     await postgres.user.deleteMany({ where: { id: { in: [owner, other] } } });
     await postgres.$disconnect();
   });
@@ -420,6 +422,40 @@ describe.skipIf(!url)("module API handlers with PostgreSQL", () => {
     } finally {
       wikiRole = "USER";
       await postgres.asset.deleteMany({ where: { label } });
+    }
+  });
+
+  it("edits inventory and its attributes in one revision and records the complete lifecycle audit", async () => {
+    wikiRole = "ADMIN";
+    userId = owner;
+    const label = "QA-edit-" + randomUUID();
+    const result = await inventory.POST(request("/", "POST", { domainId: "it", assetTypeId: "laptop", label,
+      attributes: [{ key: "ram_go", valueNumber: 16 }, { key: "legacy-field", valueText: "ancienne valeur" }] }));
+    const row = await result.json();
+    const ctx = context(row.id);
+    const read = async () => (await assetItem.GET(request("/"), ctx)).json();
+    const edit = (data: object) => assetItem.PUT(request("/", "PUT", data), ctx);
+    try {
+      expect((await edit({ label: "autre", attributes: [{ key: "same" }, { key: "same" }] })).status).toBe(400);
+      expect(await read()).toMatchObject({ label, attributes: expect.arrayContaining([{ ...row.attributes[0] }]) });
+      expect((await edit({ lifecycleStage: "inconnu" })).status).toBe(400);
+      const changes = await Promise.all(["maintenance", "reforme"].map(lifecycleStage =>
+        edit({ expectedUpdatedAt: row.updatedAt, lifecycleStage })));
+      expect(changes.map(r => r.status).sort()).toEqual([200, 409]);
+      const updated = await (await edit({ label: "Corrigé", attributes: [{ key: "ram_go", valueNumber: 32 }] })).json();
+      expect(updated.attributes).toHaveLength(1);
+      expect(updated.attributes[0].valueNumber).toBe(32);
+      expect((await assetItem.DELETE(request("/?expectedUpdatedAt=" + row.updatedAt, "DELETE"), ctx)).status).toBe(409);
+      expect((await assetItem.DELETE(request("/?expectedUpdatedAt=" + updated.updatedAt, "DELETE"), ctx)).status).toBe(200);
+      const entries = await postgres.auditLog.findMany({ where: { resourceType: "asset", resourceId: row.id }, orderBy: { timestamp: "asc" } });
+      expect(entries.map(entry => entry.action)).toEqual(["create", "update", "update", "delete"]);
+      expect(JSON.parse(entries[2].beforeState!).attributes).toHaveLength(2);
+      expect(JSON.parse(entries[3].beforeState!).attributes[0].valueNumber).toBe(32);
+      expect((await assetItem.GET(request("/"), ctx)).status).toBe(404);
+    } finally {
+      wikiRole = "USER";
+      await postgres.asset.deleteMany({ where: { id: row.id } });
+      await postgres.auditLog.deleteMany({ where: { resourceId: row.id } });
     }
   });
 
