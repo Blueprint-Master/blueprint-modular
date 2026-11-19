@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 import { readResponse } from "../../../lib/read-response";
 import Link from "next/link";
-import { useParams, useRouter } from "next/navigation";
+import { useParams, useRouter, useSearchParams } from "next/navigation";
 import { Card, Caption, Divider, Button, Spinner, Input, Selectbox } from "@/components/bpm";
 import { useI18n } from "@/lib/i18n/LocaleProvider";
 import { STR } from "../../../strings";
@@ -17,6 +17,7 @@ type DomainConfig = {
 export default function AssetManagerTicketNewPage() {
   const params = useParams();
   const router = useRouter();
+  const initialAsset = useSearchParams().get("assetId") ?? "";
   const { locale } = useI18n();
   const t = STR[locale];
   const tt = t.tickets;
@@ -37,20 +38,25 @@ export default function AssetManagerTicketNewPage() {
 
   useEffect(() => {
     if (!domainId) return;
+    const controller = new AbortController();
+    const signal = controller.signal;
+    setLoading(true); setError("");
     Promise.all([
-      fetch(`/api/asset-manager/config/${domainId}`, { credentials: "include" }).then(readResponse),
-      fetch(`/api/asset-manager/assets?domainId=${encodeURIComponent(domainId)}`, { credentials: "include" }).then((r) => (r.ok ? r.json() : [])),
-    ])
-      .then(([cfg, list]) => {
-        setConfig(cfg);
-        setAssets(Array.isArray(list) ? list : []);
-        if (cfg?.priorities?.length) setPriorityId(cfg.priorities[0].id);
-        if (cfg?.ticket_categories?.length) setCategoryId(cfg.ticket_categories[0].id);
-        if (cfg?.ticket_types?.length) setTypeId(cfg.ticket_types[0]);
-      })
-      .catch(err => setError(err instanceof Error ? err.message : String(err)))
-      .finally(() => setLoading(false));
-  }, [domainId]);
+      fetch(`/api/asset-manager/config/${domainId}`, { signal }).then(readResponse),
+      fetch(`/api/asset-manager/assets?domainId=${encodeURIComponent(domainId)}`, { signal }).then(readResponse),
+    ]).then(([cfg, list]) => {
+      if (signal.aborted) return;
+      setConfig(cfg); setAssets(list);
+      const selected = list.find((entry: { id: string }) => entry.id === initialAsset);
+      setAssetId(selected?.id ?? "");
+      if (initialAsset && !selected) setError(t.tickets.assetUnavailable);
+      if (cfg.priorities?.length) setPriorityId(cfg.priorities[0].id);
+      if (cfg.ticket_categories?.length) setCategoryId(cfg.ticket_categories[0].id);
+      if (cfg.ticket_types?.length) setTypeId(cfg.ticket_types[0]);
+    }).catch(err => { if (!signal.aborted) setError(err.message); })
+      .finally(() => { if (!signal.aborted) setLoading(false); });
+    return () => controller.abort();
+  }, [domainId, initialAsset, t.tickets.assetUnavailable]);
 
   useEffect(() => {
     if (!domainId || !categoryId) {

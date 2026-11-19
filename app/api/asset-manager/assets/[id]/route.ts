@@ -26,7 +26,7 @@ export async function GET(_request: Request, context: { params: Promise<Awaited<
     include: {
       attributes: true,
       createdBy: { select: { id: true, name: true, email: true } },
-      tickets: { select: { id: true, reference: true, title: true, status: true, openedAt: true } },
+      tickets: { orderBy: [{ openedAt: "desc" }, { id: "desc" }], select: { id: true, reference: true, title: true, status: true, openedAt: true } },
       assignments: { select: { id: true, reference: true, status: true, startDate: true, assignee: { select: { name: true } } } },
     },
   });
