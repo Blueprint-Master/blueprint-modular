@@ -16,6 +16,8 @@ export function Dashboard({ title, blocks, locale, period, source }: ArtifactSpe
         valueDecimals: block.decimals ?? decimalPlaces(block.value), delta: block.delta, currency: "",
         deltaType: !block.context ? "aucun" : block.context.direction === "lower_is_better" ? "inverse" : "normal",
         context: block.context, subtext: block.context?.referenceLabel,
+        // Même unité d'écart que la couche IA (lib/artifact/context.ts : « % » → « pt »).
+        judgmentUnit: block.unit === "%" ? "pt" : block.unit === "EUR" ? "€" : block.unit,
       })}</section>;
       case "paragraph": return <p key={i}>{block.text}</p>;
       case "status": return <div className="status" key={i}>{bpm.badge({children: block.text, variant: block.variant})}</div>;
