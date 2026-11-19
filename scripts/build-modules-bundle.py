@@ -20,7 +20,7 @@ SOURCES = [
     "packages/core/OBJECTS.md", "bpm", "pyproject.toml", "README.md", "LICENSE", "NOTICE",
     "package.json", "package-lock.json", "next.config.mjs", "next-env.d.ts", "middleware.ts",
     "tailwind.config.ts", "postcss.config.mjs", "tsconfig.json", ".env.example",
-    "deploy/prompteur", "deploy/prompteur-api-requirements.txt", "deploy/copy-standalone-assets.sh",
+    "deploy/prompteur", "deploy/prompteur-api-requirements.txt", "deploy/copy-standalone-assets.sh", "deploy/backup-postgres.sh",
     "scripts/generate-versions.mjs", "scripts/generate-changelog.mjs",
     "scripts/generate-component-examples.mjs", "scripts/build-python-runtime.sh",
     "docs/DATABASE.md", "docs/modules-bundle.md",
