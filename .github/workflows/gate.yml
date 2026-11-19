@@ -18,6 +18,9 @@ on:
   workflow_dispatch:
 
 jobs:
+  modules-install:
+    uses: ./.github/workflows/modules-install.yml
+
   gate:
     name: npm run gate
     runs-on: ubuntu-24.04
