@@ -8,6 +8,7 @@ datasource db {
 }
 
 model User {
+  knowledgeReads KnowledgeReader[]
   id        String   @id @default(cuid())
   email     String   @unique
   name      String?
@@ -401,6 +402,7 @@ model AssetAttribute {
 }
 
 model Ticket {
+  knowledgeArticles KnowledgeArticle[]
   id                String    @id @default(cuid())
   domainId          String    @map("domain_id")
   workspaceId       String?   @map("workspace_id")
@@ -513,6 +515,9 @@ model AssetMovement {
 }
 
 model KnowledgeArticle {
+  readers KnowledgeReader[]
+  sourceTicket Ticket? @relation(fields: [sourceTicketId], references: [id], onDelete: SetNull)
+  @@index([sourceTicketId])
   id               String    @id @default(cuid())
   domainId         String    @map("domain_id")
   workspaceId      String?   @map("workspace_id")
@@ -793,4 +798,14 @@ model WhiteboardNote {
   organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
 
   @@index([organizationId, board, removed, positionAt])
+}
+
+
+model KnowledgeReader {
+  articleId String @map("article_id")
+  userId String @map("user_id")
+  helpful Boolean?
+  article KnowledgeArticle @relation(fields: [articleId], references: [id], onDelete: Cascade)
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  @@id([articleId, userId])
 }

@@ -18,6 +18,9 @@ vi.mock("@/lib/auth", () => ({
 import { POST as issue } from "@/app/api/asset-manager/assignments/route";
 import { PUT as editLoan } from "@/app/api/asset-manager/assignments/[id]/route";
 import { POST as returnLoan } from "@/app/api/asset-manager/assignments/[id]/return/route";
+import * as knowledge from "@/app/api/asset-manager/knowledge/route";
+import * as knowledgeItem from "@/app/api/asset-manager/knowledge/[id]/route";
+import { PUT as recordReading } from "@/app/api/asset-manager/knowledge/[id]/reader/route";
 import * as tickets from "@/app/api/asset-manager/tickets/route";
 import * as ticketItem from "@/app/api/asset-manager/tickets/[id]/route";
 import { GET as warnings } from "@/app/api/asset-manager/sla-escalation/route";
@@ -53,6 +56,58 @@ describe.skipIf(!url)("module API handlers with PostgreSQL", () => {
   afterAll(async () => {
     await postgres.user.deleteMany({ where: { id: { in: [owner, other] } } });
     await postgres.$disconnect();
+  });
+
+  it("links ticket solutions, scopes reader visibility and records each reader and vote once across retries", async () => {
+    userId = owner;
+    wikiRole = "ADMIN";
+    const title = "QA-article-" + randomUUID();
+    const ticket = await postgres.ticket.create({ data: {
+      domainId: "it", reference: randomUUID(), title, description: "Poste isolé", typeId: "Incident",
+      priorityId: "normal", categoryId: "hardware", status: "in_progress", requesterId: owner,
+    } });
+    const create = (visibility: string) => knowledge.POST(request("/", "POST", {
+      domainId: "it", title, content: "Diagnostic", categoryId: "procedure", sourceTicketId: ticket.id, visibility,
+    }));
+    const list = async (category: string) => (await knowledge.GET(request("/?domainId=it&ticketCategoryId=" + category))).json();
+    try {
+      expect((await create("public")).status).toBe(400);
+      await postgres.ticket.update({ where: { id: ticket.id }, data: { status: "resolved" } });
+      const responses = await Promise.all([create("public"), create("technicians_only")]);
+      const [article, internal] = await Promise.all(responses.map(r => r.json()));
+      expect(article.sourceTicketId).toBe(ticket.id);
+      expect(article.slug).not.toBe(internal.slug);
+      const ctx = context(article.id);
+      const read = (body: object) => recordReading(request("/", "PUT", body), ctx);
+      const detail = async () => (await knowledgeItem.GET(request("/"), ctx)).json();
+      const edit = (content: string) => knowledgeItem.PUT(request("/", "PUT", { content, expectedUpdatedAt: article.updatedAt }), ctx);
+      const remove = (version: string) => knowledgeItem.DELETE(request("/?expectedUpdatedAt=" + encodeURIComponent(version), "DELETE"), ctx);
+      expect(await list("hardware")).toHaveLength(2);
+      expect(await list("software")).toHaveLength(0);
+      wikiRole = "USER";
+      userId = other;
+      expect(await list("hardware")).toMatchObject([{ id: article.id }]);
+      const search = async (word: string) => (await knowledge.GET(request("/?domainId=it&q=" + word))).json();
+      expect(await search("diagnostic")).toMatchObject([{ id: article.id }]);
+      expect(await search("introuvable")).toEqual([]);
+      expect((await knowledgeItem.GET(request("/"), context(internal.id))).status).toBe(404);
+      expect((await read({ helpful: "invalid" })).status).toBe(400);
+      await Promise.all([read({ helpful: true }), read({ helpful: true }), read({})]);
+      expect(await detail()).toMatchObject({ canEdit: false, viewsCount: 1, helpfulCount: 1, notHelpfulCount: 0, updatedAt: article.updatedAt });
+      expect(await (await read({ helpful: false })).json()).toMatchObject({ viewsCount: 1, helpfulCount: 0, notHelpfulCount: 1 });
+      userId = owner;
+      wikiRole = "ADMIN";
+      expect(await (await read({ helpful: true })).json()).toMatchObject({ viewsCount: 2, helpfulCount: 1, notHelpfulCount: 1 });
+      expect(await (await read({ helpful: null })).json()).toMatchObject({ viewsCount: 2, helpfulCount: 0, notHelpfulCount: 1 });
+      expect((await Promise.all([edit("Diagnostic A"), edit("Diagnostic B")])).map(r => r.status).sort()).toEqual([200, 409]);
+      expect((await remove(article.updatedAt)).status).toBe(409);
+      expect((await remove((await detail()).updatedAt)).status).toBe(200);
+      expect(await postgres.knowledgeReader.count({ where: { articleId: article.id } })).toBe(0);
+    } finally {
+      wikiRole = "USER";
+      await postgres.knowledgeArticle.deleteMany({ where: { createdById: owner, title } });
+      await postgres.ticket.delete({ where: { id: ticket.id } });
+    }
   });
 
   it("keeps ticket numbers, deadlines and resolution dates coherent across concurrent edits and reopening", async () => {

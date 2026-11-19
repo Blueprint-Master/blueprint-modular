@@ -57,10 +57,13 @@ export default function AssetManagerTicketNewPage() {
       setSuggestedArticles([]);
       return;
     }
-    const params = new URLSearchParams({ domainId, categoryId });
+    let active = true;
+    const params = new URLSearchParams({ domainId, ticketCategoryId: categoryId });
     fetch(`/api/asset-manager/knowledge?${params}`, { credentials: "include" })
       .then((r) => (r.ok ? r.json() : []))
-      .then((list: { id: string; title: string; slug: string }[]) => setSuggestedArticles(Array.isArray(list) ? list.slice(0, 5) : []));
+      .then((list: { id: string; title: string; slug: string }[]) => { if (active) setSuggestedArticles(list); })
+      .catch(() => { if (active) setSuggestedArticles([]); });
+    return () => { active = false; };
   }, [domainId, categoryId]);
 
   const handleSubmit = (e: React.FormEvent) => {
