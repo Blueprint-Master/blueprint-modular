@@ -109,7 +109,10 @@ DATABASE_URL=$(url $A) "$PRISMA" migrate deploy --schema "$APP/prisma/schema.pri
 r "Migration : VERTE en $(( $(date +%s) - T0 )) s"
 if DATABASE_URL=$(url $A) "$PRISMA" migrate diff --from-url "$(url $A)" --to-schema-datamodel "$APP/prisma/schema.prisma" --exit-code >/dev/null; then
   r "Schéma migré = schéma de la version candidate : OUI"
-else r "Schéma migré = schéma de la version candidate : NON (écart)"; fi
+else
+  r "Schéma migré = schéma de la version candidate : NON (écart ci-dessous : ce qu'il faudrait AJOUTER à la base migrée pour égaler schema.prisma)"
+  DATABASE_URL=$(url $A) "$PRISMA" migrate diff --from-url "$(url $A)" --to-schema-datamodel "$APP/prisma/schema.prisma" --script 2>&1 | grep -vE '^\s*$|^--' | head -40 | tee -a "$RAPPORT"
+fi
 comptes $A > "$TRAVAIL/comptes-apres.txt"
 PERDUES=$(join "$TRAVAIL/comptes-avant.txt" "$TRAVAIL/comptes-apres.txt" | awk '$2!=$3' || true)
 if [ -z "$PERDUES" ]; then r "Lignes existantes conservées par la migration : OUI (toutes les tables, au compte près)"; else r "Lignes existantes conservées par la migration : NON"; echo "$PERDUES" | tee -a "$RAPPORT"; fi
@@ -145,7 +148,8 @@ if [ -x "$APP/deploy/sauvegarde-avant-migration.sh" ]; then
   pg_dump --schema-only --no-owner --no-acl -d modular_preprod | grep -vE '^--|^\s*$|^\\(un)?restrict ' > "$TRAVAIL/s266-source.sql"
   pg_dump --schema-only --no-owner --no-acl -d $C | grep -vE '^--|^\s*$|^\\(un)?restrict ' > "$TRAVAIL/s266-restauree.sql"
   cmp -s "$TRAVAIL/c266-source.txt" "$TRAVAIL/c266-restauree.txt" && r "Restauration #266 : comptes de lignes identiques ($(awk '{s+=$2} END{print s+0}' "$TRAVAIL/c266-source.txt") lignes) : OUI" || r "Restauration #266 : comptes de lignes identiques : NON"
-  cmp -s "$TRAVAIL/s266-source.sql" "$TRAVAIL/s266-restauree.sql" && r "Restauration #266 : schéma identique : OUI" || r "Restauration #266 : schéma identique : NON"
+  if cmp -s "$TRAVAIL/s266-source.sql" "$TRAVAIL/s266-restauree.sql"; then r "Restauration #266 : schéma identique : OUI"
+  else r "Restauration #266 : schéma identique : NON (< source, > restaurée)"; diff "$TRAVAIL/s266-source.sql" "$TRAVAIL/s266-restauree.sql" | head -30 | tee -a "$RAPPORT"; fi
 else
   r "Sauvegarde #266 : script absent de la préproduction, non testée"
 fi
