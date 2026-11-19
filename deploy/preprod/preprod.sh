@@ -11,6 +11,8 @@
 #
 # Rapport sans secret : /var/tmp/modular-preprod/rapport.txt (lisible par tous).
 set -euo pipefail
+# Chemin absolu de l'outillage : le script change de répertoire avant la recette.
+OUTILLAGE=$(cd "$(dirname "$0")" && pwd)
 umask 027
 export LC_ALL=C.UTF-8
 
@@ -248,7 +250,10 @@ fi
 
 # --- 8c. Parcours métier des 14 modules non couverts par les suites du dépôt
 # (outillage de recette, deploy/preprod/parcours-modules.py), avec redémarrage.
-PARCOURS=$(dirname "$0")/parcours-modules.py
+PARCOURS=$OUTILLAGE/parcours-modules.py
+# Absent = échec visible, jamais un saut silencieux (constaté le 19/11 : chemin relatif
+# résolu après le cd, l'étape s'était sautée sans rien dire).
+[ -f "$PARCOURS" ] || die "parcours-modules.py introuvable dans $OUTILLAGE"
 if [ -f "$PARCOURS" ]; then
   etape "Parcours métier des 14 autres modules (parcours-modules.py)"
   set +e
