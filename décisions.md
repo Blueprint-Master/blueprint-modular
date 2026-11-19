@@ -30,7 +30,6 @@ Le simulateur Calendrier conserve ses séries en mémoire. Une date de fin expli
 
 | Module | Comportement observé dans le code | Critère métier restant à démontrer |
 |---|---|---|
-| Export planifié | L’action de démonstration incrémente les compteurs d’envoi en mémoire. | Une échéance déclenche un export réel à partir des données attendues et conserve son résultat après reprise du service. |
 | Webhooks | La démonstration remplit l’historique de livraison depuis un temporisateur. | Un destinataire de recette reçoit l’événement et les tentatives sont consultables après une interruption. |
 
 ## Réservation / Créneaux — parcours de travail qualifié
@@ -41,4 +40,12 @@ La migration `20261119002000_room_reservations` lie la réservation à son adhé
 
 **Recette exécutée le 19 novembre.** Sur PostgreSQL 16, deux comptes ont demandé des créneaux qui se recouvrent en parallèle. Une écriture a réussi, la seconde a reçu HTTP 409. Les créneaux adjacents et ceux d’une autre organisation restaient réservables. Le second membre ne pouvait ni lire le titre ni annuler la réunion du premier. Les tests ont vérifié le week-end, le changement d’heure et la fermeture à 18 h. Sur le build Next.js standalone, Chromium a réservé deux heures, puis a retrouvé la réunion avec une nouvelle connexion après redémarrage du serveur. Le premier clic de renoncement a conservé la réservation. L’annulation confirmée a libéré les deux heures.
 
-**Suite du catalogue.** Prochain module : Export planifié, puis Webhooks. Pour les autres modules, les contrôles d’ouverture du catalogue restent de simples contrôles HTTP. La recette de chaque parcours utilisateur est à consigner ici, avec ses conditions de déploiement.
+## Export planifié — exécution dans une application Modular
+
+Le paquet Python embarque `bpm.scheduled_exports`. Une installation correspond à un compte de service, une base SQLite privée sur disque persistant et un relais SMTP. Un appel à `tick` par minute traite les échéances. Un rapport peut provenir d’un fichier publié atomiquement ou d’une fonction de l’application qui lit ses données au moment de l’échéance. L’onglet Simulateur reste un exemple local. Les commandes du worker et ses variables de configuration figurent dans la documentation FR/EN du module.
+
+Le worker utilise les heures civiles du fuseau choisi pour les échéances quotidiennes, hebdomadaires et mensuelles. Après une interruption prolongée, il traite un seul instantané courant. Chaque destinataire dispose d’un journal persistant. Les octets de la pièce jointe sont identiques pour tous les destinataires du même envoi. Une acceptation SMTP est une acceptation par le relais. Une interruption avant de recevoir l’accusé entraîne une vérification manuelle du journal du relais. Les erreurs transitoires dont l’issue est connue sont réessayées après cinq minutes.
+
+**Recette du 19 novembre.** Deux workers concurrents ont livré le CSV de ventes à deux boîtes de recette via SMTP sur l’interface de bouclage, un message par destinataire, avec vérification des octets décodés. Une nouvelle connexion à la base a retrouvé les reçus. Deux invocations distinctes de la commande installable ont généré un CSV depuis les ventes de recette (100 + 210 = 310), puis retrouvé le journal sans expédier de doublon. Sept tests couvrent également l’échéance manquée, le changement d’heure, la reprise après source absente, la suspension, la suppression et la décision après accusé manquant. Le relais de l’exploitant et les sources de données de son organisation sont à configurer au déploiement.
+
+**Suite du catalogue.** Prochain module : Webhooks. Pour les autres modules, les contrôles d’ouverture du catalogue restent de simples contrôles HTTP. La recette de chaque parcours utilisateur est à consigner ici avec ses conditions de déploiement.

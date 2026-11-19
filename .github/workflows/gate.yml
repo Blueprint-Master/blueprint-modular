@@ -49,6 +49,9 @@ jobs:
       - name: Run convergence gate
         run: npm run gate
 
+      - name: Exercise scheduled exports with a local SMTP relay
+        run: python -m unittest discover -s tests/python -v
+
       - name: Exercise personal modules on a migrated database
         env:
           DATABASE_URL: postgresql://modular:test_only@127.0.0.1:${{ job.services.postgres.ports[5432] }}/modular_test

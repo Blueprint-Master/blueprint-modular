@@ -58,7 +58,7 @@ const fr = {
   andWord: "et",
   configHeading: "Paramétrage",
   configBody1:
-    "Le simulateur fonctionne entièrement en local (données seedées, aucune API requise). En production, brancher la création sur votre planificateur (cron, worker) et l'envoi sur votre service e-mail. Voir la",
+    "Le simulateur fonctionne entièrement en local (données seedées, aucune API requise). Le worker Python livré avec Modular exécute les planifications sur votre serveur avec votre relais SMTP. Voir la",
   configLinkLabel: "documentation",
   configBody2: "pour le modèle de données et les points d'intégration.",
 
@@ -185,7 +185,7 @@ const en = {
   andWord: "and",
   configHeading: "Configuration",
   configBody1:
-    "The simulator runs entirely locally (seeded data, no API required). In production, wire creation to your scheduler (cron, worker) and delivery to your email service. See the",
+    "The simulator runs entirely locally (seeded data, no API required). The included Python worker runs schedules on your server using your SMTP relay. See the",
   configLinkLabel: "documentation",
   configBody2: "for the data model and integration points.",
 
