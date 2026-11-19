@@ -265,7 +265,8 @@ export function Button({
      * `wait` pour une attente. */
     cursor: disabled ? "not-allowed" : loading ? "wait" : "pointer",
     whiteSpace: "nowrap",
-    outline: "none",
+    outline: focused ? "2px solid var(--bpm-focus-ring, #0079a8)" : undefined,
+    outlineOffset: focused ? 2 : undefined,
     userSelect: "none",
     transition: "background 0.12s ease, border-color 0.12s ease, color 0.12s ease, box-shadow 0.12s ease, transform 0.12s ease",
     opacity: disabled ? 0.42 : loading ? 0.7 : 1,
@@ -307,6 +308,7 @@ export function Button({
       <style dangerouslySetInnerHTML={{ __html: SPINNER_CSS }} />
       <button
         type={type}
+        className={className}
         style={baseStyle}
         disabled={disabled || loading}
         onClick={onClick}
