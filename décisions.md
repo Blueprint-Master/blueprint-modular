@@ -459,3 +459,22 @@ La fiche relit directement les tickets rattachés à l’équipement dans Postgr
 ## Recette de la version candidate
 
 Les 32 parcours, leurs prérequis et la surface à installer sont recensés dans `docs/modules-bundle.md`, également distribué dans le ZIP. Le test de publication compare les livrables entre eux. Un projet consommateur installe le tarball avec npm, puis exécute les opérations de traduction, de choix du thème et de résolution des exports publics. La vérification du serveur installé contrôle également le commit déclaré par le point de santé.
+
+## Validation de bout en bout du 19/11 — candidat final `528cc2dc`
+
+**Version candidate unique** : `528cc2dceb28f0f2cfef1f1da637381553ed1e58` (PR #271) = candidat 32 modules #268 (#262 ⊃ #260, #261, plus la migration d'alignement des clés étrangères) + artefacts hybrides #263 (avec le correctif de l'écart au repère) + recette des 14 parcours #270 (cloche de notifications, menu Selectbox). CI verte (gate, installation du ZIP avec PostgreSQL et MySQL).
+
+**Préproduction** (ZIP `blueprint-modules-v0.1.61.zip`, sha256 `0a90b9922bea0b77…`, installé sur base dédiée et données de recette isolées ; le serveur annonce `sourceCommit 528cc2dc`) :
+- 32/32 points d'entrée et documentations, 13 interactions Chromium, session et rendez-vous relus après redémarrage ;
+- parcours installés de #262 : Contrats, Documents, IA, Rapports, Tableaux de bord, Tâches d'équipe, Audit, relus après redémarrage ;
+- 14/14 parcours des autres modules (`deploy/preprod/parcours-modules.py`, branche `claude/preprod-outillage`), relecture après redémarrage pour ceux qui persistent.
+
+**Migration sur copie de la production** (41 tables, 89 226 lignes, bases jetables supprimées) : 4 migrations nouvelles, aucune instruction destructrice, schéma migré conforme à `schema.prisma`, toutes les lignes conservées. Retour arrière par `backup-postgres.sh` : schéma, lignes et historique identiques à l'état de départ. Sauvegarde de #266 restaurée dans une base isolée : lignes identiques ; seule différence de schéma, le parenthésage d'une contrainte CHECK réécrit par PostgreSQL (même règle).
+
+**Décisions** :
+- un module est déclaré « livré » au sens métier seulement s'il a un parcours prouvé avec relecture après redémarrage ; les 32 en ont un sur ce commit ;
+- les modules dont la page est une démonstration le restent et le documentation doit le dire : Export planifié et Webhooks (le moteur réel est un worker Python, sans écran connecté), Commentaires (persistance via le wiki uniquement), Notification (la cloche ne lit pas la boîte serveur), Newsletter (rédaction et archivage, sans envoi), Monitor (stockage navigateur, IA via service externe) ; `/api/templates` répond sans session ;
+- les migrations écrites à la main sont comparées au schéma par `prisma migrate diff --exit-code` avant toute bascule ;
+- la préproduction s'installe hors de `/home/ubuntu` et la racine Next est explicite (`next.config.mjs`) : un `package-lock.json` parent imbriquait la sortie standalone.
+
+**Écarts restants, non bloquants** : dans l'artefact, l'écart au repère n'affiche pas son unité (« −1,2 vs repère » sous « −1,2 pt ») ; un écart de +0,97 % est jugé neutre alors que le delta est vert, seuil non documenté ; graphique sans axe gradué. Réflexe Modular dans les interfaces Claude et ChatGPT : non mesuré par l'agent (pas d'accès aux interfaces réelles), protocole remis à Rémi.
