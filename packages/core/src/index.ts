@@ -20,3 +20,5 @@ export type {
 } from "../../../components/bpm";
 
 export { SkeletonLayout, type SkeletonAssembly } from "../../../components/bpm/SkeletonLayout";
+
+export { useScreenWakeLock, type ScreenWakeDuration } from "../../../components/bpm/useScreenWakeLock";

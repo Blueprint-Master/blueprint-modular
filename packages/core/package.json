@@ -32,7 +32,12 @@
       "types": "./dist/packages/core/src/connectors/index.d.ts"
     },
     "./style.css": "./dist/style.css",
-    "./dist/style.css": "./dist/style.css"
+    "./dist/style.css": "./dist/style.css",
+    "./keep-screen-on": {
+      "types": "./dist/components/bpm/useScreenWakeLock.d.ts",
+      "import": "./dist/keep-screen-on/index.mjs",
+      "require": "./dist/keep-screen-on/index.js"
+    }
   },
   "files": [
     "dist/",
