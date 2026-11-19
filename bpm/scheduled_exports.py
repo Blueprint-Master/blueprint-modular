@@ -9,11 +9,11 @@ import os
 import re
 import smtplib
 import sqlite3
+from ._module_store import connect, transaction as write
 import ssl
 import sys
 import time
 import uuid
-from contextlib import contextmanager
 from datetime import datetime, time as civil_time, timedelta
 from email.message import EmailMessage
 from pathlib import Path
@@ -63,22 +63,7 @@ def next_due(after, frequency, hour, zone):
 
 
 def open_store(path):
-    db = sqlite3.connect(path, timeout=15, isolation_level=None)
-    db.row_factory = sqlite3.Row
-    db.execute("PRAGMA foreign_keys=ON")
-    db.executescript(SCHEMA)
-    return db
-
-
-@contextmanager
-def write(db):
-    db.execute("BEGIN IMMEDIATE")
-    try:
-        yield
-        db.commit()
-    except BaseException:
-        db.rollback()
-        raise
+    return connect(path, SCHEMA)
 
 
 def add(db, report, fmt, frequency, hour, zone, recipients, now):
@@ -272,7 +257,6 @@ def main(argv=None):
     reconcile.add_argument("outcome", choices=["sent", "retry"])
     args = parser.parse_args(argv)
     now = int(time.time())
-    os.umask(0o077)
     db = open_store(args.db)
     try:
         if args.action == "add":

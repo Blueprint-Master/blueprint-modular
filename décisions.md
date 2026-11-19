@@ -26,12 +26,6 @@ Le simulateur Calendrier conserve ses séries en mémoire. Une date de fin expli
 - Compilation Next.js 16 validée avec Webpack et Turbopack. Le test Turbopack utilise les certificats système de l’environnement pour télécharger les polices habituelles. Le premier commit aligne les types de paramètres asynchrones des routes sur le contrat de Next 16, nécessaire au build complet.
 - Livraison en PR en brouillon pour revue des migrations et du traitement des sessions. Les données de recette sont synthétiques et locales. Aucun appel d’écriture vers la production.
 
-## Écarts encore visibles dans les simulateurs
-
-| Module | Comportement observé dans le code | Critère métier restant à démontrer |
-|---|---|---|
-| Webhooks | La démonstration remplit l’historique de livraison depuis un temporisateur. | Un destinataire de recette reçoit l’événement et les tentatives sont consultables après une interruption. |
-
 ## Réservation / Créneaux — parcours de travail qualifié
 
 Le lien **Réserver une salle** ouvre le planning partagé de l’organisation. Le visiteur peut toujours essayer le simulateur public. Le planning propose les trois salles du module, par jour ouvré, de 9 h à 18 h, heure de Paris. Un membre voit les disponibilités et peut annuler ses propres réservations. Les intitulés des réunions restent visibles uniquement par leur auteur. Le sélecteur d’organisation définit le planning affiché.
@@ -48,4 +42,10 @@ Le worker utilise les heures civiles du fuseau choisi pour les échéances quoti
 
 **Recette du 19 novembre.** Deux workers concurrents ont livré le CSV de ventes à deux boîtes de recette via SMTP sur l’interface de bouclage, un message par destinataire, avec vérification des octets décodés. Une nouvelle connexion à la base a retrouvé les reçus. Deux invocations distinctes de la commande installable ont généré un CSV depuis les ventes de recette (100 + 210 = 310), puis retrouvé le journal sans expédier de doublon. Sept tests couvrent également l’échéance manquée, le changement d’heure, la reprise après source absente, la suspension, la suppression et la décision après accusé manquant. Le relais de l’exploitant et les sources de données de son organisation sont à configurer au déploiement.
 
-**Suite du catalogue.** Prochain module : Webhooks. Pour les autres modules, les contrôles d’ouverture du catalogue restent de simples contrôles HTTP. La recette de chaque parcours utilisateur est à consigner ici avec ses conditions de déploiement.
+## Webhooks — livraison à un destinataire HTTPS
+
+Le worker `bpm.webhooks` associe un événement à une intégration configurée par l’exploitant. Chaque publication porte un identifiant métier stable. Le producteur peut l’inscrire dans la même transaction SQLite que son opération. Une reprise conserve le corps et l’identifiant. Le destinataire vérifie la signature des octets reçus et enregistre l’identifiant avec sa propre écriture pour dédupliquer les tentatives. Le journal conserve le code HTTP, la durée et les interruptions. Après cinq échecs consécutifs l’alerte est consultable. À partir de 72 heures d’échecs, le worker suspend l’intégration au passage suivant.
+
+**Recette du 19 novembre.** Un destinataire HTTPS de recette a reçu une commande, répondu 503, puis 204 après redémarrage du worker. Les deux requêtes portaient le même identifiant et une signature valide. Deux processus concurrents ont traité une seule nouvelle tentative. Cinq tests couvrent aussi l’annulation de la transaction métier, la reprise après interruption, les délais, les alertes, la suspension et la rotation du secret. Pour déployer, configurer la destination, le secret et le disque privé, puis lancer `tick` chaque minute. Aucun destinataire client n’a été sollicité.
+
+**Suite du catalogue.** Prochain module : Authentification. Les contrôles d’ouverture du catalogue restent des contrôles HTTP. La recette de chaque parcours utilisateur est à consigner ici avec ses conditions de déploiement.

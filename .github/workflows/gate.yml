@@ -49,7 +49,7 @@ jobs:
       - name: Run convergence gate
         run: npm run gate
 
-      - name: Exercise scheduled exports with a local SMTP relay
+      - name: Exercise Python workers with local SMTP and HTTPS receivers
         run: python -m unittest discover -s tests/python -v
 
       - name: Exercise personal modules on a migrated database
