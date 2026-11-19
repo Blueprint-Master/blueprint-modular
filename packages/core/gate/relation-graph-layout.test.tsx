@@ -31,3 +31,21 @@ it("recomputes coordinates when the viewport changes", () => {
   expect(geometry(view.container)).not.toEqual(before);
   expect(geometry(view.container)).toEqual(geometry(render(scene(260)).container));
 });
+
+it("keeps each force-layout box inside a narrow view, including after node widths change", () => {
+  const scene = (width: number) => (
+    <RelationGraph width={352} height={210} edges={edges} nodes={nodes.map(n => ({ ...n, width }))} />
+  );
+  const view = render(scene(96));
+  for (const width of [96, 130]) {
+    view.rerender(scene(width));
+    for (const rect of view.container.querySelectorAll("g[transform] > rect[rx]")) {
+      const transform = rect.parentElement!.getAttribute("transform")!;
+      const [, x, y] = /translate\(([^,]+),([^)]+)\)/.exec(transform)!;
+      expect(Number(x)).toBeGreaterThanOrEqual(0);
+      expect(Number(x) + width).toBeLessThanOrEqual(352);
+      expect(Number(y)).toBeGreaterThanOrEqual(0);
+      expect(Number(y) + 40).toBeLessThanOrEqual(210);
+    }
+  }
+});

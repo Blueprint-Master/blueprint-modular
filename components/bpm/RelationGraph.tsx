@@ -138,8 +138,12 @@ function forceLayout(nodes: GraphNode[], edges: GraphEdge[], w: number, h: numbe
       const lim = Math.min(mag, t * Math.min(w, h)) / mag;
       pos[node.id].x += d.x * lim;
       pos[node.id].y += d.y * lim;
-      pos[node.id].x = Math.max(24, Math.min(w - 24, pos[node.id].x));
-      pos[node.id].y = Math.max(24, Math.min(h - 24, pos[node.id].y));
+      const size = nodeSize(node);
+      // Keep the whole box and its stroke visible. Centre a box wider than the viewport.
+      const marginX = Math.min(w / 2, size.w / 2 + 1);
+      const marginY = Math.min(h / 2, size.h / 2 + 1);
+      pos[node.id].x = Math.max(marginX, Math.min(w - marginX, pos[node.id].x));
+      pos[node.id].y = Math.max(marginY, Math.min(h - marginY, pos[node.id].y));
     }
   }
   for (const node of nodes) out[node.id] = { ...pos[node.id] };
@@ -179,7 +183,7 @@ export function RelationGraph({
   className = "",
 }: RelationGraphProps) {
   const sig = useMemo(() => JSON.stringify([
-    layout, width, height, nodes.map(n => n.id), edges.map(e => [e.from, e.to]),
+    layout, width, height, nodes.map(n => [n.id, n.width, n.height]), edges.map(e => [e.from, e.to]),
   ]), [layout, width, height, nodes, edges]);
 
   const computed = useMemo(
