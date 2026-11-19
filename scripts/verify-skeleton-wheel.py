@@ -1,4 +1,5 @@
 """Exercise the installed wheel's six loading layouts in Chromium."""
+import os
 from pathlib import Path
 import shutil
 import socket
@@ -53,4 +54,5 @@ bpm.skeleton_chart()
 
 
 if __name__ == "__main__":
-    check()
+    executable = os.environ.get("MODULAR_TEST_CHROMIUM")
+    check({"executable_path": executable} if executable else None)

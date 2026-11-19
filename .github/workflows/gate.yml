@@ -59,8 +59,9 @@ jobs:
       - name: Run all six loading layouts from the installed wheel
         run: |
           python -m pip install playwright==1.56.0
-          python -m playwright install --with-deps chromium
-          python scripts/verify-skeleton-wheel.py
+          browser="$(command -v google-chrome)"
+          "$browser" --version
+          MODULAR_TEST_CHROMIUM="$browser" python scripts/verify-skeleton-wheel.py
 
       - uses: actions/upload-artifact@v4
         with:
