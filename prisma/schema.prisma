@@ -184,6 +184,7 @@ model ApiKey {
 }
 
 model WikiArticle {
+  revision Int @default(0)
   id                 String    @id @default(cuid())
   title              String
   content            String    @db.Text

@@ -3,9 +3,9 @@ import { NextResponse } from "next/server";
 import { getSessionOrTestUser } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { normalizeSlug } from "@/lib/slug";
-import { countWords, readingTimeMinutes, extractWikiSlugs } from "@/lib/wiki-utils";
+import { articleEdit, editArticle } from "@/lib/wiki/edit";
 
-const MAX_REVISIONS_PER_ARTICLE = 50;
+
 
 type Params = Promise<{ slug: string }> | { slug: string };
 
@@ -79,101 +79,9 @@ export async function PUT(
   const canEdit = article.authorId === user.id || user.role === "ADMIN" || user.role === "OWNER";
   if (!canEdit) return NextResponse.json({ error: "Forbidden" }, { status: 403 });
 
-  const body = (await request.json()) as {
-    title?: string;
-    content?: string;
-    isPublished?: boolean;
-    excerpt?: string | null;
-    tags?: string[];
-    coverImage?: string | null;
-    pinned?: boolean;
-    template?: string | null;
-    changeNote?: string | null;
-  };
-
-  const content = body.content ?? article.content;
-  const wordCount = countWords(content);
-  const readingTime = readingTimeMinutes(content);
-  const slugsInContent = extractWikiSlugs(content);
-
-  /** Excerpt : valeur envoyée, ou génération auto si contenu mis à jour et excerpt vide. */
-  const excerptToSave =
-    body.excerpt !== undefined
-      ? body.excerpt || null
-      : (body.content != null && content && !article.excerpt
-          ? content.replace(/\s+/g, " ").trim().slice(0, 160) + (content.replace(/\s+/g, " ").trim().length > 160 ? "…" : "")
-          : undefined);
-
-  const targetArticles = await prisma.wikiArticle.findMany({
-    where: { slug: { in: slugsInContent.map((s) => normalizeSlug(s)) } },
-    select: { id: true },
-  });
-  const targetIds = targetArticles.map((a) => a.id);
-
-  await prisma.$transaction(async (tx) => {
-    await tx.wikiRevision.create({
-      data: {
-        articleId: article.id,
-        content: article.content,
-        title: article.title,
-        authorId: article.authorId,
-        authorName: user.name ?? undefined,
-        changeNote: body.changeNote ?? undefined,
-      },
-    });
-
-    const revCount = await tx.wikiRevision.count({ where: { articleId: article.id } });
-    if (revCount > MAX_REVISIONS_PER_ARTICLE) {
-      const oldest = await tx.wikiRevision.findMany({
-        where: { articleId: article.id },
-        orderBy: { createdAt: "asc" },
-        take: revCount - MAX_REVISIONS_PER_ARTICLE,
-      });
-      for (const r of oldest) {
-        await tx.wikiRevision.delete({ where: { id: r.id } });
-      }
-    }
-
-    await tx.wikiBacklink.deleteMany({ where: { sourceArticleId: article.id } });
-    for (const targetId of targetIds) {
-      if (targetId !== article.id) {
-        await tx.wikiBacklink.upsert({
-          where: {
-            sourceArticleId_targetArticleId: { sourceArticleId: article.id, targetArticleId: targetId },
-          },
-          create: { sourceArticleId: article.id, targetArticleId: targetId },
-          update: {},
-        });
-      }
-    }
-
-    await tx.wikiArticle.update({
-      where: { id: article.id },
-      data: {
-        ...(body.title != null && { title: body.title }),
-        ...(body.content != null && { content: body.content }),
-        ...(body.isPublished != null && { isPublished: body.isPublished }),
-        ...(excerptToSave !== undefined && { excerpt: excerptToSave || null }),
-        ...(body.tags !== undefined && { tags: body.tags ?? [] }),
-        ...(body.coverImage !== undefined && { coverImage: body.coverImage || null }),
-        ...(body.pinned !== undefined && { pinned: body.pinned }),
-        ...(body.template !== undefined && { template: body.template || null }),
-        wordCount,
-        readingTimeMinutes: readingTime,
-        lastRevisedBy: user.name ?? null,
-        authorName: user.name ?? undefined,
-      },
-    });
-  });
-
-  const updated = await prisma.wikiArticle.findUniqueOrThrow({
-    where: { id: article.id },
-    include: {
-      author: { select: { name: true, email: true } },
-      children: { where: visibleWikiArticles(user?.id), select: { id: true, title: true, slug: true, excerpt: true, tags: true, pinned: true, isPublished: true } },
-    },
-  });
-  return NextResponse.json(updated);
+  const edit = articleEdit.safeParse(await request.json().catch(() => null));
+  if (!edit.success) return NextResponse.json({ error: "Champs invalides" }, { status: 400 });
+  return editArticle(article, user, edit.data);
 }
 
 export async function PATCH(

@@ -8,9 +8,10 @@ const postgres = new PrismaClient({ datasourceUrl: url });
 let userId: string | null;
 const owner = randomUUID();
 const other = randomUUID();
+let wikiRole = "USER";
 vi.mock("@/lib/prisma", () => ({ get prisma() { return postgres; } }));
 vi.mock("@/lib/auth", () => ({
-  getSessionOrTestUser: async () => userId ? { user: { id: userId } } : null,
+  getSessionOrTestUser: async () => userId ? { user: { id: userId, role: wikiRole } } : null,
   getPersonalModuleSession: async () => userId ? { user: { id: userId } } : null,
 }));
 import { GET as workflow } from "@/app/api/workflow/entity/[id]/route";
@@ -20,8 +21,9 @@ import * as edition from "@/app/api/newsletter/articles/[id]/route";
 import { PATCH as archive } from "@/app/api/newsletter/articles/[id]/archive/route";
 import * as newsletterHeader from "@/app/api/newsletter/settings/route";
 import * as board from "@/app/api/whiteboards/[organizationId]/[board]/route";
-import { GET as wikiIndex } from "@/app/api/wiki/route";
-import { GET as wikiRead } from "@/app/api/wiki/[slug]/route";
+import { GET as wikiIndex, POST as wikiCreate } from "@/app/api/wiki/route";
+import { GET as wikiRead, PUT as wikiEdit } from "@/app/api/wiki/[slug]/route";
+import { POST as wikiRestore } from "@/app/api/wiki/[slug]/restore/route";
 import { GET as wikiLinks } from "@/app/api/wiki/[slug]/backlinks/route";
 import { GET as wikiZip } from "@/app/api/wiki/export/zip/route";
 import * as comments from "@/app/api/wiki/[slug]/comments/route";
@@ -43,6 +45,38 @@ describe.skipIf(!url)("module API handlers with PostgreSQL", () => {
   afterAll(async () => {
     await postgres.user.deleteMany({ where: { id: { in: [owner, other] } } });
     await postgres.$disconnect();
+  });
+
+  it("serializes wiki edits and restores the title, content and backlinks in one revision", async () => {
+    userId = owner;
+    const slug = "qa-editor-" + randomUUID();
+    const target = await postgres.wikiArticle.create({ data: { slug: slug + "-guide", authorId: owner, title: "Guide", content: "", isPublished: true } });
+    const original = { slug, title: "Initial", content: "[[" + target.slug + "]]", isPublished: true };
+    const ctx = { params: Promise.resolve({ slug }) };
+    try {
+      const creation = await Promise.all([1, 2].map(() => wikiCreate(request("/", "POST", original))));
+      expect(creation.map(r => r.status).sort()).toEqual([200, 409]);
+      const article = await postgres.wikiArticle.findUniqueOrThrow({ where: { slug } });
+      const links = () => postgres.wikiBacklink.count({ where: { sourceArticleId: article.id } });
+      expect(await links()).toBe(1);
+      userId = other;
+      wikiRole = "ADMIN";
+      const edit = () => wikiEdit(request("/", "PUT", { title: "Nouveau", content: "Sans lien", revision: 0 }), ctx);
+      expect((await Promise.all([edit(), edit()])).map(r => r.status).sort()).toEqual([200, 409]);
+      const snapshot = await postgres.wikiRevision.findFirstOrThrow({ where: { articleId: article.id } });
+      expect(snapshot.authorId).toBe(other);
+      expect(await links()).toBe(0);
+      userId = owner;
+      wikiRole = "USER";
+      const restore = (revision: number) => wikiRestore(request("/", "POST", { revisionId: snapshot.id, revision }), ctx);
+      expect((await restore(0)).status).toBe(409);
+      expect(await (await restore(1)).json()).toMatchObject({ title: original.title, content: original.content, revision: 2 });
+      expect(await links()).toBe(1);
+      expect(await postgres.wikiRevision.count({ where: { articleId: article.id } })).toBe(2);
+    } finally {
+      wikiRole = "USER";
+      await postgres.wikiArticle.deleteMany({ where: { slug: { startsWith: slug } } });
+    }
   });
 
   it("lists article children, their count and backlinks consistently for editorial and published views", async () => {

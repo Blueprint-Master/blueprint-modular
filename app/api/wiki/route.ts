@@ -1,9 +1,12 @@
+import { Prisma } from "@prisma/client";
+import { z } from "zod";
+import { articleEdit } from "@/lib/wiki/edit";
 import { visibleWikiArticles } from "@/lib/wiki/visibility";
 import { NextResponse } from "next/server";
 import { getSessionOrTestUser } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { normalizeSlug } from "@/lib/slug";
-import { countWords, readingTimeMinutes } from "@/lib/wiki-utils";
+import { countWords, readingTimeMinutes, extractWikiSlugs } from "@/lib/wiki-utils";
 
 const PAGE_SIZE = 20;
 
@@ -120,59 +123,46 @@ export async function POST(request: Request) {
   const result = await getSessionOrTestUser();
   if (!result) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   const { user } = result;
-  const body = await request.json();
-  const {
-    title,
-    content,
-    slug,
-    parentId,
-    isPublished,
-    excerpt,
-    tags,
-    coverImage,
-    pinned,
-    template,
-  } = body as {
-    title?: string;
-    content?: string;
-    slug?: string;
-    parentId?: string;
-    isPublished?: boolean;
-    excerpt?: string | null;
-    tags?: string[];
-    coverImage?: string | null;
-    pinned?: boolean;
-    template?: string | null;
-  };
-  if (!title || !slug) {
-    return NextResponse.json({ error: "title and slug required" }, { status: 400 });
-  }
-  const normalizedSlug = normalizeSlug(slug);
-  const existing = await prisma.wikiArticle.findUnique({ where: { slug: normalizedSlug } });
-  if (existing) {
-    return NextResponse.json({ error: "slug already exists" }, { status: 409 });
-  }
+  const parsed = articleEdit.extend({ title: z.string().trim().min(1), slug: z.string().transform(normalizeSlug).pipe(z.string().min(1)),
+    parentId: z.string().nullable().optional() }).safeParse(await request.json().catch(() => null));
+  if (!parsed.success) return NextResponse.json({ error: "Invalid article" }, { status: 400 });
+  const { title, slug: normalizedSlug, content, parentId, isPublished, excerpt, tags, coverImage, pinned, template } = parsed.data;
   const text = content ?? "";
   const wordCount = countWords(text);
   const readingTime = text ? readingTimeMinutes(text) : 1;
-  const article = await prisma.wikiArticle.create({
-    data: {
-      title,
-      content: text,
-      slug: normalizedSlug,
-      parentId: parentId || null,
-      authorId: user.id,
-      authorName: user.name ?? null,
-      isPublished: isPublished ?? false,
-      excerpt: excerpt || null,
-      tags: Array.isArray(tags) ? tags : [],
-      coverImage: coverImage || null,
-      pinned: pinned ?? false,
-      template: template || null,
-      wordCount,
-      readingTimeMinutes: readingTime,
-      lastRevisedBy: user.name ?? null,
-    },
-  });
-  return NextResponse.json(article);
+  try {
+    return await prisma.$transaction(async tx => {
+      if (parentId && !await tx.wikiArticle.count({ where: { id: parentId, ...visibleWikiArticles(user.id) } }))
+        return NextResponse.json({ error: "Unknown parent" }, { status: 400 });
+      const article = await tx.wikiArticle.create({
+        data: {
+          title,
+          content: text,
+          slug: normalizedSlug,
+          parentId: parentId || null,
+          authorId: user.id,
+          authorName: user.name ?? null,
+          isPublished: isPublished ?? false,
+          excerpt: excerpt || null,
+          tags: Array.isArray(tags) ? tags : [],
+          coverImage: coverImage || null,
+          pinned: pinned ?? false,
+          template: template || null,
+          wordCount,
+          readingTimeMinutes: readingTime,
+          lastRevisedBy: user.name ?? null,
+        },
+      });
+      const slugs = extractWikiSlugs(text).map(normalizeSlug);
+      if (slugs.length) {
+        const targets = await tx.wikiArticle.findMany({ where: { slug: { in: slugs }, ...visibleWikiArticles(user.id), id: { not: article.id } }, select: { id: true } });
+        if (targets.length) await tx.wikiBacklink.createMany({ data: targets.map(target => ({ sourceArticleId: article.id, targetArticleId: target.id })) });
+      }
+      return NextResponse.json(article);
+    });
+  } catch (error) {
+    if (error instanceof Prisma.PrismaClientKnownRequestError && error.code === "P2002")
+      return NextResponse.json({ error: "slug already exists" }, { status: 409 });
+    throw error;
+  }
 }

@@ -20,7 +20,7 @@ export async function GET(
   const slug = normalizeSlug(rawSlug);
   const article = await prisma.wikiArticle.findFirst({
     where: { slug },
-    select: { id: true, authorId: true, isPublished: true },
+    select: { revision: true, id: true, authorId: true, isPublished: true },
   });
   if (!article) return NextResponse.json({ error: "Not found" }, { status: 404 });
   if (article.isPublished) {
@@ -48,5 +48,5 @@ export async function GET(
       createdAt: true,
     },
   });
-  return NextResponse.json(revisions);
+  return NextResponse.json(revisions, { headers: { "X-Article-Revision": String(article.revision) } });
 }

@@ -196,13 +196,15 @@ export default function WikiArticlePage() {
     setDeleting(true);
     try {
       if (!session) {
-        if (deleteGuestArticle(slug)) router.push("/modules/wiki");
+        if (await deleteGuestArticle(slug)) router.push("/modules/wiki");
         else setError(t.common.cannotDelete);
         return;
       }
       const res = await fetch(`/api/wiki/${encodeURIComponent(slug)}`, { method: "DELETE", credentials: "include" });
       if (res.ok) router.push("/modules/wiki");
       else setError(t.common.cannotDelete);
+    } catch {
+      setError(t.common.cannotDelete);
     } finally {
       setDeleting(false);
     }

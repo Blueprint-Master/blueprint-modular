@@ -219,12 +219,15 @@ export default function WikiPage() {
     });
   };
 
+  const [deleteError, setDeleteError] = useState("");
   const handleDelete = async (e: React.MouseEvent, slug: string) => {
     e.preventDefault();
     e.stopPropagation();
+    setDeleteError("");
     if (!confirm(t.common.confirmDeleteArticle)) return;
     if (!session) {
-      if (deleteGuestArticle(slug)) setArticles((prev) => prev.filter((a) => a.slug !== slug));
+      try { if (await deleteGuestArticle(slug)) setArticles((prev) => prev.filter((a) => a.slug !== slug)); }
+      catch { setDeleteError(locale === "en" ? "Could not save the deletion." : "La suppression n’a pas pu être enregistrée."); }
       return;
     }
     const res = await fetch(`/api/wiki/${encodeURIComponent(slug)}`, { method: "DELETE", credentials: "include" });
@@ -306,6 +309,7 @@ export default function WikiPage() {
 
   return (
     <div className="wiki-page doc-page">
+      {deleteError && <p role="alert">{deleteError}</p>}
       <div className="wiki-sticky-header">
         <ModulePageHeader
           wrapperId="documentation"
