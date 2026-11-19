@@ -25,6 +25,7 @@ model User {
   documents            Document[]
   contracts            Contract[]
   aiConversations      AiConversation[]
+  newsletterSettings   NewsletterSettings?
   newsletterArticles   NewsletterArticle[]
   assetsCreated        Asset[]           @relation("AssetCreatedBy")
   ticketsRequested     Ticket[]          @relation("TicketRequester")
@@ -327,12 +328,19 @@ model AiMessage {
 }
 
 model NewsletterSettings {
+  ownerId        String? @unique @map("owner_id")
+  owner          User? @relation(fields: [ownerId], references: [id], onDelete: Cascade)
+  revision       Int @default(0)
   id             String   @id @default("default")
   headerImageUrl String?  @map("header_image_url") @db.Text
   updatedAt      DateTime @updatedAt @map("updated_at")
 }
 
 model NewsletterArticle {
+  removed     Boolean @default(false)
+  revision    Int @default(0)
+  requestId   String? @unique
+  creationDigest String?
   id          String    @id @default(cuid())
   title       String
   content     String    @db.Text

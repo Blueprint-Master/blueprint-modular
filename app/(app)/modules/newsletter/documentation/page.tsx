@@ -23,6 +23,7 @@ export default function NewsletterDocumentationPage() {
       <h2 className="text-lg font-semibold mt-8 mb-2" style={{ color: "var(--bpm-text-primary)" }}>
         Fonctionnalités
       </h2>
+      <p>La création accepte un UUID stable dans <code>requestId</code>. Transmettre la révision lue pour modifier ou archiver, ou <code>?revision=N</code> pour supprimer. Une modification concurrente renvoie HTTP 409.</p>
       <ul className="list-disc pl-6 mb-4 text-sm" style={{ color: "var(--bpm-text-secondary)" }}>
         <li><strong>Photo de header</strong> : paramétrage via <code>/modules/newsletter/parametres</code>. Une URL d’image est enregistrée et peut être réutilisée pour l’affichage de la newsletter.</li>
         <li><strong>Articles</strong> : titre, contenu (texte), extrait optionnel, date de publication optionnelle. Chaque article est lié à l’utilisateur connecté (auteur).</li>
@@ -46,7 +47,7 @@ npx prisma migrate dev --name add_newsletter`}
         Modèles de données
       </h2>
       <p className="mb-2" style={{ color: "var(--bpm-text-secondary)" }}>
-        <strong>NewsletterSettings</strong> : une ligne (id = &quot;default&quot;) avec <code>headerImageUrl</code> (optionnel).
+        <strong>NewsletterSettings</strong> : une préférence par auteur. La ligne historique « default » fournit la valeur initiale de <code>headerImageUrl</code> (optionnel).
       </p>
       <p className="mb-4" style={{ color: "var(--bpm-text-secondary)" }}>
         <strong>NewsletterArticle</strong> : id, title, content, excerpt, publishedAt, archived, authorId, createdAt, updatedAt.
@@ -60,13 +61,13 @@ npx prisma migrate dev --name add_newsletter`}
       </h2>
       <ul className="list-disc pl-6 mb-4 text-sm" style={{ color: "var(--bpm-text-secondary)" }}>
         <li><code>GET /api/newsletter/settings</code> — récupère les paramètres (header image).</li>
-        <li><code>PUT /api/newsletter/settings</code> — met à jour les paramètres (body : <code>{`{ headerImageUrl?: string | null }`}</code>).</li>
+        <li><code>PUT /api/newsletter/settings</code> — met à jour les paramètres (body : <code>{`{ headerImageUrl?: string | null, revision?: number }`}</code>).</li>
         <li><code>GET /api/newsletter/articles</code> — liste des articles de l’utilisateur (query : <code>archived</code> = true | false, <code>sortBy</code>, <code>sortOrder</code>).</li>
-        <li><code>POST /api/newsletter/articles</code> — crée un article (body : title, content, excerpt?, publishedAt?).</li>
+        <li><code>POST /api/newsletter/articles</code> — crée un article (body : title, content, excerpt?, publishedAt?, requestId?).</li>
         <li><code>GET /api/newsletter/articles/[id]</code> — détail d’un article.</li>
-        <li><code>PUT /api/newsletter/articles/[id]</code> — met à jour un article (title, content, excerpt, publishedAt, archived).</li>
+        <li><code>PUT /api/newsletter/articles/[id]</code> — met à jour un article (title, content, excerpt, publishedAt, archived, revision).</li>
         <li><code>DELETE /api/newsletter/articles/[id]</code> — supprime un article.</li>
-        <li><code>PATCH /api/newsletter/articles/[id]/archive</code> — bascule l’état archivé (body : <code>{`{ archived?: boolean }`}</code>).</li>
+        <li><code>PATCH /api/newsletter/articles/[id]/archive</code> — bascule l’état archivé (body : <code>{`{ archived?: boolean, revision?: number }`}</code>).</li>
       </ul>
 
       <p className="mb-6" style={{ color: "var(--bpm-text-secondary)" }}>

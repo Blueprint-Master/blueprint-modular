@@ -13,6 +13,10 @@ vi.mock("@/lib/auth", () => ({
 }));
 import { GET as workflow } from "@/app/api/workflow/entity/[id]/route";
 import { POST as advance } from "@/app/api/workflow/entity/[id]/transition/route";
+import * as newsletter from "@/app/api/newsletter/articles/route";
+import * as edition from "@/app/api/newsletter/articles/[id]/route";
+import { PATCH as archive } from "@/app/api/newsletter/articles/[id]/archive/route";
+import * as newsletterHeader from "@/app/api/newsletter/settings/route";
 import * as board from "@/app/api/whiteboards/[organizationId]/[board]/route";
 import * as comments from "@/app/api/wiki/[slug]/comments/route";
 import * as reservations from "@/app/api/reservations/route";
@@ -33,6 +37,77 @@ describe.skipIf(!url)("module API handlers with PostgreSQL", () => {
   afterAll(async () => {
     await postgres.user.deleteMany({ where: { id: { in: [owner, other] } } });
     await postgres.$disconnect();
+  });
+
+  it("creates one newsletter issue, preserves concurrent edits and archives or removes the expected revision", async () => {
+    userId = owner;
+    const body = { requestId: randomUUID(), title: "Recette", content: "Article" };
+    const add = (payload: object) => newsletter.POST(request("/", "POST", payload));
+    expect((await add({ ...body, publishedAt: "absent" })).status).toBe(400);
+    const creates = await Promise.all([add(body), add(body)]);
+    expect(creates.map(r => r.status).sort()).toEqual([200, 201]);
+    const { id } = await creates[0].json();
+    const ctx = context(id);
+    const save = (payload: object) => edition.PUT(request("/", "PUT", payload), ctx);
+    const setArchived = (archived: boolean, revision: number) => archive(request("/", "PATCH", { archived, revision }), ctx);
+    const del = (revision: number) => edition.DELETE(request("/?revision=" + revision, "DELETE"), ctx);
+    expect((await add({ ...body, title: "Autre" })).status).toBe(409);
+    expect((await save({ title: " " })).status).toBe(400);
+    userId = other;
+    expect((await edition.GET(request("/"), ctx)).status).toBe(404);
+    userId = owner;
+    const edits = await Promise.all([save({ title: "Révisé", revision: 0 }), save({ content: "Révisé", revision: 0 })]);
+    expect(edits.map(r => r.status).sort()).toEqual([200, 409]);
+    expect((await setArchived(true, 1)).status).toBe(200);
+    expect(await (await newsletter.GET(request("/?archived=true"))).json()).toContainEqual(expect.objectContaining({ id, revision: 2 }));
+    expect((await setArchived(false, 2)).status).toBe(200);
+    expect((await del(1)).status).toBe(409);
+    expect((await del(3)).status).toBe(200);
+    expect((await edition.GET(request("/"), ctx)).status).toBe(404);
+    expect((await add(body)).status).toBe(409);
+  });
+
+  it("inherits the original newsletter image until the author explicitly clears it", async () => {
+    userId = owner;
+    const legacy = await postgres.newsletterSettings.createMany({
+      data: { id: "default", headerImageUrl: "/qa/existing.png" }, skipDuplicates: true,
+    });
+    try {
+      const original = await postgres.newsletterSettings.findUniqueOrThrow({ where: { id: "default" } });
+      const read = () => newsletterHeader.GET().then(r => r.json());
+      expect(await read()).toMatchObject({ headerImageUrl: original.headerImageUrl, revision: 0 });
+      const cleared = await newsletterHeader.PUT(request("/", "PUT", { headerImageUrl: null, revision: 0 }));
+      expect(await cleared.json()).toMatchObject({ headerImageUrl: null, revision: 1 });
+      userId = other;
+      expect(await read()).toMatchObject({ headerImageUrl: original.headerImageUrl, revision: 0 });
+    } finally {
+      await postgres.newsletterSettings.deleteMany({ where: { ownerId: owner } });
+      if (legacy.count) await postgres.newsletterSettings.delete({ where: { id: "default" } });
+    }
+  });
+
+  it("keeps newsletter headers private and guards concurrent replacements", async () => {
+    const read = () => newsletterHeader.GET();
+    const save = (url: string | null, revision: number) => newsletterHeader.PUT(request("/", "PUT", { headerImageUrl: url, revision }));
+    userId = null;
+    expect((await read()).status).toBe(401);
+    userId = owner;
+    const initial = await (await read()).json();
+    expect(initial.revision).toBe(0);
+    expect(await postgres.newsletterSettings.count({ where: { ownerId: owner } })).toBe(0);
+    expect((await save("invalid-scheme:logo", 0)).status).toBe(400);
+    const concurrent = await Promise.all([save("/qa/header-a.png", 0), save("/qa/header-b.png", 0)]);
+    expect(concurrent.map(r => r.status).sort()).toEqual([200, 409]);
+    const first = await (await read()).json();
+    userId = other;
+    expect(await (await read()).json()).toEqual(initial);
+    expect((await save("qa/header-other.png", 0)).status).toBe(200);
+    expect((await (await read()).json()).headerImageUrl).toBe("/qa/header-other.png");
+    userId = owner;
+    expect(await (await read()).json()).toEqual(first);
+    expect((await save(null, 0)).status).toBe(409);
+    const cleared = await (await save(null, 1)).json();
+    expect(cleared).toMatchObject({ revision: 2, headerImageUrl: null });
   });
 
   it("shares whiteboard notes inside one workshop, with retry and revision checks", async () => {
