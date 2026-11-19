@@ -24,7 +24,7 @@ describe("offline HTML renderer", () => {
       writeFileSync(join(cwd, "dashboard.html"), html);
       const {spec: recovered, observations} = JSON.parse(run("--inspect", "dashboard.html"));
       expect(recovered).toEqual(spec);
-      expect(observations[1]).toMatchObject({difference:-1.2, assessment:"unfavorable", referenceLabel:"Marge du mois précédent (%)"});
+      expect(observations[1]).toMatchObject({difference:-1.2, differenceUnit:"pt", unit:"%", assessment:"unfavorable", referenceLabel:"Marge du mois précédent (%)"});
       expect(JSON.parse(run("--schema")).properties.blocks).toBeDefined();
       expect(JSON.parse(run("--example"))).toEqual(example);
       writeFileSync(join(cwd, "spec.json"), JSON.stringify({...spec, blocks:[{kind:"status",label:"Clôturé"}]}));

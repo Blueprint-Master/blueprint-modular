@@ -29,7 +29,7 @@ with sync_playwright() as pw:
         assert page.locator("main").inner_text() == expected
         assert page.locator(".bpm-line-chart path").get_attribute("d") == geometry
         summary = page.evaluate("view.context().observations")
-        assert summary[1]["difference"] == -1.2 and summary[1]["assessment"] == "unfavorable"
+        assert summary[1]["difference"] == -1.2 and summary[1]["differenceUnit"] == "pt" and summary[1]["assessment"] == "unfavorable"
         page.goto((directory / "plot.html").as_uri())
         expect(page.locator(".barlayer .point path")).to_have_count(2)
         assert not errors and not remote, (errors, remote)

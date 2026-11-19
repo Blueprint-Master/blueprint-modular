@@ -10,7 +10,9 @@ export function describeArtifact(spec: ArtifactSpec) {
     const baseline = { reference, direction };
     const observation = (label: string, value: number) => ({
       block: index, component: componentsForBlock[block.kind],
-      label, value, ...block.context, difference: Number((value - reference).toPrecision(14)),
+      label, value, unit: block.unit, ...block.context,
+      differenceUnit: block.unit === "%" ? "pt" : block.unit,
+      difference: Number((value - reference).toPrecision(14)),
       assessment: interpret(value, baseline).level.status,
     });
     if (block.kind === "indicator") return [observation(block.label, block.value)];

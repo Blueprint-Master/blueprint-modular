@@ -10,7 +10,8 @@ const context = z.object({
 
 const metric = z.object({
   kind: z.literal("indicator"),
-  label: text.describe("Include the unit of the value in the label, e.g. 'Marge (%)'."),
+  label: text,
+  unit: text.optional().describe("Unit of value and reference, e.g. %, EUR or orders."),
   value: number,
   decimals: z.number().int().min(0).max(12).optional(),
   delta: text.regex(/^[+−-]?(?:\d+(?:[.,]\d+)?|[.,]\d+)\s*[^\d.,\s].*$/u, "Supply a signed quantity with its unit, e.g. -1,2 pt").optional(),
@@ -26,12 +27,15 @@ const badge = z.object({
 const point = z.object({ x: text, y: number }).strict();
 const chart = z.object({
   title: text,
+  unit: text.optional(),
   data: z.array(point).min(1).max(250),
   context: context.optional(),
 }).strict();
 
 export const artifactSpec = z.object({
   title: text,
+  period: text.optional(),
+  source: text.optional(),
   locale: z.enum(["fr-FR", "en-US", "de-DE"]).default("fr-FR"),
   blocks: z.array(z.discriminatedUnion("kind", [
     metric, badge,
