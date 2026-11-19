@@ -1307,6 +1307,7 @@ Composant bpm.free — voir @blueprint-modular/core ou BPM_API.md.
   trackContext?: boolean  — Si true, expose cette métrique au contexte IA.
   context?: InterpretContext  — Contexte de jugement { reference, direction, comparisonFrame? } : la métrique porte alors un jugement via interpret(value, context) — écart au repère, tendance (si trajectoire), anomalie — révélé sous la valeur. Additif : sans context, rendu inchangé.
   onClick?: (() => void) | null  — Rend la carte CLIQUABLE — ex. « voir les factures impayées » depuis le KPI qui les compte. Ajoute le rôle bouton, le focus clavier et Entrée/Espace : une carte cliquable à la souris seulement serait inatteignable au clavier et muette pour un lecteur d'écran. Absent = rendu et sémantique inchangés.
+  judgmentUnit?: string | null  — Unité de l'écart au repère quand elle ne se déduit pas de `currency` (ex. « pt », « € », « h »). Absent = déduite de `currency`.
 ```
 INTERDIT : Carte cliquable : on n'ajoute JAMAIS le curseur seul. Une affordance visuelle
 
