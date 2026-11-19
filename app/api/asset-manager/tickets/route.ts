@@ -1,3 +1,4 @@
+import { readHistoryCursor, historyPage } from "@/lib/asset-manager/history-page";
 import { NextResponse } from "next/server";
 import { getPersonalModuleSession } from "@/lib/auth";
 import { requireWriteRole } from "@/lib/asset-manager/authz";
@@ -15,17 +16,20 @@ export async function GET(request: Request) {
   const domainId = searchParams.get("domainId") ?? "";
   if (!domainId) return NextResponse.json({ error: "domainId requis" }, { status: 400 });
 
+  const cursor = searchParams.get("cursor");
+  const point = cursor ? readHistoryCursor(cursor) : null;
+  if (cursor && !point) return NextResponse.json({ error: "Curseur invalide." }, { status: 400 });
   const tickets = await prisma.ticket.findMany({
-    where: { domainId },
-    orderBy: [{ openedAt: "desc" }],
-    take: 200,
+    where: { domainId, OR: point ? [{ openedAt: { lt: point.date } }, { openedAt: point.date, id: { lt: point.id } }] : undefined },
+    orderBy: [{ openedAt: "desc" }, { id: "desc" }],
+    take: 201,
     include: {
       requester: { select: { id: true, name: true, email: true } },
       assignee: { select: { id: true, name: true } },
       asset: { select: { id: true, reference: true, label: true } },
     },
   });
-  return NextResponse.json(tickets);
+  return historyPage(tickets, 200, row => row.openedAt);
 }
 
 export async function POST(request: Request) {

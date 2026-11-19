@@ -17,7 +17,8 @@ vi.mock("@/lib/auth", () => ({
   getPersonalModuleSession: async () => userId ? { user: { id: userId, role: wikiRole } } : null,
 }));
 import { GET as auditPage } from "@/app/api/asset-manager/audit-log/route";
-import { POST as issue } from "@/app/api/asset-manager/assignments/route";
+import { ticketSla } from "@/lib/asset-manager/ticket-sla";
+import { GET as loans, POST as issue } from "@/app/api/asset-manager/assignments/route";
 import { PUT as editLoan } from "@/app/api/asset-manager/assignments/[id]/route";
 import { POST as returnLoan } from "@/app/api/asset-manager/assignments/[id]/return/route";
 import * as changeItem from "@/app/api/asset-manager/changes/[id]/route";
@@ -71,6 +72,52 @@ describe.skipIf(!url)("module API handlers with PostgreSQL", () => {
     await postgres.auditLog.deleteMany({ where: { userId: { in: [owner, other] } } });
     await postgres.user.deleteMany({ where: { id: { in: [owner, other] } } });
     await postgres.$disconnect();
+  });
+
+  it("finds an older on-hold SLA incident and pages equal-date tickets and loans beyond 200", async () => {
+    userId = owner;
+    const prefix = "SLA-" + randomUUID();
+    const start = new Date(Date.now() - 3_600_000);
+    const due = new Date(start.getTime() + 1_800_000);
+    const legacy = { openedAt: start, status: "on_hold", priorityId: "low" };
+    expect(ticketSla(legacy, [{ id: "low", sla_hours: 120 }]).atRisk).toBe(false);
+    const clock = { ...legacy, slaDueAt: due };
+    expect(ticketSla(clock, [], start.getTime() + 1_439_999).atRisk).toBe(false);
+    expect(ticketSla(clock, [], start.getTime() + 1_440_000).atRisk).toBe(true);
+    expect(ticketSla(clock, [], due.getTime() - 1).overdue).toBe(false);
+    expect(ticketSla(clock, [], due.getTime()).overdue).toBe(true);
+    expect(ticketSla({ ...clock, status: "closed" }, []).atRisk).toBe(false);
+    const asset = await postgres.asset.create({ data: {
+      reference: prefix, domainId: "it", assetTypeId: "laptop", statusId: "in_stock", label: prefix, createdById: owner,
+    } });
+    try {
+      const entries = Array.from({ length: 201 }, (_, i) => ({
+        domainId: "it", reference: prefix + i, title: prefix, description: "QA", typeId: "incident", status: "closed",
+        priorityId: "low", categoryId: "hardware", openedAt: new Date(start.getTime() + 1), requesterId: owner,
+      }));
+      await postgres.ticket.createMany({ data: entries });
+      const oldest = await postgres.ticket.create({ data: { ...entries[0], ...clock, reference: prefix } });
+      await postgres.assignment.createMany({ data: entries.map(row => ({
+        reference: row.reference, domainId: "it", assetId: asset.id, assigneeId: owner,
+        assignmentType: "temporary", status: "returned", startDate: start, actualEndDate: start,
+      })) });
+      for (const [read, count] of [[tickets.GET, 202], [loans, 201]] as const) {
+        const first = await read(request("/?domainId=it"));
+        const page = await first.json();
+        expect(page).toHaveLength(200);
+        const next = await read(request("/?domainId=it&cursor=" + first.headers.get("X-Next-Cursor")));
+        const rest = await next.json();
+        const fixtures = [...page, ...rest].filter(row => row.reference.startsWith(prefix));
+        expect(new Set(fixtures.map(row => row.id)).size).toBe(count);
+        expect(next.headers.get("X-Next-Cursor")).toBeNull();
+        expect((await read(request("/?domainId=it&cursor=invalid"))).status).toBe(400);
+      }
+      const report = await (await warnings(request("/?domainId=it"))).json();
+      expect(report.atRisk).toContainEqual(expect.objectContaining({ id: oldest.id, overdue: true, slaDueAt: due.toISOString() }));
+    } finally {
+      await postgres.ticket.deleteMany({ where: { reference: { startsWith: prefix } } });
+      await postgres.asset.delete({ where: { id: asset.id } });
+    }
   });
 
   it("pages a filtered audit by timestamp and id while newer entries arrive", async () => {

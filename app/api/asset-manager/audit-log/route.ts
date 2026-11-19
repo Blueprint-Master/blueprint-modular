@@ -1,11 +1,10 @@
 import type { Prisma } from "@prisma/client";
-import { z } from "zod";
+import { readHistoryCursor, historyPage } from "@/lib/asset-manager/history-page";
 import { getPersonalModuleSession } from "@/lib/auth";
 import { parseCalendarDate } from "@/lib/calendar/event-input";
 import { prisma } from "@/lib/prisma";
 
 export const dynamic = "force-dynamic";
-const marker = z.tuple([z.string().datetime(), z.string().min(1)]);
 
 export async function GET(request: Request) {
   if (!await getPersonalModuleSession()) return Response.json({ error: "Non autorisé" }, { status: 401 });
@@ -31,17 +30,13 @@ export async function GET(request: Request) {
   }
   const cursor = query.get("cursor");
   if (cursor) {
-    try {
-      const [timestamp, id] = marker.parse(JSON.parse(Buffer.from(cursor, "base64url").toString("utf8")));
-      where.OR = [{ timestamp: { lt: new Date(timestamp) } }, { timestamp: new Date(timestamp), id: { lt: id } }];
-    } catch { return Response.json({ error: "Curseur de journal invalide." }, { status: 400 }); }
+    const point = readHistoryCursor(cursor);
+    if (!point) return Response.json({ error: "Curseur de journal invalide." }, { status: 400 });
+    where.OR = [{ timestamp: { lt: point.date } }, { timestamp: point.date, id: { lt: point.id } }];
   }
   const rows = await prisma.auditLog.findMany({ where, orderBy: [{ timestamp: "desc" }, { id: "desc" }], take: limit + 1 });
   const page = rows.slice(0, limit);
   const users = await prisma.user.findMany({ where: { id: { in: [...new Set(page.map(row => row.userId))] } }, select: { id: true, name: true } });
   const names = new Map(users.map(user => [user.id, user.name]));
-  const last = page.at(-1);
-  const headers = new Headers();
-  if (rows.length > limit && last) headers.set("X-Next-Cursor", Buffer.from(JSON.stringify([last.timestamp, last.id])).toString("base64url"));
-  return Response.json(page.map(row => ({ ...row, userName: names.get(row.userId) ?? null })), { headers });
+  return historyPage(rows.map(row => ({ ...row, userName: names.get(row.userId) ?? null })), limit, row => row.timestamp);
 }

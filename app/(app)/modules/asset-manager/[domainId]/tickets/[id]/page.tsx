@@ -1,5 +1,6 @@
 "use client";
 
+import { ticketSla } from "@/lib/asset-manager/ticket-sla";
 import { useState, useEffect } from "react";
 import { readResponse } from "../../../lib/read-response";
 import Link from "next/link";
@@ -21,6 +22,7 @@ type Ticket = {
   categoryId: string;
   subcategory: string | null;
   openedAt: string;
+  slaDueAt: string | null;
   resolvedAt: string | null;
   closedAt: string | null;
   solution: string | null;
@@ -120,13 +122,7 @@ export default function AssetManagerTicketDetailPage() {
   const getPriorityLabel = (pid: string) => config?.priorities?.find((p) => p.id === pid)?.label ?? pid;
   const getCategoryLabel = (cid: string) => config?.ticket_categories?.find((c) => c.id === cid)?.label ?? cid;
 
-  const openStatuses = ["new", "open", "pending", "in_progress", "on_hold", "assigned"];
-  const isOpen = openStatuses.includes(ticket.status);
-  const slaHours = config?.priorities?.find((p) => p.id === ticket.priorityId)?.sla_hours ?? 48;
-  const elapsedHours = (Date.now() - new Date(ticket.openedAt).getTime()) / (1000 * 60 * 60);
-  const slaPercent = isOpen && slaHours > 0 ? Math.min(150, Math.round((elapsedHours / slaHours) * 100)) : 0;
-  const slaExceeded = isOpen && slaPercent >= 100;
-
+  const sla = ticketSla(ticket, config?.priorities ?? []);
   const statusLabel = STATUS_OPTIONS.find((o) => o.value === ticket.status)?.label ?? ticket.status;
 
   return (
@@ -159,17 +155,17 @@ export default function AssetManagerTicketDetailPage() {
         }
       />
 
-      {isOpen && (
+      {sla.open && (
         <>
           <FicheSectionCard title={tt.slaTitle} className="mt-4">
             <Progress
-              value={Math.min(100, slaPercent)}
+              value={Math.min(100, Math.floor(sla.percent))}
               max={100}
-              label={tt.slaConsumed(slaHours)}
+              label={tt.slaConsumed(Number(sla.hours.toFixed(2)))}
               showValue
             />
             <div className="mt-2">
-              {slaExceeded ? (
+              {sla.overdue ? (
                 <Badge variant="error">{tt.slaExceeded}</Badge>
               ) : (
                 <Badge variant="success">{tt.slaOk}</Badge>
