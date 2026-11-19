@@ -83,6 +83,24 @@ export interface MetricProps {
   onClick?: (() => void) | null;
 }
 
+// A formatted delta is display text. Read a complete quantity for its
+// direction, without interpreting a malformed group as a numeric prefix.
+function readDelta(text: string): { number: number | null; literal: boolean } {
+  const quantity = /^([+−-]?[\d., \u00a0\u2009\u202f]+?)(?:\s*([\p{L}\p{Sc}%‰°][\p{L}\p{N}\p{Sc}%‰°·/^−-]*))?$/u.exec(text);
+  if (!quantity) return { number: null, literal: true };
+
+  const token = quantity[1].trim().replace("−", "-");
+  const spaced = /^[+-]?\d{1,3}(?:[ \u00a0\u2009\u202f]\d{3})+(?:[.,]\d+)?$/u.test(token);
+  const dotted = /^[+-]?\d{1,3}(?:\.\d{3})+(?:,\d+)?$/.test(token);
+  const plain = /^[+-]?(?:\d+(?:[.,]\d+)?|[.,]\d+)$/.test(token);
+  if (!(spaced || dotted || plain)) return { number: null, literal: true };
+
+  const digits = dotted ? token.replace(/\./g, "") : token.replace(/\s/g, "");
+  const number = Number(digits.replace(",", "."));
+  if (!Number.isFinite(number)) return { number: null, literal: true };
+  return { number, literal: spaced || dotted || Boolean(quantity[2]) };
+}
+
 export function Metric({
   label,
   value,
@@ -148,11 +166,11 @@ export function Metric({
       maximumFractionDigits: decimals,
       useGrouping: valueGrouping,
     });
-  const formatDelta = (d: number, forcePercent = false) => {
+  const formatDelta = (d: number) => {
     if (typeof d !== "number" || !Number.isFinite(d)) return "";
     const sign = d > 0 ? "+" : d < 0 ? "-" : "";
     const fmt = formatWithLocale(Math.abs(d), deltaDecimals);
-    if (forcePercent || currency === "%") return `${sign}${fmt}%`;
+    if (currency === "%") return `${sign}${fmt}%`;
     if (!currency || currency === "") return `${sign}${fmt}`;
     return `${sign}${fmt} ${sym}`;
   };
@@ -163,14 +181,12 @@ export function Metric({
     : typeof value === "number"
       ? formatWithLocale(value, valueDecimals)
       : value;
-  const deltaStr = typeof delta === "string" ? delta.trim() : "";
-  // Strings carrying a unit already express a formatted quantity. Keep the
-  // original precision and unit while reading the leading number for direction.
-  const quantity = /^([+−-]?(?:\d+(?:[.,]\d+)?|[.,]\d+))\s*([^\d.,\s].*)?$/u.exec(deltaStr);
-  const deltaNum = typeof delta === "string"
-    ? quantity ? Number(quantity[1].replace("−", "-").replace(",", ".")) : null
-    : delta;
+  const suppliedText = typeof delta === "string" ? delta : "";
+  const deltaStr = suppliedText.trim();
+  const parsed = typeof delta === "string" ? readDelta(deltaStr) : null;
+  const deltaNum = typeof delta === "number" ? delta : parsed?.number;
   const hasDelta = deltaNum != null && Number.isFinite(deltaNum);
+  const hasText = deltaStr.length > 0;
   const positive = hasDelta && deltaType !== "aucun" && (deltaType === "inverse" ? deltaNum < 0 : deltaNum > 0);
   const negative = hasDelta && deltaType !== "aucun" && (deltaType === "inverse" ? deltaNum > 0 : deltaNum < 0);
 
@@ -299,15 +315,15 @@ export function Metric({
         </div>
       )}
       <div
-        className={`${compact ? "text-xs mt-0.5" : "text-sm mt-1"} ${hasDelta ? (positive ? "text-green-600" : negative ? "text-red-600" : "") : "opacity-0"}`}
+        className={`${compact ? "text-xs mt-0.5" : "text-sm mt-1"} ${hasDelta || hasText ? (positive ? "text-green-600" : negative ? "text-red-600" : "") : "opacity-0"}`}
       >
         {hasDelta ? (
           <>
             {deltaNum! > 0 ? "▲" : deltaNum! < 0 ? "▼" : "—"}
-            {quantity?.[2] ? deltaStr : formatDelta(deltaNum!)}
+            {parsed?.literal ? deltaStr : formatDelta(deltaNum!)}
           </>
         ) : (
-          "\u00A0"
+          hasText ? suppliedText : "\u00A0"
         )}
       </div>
     </div>
