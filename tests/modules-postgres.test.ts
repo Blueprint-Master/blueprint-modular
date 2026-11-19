@@ -22,6 +22,8 @@ import { POST as returnLoan } from "@/app/api/asset-manager/assignments/[id]/ret
 import * as changeItem from "@/app/api/asset-manager/changes/[id]/route";
 import { POST as approveChange } from "@/app/api/asset-manager/changes/[id]/approve/route";
 import { POST as rejectChange } from "@/app/api/asset-manager/changes/[id]/reject/route";
+import * as movements from "@/app/api/asset-manager/movements/route";
+import * as movementItem from "@/app/api/asset-manager/movements/[id]/route";
 import * as relations from "@/app/api/asset-manager/ci-relations/route";
 import * as relationItem from "@/app/api/asset-manager/ci-relations/[id]/route";
 import * as changes from "@/app/api/asset-manager/changes/route";
@@ -63,6 +65,54 @@ describe.skipIf(!url)("module API handlers with PostgreSQL", () => {
   afterAll(async () => {
     await postgres.user.deleteMany({ where: { id: { in: [owner, other] } } });
     await postgres.$disconnect();
+  });
+
+  it("retries a physical move once, reconciles location in date order and guards revisions including withdrawal", async () => {
+    wikiRole = "ADMIN";
+    userId = owner;
+    const asset = await postgres.asset.create({ data: {
+      label: "QA-move", reference: randomUUID(), domainId: "it", assetTypeId: "laptop", statusId: "in_stock", locationId: "A", createdById: owner,
+    } });
+    const key = randomUUID();
+    const base = { assetId: asset.id, movementType: "transfer", date: "2026-10-10", toLocationId: "B" };
+    const add = (patch: object, token: string) => {
+      const req = request("/", "POST", { ...base, ...patch });
+      req.headers.set("Idempotency-Key", token);
+      return movements.POST(req);
+    };
+    const location = async () => (await postgres.asset.findUniqueOrThrow({ where: { id: asset.id } })).locationId;
+    const history = async () => (await movements.GET(request("/?assetId=" + asset.id))).json();
+    try {
+      expect((await add({ date: "2026-02-30" }, key)).status).toBe(400);
+      expect((await add({ ticketId: randomUUID() }, key)).status).toBe(400);
+      const [a, b] = await Promise.all([add({}, key), add({}, key)]);
+      const [first, retry] = await Promise.all([a.json(), b.json()]);
+      expect(first.id).toBe(retry.id);
+      expect(first.fromLocationId).toBe("A");
+      expect(await location()).toBe("B");
+      expect((await add({ toLocationId: "C" }, key)).status).toBe(409);
+      expect((await add({ fromLocationId: "A" }, randomUUID())).status).toBe(409);
+      const early = await (await add({ date: "2026-10-01", toLocationId: "A" }, randomUUID())).json();
+      expect(await location()).toBe("B");
+      const ctx = context(first.id);
+      const revise = (patch: object) => movementItem.PUT(request("/", "PUT", { revision: 0, ...patch }), ctx);
+      const race = await Promise.all([revise({ toLocationId: "C" }), revise({ toLocationId: "D" })]);
+      expect(race.map(r => r.status).sort()).toEqual([200, 409]);
+      const [latest, older] = await history();
+      expect([latest.id, older.id]).toEqual([first.id, early.id]);
+      expect(await location()).toBe(latest.toLocationId);
+      expect((await movementItem.DELETE(request("/?revision=0", "DELETE"), ctx)).status).toBe(409);
+      expect((await movementItem.DELETE(request("/?revision=1", "DELETE"), ctx)).status).toBe(200);
+      expect(await location()).toBe("A");
+      expect((await add({}, key)).status).toBe(410);
+      expect((await movementItem.GET(request("/"), ctx)).status).toBe(404);
+      expect(await history()).toHaveLength(1);
+      expect(await postgres.auditLog.count({ where: { resourceId: first.id } })).toBe(3);
+    } finally {
+      wikiRole = "USER";
+      await postgres.asset.delete({ where: { id: asset.id } });
+      await postgres.auditLog.deleteMany({ where: { resourceType: "movement", userId: owner } });
+    }
   });
 
   it("preserves directional links and serializes symmetric CMDB relations across both asset records", async () => {

@@ -3,9 +3,10 @@
 import { useState, useEffect, useCallback } from "react";
 import { relationTypes, symmetricRelation } from "@/lib/asset-manager/relation-types";
 import { readResponse } from "../../../lib/read-response";
+import { MovementHistory } from "./MovementHistory";
 import Link from "next/link";
 import { useParams } from "next/navigation";
-import { Panel, Button, Spinner, Selectbox, Input, Badge, Card, Divider, EmptyState, Metric } from "@/components/bpm";
+import { Panel, Button, Spinner, Selectbox, Badge, Card, Divider, EmptyState, Metric } from "@/components/bpm";
 import { FicheHeader, FicheSectionCard, FicheFieldGrid, FicheNav, FicheSkeleton } from "@/components/fiche";
 import type { DomainConfig } from "@/lib/asset-manager/get-domain-config";
 import { useI18n } from "@/lib/i18n/LocaleProvider";
@@ -18,23 +19,13 @@ type Asset = {
   assetTypeId: string;
   statusId: string;
   lifecycleStage?: string | null;
+  locationId?: string | null;
   brand?: string | null;
   model?: string | null;
   serialNumber?: string | null;
   notes?: string | null;
   attributes: { key: string; valueText?: string | null; valueNumber?: number | null; valueDate?: string | null; valueBool?: boolean | null }[];
   createdBy?: { name?: string | null } | null;
-};
-
-type Movement = {
-  id: string;
-  assetId: string;
-  movementType: string;
-  date: string;
-  reason?: string | null;
-  notes?: string | null;
-  ticketId?: string | null;
-  createdAt: string;
 };
 
 const DEFAULT_LIFECYCLE_KEYS = ["achat", "reception", "deploiement", "en_service", "maintenance", "renouvellement", "reforme"] as const;
@@ -57,7 +48,6 @@ export default function AssetDetailPage() {
   const { locale } = useI18n();
   const t = STR[locale];
   const ta = t.assets;
-  const MOVEMENT_TYPE_LABELS = ta.movementTypes;
   const RELATION_TYPE_LABELS = ta.relationTypes;
   const DEFAULT_LIFECYCLE_STAGES = DEFAULT_LIFECYCLE_KEYS.map((k) => ({ id: k, label: ta.lifecycleStages[k] ?? k }));
   const domainId = typeof params?.domainId === "string" ? params.domainId : "";
@@ -66,14 +56,6 @@ export default function AssetDetailPage() {
   const [asset, setAsset] = useState<Asset | null>(null);
   const [loading, setLoading] = useState(true);
   const [savingLifecycle, setSavingLifecycle] = useState(false);
-  const [movements, setMovements] = useState<Movement[]>([]);
-  const [loadingMovements, setLoadingMovements] = useState(false);
-  const [showMovementForm, setShowMovementForm] = useState(false);
-  const [newMovementType, setNewMovementType] = useState("deployment");
-  const [newMovementDate, setNewMovementDate] = useState(() => new Date().toISOString().slice(0, 10));
-  const [newMovementReason, setNewMovementReason] = useState("");
-  const [newMovementNotes, setNewMovementNotes] = useState("");
-  const [savingMovement, setSavingMovement] = useState(false);
   const [relations, setRelations] = useState<CIRelation[]>([]);
   const [loadingRelations, setLoadingRelations] = useState(false);
   const [showRelationForm, setShowRelationForm] = useState(false);
@@ -100,20 +82,6 @@ export default function AssetDetailPage() {
       })
       .finally(() => setLoading(false));
   }, [domainId, id]);
-
-  const fetchMovements = useCallback(() => {
-    if (!id) return;
-    setLoadingMovements(true);
-    fetch(`/api/asset-manager/movements?assetId=${encodeURIComponent(id)}`, { credentials: "include" })
-      .then((r) => (r.ok ? r.json() : []))
-      .then((list) => setMovements(Array.isArray(list) ? list : []))
-      .finally(() => setLoadingMovements(false));
-  }, [id]);
-
-  useEffect(() => {
-    if (!asset?.id) return;
-    fetchMovements();
-  }, [asset?.id, fetchMovements]);
 
   const fetchRelations = useCallback(() => {
     if (!domainId || !id) return;
@@ -238,34 +206,6 @@ export default function AssetDetailPage() {
     }
   };
 
-  const handleAddMovement = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!asset || savingMovement) return;
-    setSavingMovement(true);
-    try {
-      const res = await fetch("/api/asset-manager/movements", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        credentials: "include",
-        body: JSON.stringify({
-          assetId: asset.id,
-          movementType: newMovementType,
-          date: newMovementDate,
-          reason: newMovementReason.trim() || null,
-          notes: newMovementNotes.trim() || null,
-        }),
-      });
-      if (res.ok) {
-        setNewMovementReason("");
-        setNewMovementNotes("");
-        setShowMovementForm(false);
-        fetchMovements();
-      }
-    } finally {
-      setSavingMovement(false);
-    }
-  };
-
   if (loading) {
     return <FicheSkeleton sections={5} withMetrics withList withForm />;
   }
@@ -327,6 +267,7 @@ export default function AssetDetailPage() {
                 </span>
               ),
             },
+            ...(asset.locationId ? [{ label: locale === "fr" ? "Emplacement" : "Location", value: asset.locationId }] : []),
             ...(asset.brand ? [{ label: ta.fieldBrand, value: asset.brand }] : []),
             ...(asset.model ? [{ label: ta.fieldModel, value: asset.model }] : []),
             ...(asset.serialNumber ? [{ label: ta.fieldSerial, value: asset.serialNumber }] : []),
@@ -356,90 +297,7 @@ export default function AssetDetailPage() {
       )}
 
       <Divider thickness={1} color="var(--bpm-border)" className="my-4" />
-      <FicheSectionCard title={ta.sectionMovements} className="mt-4">
-        <div className="flex flex-wrap items-center justify-between gap-2 mb-4">
-          <Metric label={ta.metricMovements} value={movements.length} border={false} />
-          <Button
-            size="small"
-            variant="outline"
-            onClick={() => setShowMovementForm((v) => !v)}
-          >
-            {showMovementForm ? ta.cancel : ta.addMovement}
-          </Button>
-        </div>
-        {showMovementForm && (
-          <Card variant="outlined" className="mb-4">
-            <div className="bpm-card-body p-4">
-              <h4 className="text-sm font-semibold mb-3" style={{ color: "var(--bpm-text-primary)" }}>{ta.newMovement}</h4>
-              <form onSubmit={handleAddMovement}>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-3 mb-3">
-              <Selectbox
-                label={ta.fieldType}
-                value={newMovementType}
-                onChange={(v) => setNewMovementType(String(v))}
-                options={Object.entries(MOVEMENT_TYPE_LABELS).map(([value, label]) => ({ value, label }))}
-              />
-              <Input
-                label={ta.fieldDate}
-                type="date"
-                value={newMovementDate}
-                onChange={(v) => setNewMovementDate(v)}
-              />
-            </div>
-            <Input
-              label={ta.fieldReasonOptional}
-              value={newMovementReason}
-              onChange={setNewMovementReason}
-              placeholder={ta.placeholderReason}
-            />
-            <div className="mt-3">
-              <label className="block text-sm font-medium mb-1" style={{ color: "var(--bpm-text-secondary)" }}>{ta.fieldNotesOptional}</label>
-              <textarea
-                value={newMovementNotes}
-                onChange={(e) => setNewMovementNotes(e.target.value)}
-                rows={2}
-                className="bpm-textarea w-full rounded-lg border px-3 py-2 text-sm resize-y"
-                style={{ borderColor: "var(--bpm-border)", background: "var(--bpm-surface)", color: "var(--bpm-text-primary)" }}
-                placeholder={ta.placeholderComment}
-              />
-            </div>
-            <div className="mt-6">
-            <Button type="submit" size="medium" variant="primary" disabled={savingMovement}>
-              {savingMovement ? ta.saving : ta.saveMovement}
-            </Button>
-            </div>
-              </form>
-            </div>
-          </Card>
-        )}
-        {loadingMovements ? (
-          <div className="flex justify-center py-6">
-            <Spinner size="small" />
-          </div>
-        ) : movements.length === 0 ? (
-          <EmptyState
-            title={ta.emptyMovementsTitle}
-            description={ta.emptyMovementsDescription}
-            action={<Button size="small" variant="outline" onClick={() => setShowMovementForm(true)}>{ta.addMovement}</Button>}
-          />
-        ) : (
-          <ul className="space-y-2">
-            {movements.map((m) => (
-              <li
-                key={m.id}
-                className="flex flex-wrap items-baseline gap-2 py-2 border-b border-[var(--bpm-border)] last:border-0 text-sm"
-              >
-                <span className="font-medium" style={{ color: "var(--bpm-text-primary)", minWidth: "10rem" }}>
-                  {new Date(m.date).toLocaleDateString(dateLocale(locale))}
-                </span>
-                <Badge variant="primary">{MOVEMENT_TYPE_LABELS[m.movementType] ?? m.movementType}</Badge>
-                {m.reason && <span style={{ color: "var(--bpm-text-secondary)" }}>{m.reason}</span>}
-                {m.notes && <span className="text-xs" style={{ color: "var(--bpm-text-secondary)" }}>— {m.notes}</span>}
-              </li>
-            ))}
-          </ul>
-        )}
-      </FicheSectionCard>
+      <MovementHistory key={asset.id} assetId={asset.id} domainId={domainId} onAssetChange={setAsset} />
 
       <Divider thickness={1} color="var(--bpm-border)" className="my-4" />
       <FicheSectionCard title={ta.sectionTickets} className="mt-4">

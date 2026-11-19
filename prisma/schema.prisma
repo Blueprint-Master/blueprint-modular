@@ -496,6 +496,11 @@ model AssetContract {
 }
 
 model AssetMovement {
+  requestKey    String?  @map("request_key")
+  requestHash   String?  @map("request_hash")
+  revision      Int      @default(0)
+  removedAt     DateTime? @map("removed_at")
+  @@unique([assetId, requestKey])
   id            String    @id @default(cuid())
   assetId       String    @map("asset_id")
   movementType  String    @map("movement_type") // reception | deployment | transfer | return | repair_out | repair_in | disposal
