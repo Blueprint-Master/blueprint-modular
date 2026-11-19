@@ -70,20 +70,24 @@ export default function AssetDetailPage() {
   const [domainAssets, setDomainAssets] = useState<{ id: string; reference: string; label: string }[]>([]);
   const [tickets, setTickets] = useState<TicketSummary[]>([]);
   const [contracts, setContracts] = useState<ContractSummary[]>([]);
-  const [loadingTickets, setLoadingTickets] = useState(false);
   const [loadingContracts, setLoadingContracts] = useState(false);
 
   useEffect(() => {
     if (!domainId || !id) return;
+    const controller = new AbortController();
+    const signal = controller.signal;
+    setLoading(true); setAssetError("");
     Promise.all([
-      fetch(`/api/asset-manager/config/${domainId}`, { credentials: "include" }).then((r) => (r.ok ? r.json() : null)),
-      fetch(`/api/asset-manager/assets/${id}`, { credentials: "include" }).then((r) => (r.ok ? r.json() : null)),
-    ])
-      .then(([cfg, a]) => {
-        setConfig(cfg);
-        setAsset(a);
-      })
-      .finally(() => setLoading(false));
+      fetch(`/api/asset-manager/config/${domainId}`, { signal }).then(readResponse),
+      fetch(`/api/asset-manager/assets/${id}`, { signal }).then(readResponse),
+    ]).then(([cfg, row]) => {
+      if (signal.aborted) return;
+      setConfig(cfg);
+      setAsset(row.domainId === domainId ? row : null);
+      setTickets(row.domainId === domainId ? row.tickets : []);
+    }).catch(err => { if (!signal.aborted) { setAsset(null); setAssetError(err.message); } })
+      .finally(() => { if (!signal.aborted) setLoading(false); });
+    return () => controller.abort();
   }, [domainId, id]);
 
   const fetchRelations = useCallback(() => {
@@ -103,15 +107,6 @@ export default function AssetDetailPage() {
     if (!asset?.id) return;
     fetchRelations();
   }, [asset?.id, fetchRelations]);
-
-  useEffect(() => {
-    if (!domainId || !id) return;
-    setLoadingTickets(true);
-    fetch(`/api/asset-manager/tickets?domainId=${encodeURIComponent(domainId)}`, { credentials: "include" })
-      .then((r) => (r.ok ? r.json() : []))
-      .then((list: { assetId?: string | null }[]) => setTickets(Array.isArray(list) ? list.filter((t) => t.assetId === id) as TicketSummary[] : []))
-      .finally(() => setLoadingTickets(false));
-  }, [domainId, id]);
 
   useEffect(() => {
     if (!domainId || !id) return;
@@ -224,7 +219,7 @@ export default function AssetDetailPage() {
     return (
       <div className="doc-page">
         <Panel variant="warning" title={ta.notFoundTitle}>
-          {ta.notFoundDescription}
+          {assetError || ta.notFoundDescription}
         </Panel>
         <FicheNav backLink={`/modules/asset-manager/${domainId}/assets`} backLabel={ta.backList} />
       </div>
@@ -317,15 +312,13 @@ export default function AssetDetailPage() {
 
       <Divider thickness={1} color="var(--bpm-border)" className="my-4" />
       <FicheSectionCard title={ta.sectionTickets} className="mt-4">
-        {loadingTickets ? (
-          <div className="flex justify-center py-4">
-            <Spinner size="small" />
-          </div>
-        ) : tickets.length === 0 ? (
+        {asset.canEdit && <Link href={`/modules/asset-manager/${domainId}/tickets/new?assetId=${encodeURIComponent(asset.id)}`}>
+          <Button size="small" variant="outline">{ta.newTicket}</Button>
+        </Link>}
+        {tickets.length === 0 ? (
           <EmptyState
             title={ta.emptyTicketsTitle}
             description={ta.emptyTicketsDescription}
-            action={<Link href={`/modules/asset-manager/${domainId}/tickets/new`}><Button size="small" variant="outline">{ta.newTicket}</Button></Link>}
           />
         ) : (
           <ul className="space-y-2">

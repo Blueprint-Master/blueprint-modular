@@ -44,6 +44,8 @@ with closing(notifications.open_store("team.sqlite")) as db:
         <code>actif</code>
         {s.ruleModel2} <code>declenchements7j</code> {s.ruleModel3}
       </p>
+      <CodeBlock language="python" code={`notices.configure(db, "large-quote", "devis.cree", "sales", ["in-app"], amount_above="10000.00")
+notices.notify(db, event_id, "devis.cree", "Devis", reference, teams=directory, amount="12500.00")`} />
       <CodeBlock code={s.ruleModelCode} language="json" />
 
       <h2 className="text-lg font-semibold mt-6 mb-2" style={{ color: "var(--bpm-text-primary)" }}>

@@ -1,6 +1,6 @@
 {
   "integration_doc_url": "https://docs.blueprint-modular.com/get-started/integration.html",
-  "repo_url": "https://github.com/remigit55/blueprint-modular",
+  "repo_url": "https://github.com/Blueprint-Master/blueprint-modular",
   "modules": [
     "asset-manager",
     "auth",
@@ -46,7 +46,16 @@
     "settings",
     "sandbox",
     "health",
-    "prompteur"
+    "prompteur",
+    "notifications",
+    "calendar",
+    "dashboards",
+    "reports",
+    "team-tasks",
+    "reservations",
+    "templates",
+    "whiteboards",
+    "workflow"
   ],
   "components": [
     "Metric",

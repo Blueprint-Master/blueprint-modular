@@ -1,13 +1,10 @@
 "use client";
 
-import React, { useState, useCallback, useRef, useEffect } from "react";
-import dynamic from "next/dynamic";
+import React, { useState, useCallback, useEffect } from "react";
+
 
 /** Carte Leaflet chargée côté client uniquement (évite erreurs SSR). */
-const LeafletMap = dynamic(
-  () => import("./GpsMap").then((m) => m.GpsMap),
-  { ssr: false }
-);
+const LeafletMap = React.lazy(() => import("./GpsMap").then(({ GpsMap }) => ({ default: GpsMap })));
 
 /** État du cycle de vie de la géolocalisation. */
 export type GpsStatus = "idle" | "loading" | "success" | "error";
@@ -67,7 +64,7 @@ const DEFAULT_CENTER = { lat: 48.8566, lng: 2.3522 };
  * @param {{lat:number,lng:number}|null} [props.value=null] - Position courante en mode `picker` (composant contrôlé). Optionnel.
  * @param {function} [props.onChange] - Callback appelé en mode `picker` à chaque clic sur la carte ou déplacement du marqueur. Reçoit `{ lat, lng }`. Optionnel.
  *
- * @note SSR-safe : la carte Leaflet est chargée dynamiquement avec `ssr: false`. L'accès à `navigator.geolocation` est encapsulé dans un handler utilisateur, jamais exécuté pendant le rendu.
+ * @note SSR-safe : la carte Leaflet est chargée dynamiquement après le montage côté client. L'accès à `navigator.geolocation` est encapsulé dans un handler utilisateur, jamais exécuté pendant le rendu.
  * @note Permission requise : le navigateur demande l'autorisation à l'utilisateur lors du premier clic sur « Localiser ». En cas de refus (code 1), le statut passe à `error` avec le message « Autorisation refusée ».
  *
  * @parent bpm.card, bpm.panel, bpm.modal
@@ -83,6 +80,8 @@ export function Gps({
   value = null,
   onChange,
 }: GpsProps) {
+  const [mounted, setMounted] = useState(false);
+  useEffect(() => setMounted(true), []);
   const [status, setStatus] = useState<GpsStatus>("idle");
   const [coords, setCoords] = useState<{
     lat: number;
@@ -197,8 +196,9 @@ export function Gps({
             </p>
           )}
         </div>
-        {showMap && (
+        {showMap && mounted && (
           <div style={{ width: "100%", height: height, borderRadius: "var(--bpm-radius)", overflow: "hidden" }}>
+            <React.Suspense fallback={null}>
             <LeafletMap
               mode={mode}
               center={
@@ -219,6 +219,7 @@ export function Gps({
               onMapClick={mode === "picker" ? handlePickerChange : undefined}
               height={height}
             />
+            </React.Suspense>
           </div>
         )}
       </div>

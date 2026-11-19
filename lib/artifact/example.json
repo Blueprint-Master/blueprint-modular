@@ -1,0 +1,13 @@
+{
+  "title": "Revue commerciale",
+  "locale": "fr-FR",
+  "period": "Septembre",
+  "source": "Exemple sur données fictives",
+  "blocks": [
+    { "kind": "indicator", "label": "Chiffre d’affaires", "unit": "EUR", "value": 125000, "delta": "+8,4 %", "context": { "reference": 120000, "referenceLabel": "Budget de septembre", "direction": "higher_is_better" } },
+    { "kind": "indicator", "label": "Marge brute", "unit": "%", "value": 41.5, "decimals": 1, "delta": "-1,2 pt", "context": { "reference": 42.7, "referenceLabel": "Marge du mois précédent (%)", "direction": "higher_is_better" } },
+    { "kind": "indicator", "label": "Commandes", "value": 380 },
+    { "kind": "status", "text": "Clôturé", "variant": "info" },
+    { "kind": "trend", "title": "Chiffre d’affaires mensuel", "unit": "EUR", "data": [{ "x": "Juillet", "y": 106000 }, { "x": "Août", "y": 115300 }, { "x": "Septembre", "y": 125000 }] }
+  ]
+}

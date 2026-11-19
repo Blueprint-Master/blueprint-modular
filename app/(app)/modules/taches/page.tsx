@@ -90,7 +90,7 @@ export default function TachesModulePage() {
         title={s.page.title}
         description={s.page.description}
         category={s.page.category}
-        links={[{ href: "/modules/taches/simulateur", label: s.page.openSimulator }]}
+        links={[{ href: "/modules/taches/equipe", label: locale === "fr" ? "Tâches de l’équipe" : "Team tasks" }, { href: "/modules/taches/simulateur", label: s.page.openSimulator }]}
       />
       <Tabs
         tabs={[

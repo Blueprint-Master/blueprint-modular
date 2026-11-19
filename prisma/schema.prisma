@@ -26,6 +26,8 @@ model User {
   documents            Document[]
   contracts            Contract[]
   aiConversations      AiConversation[]
+  reports              ReportSnapshot[]
+  personalDashboard    PersonalDashboard?
   newsletterSettings   NewsletterSettings?
   newsletterArticles   NewsletterArticle[]
   assetsCreated        Asset[]           @relation("AssetCreatedBy")
@@ -101,6 +103,7 @@ model Organization {
   updatedAt   DateTime  @updatedAt @map("updated_at")
 
   whiteboardNotes  WhiteboardNote[]
+  teamTasks       TeamTask[]
   members         OrgMember[]
   workspaces      Workspace[]
   wikis           WikiArticle[]
@@ -817,4 +820,56 @@ model KnowledgeReader {
   article KnowledgeArticle @relation(fields: [articleId], references: [id], onDelete: Cascade)
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
   @@id([articleId, userId])
+}
+
+model ReportSnapshot {
+  id        String   @id @db.Uuid
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  source    String
+  since     DateTime @db.Date
+  through   DateTime @db.Date
+  rows      Json
+  createdAt DateTime @default(now())
+
+  @@index([userId, createdAt])
+}
+
+model PersonalDashboard {
+  userId   String @id
+  user     User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  revision Int    @default(1)
+  widgets  Json
+}
+
+model TeamTask {
+  id             String       @id @db.Uuid
+  organizationId String
+  organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  creatorId      String
+  assigneeId     String
+  title          String
+  due            DateTime     @db.Date
+  priority       String
+  status         String       @default("todo")
+  revision       Int          @default(1)
+  createdAt      DateTime     @default(now())
+  removed        Boolean      @default(false)
+  events         TeamTaskEvent[]
+
+  @@index([organizationId, removed, due])
+}
+
+model TeamTaskEvent {
+  id        String   @id @default(cuid())
+  taskId    String   @db.Uuid
+  task      TeamTask @relation(fields: [taskId], references: [id], onDelete: Cascade)
+  revision  Int
+  actorId   String
+  actorName String
+  action    String
+  details   Json
+  createdAt DateTime @default(now())
+
+  @@unique([taskId, revision])
 }

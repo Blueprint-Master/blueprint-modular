@@ -88,6 +88,23 @@ const rows = await runConnector({ vault, sheetsAccessToken }, appId,
         {S.sched2}
       </p>
 
+      <h2 className="text-lg font-semibold mt-6 mb-2">Python · REST / SFTP / PostgreSQL / MySQL</h2>
+      <CodeBlock language="python" code={`from bpm import source_imports as imports
+
+# db: application SQLite store. connection: authenticated psycopg connection.
+db = imports.open_store("imports.sqlite")
+source = "erp"
+current = imports.snapshot(db, source)
+revision = current["revision"] if current else 0
+imports.sync(db, source, "id",
+    lambda: imports.read_table(connection, "postgresql", "sales", ["id", "amount"]),
+    expected_revision=revision)
+
+# PyMySQL: read_table(connection, "mysql", "sales", ["id", "amount"])
+# Paramiko: read_sftp(sftp, "/exports/sales.csv") on a verified SSH connection
+# urllib: read_rest(response) on an authenticated JSON HTTP response
+print(imports.snapshot(db, source))`} />
+
       <p className="mt-6 text-sm" style={{ color: "var(--bpm-text-secondary)" }}>
         <Link
           href="/modules/connecteurs/simulateur"

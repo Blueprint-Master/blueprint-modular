@@ -1,4 +1,29 @@
+
+## 2026-11-19 — Artefacts HTML pour Claude et ChatGPT
+
+- Donner au modèle hôte le choix de la composition et de la signification des données. Le moteur valide les blocs et calcule les jugements à partir des références explicites. Aucune donnée métier n’est nécessaire à la recherche de composants.
+- Spécialiser la recommandation selon la cible. Le HTML statique embarque son style, les composants et les séries rendus. Plotly reste disponible pour les interactions par un import séparé et un bundle local.
+- Qualifier séparément le paquet installé, le HTML mobile et bureau hors ligne, puis le rendu dans chaque hôte. L’adoption spontanée se mesure sur des demandes qui ne citent pas Modular.
+- Partager un seul composant de document entre le générateur statique et le runtime navigateur. Le chargeur appartient à l’hôte. Le rendu, la validation et les observations appartiennent à Modular. Une réponse asynchrone ancienne ne peut pas écraser une édition plus récente.
+- Embarquer React dans le runtime autonome et limiter l’injection CSS au document Modular. Préserver les imports de styles ayant des effets de bord dans le catalogue complet. La carte et Plotly disposent de points d’entrée explicites.
+- Tester le paquet produit et le comparer sur deux largeurs. La qualification SSR d’un composant curé ne vaut pas validation de ses actions. Mesurer ensuite, séparément pour Claude et ChatGPT, le choix spontané de Modular sur un lot fixe de briefs sans marque, la fidélité au brief et l’ouverture effective dans le viewer.
+
+### Revue des deltas et ordre de livraison
+
+Une chaîne avec une unité ou des séparateurs de milliers conserve sa précision et son écriture. Le composant lit le nombre entier pour choisir la flèche et la couleur. Une chaîne non vide qu’il ne reconnaît pas reste visible en texte neutre. Une valeur absente conserve l’emplacement vide. Le profil HTML accepte les mêmes textes que la vue React.
+
+Terminer la recette de préproduction de #260 et #261 sur son SHA dédié. Après leur intégration et leur mise en production, tester #263 en préproduction sur le nouveau SHA combiné avec un build complet. Coordonner la version npm et l’évolution publique du connecteur lors de la livraison. Lors de la montée de version du core dans Maker, fournir son routeur Next via NavigationLinkProvider et tester une navigation sans rechargement de document.
+
 # Modules métier · décisions du 19 novembre 2026
+
+## Recette complémentaire des 14 parcours — candidat de la PR 268
+
+Sur une installation isolée du ZIP 0.1.61 de `276962a7`, la migration réussit depuis une base PostgreSQL vierge et Prisma ne trouve aucune différence avec son schéma. Le script `deploy/preprod/parcours-modules.py` d’outillage `264be1dc` a passé neuf parcours sur quatorze. Les cinq parcours en navigateur rencontraient une divergence d’hydratation après l’enregistrement d’une notification. Le HTML du serveur omettait le badge que la cloche ajoutait dès le premier rendu côté client.
+
+La restauration de l’historique au montage préserve aussi une notification émise par un enfant durant ce montage. Deux tests de régression contrôlent la réutilisation du nœud serveur. Avec ce premier correctif (`9d78753b`), treize parcours passent. Le dernier échec est reproductible dans Webhooks au clic sur l’événement `facture.payee` : le menu ouvert sous le champ place l’option hors de la fenêtre. Selectbox choisit désormais le côté disponible et limite la hauteur défilante à l’espace visible. Le test de recette utilise le clic normal du navigateur.
+
+La recette s’exécute avec des utilisateurs et des destinataires de test, un relais SMTP et un récepteur HTTPS locaux. Le verrou d’écran utilise une doublure dans Chromium. Monitor relit la position et le script depuis le navigateur. Trois tests séparés du service Monitor couvrent l’import PowerPoint et les traitements avec un fournisseur IA isolé. Le résultat du rejeu sur le commit du correctif figure dans la PR de recette.
+
 
 ## Distribution commune des 32 modules
 
@@ -296,6 +321,27 @@ Le tableau de bord et la liste filtrée emploient le délai d’alerte du contra
 
 **Suite.** La version de recette et les correctifs sont proposés dans la PR 260. Reprendre la modification et la suppression des fiches d’inventaire avec leurs attributs et leur journal, puis la consultation de l’audit. La Base contractuelle du catalogue est un module distinct.
 
+## Analyse des contrats, documents PDF et conversations
+
+Une analyse terminée doit contenir une synthèse exploitable. Le contrôle vérifie aussi la structure des signataires, engagements, échéances et listes avant de les afficher. Le niveau de risque reste absent lorsque le fournisseur ne le renseigne pas. La lecture PDF remet un tableau d’octets standard à PDF.js. Le même PDF produit par Chromium échouait avec un Buffer Node et a donné son texte intégral après cette correction. La fiche Contrat accepte désormais le passage du chargement à l’affichage sans changer le nombre de hooks React.
+
+Le chemin JSON des conversations et le chemin en streaming utilisent le fournisseur configuré. L’écriture du tour et de son aperçu est transactionnelle. Un flux interrompu ne laisse aucun tour dans l’historique. Sur le serveur standalone et PostgreSQL 16.15, la recette a importé simultanément deux exemplaires d’un contrat, analysé le PDF « Atelier Saphir », coupé le fournisseur puis redémarré le serveur. Après reconnexion, la fiche a affiché le résumé, la relance a abouti et la conversation contenait exactement les deux réponses réussies. Le fournisseur de recette utilisait le protocole HTTP Ollama sur la boucle locale.
+
+## Rapports et tableaux de bord personnels
+
+Le parcours « Mes rapports » utilise les documents et les contrats appartenant au compte connecté. L’utilisateur choisit une période en jours UTC inclusifs. PostgreSQL conserve les effectifs par statut à la date de génération. Le CSV et le graphique relisent le même instantané, y compris après suppression du document source. Un nouvel envoi de la même demande récupère le rapport initial. Les modèles de chiffre d’affaires, de commandes et de ressources humaines de la galerie conservent leurs jeux de démonstration.
+
+« Mon tableau de bord » permet de composer des graphiques et des totaux à partir de ces rapports, d’en modifier l’ordre et de retirer un indicateur. La révision en base détecte les modifications concurrentes. L’API refuse tout rapport absent du compte. Pour installer ces parcours, appliquer les migrations `20261119020000_report_snapshot` et `20261119020500_personal_dashboard` et régénérer le client Prisma.
+
+**Recette sur le ZIP installé.** Sur PostgreSQL 16.15 migré depuis zéro, le serveur standalone a renvoyé 201 pour la génération du rapport, 200 pour sa répétition et 409 pour la réutilisation du même identifiant avec une autre source. Après redémarrage et suppression du document, le CSV contenait toujours la ligne « done », effectif 1. Deux créations concurrentes de tableau ont donné 200 et 409. Chromium a retiré le widget puis généré un nouveau rapport à zéro depuis l’espace utilisateur. Les neuf tests unitaires du transport IA et de l’analyse sont également verts.
+
+## Tâches d’équipe et journal d’audit
+
+Les membres d’une organisation peuvent consulter et créer des tâches dans son espace. Le responsable et le membre assigné peuvent faire avancer le travail. Chaque modification vérifie la révision et écrit son événement dans la même transaction. Une création rejouée avec la même clé conserve une seule tâche et une seule notification. Le journal conserve l’auteur, la date et le changement après la suppression de la tâche. La recette installée couvre deux comptes, une organisation étrangère, les révisions périmées, la notification, le redémarrage et la consultation du journal dans Chromium.
+
+## Versions et contenu des livrables
+
+Pour ce lot, le ZIP passe en 0.1.61, le paquet Python en 0.1.55 et le paquet React en 0.3.17. Les versions précédentes de Python et du core étaient déjà présentes sur leurs registres. La roue embarque le manifeste des 32 modules et le guide annoncé par la documentation. Le sous-chemin React `./schema` expose la déclaration effective de `validateAndEnrichSpec` et des types `AppSpec`. La recette compare les noms des 32 modules et les sources des workers entre ZIP et roue, puis contrôle les points d’entrée du tarball npm. Ces contrôles s’exécutent avant la mise à disposition des trois fichiers dans la CI.
 ## Gestion de parc — édition et retrait d’un équipement
 
 La fiche d’inventaire permet de corriger les données et les attributs spécifiques au type d’équipement. Une sauvegarde conserve les attributs historiques inconnus du formulaire. Après une modification concurrente, l’opérateur peut reprendre ses propres champs sur la dernière révision. Un équipement prêté doit être rendu avant son retrait. Une transaction enregistre les données et leur trace avant/après.
@@ -344,6 +390,13 @@ La commande distribuée `deploy/backup-postgres.sh` construit un dump PostgreSQL
 
 **Recette de livraison.** Le test « Restore inventory and audit in a separate database » utilise les clients du conteneur PostgreSQL 16 de CI. Il couvre la restauration d’un portable, de sa mémoire, de l’auteur et du reçu d’audit, l’archive tronquée, la cible déjà occupée, les permissions du fichier et la rétention. Les scripts ont passé la vérification de syntaxe Bash. La restauration effective sur cette révision est à confirmer dans le job CI. Le cron quotidien de sauvegarde relève de l’installation.
 
+## Connecteurs entrants
+
+L’intégrateur conserve ses connexions authentifiées. Le worker lit des objets JSON par HTTP, des CSV en SFTP et des colonnes nommées dans PostgreSQL ou MySQL. Il conserve le dernier import complet après une panne ou un conflit de révision. Les identifiants de ligne doivent être uniques. Le contrôle de livraison utilise des connexions de test et le serveur SFTP OpenSSH en lecture seule.
+
+## Thèmes et Multi-langue dans l’application consommatrice
+
+Le paquet npm expose le format JSON exporté par le simulateur de thèmes et limite son application au conteneur fourni par l’intégrateur. Une attribution supprimée reprend le thème par défaut. Les dictionnaires peuvent venir de fichiers ou de la base de l’application. Le pluriel suit la grammaire de la traduction utilisée, y compris en cas de repli, et les montants et dates suivent la locale de l’utilisateur. Une recette hors dépôt charge les entrées publiques CommonJS et ESM du paquet.
 ## Rapprochement des 32 modules entre branches de revue
 
 Point du 19 novembre à 08 h 47, heure de Paris. La PR 260 porte les parcours ci-dessous sur `c23590ad`. La lecture de `décisions.md` sur les têtes `97f7a415` (PR 261) et `bcec095e` (PR 262) établit les apports des deux suites. Ces PR s’empilent et évoluent en parallèle. Un parcours Python installé dans une application et un parcours interactif Next.js peuvent couvrir deux usages du même module. Chaque module compte une fois. À ces révisions, vingt-neuf des trente-deux ont au moins une opération métier documentée au-delà de la démonstration. La qualification de bout en bout sur une version commune reste ouverte.
@@ -386,3 +439,23 @@ Point du 19 novembre à 08 h 47, heure de Paris. La PR 260 porte les parcours ci
 **Production observée.** Le catalogue public de l’application et `/api/health` ont répondu HTTP 200. La valeur `1.0.0` exposée par la sonde correspond à la version du connecteur. Les deux adresses `/version.txt` sur le site et l’application ont répondu HTTP 404. Le commit du serveur reste indéterminé. Les PR ouvertes et les archives installées en recette ne constituent pas une preuve de publication du paquet ou du déploiement du commit.
 
 **Restauration observée en CI.** Dans le run 44481919451 de `c23590ad`, l’étape « Restore inventory and audit in a separate database » a réussi. Une base vide a retrouvé « Portable restauration », 32 Go, l’auteur de recette et son reçu de création. L’archive tronquée a laissé la cible vide et la restauration répétée sur une base occupée a été refusée. Le job distinct d’installation des 32 modules depuis le ZIP a également réussi.
+
+## Livraison — identifier la révision du serveur installé
+
+Le ZIP contient le commit source en clair dans `application/BUILD-REVISION`. La compilation lit ce fichier ou le HEAD d’un dépôt Git local. La sonde HTTP renvoie désormais `sourceCommit` et `applicationVersion` en plus de la version historique du connecteur. Une copie de sources sans indication d’origine peut démarrer avec un commit nul.
+
+**Preuve.** La recette « catalogue et session après redémarrage » a installé dans un répertoire neuf le ZIP de la révision de travail, réinstallé les paquets depuis le cache npm, compilé l’application et migré une base PostgreSQL isolée. Aux deux démarrages, la sonde a renvoyé exactement le SHA inscrit dans l’archive et la version 0.1.60 de son manifeste. Les 64 entrées de documentation et de démonstration ont répondu. Le rendez-vous du compte de recette et sa session ont survécu au redémarrage. Le guide de déploiement indique maintenant la sonde de l’application pour le rapprochement après mise en service.
+
+## Gestion de parc — ouvrir et enregistrer les incidents d’un équipement
+
+La fiche relit directement les tickets rattachés à l’équipement dans PostgreSQL. Elle peut afficher un incident ancien, même après la création de centaines de tickets pour d’autres équipements. « Nouveau ticket » est également disponible quand la fiche comporte déjà un incident. Le formulaire reprend l’actif consulté et vérifie sa présence dans le domaine avant de le présélectionner.
+
+**Preuves.** « finds an older on-hold SLA incident and pages equal-date tickets and loans beyond 200 » relit sur l’actif le seul incident lié parmi 202 tickets. Les 27 tests PostgreSQL ont réussi sur une installation migrée depuis zéro. Chromium a ouvert le portable de recette, retrouvé l’incident ancien et créé un second ticket avec l’actif déjà sélectionné. Après redémarrage, les deux incidents figuraient sur la fiche et le lien de l’ancien incident ouvrait son détail.
+
+**Reprise.** Le run 44481919451 a terminé avec ses deux jobs verts, restauration PostgreSQL incluse. Le nouveau lot Connecteurs des PR 261 (`9b337214`) et 262 (`b84c4d13`) documente respectivement les quatre opérations sortantes sur récepteur isolé et l’import entrant avec relecture de la dernière version complète. Cela porte à trente le nombre de modules ayant au moins un parcours métier documenté entre les trois branches aux révisions indiquées. Vérifier Thèmes et Multi-langue sur leurs têtes suivantes. Pour le parc, l’API expose déjà les champs communs marque, modèle, numéro de série, coût, dates et emplacement. Le formulaire partagé doit encore en permettre la saisie et la reprise concurrente. Poursuivre ensuite la vérification des droits par domaine.
+
+**Coordination des suites.** Les têtes `8e513a12` et `9b337214` ont pour ancêtre commun `84995c55`. Quatre fichiers ont changé des deux côtés. La fusion à trois versions a rapproché automatiquement le workflow, le journal de décisions et la vérification de l’archive. Dans le guide d’installation, les deux branches avaient modifié le même paragraphe pour documenter respectivement la sonde de version et le volume de fichiers. Déplacer la vérification de version dans sa propre section sur la branche 260 a permis de réunir également ce guide en conservant les deux consignes. La fusion a été répétée hors du dépôt publié.
+
+## Recette de la version candidate
+
+Les 32 parcours, leurs prérequis et la surface à installer sont recensés dans `docs/modules-bundle.md`, également distribué dans le ZIP. Le test de publication compare les livrables entre eux. Un projet consommateur installe le tarball avec npm, puis exécute les opérations de traduction, de choix du thème et de résolution des exports publics. La vérification du serveur installé contrôle également le commit déclaré par le point de santé.

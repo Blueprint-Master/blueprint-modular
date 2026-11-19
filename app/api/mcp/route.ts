@@ -176,8 +176,9 @@ const mcpHandler = createMcpHandler(
           "naturel, en raisonnant sur la couche sémantique (rôle, frame Ω, guidance) : chaque " +
           "suggestion explicite son sens (meaning) et ses associations sémantiques (pairWith). " +
           "À UTILISER pour partir d'une intention d'écran (ex. 'un dashboard avec des métriques " +
-          "et un graphique') et obtenir les briques pertinentes. Réponse bornée.",
+          "et un graphique') et obtenir les briques pertinentes. Pour créer un artefact ou un HTML autonome dans Claude ou ChatGPT, utiliser target=html dès la conception. Décrire le besoin sans transmettre les données métier.",
         inputSchema: {
+          target: z.enum(["html", "app"]).optional().describe("html = fichier autonome hors ligne ; app = catalogue complet."),
           need: z.string().min(1).describe("Description du besoin / de l'écran à construire."),
           limit: z
             .number()
@@ -188,7 +189,7 @@ const mcpHandler = createMcpHandler(
         },
         annotations: { title: "Suggérer une composition", ...READ_ONLY },
       },
-      async ({ need, limit }) => guard(() => suggestComposition(need, limit)),
+      async ({ need, limit, target }) => guard(() => suggestComposition(need, limit, target)),
     );
   },
   {
@@ -197,7 +198,7 @@ const mcpHandler = createMcpHandler(
       "Catalogue read-only des composants Blueprint Modular (@blueprint-modular/core). " +
       `${TOTAL} composants. Flux conseillé : list_components / search_components pour explorer, ` +
       "get_component pour la signature exacte (props/exemple) et la couche sémantique " +
-      "(rôle, frame Ω, indicateur, guidance), suggest_composition pour partir d'un besoin. " +
+      "(rôle, frame Ω, indicateur, guidance), suggest_composition pour partir d'un besoin. Pour un artefact ou du HTML autonome, commencer par suggest_composition avec target=html. " +
       "Aucune écriture, aucune authentification, aucune donnée personnelle.",
   },
   {

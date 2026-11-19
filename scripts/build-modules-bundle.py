@@ -23,6 +23,7 @@ SOURCES = [
     "deploy/prompteur", "deploy/prompteur-api-requirements.txt", "deploy/copy-standalone-assets.sh", "deploy/backup-postgres.sh",
     "scripts/generate-versions.mjs", "scripts/generate-changelog.mjs",
     "scripts/generate-component-examples.mjs", "scripts/build-python-runtime.sh",
+    "scripts/build-artifact.mjs", "packages/core/bin",
     "docs/DATABASE.md", "docs/modules-bundle.md",
 ]
 
@@ -64,6 +65,10 @@ def build(destination):
                             archive.writestr(info, data, compress_type=ZIP_DEFLATED)
                 if git.wait():
                     raise RuntimeError("git archive failed")
+            authored = int(subprocess.check_output(["git", "show", "-s", "--format=%ct", commit], cwd=ROOT))
+            stamp = ZipInfo("application/BUILD-REVISION", datetime.fromtimestamp(authored, timezone.utc).timetuple()[:6])
+            stamp.external_attr = 0o100644 << 16
+            archive.writestr(stamp, commit + "\n")
             archive.comment = f"Blueprint Modular {version} ({commit})".encode()
         latest = Path(staging) / "blueprint-modules-latest.zip"
         shutil.copyfile(candidate, latest)

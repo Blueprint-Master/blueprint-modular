@@ -143,7 +143,9 @@ describe.skipIf(!url)("module API handlers with PostgreSQL", () => {
         priorityId: "low", categoryId: "hardware", openedAt: new Date(start.getTime() + 1), requesterId: owner,
       }));
       await postgres.ticket.createMany({ data: entries });
-      const oldest = await postgres.ticket.create({ data: { ...entries[0], ...clock, reference: prefix } });
+      const oldest = await postgres.ticket.create({ data: { ...entries[0], ...clock, reference: prefix, assetId: asset.id } });
+      const linked = await (await assetItem.GET(request("/"), context(asset.id))).json();
+      expect(linked.tickets.map((row: { id: string }) => row.id)).toEqual([oldest.id]);
       await postgres.assignment.createMany({ data: entries.map(row => ({
         reference: row.reference, domainId: "it", assetId: asset.id, assigneeId: owner,
         assignmentType: "temporary", status: "returned", startDate: start, actualEndDate: start,

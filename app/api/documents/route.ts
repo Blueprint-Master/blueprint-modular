@@ -1,3 +1,4 @@
+import { z } from "zod";
 import { NextResponse } from "next/server";
 import { getPersonalModuleSession } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
@@ -6,6 +7,14 @@ import { extractTextFromBuffer } from "@/lib/contract-extract";
 import { writeFile, mkdir, unlink } from "fs/promises";
 import path from "path";
 import { documentMime, documentMaxBytes } from "@/lib/documents/formats";
+
+const analysis = z.object({
+  summary: z.string().trim().min(1),
+  supplier: z.string().nullish(), client: z.string().nullish(),
+  contract_date: z.string().date().nullish(), signature_date: z.string().date().nullish(),
+  termination_date: z.string().date().nullish(), key_points: z.array(z.string()).nullish(),
+  commitments: z.array(z.string()).nullish(),
+});
 
 export async function GET() {
   const result = await getPersonalModuleSession();
@@ -108,13 +117,13 @@ Règles : supplier = partie qui fournit le service ; client = partie qui le reç
       const match = stripped.match(/\{[\s\S]*\}/);
       if (!match) return null;
       try {
-        return JSON.parse(match[0]) as Record<string, unknown>;
+        return analysis.parse(JSON.parse(match[0]));
       } catch {
         return null;
       }
     };
 
-    if (rawText.length > 0) {
+    if (rawText.trim().length > 0) {
       if (apiKey) {
         const documentPayload = `${extractPrompt}\n\n---\nDocument (extrait texte) :\n${rawText.slice(0, 80000)}`;
         const Anthropic = (await import("@anthropic-ai/sdk")).default;

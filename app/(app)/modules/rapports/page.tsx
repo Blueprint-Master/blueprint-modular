@@ -72,7 +72,7 @@ export default function RapportsModulePage() {
         title={s.moduleTitle}
         description={s.moduleDescription}
         category={s.categoryBadge}
-        links={[{ href: "/modules/rapports/simulateur", label: s.openSimulator }]}
+        links={[{ href: "/modules/rapports/espace", label: locale === "fr" ? "Mes rapports" : "My reports" }, { href: "/modules/rapports/simulateur", label: s.openSimulator }]}
       />
       <Tabs
         tabs={[

@@ -65,7 +65,7 @@ En prod, **blueprint-modular.com** et **docs.blueprint-modular.com** servent la 
 
 1. **Dans le terminal** (où tu as lancé `.\scripts\deploy-vps-remote.ps1`) : attendre la ligne **`✅ Déploiement terminé.`** avec la version déployée (ex. `02a3db0`) et les chemins Vitrine / Doc / App.
 2. **En SSH sur le VPS** : `pm2 status blueprint-app` → la colonne **status** doit être **online** et **restart** peut avoir augmenté de 1 après un `pm2 restart`.
-3. **Fichier de version** : ouvrir **https://blueprint-modular.com/version.txt** (ou docs) : tu dois voir le hash court du commit (ex. `02a3db0`) et la date du dernier déploiement.
+3. Sur l’application déployée, lire `https://app.blueprint-modular.com/api/health`. Vérifier que `sourceCommit` correspond au SHA effectivement construit et que `applicationVersion` correspond à son `package.json`. Les distributions antérieures peuvent uniquement exposer la version du connecteur dans `version`.
 
 ### Modifications visibles après ce déploiement (Phase 0 multitenant)
 
