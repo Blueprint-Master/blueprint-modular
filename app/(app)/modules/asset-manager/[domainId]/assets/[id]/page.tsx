@@ -1,6 +1,8 @@
 "use client";
 
 import { useState, useEffect, useCallback } from "react";
+import { relationTypes, symmetricRelation } from "@/lib/asset-manager/relation-types";
+import { readResponse } from "../../../lib/read-response";
 import Link from "next/link";
 import { useParams } from "next/navigation";
 import { Panel, Button, Spinner, Selectbox, Input, Badge, Card, Divider, EmptyState, Metric } from "@/components/bpm";
@@ -77,6 +79,8 @@ export default function AssetDetailPage() {
   const [showRelationForm, setShowRelationForm] = useState(false);
   const [newRelationTargetId, setNewRelationTargetId] = useState("");
   const [newRelationType, setNewRelationType] = useState("depends_on");
+  const [relationError, setRelationError] = useState("");
+  const [canEditRelations, setCanEditRelations] = useState(false);
   const [savingRelation, setSavingRelation] = useState(false);
   const [domainAssets, setDomainAssets] = useState<{ id: string; reference: string; label: string }[]>([]);
   const [tickets, setTickets] = useState<TicketSummary[]>([]);
@@ -115,8 +119,12 @@ export default function AssetDetailPage() {
     if (!domainId || !id) return;
     setLoadingRelations(true);
     fetch(`/api/asset-manager/ci-relations?domainId=${encodeURIComponent(domainId)}&assetId=${encodeURIComponent(id)}`, { credentials: "include" })
-      .then((r) => (r.ok ? r.json() : []))
-      .then((list) => setRelations(Array.isArray(list) ? list : []))
+      .then(async response => {
+        const list = await readResponse(response);
+        setCanEditRelations(response.headers.get("X-Can-Edit") === "true");
+        setRelations(list);
+      })
+      .catch(err => setRelationError(err.message))
       .finally(() => setLoadingRelations(false));
   }, [domainId, id]);
 
@@ -158,6 +166,7 @@ export default function AssetDetailPage() {
   const handleAddRelation = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!asset || !domainId || !newRelationTargetId || savingRelation) return;
+    setRelationError("");
     setSavingRelation(true);
     try {
       const res = await fetch("/api/asset-manager/ci-relations", {
@@ -171,11 +180,11 @@ export default function AssetDetailPage() {
           relationType: newRelationType,
         }),
       });
-      if (res.ok) {
-        setNewRelationTargetId("");
-        setShowRelationForm(false);
-        fetchRelations();
-      }
+      await readResponse(res);
+      setNewRelationTargetId("");
+      setShowRelationForm(false);
+      fetchRelations();
+    } catch (err) { setRelationError(err instanceof Error ? err.message : String(err));
     } finally {
       setSavingRelation(false);
     }
@@ -183,18 +192,26 @@ export default function AssetDetailPage() {
 
   const handleDeleteRelation = async (relId: string) => {
     if (!confirm(ta.confirmDeleteRelation)) return;
-    const res = await fetch(`/api/asset-manager/ci-relations/${relId}`, { method: "DELETE", credentials: "include" });
-    if (res.ok) fetchRelations();
+    setRelationError("");
+    try {
+      await readResponse(await fetch(`/api/asset-manager/ci-relations/${relId}`, { method: "DELETE", credentials: "include" }));
+      fetchRelations();
+    } catch (err) { setRelationError(err instanceof Error ? err.message : String(err)); }
   };
 
   const loadDomainAssetsForRelation = useCallback(() => {
-    if (domainId && domainAssets.length === 0) {
+    if (domainId) {
       fetch(`/api/asset-manager/assets?domainId=${encodeURIComponent(domainId)}`, { credentials: "include" })
-        .then((r) => (r.ok ? r.json() : []))
-        .then((list) => setDomainAssets(Array.isArray(list) ? list.filter((a: { id: string }) => a.id !== asset?.id) : []));
+        .then(readResponse)
+        .then(list => setDomainAssets(list.filter((a: { id: string }) => a.id !== asset?.id)))
+        .catch(err => setRelationError(err.message));
     }
-  }, [domainId, asset?.id, domainAssets.length]);
+  }, [domainId, asset?.id]);
 
+  const relationLabel = (type: string) => {
+    const configured = config?.ci_relation_types?.find(entry => entry.id === type);
+    return (locale === "fr" ? configured?.label : undefined) ?? RELATION_TYPE_LABELS[type] ?? type;
+  };
   const getStatusLabel = (sid: string) => config?.statuses.find((s) => s.id === sid)?.label ?? sid;
   const getTypeLabel = (tid: string) => config?.asset_types.find((t) => t.id === tid)?.label ?? tid;
   const lifecycleStages = config?.lifecycle_stages?.length ? config.lifecycle_stages : DEFAULT_LIFECYCLE_STAGES;
@@ -486,11 +503,13 @@ export default function AssetDetailPage() {
       <FicheSectionCard title={ta.sectionDependencies} className="mt-4">
         <div className="flex flex-wrap items-center justify-between gap-2 mb-4">
           <Metric label={ta.metricRelations} value={relations.length} border={false} />
-          <Button size="small" variant="outline" onClick={() => { setShowRelationForm((v) => !v); loadDomainAssetsForRelation(); }}>
+          <Link href={`/modules/asset-manager/${domainId}/cmdb-graph?rootAssetId=${encodeURIComponent(id)}`} className="font-medium">{t.cmdb.title}</Link>
+          {canEditRelations && <Button size="small" variant="outline" onClick={() => { setShowRelationForm((v) => !v); loadDomainAssetsForRelation(); }}>
             {showRelationForm ? ta.cancel : ta.addRelation}
-          </Button>
+          </Button>}
         </div>
-        {showRelationForm && (
+        {relationError && <p role="alert">{relationError}</p>}
+        {showRelationForm && canEditRelations && (
           <Card variant="outlined" className="mb-4">
             <div className="bpm-card-body p-4">
               <form onSubmit={handleAddRelation}>
@@ -506,7 +525,7 @@ export default function AssetDetailPage() {
                     label={ta.fieldRelationType}
                     value={newRelationType}
                     onChange={(v) => setNewRelationType(String(v))}
-                    options={Object.entries(RELATION_TYPE_LABELS).map(([value, label]) => ({ value, label }))}
+                    options={relationTypes(config).map(value => ({ value, label: relationLabel(value) }))}
                   />
                 </div>
                 <div className="mt-6">
@@ -526,24 +545,24 @@ export default function AssetDetailPage() {
           <EmptyState
             title={ta.emptyRelationsTitle}
             description={ta.emptyRelationsDescription}
-            action={<Button size="small" variant="outline" onClick={() => { setShowRelationForm(true); loadDomainAssetsForRelation(); }}>{ta.addRelation}</Button>}
+            action={canEditRelations && <Button size="small" variant="outline" onClick={() => { setShowRelationForm(true); loadDomainAssetsForRelation(); }}>{ta.addRelation}</Button>}
           />
         ) : (
           <ul className="space-y-2">
             {relations.map((rel) => {
               const isSource = rel.sourceAssetId === asset.id;
               const other = isSource ? rel.targetAsset : rel.sourceAsset;
-              const direction = isSource ? "→" : "←";
+              const direction = symmetricRelation(rel.relationType) ? "↔" : isSource ? "→" : "←";
               return (
                 <li key={rel.id} className="flex flex-wrap items-center gap-2 py-2 border-b border-[var(--bpm-border)] last:border-0 text-sm">
-                  <Badge variant="primary">{RELATION_TYPE_LABELS[rel.relationType] ?? rel.relationType}</Badge>
+                  <Badge variant="primary">{relationLabel(rel.relationType)}</Badge>
                   <span style={{ color: "var(--bpm-text-secondary)" }}>{direction}</span>
                   <Link href={`/modules/asset-manager/${domainId}/assets/${other.id}`} className="font-medium" style={{ color: "var(--bpm-accent-cyan)" }}>
                     {other.reference} — {other.label}
                   </Link>
-                  <Button size="small" variant="outline" onClick={() => handleDeleteRelation(rel.id)} className="ml-auto asset-manager-btn-compact">
+                  {canEditRelations && <Button size="small" variant="outline" onClick={() => handleDeleteRelation(rel.id)} className="ml-auto asset-manager-btn-compact">
                     {ta.delete}
-                  </Button>
+                  </Button>}
                 </li>
               );
             })}

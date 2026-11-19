@@ -208,7 +208,8 @@ const fr = {
       connected_to: "Connecté à",
       hosted_on: "Hébergé sur",
       fed_by: "Alimenté par",
-      controls: "Contrôle",
+      controls: "Contrôle", backed_up_by: "Sauvegardé par", protected_by: "Protégé par",
+      prints_to: "Imprime sur", upstream_of: "En amont de", shares_utility: "Utilité commune",
     } as Record<string, string>,
     lifecycleStages: {
       achat: "Achat",
@@ -419,7 +420,8 @@ const en: typeof fr = {
       connected_to: "Connected to",
       hosted_on: "Hosted on",
       fed_by: "Fed by",
-      controls: "Controls",
+      controls: "Controls", backed_up_by: "Backed up by", protected_by: "Protected by",
+      prints_to: "Prints to", upstream_of: "Upstream of", shares_utility: "Shares a utility",
     } as Record<string, string>,
     lifecycleStages: {
       achat: "Purchase",

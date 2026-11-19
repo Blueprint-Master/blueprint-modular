@@ -22,6 +22,8 @@ import { POST as returnLoan } from "@/app/api/asset-manager/assignments/[id]/ret
 import * as changeItem from "@/app/api/asset-manager/changes/[id]/route";
 import { POST as approveChange } from "@/app/api/asset-manager/changes/[id]/approve/route";
 import { POST as rejectChange } from "@/app/api/asset-manager/changes/[id]/reject/route";
+import * as relations from "@/app/api/asset-manager/ci-relations/route";
+import * as relationItem from "@/app/api/asset-manager/ci-relations/[id]/route";
 import * as changes from "@/app/api/asset-manager/changes/route";
 import * as knowledge from "@/app/api/asset-manager/knowledge/route";
 import * as knowledgeItem from "@/app/api/asset-manager/knowledge/[id]/route";
@@ -61,6 +63,45 @@ describe.skipIf(!url)("module API handlers with PostgreSQL", () => {
   afterAll(async () => {
     await postgres.user.deleteMany({ where: { id: { in: [owner, other] } } });
     await postgres.$disconnect();
+  });
+
+  it("preserves directional links and serializes symmetric CMDB relations across both asset records", async () => {
+    wikiRole = "ADMIN";
+    userId = owner;
+    const label = "QA-CMDB-" + randomUUID();
+    const asset = (domainId: string) => postgres.asset.create({ data: {
+      domainId, label, reference: randomUUID(), assetTypeId: "qa", statusId: "active", createdById: owner,
+    } });
+    const [a, b, m] = await Promise.all([asset("it"), asset("it"), asset("maintenance")]);
+    const create = (sourceAssetId: string, targetAssetId: string, relationType: string) =>
+      relations.POST(request("/", "POST", { domainId: "it", sourceAssetId, targetAssetId, relationType }));
+    try {
+      expect((await create(a.id, m.id, "connected_to")).status).toBe(400);
+      expect((await create(a.id, a.id, "connected_to")).status).toBe(400);
+      expect((await create(a.id, b.id, "unknown")).status).toBe(400);
+      const paired = await Promise.all([create(a.id, b.id, "connected_to"), create(b.id, a.id, "connected_to")]);
+      expect(paired.map(r => r.status).sort()).toEqual([200, 409]);
+      const pair = await paired.find(r => r.ok)!.json();
+      expect((await create(a.id, b.id, "prints_to")).status).toBe(200);
+      expect((await create(b.id, a.id, "prints_to")).status).toBe(200);
+      const list = async (query: string) => (await relations.GET(request("/?domainId=it&" + query))).json();
+      expect(await list("assetId=" + b.id)).toHaveLength(3);
+      const direction = await list("sourceAssetId=" + a.id + "&targetAssetId=" + b.id);
+      expect(direction.every((row: { targetAssetId: string }) => row.targetAssetId === b.id)).toBe(true);
+      wikiRole = "USER";
+      expect((await relationItem.GET(request("/"), context(pair.id))).status).toBe(200);
+      expect((await relationItem.DELETE(request("/", "DELETE"), context(pair.id))).status).toBe(403);
+      wikiRole = "ADMIN";
+      const remove = () => relationItem.DELETE(request("/", "DELETE"), context(pair.id));
+      expect((await Promise.all([remove(), remove()])).map(r => r.status).sort()).toEqual([200, 404]);
+      expect(await postgres.auditLog.count({ where: { resourceId: pair.id } })).toBe(2);
+      await postgres.asset.delete({ where: { id: a.id } });
+      expect(await list("assetId=" + b.id)).toEqual([]);
+    } finally {
+      wikiRole = "USER";
+      await postgres.asset.deleteMany({ where: { label } });
+      await postgres.auditLog.deleteMany({ where: { userId: owner, resourceType: "relation" } });
+    }
   });
 
   it("records one CAB vote per member and review, enforces the quorum and retains the decision on restart", async () => {
