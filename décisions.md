@@ -93,3 +93,15 @@ Chaque création porte un UUID fourni par le client. La même requête peut êtr
 **Recette Chromium sur le serveur standalone.** Un compte de recette a ouvert l’atelier depuis la fiche du module, créé un post-it par Ctrl+Entrée puis édité son texte. Une écriture concurrente a affiché la contribution du collègue et conservé le brouillon en cours. La reprise explicite a enregistré le brouillon puis la carte a rejoint « Action ». Après arrêt et redémarrage du serveur et nouvelle connexion, la carte était toujours dans « Action ». Le refus de confirmation a conservé la carte et la suppression confirmée l’a retirée. Les polices distantes ont été remplacées localement pendant cette recette fonctionnelle.
 
 **Prochain module.** Templates. Les deux boutons « Créer » du catalogue et du simulateur n’exécutent qu’un toast. La recette doit vérifier le contenu d’un document effectivement produit par chacun des trois modèles.
+
+## Templates — génération et téléchargement de documents
+
+Les deux entrées du module déclenchent désormais la même génération de fichier. Le rapport mensuel et la fiche projet produisent du HTML UTF-8 imprimable et autonome. Le troisième modèle produit un brouillon de courriel MIME au format EML avec destinataire, objet et corps multiligne. L’ouverture et l’envoi éventuel relèvent du logiciel de messagerie de l’utilisateur. Le module utilise le disque du destinataire du téléchargement comme support de persistance. Aucun SMTP, stockage serveur ou migration n’est nécessaire.
+
+Les applications peuvent découvrir les champs par `GET /api/templates?locale=fr` puis télécharger le résultat de `POST /api/templates`. Les dates impossibles, les adresses incorrectes, les montants mal formés ou les champs manquants entraînent HTTP 400 avec le nom des champs. L’interface conserve la saisie pour correction.
+
+**Recette de l’API.** Les quatre tests de `tests/templates-document.test.ts` ont vérifié la découverte en anglais, les trois modèles, la date bissextile, les erreurs de saisie et deux rapports générés simultanément avec des données différentes. Les réponses contiennent les valeurs propres à chaque rapport. Le courriel de recette était adressé à qa@example.test.
+
+**Recette Chromium du paquet standalone.** Le navigateur a utilisé les deux formulaires publics, corrigé les champs indiqués et téléchargé les trois fichiers avec leurs noms accentués. Après fermeture du navigateur, les deux HTML ont été relus hors ligne (titre, responsable, montant ou échéance). Un lecteur MIME indépendant a retrouvé le destinataire de recette, l’objet accentué, le corps multiligne et le statut de brouillon. Aucun courriel n’a été expédié.
+
+**Prochain module.** Newsletter. Les articles sont déjà liés à leur auteur. Le paramétrage d’en-tête utilise une ligne commune à tous les comptes et l’initialisation de cette ligne se fait en deux opérations. Qualifier l’isolation, les écritures simultanées et le cycle de publication et d’archivage à partir de ces routes existantes.

@@ -1,9 +1,10 @@
 "use client";
 
 import React, { useState } from "react";
-import { Tabs, CodeBlock, Selectbox, Input, Button, useToast } from "@/components/bpm";
+import { Tabs, CodeBlock, Selectbox, Input, Textarea, Button } from "@/components/bpm";
 import { ModulePageHeader } from "@/components/site/ModulePageHeader";
 import { useI18n } from "@/lib/i18n/LocaleProvider";
+import { useTemplateDownload } from "./useTemplateDownload";
 import { STR } from "./strings";
 
 function DocContent() {
@@ -25,20 +26,11 @@ function SimuContent() {
   const s = STR[locale];
   const [selectedModel, setSelectedModel] = useState<string | null>(null);
   const [documentName, setDocumentName] = useState("");
-  const [formError, setFormError] = useState<string | null>(null);
+  const { formError, setFormError, busy, download } = useTemplateDownload();
   const [fieldValues, setFieldValues] = useState<Record<string, string>>({});
-  const { showToast } = useToast();
   const canCreate = Boolean(selectedModel && documentName.trim());
 
-  const handleCreate = () => {
-    if (!selectedModel || !documentName.trim()) {
-      setFormError(s.validationError);
-      return;
-    }
-    setFormError(null);
-    const modelLabel = s.templateOptions.find((o) => o.value === selectedModel)?.label ?? selectedModel;
-    showToast(s.toastCreated(documentName.trim(), modelLabel), "success", 5000, s.toastTitle, s.moduleName, null);
-  };
+  const handleCreate = () => download(selectedModel, documentName, fieldValues);
 
   return (
     <>
@@ -55,10 +47,12 @@ function SimuContent() {
           <>
             <Input label={s.documentNameLabel} placeholder={s.documentNamePlaceholder} value={documentName} onChange={setDocumentName} className="mt-4" />
             {(s.overviewFields[selectedModel] ?? []).map((f) => (
+              f.key === "corps" ? <Textarea key={f.key} label={f.label} aria-label={f.label} value={fieldValues[f.key] ?? ""} rows={4}
+                onChange={v => setFieldValues(prev => ({ ...prev, [f.key]: v }))} className="mt-4" /> :
               <Input key={f.key} label={f.label} placeholder={f.placeholder} value={fieldValues[f.key] ?? ""} onChange={(v) => setFieldValues((prev) => ({ ...prev, [f.key]: v }))} className="mt-4" />
             ))}
-            {formError && <p className="text-sm mt-3" style={{ color: "#e74c3c" }}>{formError}</p>}
-            <Button className="mt-4" onClick={handleCreate} disabled={!canCreate}>{s.createButton}</Button>
+            {formError && <p role="alert" className="text-sm mt-3" style={{ color: "#e74c3c" }}>{formError}</p>}
+            <Button className="mt-4" onClick={handleCreate} disabled={!canCreate || busy}>{s.createButton}</Button>
           </>
         )}
         {!selectedModel && <p className="text-sm mt-4" style={{ color: "var(--bpm-text-secondary)" }}>{s.emptyStateShort}</p>}
