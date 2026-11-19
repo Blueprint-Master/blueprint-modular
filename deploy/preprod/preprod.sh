@@ -38,6 +38,11 @@ die() { echo "ÉCHEC : $*" >&2; [ -d "$PUBLIC" ] && echo "ÉCHEC : $*" >> "$RAPP
 etape() { echo; echo "== $* ($(date -u +%H:%M:%SZ))"; echo "- $*" >> "$RAPPORT"; }
 
 [ "$(id -un)" = ubuntu ] || die "à lancer en ubuntu (pas en root, pas en claude-ops)"
+# Une seule installation à la fois : deux lancements simultanés se suppriment
+# mutuellement le répertoire de build (constaté le 19/11 : « uv_cwd ENOENT »).
+mkdir -p "$RACINE"
+exec 9>"$RACINE/.preprod.lock"
+flock -n 9 || { echo "ÉCHEC : une autre installation de préproduction est en cours" >&2; exit 1; }
 sudo -n true 2>/dev/null || die "jeton sudo absent : lancer 'sudo -v' juste avant"
 sudo install -d -m 755 -o ubuntu -g ubuntu "$PUBLIC"
 mkdir -p "$RACINE/logs"
