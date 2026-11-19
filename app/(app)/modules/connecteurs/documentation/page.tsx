@@ -20,6 +20,20 @@ export default function ConnecteursDocumentationPage() {
         <p className="doc-description">{S.docDescription}</p>
       </div>
 
+      <h2 className="text-lg font-semibold mt-6 mb-2">
+        {locale === "fr" ? "Utiliser le module dans votre application" : "Use the module in your application"}
+      </h2>
+      <p className="mb-4 text-sm">
+        {locale === "fr"
+          ? "Dans l’application extraite du ZIP, le serveur dispose de quatre opérations configurables. Il reçoit le coffre de l’application et, pour Google, un fournisseur de jeton d’accès. Le client ne reçoit aucune valeur d’identification. Configurez restOrigin pour votre API REST."
+          : "The server in the extracted application includes four configurable operations. Supply the application vault and, for Google, an access token provider. Credentials remain on the server. Set restOrigin for your REST API."}
+      </p>
+      <CodeBlock language="typescript" code={`import { runConnector } from "@/lib/connectors/runtime";
+
+const charges = await runConnector({ vault }, appId, "stripe", "listCharges", { limit: 10 });
+const rows = await runConnector({ vault, sheetsAccessToken }, appId,
+  "google-sheets", "readRange", { range: "Sheet1!A1:C50" });`} />
+
       <h2 className="text-lg font-semibold mt-6 mb-2" style={{ color: "var(--bpm-text-primary)" }}>
         {S.docTypesTitle}
       </h2>
@@ -73,6 +87,23 @@ export default function ConnecteursDocumentationPage() {
         <code>paused</code>
         {S.sched2}
       </p>
+
+      <h2 className="text-lg font-semibold mt-6 mb-2">Python · REST / SFTP / PostgreSQL / MySQL</h2>
+      <CodeBlock language="python" code={`from bpm import source_imports as imports
+
+# db: application SQLite store. connection: authenticated psycopg connection.
+db = imports.open_store("imports.sqlite")
+source = "erp"
+current = imports.snapshot(db, source)
+revision = current["revision"] if current else 0
+imports.sync(db, source, "id",
+    lambda: imports.read_table(connection, "postgresql", "sales", ["id", "amount"]),
+    expected_revision=revision)
+
+# PyMySQL: read_table(connection, "mysql", "sales", ["id", "amount"])
+# Paramiko: read_sftp(sftp, "/exports/sales.csv") on a verified SSH connection
+# urllib: read_rest(response) on an authenticated JSON HTTP response
+print(imports.snapshot(db, source))`} />
 
       <p className="mt-6 text-sm" style={{ color: "var(--bpm-text-secondary)" }}>
         <Link

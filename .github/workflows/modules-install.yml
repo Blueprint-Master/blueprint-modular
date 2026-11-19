@@ -19,6 +19,16 @@ jobs:
         ports:
           - 5432/tcp
         options: --health-cmd pg_isready --health-interval 5s --health-timeout 5s --health-retries 10
+      mysql:
+        image: mysql:8.4
+        env:
+          MYSQL_RANDOM_ROOT_PASSWORD: 'yes'
+          MYSQL_DATABASE: modules_test
+          MYSQL_USER: modular
+          MYSQL_PASSWORD: import-fixture
+        ports:
+          - 3306/tcp
+        options: --health-cmd="mysqladmin ping -h 127.0.0.1" --health-interval=5s --health-timeout=5s --health-retries=20
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
@@ -53,12 +63,20 @@ jobs:
           export MODULAR_TEST_CHROMIUM="$(command -v google-chrome)"
           "$RUNNER_TEMP/module-browser/bin/python" scripts/verify-installed-analysis.py "$RUNNER_TEMP/install/application"
       - name: Exercise the wheel and inspect the packed npm exports from the installed ZIP
+        env:
+          MODULAR_IMPORT_PROTOCOLS: '1'
+          MODULAR_IMPORT_POSTGRES: postgresql://modular:fixture@127.0.0.1:${{ job.services.postgres.ports[5432] }}/modules_test
+          MODULAR_IMPORT_MYSQL_PORT: ${{ job.services.mysql.ports[3306] }}
+          MODULAR_IMPORT_MYSQL_PASSWORD: import-fixture
         run: |
           cd "$RUNNER_TEMP/install/application"
-          bash scripts/build-python-runtime.sh
+          npm ci --prefix bpm/frontend --ignore-scripts --no-audit --no-fund
+          npm run build --prefix bpm/frontend
+          test -x /usr/lib/openssh/sftp-server || { sudo apt-get update -qq && sudo apt-get install -y openssh-sftp-server; }
           python3 -m pip wheel --no-deps . -w "$RUNNER_TEMP/release"
           (cd packages/core && npm pack --pack-destination "$RUNNER_TEMP/release")
           "$RUNNER_TEMP/module-browser/bin/pip" install --no-deps "$RUNNER_TEMP/release/"*.whl
+          "$RUNNER_TEMP/module-browser/bin/pip" install 'psycopg[binary]>=3.1,<4' 'pymysql[rsa]>=1.1,<2' 'paramiko>=3,<5'
           "$RUNNER_TEMP/module-browser/bin/python" -I -m unittest discover -s "$GITHUB_WORKSPACE/tests/python" -v
           python3 "$GITHUB_WORKSPACE/scripts/verify-module-distributions.py" "$RUNNER_TEMP/release/"blueprint-modules-v*.zip "$RUNNER_TEMP/release/"*.whl "$RUNNER_TEMP/release/"*.tgz
       - uses: actions/upload-artifact@v4
