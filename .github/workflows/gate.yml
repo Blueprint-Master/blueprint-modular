@@ -11,6 +11,7 @@ on:
     branches:
       - master
       - codex/modules-metier-fiabilite
+      - codex/modules-validation-distribution
   # Déclenchement explicite sur une branche : nécessaire pour les branches
   # poussées par un agent avec GITHUB_TOKEN — GitHub ne déclenche AUCUN
   # workflow sur ces pushes (garde anti-récursion), mais workflow_dispatch

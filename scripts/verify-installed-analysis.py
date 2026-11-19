@@ -188,7 +188,7 @@ def run():
         receiver.shutdown()
         receiver.server_close()
         subprocess.run(["node", "-e", "const db=new(require('@prisma/client').PrismaClient)();db.user.delete({where:{email:process.env.MODULAR_QA_EMAIL}}).finally(()=>db.$disconnect())"], cwd=APP, env=env, check=True)
-    print("Contracts, Documents and AI passed on the installed server, including persistence across restart.")
+    print("Contracts, Documents, AI, Reports and Dashboards passed on the installed server across restart.")
 
 
 if __name__ == "__main__":
