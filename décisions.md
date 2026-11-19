@@ -299,3 +299,46 @@ Les instantanés avant/après restent accessibles aux administrateurs et propri�
 La commande distribuée `deploy/backup-postgres.sh` construit un dump PostgreSQL privé et le décode intégralement avant sa publication dans le répertoire de la base. Un dump incomplet ne prend pas la place d’une archive valide. Seuls les fichiers de sauvegarde nommés par le script atteignant trente jours dans ce répertoire sont soumis à la rétention. La restauration exige une base vide et utilise une transaction. Les fichiers téléversés et les paramètres d’installation doivent aussi être sauvegardés par l’exploitant. Les commandes figurent dans `docs/DATABASE.md`.
 
 **Recette de livraison.** Le test « Restore inventory and audit in a separate database » utilise les clients du conteneur PostgreSQL 16 de CI. Il couvre la restauration d’un portable, de sa mémoire, de l’auteur et du reçu d’audit, l’archive tronquée, la cible déjà occupée, les permissions du fichier et la rétention. Les scripts ont passé la vérification de syntaxe Bash. La restauration effective sur cette révision est à confirmer dans le job CI. Le cron quotidien de sauvegarde relève de l’installation.
+
+## Rapprochement des 32 modules entre branches de revue
+
+Point du 19 novembre à 08 h 47, heure de Paris. La PR 260 porte les parcours ci-dessous sur `c23590ad`. La lecture de `décisions.md` sur les têtes `97f7a415` (PR 261) et `bcec095e` (PR 262) établit les apports des deux suites. Ces PR s’empilent et évoluent en parallèle. Un parcours Python installé dans une application et un parcours interactif Next.js peuvent couvrir deux usages du même module. Chaque module compte une fois. À ces révisions, vingt-neuf des trente-deux ont au moins une opération métier documentée au-delà de la démonstration. La qualification de bout en bout sur une version commune reste ouverte.
+
+| Module du catalogue | Recette métier identifiée | Branche de preuve |
+|---|---|---|
+| Gestion de parc | Fiche, prêt, retour, ticket, connaissances, CAB, CMDB, mouvements, contrats, escalade et journal. Restauration et droits suivis dans ce fichier. | 260 |
+| Journal d’audit | Filtrage et export du journal applicatif, événement transactionnel et relecture après suppression d’une tâche. | 261 et 262 |
+| Authentification | Inscription, courriel de recette, connexion et révocation. Le parcours avec le fournisseur Google de l’exploitant reste ouvert. | 260 |
+| Calendrier | Événement personnel, intervalle de dates et correction concurrente. | 260 |
+| Catalogue produits | SKU, EAN, mouvements et deux réservations de la dernière unité. | 261 |
+| Commentaires | Fil d’un article Wiki et opérations de ses auteurs. | 260 |
+| Connecteurs | Recette métier installée à rapprocher de la tête suivante. | À vérifier |
+| Base contractuelle | Import simultané, analyse du PDF, panne du fournisseur, reprise de la fiche. | 261 et 262 |
+| Devis-facturation | Acceptation concurrente, facture unique, deux règlements et pièce imprimable. | 261 |
+| Documents | Import de pièces PDF, DOCX et TXT, stockage persistant et extraction. | 261 et 262 |
+| Export planifié | Exécution concurrente, SMTP de recette, pièce jointe et reçus persistants. | 260 |
+| Formulaire dynamique | Schéma versionné, soumission, options et décisions concurrentes. | 261 |
+| IA | Fournisseur local, interruption et reprise, historique des seuls tours aboutis. | 261 et 262 |
+| Keep screen on | Verrou de veille, durée, visibilité et libération dans une application React installée. | 260 |
+| Monitor | Installation du prompteur et conduite d’une séance PowerPoint. | 260 |
+| Multi-langue | Recette métier installée à rapprocher de la tête suivante. | À vérifier |
+| Newsletter | Création, édition, photo et archivage d’un article personnel. | 260 |
+| Notifications | Boîte personnelle, filtre et première lecture idempotente. | 260 |
+| Notifications ciblées | Règles qui se recouvrent, destinataires dédupliqués, lectures individuelles et envoi en file. | 261 |
+| Rapports | Agrégats Python sur données fournies, instantanés personnels et exports CSV dans le site. | 261 et 262 |
+| Référentiels | Données de référence utilisées par une commande, désactivation et traçabilité. | 261 |
+| Réservation / Créneaux | Réunion partagée, conflit de créneau, confidentialité du titre et annulation. | 260 |
+| Skeleton | Six états de chargement vérifiés dans un paquet installé. | 260 |
+| Tableau blanc | Atelier partagé, déplacement, correction concurrente et relecture après redémarrage. | 260 |
+| Tableaux de bord | Indicateurs composés depuis les rapports du compte, ordre et révision concurrente. | 262 |
+| Tâches | Assignation, transitions, retard, notification et suppression avec journal. | 261 et 262 |
+| Templates | Rapport, fiche projet et brouillon EML téléchargés et relus. | 260 |
+| Thèmes | Recette métier installée à rapprocher de la tête suivante. | À vérifier |
+| Veille | Sources HTTP locales, collecte concurrente, contenu inchangé, panne et reprise. | 261 |
+| Webhooks | Livraison HTTPS signée, erreur 503 puis reprise avec le même identifiant. | 260 |
+| Wiki | Édition, versions, restauration, liens entrants et export ZIP. | 260 |
+| Workflow | Transitions personnelles et journal persistants. L’approbation partagée reste à qualifier. | 260 |
+
+**Production observée.** Le catalogue public de l’application et `/api/health` ont répondu HTTP 200. La valeur `1.0.0` exposée par la sonde correspond à la version du connecteur. Les deux adresses `/version.txt` sur le site et l’application ont répondu HTTP 404. Le commit du serveur reste indéterminé. Les PR ouvertes et les archives installées en recette ne constituent pas une preuve de publication du paquet ou du déploiement du commit.
+
+**Restauration observée en CI.** Dans le run 44481919451 de `c23590ad`, l’étape « Restore inventory and audit in a separate database » a réussi. Une base vide a retrouvé « Portable restauration », 32 Go, l’auteur de recette et son reçu de création. L’archive tronquée a laissé la cible vide et la restauration répétée sur une base occupée a été refusée. Le job distinct d’installation des 32 modules depuis le ZIP a également réussi.
