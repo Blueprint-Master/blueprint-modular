@@ -41,7 +41,7 @@ echo "Préproduction Modular — $(date -u +%d/%m/%Y\ %H:%M:%SZ)" >> "$RAPPORT"
 
 certificat() {
   local resolu
-  resolu=$(getent ahostsv4 "$DOMAINE" | awk 'NR==1{print $1}')
+  resolu=$(getent ahostsv4 "$DOMAINE" | awk 'NR==1{print $1}' || true)
   if [ "$resolu" != "$IP_SERVEUR" ]; then
     echo "DNS : $DOMAINE ne résout pas vers $IP_SERVEUR (lu : '${resolu:-rien}')." | tee -a "$RAPPORT"
     echo "Enregistrement à créer : $DOMAINE. A $IP_SERVEUR (TTL 300), puis : bash $0 --certificat" | tee -a "$RAPPORT"
@@ -202,7 +202,7 @@ done
 echo "$SANTE" | grep -q '"ok"' || die "santé locale KO : '$SANTE'"
 echo "  /api/health : $SANTE" >> "$RAPPORT"
 
-if [ "$(getent ahostsv4 "$DOMAINE" | awk 'NR==1{print $1}')" = "$IP_SERVEUR" ]; then
+if [ "$(getent ahostsv4 "$DOMAINE" | awk 'NR==1{print $1}' || true)" = "$IP_SERVEUR" ]; then
   code=$(curl -sS -o /dev/null -w '%{http_code}' "https://$DOMAINE/api/health" || true)
   echo "  HTTPS public /api/health : $code" >> "$RAPPORT"
 fi
