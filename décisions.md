@@ -259,3 +259,11 @@ La fiche d’inventaire permet de corriger les données et les attributs spécif
 **Preuves.** « edits inventory and its attributes in one revision and records the complete lifecycle audit » figure parmi les 24 tests passés sur PostgreSQL 16.15 après installation depuis zéro. Dans Chromium, un opérateur a porté la mémoire d’un portable de 32 à 64 Go alors qu’un second client changeait son nom. Après résolution du conflit et redémarrage du serveur standalone, le nom, la mémoire et l’attribut historique ont été relus. Le retrait depuis la fiche a conservé la dernière version de l’équipement dans le journal. Le parcours a utilisé les données et le compte de recette uniquement.
 
 **Suite.** Reprendre la consultation et la pagination du journal sur la branche de la PR 260.
+
+## Gestion de parc — retrouver une opération dans le journal
+
+La liste est filtrable par période, action, type et identifiant de ressource. La date de fin inclut toute la journée UTC. Le curseur combine la date de l’opération et son identifiant pour départager des écritures simultanées. L’application peut récupérer la page suivante dans l’en-tête `X-Next-Cursor`. L’écran permet de relire l’auteur et les états avant et après, y compris pour une fiche supprimée.
+
+**Preuves.** « pages a filtered audit by timestamp and id while newer entries arrive » couvre trois écritures simultanées, l’arrivée d’une opération après la première page, les limites de date et de domaine, la date impossible, le curseur invalide et la session absente. Les 25 tests PostgreSQL 16.15 ont réussi après application des migrations sur une base vide. Sur le serveur standalone, Chromium a filtré l’historique d’un portable de recette, retrouvé ses deux opérations et ouvert le contenu conservé avant suppression. Après redémarrage et nouvelle connexion, la même opération et son auteur restaient consultables.
+
+**État.** La CI de la révision contrats `84995c55` a réussi, installation du ZIP comprise (run 44478656770). La révision inventaire `632aabd9` est en revue. Le chantier se poursuit avec la cohérence des échéances de tickets entre le tableau de bord, la liste et la fiche, ainsi que l’accès aux tickets anciens.

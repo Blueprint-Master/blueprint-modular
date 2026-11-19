@@ -16,6 +16,7 @@ vi.mock("@/lib/auth", () => ({
   getSessionOrTestUser: async () => userId ? { user: { id: userId, role: wikiRole } } : null,
   getPersonalModuleSession: async () => userId ? { user: { id: userId, role: wikiRole } } : null,
 }));
+import { GET as auditPage } from "@/app/api/asset-manager/audit-log/route";
 import { POST as issue } from "@/app/api/asset-manager/assignments/route";
 import { PUT as editLoan } from "@/app/api/asset-manager/assignments/[id]/route";
 import { POST as returnLoan } from "@/app/api/asset-manager/assignments/[id]/return/route";
@@ -70,6 +71,35 @@ describe.skipIf(!url)("module API handlers with PostgreSQL", () => {
     await postgres.auditLog.deleteMany({ where: { userId: { in: [owner, other] } } });
     await postgres.user.deleteMany({ where: { id: { in: [owner, other] } } });
     await postgres.$disconnect();
+  });
+
+  it("pages a filtered audit by timestamp and id while newer entries arrive", async () => {
+    const resourceId = randomUUID();
+    const details = { resourceId, domainId: "it", resourceType: "asset", action: "delete", userId: owner, beforeState: '{"label":"QA"}' };
+    const timestamp = new Date("2026-11-17T16:00:00Z");
+    const search = "/?resourceId=" + resourceId + "&domainId=it&resourceType=asset&action=delete&from=2026-11-17&to=2026-11-17&limit=2";
+    userId = owner;
+    await postgres.auditLog.createMany({ data: [
+      ...Array.from({ length: 3 }, () => ({ ...details, timestamp })),
+      { ...details, timestamp: new Date("2026-11-18T00:00:00Z") },
+      { ...details, domainId: "maintenance", timestamp },
+    ] });
+    const expected = await postgres.auditLog.findMany({ where: { resourceId, domainId: "it", timestamp }, orderBy: { id: "desc" } });
+    const first = await auditPage(request(search));
+    const rows = await first.json();
+    expect(rows.map((row: { id: string }) => row.id)).toEqual(expected.slice(0, 2).map(row => row.id));
+    expect(rows[0]).toMatchObject({ userId: owner, beforeState: details.beforeState });
+    const cursor = first.headers.get("X-Next-Cursor");
+    expect(cursor).toBeTruthy();
+    await postgres.auditLog.create({ data: { ...details, timestamp: new Date("2026-11-17T23:59:59Z") } });
+    const last = await auditPage(request(search + "&cursor=" + cursor));
+    expect((await last.json()).map((row: { id: string }) => row.id)).toEqual([expected[2].id]);
+    expect(last.headers.get("X-Next-Cursor")).toBeNull();
+    for (const query of ["from=2026-02-30", "from=2026-11-18&to=2026-11-17", "cursor=invalid"]) {
+      expect((await auditPage(request("/?" + query))).status).toBe(400);
+    }
+    userId = null;
+    expect((await auditPage(request(search))).status).toBe(401);
   });
 
   it("reserves contract references per domain and keeps deadlines, notice and coverage consistent across edits", async () => {

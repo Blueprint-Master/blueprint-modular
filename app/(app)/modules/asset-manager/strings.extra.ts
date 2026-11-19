@@ -101,7 +101,7 @@ const extraFr = {
       change: "Changement",
       assignment: "Mise à disposition",
       contract: "Contrat",
-      relation: "Relation",
+      relation: "Relation", movement: "Mouvement",
     } as Record<string, string>,
   },
   cmdb: {
@@ -536,7 +536,7 @@ const extraEn: typeof extraFr = {
       change: "Change",
       assignment: "Assignment",
       contract: "Contract",
-      relation: "Relation",
+      relation: "Relation", movement: "Movement",
     } as Record<string, string>,
   },
   cmdb: {
