@@ -98,6 +98,7 @@ model Organization {
   createdAt   DateTime  @default(now()) @map("created_at")
   updatedAt   DateTime  @updatedAt @map("updated_at")
 
+  whiteboardNotes  WhiteboardNote[]
   members         OrgMember[]
   workspaces      Workspace[]
   wikis           WikiArticle[]
@@ -765,4 +766,22 @@ model EnrollmentChallenge {
   sentAt    DateTime
   expiresAt DateTime
   @@index([sentAt])
+}
+
+model WhiteboardNote {
+  id             String @id
+  organizationId String
+  board          String
+  authorId       String
+  authorName     String
+  content        String
+  column         String
+  creationDigest String
+  revision       Int @default(0)
+  removed        Boolean @default(false)
+  createdAt      DateTime @default(now())
+  positionAt     DateTime @default(now())
+  organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+
+  @@index([organizationId, board, removed, positionAt])
 }

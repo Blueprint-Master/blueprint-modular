@@ -79,3 +79,17 @@ Les variantes tableau de bord, liste, article, formulaire, fiche et graphique ut
 **Installation et livraison.** Le workflow de la PR construit le runtime, installe le wheel, exécute cette recette et joint le paquet au run. Pour préparer une installation depuis un checkout, lancer `bash scripts/build-python-runtime.sh` avant de fabriquer le wheel. Une installation directement depuis les sources sans cette étape réutilise les anciens fichiers statiques. Le workflow PyPI reconstruit également le runtime lors d’un tag de publication. Aucun tag de publication ni déploiement de production n’a été effectué pour cette recette. La CI du commit précédent, couvrant notamment l’authentification et les commentaires, est verte (run 44431611456).
 
 **Prochain module.** Tableau blanc.
+
+## Tableau blanc — atelier partagé par organisation
+
+Le simulateur conserve ses exemples. L’entrée « Ouvrir le tableau d’équipe » donne accès à des tableaux persistants, chacun identifié par l’organisation et le nom de l’atelier. Un membre peut ajouter, modifier, déplacer ou supprimer un post-it. La page et les applications utilisent `/api/whiteboards/{organizationId}/{board}`. L’atelier enregistre le nom d’affichage au moment de la contribution. Le départ d’un participant conserve les travaux de l’équipe et la suppression de l’organisation efface ses tableaux.
+
+Chaque création porte un UUID fourni par le client. La même requête peut être rejouée sans doubler le post-it. Une suppression conserve un marqueur pour empêcher une ancienne création de ressusciter la carte. L’édition et le déplacement exigent la révision lue. En cas de conflit, la page présente la version actuelle à côté du brouillon, que l’utilisateur peut reprendre explicitement.
+
+**Recette PostgreSQL.** Le test « shares whiteboard notes inside one workshop, with retry and revision checks » a tourné sur PostgreSQL 16.15 après installation des migrations depuis zéro. Deux créations concurrentes ont produit une carte. Deux modifications de la même révision ont donné un succès et un conflit. Un second membre a déplacé, corrigé puis supprimé la carte. Les lectures d’un autre atelier, l’accès sans adhésion, les valeurs invalides et le rejeu après suppression ont été vérifiés.
+
+**Installation.** Appliquer `prisma migrate deploy` avant de lancer le serveur compilé. L’accès à l’atelier requiert un compte membre d’une organisation. Le module n’envoie aucun message aux participants.
+
+**Recette Chromium sur le serveur standalone.** Un compte de recette a ouvert l’atelier depuis la fiche du module, créé un post-it par Ctrl+Entrée puis édité son texte. Une écriture concurrente a affiché la contribution du collègue et conservé le brouillon en cours. La reprise explicite a enregistré le brouillon puis la carte a rejoint « Action ». Après arrêt et redémarrage du serveur et nouvelle connexion, la carte était toujours dans « Action ». Le refus de confirmation a conservé la carte et la suppression confirmée l’a retirée. Les polices distantes ont été remplacées localement pendant cette recette fonctionnelle.
+
+**Prochain module.** Templates. Les deux boutons « Créer » du catalogue et du simulateur n’exécutent qu’un toast. La recette doit vérifier le contenu d’un document effectivement produit par chacun des trois modèles.

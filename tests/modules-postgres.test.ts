@@ -13,6 +13,7 @@ vi.mock("@/lib/auth", () => ({
 }));
 import { GET as workflow } from "@/app/api/workflow/entity/[id]/route";
 import { POST as advance } from "@/app/api/workflow/entity/[id]/transition/route";
+import * as board from "@/app/api/whiteboards/[organizationId]/[board]/route";
 import * as comments from "@/app/api/wiki/[slug]/comments/route";
 import * as reservations from "@/app/api/reservations/route";
 import * as calendar from "@/app/api/calendar/route";
@@ -32,6 +33,47 @@ describe.skipIf(!url)("module API handlers with PostgreSQL", () => {
   afterAll(async () => {
     await postgres.user.deleteMany({ where: { id: { in: [owner, other] } } });
     await postgres.$disconnect();
+  });
+
+  it("shares whiteboard notes inside one workshop, with retry and revision checks", async () => {
+    const organizationId = randomUUID();
+    await postgres.organization.create({ data: { id: organizationId, slug: organizationId, name: "Recette",
+      members: { create: { userId: owner } } } });
+    const ctx = { params: Promise.resolve({ organizationId, board: "retro" }) };
+    const list = () => board.GET(request("/"), ctx);
+    const input = { id: randomUUID(), content: " Qualité ", column: "bien" };
+    const post = (body: object) => board.POST(request("/", "POST", body), ctx);
+    const edit = (body: object) => board.PATCH(request("/", "PATCH", body), ctx);
+    const del = (revision: number) => board.DELETE(request("/", "DELETE", { id: input.id, revision }), ctx);
+    try {
+      userId = null;
+      expect((await list()).status).toBe(401);
+      userId = other;
+      expect((await post(input)).status).toBe(403);
+      userId = owner;
+      expect((await post({ ...input, content: " " })).status).toBe(400);
+      expect((await post({ ...input, column: "inconnue" })).status).toBe(400);
+      const results = await Promise.all([post(input), post(input)]);
+      expect(results.map(r => r.status).sort()).toEqual([200, 201]);
+      expect((await post({ ...input, content: "Autre" })).status).toBe(409);
+      expect(await (await list()).json()).toEqual([expect.objectContaining({ id: input.id, content: "Qualité", revision: 0 })]);
+      const second = { params: Promise.resolve({ organizationId, board: "achats" }) };
+      expect(await (await board.GET(request("/"), second)).json()).toEqual([]);
+      await postgres.orgMember.create({ data: { organizationId, userId: other } });
+      userId = other;
+      const changes = await Promise.all([edit({ id: input.id, revision: 0, column: "action" }),
+        edit({ id: input.id, revision: 0, content: "Corrigé" })]);
+      expect(changes.map(r => r.status).sort()).toEqual([204, 409]);
+      expect((await edit({ id: input.id, revision: 1, column: "action", content: "Validé" })).status).toBe(204);
+      expect(await (await list()).json()).toEqual([expect.objectContaining({ revision: 2, column: "action", content: "Validé" })]);
+      expect((await del(1)).status).toBe(409);
+      expect((await del(2)).status).toBe(204);
+      expect(await (await list()).json()).toEqual([]);
+      userId = owner;
+      expect((await post(input)).status).toBe(409);
+    } finally {
+      await postgres.organization.delete({ where: { id: organizationId } });
+    }
   });
 
   it("keeps one article comment per submission and preserves replies during concurrent changes", async () => {
