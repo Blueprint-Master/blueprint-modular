@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import { readResponse } from "../../../lib/read-response";
 import Link from "next/link";
 import { useParams } from "next/navigation";
 import { Panel, Button, Spinner, Selectbox, Badge, Card, Divider, Progress } from "@/components/bpm";
@@ -11,6 +12,7 @@ import { STR, dateLocale } from "../../../strings";
 type Ticket = {
   id: string;
   reference: string;
+  updatedAt: string;
   typeId: string;
   title: string;
   description: string;
@@ -52,6 +54,8 @@ export default function AssetManagerTicketDetailPage() {
   const [config, setConfig] = useState<DomainConfig | null>(null);
   const [ticket, setTicket] = useState<Ticket | null>(null);
   const [loading, setLoading] = useState(true);
+  const [conflict, setConflict] = useState<Ticket | null>(null);
+  const [error, setError] = useState("");
   const [saving, setSaving] = useState(false);
   const [editStatus, setEditStatus] = useState("");
   const [editSolution, setEditSolution] = useState("");
@@ -59,8 +63,8 @@ export default function AssetManagerTicketDetailPage() {
   useEffect(() => {
     if (!domainId || !id) return;
     Promise.all([
-      fetch(`/api/asset-manager/config/${domainId}`, { credentials: "include" }).then((r) => (r.ok ? r.json() : null)),
-      fetch(`/api/asset-manager/tickets/${id}`, { credentials: "include" }).then((r) => (r.ok ? r.json() : null)),
+      fetch(`/api/asset-manager/config/${domainId}`, { credentials: "include" }).then(readResponse),
+      fetch(`/api/asset-manager/tickets/${id}`, { credentials: "include" }).then(readResponse),
     ])
       .then(([cfg, tk]) => {
         setConfig(cfg);
@@ -70,24 +74,33 @@ export default function AssetManagerTicketDetailPage() {
           setEditSolution(tk.solution ?? "");
         }
       })
+      .catch(err => setError(err instanceof Error ? err.message : String(err)))
       .finally(() => setLoading(false));
   }, [domainId, id]);
 
   const handleSave = () => {
-    if (!ticket || saving) return;
+    if (!ticket || saving || conflict) return;
+    setError("");
     setSaving(true);
     fetch(`/api/asset-manager/tickets/${id}`, {
       method: "PUT",
       headers: { "Content-Type": "application/json" },
       credentials: "include",
-      body: JSON.stringify({ status: editStatus, solution: editSolution || null }),
+      body: JSON.stringify({ expectedUpdatedAt: ticket.updatedAt, status: editStatus, solution: editSolution || null }),
     })
-      .then((r) => (r.ok ? r.json() : null))
+      .then(async response => {
+        if (response.status === 409) {
+          const current = await fetch(`/api/asset-manager/tickets/${id}`, { credentials: "include", cache: "no-store" }).then(readResponse);
+          setConflict(current);
+        }
+        return readResponse(response);
+      })
       .then((updated) => {
         if (updated) setTicket(updated);
         setEditStatus(updated?.status ?? editStatus);
         setEditSolution(updated?.solution ?? editSolution);
       })
+      .catch(err => setError(err instanceof Error ? err.message : String(err)))
       .finally(() => setSaving(false));
   };
 
@@ -98,7 +111,7 @@ export default function AssetManagerTicketDetailPage() {
   if (!ticket) {
     return (
       <div className="doc-page">
-        <Panel variant="warning" title={tt.notFoundTitle}>{tt.notFoundDescription}</Panel>
+        <Panel variant="warning" title={tt.notFoundTitle}>{error || tt.notFoundDescription}</Panel>
         <FicheNav backLink={`/modules/asset-manager/${domainId}/tickets`} backLabel={tt.backToList} />
       </div>
     );
@@ -118,6 +131,14 @@ export default function AssetManagerTicketDetailPage() {
 
   return (
     <div className="doc-page">
+      {error && <p role="alert">{error}</p>}
+      {conflict && <div role="status">
+        <strong>{locale === "fr" ? "Version actuelle" : "Current version"} · {tt.statusLabels[conflict.status] || conflict.status}</strong>
+        <p className="whitespace-pre-wrap">{conflict.solution}</p>
+        <Button variant="outline" onClick={() => { setTicket(conflict); setConflict(null); setError(""); }}>
+          {locale === "fr" ? "Reprendre ma saisie" : "Resume my edits"}
+        </Button>
+      </div>}
       <FicheHeader
         breadcrumb={
           <>

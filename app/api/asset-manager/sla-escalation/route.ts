@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { getSessionOrTestUser } from "@/lib/auth";
+import { getPersonalModuleSession } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { getDomainConfig } from "@/lib/asset-manager/get-domain-config";
 
@@ -11,7 +11,7 @@ export const dynamic = "force-dynamic";
  * Utilisable par un job planifié (cron) pour notifications / escalade.
  */
 export async function GET(request: Request) {
-  const result = await getSessionOrTestUser();
+  const result = await getPersonalModuleSession();
   if (!result) return NextResponse.json({ error: "Non autorisé" }, { status: 401 });
 
   const { searchParams } = new URL(request.url);
@@ -34,17 +34,17 @@ export async function GET(request: Request) {
       status: true,
       priorityId: true,
       openedAt: true,
+      slaDueAt: true,
     },
-    take: 200,
+    orderBy: [{ openedAt: "asc" }, { id: "asc" }],
   });
 
   const atRisk = tickets.filter((t) => {
     const prio = priorities.find((p: { id: string; sla_hours?: number }) => p.id === t.priorityId);
     const slaHours = prio?.sla_hours ?? 48;
     const opened = new Date(t.openedAt).getTime();
-    const elapsed = (now - opened) / (1000 * 60 * 60);
-    const pct = (elapsed / slaHours) * 100;
-    return pct >= 80;
+    const due = t.slaDueAt?.getTime() ?? opened + slaHours * 3_600_000;
+    return now >= opened + 0.8 * (due - opened);
   });
 
   return NextResponse.json({

@@ -18,6 +18,9 @@ vi.mock("@/lib/auth", () => ({
 import { POST as issue } from "@/app/api/asset-manager/assignments/route";
 import { PUT as editLoan } from "@/app/api/asset-manager/assignments/[id]/route";
 import { POST as returnLoan } from "@/app/api/asset-manager/assignments/[id]/return/route";
+import * as tickets from "@/app/api/asset-manager/tickets/route";
+import * as ticketItem from "@/app/api/asset-manager/tickets/[id]/route";
+import { GET as warnings } from "@/app/api/asset-manager/sla-escalation/route";
 import * as inventory from "@/app/api/asset-manager/assets/route";
 import { GET as workflow } from "@/app/api/workflow/entity/[id]/route";
 import { POST as advance } from "@/app/api/workflow/entity/[id]/transition/route";
@@ -50,6 +53,38 @@ describe.skipIf(!url)("module API handlers with PostgreSQL", () => {
   afterAll(async () => {
     await postgres.user.deleteMany({ where: { id: { in: [owner, other] } } });
     await postgres.$disconnect();
+  });
+
+  it("keeps ticket numbers, deadlines and resolution dates coherent across concurrent edits and reopening", async () => {
+    userId = owner;
+    wikiRole = "ADMIN";
+    const title = "QA-ticket-" + randomUUID();
+    const body = { domainId: "it", title, description: "Lot isolé", priorityId: "critical" };
+    const add = (patch = {}) => tickets.POST(request("/", "POST", { ...body, ...patch }));
+    try {
+      expect((await add({ typeId: "inconnu" })).status).toBe(400);
+      const results = await Promise.all([add(), add()]);
+      expect(results.map(r => r.status)).toEqual([200, 200]);
+      const [a,b] = await Promise.all(results.map(r => r.json()));
+      expect(a.reference).not.toBe(b.reference);
+      expect(Date.parse(a.slaDueAt) - Date.parse(a.openedAt)).toBe(4 * 3_600_000);
+      const edit = (patch: object) => ticketItem.PUT(request("/", "PUT", patch), context(a.id));
+      const concurrent = await Promise.all(["en cours", "à suivre"].map(solution => edit({ solution, status: "in_progress", expectedUpdatedAt: a.updatedAt })));
+      expect(concurrent.map(r => r.status).sort()).toEqual([200, 409]);
+      const closed = await (await edit({ status: "closed" })).json();
+      expect(closed.takenAt && closed.resolvedAt && closed.closedAt).toBeTruthy();
+      expect((await (await edit({ status: "closed" })).json()).closedAt).toBe(closed.closedAt);
+      const reopened = await (await edit({ status: "in_progress" })).json();
+      expect(reopened.resolvedAt).toBeNull();
+      expect(reopened.closedAt).toBeNull();
+      await postgres.ticket.update({ where: { id: a.id }, data: { openedAt: new Date(Date.now() - 5 * 3_600_000), slaDueAt: new Date() } });
+      const report = await (await warnings(request("/?domainId=it"))).json();
+      expect(report.atRisk.some((t: { id: string }) => t.id === a.id)).toBe(true);
+      expect(report.atRisk.some((t: { id: string }) => t.id === b.id)).toBe(false);
+    } finally {
+      wikiRole = "USER";
+      await postgres.ticket.deleteMany({ where: { title } });
+    }
   });
 
   it("serializes loans and returns without changing the maintenance domain's operating status", async () => {
