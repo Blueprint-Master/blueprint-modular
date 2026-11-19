@@ -36,6 +36,10 @@ L’API Python lit le schéma JSON documenté. La soumission conserve la version
 
 Les tâches utilisent une échéance civile, un assigné et une révision qui protège les modifications concurrentes. Le test a vérifié la séquence à faire → en cours → terminé, le filtre de retard, la suppression et l’historique après réouverture. Une notification consulte les équipes fournies par l’application au premier enregistrement, déduplique les membres communs, conserve les boîtes individuelles et transmet les canaux externes au worker Webhooks. La recette a créé deux règles qui se recoupent, vérifié la séparation des lectures et attendu trois livraisons en file pour deux destinataires. L’accusé du prestataire final relève de l’adaptateur SMS ou e-mail configuré.
 
+## Catalogue produits et devis-facturation
+
+Le paquet Python gère les SKU et leurs variantes, les contrôles EAN-13 et les mouvements de stock idempotents. Deux réservations concurrentes de la dernière unité ont donné un seul retrait. Le devis et la facture gardent les coordonnées et montants historiques. Le passage en livraison attend un adaptateur configuré et l’état de l’envoi provient du journal du worker. Le test a fixé un prix hors taxe de 3,15 €, une TVA de 0,63 €, émis une seule facture pour deux acceptations et rapproché deux règlements de 2,00 € et 1,78 €. Le HTML imprimable a conservé le montant et échappé le libellé de l’article. La recette a utilisé un adaptateur isolé.
+
 ## Point de départ
 
 Le catalogue public de Blueprint Modular présente 32 modules et 64 liens de documentation ou de démonstration. Sur le passage HTTP complet, 63 destinations répondaient en 200. Le lien Documentation du calendrier ajoutait `/documentation` à l’URL du simulateur et donnait une 404. La recette de la branche retrouve les 64 destinations depuis le HTML du catalogue et vérifie leur réponse sur le serveur compilé.
