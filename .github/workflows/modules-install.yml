@@ -82,8 +82,8 @@ jobs:
       - name: Consume the npm package outside the project
         run: |
           consumer="$RUNNER_TEMP/npm-consumer"
-          mkdir -p "$consumer/node_modules/@blueprint-modular/core"
-          tar -xzf "$RUNNER_TEMP/release/"*.tgz --strip-components=1 -C "$consumer/node_modules/@blueprint-modular/core"
+          mkdir -p "$consumer"
+          npm install --prefix "$consumer" --ignore-scripts --no-audit --no-fund --legacy-peer-deps "$RUNNER_TEMP/release/"*.tgz
           cp scripts/verify-packed-modules.mjs "$consumer/check.mjs"
           node "$consumer/check.mjs"
       - uses: actions/upload-artifact@v4

@@ -37,3 +37,42 @@ node --experimental-strip-types --env-file=.env lib/asset-manager/escalate-sla.m
 ```
 
 L’exécution dépose les alertes dans les boîtes Notifications du domaine configuré et réaffecte le ticket au seuil prévu. Une intervention terminée sort du traitement. À la reprise, chaque seuil franchi est traité une fois pour l’échéance et la priorité du ticket. Les opérations sont consultables sous « Escalade SLA » dans le journal du parc. Un routage incomplet produit un code de sortie non nul avant traitement. Un opérateur peut corriger le fichier puis rejouer la commande. Le domaine maintenance livré ne définit aucun seuil automatique.
+
+## Parcours disponibles par module
+
+L’application Next.js utilise PostgreSQL. Les modules Python s’installent avec la roue et utilisent un fichier SQLite persistant par application ou organisation. Le paquet React se consomme avec npm. Le catalogue contient un exemple et une documentation pour chaque module.
+
+| Module | Parcours à vérifier à la réception | Exécution |
+|---|---|---|
+| Gestion de parc | Inventorier et prêter un équipement, suivre son incident, consulter l’audit et restaurer la sauvegarde | Application, PostgreSQL |
+| Authentification | Créer un compte et ouvrir une session personnelle | Application, PostgreSQL |
+| Wiki | Éditer une page, relire une ancienne version et la restaurer | Application, PostgreSQL |
+| Documents | Importer un PDF ou un DOCX et relire le document analysé après redémarrage | Application, volume de fichiers, fournisseur IA |
+| Base contractuelle | Importer un contrat, reprendre une analyse interrompue et consulter son résultat | Application, volume de fichiers, fournisseur IA |
+| Newsletter | Éditer une édition, gérer sa photo puis l’archiver | Application, PostgreSQL et fichiers |
+| IA | Démarrer une conversation et poursuivre son historique après redémarrage | Application, PostgreSQL, fournisseur IA |
+| Monitor | Ouvrir une séance du prompteur et suivre la progression des diapositives | Application et service prompteur |
+| Commentaires | Déposer et retrouver un commentaire sur un article Wiki | Application, PostgreSQL |
+| Calendrier | Créer, modifier et supprimer un événement personnel | Application, PostgreSQL |
+| Tableau blanc | Enregistrer un tableau partagé dans une organisation | Application, PostgreSQL |
+| Keep screen on | Acquérir, relâcher puis redemander le verrou après retour à l’écran | React, navigateur compatible, HTTPS |
+| Skeleton | Rendre les six dispositions de chargement depuis une application installée | Roue Python et interface embarquée |
+| Templates | Générer puis télécharger un document depuis un modèle | Application |
+| Workflow | Faire avancer un dossier et relire le journal de ses transitions | Application, PostgreSQL |
+| Thèmes | Charger le JSON d’un client et retrouver le thème par défaut si son attribution disparaît | React, entrée `./themes` |
+| Webhooks | Livrer un événement signé, constater le reçu et reprendre après échec | Python, SQLite, destinataire HTTPS |
+| Tableaux de bord | Enregistrer les indicateurs personnels et détecter une modification concurrente | Application, PostgreSQL |
+| Référentiels | Enregistrer une devise, un pays, une TVA ou une unité et préserver les références utilisées | Python, SQLite |
+| Rapports | Générer, conserver et exporter un état depuis des données réelles | Application et Python |
+| Réservation / Créneaux | Réserver une ressource et traiter un conflit de disponibilité | Application, PostgreSQL |
+| Veille | Collecter un flux RSS, une API JSON ou une page et dédupliquer les observations | Python, SQLite, sources HTTP |
+| Tâches | Assigner une tâche, notifier le destinataire puis suivre son avancement | Application, PostgreSQL ou Python |
+| Formulaire dynamique | Soumettre un schéma conditionnel et retrouver sa version et ses réponses | Python, SQLite |
+| Notification | Retrouver une notification personnelle et la marquer comme lue | Application, PostgreSQL |
+| Notifications ciblées | Router un événement vers une équipe et dédupliquer les livraisons | Python, SQLite, adaptateur pour e-mail ou SMS |
+| Connecteurs | Importer un jeu de données REST, SFTP, PostgreSQL ou MySQL, puis le relire | Python, connexions de l’application hôte |
+| Devis / Facturation | Convertir un devis, conserver la facture émise et rapprocher un paiement | Python, SQLite |
+| Export planifié | Déclencher l’export et contrôler la pièce jointe reçue par SMTP | Python, SQLite, relais SMTP |
+| Multi-langue | Charger des dictionnaires, interpoler et formater les valeurs avec repli par clé | React, entrée `./i18n` |
+| Catalogue produits | Gérer une variante et réconcilier deux demandes sur la dernière unité en stock | Python, SQLite |
+| Journal d’audit | Relire l’historique d’une tâche supprimée ou exporter des événements métier | Application et Python |

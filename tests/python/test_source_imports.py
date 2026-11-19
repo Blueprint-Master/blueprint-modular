@@ -1,4 +1,4 @@
-from contextlib import closing, contextmanager
+from contextlib import closing
 from http.server import BaseHTTPRequestHandler, HTTPServer
 from pathlib import Path
 import os
@@ -50,12 +50,24 @@ class SourceProtocols(unittest.TestCase):
         with tempfile.TemporaryDirectory() as directory:
             path = Path(directory) / "extrait.csv"
             path.write_text('code,libellé\nA,"Paris, France"\n', encoding="utf-8-sig")
-            local, remote = socket.socketpair()
-            with local, remote, subprocess.Popen(["/usr/lib/openssh/sftp-server", "-R"], stdin=remote, stdout=remote) as server:
+            class ChannelSocket(socket.socket):
+                # Paramiko uses a channel name for logging the negotiated SFTP version.
+                def get_name(self):
+                    return "openssh-sftp"
+
+            client_socket, remote = socket.socketpair()
+            local = ChannelSocket(fileno=client_socket.detach())
+            with local, remote:
+                local.settimeout(10)
+                server = subprocess.Popen(["/usr/lib/openssh/sftp-server", "-R"], stdin=remote, stdout=remote)
                 remote.close()
-                with closing(paramiko.SFTPClient(local)) as sftp:
+                try:
+                    sftp = paramiko.SFTPClient(local)
                     self.assertEqual(sources.read_sftp(sftp, str(path)), [{"code": "A", "libellé": "Paris, France"}])
-                server.wait(timeout=10)
+                finally:
+                    local.close()
+                    server.terminate()
+                    server.wait(timeout=10)
 
     def check_sql(self, db, dialect):
         with closing(db), closing(db.cursor()) as cursor:
