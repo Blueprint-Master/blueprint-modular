@@ -44,6 +44,24 @@ export default function ReferentielsDocumentationPage() {
         <p className="doc-description">{s.docPageDescription}</p>
       </div>
 
+      <h2 className="text-lg font-semibold mt-6 mb-2">
+        {locale === "fr" ? "Maintenir les référentiels de votre application" : "Maintain your application’s reference data"}
+      </h2>
+      <p className="mb-4 text-sm">
+        {locale === "fr"
+          ? "Le paquet Python blueprint-modular conserve les devises, pays, taux de TVA et unités. Le formulaire de l’application peut charger choices et enregistrer l’identifiant du document avec link. Une référence utilisée reste consultable et peut être désactivée. Chaque modification est inscrite dans le journal d’audit de la même base."
+          : "The blueprint-modular Python package stores currencies, countries, VAT rates and units. Application forms can load choices and link a document identifier with link. Retired entries remain readable. Every change writes an audit event in the same database."}
+      </p>
+      <CodeBlock language="python" code={`from contextlib import closing
+from bpm import reference_data as refs
+
+with closing(refs.open_store("application.sqlite")) as db:
+    eur = refs.save(db, "currency", "EUR", "Euro", {"symbol": "€", "decimals": 2},
+                    actor="finance", expected_revision=0)
+    refs.link(db, "currency", "EUR", "order-42")
+    currencies = refs.choices(db, "currency")
+    current = refs.get(db, "currency", "EUR")`} />
+
       <h2 className="text-lg font-semibold mt-6 mb-2" style={{ color: "var(--bpm-text-primary)" }}>
         {s.docModelTitle}
       </h2>

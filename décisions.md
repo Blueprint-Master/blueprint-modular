@@ -22,6 +22,12 @@ Le paquet Python et le ZIP embarquent `bpm.reports`. Les trois modèles lisent l
 
 Le collecteur installé `python -m bpm.watch` lit des flux RSS et Atom, des API JSON et des pages HTML par HTTP. Un exploitant déclare les sources et programme les passages. Le stockage par application conserve les articles, les versions des pages, la dernière collecte réussie et les alertes de franchissement de seuil. Un flux invalide ou en panne conserve ses résultats précédents. Deux collectes simultanées de la même version ne doublent ni les articles ni les alertes. La recette a interrogé un serveur HTTP isolé, relu la base après réouverture et vérifié une réponse 304, une panne 503, un flux invalide, la reprise et deux franchissements distincts.
 
+## Référentiels et journal d’audit
+
+Les applications peuvent créer, relire, modifier, désactiver et supprimer leurs propres devises, pays, taux de TVA et unités dans une base dédiée. Chaque modification des référentiels et son événement d’audit sont dans la même transaction. Les usages sont enregistrés par identifiant métier. Une référence utilisée ne peut pas être supprimée. Les révisions restent croissantes après suppression et recréation du même code. Les tests ont rejoué deux retraits simultanés, rouvert la base et vérifié que la désactivation masquait le choix tout en préservant la lecture de la commande existante.
+
+Le journal permet également à une application d’inscrire ses propres événements, de filtrer par acteur/action/entité, de paginer et d’exporter en CSV. Une clé d’événement stable rend la réémission idempotente. La recette contrôle un rollback métier, un conflit de clé, le rejet des modifications et suppressions ordinaires, et la lecture d’un export. La protection de l’historique contre un administrateur disposant du fichier repose sur les mesures de sauvegarde et d’exploitation du déploiement.
+
 ## Point de départ
 
 Le catalogue public de Blueprint Modular présente 32 modules et 64 liens de documentation ou de démonstration. Sur le passage HTTP complet, 63 destinations répondaient en 200. Le lien Documentation du calendrier ajoutait `/documentation` à l’URL du simulateur et donnait une 404. La recette de la branche retrouve les 64 destinations depuis le HTML du catalogue et vérifie leur réponse sur le serveur compilé.
