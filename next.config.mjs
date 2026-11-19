@@ -19,11 +19,18 @@ function sourceCommit() {
   return "";
 }
 
+// Racine EXPLICITE (#267) : sans elle, Next remonte jusqu'au premier package-lock.json
+// trouvé (/home/ubuntu/package-lock.json sur bpm-prod) et imbrique la sortie
+// standalone sous le chemin relatif (« Build standalone introuvable », 19/11).
+const rootDir = fileURLToPath(root);
+
 /** @type {import('next').NextConfig} */
 // Cache-buster favicon à chaque build (force le rafraîchissement navigateur)
 const nextConfig = {
   reactStrictMode: true,
   output: "standalone",
+  outputFileTracingRoot: rootDir,
+  turbopack: { root: rootDir },
   env: {
     MODULAR_SOURCE_COMMIT: sourceCommit(),
     MODULAR_PACKAGE_VERSION: manifest.version,
