@@ -1,4 +1,5 @@
-import { randomUUID } from "node:crypto";
+import JSZip from "jszip";
+import { randomBytes, randomUUID } from "node:crypto";
 import { afterAll, beforeAll, describe, expect, it, vi } from "vitest";
 import { PrismaClient } from "@prisma/client";
 
@@ -9,6 +10,7 @@ const owner = randomUUID();
 const other = randomUUID();
 vi.mock("@/lib/prisma", () => ({ get prisma() { return postgres; } }));
 vi.mock("@/lib/auth", () => ({
+  getSessionOrTestUser: async () => userId ? { user: { id: userId } } : null,
   getPersonalModuleSession: async () => userId ? { user: { id: userId } } : null,
 }));
 import { GET as workflow } from "@/app/api/workflow/entity/[id]/route";
@@ -18,6 +20,10 @@ import * as edition from "@/app/api/newsletter/articles/[id]/route";
 import { PATCH as archive } from "@/app/api/newsletter/articles/[id]/archive/route";
 import * as newsletterHeader from "@/app/api/newsletter/settings/route";
 import * as board from "@/app/api/whiteboards/[organizationId]/[board]/route";
+import { GET as wikiIndex } from "@/app/api/wiki/route";
+import { GET as wikiRead } from "@/app/api/wiki/[slug]/route";
+import { GET as wikiLinks } from "@/app/api/wiki/[slug]/backlinks/route";
+import { GET as wikiZip } from "@/app/api/wiki/export/zip/route";
 import * as comments from "@/app/api/wiki/[slug]/comments/route";
 import * as reservations from "@/app/api/reservations/route";
 import * as calendar from "@/app/api/calendar/route";
@@ -37,6 +43,50 @@ describe.skipIf(!url)("module API handlers with PostgreSQL", () => {
   afterAll(async () => {
     await postgres.user.deleteMany({ where: { id: { in: [owner, other] } } });
     await postgres.$disconnect();
+  });
+
+  it("lists article children, their count and backlinks consistently for editorial and published views", async () => {
+    const slug = "qa-rubrique-" + randomUUID();
+    const folder = await postgres.wikiArticle.create({ data: { slug, authorId: owner, title: "Rubrique QA", content: "", isPublished: true } });
+    const ctx = { params: Promise.resolve({ slug }) };
+    try {
+      for (const [suffix, published] of [["public", true], ["brouillon", false]] as const) {
+        const child = await postgres.wikiArticle.create({ data: { slug: slug + "-" + suffix, content: "QA", title: suffix, parentId: folder.id, authorId: owner, isPublished: published } });
+        await postgres.wikiBacklink.create({ data: { sourceArticleId: child.id, targetArticleId: folder.id } });
+      }
+      for (const [user, count] of [[owner, 2], [null, 1]] as const) {
+        userId = user;
+        const page = await (await wikiRead(request("/"), ctx)).json();
+        expect(page.children).toHaveLength(count);
+        const index = await (await wikiIndex(request("/?parent=root&include=children_count&search=" + slug))).json();
+        expect(index).toContainEqual(expect.objectContaining({ slug, childrenCount: count }));
+        expect(await (await wikiLinks(request("/"), ctx)).json()).toHaveLength(count);
+      }
+    } finally {
+      await postgres.wikiArticle.deleteMany({ where: { authorId: owner, slug: { startsWith: slug } } });
+    }
+  });
+
+  it("streams a complete selected Wiki issue and preserves Markdown and YAML values", async () => {
+    const slug = "qa-manuel-" + randomUUID();
+    const title = "Manuel : préparation";
+    const tags = ["true", "Réunion #2"];
+    const content = "# Guide de recette\n" + randomBytes(160000).toString("base64");
+    await postgres.wikiArticle.create({ data: { authorId: owner, title, slug, content, tags, isPublished: true } });
+    try {
+      userId = null;
+      expect((await wikiZip(request("/"))).status).toBe(400);
+      expect((await wikiZip(request("/?slugs=" + slug + ",article-absent-de-recette"))).status).toBe(409);
+      const response = await wikiZip(request("/?slugs=" + slug + "," + slug));
+      const zip = await JSZip.loadAsync(await response.arrayBuffer(), { checkCRC32: true });
+      expect(Object.keys(zip.files)).toEqual([slug + ".md"]);
+      const md = await zip.file(slug + ".md")!.async("string");
+      expect(md).toContain("title: " + JSON.stringify(title));
+      expect(md).toContain("tags: " + JSON.stringify(tags));
+      expect(md.endsWith(content)).toBe(true);
+    } finally {
+      await postgres.wikiArticle.delete({ where: { slug } });
+    }
   });
 
   it("creates one newsletter issue, preserves concurrent edits and archives or removes the expected revision", async () => {

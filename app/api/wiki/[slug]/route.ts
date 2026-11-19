@@ -1,3 +1,4 @@
+import { visibleWikiArticles } from "@/lib/wiki/visibility";
 import { NextResponse } from "next/server";
 import { getSessionOrTestUser } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
@@ -26,12 +27,10 @@ export async function GET(
   const incView = searchParams.get("incView") === "1";
 
   const article = await prisma.wikiArticle.findFirst({
-    where: user
-      ? { slug, OR: [{ isPublished: true }, { authorId: user.id }] }
-      : { slug, isPublished: true },
+    where: { slug, ...visibleWikiArticles(user?.id) },
     include: {
       author: { select: { name: true, email: true } },
-      children: { select: { id: true, title: true, slug: true, excerpt: true, tags: true, pinned: true, isPublished: true } },
+      children: { where: visibleWikiArticles(user?.id), select: { id: true, title: true, slug: true, excerpt: true, tags: true, pinned: true, isPublished: true } },
     },
   });
   if (!article) return NextResponse.json({ error: "Not found" }, { status: 404 });
@@ -46,7 +45,7 @@ export async function GET(
   const siblings = await prisma.wikiArticle.findMany({
     where: {
       parentId: article.parentId,
-      OR: user ? [{ isPublished: true }, { authorId: user.id }] : [{ isPublished: true }],
+      ...visibleWikiArticles(user?.id),
     },
     orderBy: { title: "asc" },
     select: { slug: true },
@@ -171,7 +170,7 @@ export async function PUT(
     where: { id: article.id },
     include: {
       author: { select: { name: true, email: true } },
-      children: { select: { id: true, title: true, slug: true, excerpt: true, tags: true, pinned: true, isPublished: true } },
+      children: { where: visibleWikiArticles(user?.id), select: { id: true, title: true, slug: true, excerpt: true, tags: true, pinned: true, isPublished: true } },
     },
   });
   return NextResponse.json(updated);

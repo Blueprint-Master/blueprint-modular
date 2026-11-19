@@ -38,6 +38,7 @@
     "archiver": "^7.0.1",
     "idb-keyval": "^6.2.2",
     "leaflet": "^1.9.4",
+    "jszip": "^3.10.1",
     "lucide-react": "^0.460.0",
     "mammoth": "^1.11.0",
     "mcp-handler": "^1.1.0",

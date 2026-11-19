@@ -6,6 +6,7 @@ import { useRouter } from "next/navigation";
 import { useSession } from "next-auth/react";
 import { Badge, Button } from "@/components/bpm";
 import { ModulePageHeader } from "@/components/site/ModulePageHeader";
+import { articleMarkdown } from "@/lib/wiki/markdown-export";
 import { getGuestWikiArticles, deleteGuestArticle, type GuestWikiArticle } from "@/lib/wiki-guest";
 import { useI18n } from "@/lib/i18n/LocaleProvider";
 import { STR, type WikiStrings } from "./strings";
@@ -261,14 +262,46 @@ export default function WikiPage() {
     });
   };
 
-  const exportSelectionZip = () => {
-    const slugs = Array.from(selectedSlugs);
-    if (slugs.length === 0) return;
-    const url = `/api/wiki/export/zip?slugs=${encodeURIComponent(slugs.join(","))}`;
-    const a = document.createElement("a");
-    a.href = url;
-    a.download = `wiki-export-${new Date().toISOString().slice(0, 10)}.zip`;
-    a.click();
+  const [exportError, setExportError] = useState("");
+  const [exporting, setExporting] = useState(false);
+  const exportSelectionZip = async () => {
+    if (!selectedSlugs.size || exporting) return;
+    setExportError("");
+    if (selectedSlugs.size > 100) {
+      setExportError(locale === "en" ? "Select up to 100 articles." : "Sélectionne jusqu’à 100 articles.");
+      return;
+    }
+    setExporting(true);
+    try {
+      const local = session ? [] : getGuestWikiArticles().filter(a => selectedSlugs.has(a.slug));
+      const remote = [...selectedSlugs].filter(slug => !local.some(a => a.slug === slug));
+      let blob: Blob | undefined;
+      if (remote.length) {
+        const query = new URLSearchParams({ slugs: remote.join(",") });
+        const response = await fetch("/api/wiki/export/zip?" + query);
+        if (!response.ok) throw new Error("export");
+        blob = await response.blob();
+      }
+      if (local.length) {
+        const { default: JSZip } = await import("jszip");
+        const zip = blob ? await JSZip.loadAsync(blob) : new JSZip();
+        for (const a of local) zip.file(a.slug + ".md", articleMarkdown({ ...a, authorName: a.author?.name }));
+        blob = await zip.generateAsync({ type: "blob", compression: "DEFLATE" });
+      }
+      if (!blob) return;
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = `wiki-export-${new Date().toISOString().slice(0, 10)}.zip`;
+      document.body.append(a);
+      a.click();
+      a.remove();
+      setTimeout(() => URL.revokeObjectURL(url), 1000);
+    } catch {
+      setExportError(locale === "en" ? "Could not export the selection. Refresh the list or retry." : "Export impossible. Actualise la liste ou réessaie.");
+    } finally {
+      setExporting(false);
+    }
   };
 
   return (
@@ -414,12 +447,14 @@ export default function WikiPage() {
               <p>{t.list.noArticleInSection}</p>
             ) : (
               <>
+                <div className="wiki-article-list">
                 {selectedSlugs.size > 0 && (
                   <div className="flex flex-wrap items-center gap-2 mb-3 p-2 rounded border" style={{ borderColor: "var(--bpm-border)", background: "var(--bpm-bg-secondary)" }}>
+                    {exportError && <p role="alert">{exportError}</p>}
                     <span className="text-sm" style={{ color: "var(--bpm-text-primary)" }}>
                       {t.list.selectedCount(selectedSlugs.size)}
                     </span>
-                    <Button type="button" size="small" onClick={exportSelectionZip}>
+                    <Button type="button" size="small" disabled={exporting} onClick={exportSelectionZip}>
                       {t.list.exportZip}
                     </Button>
                     <button
@@ -432,7 +467,6 @@ export default function WikiPage() {
                     </button>
                   </div>
                 )}
-                <div className="wiki-article-list">
                 {displayed.map((article) => {
                   const a = article as WikiArticle & { excerpt?: string; tags?: string[]; pinned?: boolean; wordCount?: number; readingTimeMinutes?: number; viewCount?: number; lastRevisedBy?: string };
                   return (

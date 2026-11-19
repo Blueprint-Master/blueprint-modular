@@ -1,3 +1,4 @@
+import { visibleWikiArticles } from "@/lib/wiki/visibility";
 import { NextResponse } from "next/server";
 import { getSessionOrTestUser } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
@@ -24,10 +25,7 @@ export async function GET(request: Request) {
   const withContent = searchParams.get("withContent") === "true";
   const limitContent = Math.min(parseInt(searchParams.get("limit") ?? "15", 10) || 15, 30);
 
-  const visibility =
-    user && !publishedOnly
-      ? { OR: [{ isPublished: true }, { authorId: user.id }] }
-      : { isPublished: true };
+  const visibility = visibleWikiArticles(publishedOnly ? undefined : user?.id);
 
   const statusCondition =
     status === "published"
@@ -100,7 +98,7 @@ export async function GET(request: Request) {
       lastRevisedBy: true,
       authorName: true,
       author: { select: { name: true } },
-      ...(includeChildrenCount ? { _count: { select: { children: true } } } : {}),
+      ...(includeChildrenCount ? { _count: { select: { children: { where: visibility } } } } : {}),
       ...(withContent ? { content: true } : {}),
     },
   });

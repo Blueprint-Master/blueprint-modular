@@ -1,3 +1,4 @@
+import { visibleWikiArticles } from "@/lib/wiki/visibility";
 import { NextResponse } from "next/server";
 import { getSessionOrTestUser } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
@@ -54,7 +55,7 @@ export async function POST(
     where: { id: article.id },
     include: {
       author: { select: { name: true, email: true } },
-      children: { select: { id: true, title: true, slug: true, excerpt: true, tags: true, pinned: true } },
+      children: { where: visibleWikiArticles(user.id), select: { id: true, title: true, slug: true, excerpt: true, tags: true, pinned: true } },
     },
   });
   return NextResponse.json(updated);
