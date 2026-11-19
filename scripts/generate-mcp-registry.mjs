@@ -162,11 +162,8 @@ function main() {
       name: c.name,
       description: c.description,
       category: c.category,
-      // Statut de curation HONNÊTE, dérivé de la présence d'une couche sémantique.
-      // "curated"   : le composant porte un bloc sémantique (frame Ω, guidance…).
-      // "uncurated" : exposé (nom + description + props) mais sans sémantique —
-      //               champ honnête, aucune guidance fabriquée (cf. semantics:null).
-      status: sem ? "curated" : "uncurated",
+      // Only the source annotation can record human approval.
+      status: sem?.status === "curated" ? "curated" : "uncurated",
       fullDescription: d.fullDescription,
       props: d.props,
       example: d.example,
@@ -193,7 +190,7 @@ function main() {
 
   console.log(
     `Wrote ${path.relative(REPO_ROOT, OUT_FILE)} — ${components.length} composants ` +
-      `(${withSemantics} curated, ${components.length - withSemantics} uncurated ; ` +
+      `(${withSemantics} annotés, ${components.length - withSemantics} sans annotation ; ` +
       `${withProps} avec props, ${withExample} avec exemple), ` +
       `${categories.length} catégories.`,
   );

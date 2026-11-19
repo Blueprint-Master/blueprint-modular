@@ -15,7 +15,7 @@ const pack = JSON.parse(execFileSync("npm", ["pack","--json","--pack-destination
 execFileSync("tar", ["-xzf",join(out,pack.filename),"--strip-components=1","-C",installed]);
 
 const registry = JSON.parse(readFileSync(join(root,"lib/generated/mcp-registry.json"),"utf8"));
-const curated = registry.components.filter(c => c.status === "curated").map(c => c.name.slice(4));
+const annotated = registry.components.filter(c => c.semantics).map(c => c.name.slice(4));
 const options = {
   bundle:true, absWorkingDir:out, nodePaths:[join(root,"node_modules")],
   alias:{react:join(root,"node_modules/react"),"react-dom":join(root,"node_modules/react-dom")},
@@ -29,7 +29,7 @@ await build({...options, platform:"node", outfile:join(out,"catalogue.cjs"),
     import {bpm} from '@blueprint-modular/core';
     import {renderToStaticMarkup} from 'react-dom/server';
     import {FIXTURES} from ${JSON.stringify(join(root,"packages/core/gate/fixtures.ts"))};
-    for (const key of ${JSON.stringify(curated)}) {
+    for (const key of ${JSON.stringify(annotated)}) {
       if (!(key in FIXTURES)) throw new Error("Missing fixture "+key);
       try {renderToStaticMarkup(bpm[key](FIXTURES[key]));}
       catch(e) {throw new Error(key+": "+e.message);}
@@ -37,7 +37,7 @@ await build({...options, platform:"node", outfile:join(out,"catalogue.cjs"),
   `},
 });
 execFileSync(process.execPath,[join(out,"catalogue.cjs")],{stdio:"inherit"});
-console.log(curated.length+" curated components rendered from the package (SSR).");
+console.log(annotated.length+" annotated components rendered from the package (SSR).");
 const interactive=await build({...options, platform:"browser",write:false,stdin:{resolveDir:out,contents:`
   import {createRoot} from 'react-dom/client';
   import {plotlyChart} from '@blueprint-modular/core/artifact/plotly';
