@@ -105,7 +105,13 @@ if [ "${PREPROD_ZIP:-0}" = 1 ]; then
   python3 -m zipfile -e "$ZIP" "$APP_BASE/zipx-$SHA"
   [ -s "$APP_BASE/zipx-$SHA/application/package.json" ] || die "ZIP sans application/"
   cp -a "$APP_BASE/zipx-$SHA/application/." "$APP/"
-  echo "  ZIP installé : $(basename "$ZIP") sha256 $(sha256sum "$ZIP" | cut -c1-16)…" >> "$RAPPORT"
+  ZIP_SHA=$(sha256sum "$ZIP" | cut -d" " -f1)
+  echo "  ZIP installé : $(basename "$ZIP") sha256 $ZIP_SHA" >> "$RAPPORT"
+  # Empreinte attendue (annoncée par la PR) : un écart arrête l'installation.
+  if [ -n "${PREPROD_ZIP_SHA256:-}" ]; then
+    if [ "$ZIP_SHA" = "$PREPROD_ZIP_SHA256" ]; then echo "  empreinte conforme à l'attendu de la PR : OUI" >> "$RAPPORT"
+    else die "empreinte du ZIP $ZIP_SHA ≠ attendue $PREPROD_ZIP_SHA256"; fi
+  fi
 else
   cp -a "$SOURCE/." "$APP/"
 fi
