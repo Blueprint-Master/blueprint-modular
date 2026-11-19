@@ -14,7 +14,7 @@ import threading
 import time
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 
-from playwright.sync_api import sync_playwright
+from playwright.sync_api import expect, sync_playwright
 import requests
 
 from module_team_fixture import seed_team, open_task, finish_task, check_audit, clear_team
@@ -59,6 +59,38 @@ class Model(BaseHTTPRequestHandler):
 def checked(response, status=200):
     assert response.status_code == status, (response.url, response.status_code, response.text[:250])
     return response
+
+
+
+def check_assignment_bell(browser, http, origin, *, assigned):
+    """Use a fresh device for each account and re-read the persisted receipt."""
+    context = browser.new_context(locale="fr-FR")
+    try:
+        context.add_cookies([{"name": c.name, "value": c.value, "url": origin} for c in http.cookies])
+        page = context.new_page()
+        page.goto(origin + "/modules/notification")
+        bell = page.get_by_role("button", name="Notifications", exact=True)
+        # Wait for the authenticated shell and its first GET before opening the panel.
+        with page.expect_response(lambda r: "/api/notifications?read=false" in r.url and r.status == 200):
+            page.reload()
+        bell.click()
+        inbox = page.get_by_role("region", name="Boîte de réception · non lues")
+        if not assigned:
+            expect(inbox.get_by_text("Aucune notification non lue", exact=True)).to_be_visible()
+            expect(inbox.get_by_text("Réceptionner un lot", exact=True)).to_have_count(0)
+            return
+        item = inbox.locator(".notification-item").filter(has_text="Réceptionner un lot")
+        expect(item).to_have_count(1)
+        item.get_by_role("button", name="Marquer comme lue").click()
+        expect(inbox.get_by_text("Aucune notification non lue", exact=True)).to_be_visible()
+        read = checked(http.get(origin + "/api/notifications?read=true")).json()["notifications"]
+        assert sum(n["message"] == "Réceptionner un lot" and bool(n["readAt"]) for n in read) == 1
+        with page.expect_response(lambda r: "/api/notifications?read=false" in r.url and r.status == 200):
+            page.reload()
+        bell.click()
+        expect(inbox.get_by_text("Aucune notification non lue", exact=True)).to_be_visible()
+    finally:
+        context.close()
 
 
 def run():
@@ -160,7 +192,10 @@ def run():
             with server():
                 http.cookies.clear()
                 login()
+                check_assignment_bell(browser, http, origin, assigned=False)
                 login(team["email"])
+                check_assignment_bell(browser, http, origin, assigned=True)
+                print("Installed bell: assignee saw task, other account excluded, read receipt survived reload.", flush=True)
                 finish_task(http, origin, team, task_id)
                 login()
                 Model.outage = False
