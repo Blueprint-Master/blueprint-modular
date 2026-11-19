@@ -13,6 +13,7 @@ vi.mock("@/lib/auth", () => ({
 }));
 import { GET as workflow } from "@/app/api/workflow/entity/[id]/route";
 import { POST as advance } from "@/app/api/workflow/entity/[id]/transition/route";
+import * as comments from "@/app/api/wiki/[slug]/comments/route";
 import * as reservations from "@/app/api/reservations/route";
 import * as calendar from "@/app/api/calendar/route";
 import * as item from "@/app/api/calendar/[id]/route";
@@ -31,6 +32,43 @@ describe.skipIf(!url)("module API handlers with PostgreSQL", () => {
   afterAll(async () => {
     await postgres.user.deleteMany({ where: { id: { in: [owner, other] } } });
     await postgres.$disconnect();
+  });
+
+  it("keeps one article comment per submission and preserves replies during concurrent changes", async () => {
+    userId = owner;
+    const slug = "qa-" + randomUUID();
+    const article = await postgres.wikiArticle.create({ data: { slug, authorId: owner, content: "QA", title: "QA", isPublished: false } });
+    const ctx = { params: Promise.resolve({ slug }) };
+    const post = (body: object) => comments.POST(request("/", "POST", body), ctx);
+    const patch = (body: object) => comments.PATCH(request("/", "PATCH", body), ctx);
+    const remove = (body: object) => comments.DELETE(request("/", "DELETE", body), ctx);
+    const list = () => comments.GET(request("/"), ctx);
+    try {
+      expect((await post({ content: " " })).status).toBe(400);
+      const input = { content: "Décision qualité", requestId: randomUUID(), kind: "décision" };
+      const race = await Promise.all([post(input), post(input)]);
+      expect(race.map(r => r.status).sort()).toEqual([200, 201]);
+      const { id } = await race[0].json();
+      expect(await (await list()).json()).toHaveLength(1);
+      expect((await post({ ...input, content: "Autre texte" })).status).toBe(409);
+      userId = other;
+      expect((await list()).status).toBe(403);
+      await postgres.wikiArticle.update({ where: { id: article.id }, data: { isPublished: true } });
+      const reply = await (await post({ content: "Bien reçu", parentId: id })).json();
+      expect(reply.parentId).toBe(id);
+      expect((await remove({ id, revision: 0 })).status).toBe(404);
+      userId = owner;
+      const updates = await Promise.all([patch({ id, revision: 0, resolved: true }), patch({ id, revision: 0, content: "Corrigé" })]);
+      expect(updates.map(r => r.status).sort()).toEqual([204, 409]);
+      expect((await remove({ id, revision: 1 })).status).toBe(204);
+      userId = null;
+      const rows = await (await list()).json();
+      expect(rows).toContainEqual(expect.objectContaining({ id, deleted: true, content: "" }));
+      expect(rows).toContainEqual(expect.objectContaining({ id: reply.id, parentId: id, content: "Bien reçu" }));
+      expect((await post({ content: "Anonymous" })).status).toBe(401);
+    } finally {
+      await postgres.wikiArticle.delete({ where: { id: article.id } });
+    }
   });
 
   it("serializes room occupancy, scopes access and releases both hours on cancellation", async () => {

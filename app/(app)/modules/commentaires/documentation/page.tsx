@@ -69,7 +69,7 @@ export default function CommentairesDocumentationPage() {
       <p className="mb-2 text-sm font-medium" style={{ color: "var(--bpm-text-primary)" }}>{t.docExampleLabel}</p>
       <CodeBlock
         code={t.docExampleCode}
-        language="python"
+        language="javascript"
       />
 
       <h2 className="text-lg font-semibold mt-8 mb-2" style={{ color: "var(--bpm-text-primary)" }}>

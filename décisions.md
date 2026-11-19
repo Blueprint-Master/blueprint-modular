@@ -62,4 +62,10 @@ La migration conserve les photos existantes et crée la relation entre compte Mo
 
 **Recette de récupération.** Dix tests PostgreSQL ont réussi, dont une course entre deux confirmations du même code. Sur le serveur standalone, un second navigateur a demandé le code à un relais SMTP local puis remplacé le mot de passe. La session ouverte avant la récupération est devenue invalide. La connexion avec le nouveau mot de passe fonctionne après redémarrage.
 
-**Suite du catalogue.** Commentaires. Les parcours des autres modules sont à vérifier individuellement.
+## Commentaires — fil d’un article Wiki
+
+Le module donne accès au Wiki, où chaque article dispose d’un fil persistant. La migration enrichit les commentaires existants. Les types commentaire, annotation, décision et blocage, les réponses, l’édition, la résolution, la réouverture et la suppression passent par la même API que la page. Une suppression efface le contenu et préserve la position des réponses. Une clé de requête évite un double enregistrement après un nouvel essai. Une révision contrôle les éditions simultanées. Le branchement livré porte sur les articles Wiki et hérite de leurs règles de visibilité.
+
+**Recette du 19 novembre.** PostgreSQL a enregistré une seule contribution pour deux publications simultanées utilisant la même clé. Deux modifications concurrentes ont donné un succès et un conflit. L’autre participant a pu répondre à l’article publié et n’a pas pu supprimer la contribution de l’auteur. Chromium a publié une décision, modifié le texte, ajouté une réponse et résolu la décision. Après redémarrage de l’application, la décision était toujours résolue. Sa suppression a conservé la réponse. Le build standalone avec migrations depuis une base vide a servi ces opérations.
+
+**Suite du catalogue.** Skeleton, puis Tableau blanc.

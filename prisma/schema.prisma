@@ -227,6 +227,16 @@ model WikiRevision {
 }
 
 model WikiComment {
+  kind       String @default("commentaire")
+  parentId   String?
+  requestId  String?
+  revision   Int @default(0)
+  resolved   Boolean @default(false)
+  deleted    Boolean @default(false)
+  parent     WikiComment? @relation("WikiReplies", fields: [articleId,parentId], references: [articleId,id], onDelete: NoAction, onUpdate: NoAction, map: "WikiComment_parent_article_fkey")
+  replies    WikiComment[] @relation("WikiReplies")
+  @@unique([articleId,authorId,requestId])
+  @@unique([articleId,id])
   id         String     @id @default(cuid())
   articleId  String     @map("article_id")
   content    String     @db.Text

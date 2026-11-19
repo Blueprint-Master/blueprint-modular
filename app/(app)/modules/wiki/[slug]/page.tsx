@@ -1,5 +1,7 @@
 "use client";
 
+import { ArticleComments } from "@/components/comments/ArticleComments";
+
 import { useEffect, useState, useRef } from "react";
 import { useParams, useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
@@ -95,9 +97,6 @@ export default function WikiArticlePage() {
   const [error, setError] = useState<string | null>(null);
   const [deleting, setDeleting] = useState(false);
   const [backlinks, setBacklinks] = useState<{ id: string; title: string; slug: string; excerpt?: string }[]>([]);
-  const [comments, setComments] = useState<{ id: string; content: string; authorName?: string; createdAt: string }[]>([]);
-  const [commentText, setCommentText] = useState("");
-  const [commentSending, setCommentSending] = useState(false);
   const [knownTags, setKnownTags] = useState<string[]>([]);
   const [menuOpen, setMenuOpen] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
@@ -179,10 +178,6 @@ export default function WikiArticlePage() {
       .then((r) => (r.ok ? r.json() : []))
       .then((data) => setBacklinks(Array.isArray(data) ? data : []))
       .catch(() => setBacklinks([]));
-    fetch(`/api/wiki/${encodeURIComponent(slug)}/comments`, { credentials: "include" })
-      .then((r) => (r.ok ? r.json() : []))
-      .then((data) => setComments(Array.isArray(data) ? data : []))
-      .catch(() => setComments([]));
   }, [slug, article]);
 
   useEffect(() => {
@@ -195,33 +190,6 @@ export default function WikiArticlePage() {
       setKnownTags(Array.isArray(article.tags) ? article.tags : []);
     }
   }, [session, article]);
-
-  const refreshComments = () => {
-    if (!session || !slug) return;
-    fetch(`/api/wiki/${encodeURIComponent(slug)}/comments`, { credentials: "include" })
-      .then((r) => (r.ok ? r.json() : []))
-      .then((data) => setComments(Array.isArray(data) ? data : []));
-  };
-
-  const handleAddComment = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!commentText.trim() || commentSending || !session) return;
-    setCommentSending(true);
-    try {
-      const res = await fetch(`/api/wiki/${encodeURIComponent(slug)}/comments`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ content: commentText.trim() }),
-        credentials: "include",
-      });
-      if (res.ok) {
-        setCommentText("");
-        refreshComments();
-      }
-    } finally {
-      setCommentSending(false);
-    }
-  };
 
   const handleDelete = async () => {
     if (!confirm(t.common.confirmDeleteArticle)) return;
@@ -454,32 +422,7 @@ export default function WikiArticlePage() {
           </nav>
         ))}
 
-        {session && (
-          <div className="mt-8">
-            <h2 className="text-lg font-semibold mb-2" style={{ color: "var(--bpm-text-primary)" }}>{t.article.comments}</h2>
-            <ul className="space-y-3 mb-4">
-              {comments.map((c) => (
-                <li key={c.id} className="text-sm p-3 rounded border" style={{ borderColor: "var(--bpm-border)", background: "var(--bpm-bg-secondary)" }}>
-                  <p className="m-0 whitespace-pre-wrap">{c.content}</p>
-                  <span className="text-xs opacity-70">{c.authorName ?? t.article.anonymous} · {new Date(c.createdAt).toLocaleString(t.common.locale)}</span>
-                </li>
-              ))}
-            </ul>
-            <form onSubmit={handleAddComment} className="flex flex-col gap-2">
-              <textarea
-                value={commentText}
-                onChange={(e) => setCommentText(e.target.value)}
-                placeholder={t.article.addCommentPlaceholder}
-                rows={2}
-                className="w-full px-3 py-2 rounded border text-sm"
-                style={{ borderColor: "var(--bpm-border)", background: "var(--bpm-surface)", color: "var(--bpm-text-primary)" }}
-              />
-              <Button type="submit" size="small" disabled={commentSending || !commentText.trim()}>
-                {commentSending ? t.article.sending : t.article.publish}
-              </Button>
-            </form>
-          </div>
-        )}
+        {session && <ArticleComments key={slug} slug={slug} userId={(session.user as { id?: string })?.id} />}
 
         <nav className="doc-pagination mt-8">
           <Link href="/modules/wiki" style={{ color: "var(--bpm-accent-cyan)" }}>{t.common.backToWiki}</Link>
