@@ -36,13 +36,16 @@ export default function AssetManagerAssetNewPage() {
   useEffect(() => {
     if (!domainId) return;
     fetch(`/api/asset-manager/config/${domainId}`, { credentials: "include" })
-      .then((r) => (r.ok ? r.json() : null))
+      .then(async r => {
+        if (!r.ok) throw new Error((await r.json().catch(() => ({}))).error || ta.errNetwork);
+        return r.json();
+      })
       .then((c) => {
         setConfig(c);
         if (c?.statuses?.length) setStatusId(c.statuses[0].id);
       })
-      .catch(() => {});
-  }, [domainId]);
+      .catch(err => setError(err instanceof Error ? err.message : ta.errNetwork));
+  }, [domainId, ta.errNetwork]);
 
   const typeOptions = config?.asset_types.map((t) => ({ value: t.id, label: t.label })) ?? [];
   const statusOptions = config?.statuses.map((s) => ({ value: s.id, label: s.label })) ?? [];
@@ -90,6 +93,7 @@ export default function AssetManagerAssetNewPage() {
     }
   };
 
+  if (!config && error) return <p role="alert">{error}</p>;
   if (!config) {
     return (
       <div className="doc-page">
@@ -163,7 +167,7 @@ export default function AssetManagerAssetNewPage() {
                       />
                     ) : f.type === "number" ? (
                       <Input
-                        type="text"
+                        type="number"
                         value={String(attributes[f.key] ?? "")}
                         onChange={(v) => setAttributes((prev) => ({ ...prev, [f.key]: v === "" ? "" : Number(v) }))}
                         placeholder={f.label}

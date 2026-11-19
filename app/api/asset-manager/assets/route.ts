@@ -1,4 +1,7 @@
 import { NextResponse } from "next/server";
+import { z } from "zod";
+import { generateAssetReference } from "@/lib/asset-manager/numbering";
+import { parseCalendarDate } from "@/lib/calendar/event-input";
 import { Prisma } from "@prisma/client";
 import { getSessionOrTestUser } from "@/lib/auth";
 import { requireWriteRole } from "@/lib/asset-manager/authz";
@@ -48,95 +51,57 @@ export async function GET(request: Request) {
   return NextResponse.json(assets);
 }
 
+const text = z.string().trim().nullish().transform(value => value || null);
+const date = text.transform((value, ctx) => {
+  if (!value) return null;
+  const parsed = parseCalendarDate(value);
+  if (parsed) return parsed;
+  ctx.addIssue({ code: "custom", message: "Date invalide" });
+  return z.NEVER;
+});
+const attribute = z.object({
+  key: z.string().trim().min(1), valueText: z.string().nullish(),
+  valueNumber: z.number().finite().nullish(), valueDate: date, valueBool: z.boolean().nullish(),
+});
+const input = z.object({
+  domainId: z.string(), assetTypeId: z.string(), label: z.string().trim().min(1), reference: text,
+  brand: text, model: text, serialNumber: text, statusId: text, locationId: text, ownerUserId: text,
+  purchaseDate: date, warrantyEndDate: date, supplierId: text, purchasePrice: z.number().finite().nullish(),
+  notes: text, attributes: z.array(attribute).default([]),
+});
+
 export async function POST(request: Request) {
   const result = await getSessionOrTestUser();
   if (!result) return NextResponse.json({ error: "Non autorisé" }, { status: 401 });
   const forbidden = requireWriteRole(result.user);
   if (forbidden) return forbidden;
 
-  let body: {
-    domainId: string;
-    assetTypeId: string;
-    label: string;
-    reference?: string;
-    brand?: string;
-    model?: string;
-    serialNumber?: string;
-    statusId: string;
-    locationId?: string;
-    ownerUserId?: string;
-    purchaseDate?: string;
-    warrantyEndDate?: string;
-    supplierId?: string;
-    purchasePrice?: number;
-    notes?: string;
-    attributes?: { key: string; valueText?: string; valueNumber?: number; valueDate?: string; valueBool?: boolean }[];
-  };
+  const parsed = input.safeParse(await request.json().catch(() => null));
+  if (!parsed.success) return NextResponse.json({ error: "Vérifiez les champs de la fiche." }, { status: 400 });
+  const { reference: requested, attributes, statusId, ...data } = parsed.data;
+  const config = getDomainConfig(data.domainId);
+  if (!config?.asset_types.some(type => type.id === data.assetTypeId))
+    return NextResponse.json({ error: "Domaine ou type d’actif inconnu" }, { status: 400 });
+  const status = statusId ?? config.statuses[0]?.id;
+  if (!config.statuses.some(item => item.id === status))
+    return NextResponse.json({ error: "Statut inconnu dans ce domaine" }, { status: 400 });
+  if (new Set(attributes.map(attr => attr.key)).size !== attributes.length)
+    return NextResponse.json({ error: "Un attribut est présent deux fois" }, { status: 400 });
+
   try {
-    body = await request.json();
-  } catch {
-    return NextResponse.json({ error: "Corps invalide" }, { status: 400 });
-  }
-  const config = getDomainConfig(body.domainId);
-  if (!config) return NextResponse.json({ error: "Domaine invalide" }, { status: 400 });
-
-  const label = typeof body.label === "string" ? body.label.trim() : "";
-  const statusId = typeof body.statusId === "string" ? body.statusId : config.statuses[0]?.id ?? "in_service";
-  if (!label) return NextResponse.json({ error: "Le libellé est requis" }, { status: 400 });
-
-  // Référence : pour l'instant génération simple (PREFIX-TYPE-ANNEE-SEQ)
-  const year = new Date().getFullYear();
-  const count = await prisma.asset.count({
-    where: { domainId: body.domainId, assetTypeId: body.assetTypeId },
-  });
-  const seq = String(count + 1).padStart(4, "0");
-  const prefix = config.asset_id_prefix ?? "AST";
-  const reference = body.reference?.trim() || `${prefix}-${body.assetTypeId}-${year}-${seq}`;
-
-  const existingRef = await prisma.asset.findUnique({ where: { reference } });
-  if (existingRef) return NextResponse.json({ error: "Cette référence existe déjà" }, { status: 409 });
-
-  const asset = await prisma.asset.create({
-    data: {
-      domainId: body.domainId,
-      assetTypeId: body.assetTypeId,
-      reference,
-      label,
-      brand: body.brand?.trim() || null,
-      model: body.model?.trim() || null,
-      serialNumber: body.serialNumber?.trim() || null,
-      statusId,
-      locationId: body.locationId || null,
-      ownerUserId: body.ownerUserId || null,
-      purchaseDate: body.purchaseDate ? new Date(body.purchaseDate) : null,
-      warrantyEndDate: body.warrantyEndDate ? new Date(body.warrantyEndDate) : null,
-      supplierId: body.supplierId || null,
-      purchasePrice: body.purchasePrice ?? null,
-      notes: body.notes?.trim() || null,
-      createdById: result.user.id,
-    },
-    include: {
-      attributes: true,
-      createdBy: { select: { id: true, name: true, email: true } },
-    },
-  });
-
-  if (body.attributes?.length) {
-    await prisma.assetAttribute.createMany({
-      data: body.attributes.map((a) => ({
-        assetId: asset.id,
-        key: a.key,
-        valueText: a.valueText ?? null,
-        valueNumber: a.valueNumber ?? null,
-        valueDate: a.valueDate ? new Date(a.valueDate) : null,
-        valueBool: a.valueBool ?? null,
-      })),
+    const asset = await prisma.$transaction(async tx => {
+      const reference = requested || await generateAssetReference(tx, data.assetTypeId, config.asset_id_prefix);
+      return tx.asset.create({
+        data: { ...data, domainId: data.domainId, assetTypeId: data.assetTypeId, label: data.label,
+          reference, statusId: status, createdById: result.user.id,
+          attributes: { create: attributes.map(attr => ({ ...attr, key: attr.key })) } },
+        include: { attributes: true, createdBy: { select: { id: true, name: true, email: true } } },
+      });
     });
-    const withAttrs = await prisma.asset.findUnique({
-      where: { id: asset.id },
-      include: { attributes: true, createdBy: { select: { id: true, name: true, email: true } } },
-    });
-    return NextResponse.json(withAttrs ?? asset);
+    return NextResponse.json(asset);
+  } catch (error) {
+    if (error instanceof Prisma.PrismaClientKnownRequestError && error.code === "P2002")
+      return NextResponse.json({ error: "Cette référence existe déjà" }, { status: 409 });
+    throw error;
   }
-  return NextResponse.json(asset);
 }

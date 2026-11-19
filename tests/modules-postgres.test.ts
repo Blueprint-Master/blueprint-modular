@@ -11,9 +11,11 @@ const other = randomUUID();
 let wikiRole = "USER";
 vi.mock("@/lib/prisma", () => ({ get prisma() { return postgres; } }));
 vi.mock("@/lib/auth", () => ({
+  hasWriteRole: (user: { role?: string }) => user.role === "ADMIN",
   getSessionOrTestUser: async () => userId ? { user: { id: userId, role: wikiRole } } : null,
   getPersonalModuleSession: async () => userId ? { user: { id: userId } } : null,
 }));
+import * as inventory from "@/app/api/asset-manager/assets/route";
 import { GET as workflow } from "@/app/api/workflow/entity/[id]/route";
 import { POST as advance } from "@/app/api/workflow/entity/[id]/transition/route";
 import * as newsletter from "@/app/api/newsletter/articles/route";
@@ -45,6 +47,32 @@ describe.skipIf(!url)("module API handlers with PostgreSQL", () => {
   afterAll(async () => {
     await postgres.user.deleteMany({ where: { id: { in: [owner, other] } } });
     await postgres.$disconnect();
+  });
+
+  it("creates inventory records and their attributes together with independent concurrent references", async () => {
+    userId = owner;
+    wikiRole = "ADMIN";
+    const label = "QA-" + randomUUID();
+    const asset = { domainId: "it", assetTypeId: "laptop", label, attributes: [{ key: "hostname", valueText: label }] };
+    const create = (fields = {}) => inventory.POST(request("/", "POST", { ...asset, ...fields }));
+    try {
+      const responses = await Promise.all([create(), create()]);
+      expect(responses.map(r => r.status)).toEqual([200, 200]);
+      const [first, second] = await Promise.all(responses.map(r => r.json()));
+      expect(first.reference).not.toBe(second.reference);
+      expect(first.attributes[0].valueText).toBe(label);
+      await postgres.asset.delete({ where: { id: first.id } });
+      expect((await create()).status).toBe(200);
+      expect((await create({ reference: second.reference })).status).toBe(409);
+      expect((await create({ purchaseDate: "2026-02-30" })).status).toBe(400);
+      expect((await create({ attributes: [asset.attributes[0], asset.attributes[0]] })).status).toBe(400);
+      expect((await create({ statusId: "hors-domaine" })).status).toBe(400);
+      const list = await inventory.GET(request("/?domainId=it&search=" + encodeURIComponent(label)));
+      expect((await list.json()).map((record: { label: string }) => record.label)).toEqual([label, label]);
+    } finally {
+      wikiRole = "USER";
+      await postgres.asset.deleteMany({ where: { label } });
+    }
   });
 
   it("serializes wiki edits and restores the title, content and backlinks in one revision", async () => {
