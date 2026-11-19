@@ -1,9 +1,32 @@
+import { execFileSync } from "node:child_process";
+import { existsSync, readFileSync } from "node:fs";
+import { fileURLToPath } from "node:url";
+
+const root = new URL("./", import.meta.url);
+const manifest = JSON.parse(readFileSync(new URL("package.json", root), "utf8"));
+const stamp = new URL("BUILD-REVISION", root);
+function sourceCommit() {
+  if (existsSync(stamp)) {
+    const revision = readFileSync(stamp, "utf8").trim();
+    if (!/^(?:[a-f0-9]{40}|[a-f0-9]{64})$/.test(revision)) throw new Error("Invalid BUILD-REVISION");
+    return revision;
+  }
+  if (existsSync(new URL(".git", root))) {
+    try {
+      return execFileSync("git", ["rev-parse", "HEAD"], { cwd: fileURLToPath(root), encoding: "utf8", stdio: ["ignore", "pipe", "ignore"] }).trim();
+    } catch { /* Source copies can be built without a Git executable. */ }
+  }
+  return "";
+}
+
 /** @type {import('next').NextConfig} */
 // Cache-buster favicon à chaque build (force le rafraîchissement navigateur)
 const nextConfig = {
   reactStrictMode: true,
   output: "standalone",
   env: {
+    MODULAR_SOURCE_COMMIT: sourceCommit(),
+    MODULAR_PACKAGE_VERSION: manifest.version,
     NEXT_PUBLIC_FAVICON_V: String(Date.now()),
   },
   async rewrites() {

@@ -56,7 +56,10 @@ def main(application):
                 if proc.poll() is not None:
                     raise RuntimeError(f"Standalone exited with {proc.returncode}")
                 try:
-                    if json.loads(read("/api/health"))["status"] == "ok":
+                    health = json.loads(read("/api/health"))
+                    assert health["sourceCommit"] == (application / "BUILD-REVISION").read_text().strip()
+                    assert health["applicationVersion"] == json.loads((application / "package.json").read_text())["version"]
+                    if health["status"] == "ok":
                         break
                 except URLError:
                     time.sleep(0.2)

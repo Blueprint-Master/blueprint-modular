@@ -15,7 +15,7 @@ npx --no-install prisma migrate deploy
 node --env-file=.env .next/standalone/server.js
 ```
 
-Conserver la base, le secret de session et le répertoire `uploads/` du serveur standalone sur stockage persistant. Le service répond sur `/api/health`. Les chemins de fichiers enregistrés par les modules Documents et Contrats doivent rester accessibles au même emplacement après une mise à jour.
+Conserver la base, le secret de session et le répertoire `uploads/` du serveur standalone sur stockage persistant. Le service répond sur `/api/health`. Les champs `applicationVersion` et `sourceCommit` indiquent la version de l’application et le commit source utilisé pour construire le serveur. L’archive contient ce même commit dans `application/BUILD-REVISION`. Une copie de sources dépourvue de Git et de ce fichier renvoie un commit nul. Les chemins de fichiers enregistrés par les modules Documents et Contrats doivent rester accessibles au même emplacement après une mise à jour.
 
 ## Services à configurer selon les modules
 
