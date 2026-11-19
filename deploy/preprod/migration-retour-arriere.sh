@@ -88,6 +88,13 @@ comptes() {
     | psql -X -At -F' ' -d "$1" | sort
 }
 comptes $A > "$TRAVAIL/comptes-avant.txt"
+pg_dump --schema-only --no-owner --no-acl -d $A > "$TRAVAIL/schema-avant.sql"
+if DATABASE_URL=$(url $A) "$PRISMA" migrate diff --from-url "$(url $A)" --to-schema-datamodel "$TRAVAIL/avant/prisma/schema.prisma" --exit-code >/dev/null; then
+  r "Base de départ = schéma de la version en production : OUI"
+else
+  r "Base de départ = schéma de la version en production : NON (écart PRÉEXISTANT, avant toute migration) :"
+  DATABASE_URL=$(url $A) "$PRISMA" migrate diff --from-url "$(url $A)" --to-schema-datamodel "$TRAVAIL/avant/prisma/schema.prisma" --script 2>&1 | grep -vE '^\s*$|^--' | head -30 | tee -a "$RAPPORT"
+fi
 r "Tables avant migration : $(wc -l < "$TRAVAIL/comptes-avant.txt"), lignes : $(awk '{s+=$2} END{print s+0}' "$TRAVAIL/comptes-avant.txt")"
 
 # --- 3. Sauvegarde (procédure réelle)
@@ -112,6 +119,13 @@ if DATABASE_URL=$(url $B) "$PRISMA" migrate diff --from-url "$(url $B)" --to-sch
   r "Retour arrière : schéma restauré = schéma de la version en production : OUI"
 else r "Retour arrière : schéma restauré = schéma de la version en production : NON"; fi
 comptes $B > "$TRAVAIL/comptes-restauree.txt"
+pg_dump --schema-only --no-owner --no-acl -d $B > "$TRAVAIL/schema-restauree.sql"
+if diff -q <(grep -vE '^--|^\s*$' "$TRAVAIL/schema-avant.sql") <(grep -vE '^--|^\s*$' "$TRAVAIL/schema-restauree.sql") >/dev/null; then
+  r "Retour arrière : schéma restauré = schéma de la base de départ (pg_dump --schema-only) : OUI"
+else
+  r "Retour arrière : schéma restauré = schéma de la base de départ : NON"
+  diff <(grep -vE '^--|^\s*$' "$TRAVAIL/schema-avant.sql") <(grep -vE '^--|^\s*$' "$TRAVAIL/schema-restauree.sql") | head -20 | tee -a "$RAPPORT"
+fi
 if cmp -s "$TRAVAIL/comptes-avant.txt" "$TRAVAIL/comptes-restauree.txt"; then
   r "Retour arrière : comptes de lignes identiques à l'état d'avant : OUI"
 else r "Retour arrière : comptes de lignes identiques : NON"; diff "$TRAVAIL/comptes-avant.txt" "$TRAVAIL/comptes-restauree.txt" | head -20 | tee -a "$RAPPORT"; fi
