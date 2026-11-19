@@ -1,6 +1,6 @@
 {
   "name": "@blueprint-modular/core",
-  "version": "0.3.17",
+  "version": "0.3.18",
   "description": "Blueprint Modular — composants React pour apps de données",
   "repository": {
     "type": "git",
@@ -83,8 +83,8 @@
     "react-dom": ">=18",
     "leaflet": ">=1.9.0",
     "react-leaflet": ">=4.0.0",
-    "react-plotly.js": "^2.6.0",
-    "plotly.js": "^2.35.0"
+    "react-plotly.js": ">=2.6.0",
+    "plotly.js": ">=2.35.0"
   },
   "peerDependenciesMeta": {
     "leaflet": {
