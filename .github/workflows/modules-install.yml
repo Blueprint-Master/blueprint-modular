@@ -62,6 +62,7 @@ jobs:
         run: |
           export MODULAR_TEST_CHROMIUM="$(command -v google-chrome)"
           "$RUNNER_TEMP/module-browser/bin/python" scripts/verify-installed-analysis.py "$RUNNER_TEMP/install/application"
+          "$RUNNER_TEMP/module-browser/bin/python" scripts/verify-worker-console.py "$RUNNER_TEMP/install/application"
       - name: Exercise the wheel and inspect the packed npm exports from the installed ZIP
         env:
           MODULAR_IMPORT_PROTOCOLS: '1'

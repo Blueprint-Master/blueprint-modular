@@ -44,6 +44,8 @@ class ConsoleTest(unittest.TestCase):
         webhooks.subscribe(db, "ERP", "order.ready")
         with webhooks.transaction(db):
             webhooks.publish(db, "order-1", "order.ready", {"customer": "private"}, 100)
+        before = snapshot(db, "webhooks")
+        self.assertEqual((before["items"][0]["queued"], before["items"][0]["due"], before["history"]), (1, 100, []))
         webhooks.tick(db, lambda *_: 503, now=100)
         result = snapshot(db, "webhooks")
         self.assertEqual(result["history"][0]["retry"], 160)
@@ -52,5 +54,7 @@ class ConsoleTest(unittest.TestCase):
         self.assertIsNone(snapshot(db, "webhooks")["history"][0]["retry"])
         command(db, "webhooks", {"action": "resume", "id": "ERP"}, [], 155)
         webhooks.tick(db, lambda *_: 204, now=160)
-        history = snapshot(db, "webhooks")["history"]
+        result = snapshot(db, "webhooks")
+        self.assertEqual((result["items"][0]["queued"], result["items"][0]["due"]), (0, None))
+        history = result["history"]
         self.assertEqual([(r["http_code"], r["retry"]) for r in history], [(204, None), (503, None)])

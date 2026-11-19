@@ -96,7 +96,8 @@ export function WorkerConsole({ module }: { module: Module }) {
   const col = (key: string, label: string, render?: TableColumn["render"]): TableColumn => ({ key, label, render });
   const items = hooks ? [
     col("id", t("Intégration", "Integration")), col("event", t("Événement", "Event")),
-    col("failures", t("Échecs consécutifs", "Consecutive failures")),
+    col("queued", t("En attente", "Queued")), col("sending", t("En cours", "Sending")),
+    col("due", t("Prochaine échéance", "Next due"), date), col("failures", t("Échecs consécutifs", "Consecutive failures")),
   ] : [
     col("report", t("Rapport", "Report"), (v, row) => v + "." + row.format),
     col("recipients", t("Destinataires", "Recipients")),

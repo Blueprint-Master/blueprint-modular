@@ -20,8 +20,12 @@ def rows(db, query):
 def snapshot(db, module):
     if module == "webhooks":
         return {
-            "items": rows(db, """SELECT name AS id,event,paused,failures FROM hook
-                WHERE deleted=0 ORDER BY name"""),
+            "items": rows(db, """SELECT h.name AS id,h.event,h.paused,h.failures,
+                count(CASE WHEN d.status='pending' THEN 1 END) AS queued,
+                count(CASE WHEN d.status='sending' THEN 1 END) AS sending,
+                CASE WHEN h.paused=0 THEN min(CASE WHEN d.status='pending' THEN d.due END) END AS due
+                FROM hook h LEFT JOIN dispatch d ON d.hook=h.name AND d.status IN ('pending','sending')
+                WHERE h.deleted=0 GROUP BY h.name ORDER BY h.name"""),
             "history": rows(db, """SELECT a.id,a.hook,a.event_id,a.started,a.outcome,a.http_code,
                 CASE WHEN d.status='pending' AND h.paused=0 AND a.id=(
                   SELECT last.id FROM attempt last WHERE last.hook=a.hook AND last.event_id=a.event_id
