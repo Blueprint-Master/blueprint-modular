@@ -4,6 +4,7 @@ import { ticketSla } from "@/lib/asset-manager/ticket-sla";
 import { useState, useEffect } from "react";
 import { readResponse } from "../../../lib/read-response";
 import Link from "next/link";
+import { useAuditAccess } from "../../../lib/useAuditAccess";
 import { useParams } from "next/navigation";
 import { Panel, Button, Spinner, Selectbox, Badge, Card, Divider, Progress } from "@/components/bpm";
 import { FicheHeader, FicheSectionCard, FicheFieldGrid, FicheNav, FicheSkeleton } from "@/components/fiche";
@@ -48,6 +49,7 @@ function statusBadgeVariant(s: string): "primary" | "success" | "warning" | "err
 export default function AssetManagerTicketDetailPage() {
   const params = useParams();
   const { locale } = useI18n();
+  const canViewAudit = useAuditAccess();
   const t = STR[locale];
   const tt = t.tickets;
   const STATUS_OPTIONS = STATUS_VALUES.map((value) => ({ value, label: tt.statusLabels[value] ?? value }));
@@ -176,9 +178,9 @@ export default function AssetManagerTicketDetailPage() {
         </>
       )}
 
-      <Link href={`/modules/asset-manager/${domainId}/audit?resourceType=ticket&action=escalate&resourceId=${encodeURIComponent(ticket.id)}`}>
+      {canViewAudit && <Link href={`/modules/asset-manager/${domainId}/audit?resourceType=ticket&action=escalate&resourceId=${encodeURIComponent(ticket.id)}`}>
         {locale === "fr" ? "Historique des escalades" : "Escalation history"}
-      </Link>
+      </Link>}
       <FicheSectionCard title={tt.sectionInformation} className="mt-4">
         <FicheFieldGrid
           withDividers

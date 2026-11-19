@@ -168,6 +168,7 @@ describe.skipIf(!url)("module API handlers with PostgreSQL", () => {
   });
 
   it("pages a filtered audit by timestamp and id while newer entries arrive", async () => {
+    wikiRole = "ADMIN";
     const resourceId = randomUUID();
     const details = { resourceId, domainId: "it", resourceType: "asset", action: "delete", userId: owner, beforeState: '{"label":"QA"}' };
     const timestamp = new Date("2026-11-17T16:00:00Z");
@@ -192,6 +193,9 @@ describe.skipIf(!url)("module API handlers with PostgreSQL", () => {
     for (const query of ["from=2026-02-30", "from=2026-11-18&to=2026-11-17", "cursor=invalid"]) {
       expect((await auditPage(request("/?" + query))).status).toBe(400);
     }
+    wikiRole = "USER";
+    expect((await auditPage(request(search))).status).toBe(403);
+    wikiRole = "ADMIN";
     userId = null;
     expect((await auditPage(request(search))).status).toBe(401);
   });

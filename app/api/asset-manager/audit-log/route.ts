@@ -1,13 +1,15 @@
 import type { Prisma } from "@prisma/client";
 import { readHistoryCursor, historyPage } from "@/lib/asset-manager/history-page";
-import { getPersonalModuleSession } from "@/lib/auth";
+import { getPersonalModuleSession, hasWriteRole } from "@/lib/auth";
 import { parseCalendarDate } from "@/lib/calendar/event-input";
 import { prisma } from "@/lib/prisma";
 
 export const dynamic = "force-dynamic";
 
 export async function GET(request: Request) {
-  if (!await getPersonalModuleSession()) return Response.json({ error: "Non autorisé" }, { status: 401 });
+  const session = await getPersonalModuleSession();
+  if (!session) return Response.json({ error: "Non autorisé" }, { status: 401 });
+  if (!hasWriteRole(session.user)) return Response.json({ error: "Le journal du parc est réservé aux administrateurs." }, { status: 403 });
   const query = new URL(request.url).searchParams;
   const where: Prisma.AuditLogWhereInput = {};
   for (const key of ["domainId", "resourceType", "resourceId", "userId", "action"] as const) {

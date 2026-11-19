@@ -4,6 +4,8 @@ import { PrismaAdapter } from "@auth/prisma-adapter";
 import GoogleProvider from "next-auth/providers/google";
 import CredentialsProvider from "next-auth/providers/credentials";
 import { prisma } from "./prisma";
+import { hasWriteRole } from "./auth/roles";
+export { hasWriteRole } from "./auth/roles";
 import { authenticatePassword } from "./auth/credentials";
 import type { User } from "@prisma/client";
 
@@ -128,16 +130,6 @@ export function requireRole(role: Role): Role[] {
   const order: Role[] = ["USER", "ADMIN", "OWNER"];
   const i = order.indexOf(role);
   return order.slice(i);
-}
-
-/**
- * Politique d'écriture par défaut (mono-tenant, calquée sur `canContributeToWiki`).
- * Écriture (create/update/delete) réservée à OWNER/ADMIN ; USER = lecture seule.
- * Les actifs appartiennent à l'org, pas à un utilisateur : pas de filtrage par ownership.
- */
-export function hasWriteRole(user: { role?: string } | null | undefined): boolean {
-  const r = user?.role ?? "USER";
-  return r === "OWNER" || r === "ADMIN";
 }
 
 export function canEdit(user: { role?: string }, _resource?: unknown): boolean {
