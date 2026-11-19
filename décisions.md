@@ -28,6 +28,14 @@ Les applications peuvent créer, relire, modifier, désactiver et supprimer leur
 
 Le journal permet également à une application d’inscrire ses propres événements, de filtrer par acteur/action/entité, de paginer et d’exporter en CSV. Une clé d’événement stable rend la réémission idempotente. La recette contrôle un rollback métier, un conflit de clé, le rejet des modifications et suppressions ordinaires, et la lecture d’un export. La protection de l’historique contre un administrateur disposant du fichier repose sur les mesures de sauvegarde et d’exploitation du déploiement.
 
+## Formulaire dynamique — demandes versionnées
+
+L’API Python lit le schéma JSON documenté. La soumission conserve la version exacte et l’identité fournie par l’application. Elle revalide les options, les dates, les seuils et les champs requis côté serveur. Les réponses masquées sont omises. Le formulaire et le SDK traitent la virgule décimale et rejettent un suffixe non numérique. Le test de concurrence enregistre deux tentatives de décision opposées et un seul changement dans le journal. La base rouverte restitue le schéma initial après publication de sa version suivante.
+
+## Tâches et notifications ciblées
+
+Les tâches utilisent une échéance civile, un assigné et une révision qui protège les modifications concurrentes. Le test a vérifié la séquence à faire → en cours → terminé, le filtre de retard, la suppression et l’historique après réouverture. Une notification consulte les équipes fournies par l’application au premier enregistrement, déduplique les membres communs, conserve les boîtes individuelles et transmet les canaux externes au worker Webhooks. La recette a créé deux règles qui se recoupent, vérifié la séparation des lectures et attendu trois livraisons en file pour deux destinataires. L’accusé du prestataire final relève de l’adaptateur SMS ou e-mail configuré.
+
 ## Point de départ
 
 Le catalogue public de Blueprint Modular présente 32 modules et 64 liens de documentation ou de démonstration. Sur le passage HTTP complet, 63 destinations répondaient en 200. Le lien Documentation du calendrier ajoutait `/documentation` à l’URL du simulateur et donnait une 404. La recette de la branche retrouve les 64 destinations depuis le HTML du catalogue et vérifie leur réponse sur le serveur compilé.
