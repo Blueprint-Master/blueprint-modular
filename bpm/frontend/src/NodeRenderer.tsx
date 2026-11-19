@@ -1,5 +1,5 @@
 import React from 'react'
-import { bpm } from '@blueprint-modular/core'
+import { bpm, SkeletonLayout, type SkeletonAssembly } from '@blueprint-modular/core'
 
 /**
  * Table de rendu du core : chaque clé est un type de nœud (camelCase, ex. liveGauge,
@@ -23,6 +23,14 @@ export function NodeRenderer({ node, onAction }: Props) {
   const { type, props } = node
 
   switch (type) {
+    case 'skeleton_dashboard':
+    case 'skeleton_list':
+    case 'skeleton_article':
+    case 'skeleton_form':
+    case 'skeleton_detail':
+    case 'skeleton_chart':
+      return <SkeletonLayout assembly={type.slice('skeleton_'.length) as SkeletonAssembly} {...props} />
+
     case 'title':
       return React.createElement(
         `h${props.level || 1}`,

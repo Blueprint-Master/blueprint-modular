@@ -35,6 +35,7 @@ Documentation = "https://docs.blueprint-modular.com"
 [tool.setuptools.packages.find]
 where = ["."]
 include = ["bpm*"]
+namespaces = false
 
 [tool.setuptools.package-data]
 bpm = ["static/**/*", "frontend/src/**/*", "frontend/index.html", "frontend/package.json", "frontend/vite.config.ts", "frontend/tsconfig.json"]

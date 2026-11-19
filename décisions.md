@@ -69,3 +69,13 @@ Le module donne accès au Wiki, où chaque article dispose d’un fil persistant
 **Recette du 19 novembre.** PostgreSQL a enregistré une seule contribution pour deux publications simultanées utilisant la même clé. Deux modifications concurrentes ont donné un succès et un conflit. L’autre participant a pu répondre à l’article publié et n’a pas pu supprimer la contribution de l’auteur. Chromium a publié une décision, modifié le texte, ajouté une réponse et résolu la décision. Après redémarrage de l’application, la décision était toujours résolue. Sa suppression a conservé la réponse. Le build standalone avec migrations depuis une base vide a servi ces opérations.
 
 **Suite du catalogue.** Skeleton, puis Tableau blanc.
+
+## Skeleton — six écrans de chargement dans une application installée
+
+Les variantes tableau de bord, liste, article, formulaire, fiche et graphique utilisent maintenant les mêmes composants dans le simulateur et dans le moteur embarqué. Le client Python émettait les six types de nœuds, mais le moteur ne les affichait pas. L’ouverture de l’application révélait également un changement d’ordre des hooks React entre le chargement et le premier rendu. La correction couvre cette transition. Les dimensions sont bornées et le choix de mouvement réduit du navigateur est respecté. Ces composants d’affichage ne stockent aucune donnée.
+
+**Recette du 19 novembre.** Une application Python temporaire utilisant les six fonctions publiques a démarré par la commande `bpm run` d’un wheel installé. En Chromium, à 375 pixels de large, les six régions de chargement étaient présentes, leurs formes avaient une hauteur et une largeur positives, et l’animation était désactivée en mode mouvement réduit. Le scénario reproductible est `scripts/verify-skeleton-wheel.py`.
+
+**Installation et livraison.** Le workflow de la PR construit le runtime, installe le wheel, exécute cette recette et joint le paquet au run. Pour préparer une installation depuis un checkout, lancer `bash scripts/build-python-runtime.sh` avant de fabriquer le wheel. Une installation directement depuis les sources sans cette étape réutilise les anciens fichiers statiques. Le workflow PyPI reconstruit également le runtime lors d’un tag de publication. Aucun tag de publication ni déploiement de production n’a été effectué pour cette recette. La CI du commit précédent, couvrant notamment l’authentification et les commentaires, est verte (run 44431611456).
+
+**Prochain module.** Tableau blanc.

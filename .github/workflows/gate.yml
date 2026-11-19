@@ -49,6 +49,24 @@ jobs:
       - name: Run convergence gate
         run: npm run gate
 
+      - name: Package the embedded runtime from the reviewed sources
+        run: |
+          npm ci --prefix bpm/frontend --ignore-scripts --no-audit --no-fund
+          npm run build --prefix bpm/frontend
+          python -m pip wheel --no-deps . -w "${{ runner.temp }}/modular-wheel"
+          python -m pip install --no-deps "${{ runner.temp }}"/modular-wheel/*.whl
+
+      - name: Run all six loading layouts from the installed wheel
+        run: |
+          python -m pip install playwright==1.56.0
+          python -m playwright install --with-deps chromium
+          python scripts/verify-skeleton-wheel.py
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: blueprint-modular-wheel
+          path: ${{ runner.temp }}/modular-wheel/*.whl
+
       - name: Exercise Python workers with local SMTP and HTTPS receivers
         run: python -m unittest discover -s tests/python -v
 
