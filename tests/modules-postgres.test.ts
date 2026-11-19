@@ -18,6 +18,7 @@ vi.mock("@/lib/auth", () => ({
 import { POST as issue } from "@/app/api/asset-manager/assignments/route";
 import { PUT as editLoan } from "@/app/api/asset-manager/assignments/[id]/route";
 import { POST as returnLoan } from "@/app/api/asset-manager/assignments/[id]/return/route";
+import * as changes from "@/app/api/asset-manager/changes/route";
 import * as knowledge from "@/app/api/asset-manager/knowledge/route";
 import * as knowledgeItem from "@/app/api/asset-manager/knowledge/[id]/route";
 import { PUT as recordReading } from "@/app/api/asset-manager/knowledge/[id]/reader/route";
@@ -56,6 +57,40 @@ describe.skipIf(!url)("module API handlers with PostgreSQL", () => {
   afterAll(async () => {
     await postgres.user.deleteMany({ where: { id: { in: [owner, other] } } });
     await postgres.$disconnect();
+  });
+
+  it("allocates change numbers across domains and preserves linked assets and planning dates", async () => {
+    wikiRole = "ADMIN";
+    userId = owner;
+    const title = "QA-change-" + randomUUID();
+    const body = { domainId: "it", title, description: "Bascule", impact: "Atelier", rollbackPlan: "Restaurer", riskLevel: "low",
+      plannedStart: "2026-11-29", plannedEnd: "2026-12-01" };
+    const create = (patch: object) => changes.POST(request("/", "POST", { ...body, ...patch }));
+    const asset = await postgres.asset.create({ data: {
+      reference: randomUUID(), domainId: "it", label: title, assetTypeId: "laptop", createdById: owner, statusId: "in_stock",
+    } });
+    try {
+      expect((await create({ plannedStart: "2026-02-30" })).status).toBe(400);
+      expect((await create({ plannedEnd: "2026-11-28" })).status).toBe(400);
+      expect((await create({ ticketsLinked: [randomUUID()] })).status).toBe(400);
+      expect((await create({ domainId: "maintenance", assetsImpacted: [asset.id] })).status).toBe(400);
+      const result = await Promise.all([create({ assetsImpacted: [asset.id, asset.id] }), create({ domainId: "maintenance" })]);
+      expect(result.map(r => r.status)).toEqual([200, 200]);
+      const [it, maintenance] = await Promise.all(result.map(r => r.json()));
+      expect(it.reference).not.toBe(maintenance.reference);
+      const calendar = async (month: string) => (await changes.GET(request("/?domainId=it&month=" + month))).json();
+      expect(await calendar("2026-12")).toMatchObject([{ id: it.id }]);
+      expect(await calendar("2027-01")).toEqual([]);
+      expect((await changes.GET(request("/?domainId=it&month=2026-13"))).status).toBe(400);
+      expect(JSON.parse(it.assetsImpacted)).toEqual([asset.id]);
+      expect(it.plannedStart).toBe("2026-11-29T00:00:00.000Z");
+      const list = await (await changes.GET(request("/?domainId=it&status=draft"))).json();
+      expect(list.find((row: {id: string}) => row.id === it.id)).toMatchObject({ title, type: "normal", plannedEnd: it.plannedEnd });
+    } finally {
+      await postgres.changeRequest.deleteMany({ where: { title } });
+      await postgres.asset.delete({ where: { id: asset.id } });
+      wikiRole = "USER";
+    }
   });
 
   it("links ticket solutions, scopes reader visibility and records each reader and vote once across retries", async () => {

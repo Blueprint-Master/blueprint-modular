@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import { readResponse } from "../../../lib/read-response";
 import Link from "next/link";
 import { useParams } from "next/navigation";
 import { Button, Card, Panel, Spinner } from "@/components/bpm";
@@ -25,20 +26,26 @@ export default function AssetManagerChangesCalendarPage() {
   const params = useParams();
   const domainId = typeof params?.domainId === "string" ? params.domainId : "";
   const [changes, setChanges] = useState<ChangeRequest[]>([]);
+  const [error, setError] = useState("");
   const [loading, setLoading] = useState(true);
   const [viewDate, setViewDate] = useState(() => {
     const d = new Date();
     return { year: d.getFullYear(), month: d.getMonth() };
   });
 
+  const monthKey = `${viewDate.year}-${String(viewDate.month + 1).padStart(2, "0")}`;
   useEffect(() => {
     if (!domainId) return;
+    let active = true;
+    setError("");
     setLoading(true);
-    fetch(`/api/asset-manager/changes?domainId=${encodeURIComponent(domainId)}`, { credentials: "include" })
-      .then((r) => (r.ok ? r.json() : []))
-      .then((data) => setChanges(Array.isArray(data) ? data : []))
-      .finally(() => setLoading(false));
-  }, [domainId]);
+    fetch(`/api/asset-manager/changes?domainId=${encodeURIComponent(domainId)}&month=${monthKey}`, { credentials: "include" })
+      .then(readResponse)
+      .then(data => { if (active) setChanges(data); })
+      .catch(err => { if (active) setError(err.message); })
+      .finally(() => { if (active) setLoading(false); });
+    return () => { active = false; };
+  }, [domainId, monthKey]);
 
   const firstDay = new Date(viewDate.year, viewDate.month, 1);
   const lastDay = new Date(viewDate.year, viewDate.month + 1, 0);
@@ -47,13 +54,15 @@ export default function AssetManagerChangesCalendarPage() {
   const totalCells = Math.ceil((startPad + daysInMonth) / 7) * 7;
 
   const changesByDay: Record<string, ChangeRequest[]> = {};
-  changes.forEach((c) => {
-    if (!c.plannedStart) return;
-    const d = new Date(c.plannedStart);
-    const key = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
-    if (!changesByDay[key]) changesByDay[key] = [];
-    changesByDay[key].push(c);
-  });
+  const monthPrefix = monthKey + "-";
+  for (let day = 1; day <= daysInMonth; day++) {
+    const key = monthPrefix + String(day).padStart(2, "0");
+    changesByDay[key] = changes.filter(change => {
+      const start = change.plannedStart?.slice(0, 10);
+      const end = change.plannedEnd?.slice(0, 10) ?? start;
+      return start && start <= key && key <= end;
+    });
+  }
 
   const prevMonth = () => {
     setViewDate((v) => (v.month === 0 ? { year: v.year - 1, month: 11 } : { year: v.year, month: v.month - 1 }));
@@ -107,7 +116,7 @@ export default function AssetManagerChangesCalendarPage() {
         </p>
       </div>
 
-      {loading ? (
+      {error ? <Panel variant="warning" title={tch.calendarTitle}>{error}</Panel> : loading ? (
         <div className="flex justify-center py-12">
           <Spinner size="medium" />
         </div>
@@ -141,7 +150,7 @@ export default function AssetManagerChangesCalendarPage() {
                 >
                   <span className="calendar-month-day-num text-xs font-medium">{isCurrentMonth ? dayNum : ""}</span>
                   <div className="flex-1 space-y-0.5 overflow-auto">
-                    {dayChanges.slice(0, 3).map((c) => (
+                    {dayChanges.map((c) => (
                       <Link
                         key={c.id}
                         href={`/modules/asset-manager/${domainId}/changes/${c.id}`}
@@ -152,9 +161,6 @@ export default function AssetManagerChangesCalendarPage() {
                         {c.reference}
                       </Link>
                     ))}
-                    {dayChanges.length > 3 && (
-                      <span className="text-xs" style={{ color: "var(--bpm-text-secondary)" }}>+{dayChanges.length - 3}</span>
-                    )}
                   </div>
                 </div>
               );
