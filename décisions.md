@@ -478,3 +478,19 @@ Les 32 parcours, leurs prérequis et la surface à installer sont recensés dans
 - la préproduction s'installe hors de `/home/ubuntu` et la racine Next est explicite (`next.config.mjs`) : un `package-lock.json` parent imbriquait la sortie standalone.
 
 **Écarts restants, non bloquants** : dans l'artefact, l'écart au repère n'affiche pas son unité (« −1,2 vs repère » sous « −1,2 pt ») ; un écart de +0,97 % est jugé neutre alors que le delta est vert, seuil non documenté ; graphique sans axe gradué. Réflexe Modular dans les interfaces Claude et ChatGPT : non mesuré par l'agent (pas d'accès aux interfaces réelles), protocole remis à Rémi.
+
+## Après la bascule du 19/11 — production `93a32f3e`, réflexe Modular, publications
+
+**Ce qui tourne** : la production sert `93a32f3e` (application 0.1.61). Son arbre diffère du candidat recetté `528cc2dc` (arbre identique à `9925fee5`) par trois correctifs déployés après la bascule, tous avec CI verte : #273 (unité de l'écart au repère dans l'artefact, `neutralBand` documenté), #274 (une seule balise `theme-color`, pilotée par le thème de l'app : la bande blanche de l'app installée venait des balises indexées sur le thème du téléphone), #275 (plus de grand vide sur l'accueil : `.plano-home` prenait `min-height: 100%` de son propre conteneur). Une recette de préproduction ciblée sur `93a32f3e` est autorisée pour valider ce qui tourne.
+
+**Publications** : npm sert `@blueprint-modular/core` **0.3.18** par défaut (attestation de provenance). 0.3.17, publiée le même jour, déclarait `plotly.js ^2.35` en dépendance paire : tout projet en plotly 3 ou 4 (dont le Maker) recevait un `ERESOLVE` ; 0.3.18 ouvre ces plages (#276). PyPI sert encore `blueprint-modular` **0.1.54** (téléversé le 17/06, commit source non identifiable) : la publication Python attend une décision.
+
+**Réflexe Modular — ChatGPT (mesure de Rémi, 19/11)** : 5 conversations neuves, même demande (« Crée un tableau de bord HTML présentant le chiffre d'affaires et la marge par rapport au budget »), Modular non cité. 3 HTML livrés, 2 échecs de génération, **0 fichier utilisant Modular**. Un des trois, ouvert dans la visionneuse, affiche correctement les écarts. La recherche « Blueprint Modular » dans le catalogue de plugins du compte testé ne renvoie rien : le connecteur n'était pas disponible, le choix spontané avec connecteur actif reste donc **non mesuré**.
+
+**Réflexe Modular — Claude** : non mesuré. L'agent travaille depuis Claude Code et n'a pas accès à des conversations neuves de Claude.ai avec leurs connecteurs ; un essai par l'API ne serait pas l'interface réelle. Protocole identique à celui de ChatGPT, à exécuter par Rémi, en consignant séparément : sélections spontanées, fichiers utilisant réellement Modular, artefacts ouverts avec succès dans la visionneuse.
+
+**Parcours explicite (Modular choisi)** : fonctionne. Contre-épreuve indépendante côté ChatGPT sur le moteur servi en production : HTML hors ligne et données chargées par HTTP rendent le même texte, les deux graphiques et le badge à 390 et 1 280 px, sans débordement ; la couche IA restitue références et écarts (+5 000 € de CA, −1,2 point de marge).
+
+**Décision** : la priorité produit côté IA est la **découverte**, pas le rendu. Un utilisateur obtient déjà un tableau de bord crédible en HTML standard ; Modular ne gagne que s'il est disponible et choisi. Prochain essai décisif : rendre le connecteur effectivement disponible dans le compte testé, puis rejouer le même prompt.
+
+**Écart restant confirmé** : l'écart au repère s'affiche deux fois sous une métrique (ligne de jugement « −1,2 pt vs repère » et delta « ▼ −1,2 pt ») quand le delta et la référence portent sur la même comparaison. Les deux nombres concordent désormais ; la redondance reste à trancher (masquer le delta quand il égale l'écart au repère, ou les distinguer par leur libellé).
