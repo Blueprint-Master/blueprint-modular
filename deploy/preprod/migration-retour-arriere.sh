@@ -132,7 +132,7 @@ else
 fi
 if cmp -s "$TRAVAIL/comptes-avant.txt" "$TRAVAIL/comptes-restauree.txt"; then
   r "Retour arrière : comptes de lignes identiques à l'état d'avant : OUI"
-else r "Retour arrière : comptes de lignes identiques : NON"; diff "$TRAVAIL/comptes-avant.txt" "$TRAVAIL/comptes-restauree.txt" | head -20 | tee -a "$RAPPORT"; fi
+else r "Retour arrière : comptes de lignes identiques : NON"; { diff "$TRAVAIL/comptes-avant.txt" "$TRAVAIL/comptes-restauree.txt" || true; } | head -20 | tee -a "$RAPPORT"; fi
 DATABASE_URL=$(url $B) "$PRISMA" migrate status --schema "$TRAVAIL/avant/prisma/schema.prisma" >/dev/null \
   && r "Retour arrière : historique de migrations = version en production : OUI" \
   || r "Retour arrière : historique de migrations = version en production : NON"
