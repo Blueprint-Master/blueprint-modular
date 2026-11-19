@@ -160,6 +160,8 @@ export function Metric({
   };
   const sym = currency && currency !== "%" ? (symbols[currency] ?? currency) : "";
   const locale = valueLocale ?? "fr-FR";
+  // Écart au repère : en points pour un taux, dans la devise sinon (cf. differenceUnit de l'artefact).
+  const judgmentFormat = { locale, unit: currency === "%" ? "pt" : sym || undefined };
   const formatWithLocale = (n: number, decimals: number) =>
     n.toLocaleString(locale, {
       minimumFractionDigits: decimals,
@@ -294,11 +296,11 @@ export function Metric({
       {judgment && (
         <div
           role="status"
-          aria-label={`${label} : ${judgmentLabel(judgment)}`}
+          aria-label={`${label} : ${judgmentLabel(judgment, judgmentFormat)}`}
           className={`flex items-center gap-2 ${compact ? "text-[11px] mt-0.5" : "text-xs mt-1"}`}
           style={{ color: judgmentColor(judgment) }}
         >
-          <span>{judgmentLabel(judgment)}</span>
+          <span>{judgmentLabel(judgment, judgmentFormat)}</span>
           {sortedTraj && sortedTraj.length >= 2 && judgment.trend && (
             <Sparkline
               values={sortedTraj.map((p) => p.v)}
