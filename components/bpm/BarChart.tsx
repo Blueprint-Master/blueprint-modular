@@ -58,19 +58,22 @@ export function BarChart(p: BarChartProps) {
   const geom = useMemo(() => {
     if (!data.length) return { bars: [], refY: null as number | null };
     const ys = data.map((d) => d.y);
-    const maxY = Math.max(...ys, 1, judgment && context ? context.reference : 1);
+    const reference = judgment && context ? context.reference : 0;
+    const maxY = Math.max(0, reference, ...ys);
+    const minY = Math.min(0, reference, ...ys);
     const pad = 20;
     const barW = Math.max(2, (width - pad * 2) / data.length - 4);
     const h = height - pad * 2;
+    const y = (value: number) => height - pad - ((value - minY) / (maxY - minY || 1)) * h;
     return {
       bars: data.map((d, i) => ({
         x: pad + i * ((width - pad * 2) / data.length) + 2,
         w: barW,
-        h: (d.y / maxY) * h,
-        y: height - pad - (d.y / maxY) * h,
+        h: Math.abs(y(d.y) - y(0)),
+        y: Math.min(y(d.y), y(0)),
         fill: context ? judgmentColor(interpret(d.y, context)) : color,
       })),
-      refY: judgment && context ? height - pad - (context.reference / maxY) * h : null,
+      refY: judgment && context ? y(context.reference) : null,
     };
   }, [data, width, height, judgment, context, color]);
   if (!data.length) {

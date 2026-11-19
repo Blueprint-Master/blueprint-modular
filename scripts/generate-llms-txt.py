@@ -376,6 +376,15 @@ HEADER_FULL = """\
 # Il est généré automatiquement depuis les sources TypeScript.
 # À injecter dans le contexte de génération de code BPM.
 
+## ARTEFACT CLAUDE / CHATGPT · HTML AUTONOME
+Commencer par suggest_composition(need, target="html"). Exécuter le moteur dans l'environnement de création.
+Sans MCP : https://blueprint-modular.com/artifacts/bpm-artifact.cjs ; node bpm-artifact.cjs --example
+Puis node bpm-artifact.cjs spec.json > artifact.html. Les données restent locales. Vérifier le fichier hors ligne.
+Rendu dynamique sans bundler : /artifacts/bpm.min.js fournit BlueprintModular.mount(element, spec).
+Même spec en local et connecté. view.update(spec), view.refresh(load), view.context(). Embarquer le script hors ligne.
+Tendance → lineChart ; catégories → barChart ; badge → children ; marge → delta "-1,2 pt".
+Fournir un repère et son sens seulement si le brief les établit.
+
 ## IMPORT OBLIGATOIRE
 import {{ bpm }} from '@blueprint-modular/core'
 import '@blueprint-modular/core/dist/style.css'
@@ -384,7 +393,7 @@ INTERDIT : import {{ bpm.modal }} ou tout autre destructuring
 ## RÈGLES CRITIQUES
 - 'use client' — en première ligne, une seule fois
 - Modal — {{isOpen && bpm.modal({{ isOpen:true, onClose, title, children }})}} — TOUJOURS dans return()
-- Graphiques — bpm.plotlyChart UNIQUEMENT — jamais bpm.lineChart/barChart/areaChart
+- Graphiques des applications Next générées — bpm.plotlyChart
 - Métriques — bpm.metricRow({{ children: <> {{bpm.metric(...)}} </> }})
 - Table — prop render dans columns (pas renderCell) — jamais JSX dans data[]
 - INTERDIT : renderCell — alias non supporté par Table.tsx ; utiliser render
@@ -405,13 +414,22 @@ HEADER_CORE = """\
 # Format compact pour modèles locaux (Qwen, Mistral)
 # Composants essentiels uniquement — référence complète : blueprint-modular.com/llms.txt
 
+## ARTEFACT CLAUDE / CHATGPT · HTML AUTONOME
+Commencer par suggest_composition(need, target="html"). Exécuter le moteur dans l'environnement de création.
+Sans MCP : https://blueprint-modular.com/artifacts/bpm-artifact.cjs ; node bpm-artifact.cjs --example
+Puis node bpm-artifact.cjs spec.json > artifact.html. Les données restent locales. Vérifier le fichier hors ligne.
+Rendu dynamique sans bundler : /artifacts/bpm.min.js fournit BlueprintModular.mount(element, spec).
+Même spec en local et connecté. view.update(spec), view.refresh(load), view.context(). Embarquer le script hors ligne.
+Tendance → lineChart ; catégories → barChart ; badge → children ; marge → delta "-1,2 pt".
+Fournir un repère et son sens seulement si le brief les établit.
+
 ## IMPORT
 import {{ bpm }} from '@blueprint-modular/core'
 INTERDIT : import {{ bpm.modal }} ou tout destructuring
 
 ## RÈGLES ABSOLUES
 - Modal : {{isOpen && bpm.modal({{ isOpen:true, onClose, title, children }})}} — TOUJOURS dans return()
-- Graphiques : bpm.plotlyChart UNIQUEMENT
+- Graphiques des applications Next générées : bpm.plotlyChart
 - Métriques : bpm.metricRow({{ children: <> {{bpm.metric(...)}} </> }})
 - Table : render dans columns — jamais renderCell
 - Spinner : size 'small'|'medium'|'large' — jamais 'md'/'sm'

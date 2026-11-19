@@ -95,3 +95,7 @@ Next.js, en composants `bpm.*`. Modular est le substrat ; Maker le fabrique.
 `@blueprint-modular/core` : Apache-2.0 · `blueprint-modular` (PyPI) : Apache-2.0
 </content>
 </invoke>
+
+### Artefacts HTML pour ChatGPT et Claude
+
+Pour un HTML autonome, le modèle compose les données et le moteur Modular produit un fichier local. Le connecteur expose le profil `target="html"` et la commande fournit un exemple et son schéma. [Instructions pour un projet ChatGPT ou Claude](public/artifacts/instructions.md) · [Guide du paquet](packages/core/USAGE.md#artefacts-et-fichiers-html-autonomes)

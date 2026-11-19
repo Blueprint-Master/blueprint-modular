@@ -137,6 +137,9 @@ export default defineConfig({
         index: resolve(__dirname, 'src/index.ts'),
         'i18n/index': resolve(__dirname, 'src/i18n/index.ts'),
         'themes/index': resolve(__dirname, 'src/themes/index.ts'),
+        'maps/index': resolve(__dirname, 'src/maps/index.ts'),
+        'artifact/index': resolve(__dirname, 'src/artifact/index.ts'),
+        'artifact/plotly': resolve(__dirname, 'src/artifact/plotly.ts'),
         'schema/index': resolve(__dirname, 'src/schema/index.ts'),
         'connectors/index': resolve(__dirname, 'src/connectors/index.ts'),
         'keep-screen-on/index': resolve(repoRoot, 'components/bpm/useScreenWakeLock.ts'),
@@ -154,7 +157,6 @@ export default defineConfig({
       external: [
         'react', 'react-dom', 'react/jsx-runtime', 'react/jsx-dev-runtime',
         'react-plotly.js', 'plotly.js', 'zod',
-        /^next(\/|$)/,
         /^leaflet(\/|$)/,
         'react-leaflet',
         'qrcode.react',

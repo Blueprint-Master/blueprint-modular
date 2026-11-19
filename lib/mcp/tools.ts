@@ -19,7 +19,7 @@ export const MCP_TOOLS = [
   { name: "list_components", sig: "category?, cursor?" },
   { name: "search_components", sig: "query, cursor?" },
   { name: "get_component", sig: "name" },
-  { name: "suggest_composition", sig: "need, limit?" },
+  { name: "suggest_composition", sig: "need, limit?, target?" },
 ] as const;
 
 export type McpToolName = (typeof MCP_TOOLS)[number]["name"];

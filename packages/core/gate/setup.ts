@@ -32,27 +32,6 @@ afterAll(() => {
   console.error = originalError;
 });
 
-// --- Next.js stubs ---
-vi.mock("next/dynamic", () => ({
-  default: (_loader: unknown, _opts?: unknown) => {
-    const Noop = () => null;
-    Noop.displayName = "DynamicNoop";
-    return Noop;
-  },
-}));
-
-vi.mock("next/link", () => ({
-  default: ({
-    children,
-    href,
-    ...rest
-  }: {
-    children: React.ReactNode;
-    href?: string;
-    [k: string]: unknown;
-  }) => React.createElement("a", { href, ...rest }, children),
-}));
-
 // --- Third-party stubs (not installed in packages/core) ---
 vi.mock("qrcode.react", () => ({
   QRCodeSVG: ({ value }: { value: string }) =>
