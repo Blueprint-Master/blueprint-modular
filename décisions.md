@@ -30,8 +30,15 @@ Le simulateur Calendrier conserve ses séries en mémoire. Une date de fin expli
 
 | Module | Comportement observé dans le code | Critère métier restant à démontrer |
 |---|---|---|
-| Réservation / Créneaux | Les réservations sont conservées dans l’état React du simulateur. | Deux utilisateurs réservent simultanément une même ressource. Une seule réservation est confirmée et retrouvée après reconnexion. |
 | Export planifié | L’action de démonstration incrémente les compteurs d’envoi en mémoire. | Une échéance déclenche un export réel à partir des données attendues et conserve son résultat après reprise du service. |
 | Webhooks | La démonstration remplit l’historique de livraison depuis un temporisateur. | Un destinataire de recette reçoit l’événement et les tentatives sont consultables après une interruption. |
 
-Ces écarts portent sur les parcours examinés. Une qualification de l’ensemble du catalogue demanderait une recette métier pour chacun des 29 autres modules.
+## Réservation / Créneaux — parcours de travail qualifié
+
+Le lien **Réserver une salle** ouvre le planning partagé de l’organisation. Le visiteur peut toujours essayer le simulateur public. Le planning propose les trois salles du module, par jour ouvré, de 9 h à 18 h, heure de Paris. Un membre voit les disponibilités et peut annuler ses propres réservations. Les intitulés des réunions restent visibles uniquement par leur auteur. Le sélecteur d’organisation définit le planning affiché.
+
+La migration `20261119002000_room_reservations` lie la réservation à son adhésion à l’organisation. Une contrainte unique PostgreSQL pour chacune des neuf heures interdit tout chevauchement, y compris sur la seconde heure. Le départ d’un membre libère ses créneaux. Le déploiement nécessite `prisma migrate deploy` puis le démarrage de la nouvelle version.
+
+**Recette exécutée le 19 novembre.** Sur PostgreSQL 16, deux comptes ont demandé des créneaux qui se recouvrent en parallèle. Une écriture a réussi, la seconde a reçu HTTP 409. Les créneaux adjacents et ceux d’une autre organisation restaient réservables. Le second membre ne pouvait ni lire le titre ni annuler la réunion du premier. Les tests ont vérifié le week-end, le changement d’heure et la fermeture à 18 h. Sur le build Next.js standalone, Chromium a réservé deux heures, puis a retrouvé la réunion avec une nouvelle connexion après redémarrage du serveur. Le premier clic de renoncement a conservé la réservation. L’annulation confirmée a libéré les deux heures.
+
+**Suite du catalogue.** Prochain module : Export planifié, puis Webhooks. Pour les autres modules, les contrôles d’ouverture du catalogue restent de simples contrôles HTTP. La recette de chaque parcours utilisateur est à consigner ici, avec ses conditions de déploiement.

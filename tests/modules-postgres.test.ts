@@ -13,6 +13,7 @@ vi.mock("@/lib/auth", () => ({
 }));
 import { GET as workflow } from "@/app/api/workflow/entity/[id]/route";
 import { POST as advance } from "@/app/api/workflow/entity/[id]/transition/route";
+import * as reservations from "@/app/api/reservations/route";
 import * as calendar from "@/app/api/calendar/route";
 import * as item from "@/app/api/calendar/[id]/route";
 import * as notifications from "@/app/api/notifications/route";
@@ -30,6 +31,55 @@ describe.skipIf(!url)("module API handlers with PostgreSQL", () => {
   afterAll(async () => {
     await postgres.user.deleteMany({ where: { id: { in: [owner, other] } } });
     await postgres.$disconnect();
+  });
+
+  it("serializes room occupancy, scopes access and releases both hours on cancellation", async () => {
+    const org = randomUUID();
+    const second = randomUUID();
+    const day = "2090-06-05";
+    for (const id of [org, second]) {
+      await postgres.organization.create({ data: { id, name: id, slug: id } });
+    }
+    try {
+      await postgres.orgMember.createMany({ data: [
+        { userId: owner, organizationId: org }, { userId: other, organizationId: org },
+        { userId: other, organizationId: second },
+      ] });
+      const book = (startHour: number, duration: number, organizationId = org) => reservations.POST(request("/", "POST", {
+        day, startHour, duration, room: "hugo", organizationId, title: "Comité confidentiel",
+      }));
+      const list = (id = org) => reservations.GET(request("/?organizationId=" + id + "&day=" + day));
+      const cancel = (id: string) => reservations.DELETE(request("/?id=" + id, "DELETE"));
+      userId = null;
+      expect((await list()).status).toBe(401);
+      userId = owner;
+      expect((await list(second)).status).toBe(403);
+      expect((await book(9, 1, second)).status).toBe(403);
+      expect((await book(17, 2)).status).toBe(400);
+      const first = book(9, 2);
+      userId = other;
+      const race = await Promise.all([first, book(10, 1)]);
+      expect(race.map(r => r.status).sort()).toEqual([201, 409]);
+      const winningIndex = race.findIndex(r => r.status === 201);
+      const winner = winningIndex === 0 ? owner : other;
+      const loser = winner === owner ? other : owner;
+      const { id } = await race[winningIndex].json();
+      userId = loser;
+      expect(await (await list()).json()).toEqual([expect.objectContaining({ id: null, title: null })]);
+      expect((await cancel(id)).status).toBe(404);
+      userId = winner;
+      expect(await (await list()).json()).toEqual([expect.objectContaining({ id, title: "Comité confidentiel" })]);
+      expect((await book(11, 1)).status).toBe(201);
+      userId = other;
+      expect((await book(9, 2, second)).status).toBe(201);
+      userId = winner;
+      expect((await cancel(id)).status).toBe(204);
+      expect((await book(9, 2)).status).toBe(201);
+      expect((await book(10, 2)).status).toBe(409);
+      expect(await postgres.roomReservation.count({ where: { organizationId: org } })).toBe(2);
+    } finally {
+      await postgres.organization.deleteMany({ where: { id: { in: [org, second] } } });
+    }
   });
 
   it("creates, lists, partially edits and deletes an event for its owner", async () => {
