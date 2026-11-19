@@ -1,14 +1,18 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import { contractDocumentHref, contractNumber, coveredIds } from "@/lib/asset-manager/contract-terms";
+import { readResponse } from "../../../lib/read-response";
 import Link from "next/link";
-import { useParams } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 import { Panel, Button, Spinner, Selectbox, Input, Badge, Card, Divider } from "@/components/bpm";
 import { FicheHeader, FicheSectionCard, FicheFieldGrid, FicheNav, FicheSkeleton } from "@/components/fiche";
 import { useI18n } from "@/lib/i18n/LocaleProvider";
 import { STR } from "../../../strings";
 
+type AssetSummary = { id: string; reference: string; label: string };
 type AssetContract = {
+  canEdit: boolean; coveredAssets: AssetSummary[];
   id: string;
   domainId: string;
   reference: string;
@@ -30,6 +34,7 @@ type AssetContract = {
 
 export default function AssetManagerContractDetailPage() {
   const params = useParams();
+  const router = useRouter();
   const { locale } = useI18n();
   const t = STR[locale];
   const tc = t.contracts;
@@ -46,52 +51,74 @@ export default function AssetManagerContractDetailPage() {
   const [editAmount, setEditAmount] = useState("");
   const [editNoticeDays, setEditNoticeDays] = useState("");
   const [editAutoRenewal, setEditAutoRenewal] = useState(false);
+  const [error, setError] = useState("");
+  const [assets, setAssets] = useState<AssetSummary[]>([]);
+  const [selected, setSelected] = useState<string[]>([]);
+  const [alertDays, setAlertDays] = useState("30");
+  const [documentUrl, setDocumentUrl] = useState("");
   const [editNotes, setEditNotes] = useState("");
 
-  useEffect(() => {
-    if (!id) return;
-    fetch(`/api/asset-manager/contracts/${id}`, { credentials: "include" })
-      .then((r) => (r.ok ? r.json() : null))
-      .then((c) => {
-        setContract(c);
-        if (c) {
-          setEditLabel(c.label);
-          setEditSupplier(c.supplier ?? "");
-          setEditStartDate(c.startDate ? new Date(c.startDate).toISOString().slice(0, 10) : "");
-          setEditEndDate(c.endDate ? new Date(c.endDate).toISOString().slice(0, 10) : "");
-          setEditAmount(c.amount != null ? String(c.amount) : "");
-          setEditNoticeDays(String(c.noticeDays ?? 30));
-          setEditAutoRenewal(c.autoRenewal);
-          setEditNotes(c.notes ?? "");
-        }
-      })
-      .finally(() => setLoading(false));
-  }, [id]);
+  const endpoint = `/api/asset-manager/contracts/${id}`;
+  function populate(c: AssetContract) {
+    setEditLabel(c.label); setEditSupplier(c.supplier ?? ""); setEditNotes(c.notes ?? "");
+    setEditStartDate(c.startDate.slice(0, 10)); setEditEndDate(c.endDate.slice(0, 10));
+    setEditAmount(c.amount === null ? "" : String(c.amount)); setEditNoticeDays(String(c.noticeDays));
+    setAlertDays(String(c.alertDaysBefore)); setEditAutoRenewal(c.autoRenewal);
+    setSelected(coveredIds(c.assetIds)); setDocumentUrl(c.documentUrl ?? "");
+  }
 
-  const handleSave = () => {
+  useEffect(() => {
+    let active = true;
+    setLoading(true);
+    fetch(endpoint).then(readResponse).then(async c => {
+      if (!active) return;
+      setContract(c); populate(c);
+      if (c.canEdit) {
+        const list = await fetch(`/api/asset-manager/assets?domainId=${encodeURIComponent(c.domainId)}`).then(readResponse);
+        if (active) setAssets(list);
+      }
+    }).catch(err => { if (active) setError(err.message); }).finally(() => { if (active) setLoading(false); });
+    return () => { active = false; };
+  }, [endpoint]);
+
+  async function handleSave() {
     if (!contract || saving) return;
+    setError("");
+    const numbers = [editAmount, editNoticeDays, alertDays].map(contractNumber);
+    if (numbers.some(n => !Number.isFinite(n))) { setError(locale === "fr" ? "Montant ou délai invalide." : "Invalid amount or period."); return; }
+    const fields = { label: editLabel.trim(), supplier: editSupplier.trim() || null, notes: editNotes.trim() || null,
+      amount: editAmount.trim() ? numbers[0] : null, noticeDays: numbers[1], alertDaysBefore: numbers[2],
+      autoRenewal: editAutoRenewal, startDate: editStartDate, endDate: editEndDate, assetIds: selected,
+      documentUrl: documentUrl.trim() || null };
+    const original = { ...contract, startDate: contract.startDate.slice(0, 10), endDate: contract.endDate.slice(0, 10), assetIds: coveredIds(contract.assetIds) };
+    const patch = Object.fromEntries(Object.entries(fields).filter(([key, value]) => JSON.stringify(value) !== JSON.stringify(original[key])));
+    if (!Object.keys(patch).length) return;
     setSaving(true);
-    fetch(`/api/asset-manager/contracts/${id}`, {
-      method: "PUT",
-      headers: { "Content-Type": "application/json" },
-      credentials: "include",
-      body: JSON.stringify({
-        label: editLabel.trim(),
-        supplier: editSupplier.trim() || null,
-        startDate: editStartDate || null,
-        endDate: editEndDate || null,
-        amount: editAmount ? parseFloat(editAmount) : null,
-        noticeDays: parseInt(editNoticeDays, 10) || 30,
-        autoRenewal: editAutoRenewal,
-        notes: editNotes.trim() || null,
-      }),
-    })
-      .then((r) => (r.ok ? r.json() : null))
-      .then((updated) => {
-        if (updated) setContract(updated);
-      })
-      .finally(() => setSaving(false));
-  };
+    try {
+      const response = await fetch(endpoint, { method: "PUT", headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ ...patch, expectedUpdatedAt: contract.updatedAt }) });
+      if (response.status === 409) {
+        const latest = await fetch(endpoint).then(readResponse);
+        setContract(latest);
+        populate({ ...latest, ...patch, assetIds: patch.assetIds ? JSON.stringify(patch.assetIds) : latest.assetIds });
+        setError(locale === "fr" ? "Le contrat a changé. Vérifiez vos champs avant de les enregistrer." : "The contract changed. Review your fields before saving.");
+        return;
+      }
+      await readResponse(response);
+      const saved = await fetch(endpoint).then(readResponse);
+      setContract(saved); populate(saved);
+    } catch (err) { setError(err instanceof Error ? err.message : String(err)); }
+    finally { setSaving(false); }
+  }
+  async function remove() {
+    if (!contract || !window.confirm(locale === "fr" ? "Supprimer ce contrat ?" : "Delete this contract?")) return;
+    setSaving(true); setError("");
+    try {
+      await fetch(endpoint + "?expectedUpdatedAt=" + encodeURIComponent(contract.updatedAt), { method: "DELETE" }).then(readResponse);
+      router.push(`/modules/asset-manager/${domainId}/contracts`);
+    } catch (err) { setError(err instanceof Error ? err.message : String(err)); }
+    finally { setSaving(false); }
+  }
 
   if (loading) {
     return <FicheSkeleton singleSection />;
@@ -100,12 +127,13 @@ export default function AssetManagerContractDetailPage() {
   if (!contract) {
     return (
       <div className="doc-page">
-        <Panel variant="warning" title={tc.notFoundTitle}>{tc.notFoundDescription}</Panel>
+        <Panel variant="warning" title={tc.notFoundTitle}>{error || tc.notFoundDescription}</Panel>
         <FicheNav backLink={`/modules/asset-manager/${domainId}/contracts`} backLabel={tc.backList} />
       </div>
     );
   }
 
+  const doc = contractDocumentHref(contract.documentUrl);
   const typeLabel = TYPE_LABELS[contract.type] ?? contract.type;
 
   return (
@@ -128,10 +156,11 @@ export default function AssetManagerContractDetailPage() {
       />
 
       <Divider thickness={1} color="var(--bpm-border)" className="my-4" />
+      {error && <p role="alert">{error}</p>}
       <Card variant="outlined" className="mt-4">
         <div className="bpm-card-body p-4">
           <h3 className="text-base font-semibold mb-3" style={{ color: "var(--bpm-text-primary)" }}>{tc.detailTitle}</h3>
-          <FicheFieldGrid
+          <fieldset disabled={!contract.canEdit || saving}><FicheFieldGrid
             withDividers
             items={[
               { label: tc.fieldReference, value: contract.reference },
@@ -176,6 +205,8 @@ export default function AssetManagerContractDetailPage() {
                 label: tc.fieldNoticeDays,
                 value: <Input value={editNoticeDays} onChange={(v) => setEditNoticeDays(v)} placeholder="30" />,
               },
+              { label: locale === "fr" ? "Alerte (jours)" : "Alert (days)", value: <Input value={alertDays} onChange={setAlertDays} /> },
+              { label: locale === "fr" ? "Lien vers le contrat" : "Document URL", value: <Input value={documentUrl} onChange={setDocumentUrl} /> },
               {
                 label: tc.fieldAutoRenewalShort,
                 value: (
@@ -199,11 +230,20 @@ export default function AssetManagerContractDetailPage() {
               placeholder={tc.sectionNotes}
             />
           </div>
-          <div className="mt-6">
-            <Button variant="primary" size="medium" onClick={handleSave} disabled={saving}>
-              {saving ? t.common.saving : t.common.save}
-            </Button>
-          </div>
+          {contract.canEdit && assets.length > 0 && <div className="mt-3"><p>{tc.sectionCoveredAssets}</p>
+            {assets.map(asset => <label key={asset.id} className="flex gap-2"><input type="checkbox" checked={selected.includes(asset.id)}
+              onChange={() => setSelected(ids => ids.includes(asset.id) ? ids.filter(id => id !== asset.id) : [...ids, asset.id])} />
+              {asset.reference} — {asset.label}</label>)}
+          </div>}
+          </fieldset>
+          {doc && <p className="mt-3"><a href={doc} target="_blank" rel="noopener noreferrer">{locale === "fr" ? "Ouvrir le contrat" : "Open document"}</a></p>}
+          {contract.coveredAssets.length > 0 && <ul className="mt-3">{contract.coveredAssets.map(asset => <li key={asset.id}>
+            <Link href={`/modules/asset-manager/${domainId}/assets/${asset.id}`}>{asset.reference} — {asset.label}</Link>
+          </li>)}</ul>}
+          {contract.canEdit && <div className="mt-6 flex gap-2">
+            <Button variant="primary" size="medium" onClick={handleSave} disabled={saving}>{saving ? t.common.saving : t.common.save}</Button>
+            <Button variant="outline" size="small" onClick={remove} disabled={saving}>{t.common.delete}</Button>
+          </div>}
         </div>
       </Card>
 

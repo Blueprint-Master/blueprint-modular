@@ -1,8 +1,9 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import { readResponse } from "../../lib/read-response";
 import Link from "next/link";
-import { useParams, useRouter } from "next/navigation";
+import { useParams, useRouter, useSearchParams } from "next/navigation";
 import { Download, FileText, ChevronDown, ChevronUp } from "lucide-react";
 import { Table, Spinner, Panel, Button, Chip, EmptyState } from "@/components/bpm";
 import { useI18n } from "@/lib/i18n/LocaleProvider";
@@ -33,6 +34,9 @@ export default function AssetManagerContractsPage() {
   const [contracts, setContracts] = useState<AssetContract[]>([]);
   const [config, setConfig] = useState<{ domain_label?: string } | null>(null);
   const [loading, setLoading] = useState(true);
+  const alertOnly = useSearchParams().get("alert") === "1";
+  const [canEdit, setCanEdit] = useState(false);
+  const [error, setError] = useState("");
   const [filterType, setFilterType] = useState("");
   const [filtersOpen, setFiltersOpen] = useState(false);
 
@@ -41,20 +45,17 @@ export default function AssetManagerContractsPage() {
       setLoading(false);
       return;
     }
-    setLoading(true);
-    const url = `/api/asset-manager/contracts?domainId=${encodeURIComponent(domainId)}${filterType ? `&type=${encodeURIComponent(filterType)}` : ""}`;
+    let active = true;
+    setLoading(true); setError("");
+    const search = new URLSearchParams({ domainId, type: filterType, alert: alertOnly ? "1" : "0" });
     Promise.all([
-      fetch(`/api/asset-manager/config/${domainId}`, { credentials: "include" }).then((r) => (r.ok ? r.json() : null)),
-      fetch(url, { credentials: "include" }).then((r) => (r.ok ? r.json() : [])),
-    ])
-      .then(([cfg, data]) => {
-        setConfig(cfg);
-        setContracts(Array.isArray(data) ? data : []);
-      })
-      .catch(() => setContracts([]))
-      .finally(() => setLoading(false));
-  }, [domainId, filterType]);
-
+      fetch(`/api/asset-manager/config/${domainId}`).then(readResponse),
+      fetch(`/api/asset-manager/contracts?${search}`).then(async res => ({ rows: await readResponse(res), canEdit: res.headers.get("X-Can-Edit") === "true" })),
+    ]).then(([cfg, list]) => { if (active) { setConfig(cfg); setContracts(list.rows); setCanEdit(list.canEdit); } })
+      .catch(err => { if (active) setError(err.message); }).finally(() => { if (active) setLoading(false); });
+    return () => { active = false; };
+  }, [domainId, filterType, alertOnly]);
+  if (error) return <Panel variant="warning" title={t.nav.contracts}>{error}</Panel>;
   const filtered = contracts;
 
   const columns = [
@@ -115,12 +116,13 @@ export default function AssetManagerContractsPage() {
               {tc.listSubtitle}
             </p>
           </div>
-          <Link href={`/modules/asset-manager/${domainId}/contracts/new`} className="asset-manager-cta-button">
+          {canEdit && <Link href={`/modules/asset-manager/${domainId}/contracts/new`} className="asset-manager-cta-button">
             <Button variant="primary" size="small">{tc.newContract}</Button>
-          </Link>
+          </Link>}
         </div>
       </div>
 
+      {alertOnly && <Link href={`/modules/asset-manager/${domainId}/contracts`}>{locale === "fr" ? "Afficher tous les contrats" : "Show all contracts"}</Link>}
       <div className={`asset-manager-equipment-filters ${!filtersOpen ? "asset-manager-equipment-filters--collapsed" : ""}`}>
         <button
           type="button"
@@ -165,7 +167,7 @@ export default function AssetManagerContractsPage() {
             title={tc.emptyTitle}
             description={tc.emptyDescription}
             icon={<FileText size={64} style={{ color: "var(--bpm-text-secondary)", opacity: 0.6 }} />}
-            action={
+            action={canEdit &&
               <Link href={`/modules/asset-manager/${domainId}/contracts/new`}>
                 <Button variant="primary" size="small">{tc.newContract}</Button>
               </Link>
