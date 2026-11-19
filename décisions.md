@@ -40,6 +40,10 @@ Les tâches utilisent une échéance civile, un assigné et une révision qui pr
 
 Le paquet Python gère les SKU et leurs variantes, les contrôles EAN-13 et les mouvements de stock idempotents. Deux réservations concurrentes de la dernière unité ont donné un seul retrait. Le devis et la facture gardent les coordonnées et montants historiques. Le passage en livraison attend un adaptateur configuré et l’état de l’envoi provient du journal du worker. Le test a fixé un prix hors taxe de 3,15 €, une TVA de 0,63 €, émis une seule facture pour deux acceptations et rapproché deux règlements de 2,00 € et 1,78 €. Le HTML imprimable a conservé le montant et échappé le libellé de l’article. La recette a utilisé un adaptateur isolé.
 
+## Connecteurs — appels du serveur de l’application
+
+Le serveur installé peut exécuter les quatre opérations déclarées par le catalogue. Le coffre est isolé par application et le fournisseur OAuth est injecté par l’exploitant. Les quatre requêtes ont été exécutées contre un récepteur local isolé via un transport de recette. Les tests ont contrôlé le mapping, l’accusé du webhook et le traitement d’une erreur HTTP. Aucun compte Stripe, Google ou Slack de production n’a été utilisé.
+
 ## Point de départ
 
 Le catalogue public de Blueprint Modular présente 32 modules et 64 liens de documentation ou de démonstration. Sur le passage HTTP complet, 63 destinations répondaient en 200. Le lien Documentation du calendrier ajoutait `/documentation` à l’URL du simulateur et donnait une 404. La recette de la branche retrouve les 64 destinations depuis le HTML du catalogue et vérifie leur réponse sur le serveur compilé.
