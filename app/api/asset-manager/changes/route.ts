@@ -6,6 +6,7 @@ import { requireWriteRole } from "@/lib/asset-manager/authz";
 import { prisma } from "@/lib/prisma";
 import { getDomainConfig } from "@/lib/asset-manager/get-domain-config";
 import { changeInput } from "@/lib/asset-manager/change-input";
+import { checkChangeLinks } from "@/lib/asset-manager/change-workflow";
 import { nextInventoryReference } from "@/lib/asset-manager/numbering";
 
 export const dynamic = "force-dynamic";
@@ -53,12 +54,8 @@ export async function POST(request: Request) {
   if (!getDomainConfig(body.domainId)) return NextResponse.json({ error: "Domaine invalide." }, { status: 400 });
   return prisma.$transaction(async tx => {
     const domainId = body.domainId;
-    if (body.assetsImpacted.length && await tx.asset.count({ where: { domainId, id: { in: body.assetsImpacted } } }) !== body.assetsImpacted.length) {
-      return NextResponse.json({ error: "Actif introuvable dans ce domaine." }, { status: 400 });
-    }
-    if (body.ticketsLinked.length && await tx.ticket.count({ where: { domainId, id: { in: body.ticketsLinked } } }) !== body.ticketsLinked.length) {
-      return NextResponse.json({ error: "Ticket introuvable dans ce domaine." }, { status: 400 });
-    }
+    const invalid = await checkChangeLinks(tx, domainId, body.assetsImpacted, body.ticketsLinked);
+    if (invalid) return invalid;
     const reference = await nextInventoryReference(tx, "ChangeRequest", `CHG-${new Date().getFullYear()}-`);
     const change = await tx.changeRequest.create({ data: {
       domainId, reference, type: body.type, riskLevel: body.riskLevel, status: "draft", title: body.title,

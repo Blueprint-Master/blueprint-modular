@@ -11,6 +11,7 @@ const other = randomUUID();
 let wikiRole = "USER";
 vi.mock("@/lib/prisma", () => ({ get prisma() { return postgres; } }));
 vi.mock("@/lib/auth", () => ({
+  canApproveChange: (user: { role?: string }) => user.role === "ADMIN",
   hasWriteRole: (user: { role?: string }) => user.role === "ADMIN",
   getSessionOrTestUser: async () => userId ? { user: { id: userId, role: wikiRole } } : null,
   getPersonalModuleSession: async () => userId ? { user: { id: userId, role: wikiRole } } : null,
@@ -18,6 +19,9 @@ vi.mock("@/lib/auth", () => ({
 import { POST as issue } from "@/app/api/asset-manager/assignments/route";
 import { PUT as editLoan } from "@/app/api/asset-manager/assignments/[id]/route";
 import { POST as returnLoan } from "@/app/api/asset-manager/assignments/[id]/return/route";
+import * as changeItem from "@/app/api/asset-manager/changes/[id]/route";
+import { POST as approveChange } from "@/app/api/asset-manager/changes/[id]/approve/route";
+import { POST as rejectChange } from "@/app/api/asset-manager/changes/[id]/reject/route";
 import * as changes from "@/app/api/asset-manager/changes/route";
 import * as knowledge from "@/app/api/asset-manager/knowledge/route";
 import * as knowledgeItem from "@/app/api/asset-manager/knowledge/[id]/route";
@@ -57,6 +61,77 @@ describe.skipIf(!url)("module API handlers with PostgreSQL", () => {
   afterAll(async () => {
     await postgres.user.deleteMany({ where: { id: { in: [owner, other] } } });
     await postgres.$disconnect();
+  });
+
+  it("records one CAB vote per member and review, enforces the quorum and retains the decision on restart", async () => {
+    userId = owner;
+    wikiRole = "ADMIN";
+    const title = "QA-CAB-" + randomUUID();
+    const origin = { domainId: "it", title, description: "Mise à jour", impact: "Poste QA", rollbackPlan: "Restaurer",
+      riskLevel: "low", plannedStart: "2026-11-25" };
+    const createdIds: string[] = [];
+    const create = async (patch: object = {}) => {
+      const row = await (await changes.POST(request("/", "POST", { ...origin, ...patch }))).json();
+      createdIds.push(row.id);
+      return context(row.id);
+    };
+    try {
+      await postgres.user.updateMany({ where: { id: { in: [owner, other] } }, data: { role: "ADMIN" } });
+      const ctx = await create();
+      const edit = (patch: object) => changeItem.PUT(request("/", "PUT", patch), ctx);
+      const read = async () => (await changeItem.GET(request("/"), ctx)).json();
+      const review = await (await edit({ status: "cab_review" })).json();
+      expect(review).toMatchObject({ cabRound: 1, cabRequiredVotes: 2, status: "cab_review" });
+      const vote = (round: number) => approveChange(request("/", "POST", { round }), ctx);
+      const [first, retry] = await Promise.all([vote(1), vote(1)]);
+      expect(first.status).toBe(200);
+      expect(retry.status).toBe(200);
+      expect(await read()).toMatchObject({ status: "cab_review", cabReviewerIds: JSON.stringify([owner]) });
+      userId = other;
+      const rejected = await rejectChange(request("/", "POST", { round: 1, comment: "Fenêtre à revoir" }), ctx);
+      expect(await rejected.json()).toMatchObject({ status: "rejected", implementationNotes: "Fenêtre à revoir" });
+      expect((await changeItem.DELETE(request("/", "DELETE"), ctx)).status).toBe(409);
+      await edit({ status: "draft" });
+      await edit({ status: "cab_review" });
+      expect((await vote(1)).status).toBe(409);
+      await vote(2);
+      userId = owner;
+      expect(await (await vote(2)).json()).toMatchObject({ status: "approved" });
+      expect((await edit({ status: "scheduled", expectedUpdatedAt: review.updatedAt })).status).toBe(409);
+      expect((await edit({ plannedEnd: "2026-11-24" })).status).toBe(400);
+      await edit({ status: "scheduled" });
+      await edit({ status: "in_progress" });
+      await edit({ status: "completed" });
+      expect(await read()).toMatchObject({ status: "completed", actualStart: expect.any(String), actualEnd: expect.any(String), success: true });
+      expect((await edit({ success: false })).status).toBe(400);
+      expect((await edit({ actualEnd: null })).status).toBe(400);
+      expect(await postgres.auditLog.count({ where: { resourceId: createdIds[0], afterState: { contains: "vote_approve" } } })).toBe(3);
+
+      const urgent = await create({ type: "emergency" });
+      const submit = () => changeItem.PUT(request("/", "PUT", { status: "cab_review" }), urgent);
+      const pending = await (await submit()).json();
+      await submit();
+      expect(pending.cabRequiredVotes).toBe(1);
+      expect(await postgres.notification.count({ where: { title: pending.reference } })).toBe(2);
+      const conflicting = await Promise.all([approveChange(request("/", "POST"), urgent), rejectChange(request("/", "POST"), urgent)]);
+      expect(conflicting.map(r => r.status).sort()).toEqual([200, 409]);
+      const legacy = await create();
+      const legacyId = (await legacy.params).id;
+      await postgres.changeRequest.update({ where: { id: legacyId }, data: {
+        status: "cab_review", cabReviewerIds: JSON.stringify([randomUUID(), other]),
+      } });
+      expect(await (await approveChange(request("/", "POST"), legacy)).json()).toMatchObject({
+        status: "approved", cabRequiredVotes: 2, cabReviewerIds: JSON.stringify([other, owner]),
+      });
+      const standard = await create({ type: "standard", title: "Redémarrage programmé" });
+      expect(await (await changeItem.PUT(request("/", "PUT", { status: "cab_review" }), standard)).json()).toMatchObject({ status: "approved" });
+    } finally {
+      wikiRole = "USER";
+      await postgres.notification.deleteMany({ where: { userId: { in: [owner, other] }, message: { contains: title } } });
+      await postgres.auditLog.deleteMany({ where: { resourceType: "change", resourceId: { in: createdIds } } });
+      await postgres.changeRequest.deleteMany({ where: { id: { in: createdIds } } });
+      await postgres.user.updateMany({ where: { id: { in: [owner, other] } }, data: { role: "USER" } });
+    }
   });
 
   it("allocates change numbers across domains and preserves linked assets and planning dates", async () => {

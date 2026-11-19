@@ -558,6 +558,10 @@ model ChangeRequest {
   ticketsLinked           String?   @map("tickets_linked") @db.Text // JSON array
   requesterId             String    @map("requester_id")
   implementerId           String?   @map("implementer_id")
+  cabRound                 Int @default(0) @map("cab_round")
+  cabElectorate            String[] @default([]) @map("cab_electorate")
+  cabRequiredVotes         Int? @map("cab_required_votes")
+  cabRejections            String[] @default([]) @map("cab_rejections")
   cabReviewerIds         String?   @map("cab_reviewer_ids") @db.Text // JSON array
   status                  String    // draft | submitted | cab_review | approved | rejected | scheduled | in_progress | completed | failed | cancelled
   plannedStart            DateTime? @map("planned_start")
