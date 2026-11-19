@@ -15,7 +15,7 @@ npx --no-install prisma migrate deploy
 node --env-file=.env .next/standalone/server.js
 ```
 
-Conserver la base, le secret de session et le répertoire `uploads/` du serveur standalone sur stockage persistant. Le service répond sur `/api/health`. Les champs `applicationVersion` et `sourceCommit` indiquent la version de l’application et le commit source utilisé pour construire le serveur. L’archive contient ce même commit dans `application/BUILD-REVISION`. Une copie de sources dépourvue de Git et de ce fichier renvoie un commit nul. Les chemins de fichiers enregistrés par les modules Documents et Contrats doivent rester accessibles au même emplacement après une mise à jour.
+Conserver la base, le secret de session et le répertoire `uploads/` du serveur standalone sur stockage persistant. Le service répond sur `/api/health`. Les chemins de fichiers enregistrés par les modules Documents et Contrats doivent rester accessibles au même emplacement après une mise à jour.
 
 ## Services à configurer selon les modules
 
@@ -23,6 +23,10 @@ Conserver la base, le secret de session et le répertoire `uploads/` du serveur 
 - Les modules IA et Documents utilisent le fournisseur configuré par l’exploitant. Le service du prompteur Monitor et ses dépendances se trouvent sous `deploy/prompteur/` et dans `deploy/prompteur-api-requirements.txt`.
 - Les workers Python Export planifié et Webhooks se trouvent sous `bpm/`. Leur configuration, les commandes de traitement et les règles de reprise figurent dans la documentation de chaque module. Pour construire le paquet Python avec son interface embarquée, utiliser `bash scripts/build-python-runtime.sh`, puis `python -m pip wheel --no-deps . -w dist`.
 - Les écrans intitulés « Simulateur » proposent une démonstration. Leur documentation précise le mode de stockage et les éventuels services à raccorder.
+
+## Vérifier la version servie
+
+Lire `/api/health` après démarrage de l’application. Les champs `applicationVersion` et `sourceCommit` indiquent la version de l’application et le commit source utilisé pour construire le serveur. L’archive contient ce même commit dans `application/BUILD-REVISION`. Une copie de sources dépourvue de Git et de ce fichier renvoie un commit nul.
 
 ## Escalades de la Gestion de parc
 
