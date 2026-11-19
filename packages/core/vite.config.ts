@@ -135,6 +135,8 @@ export default defineConfig({
     lib: {
       entry: {
         index: resolve(__dirname, 'src/index.ts'),
+        'i18n/index': resolve(__dirname, 'src/i18n/index.ts'),
+        'themes/index': resolve(__dirname, 'src/themes/index.ts'),
         'schema/index': resolve(__dirname, 'src/schema/index.ts'),
         'connectors/index': resolve(__dirname, 'src/connectors/index.ts'),
         'keep-screen-on/index': resolve(repoRoot, 'components/bpm/useScreenWakeLock.ts'),

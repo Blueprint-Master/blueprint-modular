@@ -37,6 +37,16 @@
       "types": "./dist/components/bpm/useScreenWakeLock.d.ts",
       "import": "./dist/keep-screen-on/index.mjs",
       "require": "./dist/keep-screen-on/index.js"
+    },
+    "./i18n": {
+      "types": "./dist/packages/core/src/i18n/index.d.ts",
+      "import": "./dist/i18n/index.mjs",
+      "require": "./dist/i18n/index.js"
+    },
+    "./themes": {
+      "types": "./dist/packages/core/src/themes/index.d.ts",
+      "import": "./dist/themes/index.mjs",
+      "require": "./dist/themes/index.js"
     }
   },
   "files": [

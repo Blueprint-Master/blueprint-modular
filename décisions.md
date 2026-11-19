@@ -368,3 +368,7 @@ La commande distribuée `deploy/backup-postgres.sh` construit un dump PostgreSQL
 ## Connecteurs entrants
 
 L’intégrateur conserve ses connexions authentifiées. Le worker lit des objets JSON par HTTP, des CSV en SFTP et des colonnes nommées dans PostgreSQL ou MySQL. Il conserve le dernier import complet après une panne ou un conflit de révision. Les identifiants de ligne doivent être uniques. Le contrôle de livraison utilise des connexions de test et le serveur SFTP OpenSSH en lecture seule.
+
+## Thèmes et Multi-langue dans l’application consommatrice
+
+Le paquet npm expose le format JSON exporté par le simulateur de thèmes et limite son application au conteneur fourni par l’intégrateur. Une attribution supprimée reprend le thème par défaut. Les dictionnaires peuvent venir de fichiers ou de la base de l’application. Le pluriel suit la grammaire de la traduction utilisée, y compris en cas de repli, et les montants et dates suivent la locale de l’utilisateur. Une recette hors dépôt charge les entrées publiques CommonJS et ESM du paquet.

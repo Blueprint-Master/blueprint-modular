@@ -89,6 +89,12 @@ function appliquerTheme(racine: HTMLElement, theme: Theme) {
         ))}
       </ul>
 
+      <h2 className="text-lg font-semibold mt-6 mb-2">@blueprint-modular/core</h2>
+      <CodeBlock code={`import { resolveTheme, applyTheme } from "@blueprint-modular/core/themes";
+// themes: JSON exports from the theme editor; assignedTheme: tenant configuration
+const branding = resolveTheme(themes, defaultThemeId, assignedTheme);
+applyTheme(document.querySelector<HTMLElement>("#application")!, branding);`} language="typescript" />
+
       <p className="mt-6 text-sm" style={{ color: "var(--bpm-text-secondary)" }}>
         <Link
           href="/modules/themes/simulateur"
