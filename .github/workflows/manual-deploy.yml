@@ -29,6 +29,11 @@ jobs:
     runs-on: [self-hosted, bpm-prod]
     steps:
       - name: Deploy
+        env:
+          # Sans cela, `pm2 restart --update-env` transmet RUNNER_TRACKING_ID au process
+          # de l'app, et le runner le tue en fin de job comme « orphelin » (constaté le
+          # 19/11 : « Terminate orphan process … next-server », PM2 relance aussitôt).
+          RUNNER_TRACKING_ID: ""
         run: |
           cd ~/blueprint-modular
           git fetch origin
