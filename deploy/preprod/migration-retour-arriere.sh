@@ -24,6 +24,7 @@ PUBLIC=/var/tmp/modular-preprod
 RAPPORT=$PUBLIC/migration.txt
 A=modular_mig_avant
 B=modular_mig_restauree
+C=modular_mig_sauvegarde266
 TRAVAIL=$(mktemp -d "$RACINE/mig-XXXXXX")
 PRISMA=$APP/node_modules/.bin/prisma
 
@@ -36,7 +37,7 @@ mkdir -p "$PUBLIC"; : > "$RAPPORT"; chmod 644 "$RAPPORT"
 r() { echo "$*" | tee -a "$RAPPORT"; }
 pg() { ( cd /tmp && sudo -u postgres psql -X -q -v ON_ERROR_STOP=1 "$@" ); }
 nettoyer() {
-  pg -c "DROP DATABASE IF EXISTS $A WITH (FORCE)" -c "DROP DATABASE IF EXISTS $B WITH (FORCE)" || true
+  pg -c "DROP DATABASE IF EXISTS $A WITH (FORCE)" -c "DROP DATABASE IF EXISTS $B WITH (FORCE)" -c "DROP DATABASE IF EXISTS $C WITH (FORCE)" || true
   rm -rf "$TRAVAIL"
 }
 trap nettoyer EXIT
@@ -120,7 +121,7 @@ if DATABASE_URL=$(url $B) "$PRISMA" migrate diff --from-url "$(url $B)" --to-sch
 else r "Retour arrière : schéma restauré = schéma de la version en production : NON"; fi
 comptes $B > "$TRAVAIL/comptes-restauree.txt"
 pg_dump --schema-only --no-owner --no-acl -d $B > "$TRAVAIL/schema-restauree.sql"
-if diff -q <(grep -vE '^--|^\s*$' "$TRAVAIL/schema-avant.sql") <(grep -vE '^--|^\s*$' "$TRAVAIL/schema-restauree.sql") >/dev/null; then
+if diff -q <(grep -vE '^--|^\s*$|^\\(un)?restrict ' "$TRAVAIL/schema-avant.sql") <(grep -vE '^--|^\s*$|^\\(un)?restrict ' "$TRAVAIL/schema-restauree.sql") >/dev/null; then
   r "Retour arrière : schéma restauré = schéma de la base de départ (pg_dump --schema-only) : OUI"
 else
   r "Retour arrière : schéma restauré = schéma de la base de départ : NON"
@@ -132,5 +133,21 @@ else r "Retour arrière : comptes de lignes identiques : NON"; diff "$TRAVAIL/co
 DATABASE_URL=$(url $B) "$PRISMA" migrate status --schema "$TRAVAIL/avant/prisma/schema.prisma" >/dev/null \
   && r "Retour arrière : historique de migrations = version en production : OUI" \
   || r "Retour arrière : historique de migrations = version en production : NON"
+# --- 6. Sauvegarde de #266 (deploy/sauvegarde-avant-migration.sh, celle du déploiement de
+# production) : prise sur la base de PRÉPRODUCTION, restaurée dans une base isolée C.
+if [ -x "$APP/deploy/sauvegarde-avant-migration.sh" ]; then
+  SORTIE=$(HOME="$TRAVAIL" GIT_DIR="$SRC" bash "$APP/deploy/sauvegarde-avant-migration.sh" 2>&1) || { r "Sauvegarde #266 : ÉCHEC — $SORTIE"; exit 1; }
+  D266=$(ls "$TRAVAIL"/backups/modular/avant-migration-*.dump | head -1)
+  r "Sauvegarde #266 : $(basename "$D266") ($(du -h "$D266" | cut -f1)), base modular_preprod"
+  pg -c "DROP DATABASE IF EXISTS $C WITH (FORCE)" -c "CREATE DATABASE $C OWNER modular_preprod"
+  pg_restore --single-transaction --exit-on-error --no-owner --no-privileges -d $C "$D266"
+  comptes modular_preprod > "$TRAVAIL/c266-source.txt"; comptes $C > "$TRAVAIL/c266-restauree.txt"
+  pg_dump --schema-only --no-owner --no-acl -d modular_preprod | grep -vE '^--|^\s*$|^\\(un)?restrict ' > "$TRAVAIL/s266-source.sql"
+  pg_dump --schema-only --no-owner --no-acl -d $C | grep -vE '^--|^\s*$|^\\(un)?restrict ' > "$TRAVAIL/s266-restauree.sql"
+  cmp -s "$TRAVAIL/c266-source.txt" "$TRAVAIL/c266-restauree.txt" && r "Restauration #266 : comptes de lignes identiques ($(awk '{s+=$2} END{print s+0}' "$TRAVAIL/c266-source.txt") lignes) : OUI" || r "Restauration #266 : comptes de lignes identiques : NON"
+  cmp -s "$TRAVAIL/s266-source.sql" "$TRAVAIL/s266-restauree.sql" && r "Restauration #266 : schéma identique : OUI" || r "Restauration #266 : schéma identique : NON"
+else
+  r "Sauvegarde #266 : script absent de la préproduction, non testée"
+fi
 r "Limite : le retour arrière restaure la sauvegarde ; ce qui est écrit APRÈS la migration est perdu."
 r "Bases jetables supprimées en sortie."
