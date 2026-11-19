@@ -21,7 +21,12 @@ IP_SERVEUR=51.83.88.18
 PORT=3040
 RACINE=/home/ubuntu/modular-preprod
 SRC=$RACINE/src.git
-APP=$RACINE/releases/$SHA
+# Build HORS de /home/ubuntu : /home/ubuntu/package-lock.json fait choisir à Next ce
+# répertoire comme racine, et la sortie standalone est alors imbriquée sous le
+# chemin relatif (constaté le 19/11 : « Build standalone introuvable »). La prod
+# n'y échappe que parce que son dossier s'appelle exactement blueprint-modular.
+APP_BASE=/srv/modular-preprod
+APP=$APP_BASE/releases/$SHA
 SECRETS=$RACINE/secrets.env
 BASE=modular_preprod
 PM2_NOM=modular-preprod
@@ -35,7 +40,8 @@ etape() { echo; echo "== $* ($(date -u +%H:%M:%SZ))"; echo "- $*" >> "$RAPPORT";
 [ "$(id -un)" = ubuntu ] || die "à lancer en ubuntu (pas en root, pas en claude-ops)"
 sudo -n true 2>/dev/null || die "jeton sudo absent : lancer 'sudo -v' juste avant"
 sudo install -d -m 755 -o ubuntu -g ubuntu "$PUBLIC"
-mkdir -p "$RACINE/releases" "$RACINE/logs"
+mkdir -p "$RACINE/logs"
+sudo install -d -m 755 -o ubuntu -g ubuntu "$APP_BASE" "$APP_BASE/releases"
 : > "$RAPPORT"; chmod 644 "$RAPPORT"
 echo "Préproduction Modular — $(date -u +%d/%m/%Y\ %H:%M:%SZ)" >> "$RAPPORT"
 
@@ -157,7 +163,7 @@ export DATABASE_URL NEXT_TELEMETRY_DISABLED=1
   npm run build --prefix packages/core
   node scripts/build-modules-bundle.cjs --output public/downloads
   npm run build:standalone
-} > "$RACINE/logs/build.log" 2>&1 || die "build (voir $RACINE/logs/build.log)"
+} > "$RACINE/logs/build.log" 2>&1 || { tail -40 "$RACINE/logs/build.log" > "$PUBLIC/build-fin.log"; chmod 644 "$PUBLIC/build-fin.log"; die "build (fin du journal : $PUBLIC/build-fin.log)"; }
 [ -s .next/standalone/server.js ] || die "server.js standalone absent"
 
 # --- 6. Migrations
