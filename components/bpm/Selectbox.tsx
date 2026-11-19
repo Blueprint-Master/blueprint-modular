@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useRef, useEffect } from "react";
+import React, { useLayoutEffect, useState, useRef, useEffect } from "react";
 import { createPortal } from "react-dom";
 import { useBpmLocale } from "./i18n";
 
@@ -97,46 +97,34 @@ export function Selectbox({
     };
   }, [isOpen]);
 
-  useEffect(() => {
-    if (!isOpen) {
-      setDropdownStyle({});
-      return;
-    }
+  useLayoutEffect(() => {
+    if (!isOpen) return;
     const update = () => {
       if (!selectboxRef.current || !dropdownRef.current) return;
       const rect = selectboxRef.current.getBoundingClientRect();
-      const dropdownEl = dropdownRef.current;
-      const minDropdownWidth = 220;
-      const viewW = window.innerWidth;
-      const dropW = Math.max(rect.width, minDropdownWidth);
-      
-      // Positionner à droite du trigger par défaut
-      let left = rect.left;
-      
-      // Si ça sort à droite → aligner sur le bord droit du trigger
-      if (left + dropW > viewW - 12) {
-        left = rect.right - dropW;
-      }
-      
-      // S'assurer que le dropdown ne sorte pas à gauche
-      left = Math.max(8, left);
-      
+      const margin = 8;
+      const gap = 4;
+      const viewHeight = window.innerHeight;
+      const viewWidth = window.innerWidth;
+      const width = Math.min(Math.max(rect.width, 220), Math.max(0, viewWidth - 2 * margin));
+      const below = Math.max(0, viewHeight - rect.bottom - gap - margin);
+      const above = Math.max(0, rect.top - gap - margin);
+      const menuHeight = Math.min(280, dropdownRef.current.scrollHeight + 2);
+      const openAbove = below < menuHeight && above > below;
       setDropdownStyle({
         position: "fixed",
-        top: rect.bottom + 4,
-        left: left,
-        width: dropW,
-        minWidth: minDropdownWidth,
-        maxHeight: 280,
+        ...(openAbove ? { bottom: viewHeight - rect.top + gap } : { top: rect.bottom + gap }),
+        left: Math.max(margin, Math.min(rect.left, viewWidth - width - margin)),
+        width,
+        maxHeight: Math.min(280, openAbove ? above : below),
         zIndex: 10002,
         overflow: "auto",
       });
     };
-    const t = setTimeout(update, 10);
+    update();
     window.addEventListener("scroll", update, true);
     window.addEventListener("resize", update);
     return () => {
-      clearTimeout(t);
       window.removeEventListener("scroll", update, true);
       window.removeEventListener("resize", update);
     };
