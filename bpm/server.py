@@ -23,39 +23,47 @@ import bpm
 # Dossier du build React embarqué
 STATIC_DIR = Path(__file__).parent / "static"
 SERVER_URL = os.environ.get("BPM_SERVER_URL", "").rstrip("/")
+# The embedded runtime shares one node buffer, session and working directory.
+_runtime_lock = threading.RLock()
 
 
 def _run_script(script_path: str) -> list[dict]:
     """Exécute le script utilisateur et retourne les nœuds."""
-    bpm.reset_current_nodes()
-    script_dir = os.path.abspath(os.path.dirname(script_path))
-    if script_dir not in sys.path:
-        sys.path.insert(0, script_dir)
-    old_cwd = os.getcwd()
-    try:
-        os.chdir(script_dir)
-        runpy.run_path(script_path, run_name="__main__")
-        return bpm.get_current_nodes()
-    finally:
-        os.chdir(old_cwd)
-        if script_dir in sys.path:
-            sys.path.remove(script_dir)
+    with _runtime_lock:
+        bpm.reset_current_nodes()
+        script_dir = os.path.abspath(os.path.dirname(script_path))
+        add_path = script_dir not in sys.path
+        if add_path:
+            sys.path.insert(0, script_dir)
+        old_cwd = os.getcwd()
+        try:
+            os.chdir(script_dir)
+            runpy.run_path(script_path, run_name="__main__")
+            nodes = bpm.get_current_nodes()
+            for key in [k for k in bpm.session_state if isinstance(k, str) and k.startswith("_clicked_")]:
+                del bpm.session_state[key]
+            return nodes
+        finally:
+            os.chdir(old_cwd)
+            if add_path and script_dir in sys.path:
+                sys.path.remove(script_dir)
 
 
 def _apply_action(action: str, payload: dict) -> None:
     """Applique une action utilisateur dans le session_state."""
-    if action == "button_click":
-        key = payload.get("key", "")
-        bpm.session_state[f"_clicked_{key}"] = True
-    elif action == "input_change":
-        key = payload.get("key", "")
-        bpm.session_state[f"_input_{key}"] = payload.get("value", "")
-    elif action == "toggle_change":
-        key = payload.get("key", "")
-        bpm.session_state[f"_toggle_{key}"] = payload.get("value", False)
-    elif action == "select_change":
-        key = payload.get("key", "")
-        bpm.session_state[f"_select_{key}"] = payload.get("value", "")
+    with _runtime_lock:
+        if action == "button_click":
+            key = payload.get("key", "")
+            bpm.session_state[f"_clicked_{key}"] = True
+        elif action == "input_change":
+            key = payload.get("key", "")
+            bpm.session_state[f"_input_{key}"] = payload.get("value", "")
+        elif action == "toggle_change":
+            key = payload.get("key", "")
+            bpm.session_state[f"_toggle_{key}"] = payload.get("value", False)
+        elif action == "select_change":
+            key = payload.get("key", "")
+            bpm.session_state[f"_select_{key}"] = payload.get("value", "")
 
 
 def _serve_static(path: str) -> tuple[int, str, bytes]:
@@ -124,9 +132,6 @@ class BPMHandler(BaseHTTPRequestHandler):
                 for n in nodes:
                     if n["type"] == "page_config":
                         title = n["props"].get("page_title", title)
-                # Nettoyer les clics consommés
-                for k in [k for k in bpm.session_state if k.startswith("_clicked_")]:
-                    del bpm.session_state[k]
                 body = json.dumps(
                     {"nodes": nodes, "title": title},
                     default=str,
