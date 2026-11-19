@@ -18,3 +18,5 @@ export type {
   MapTileLayer, MapWmsLayer, MapImageLayer, MapRasterLayer, MapCustomLayer, CartographicLayer, MapLayerState,
   MapFeatureSelection, CartographicTheme, ResolvedMapLayer,
 } from "../../../components/bpm";
+
+export { NavigationLinkProvider } from "../../../components/bpm/NavigationLink";

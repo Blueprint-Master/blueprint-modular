@@ -50,7 +50,7 @@ export interface MetricProps {
   label: string;
   /** Valeur principale (string, number, ou trajectoire v(t) [{t, v}] — affiche le dernier point et révèle la tendance si context est fourni). */
   value: string | number | TrajectoryPoint[];
-  /** Variation affichée. Format string (ex. "+12%") ou number. */
+  /** Variation numérique formatée, ou variation avec unité explicite conservée (ex. "-1,2 pt"). */
   delta?: number | string | null;
   /** Nom optionnel pour référencer la métrique dans le chat IA : $metric:name ou @name */
   name?: string | null;
@@ -164,9 +164,13 @@ export function Metric({
       ? formatWithLocale(value, valueDecimals)
       : value;
   const deltaStr = typeof delta === "string" ? delta.trim() : "";
-  const deltaIsPercent = deltaStr.endsWith("%");
-  const deltaNum = typeof delta === "string" ? parseFloat(delta.replace(/,/g, ".").replace(/%/g, "")) : delta;
-  const hasDelta = deltaNum != null && !Number.isNaN(deltaNum);
+  // Strings carrying a unit already express a formatted quantity. Keep the
+  // original precision and unit while reading the leading number for direction.
+  const quantity = /^([+−-]?(?:\d+(?:[.,]\d+)?|[.,]\d+))\s*([^\d.,\s].*)?$/u.exec(deltaStr);
+  const deltaNum = typeof delta === "string"
+    ? quantity ? Number(quantity[1].replace("−", "-").replace(",", ".")) : null
+    : delta;
+  const hasDelta = deltaNum != null && Number.isFinite(deltaNum);
   const positive = hasDelta && deltaType !== "aucun" && (deltaType === "inverse" ? deltaNum < 0 : deltaNum > 0);
   const negative = hasDelta && deltaType !== "aucun" && (deltaType === "inverse" ? deltaNum > 0 : deltaNum < 0);
 
@@ -300,7 +304,7 @@ export function Metric({
         {hasDelta ? (
           <>
             {deltaNum! > 0 ? "▲" : deltaNum! < 0 ? "▼" : "—"}
-            {formatDelta(deltaNum!, deltaIsPercent)}
+            {quantity?.[2] ? deltaStr : formatDelta(deltaNum!)}
           </>
         ) : (
           "\u00A0"

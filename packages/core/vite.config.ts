@@ -135,6 +135,9 @@ export default defineConfig({
     lib: {
       entry: {
         index: resolve(__dirname, 'src/index.ts'),
+        'maps/index': resolve(__dirname, 'src/maps/index.ts'),
+        'artifact/index': resolve(__dirname, 'src/artifact/index.ts'),
+        'artifact/plotly': resolve(__dirname, 'src/artifact/plotly.ts'),
         'schema/index': resolve(__dirname, 'src/schema/index.ts'),
         'connectors/index': resolve(__dirname, 'src/connectors/index.ts'),
         'objects/index': resolve(__dirname, 'src/objects/index.ts'),
@@ -151,7 +154,6 @@ export default defineConfig({
       external: [
         'react', 'react-dom', 'react/jsx-runtime', 'react/jsx-dev-runtime',
         'react-plotly.js', 'plotly.js', 'zod',
-        /^next(\/|$)/,
         /^leaflet(\/|$)/,
         'react-leaflet',
         'qrcode.react',

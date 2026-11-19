@@ -62,3 +62,5 @@ frontend/static/i18n/_frag2/
 
 # APK Android construit localement (android/build-twa.sh)
 android/out/
+/public/artifacts/bpm-artifact.cjs
+/public/artifacts/bpm.min.js

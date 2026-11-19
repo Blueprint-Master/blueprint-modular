@@ -1,12 +1,21 @@
 # Blueprint Modular — Agent Context File
 # Version React (@blueprint-modular/core, npm) : 0.3.16
 # Version Python (blueprint-modular, PyPI)      : 0.1.54
-# Date    : 2026-11-15
+# Date    : 2026-11-19
 # URL canonique : https://blueprint-modular.com/llms.txt
 #
 # Ce fichier est la référence machine de @blueprint-modular/core.
 # Il est généré automatiquement depuis les sources TypeScript.
 # À injecter dans le contexte de génération de code BPM.
+
+## ARTEFACT CLAUDE / CHATGPT · HTML AUTONOME
+Commencer par suggest_composition(need, target="html"). Exécuter le moteur dans l'environnement de création.
+Sans MCP : https://blueprint-modular.com/artifacts/bpm-artifact.cjs ; node bpm-artifact.cjs --example
+Puis node bpm-artifact.cjs spec.json > artifact.html. Les données restent locales. Vérifier le fichier hors ligne.
+Rendu dynamique sans bundler : /artifacts/bpm.min.js fournit BlueprintModular.mount(element, spec).
+Même spec en local et connecté. view.update(spec), view.refresh(load), view.context(). Embarquer le script hors ligne.
+Tendance → lineChart ; catégories → barChart ; badge → children ; marge → delta "-1,2 pt".
+Fournir un repère et son sens seulement si le brief les établit.
 
 ## IMPORT OBLIGATOIRE
 import { bpm } from '@blueprint-modular/core'
@@ -16,7 +25,7 @@ INTERDIT : import { bpm.modal } ou tout autre destructuring
 ## RÈGLES CRITIQUES
 - 'use client' — en première ligne, une seule fois
 - Modal — {isOpen && bpm.modal({ isOpen:true, onClose, title, children })} — TOUJOURS dans return()
-- Graphiques — bpm.plotlyChart UNIQUEMENT — jamais bpm.lineChart/barChart/areaChart
+- Graphiques des applications Next générées — bpm.plotlyChart
 - Métriques — bpm.metricRow({ children: <> {bpm.metric(...)} </> })
 - Table — prop render dans columns (pas renderCell) — jamais JSX dans data[]
 - INTERDIT : renderCell — alias non supporté par Table.tsx ; utiliser render
@@ -924,7 +933,7 @@ Composant bpm.free — voir @blueprint-modular/core ou BPM_API.md.
 ```
 
 ## bpm.gps
-@component bpm.gps @description Composant de géolocalisation avec carte Leaflet : affiche la position courante de l'utilisateur (mode `display`) ou permet de sélectionner un point sur la carte (mode `picker`). @example // Mode display : récupération et affichage de la position du navigateur bpm.gps({ label: "Ma position", onLocation: ({ lat, lng, accuracy }) => console.log(lat, lng, accuracy), }) @example // Mode picker : sélection contrôlée d'un point sur la carte const [point, setPoint] = useState<{ lat: number; lng: number } | null>(null); bpm.gps({ mode: "picker", value: point, onChange: setPoint, height: 400, }) @param {object} props @param {string} [props.label] - Titre affiché au-dessus du bloc. Optionnel. @param {boolean} [props.showMap=true] - Affiche la carte Leaflet sous les contrôles. Optionnel. @param {function} [props.onLocation] - Callback appelé en mode `display` quand la position du navigateur est obtenue. Reçoit `{ lat, lng, accuracy }`. Optionnel. @param {number} [props.height=300] - Hauteur de la carte en pixels. Optionnel. @param {string} [props.className=""] - Classes CSS additionnelles appliquées au conteneur racine. Optionnel. @param {"display"|"picker"} [props.mode="display"] - Mode du composant : `display` pour afficher la position courante, `picker` pour sélectionner un point. Optionnel. @param {{lat:number,lng:number}|null} [props.value=null] - Position courante en mode `picker` (composant contrôlé). Optionnel. @param {function} [props.onChange] - Callback appelé en mode `picker` à chaque clic sur la carte ou déplacement du marqueur. Reçoit `{ lat, lng }`. Optionnel. @note SSR-safe : la carte Leaflet est chargée dynamiquement avec `ssr: false`. L'accès à `navigator.geolocation` est encapsulé dans un handler utilisateur, jamais exécuté pendant le rendu. @note Permission requise : le navigateur demande l'autorisation à l'utilisateur lors du premier clic sur « Localiser ». En cas de refus (code 1), le statut passe à `error` avec le message « Autorisation refusée ». @parent bpm.card, bpm.panel, bpm.modal @associated bpm.mapView, bpm.geofence, bpm.routePlanner, bpm.addressInput
+@component bpm.gps @description Composant de géolocalisation avec carte Leaflet : affiche la position courante de l'utilisateur (mode `display`) ou permet de sélectionner un point sur la carte (mode `picker`). @example // Mode display : récupération et affichage de la position du navigateur bpm.gps({ label: "Ma position", onLocation: ({ lat, lng, accuracy }) => console.log(lat, lng, accuracy), }) @example // Mode picker : sélection contrôlée d'un point sur la carte const [point, setPoint] = useState<{ lat: number; lng: number } | null>(null); bpm.gps({ mode: "picker", value: point, onChange: setPoint, height: 400, }) @param {object} props @param {string} [props.label] - Titre affiché au-dessus du bloc. Optionnel. @param {boolean} [props.showMap=true] - Affiche la carte Leaflet sous les contrôles. Optionnel. @param {function} [props.onLocation] - Callback appelé en mode `display` quand la position du navigateur est obtenue. Reçoit `{ lat, lng, accuracy }`. Optionnel. @param {number} [props.height=300] - Hauteur de la carte en pixels. Optionnel. @param {string} [props.className=""] - Classes CSS additionnelles appliquées au conteneur racine. Optionnel. @param {"display"|"picker"} [props.mode="display"] - Mode du composant : `display` pour afficher la position courante, `picker` pour sélectionner un point. Optionnel. @param {{lat:number,lng:number}|null} [props.value=null] - Position courante en mode `picker` (composant contrôlé). Optionnel. @param {function} [props.onChange] - Callback appelé en mode `picker` à chaque clic sur la carte ou déplacement du marqueur. Reçoit `{ lat, lng }`. Optionnel. @note SSR-safe : la carte Leaflet est chargée dynamiquement après le montage côté client. L'accès à `navigator.geolocation` est encapsulé dans un handler utilisateur, jamais exécuté pendant le rendu. @note Permission requise : le navigateur demande l'autorisation à l'utilisateur lors du premier clic sur « Localiser ». En cas de refus (code 1), le statut passe à `error` avec le message « Autorisation refusée ». @parent bpm.card, bpm.panel, bpm.modal @associated bpm.mapView, bpm.geofence, bpm.routePlanner, bpm.addressInput
 @semantic role=saisie frame=entity status=proposed
 @guidance Saisir ou afficher une position GPS (carte + picker) : géolocalisation d'une entité, pointage terrain. Associer : bpm.map, bpm.labelValue, bpm.wizardForm. Éviter : Pure consultation cartographique multi-points (bpm.map).
 ```
@@ -1281,7 +1290,7 @@ Composant bpm.free — voir @blueprint-modular/core ou BPM_API.md.
 ```
   label*: string  — Libellé affiché au-dessus de la valeur.
   value*: string | number | TrajectoryPoint[]  — Valeur principale (string, number, ou trajectoire v(t) [{t, v}] — affiche le dernier point et révèle la tendance si context est fourni).
-  delta?: number | string | null  — Variation affichée. Format string (ex. "+12%") ou number.
+  delta?: number | string | null  — Variation numérique formatée, ou variation avec unité explicite conservée (ex. "-1,2 pt").
   name?: string | null  — Nom optionnel pour référencer la métrique dans le chat IA : $metric:name ou @name
   deltaType?: "aucun" | "normal" | "inverse"  — Aucun = pas de couleur, normal = + vert / - rouge, inverse = + rouge / - vert
   help?: string | null

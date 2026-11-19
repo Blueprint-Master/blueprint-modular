@@ -32,7 +32,23 @@
       "types": "./dist/packages/core/src/connectors/index.d.ts"
     },
     "./style.css": "./dist/style.css",
-    "./dist/style.css": "./dist/style.css"
+    "./dist/style.css": "./dist/style.css",
+    "./artifact": {
+      "types": "./dist/packages/core/src/artifact/index.d.ts",
+      "import": "./dist/artifact/index.mjs",
+      "require": "./dist/artifact/index.js"
+    },
+    "./artifact/plotly": {
+      "types": "./dist/packages/core/src/artifact/plotly.d.ts",
+      "import": "./dist/artifact/plotly.mjs",
+      "require": "./dist/artifact/plotly.js"
+    },
+    "./maps": {
+      "types": "./dist/packages/core/src/maps/index.d.ts",
+      "import": "./dist/maps/index.mjs",
+      "require": "./dist/maps/index.js"
+    },
+    "./standalone/bpm.min.js": "./dist/standalone/bpm.min.js"
   },
   "files": [
     "dist/",
@@ -42,7 +58,7 @@
     "NOTICE"
   ],
   "scripts": {
-    "build": "vite build",
+    "build": "vite build && node ../../scripts/build-artifact.mjs --package",
     "dev": "vite build --watch",
     "gate:test": "vitest run gate/",
     "gate:types": "tsc --noEmit"
@@ -51,13 +67,21 @@
     "react": ">=18",
     "react-dom": ">=18",
     "leaflet": ">=1.9.0",
-    "react-leaflet": ">=4.0.0"
+    "react-leaflet": ">=4.0.0",
+    "react-plotly.js": "^2.6.0",
+    "plotly.js": "^2.35.0"
   },
   "peerDependenciesMeta": {
     "leaflet": {
       "optional": true
     },
     "react-leaflet": {
+      "optional": true
+    },
+    "react-plotly.js": {
+      "optional": true
+    },
+    "plotly.js": {
       "optional": true
     }
   },
@@ -73,7 +97,8 @@
     "typescript": "^5.6.3",
     "vite": "^5.4.11",
     "vite-plugin-dts": "^4.3.0",
-    "vitest": "^2.1.8"
+    "vitest": "^2.1.8",
+    "esbuild": "0.21.5"
   },
   "license": "Apache-2.0",
   "dependencies": {
@@ -84,5 +109,8 @@
     "rehype-highlight": "7.0.2",
     "remark-gfm": "4.0.1",
     "zod": "^4.3.6"
+  },
+  "bin": {
+    "bpm-artifact": "./dist/artifact/bpm-artifact.cjs"
   }
 }

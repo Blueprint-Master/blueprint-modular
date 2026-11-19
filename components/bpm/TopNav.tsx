@@ -1,7 +1,7 @@
 "use client";
 
 import React from "react";
-import Link from "next/link";
+import { NavigationLink as Link } from "./NavigationLink";
 
 /**
  * @component bpm.topNav

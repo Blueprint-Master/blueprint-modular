@@ -87,3 +87,23 @@ bpm.modal({ title: string, isOpen: boolean, onClose: () => void, children: React
 ```ts
 bpm.plotlyChart({ data: Plotly.Data[], layout?: Partial<Plotly.Layout> })
 ```
+
+## Artefacts et fichiers HTML autonomes
+
+Pour une synthèse statique, la commande du paquet construit un document HTML à partir de blocs JSON validés. Elle rend les composants React en HTML et SVG lors de la création. Le fichier livré s’ouvre sans JavaScript, serveur ou CDN.
+
+```sh
+bpm-artifact --example > spec.json
+bpm-artifact --schema
+bpm-artifact spec.json > dashboard.html
+```
+
+Le site distribue aussi la commande autonome dans `/artifacts/bpm-artifact.cjs` pour une exécution avec Node 18+ sans installation npm. Les instructions pour un projet Claude ou ChatGPT se trouvent dans `/artifacts/instructions.md`. Le profil couvre les indicateurs, badges, paragraphes, tendances et comparaisons. Le champ `context` active le jugement de la métrique ou de la série à partir d’une référence et du sens d’amélioration fournis.
+
+Pour un HTML React sur mesure, importer `{ bpm }` depuis `@blueprint-modular/core/artifact`. Cette entrée expose metric, metricRow, badge, barChart et lineChart avec React. Le badge reçoit son libellé dans `children`. Pour une interaction Plotly, importer `{ plotlyChart }` depuis `@blueprint-modular/core/artifact/plotly`, installer les pairs `react-plotly.js` et `plotly.js` puis embarquer le code dans le fichier. Certaines traces géographiques ou images distantes ont leurs propres besoins réseau. Les liens utilisent des ancres par défaut. Un hôte React peut fournir son routeur via `NavigationLinkProvider`. L’entrée `/maps` expose gps et mapView, avec les pairs Leaflet.
+
+Une question de suivi peut relire le contexte de la page avec `bpm-artifact --inspect dashboard.html`. Le résultat contient la spécification et les observations recalculées à partir des données et des références fournies.
+
+Le build fournit également `dist/standalone/bpm.min.js` (IIFE, React inclus, styles injectés et limités à la vue). `BlueprintModular.mount(element, spec)` monte la même vue que la commande. `view.update(spec)` et `view.refresh(load)` acceptent respectivement une valeur locale et un chargeur asynchrone. Le chargeur peut appeler une API, vérifier le statut HTTP et adapter le résultat avec `applyResponseMapping` de `/connectors`. `view.unmount()` libère la racine. La documentation et un exemple se trouvent dans `/artifacts/instructions.md`.
+
+Les exports nommés `Metric`, `Badge`, `LineChart`, `BarChart` et `MetricRow` de `/artifact` permettent au bundler de ne retenir que les composants utilisés.
