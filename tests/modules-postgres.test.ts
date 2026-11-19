@@ -13,8 +13,11 @@ vi.mock("@/lib/prisma", () => ({ get prisma() { return postgres; } }));
 vi.mock("@/lib/auth", () => ({
   hasWriteRole: (user: { role?: string }) => user.role === "ADMIN",
   getSessionOrTestUser: async () => userId ? { user: { id: userId, role: wikiRole } } : null,
-  getPersonalModuleSession: async () => userId ? { user: { id: userId } } : null,
+  getPersonalModuleSession: async () => userId ? { user: { id: userId, role: wikiRole } } : null,
 }));
+import { POST as issue } from "@/app/api/asset-manager/assignments/route";
+import { PUT as editLoan } from "@/app/api/asset-manager/assignments/[id]/route";
+import { POST as returnLoan } from "@/app/api/asset-manager/assignments/[id]/return/route";
 import * as inventory from "@/app/api/asset-manager/assets/route";
 import { GET as workflow } from "@/app/api/workflow/entity/[id]/route";
 import { POST as advance } from "@/app/api/workflow/entity/[id]/transition/route";
@@ -47,6 +50,40 @@ describe.skipIf(!url)("module API handlers with PostgreSQL", () => {
   afterAll(async () => {
     await postgres.user.deleteMany({ where: { id: { in: [owner, other] } } });
     await postgres.$disconnect();
+  });
+
+  it("serializes loans and returns without changing the maintenance domain's operating status", async () => {
+    userId = owner;
+    wikiRole = "ADMIN";
+    const label = "QA-loan-" + randomUUID();
+    try {
+      for (const [domainId, initial] of [["it", "in_stock"], ["maintenance", "running"]]) {
+        const asset = await postgres.asset.create({ data: { domainId, label, assetTypeId: "qa", reference: randomUUID(), statusId: initial, createdById: owner } });
+        const body = { domainId, assetId: asset.id, assigneeId: other, startDate: "2025-01-01" };
+        const open = (fields = {}) => issue(request("/", "POST", { ...body, ...fields }));
+        expect((await open({ expectedEndDate: "2024-12-01" })).status).toBe(400);
+        const results = await Promise.all([open(), open()]);
+        expect(results.map(r => r.status).sort()).toEqual([200, 409]);
+        const loan = await results.find(r => r.ok)!.json();
+        const currentStatus = async () => (await postgres.asset.findUniqueOrThrow({ where: { id: asset.id } })).statusId;
+        expect(await currentStatus()).toBe(domainId === "it" ? "assigned" : initial);
+        const ctx = context(loan.id);
+        const patch = (data: object) => editLoan(request("/", "PUT", data), ctx);
+        expect((await patch({ status: "overdue", expectedUpdatedAt: loan.updatedAt })).status).toBe(200);
+        expect((await patch({ reason: "ancien", expectedUpdatedAt: loan.updatedAt })).status).toBe(409);
+        const returns = await Promise.all([1, 2].map(() => returnLoan(request("/", "POST"), ctx)));
+        expect(returns.map(r => r.status)).toEqual([200, 200]);
+        const [a, b] = await Promise.all(returns.map(r => r.json()));
+        expect(a.updatedAt).toBe(b.updatedAt);
+        expect(a.actualEndDate).toBeTruthy();
+        expect(await currentStatus()).toBe(initial);
+        expect((await open()).status).toBe(200);
+        expect((await patch({ status: "active" })).status).toBe(409);
+      }
+    } finally {
+      wikiRole = "USER";
+      await postgres.asset.deleteMany({ where: { label } });
+    }
   });
 
   it("creates inventory records and their attributes together with independent concurrent references", async () => {
