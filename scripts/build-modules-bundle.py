@@ -23,6 +23,7 @@ SOURCES = [
     "deploy/prompteur", "deploy/prompteur-api-requirements.txt", "deploy/copy-standalone-assets.sh", "deploy/backup-postgres.sh",
     "scripts/generate-versions.mjs", "scripts/generate-changelog.mjs",
     "scripts/generate-component-examples.mjs", "scripts/build-python-runtime.sh",
+    "scripts/build-artifact.mjs", "packages/core/bin",
     "docs/DATABASE.md", "docs/modules-bundle.md",
 ]
 
