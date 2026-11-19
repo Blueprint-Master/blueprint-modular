@@ -14,22 +14,14 @@ async function saveConversationTurn(
 ): Promise<string> {
   const preview = userMessage.slice(0, 80) + (userMessage.length > 80 ? "…" : "");
   if (discussionId) {
-    const conv = await prisma.aiConversation.findFirst({ where: { id: discussionId, userId } });
-    if (conv) {
-      await prisma.$transaction([
-        prisma.aiMessage.create({
-          data: { conversationId: conv.id, userMessage, aiResponse, providerName },
-        }),
-        prisma.aiConversation.update({ where: { id: conv.id }, data: { preview, updatedAt: new Date() } }),
-      ]);
-      return conv.id;
-    }
+    const conv = await prisma.aiConversation.update({
+      where: { id: discussionId, userId },
+      data: { preview, messages: { create: { userMessage, aiResponse, providerName } } },
+    });
+    return conv.id;
   }
   const conv = await prisma.aiConversation.create({
-    data: { userId, preview },
-  });
-  await prisma.aiMessage.create({
-    data: { conversationId: conv.id, userMessage, aiResponse, providerName },
+    data: { userId, preview, messages: { create: { userMessage, aiResponse, providerName } } },
   });
   return conv.id;
 }
@@ -71,7 +63,7 @@ export async function POST(req: Request) {
             ? { type: "ollama" as const, model: process.env.AI_MODEL_MISTRAL ?? "mistral:7b" }
             : undefined;
 
-  if (!message || typeof message !== "string") {
+  if (typeof message !== "string" || !message.trim()) {
     return new Response(JSON.stringify({ error: "message required" }), { status: 400 });
   }
 
@@ -82,6 +74,13 @@ export async function POST(req: Request) {
     );
   }
 
+  if (discussion_id && !await prisma.aiConversation.findFirst({
+    where: { id: discussion_id, userId: user.id }, select: { id: true },
+  })) return Response.json({ error: "Not found" }, { status: 404 });
+
+  if (!Array.isArray(conversation_history) || !conversation_history.every(
+    m => m && ["user", "assistant"].includes(m.role) && typeof m.content === "string",
+  )) return Response.json({ error: "Historique invalide" }, { status: 400 });
   const provider = getProvider(providerConfig);
   const systemPrompt =
     mode === "builder"

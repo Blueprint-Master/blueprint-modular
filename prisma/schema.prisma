@@ -26,6 +26,8 @@ model User {
   documents            Document[]
   contracts            Contract[]
   aiConversations      AiConversation[]
+  reports              ReportSnapshot[]
+  personalDashboard    PersonalDashboard?
   newsletterSettings   NewsletterSettings?
   newsletterArticles   NewsletterArticle[]
   assetsCreated        Asset[]           @relation("AssetCreatedBy")
@@ -817,4 +819,24 @@ model KnowledgeReader {
   article KnowledgeArticle @relation(fields: [articleId], references: [id], onDelete: Cascade)
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
   @@id([articleId, userId])
+}
+
+model ReportSnapshot {
+  id        String   @id @db.Uuid
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  source    String
+  since     DateTime @db.Date
+  through   DateTime @db.Date
+  rows      Json
+  createdAt DateTime @default(now())
+
+  @@index([userId, createdAt])
+}
+
+model PersonalDashboard {
+  userId   String @id
+  user     User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  revision Int    @default(1)
+  widgets  Json
 }

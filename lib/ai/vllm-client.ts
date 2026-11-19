@@ -141,7 +141,7 @@ export class VLLMClient {
           done?: boolean;
         };
         const content = data.message?.content ?? "";
-        if (!content.trim()) throw new Error("Ollama returned an empty response");
+        if (typeof content !== "string" || !content.trim() || data.done === false) throw new Error("Ollama returned an incomplete response");
         return { content };
       } catch (err) {
         lastError = err instanceof Error ? err : new Error(String(err));
@@ -208,7 +208,10 @@ export class VLLMClient {
             full += text;
             onChunk(text);
           }
-          if (chunk.done === true) return full;
+          if (chunk.done === true) {
+            if (!full.trim()) throw new Error("Ollama returned an empty response");
+            return full;
+          }
         }
         if (done) throw new Error("Ollama stream ended before completion");
       }

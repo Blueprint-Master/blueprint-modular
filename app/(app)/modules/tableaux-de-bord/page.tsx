@@ -78,7 +78,7 @@ export default function TableauxDeBordModulePage() {
         title={s.moduleTitle}
         description={s.pageDescription}
         category={s.categoryBadge}
-        links={[{ href: "/modules/tableaux-de-bord/simulateur", label: s.openSimulator }]}
+        links={[{ href: "/modules/tableaux-de-bord/espace", label: locale === "fr" ? "Mon tableau de bord" : "My dashboard" }, { href: "/modules/tableaux-de-bord/simulateur", label: s.openSimulator }]}
       />
       <Tabs
         tabs={[
