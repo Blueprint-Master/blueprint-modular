@@ -176,6 +176,9 @@ export default function AssetManagerTicketDetailPage() {
         </>
       )}
 
+      <Link href={`/modules/asset-manager/${domainId}/audit?resourceType=ticket&action=escalate&resourceId=${encodeURIComponent(ticket.id)}`}>
+        {locale === "fr" ? "Historique des escalades" : "Escalation history"}
+      </Link>
       <FicheSectionCard title={tt.sectionInformation} className="mt-4">
         <FicheFieldGrid
           withDividers

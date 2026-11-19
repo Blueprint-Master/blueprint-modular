@@ -3,7 +3,7 @@
 import { useState, useEffect, useRef } from "react";
 import { readResponse } from "../../lib/read-response";
 import Link from "next/link";
-import { useParams } from "next/navigation";
+import { useParams, useSearchParams } from "next/navigation";
 import { ClipboardList, ChevronDown, ChevronUp } from "lucide-react";
 import { Input, Button, Panel, Spinner, Chip, Table, EmptyState } from "@/components/bpm";
 import { useI18n } from "@/lib/i18n/LocaleProvider";
@@ -25,6 +25,7 @@ type AuditEntry = {
 
 export default function AssetManagerAuditPage() {
   const params = useParams();
+  const search = useSearchParams();
   const { locale } = useI18n();
   const t = STR[locale];
   const ta = t.audit;
@@ -33,13 +34,17 @@ export default function AssetManagerAuditPage() {
   const domainId = typeof params?.domainId === "string" ? params.domainId : "";
   const [logs, setLogs] = useState<AuditEntry[]>([]);
   const [loading, setLoading] = useState(true);
-  const [filterType, setFilterType] = useState("");
-  const [filterAction, setFilterAction] = useState("");
+  const [filterType, setFilterType] = useState(search.get("resourceType") ?? "");
+  const [filterAction, setFilterAction] = useState(search.get("action") ?? "");
   const [filtersOpen, setFiltersOpen] = useState(false);
 
   const [from, setFrom] = useState("");
   const [to, setTo] = useState("");
-  const [resource, setResource] = useState("");
+  const [resource, setResource] = useState(search.get("resourceId") ?? "");
+  useEffect(() => {
+    setFilterType(search.get("resourceType") ?? ""); setFilterAction(search.get("action") ?? "");
+    setResource(search.get("resourceId") ?? "");
+  }, [search]);
   const [error, setError] = useState("");
   const [next, setNext] = useState("");
   const [more, setMore] = useState(false);

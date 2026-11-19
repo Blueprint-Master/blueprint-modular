@@ -17,6 +17,7 @@ vi.mock("@/lib/auth", () => ({
   getPersonalModuleSession: async () => userId ? { user: { id: userId, role: wikiRole } } : null,
 }));
 import { GET as auditPage } from "@/app/api/asset-manager/audit-log/route";
+import { runEscalations } from "@/lib/asset-manager/escalate-sla.mjs";
 import { ticketSla } from "@/lib/asset-manager/ticket-sla";
 import { GET as loans, POST as issue } from "@/app/api/asset-manager/assignments/route";
 import { PUT as editLoan } from "@/app/api/asset-manager/assignments/[id]/route";
@@ -72,6 +73,52 @@ describe.skipIf(!url)("module API handlers with PostgreSQL", () => {
     await postgres.auditLog.deleteMany({ where: { userId: { in: [owner, other] } } });
     await postgres.user.deleteMany({ where: { id: { in: [owner, other] } } });
     await postgres.$disconnect();
+  });
+
+  it("delivers SLA escalations once, routes reassignment and records the personal inbox receipts", async () => {
+    const job = await postgres.user.create({ data: { email: randomUUID() + "@example.test", role: "ADMIN" } });
+    const tech = await postgres.user.create({ data: { email: randomUUID() + "@example.test", role: "ADMIN" } });
+    const org = await postgres.organization.create({ data: { name: "QA", slug: randomUUID() } });
+    const workspace = await postgres.workspace.create({ data: { organizationId: org.id, name: "QA", slug: "qa" } });
+    await postgres.orgMember.createMany({ data: [job.id, tech.id, owner].map(userId => ({ userId, organizationId: org.id })) });
+    const prefix = randomUUID();
+    const now = new Date("2026-11-17T12:00:00Z");
+    const openedAt = new Date("2026-11-17T10:00:00Z");
+    const slaDueAt = new Date("2026-11-17T14:00:00Z");
+    const base = { workspaceId: workspace.id, domainId: "it", title: prefix, description: "QA", typeId: "incident", status: "on_hold", priorityId: "critical",
+      categoryId: "hardware", requesterId: owner, openedAt, slaDueAt };
+    const routing = { workspaceId: workspace.id, domainId: "it", actorId: job.id, targets: { notify_manager: owner, senior_tech: tech.id, notify_director: owner } };
+    try {
+      const incident = await postgres.ticket.create({ data: { ...base, reference: prefix } });
+      await postgres.ticket.create({ data: { ...base, reference: prefix + "-resolved", status: "resolved" } });
+      await expect(runEscalations(postgres, { ...routing, targets: { ...routing.targets, senior_tech: "unknown" } }, now)).rejects.toThrow();
+      await expect(runEscalations(postgres, { ...routing, actorId: other }, now)).rejects.toThrow();
+      await expect(runEscalations(postgres, { ...routing, targets: { ...routing.targets, senior_tech: owner } }, now)).rejects.toThrow();
+      await postgres.ticket.create({ data: { ...base, workspaceId: null, reference: prefix + "-other-scope" } });
+      const concurrent = await Promise.all([runEscalations(postgres, routing, now), runEscalations(postgres, routing, now)]);
+      expect(concurrent.map(result => result.actions).sort()).toEqual([0, 1]);
+      const later = await runEscalations(postgres, routing, slaDueAt);
+      expect(later.actions).toBe(2);
+      expect((await runEscalations(postgres, routing, slaDueAt)).actions).toBe(0);
+      expect(await postgres.ticket.findUnique({ where: { id: incident.id } })).toMatchObject({ assigneeId: tech.id });
+      userId = tech.id;
+      const inbox = await (await notifications.GET(request("/?read=false"))).json();
+      expect(inbox.notifications.filter((row: { title: string }) => row.title === prefix)).toHaveLength(1);
+      expect(await postgres.notification.count({ where: { userId: owner, title: prefix } })).toBe(2);
+      const logs = await postgres.auditLog.findMany({ where: { resourceId: incident.id, action: "escalate" } });
+      expect(logs).toHaveLength(3);
+      for (const log of logs) {
+        const action = JSON.parse(log.afterState!);
+        expect(log.userId).toBe(job.id);
+        expect(await postgres.notification.findUnique({ where: { id: action.notificationId } })).toMatchObject({ userId: action.recipientId });
+      }
+    } finally {
+      await postgres.ticket.deleteMany({ where: { title: prefix } });
+      await postgres.notification.deleteMany({ where: { title: prefix } });
+      await postgres.auditLog.deleteMany({ where: { userId: job.id } });
+      await postgres.organization.delete({ where: { id: org.id } });
+      await postgres.user.deleteMany({ where: { id: { in: [job.id, tech.id] } } });
+    }
   });
 
   it("finds an older on-hold SLA incident and pages equal-date tickets and loans beyond 200", async () => {

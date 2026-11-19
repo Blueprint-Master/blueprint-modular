@@ -94,6 +94,7 @@ const extraFr = {
       create: "Création",
       update: "Modification",
       delete: "Suppression",
+      escalate: "Escalade SLA",
     } as Record<string, string>,
     resourceLabels: {
       asset: "Actif",
@@ -529,6 +530,7 @@ const extraEn: typeof extraFr = {
       create: "Creation",
       update: "Update",
       delete: "Deletion",
+      escalate: "SLA escalation",
     } as Record<string, string>,
     resourceLabels: {
       asset: "Asset",
