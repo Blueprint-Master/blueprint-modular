@@ -478,3 +478,17 @@ Les 32 parcours, leurs prérequis et la surface à installer sont recensés dans
 - la préproduction s'installe hors de `/home/ubuntu` et la racine Next est explicite (`next.config.mjs`) : un `package-lock.json` parent imbriquait la sortie standalone.
 
 **Écarts restants, non bloquants** : dans l'artefact, l'écart au repère n'affiche pas son unité (« −1,2 vs repère » sous « −1,2 pt ») ; un écart de +0,97 % est jugé neutre alors que le delta est vert, seuil non documenté ; graphique sans axe gradué. Réflexe Modular dans les interfaces Claude et ChatGPT : non mesuré par l'agent (pas d'accès aux interfaces réelles), protocole remis à Rémi.
+
+## 2026-11-19 — Cloche du compte et affectations persistantes
+
+La recette des 32 modules de `528cc2dc` a identifié trois parcours où le moteur existe et où l’écran ne l’utilise pas. Les priorités suivantes sont des estimations d’ingénierie. La fréquence d’utilisation en production reste inconnue.
+
+| Rang Modular | Impact attendu | Coût estimé | Principal risque |
+| --- | --- | --- | --- |
+| 1. Cloche personnelle | Rendre les tâches attribuées et les alertes SLA visibles depuis toutes les pages de l’application | Faible, lecture et acquittement déjà dans l’API | Compter une alerte deux fois ou afficher le compte précédent |
+| 2. Webhooks | Rendre l’état des livraisons et des reprises visible dans le module | Moyen à élevé, raccord du worker Python à l’application | Doubler une livraison après interruption |
+| 3. Export planifié | Permettre de planifier un export et de relire le reçu d’envoi sur l’écran | Moyen à élevé, configuration du planificateur et transport | Planifier deux fois un envoi |
+
+**Décision.** La cloche interroge la boîte du compte à l’ouverture, au retour sur l’onglet et toutes les minutes si l’onglet est visible. L’API filtre les non-lues avant sa limite de 100 lignes. Le badge affiche leur nombre jusqu’à 99 puis « 99+ ». Une lecture confirmée recharge la fenêtre. Une panne de lecture affiche « ! » puis un message et une reprise dans le panneau. Le simulateur, le filtre de priorité local et l’effacement de l’historique concernent l’appareil. Aucune notification serveur n’est écrite dans son stockage local.
+
+**Mesure sur la même recette.** Depuis `3e038319`, copier `tests/notification-bell-inbox.test.tsx` du candidat et exécuter `npx --no-install vitest run tests/notification-bell-inbox.test.tsx` : 1/7, seul le mode invité passe. Le candidat obtient 7/7 : affectation et acquittement, panne et reprise, réponse tardive après changement de compte, refus d’acquittement, visite anonyme, badge borné et déconnexion pendant une écriture. Les réponses HTTP sont contrôlées par le test. Les deux essais d’hydratation passent également. Le contrôle intégré à `scripts/verify-installed-analysis.py` vérifie séparément la vraie affectation PostgreSQL, les deux sessions dans Chromium, le marquage par la cloche et la relecture sur une page rechargée. La CI ciblée de revue exécute les neuf essais React. La CI complète de master installe une base avec `prisma migrate deploy` et nécessite le feu vert prévu.

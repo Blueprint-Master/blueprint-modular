@@ -1,6 +1,8 @@
 "use client";
 
 import React, { useState, useRef, useEffect, useLayoutEffect, useCallback } from "react";
+import { useSession } from "next-auth/react";
+import { usePersonalInbox } from "./usePersonalInbox";
 import { createPortal } from "react-dom";
 import { useNotificationHistory } from "@/contexts/NotificationHistoryContext";
 import type { StoredNotification } from "@/contexts/NotificationHistoryContext";
@@ -17,8 +19,11 @@ const CONTENT = {
     hoursAgo: (n: number) => `Il y a ${n}h`,
     daysAgo: (n: number) => `Il y a ${n}j`,
     notifications: "Notifications",
+    inbox: "Boîte de réception · non lues", local: "Historique de cet appareil", loading: "Chargement de la boîte de réception…",
+    unavailable: "Boîte de réception indisponible", retry: "Réessayer", markRead: "Marquer comme lue",
+    readFailed: "Lecture non enregistrée", noUnread: "Aucune notification non lue",
     clearHistory: "Effacer l'historique",
-    clearConfirm: "Voulez-vous effacer tout l'historique des notifications ?",
+    clearConfirm: "Effacer l’historique des notifications de cet appareil ?",
     clear: "Effacer",
     empty: "Aucune notification",
     showLess: "Afficher moins",
@@ -31,8 +36,11 @@ const CONTENT = {
     hoursAgo: (n: number) => `${n}h ago`,
     daysAgo: (n: number) => `${n}d ago`,
     notifications: "Notifications",
+    inbox: "Inbox · unread", local: "History on this device", loading: "Loading inbox…",
+    unavailable: "Inbox unavailable", retry: "Retry", markRead: "Mark as read",
+    readFailed: "Could not mark as read", noUnread: "No unread notifications",
     clearHistory: "Clear history",
-    clearConfirm: "Do you want to clear the entire notification history?",
+    clearConfirm: "Clear the notification history on this device?",
     clear: "Clear",
     empty: "No notifications",
     showLess: "Show less",
@@ -80,10 +88,17 @@ const BellSvg = () => (
 );
 
 export function NotificationBell() {
+  const { data: session } = useSession();
+  const account = session?.user?.email;
+  return <AccountBell key={account ?? "guest"} connected={Boolean(account)} />;
+}
+
+function AccountBell({ connected }: { connected: boolean }) {
   const { notifications, clearHistory } = useNotificationHistory();
   const { locale } = useI18n();
   const t = CONTENT[locale];
   const [isOpen, setIsOpen] = useState(false);
+  const { inbox, refresh, saving, acknowledge, readFailed } = usePersonalInbox(connected, isOpen);
   const [isClosing, setIsClosing] = useState(false);
   const [animActive, setAnimActive] = useState(false);
   const [showAll, setShowAll] = useState(false);
@@ -249,23 +264,46 @@ export function NotificationBell() {
     <>
       <div className="notification-popup-header">
         <h3>{t.notifications}</h3>
-        {count > 0 && (
-          <Tooltip text={t.clearHistory} position="bottom">
-            <button
-              type="button"
-              className="notification-clear-button"
-              onClick={() => {
-                if (window.confirm(t.clearConfirm)) {
-                  clearHistory();
-                }
-              }}
-            >
-              {t.clear}
-            </button>
-          </Tooltip>
-        )}
       </div>
       <div className="notification-popup-content">
+        {connected && (
+          <section aria-label={t.inbox}>
+            <div className="notification-popup-header"><h3>{t.inbox}</h3></div>
+            {inbox.status === "loading" && <p className="notification-empty" role="status">{t.loading}</p>}
+            {inbox.status === "unavailable" && (
+              <div className="notification-empty" role="status">
+                {t.unavailable} <button className="notification-show-more-button" onClick={refresh}>{t.retry}</button>
+              </div>
+            )}
+            {readFailed && <p className="notification-empty" role="alert">{t.readFailed}</p>}
+            {inbox.status === "ready" && (inbox.items.length === 0
+              ? <p className="notification-empty">{t.noUnread}</p>
+              : inbox.items.map(item => (
+                <div key={item.id} className="notification-item">
+                  <div className="notification-item-content">
+                    {item.title && <div className="notification-item-title">{item.title}</div>}
+                    <div className="notification-item-message">{item.message}</div>
+                    <time className="notification-item-time" dateTime={item.createdAt}>{formatTime(item.createdAt, t)}</time>
+                  </div>
+                  <button type="button" className="notification-show-more-button" disabled={saving !== null}
+                    onClick={() => acknowledge(item.id)}>{t.markRead}</button>
+                </div>
+              )))}
+          </section>
+        )}
+        {(connected || count > 0) && (
+          <div className="notification-popup-header">
+            {connected && <h3>{t.local}</h3>}
+            {count > 0 && (
+              <Tooltip text={t.clearHistory} position="bottom">
+                <button type="button" className="notification-clear-button"
+                  onClick={() => { if (window.confirm(t.clearConfirm)) clearHistory(); }}>
+                  {t.clear}
+                </button>
+              </Tooltip>
+            )}
+          </div>
+        )}
         {recentNotifications.length === 0 ? (
           <div className="notification-empty">
             <p>{t.empty}</p>
@@ -338,10 +376,13 @@ export function NotificationBell() {
 
   const popupClasses = `notification-popup${animActive ? " tooltip-dock-open" : ""}${isClosing ? " tooltip-dock-closing" : ""}`;
 
-  const badgeCount = count > 99 ? "99+" : count;
-  const isSingleDigit = count > 0 && count < 10;
-  const badge =
-    count > 0 ? (
+  const badgeTotal = connected ? (inbox.status === "ready" ? inbox.items.length : 0) : count;
+  const badgeCount = badgeTotal > 99 ? "99+" : badgeTotal;
+  const isSingleDigit = badgeTotal > 0 && badgeTotal < 10;
+  const unavailable = connected && inbox.status === "unavailable";
+  const badge = unavailable ? (
+    <span className="notification-bell-badge notification-bell-badge--single" title={t.unavailable}>!</span>
+  ) : badgeTotal > 0 ? (
       <span className={`notification-bell-badge${isSingleDigit ? " notification-bell-badge--single" : ""}`}>
         {badgeCount}
       </span>
@@ -376,6 +417,7 @@ export function NotificationBell() {
           className="dashboard-header-icon-btn notification-bell-mobile-btn"
           onClick={handleMobileBellClick}
           aria-label={t.notifications}
+          aria-description={unavailable ? t.unavailable : undefined}
         >
           <BellSvg />
           {badge}
@@ -392,7 +434,8 @@ export function NotificationBell() {
       onClick={toggle}
       onPointerDown={(e) => e.preventDefault()}
       aria-label={t.notifications}
-      title={t.notifications}
+      aria-description={unavailable ? t.unavailable : undefined}
+      title={unavailable ? t.unavailable : t.notifications}
     >
       <BellSvg />
       {badge}
