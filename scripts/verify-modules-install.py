@@ -16,6 +16,8 @@ from urllib.parse import urlencode
 from urllib.request import build_opener, HTTPCookieProcessor, ProxyHandler, Request
 from uuid import uuid4
 
+from module_analysis_fixture import model_service, create_records, verify_after_restart
+
 
 class Catalogue(HTMLParser):
     def __init__(self):
@@ -32,7 +34,7 @@ class Catalogue(HTMLParser):
             self.assets.add(target)
 
 
-def main(application):
+def main(application, model_url):
     with socket.socket() as port_selector:
         port_selector.bind(("127.0.0.1", 0))
         port = port_selector.getsockname()[1]
@@ -49,7 +51,8 @@ def main(application):
     @contextmanager
     def server():
         env = {**os.environ, "HOSTNAME": "127.0.0.1", "PORT": str(port), "NEXTAUTH_URL": origin,
-               "NEXTAUTH_SECRET": secret, "NODE_ENV": "production", "SKIP_AUTH_FOR_TEST": "false"}
+               "NEXTAUTH_SECRET": secret, "NODE_ENV": "production", "SKIP_AUTH_FOR_TEST": "false",
+               "AI_SERVER_URL": model_url, "AI_MOCK": "false", "ANTHROPIC_API_KEY": ""}
         proc = subprocess.Popen(["node", ".next/standalone/server.js"], cwd=application, env=env)
         try:
             for _ in range(100):
@@ -97,10 +100,13 @@ def main(application):
         assert json.loads(read("/api/auth/session"))["user"]["email"] == email
         event = json.dumps({"title": record, "startAt": "2026-11-19T08:00:00Z", "endAt": "2026-11-19T09:00:00Z"}).encode()
         event_id = json.loads(read("/api/calendar", data=event, mime="application/json"))["id"]
+        analyses = create_records(read)
     with server():
+        verify_after_restart(read, analyses)
         assert json.loads(read("/api/calendar/" + event_id))["title"] == record
         print("Calendar record and authenticated session survived standalone restart")
 
 
 if __name__ == "__main__":
-    main(Path(sys.argv[1]).resolve())
+    with model_service() as model_url:
+        main(Path(sys.argv[1]).resolve(), model_url)

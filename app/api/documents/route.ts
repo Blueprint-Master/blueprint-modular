@@ -1,13 +1,14 @@
 import { NextResponse } from "next/server";
-import { getSessionOrTestUser } from "@/lib/auth";
+import { getPersonalModuleSession } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { vllmClient } from "@/lib/ai/vllm-client";
 import { extractTextFromBuffer } from "@/lib/contract-extract";
-import { writeFile, mkdir } from "fs/promises";
+import { writeFile, mkdir, unlink } from "fs/promises";
 import path from "path";
+import { documentMime, documentMaxBytes } from "@/lib/documents/formats";
 
 export async function GET() {
-  const result = await getSessionOrTestUser();
+  const result = await getPersonalModuleSession();
   if (!result) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   const { user } = result;
   const docs = await prisma.document.findMany({
@@ -30,7 +31,7 @@ export async function GET() {
 }
 
 export async function POST(request: Request) {
-  const result = await getSessionOrTestUser();
+  const result = await getPersonalModuleSession();
   if (!result) return NextResponse.json({ error: "Non autorisé" }, { status: 401 });
   const { user } = result;
 
@@ -40,14 +41,16 @@ export async function POST(request: Request) {
   } catch {
     return NextResponse.json({ error: "Requête invalide" }, { status: 400 });
   }
-  const file = formData.get("file") as File | null;
-  if (!file || file.size === 0) return NextResponse.json({ error: "Aucun fichier fourni" }, { status: 400 });
-  if (file.type !== "application/pdf")
-    return NextResponse.json({ error: "Seuls les fichiers PDF sont acceptés" }, { status: 400 });
+  const file = formData.get("file");
+  if (!file || typeof file === "string" || !file.size) {
+    return NextResponse.json({ error: "Aucun fichier fourni" }, { status: 400 });
+  }
+  if (file.size > documentMaxBytes) return NextResponse.json({ error: "Limite de 50 Mo par fichier" }, { status: 413 });
+  const mime = documentMime(file);
+  if (!mime) return NextResponse.json({ error: "Formats acceptés : PDF, DOCX et TXT" }, { status: 415 });
 
-  const mime = file.type;
   const ext = path.extname(file.name) || ".pdf";
-  const baseDir = path.join(process.cwd(), "uploads", user.id);
+  const baseDir = path.resolve(process.env.MODULAR_UPLOAD_DIR || "uploads", user.id);
   const docId = crypto.randomUUID();
   const filePath = path.join(baseDir, `${docId}${ext}`);
   let buf: Buffer;
@@ -70,12 +73,16 @@ export async function POST(request: Request) {
 
   let doc = await prisma.document.create({
     data: {
+      id: docId,
       filename: file.name,
       mimeType: mime,
       filePath,
       uploadedById: user.id,
       analysisStatus: "processing",
     },
+  }).catch(async error => {
+    await unlink(filePath);
+    throw error;
   });
 
   const extractPrompt = `Tu es un assistant d'extraction de données. Tu dois analyser le document fourni et répondre par UN SEUL objet JSON valide, sans aucun texte avant ou après, sans balises markdown (\`\`\`).
@@ -142,7 +149,7 @@ Règles : supplier = partie qui fournit le service ; client = partie qui le reç
       return NextResponse.json(doc);
     }
 
-    if (parsed) {
+    if (parsed && typeof parsed.summary === "string" && parsed.summary.trim()) {
       const contractDate = parsed.contract_date ? new Date(String(parsed.contract_date)) : null;
       const signatureDate = parsed.signature_date ? new Date(String(parsed.signature_date)) : null;
       const terminationDate = parsed.termination_date ? new Date(String(parsed.termination_date)) : null;
@@ -156,8 +163,8 @@ Règles : supplier = partie qui fournit le service ; client = partie qui le reç
           signatureDate: signatureDate && !Number.isNaN(signatureDate.getTime()) ? signatureDate : null,
           terminationDate: terminationDate && !Number.isNaN(terminationDate.getTime()) ? terminationDate : null,
           summary: typeof parsed.summary === "string" ? parsed.summary : null,
-          keyPoints: Array.isArray(parsed.key_points) ? JSON.stringify(parsed.key_points) : null,
-          commitments: Array.isArray(parsed.commitments) ? JSON.stringify(parsed.commitments) : null,
+          keyPoints: Array.isArray(parsed.key_points) ? JSON.stringify(parsed.key_points.filter(point => typeof point === "string")) : null,
+          commitments: Array.isArray(parsed.commitments) ? JSON.stringify(parsed.commitments.filter(point => typeof point === "string")) : null,
         },
       });
     } else {

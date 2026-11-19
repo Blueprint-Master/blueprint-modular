@@ -1,12 +1,12 @@
 import { NextResponse } from "next/server";
-import { getSessionOrTestUser } from "@/lib/auth";
+import { getPersonalModuleSession } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { generateEmbedding, cosineSimilarity } from "@/lib/ai/embedding-client";
 
 export const dynamic = "force-dynamic";
 
 export async function POST(request: Request) {
-  const result = await getSessionOrTestUser();
+  const result = await getPersonalModuleSession();
   if (!result) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   const { user } = result;
 

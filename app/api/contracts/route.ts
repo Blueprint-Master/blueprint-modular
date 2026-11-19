@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
-import { getSessionOrTestUser } from "@/lib/auth";
+import { getPersonalModuleSession } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
-import { writeFile, mkdir } from "fs/promises";
+import { writeFile, mkdir, unlink } from "fs/promises";
 import path from "path";
 import { extractTextFromBuffer, computeFileHash } from "@/lib/contract-extract";
 import { analyzeContract, type ContractType } from "@/lib/ai/contract-analyzer";
@@ -20,7 +20,7 @@ const MAX_FILE_SIZE_MB = 50;
 const MAX_FILE_BYTES = MAX_FILE_SIZE_MB * 1024 * 1024;
 
 export async function GET(request: Request) {
-  const result = await getSessionOrTestUser();
+  const result = await getPersonalModuleSession();
   if (!result) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   const { user } = result;
 
@@ -65,7 +65,7 @@ export async function GET(request: Request) {
 }
 
 export async function POST(request: Request) {
-  const result = await getSessionOrTestUser();
+  const result = await getPersonalModuleSession();
   if (!result) return NextResponse.json({ error: "Non autorisé" }, { status: 401 });
   const { user } = result;
 
@@ -97,55 +97,34 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: "Impossible de lire le fichier" }, { status: 400 });
   }
   const fileHash = computeFileHash(buf);
-  const existing = await prisma.contract.findFirst({
-    where: { fileHash, uploadedById: user.id },
-  });
-  if (existing) return NextResponse.json({ error: "Un contrat avec le même fichier existe déjà" }, { status: 409 });
-
-  const baseDir = path.join(process.cwd(), "uploads", "contracts", user.id);
+  const baseDir = path.resolve(process.env.MODULAR_UPLOAD_DIR || "uploads", "contracts", user.id);
   const ext = path.extname(file.name) || ".pdf";
   const title = path.basename(file.name, ext) || file.name;
-
+  const id = crypto.randomUUID();
+  const filePath = path.join(baseDir, id + ext);
   try {
     await mkdir(baseDir, { recursive: true });
-  } catch (err) {
-    console.error("[contracts] mkdir failed:", err instanceof Error ? err.message : String(err));
-    return NextResponse.json(
-      { error: "Impossible de créer le dossier d'upload. Contactez l'administrateur." },
-      { status: 500 }
-    );
+    await writeFile(filePath, buf, { flag: "wx", mode: 0o600 });
+  } catch {
+    return NextResponse.json({ error: "Enregistrement du fichier impossible" }, { status: 500 });
   }
-
-  const contract = await prisma.contract.create({
-    data: {
-      title,
-      contractType: ct,
-      workspace,
-      filePath: path.join(baseDir, `temp-${Date.now()}${ext}`),
-      fileHash,
-      originalFilename: file.name,
-      fileSizeBytes: file.size,
-      status: "analyzing",
-      analysisProgress: 0,
-      uploadedById: user.id,
-    },
+  // Le verrou couvre aussi les anciennes bases qui contiennent des doublons historiques.
+  const contract = await prisma.$transaction(async tx => {
+    const lock = `contract-import:${user.id}:${fileHash}`;
+    await tx.$queryRaw`SELECT 1 FROM pg_advisory_xact_lock(hashtextextended(${lock}, 0))`;
+    if (await tx.contract.findFirst({ where: { uploadedById: user.id, fileHash }, select: { id: true } })) return null;
+    return tx.contract.create({ data: {
+      id, title, contractType: ct, workspace, filePath, fileHash, originalFilename: file.name,
+      fileSizeBytes: file.size, status: "analyzing", analysisProgress: 0, uploadedById: user.id,
+    } });
+  }).catch(async error => {
+    await unlink(filePath);
+    throw error;
   });
-  const filePath = path.join(baseDir, `${contract.id}${ext}`);
-  try {
-    await writeFile(filePath, buf);
-  } catch (err) {
-    console.error("[contracts] writeFile failed:", err instanceof Error ? err.message : String(err));
-    await prisma.contract.update({
-      where: { id: contract.id },
-      data: { status: "error", analysisProgress: 0 },
-    });
-    const updated = await prisma.contract.findUniqueOrThrow({ where: { id: contract.id } });
-    return NextResponse.json(updated);
+  if (!contract) {
+    await unlink(filePath);
+    return NextResponse.json({ error: "Un contrat avec le même fichier existe déjà" }, { status: 409 });
   }
-  await prisma.contract.update({
-    where: { id: contract.id },
-    data: { filePath },
-  });
 
   try {
     const text = await extractTextFromBuffer(buf, file.type, file.name);
