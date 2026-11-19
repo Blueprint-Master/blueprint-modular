@@ -241,6 +241,20 @@ if [ -f "$SOURCE/scripts/verify-installed-analysis.py" ]; then
   else echo "  ROUGE (code $METIER) — voir $PUBLIC/parcours-metier.log" >> "$RAPPORT"; fi
 fi
 
+# --- 8c. Parcours métier des 14 modules non couverts par les suites du dépôt
+# (outillage de recette, deploy/preprod/parcours-modules.py), avec redémarrage.
+PARCOURS=$(dirname "$0")/parcours-modules.py
+if [ -f "$PARCOURS" ]; then
+  etape "Parcours métier des 14 autres modules (parcours-modules.py)"
+  set +e
+  MODULAR_QA_EMAIL=$QA_EMAIL MODULAR_QA_PASSWORD=$QA_PASSWORD \
+    "$VENV/bin/python" "$PARCOURS" "$APP" > "$PUBLIC/parcours-14-modules.log" 2>&1
+  P14=$?
+  set -e
+  chmod 644 "$PUBLIC/parcours-14-modules.log"
+  echo "  $(grep -c '^PARCOURS OK:' "$PUBLIC/parcours-14-modules.log" || true) OK, $(grep -c '^PARCOURS ÉCHEC:' "$PUBLIC/parcours-14-modules.log" || true) ÉCHEC (code $P14) — détail : $PUBLIC/parcours-14-modules.log" >> "$RAPPORT"
+fi
+
 # --- 9. Service PM2
 etape "Service PM2 $PM2_NOM sur 127.0.0.1:$PORT"
 pm2 start deploy/run-app.sh --name "$PM2_NOM" --interpreter bash --cwd "$APP" >/dev/null
