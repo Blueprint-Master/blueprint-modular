@@ -134,6 +134,11 @@ describe("mobile : barre de l'app installée et fiche composant (18/11)", () => 
     expect(block).not.toMatch(/background:\s*#fff/i);
     expect(block).toContain("background: var(--bpm-bg-primary, #0a1626) !important;");
     expect(block).toContain("height: var(--bpm-titlebar-height);");
+    // Même place à l'écran dans les deux modes : en overlay, le header se pose sous
+    // la zone de titre (décalage) au lieu d'y monter (20/11).
+    expect(block).toContain("top: var(--bpm-titlebar-offset) !important;");
+    expect(block).toContain("width: 100%;");
+    expect(g).toMatch(/@media \(display-mode: window-controls-overlay\) \{\s*:root \{\s*--bpm-titlebar-offset: env\(titlebar-area-height, 0px\);/);
   });
   it("la fiche ne s'élargit plus au contenu sur téléphone", () => {
     const css = readFileSync(resolve(process.cwd(), "app/planotheque.css"), "utf8");
