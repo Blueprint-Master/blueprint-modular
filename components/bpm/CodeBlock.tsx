@@ -33,9 +33,8 @@ export function CodeBlock({ code, language = "text", className = "" }: CodeBlock
     setTimeout(() => setCopied(false), 2000);
   };
 
-  /* Le bouton vit dans une barre d'en-tête, jamais par-dessus le code : posé en
-     absolu, il masquait la fin des lignes longues (défilement horizontal sur
-     mobile) et ne ressemblait pas au bouton du bac à sable de la même page. */
+  // Barre d'en-tête pour le bouton Copier : en position absolue, il masquait la
+  // fin des lignes longues sur mobile et différait du bouton du bac à sable.
   return (
     <div
       className="bpm-codeblock"
