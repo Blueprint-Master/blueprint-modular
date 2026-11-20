@@ -24,6 +24,27 @@ Conserver la base, le secret de session et les fichiers importés sur stockage p
 - Les workers Python Export planifié et Webhooks se trouvent sous `bpm/`. Leur configuration, les commandes de traitement et les règles de reprise figurent dans la documentation de chaque module. Pour construire le paquet Python avec son interface embarquée, utiliser `bash scripts/build-python-runtime.sh`, puis `python -m pip wheel --no-deps . -w dist`.
 - Les écrans intitulés « Simulateur » proposent une démonstration. Leur documentation précise le mode de stockage et les éventuels services à raccorder.
 
+## Raccorder les écrans Webhooks et Export planifié
+
+L’onglet **Opérations** de chaque module utilise la base SQLite de son worker. Les comptes ADMIN et OWNER de l’installation peuvent consulter les destinataires et piloter les livraisons. Utiliser une instance dédiée par organisation. Les sessions ordinaires et anonymes ne donnent pas accès à ces données.
+
+Dans l’environnement du serveur Next, définir les chemins absolus des bases utilisées par les commandes Python. Déclarer les rapports que cette installation autorise à planifier.
+
+```dotenv
+BPM_WEBHOOKS_DB=/var/lib/modular/events.sqlite
+BPM_EXPORTS_DB=/var/lib/modular/exports.sqlite
+BPM_EXPORT_REPORTS=ventes.csv,tresorerie.pdf
+```
+
+Pour une nouvelle base, lancer la commande `list` du worker avec le chemin voulu pour initialiser son schéma. Python 3.9 ou ultérieur, les fuseaux IANA et les droits en lecture/écriture sur les bases et leur répertoire sont nécessaires au serveur Next. Redémarrer le serveur après modification des variables. Laisser les secrets HTTPS et SMTP dans l’environnement des workers. Configurer leur planificateur pour exécuter chaque minute, depuis le répertoire `application/` ou avec le paquet de cette version installé :
+
+```bash
+python3 -m bpm.webhooks --db /var/lib/modular/events.sqlite tick
+python3 -m bpm.scheduled_exports --db /var/lib/modular/exports.sqlite tick --reports /srv/rapports
+```
+
+Les intégrations Webhooks sont définies avec la commande `subscribe` et alimentées par le producteur métier. L’onglet montre les abonnements et les 100 dernières tentatives, leur réponse HTTP et la prochaine reprise. Pour les exports, publier les rapports indiqués dans `/srv/rapports` ou utiliser le fournisseur Python documenté. L’onglet permet de programmer, suspendre, reprendre ou demander un envoi immédiat. **Actualiser** relit les 100 derniers reçus individuels. « Accepté par le relais SMTP » confirme la soumission au relais. Un envoi incertain se rapproche avec le journal du relais avant toute nouvelle soumission.
+
 ## Vérifier la version servie
 
 Lire `/api/health` après démarrage de l’application. Les champs `applicationVersion` et `sourceCommit` indiquent la version de l’application et le commit source utilisé pour construire le serveur. L’archive contient ce même commit dans `application/BUILD-REVISION`. Une copie de sources dépourvue de Git et de ce fichier renvoie un commit nul.
@@ -64,7 +85,7 @@ L’application Next.js utilise PostgreSQL. Les modules Python s’installent av
 | Templates | Générer puis télécharger un document depuis un modèle | Application |
 | Workflow | Faire avancer un dossier et relire le journal de ses transitions | Application, PostgreSQL |
 | Thèmes | Charger le JSON d’un client et retrouver le thème par défaut si son attribution disparaît | React, entrée `./themes` |
-| Webhooks | Livrer un événement signé, constater le reçu et reprendre après échec | Python, SQLite, destinataire HTTPS |
+| Webhooks | Livrer un événement signé, constater le reçu et reprendre après échec | Application, worker Python, SQLite, destinataire HTTPS |
 | Tableaux de bord | Enregistrer les indicateurs personnels et détecter une modification concurrente | Application, PostgreSQL |
 | Référentiels | Enregistrer une devise, un pays, une TVA ou une unité et préserver les références utilisées | Python, SQLite |
 | Rapports | Générer, conserver et exporter un état depuis des données réelles | Application et Python |
@@ -76,7 +97,7 @@ L’application Next.js utilise PostgreSQL. Les modules Python s’installent av
 | Notifications ciblées | Router un événement vers une équipe et dédupliquer les livraisons | Python, SQLite, adaptateur pour e-mail ou SMS |
 | Connecteurs | Importer un jeu de données REST, SFTP, PostgreSQL ou MySQL, puis le relire | Python, connexions de l’application hôte |
 | Devis / Facturation | Convertir un devis, conserver la facture émise et rapprocher un paiement | Python, SQLite |
-| Export planifié | Déclencher l’export et contrôler la pièce jointe reçue par SMTP | Python, SQLite, relais SMTP |
+| Export planifié | Déclencher l’export et contrôler la pièce jointe reçue par SMTP | Application, worker Python, SQLite, relais SMTP |
 | Multi-langue | Charger des dictionnaires, interpoler et formater les valeurs avec repli par clé | React, entrée `./i18n` |
 | Catalogue produits | Gérer une variante et réconcilier deux demandes sur la dernière unité en stock | Python, SQLite |
 | Journal d’audit | Relire l’historique d’une tâche supprimée ou exporter des événements métier | Application et Python |
