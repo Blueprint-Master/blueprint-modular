@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useCallback, useEffect, useId, useMemo, useRef, useState } from "react";
+import { seededRandom } from "./spatial";
 
 /**
  * @component bpm.relationGraph
@@ -51,13 +52,9 @@ function nodeSize(n: GraphNode): { w: number; h: number } {
   return { w: n.width ?? 96, h: n.height ?? 40 };
 }
 
-function layoutSignature(nodes: GraphNode[], edges: GraphEdge[], layout: RelationGraphLayout): string {
-  return `${layout}:${nodes.map((n) => n.id).join(",")}:${edges.map((e) => `${e.from}->${e.to}`).join(",")}`;
-}
-
 function gridLayout(nodes: GraphNode[], w: number, h: number): Record<string, Vec> {
   const n = nodes.length;
-  const out: Record<string, Vec> = {};
+  const out: Record<string, Vec> = Object.create(null);
   if (n === 0) return out;
   const cols = Math.ceil(Math.sqrt(n));
   const rows = Math.ceil(n / cols);
@@ -73,7 +70,7 @@ function gridLayout(nodes: GraphNode[], w: number, h: number): Record<string, Ve
 
 function circularLayout(nodes: GraphNode[], w: number, h: number): Record<string, Vec> {
   const n = nodes.length;
-  const out: Record<string, Vec> = {};
+  const out: Record<string, Vec> = Object.create(null);
   if (n === 0) return out;
   const cx = w / 2;
   const cy = h / 2;
@@ -87,15 +84,16 @@ function circularLayout(nodes: GraphNode[], w: number, h: number): Record<string
 
 function forceLayout(nodes: GraphNode[], edges: GraphEdge[], w: number, h: number, iterations = 50): Record<string, Vec> {
   const n = nodes.length;
-  const out: Record<string, Vec> = {};
+  const out: Record<string, Vec> = Object.create(null);
   if (n === 0) return out;
   const area = w * h;
   const k = Math.sqrt(area / Math.max(1, n));
-  const pos: Record<string, Vec> = {};
+  const pos: Record<string, Vec> = Object.create(null);
+  const random = seededRandom(1);
   for (const node of nodes) {
-    pos[node.id] = { x: 0.2 * w + Math.random() * 0.6 * w, y: 0.2 * h + Math.random() * 0.6 * h };
+    pos[node.id] = { x: 0.2 * w + random() * 0.6 * w, y: 0.2 * h + random() * 0.6 * h };
   }
-  const disp: Record<string, Vec> = {};
+  const disp: Record<string, Vec> = Object.create(null);
 
   for (let iter = 0; iter < iterations; iter++) {
     for (const node of nodes) disp[node.id] = { x: 0, y: 0 };
@@ -140,8 +138,12 @@ function forceLayout(nodes: GraphNode[], edges: GraphEdge[], w: number, h: numbe
       const lim = Math.min(mag, t * Math.min(w, h)) / mag;
       pos[node.id].x += d.x * lim;
       pos[node.id].y += d.y * lim;
-      pos[node.id].x = Math.max(24, Math.min(w - 24, pos[node.id].x));
-      pos[node.id].y = Math.max(24, Math.min(h - 24, pos[node.id].y));
+      const size = nodeSize(node);
+      // Keep the whole box and its stroke visible. Centre a box wider than the viewport.
+      const marginX = Math.min(w / 2, size.w / 2 + 1);
+      const marginY = Math.min(h / 2, size.h / 2 + 1);
+      pos[node.id].x = Math.max(marginX, Math.min(w - marginX, pos[node.id].x));
+      pos[node.id].y = Math.max(marginY, Math.min(h - marginY, pos[node.id].y));
     }
   }
   for (const node of nodes) out[node.id] = { ...pos[node.id] };
@@ -180,20 +182,22 @@ export function RelationGraph({
   height = 420,
   className = "",
 }: RelationGraphProps) {
-  const sig = useMemo(() => layoutSignature(nodes, edges, layout), [nodes, edges, layout]);
+  const sig = useMemo(() => JSON.stringify([
+    layout, width, height, nodes.map(n => [n.id, n.width, n.height]), edges.map(e => [e.from, e.to]),
+  ]), [layout, width, height, nodes, edges]);
 
   const computed = useMemo(
     () => computeLayout(layout, nodes, edges, width, height),
     [layout, nodes, edges, width, height]
   );
 
-  const [positions, setPositions] = useState<Record<string, Vec>>({});
-  const lastSig = useRef("");
+  const [positions, setPositions] = useState<Record<string, Vec>>(computed);
+  const lastSig = useRef(sig);
 
   useEffect(() => {
     if (lastSig.current !== sig) {
       lastSig.current = sig;
-      setPositions({ ...computed });
+      setPositions(computed);
     }
   }, [sig, computed]);
 
@@ -222,8 +226,7 @@ export function RelationGraph({
       const vy = ((e.clientY - rect.top) / rect.height) * height;
       const wx = (vx - tx) / scale;
       const wy = (vy - ty) / scale;
-      setPositions((prev) => ({
-        ...prev,
+      setPositions((prev) => Object.assign(Object.create(null), prev, {
         [d.id]: {
           x: Math.max(16, Math.min(width - 16, wx - d.gx)),
           y: Math.max(16, Math.min(height - 16, wy - d.gy)),
