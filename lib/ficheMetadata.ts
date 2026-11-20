@@ -4,6 +4,10 @@ import registry from "@/lib/generated/bpm-components.json";
 /** Base canonique des fiches composants (origine apex, cf. SEO du site). */
 const CANON_BASE = "https://blueprint-modular.com/composants";
 
+export function componentCanonical(slug: string): string {
+  return `${CANON_BASE}/${slug}`;
+}
+
 /**
  * Métadonnée SEO d'une fiche composant `/composants/<slug>`, dérivée du registre
  * (`lib/generated/bpm-components.json`, source de vérité des noms/descriptions).
@@ -15,7 +19,7 @@ const CANON_BASE = "https://blueprint-modular.com/composants";
  */
 export function ficheMetadata(slug: string): Metadata {
   const entry = registry.components.find((c) => c.slug === slug);
-  const canonical = `${CANON_BASE}/${slug}`;
+  const canonical = componentCanonical(slug);
   if (!entry) {
     // Slug hors registre (alias) : pas de titre dédié, mais canonical self propre.
     return { alternates: { canonical } };

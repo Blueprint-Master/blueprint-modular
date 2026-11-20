@@ -2,7 +2,7 @@ User-agent: *
 Allow: /
 Disallow: /settings/
 Disallow: /api/
-Sitemap: https://app.blueprint-modular.com/sitemap.xml
+Sitemap: https://blueprint-modular.com/sitemap.xml
 
 User-agent: GPTBot
 Allow: /
