@@ -33,26 +33,57 @@ export function CodeBlock({ code, language = "text", className = "" }: CodeBlock
     setTimeout(() => setCopied(false), 2000);
   };
 
+  /* Le bouton vit dans une barre d'en-tête, jamais par-dessus le code : posé en
+     absolu, il masquait la fin des lignes longues (défilement horizontal sur
+     mobile) et ne ressemblait pas au bouton du bac à sable de la même page. */
   return (
-    <div className="relative group">
-      <pre
-        className={`p-4 rounded-lg overflow-x-auto text-sm ${className}`}
+    <div
+      className="bpm-codeblock"
+      style={{
+        border: "1px solid var(--bpm-border)",
+        borderRadius: "var(--bpm-radius-md, 8px)",
+        background: "var(--bpm-code-bg)",
+        overflow: "hidden",
+        margin: "0 0 12px",
+      }}
+    >
+      <div
+        className="bpm-codeblock-header"
         style={{
-          background: "var(--bpm-code-bg)",
-          border: "1px solid var(--bpm-border)",
-          color: "var(--bpm-text-primary)",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "space-between",
+          gap: 8,
+          padding: "6px 12px 6px 16px",
+          borderBottom: "1px solid var(--bpm-border)",
+          color: "var(--bpm-text-muted, var(--bpm-text-secondary))",
+          fontSize: "var(--bpm-font-size-sm, 13px)",
         }}
+      >
+        <span>{language !== "text" ? language : ""}</span>
+        <button
+          type="button"
+          onClick={copy}
+          aria-live="polite"
+          style={{
+            background: "transparent",
+            border: "1px solid var(--bpm-border)",
+            color: "inherit",
+            padding: "4px 10px",
+            borderRadius: "var(--bpm-radius-sm, 4px)",
+            cursor: "pointer",
+            font: "inherit",
+          }}
+        >
+          {copied ? "Copié" : "Copier"}
+        </button>
+      </div>
+      <pre
+        className={`p-4 overflow-x-auto text-sm ${className}`}
+        style={{ margin: 0, color: "var(--bpm-text-primary)" }}
       >
         <code>{code}</code>
       </pre>
-      <button
-        type="button"
-        onClick={copy}
-        className="absolute top-2 right-2 px-2 py-1.5 rounded-lg text-sm font-medium opacity-80 group-hover:opacity-100"
-        style={{ background: "var(--bpm-accent)", color: "var(--bpm-accent-contrast)" }}
-      >
-        {copied ? "Copié" : "Copier"}
-      </button>
     </div>
   );
 }
