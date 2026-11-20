@@ -170,3 +170,10 @@ describe("accueil : même fond et même gouttière que les autres pages (19/11)"
     expect(css).toMatch(/\.app-main > \.plano-home \{\s*padding-left: 0;\s*padding-right: 0;/);
   });
 });
+
+describe("démo « Suivi commercial » : un nombre de commandes n'est pas un montant (19/11)", () => {
+  it("la métrique Commandes ne porte pas la devise par défaut (EUR)", () => {
+    const src = readFileSync(resolve(process.cwd(), "app/(app)/demo/page.tsx"), "utf8");
+    expect(src).toMatch(/<Metric label=\{S\.metricOrders\}[^>]*currency=""/);
+  });
+});
