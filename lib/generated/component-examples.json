@@ -140,7 +140,7 @@
   "splitview": "bpm.splitView({ left: <List />, right: <Detail />, defaultSplit: 30, direction: \"horizontal\" })",
   "statemachine": "bpm.stateMachine({ states: [\"A\", \"B\", \"C\"], transitions: [{ from: \"A\", to: \"B\" }], currentState: \"A\", onTransition: handleTransition })",
   "statusbox": "bpm.statusBox({ label: \"Synchronisation CRM\", state: \"complete\", defaultExpanded: false })",
-  "statustracker": "bpm.statusTracker({ stages: [{ label: \"Reçu\", state: \"completed\" }, { label: \"En cours\", state: \"current\" }, { label: \"Livré\", state: \"pending\" }] })",
+  "statustracker": "bpm.statusTracker({ stages: [{ label: \"Reçu\", status: \"completed\" }, { label: \"En cours\", status: \"current\" }, { label: \"Livré\", status: \"pending\" }] })",
   "stepper": "bpm.stepper({ steps: [{ label: \"Panier\" }, { label: \"Livraison\" }, { label: \"Paiement\" }], currentStep: 1 })",
   "streamingtext": "bpm.streamingText({ content: partialText, isStreaming: true, renderMarkdown: true })",
   "suggestioncard": "bpm.suggestionCard({ title: \"Suggestion\", description: \"Détail...\", confidence: 85, actions: [{ label: \"Appliquer\", onClick: apply, variant: \"primary\" }] })",
