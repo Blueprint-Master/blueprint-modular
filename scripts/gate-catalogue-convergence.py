@@ -23,7 +23,7 @@ comparaison est strictement TS ↔ catalogue ; le registre Python historique
   - une entrée du catalogue n'a pas de pendant exporté sur le barrel (CAT \\ TS).
 
 Garde optionnelle (warning, jamais d'échec) : alerte si le nombre d'entrées
-"curated" du registre MCP a diminué sous une référence — détecte une perte
+annotées du registre MCP a diminué sous une référence — détecte une perte
 accidentelle de curation.
 
 Run depuis la racine du repo :
@@ -39,13 +39,13 @@ GENERATOR = REPO_ROOT / "scripts" / "generate-bpm-components-json.py"
 CATALOGUE = REPO_ROOT / "lib" / "generated" / "bpm-components.json"
 MCP_REGISTRY = REPO_ROOT / "lib" / "generated" / "mcp-registry.json"
 
-# Compteur de référence de curation (entrées "curated" du registre MCP).
+# Compteur de référence de curation (entrées annotées du registre MCP).
 # Garde de NON-RÉGRESSION : warning si on descend en dessous, jamais d'échec.
 # À relever volontairement (avec la PR qui ajoute de la curation), jamais à
 # baisser pour masquer une perte. 101 après PR1 ; 109 après CAT-3 (curation des
 # 8 primitives : metricRow, toggle, gantt, scheduler, heatmap, funnelChart,
 # pivotTable, radarChart).
-CURATED_BASELINE = 109
+ANNOTATED_BASELINE = 109
 
 
 def load_generator():
@@ -105,15 +105,15 @@ def main() -> int:
     # ── Garde optionnelle : non-régression de curation (warning only) ──────────
     try:
         registry = json.loads(MCP_REGISTRY.read_text(encoding="utf-8"))
-        curated = sum(1 for c in registry["components"] if c.get("status") == "curated")
-        if curated < CURATED_BASELINE:
+        annotated = sum(1 for c in registry["components"] if c.get("semantics"))
+        if annotated < ANNOTATED_BASELINE:
             print(
-                f"  [WARN] curation en baisse : {curated} entrées \"curated\" "
-                f"< référence {CURATED_BASELINE}. Perte de curation accidentelle ? "
+                f"  [WARN] couverture en baisse : {annotated} entrées annotées "
+                f"< référence {ANNOTATED_BASELINE}. Perte d’annotations accidentelle ? "
                 f"(non bloquant)"
             )
         else:
-            print(f"  [OK] curation : {curated} \"curated\" (référence {CURATED_BASELINE}).")
+            print(f"  [OK] couverture : {annotated} entrées annotées (référence {ANNOTATED_BASELINE}).")
     except (FileNotFoundError, KeyError, ValueError):
         # Registre absent/illisible : la garde de curation est best-effort, on n'échoue pas.
         print("  [WARN] mcp-registry.json absent/illisible — garde de curation ignorée.")

@@ -31,7 +31,7 @@ bretelles) au cas où l'un d'eux serait un jour ajouté au barrel par erreur.
 
 Sortie : { "components": [ { slug, name, description, category }, ... ] }
 Le champ `status` (curated / uncurated) est dérivé EN AVAL par
-generate-mcp-registry.mjs à partir de la présence d'une couche sémantique —
+generate-mcp-registry.mjs à partir du statut de validation humaine de l’annotation —
 il n'est pas stocké ici (le catalogue reste minimal et stable).
 
 Lancer depuis la racine du repo :
