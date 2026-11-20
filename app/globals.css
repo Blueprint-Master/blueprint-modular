@@ -573,21 +573,22 @@ html[data-theme="dark"] .bpm-app-sidebar .bpm-sidebar-footer-wrap {
     padding-left: 0;
   }
 }
-/* App installée. Deux modes d'affichage : `standalone` (barre de titre native visible)
-   et `window-controls-overlay` (barre native masquée, boutons de fenêtre dessinés
-   par-dessus la page). Sans le second, le masquage de la barre faisait retomber le
-   header en position sticky pleine largeur : langue et cloche passaient sous les
-   boutons de fenêtre (20/11). `titlebar-area-*` n'est défini qu'en overlay ; la
-   largeur exclut alors la zone des boutons de fenêtre. */
+/* App installée. Deux modes d'affichage : `standalone` (barre de titre native
+   visible) et `window-controls-overlay` (barre native masquée, boutons de
+   fenêtre dessinés par-dessus la page). Le header garde la MÊME place à l'écran
+   dans les deux : en overlay il se pose juste sous la zone de titre au lieu d'y
+   monter (20/11, Rémi : « l'idée est que ça reste fixe à sa place »). La zone de
+   titre vide reste une poignée de déplacement de la fenêtre. */
 @media (display-mode: standalone), (display-mode: window-controls-overlay) {
   :root {
-    --bpm-titlebar-height: max(env(titlebar-area-height, 56px), 44px);
+    --bpm-titlebar-height: 56px;
+    --bpm-titlebar-offset: 0px;
   }
   .pwa-title-bar {
     position: fixed;
-    left: env(titlebar-area-x, 0);
-    top: env(titlebar-area-y, 0);
-    width: env(titlebar-area-width, 100%);
+    left: 0;
+    top: var(--bpm-titlebar-offset) !important;
+    width: 100%;
     height: var(--bpm-titlebar-height);
     padding-left: var(--bpm-sidebar-width, 0);
     overflow: visible;
@@ -610,12 +611,30 @@ html[data-theme="dark"] .bpm-app-sidebar .bpm-sidebar-footer-wrap {
     pointer-events: auto;
     cursor: pointer;
   }
-  /* Même hauteur que la barre (plancher 44px inclus), sinon le haut du contenu passe dessous. */
+  /* Le contenu commence sous la zone de titre ET sous le header. */
   .app-content-column {
-    padding-top: var(--bpm-titlebar-height);
+    padding-top: calc(var(--bpm-titlebar-offset) + var(--bpm-titlebar-height));
   }
   .asset-manager-sidebar-outer--open {
-    padding-top: var(--bpm-titlebar-height);
+    padding-top: calc(var(--bpm-titlebar-offset) + var(--bpm-titlebar-height));
+  }
+}
+@media (display-mode: window-controls-overlay) {
+  :root {
+    --bpm-titlebar-offset: env(titlebar-area-height, 0px);
+  }
+  /* Bande de la zone de titre, au-dessus du header : même fond, et poignée de
+     déplacement de la fenêtre (les boutons de fenêtre sont dessinés par-dessus). */
+  .pwa-title-bar::before {
+    content: "";
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: calc(-1 * var(--bpm-titlebar-offset));
+    height: var(--bpm-titlebar-offset);
+    background: var(--bpm-bg-primary, #0a1626);
+    -webkit-app-region: drag;
+    app-region: drag;
   }
 }
 
