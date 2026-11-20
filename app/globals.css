@@ -573,14 +573,22 @@ html[data-theme="dark"] .bpm-app-sidebar .bpm-sidebar-footer-wrap {
     padding-left: 0;
   }
 }
-@media (display-mode: standalone) {
+/* App installée. Deux modes d'affichage : `standalone` (barre de titre native visible)
+   et `window-controls-overlay` (barre native masquée, boutons de fenêtre dessinés
+   par-dessus la page). Sans le second, le masquage de la barre faisait retomber le
+   header en position sticky pleine largeur : langue et cloche passaient sous les
+   boutons de fenêtre (20/11). `titlebar-area-*` n'est défini qu'en overlay ; la
+   largeur exclut alors la zone des boutons de fenêtre. */
+@media (display-mode: standalone), (display-mode: window-controls-overlay) {
+  :root {
+    --bpm-titlebar-height: max(env(titlebar-area-height, 56px), 44px);
+  }
   .pwa-title-bar {
     position: fixed;
     left: env(titlebar-area-x, 0);
     top: env(titlebar-area-y, 0);
     width: env(titlebar-area-width, 100%);
-    height: env(titlebar-area-height, 56px);
-    min-height: 44px;
+    height: var(--bpm-titlebar-height);
     padding-left: var(--bpm-sidebar-width, 0);
     overflow: visible;
     -webkit-app-region: drag;
@@ -602,11 +610,12 @@ html[data-theme="dark"] .bpm-app-sidebar .bpm-sidebar-footer-wrap {
     pointer-events: auto;
     cursor: pointer;
   }
+  /* Même hauteur que la barre (plancher 44px inclus), sinon le haut du contenu passe dessous. */
   .app-content-column {
-    padding-top: env(titlebar-area-height, 56px);
+    padding-top: var(--bpm-titlebar-height);
   }
   .asset-manager-sidebar-outer--open {
-    padding-top: env(titlebar-area-height, 56px);
+    padding-top: var(--bpm-titlebar-height);
   }
 }
 

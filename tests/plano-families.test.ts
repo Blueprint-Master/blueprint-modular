@@ -128,9 +128,12 @@ describe("aucun texte blanc posé sur l'accent", () => {
 describe("mobile : barre de l'app installée et fiche composant (18/11)", () => {
   it("la barre de titre de l'app installée prend le fond du thème, plus le blanc figé", () => {
     const g = readFileSync(resolve(process.cwd(), "app/globals.css"), "utf8");
-    const block = /@media \(display-mode: standalone\) \{\s*\.pwa-title-bar \{([^}]*)\}/.exec(g)?.[1] ?? "";
+    // Le bloc couvre les DEUX modes de l'app installée : barre native visible
+    // (`standalone`) et barre masquée (`window-controls-overlay`, 20/11).
+    const block = /@media \(display-mode: standalone\), \(display-mode: window-controls-overlay\) \{[^]*?\.pwa-title-bar \{([^}]*)\}/.exec(g)?.[1] ?? "";
     expect(block).not.toMatch(/background:\s*#fff/i);
     expect(block).toContain("background: var(--bpm-bg-primary, #0a1626) !important;");
+    expect(block).toContain("height: var(--bpm-titlebar-height);");
   });
   it("la fiche ne s'élargit plus au contenu sur téléphone", () => {
     const css = readFileSync(resolve(process.cwd(), "app/planotheque.css"), "utf8");
