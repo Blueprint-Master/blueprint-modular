@@ -20,11 +20,7 @@ export interface BpmComponent {
   name: string;
   description: string;
   category: string;
-  /**
-   * Statut de curation : "curated" (porte une couche sémantique) ou "uncurated"
-   * (exposé sans sémantique — champ honnête, pas de guidance fabriquée). Dérivé
-   * par generate-mcp-registry.mjs. Optionnel pour tolérer un registre ancien.
-   */
+  /** Human approval. Proposed annotations remain available under semantics. */
   status?: "curated" | "uncurated";
   fullDescription?: string;
   props?: string;
@@ -125,7 +121,6 @@ export function componentDetail(c: BpmComponent) {
     name: c.name,
     category: c.category,
     description: c.fullDescription || c.description,
-    // Statut de curation honnête : "uncurated" => semantics null, sans guidance fabriquée.
     status: c.status ?? "uncurated",
     props: c.props ?? "(props non documentées dans le registre)",
     example: c.example ?? null,

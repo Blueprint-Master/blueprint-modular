@@ -30,6 +30,9 @@ const nextConfig = {
   reactStrictMode: true,
   output: "standalone",
   outputFileTracingRoot: rootDir,
+  outputFileTracingIncludes: {
+    "/api/module-workers/*": ["./bpm/__init__.py", "./bpm/_module_store.py", "./bpm/worker_console.py", "./bpm/webhooks.py", "./bpm/scheduled_exports.py"],
+  },
   turbopack: { root: rootDir },
   env: {
     MODULAR_SOURCE_COMMIT: sourceCommit(),

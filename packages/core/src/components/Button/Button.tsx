@@ -9,7 +9,11 @@ export type ButtonVariant =
   | "ghost"
   | "destructive"
   | "link";
-export type ButtonSize = "sm" | "md" | "lg";
+type ShortSize = "sm" | "md" | "lg";
+export type ButtonSize = ShortSize | "small" | "medium" | "large";
+const SHORT_SIZE: Record<ButtonSize, ShortSize> = {
+  sm: "sm", md: "md", lg: "lg", small: "sm", medium: "md", large: "lg",
+};
 
 export interface ButtonProps {
   variant?: ButtonVariant;
@@ -24,17 +28,19 @@ export interface ButtonProps {
   onClick?: () => void;
   children?: React.ReactNode;
   "aria-label"?: string;
+  className?: string;
+  style?: React.CSSProperties;
   type?: "button" | "submit" | "reset";
 }
 
 /* Aligné bpm-button.jsx : radius 6px sm/md, 8px lg (référence) */
-const SIZES: Record<ButtonSize, { height: number; padding: string; fontSize: number; gap: number; borderRadius: string }> = {
+const SIZES: Record<ShortSize, { height: number; padding: string; fontSize: number; gap: number; borderRadius: string }> = {
   sm: { height: 32, padding: "0 12px", fontSize: 13, gap: 5, borderRadius: "6px" },
   md: { height: 36, padding: "0 16px", fontSize: 14, gap: 6, borderRadius: "6px" },
   lg: { height: 44, padding: "0 20px", fontSize: 15, gap: 7, borderRadius: "8px" },
 };
 
-const ICON_SIZE: Record<ButtonSize, number> = { sm: 14, md: 16, lg: 18 };
+const ICON_SIZE: Record<ShortSize, number> = { sm: 14, md: 16, lg: 18 };
 
 type VariantStyle = {
   base: React.CSSProperties;
@@ -214,6 +220,8 @@ export function Button({
   children,
   "aria-label": ariaLabel,
   type = "button",
+  className,
+  style,
 }: ButtonProps) {
   const [hovered, setHovered] = useState(false);
   const [pressed, setPressed] = useState(false);
@@ -221,8 +229,9 @@ export function Button({
 
   const vDef =
     variant === "ghost" && raised ? GHOST_RAISED : (VARIANTS[variant] ?? VARIANTS.primary);
-  const sDef = SIZES[size] ?? SIZES.md;
-  const iconSize = ICON_SIZE[size] ?? 16;
+  const sizeKey = SHORT_SIZE[size] ?? "md";
+  const sDef = SIZES[sizeKey];
+  const iconSize = ICON_SIZE[sizeKey];
   const isIconOnly = children == null || (typeof children === "string" && children.trim() === "");
 
   const disabledOverride: React.CSSProperties =
@@ -255,6 +264,7 @@ export function Button({
     ...(focused ? { boxShadow: "0 0 0 3px rgba(37,99,235,0.4)" } : {}),
     ...loadingOverride,
     ...disabledOverride,
+    ...style,
   };
 
   return (
@@ -262,7 +272,7 @@ export function Button({
       <style dangerouslySetInnerHTML={{ __html: SPINNER_STYLE }} />
       <button
         type={type}
-        className="bpm-button"
+        className={className ? `bpm-button ${className}` : "bpm-button"}
         style={baseStyle}
         disabled={disabled || loading}
         onClick={onClick}

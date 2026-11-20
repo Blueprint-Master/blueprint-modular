@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { WorkerConsole } from "@/components/module-workers/WorkerConsole";
 import { CodeBlock, Tabs } from "@/components/bpm";
 import { ModulePageHeader } from "@/components/site/ModulePageHeader";
 import { useI18n } from "@/lib/i18n/LocaleProvider";
@@ -67,6 +68,7 @@ export default function WebhooksModulePage() {
         tabs={[
           { label: S.tabDocumentation, content: <DocContent /> },
           { label: S.tabSimulator, content: <WebhooksSimulateur /> },
+          { label: locale === "fr" ? "Opérations" : "Operations", content: <WorkerConsole module="webhooks" /> },
         ]}
         defaultTab={0}
       />

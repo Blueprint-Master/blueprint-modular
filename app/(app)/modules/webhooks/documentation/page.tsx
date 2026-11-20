@@ -89,6 +89,9 @@ python -m bpm.webhooks --db /var/lib/modular/events.sqlite history`} />
           : "Run tick every minute. The alerts command lists persistent delivery incidents. Use pause, resume or delete with the integration name. Retries carry the same event ID. Commit that ID with the receiving business operation to prevent duplicates, including when an acknowledgement is lost. For key rotation, accept both keys at the receiver before replacing the sender’s secret."}
       </p>
 
+      <p className="mt-3 text-sm">{locale === "fr"
+        ? "Dans le serveur Next, pointez BPM_WEBHOOKS_DB vers la même base. Les administrateurs consultent les tentatives HTTP et suspendent ou reprennent les abonnements dans l’onglet Opérations."
+        : "Set BPM_WEBHOOKS_DB on the Next server to the same database. Administrators can inspect HTTP attempts and pause or resume subscriptions in the Operations tab."}</p>
       <p className="mt-6 text-sm" style={{ color: "var(--bpm-text-secondary)" }}>
         <Link
           href="/modules/webhooks/simulateur"

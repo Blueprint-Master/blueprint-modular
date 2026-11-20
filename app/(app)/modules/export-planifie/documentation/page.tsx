@@ -77,6 +77,9 @@ python -m bpm.scheduled_exports --db /var/lib/modular/exports.sqlite history`} /
           ? "list affiche les identifiants utilisés par pause, resume, send et delete. history distingue l’acceptation par le relais SMTP d’un envoi incertain. Après une interruption pendant l’envoi, vérifiez le journal du relais puis utilisez reconcile RUN DESTINATAIRE sent ou retry. Chaque installation conserve sa propre base et ses propres secrets."
           : "list shows the IDs used by pause, resume, send and delete. history distinguishes relay acceptance from uncertain delivery. Following an interruption during submission, check the relay log, then use reconcile RUN RECIPIENT sent or retry. Each installation maintains its own database and secrets."}
       </p>
+      <p className="mt-3 text-sm">{locale === "fr"
+        ? "Dans le serveur Next, pointez BPM_EXPORTS_DB vers la même base et listez les rapports autorisés dans BPM_EXPORT_REPORTS (ex. ventes.csv,tresorerie.pdf). Les administrateurs planifient les envois et consultent les reçus dans l’onglet Opérations."
+        : "Set BPM_EXPORTS_DB on the Next server to the same database and list available reports in BPM_EXPORT_REPORTS (e.g. sales.csv,cash.pdf). Administrators can schedule deliveries and inspect receipts in the Operations tab."}</p>
       <p className="mt-6 text-sm" style={{ color: "var(--bpm-text-secondary)" }}>
         <Link
           href="/modules/export-planifie/simulateur"
