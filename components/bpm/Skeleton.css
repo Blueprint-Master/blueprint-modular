@@ -1,0 +1,25 @@
+@keyframes bpm-skeleton-pulse { 50% { opacity: .5; } }
+.bpm-skeleton--pulse { animation: bpm-skeleton-pulse 2s ease-in-out infinite; }
+.bpm-skeleton.rounded-sm { border-radius: 2px; }
+.bpm-skeleton.rounded { border-radius: 4px; }
+.bpm-skeleton.rounded-lg { border-radius: 8px; }
+.bpm-skeleton.rounded-full { border-radius: 9999px; }
+@keyframes bpm-shimmer {
+  0% { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}
+.bpm-skeleton { background: var(--bpm-skeleton-bg, var(--bpm-bg-secondary, #eef0f3)) !important; }
+.bpm-skeleton--shimmer {
+  background: linear-gradient(
+    90deg,
+    var(--bpm-skeleton-bg, var(--bpm-bg-secondary, #eef0f3)) 25%,
+    var(--bpm-skeleton-shimmer-mid, var(--bpm-bg-primary, #f8f9fb)) 50%,
+    var(--bpm-skeleton-bg, var(--bpm-bg-secondary, #eef0f3)) 75%
+  ) !important;
+  background-size: 200% 100% !important;
+  animation: bpm-shimmer 1.5s ease-in-out infinite;
+}
+@media (prefers-reduced-motion: reduce) {
+  .bpm-skeleton { animation: none !important; }
+  .bpm-skeleton--shimmer { animation: none !important; }
+}

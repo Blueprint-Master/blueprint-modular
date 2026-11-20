@@ -12,8 +12,10 @@ export async function extractTextFromBuffer(
     let extractedText = "";
     try {
       // eslint-disable-next-line @typescript-eslint/no-require-imports
-      const pdfParse = require("pdf-parse") as (buf: Buffer) => Promise<{ text: string; numpages: number }>;
-      const data = await pdfParse(buffer);
+      const pdfParse = require("pdf-parse") as (bytes: Uint8Array) => Promise<{ text: string; numpages: number }>;
+      // PDF.js expects TypedArray.slice() to copy. Buffer.slice() would share and mutate the input.
+      const bytes = new Uint8Array(buffer.buffer, buffer.byteOffset, buffer.byteLength);
+      const data = await pdfParse(bytes);
       extractedText = data?.text ?? "";
       if (extractedText.length > 0) {
         console.log(`[contract-extract] Texte natif extrait: ${extractedText.length} caractères`);

@@ -50,7 +50,7 @@ export interface MetricProps {
   label: string;
   /** Valeur principale (string, number, ou trajectoire v(t) [{t, v}] — affiche le dernier point et révèle la tendance si context est fourni). */
   value: string | number | TrajectoryPoint[];
-  /** Variation affichée. Format string (ex. "+12%") ou number. */
+  /** Variation numérique formatée, ou variation avec unité explicite conservée (ex. "-1,2 pt"). */
   delta?: number | string | null;
   /** Nom optionnel pour référencer la métrique dans le chat IA : $metric:name ou @name */
   name?: string | null;
@@ -81,6 +81,26 @@ export interface MetricProps {
   context?: InterpretContext;
   /** Rend la carte CLIQUABLE — ex. « voir les factures impayées » depuis le KPI qui les compte. Ajoute le rôle bouton, le focus clavier et Entrée/Espace : une carte cliquable à la souris seulement serait inatteignable au clavier et muette pour un lecteur d'écran. Absent = rendu et sémantique inchangés. */
   onClick?: (() => void) | null;
+  /** Unité de l'écart au repère quand elle ne se déduit pas de `currency` (ex. « pt », « € », « h »). Absent = déduite de `currency`. */
+  judgmentUnit?: string | null;
+}
+
+// A formatted delta is display text. Read a complete quantity for its
+// direction, without interpreting a malformed group as a numeric prefix.
+function readDelta(text: string): { number: number | null; literal: boolean } {
+  const quantity = /^([+−-]?[\d., \u00a0\u2009\u202f]+?)(?:\s*([\p{L}\p{Sc}%‰°][\p{L}\p{N}\p{Sc}%‰°·/^−-]*))?$/u.exec(text);
+  if (!quantity) return { number: null, literal: true };
+
+  const token = quantity[1].trim().replace("−", "-");
+  const spaced = /^[+-]?\d{1,3}(?:[ \u00a0\u2009\u202f]\d{3})+(?:[.,]\d+)?$/u.test(token);
+  const dotted = /^[+-]?\d{1,3}(?:\.\d{3})+(?:,\d+)?$/.test(token);
+  const plain = /^[+-]?(?:\d+(?:[.,]\d+)?|[.,]\d+)$/.test(token);
+  if (!(spaced || dotted || plain)) return { number: null, literal: true };
+
+  const digits = dotted ? token.replace(/\./g, "") : token.replace(/\s/g, "");
+  const number = Number(digits.replace(",", "."));
+  if (!Number.isFinite(number)) return { number: null, literal: true };
+  return { number, literal: spaced || dotted || Boolean(quantity[2]) };
 }
 
 export function Metric({
@@ -103,6 +123,7 @@ export function Metric({
   trackContext = false,
   context,
   onClick = null,
+  judgmentUnit = null,
 }: MetricProps) {
   /* Carte cliquable : on n'ajoute JAMAIS le curseur seul. Une affordance visuelle
      sans affordance clavier fabrique un piège — visible pour la souris, invisible
@@ -142,17 +163,19 @@ export function Metric({
   };
   const sym = currency && currency !== "%" ? (symbols[currency] ?? currency) : "";
   const locale = valueLocale ?? "fr-FR";
+  // Écart au repère : en points pour un taux, dans la devise sinon (cf. differenceUnit de l'artefact).
+  const judgmentFormat = { locale, unit: judgmentUnit || (currency === "%" ? "pt" : sym || undefined) };
   const formatWithLocale = (n: number, decimals: number) =>
     n.toLocaleString(locale, {
       minimumFractionDigits: decimals,
       maximumFractionDigits: decimals,
       useGrouping: valueGrouping,
     });
-  const formatDelta = (d: number, forcePercent = false) => {
+  const formatDelta = (d: number) => {
     if (typeof d !== "number" || !Number.isFinite(d)) return "";
     const sign = d > 0 ? "+" : d < 0 ? "-" : "";
     const fmt = formatWithLocale(Math.abs(d), deltaDecimals);
-    if (forcePercent || currency === "%") return `${sign}${fmt}%`;
+    if (currency === "%") return `${sign}${fmt}%`;
     if (!currency || currency === "") return `${sign}${fmt}`;
     return `${sign}${fmt} ${sym}`;
   };
@@ -163,10 +186,12 @@ export function Metric({
     : typeof value === "number"
       ? formatWithLocale(value, valueDecimals)
       : value;
-  const deltaStr = typeof delta === "string" ? delta.trim() : "";
-  const deltaIsPercent = deltaStr.endsWith("%");
-  const deltaNum = typeof delta === "string" ? parseFloat(delta.replace(/,/g, ".").replace(/%/g, "")) : delta;
-  const hasDelta = deltaNum != null && !Number.isNaN(deltaNum);
+  const suppliedText = typeof delta === "string" ? delta : "";
+  const deltaStr = suppliedText.trim();
+  const parsed = typeof delta === "string" ? readDelta(deltaStr) : null;
+  const deltaNum = typeof delta === "number" ? delta : parsed?.number;
+  const hasDelta = deltaNum != null && Number.isFinite(deltaNum);
+  const hasText = deltaStr.length > 0;
   const positive = hasDelta && deltaType !== "aucun" && (deltaType === "inverse" ? deltaNum < 0 : deltaNum > 0);
   const negative = hasDelta && deltaType !== "aucun" && (deltaType === "inverse" ? deltaNum > 0 : deltaNum < 0);
 
@@ -274,11 +299,11 @@ export function Metric({
       {judgment && (
         <div
           role="status"
-          aria-label={`${label} : ${judgmentLabel(judgment)}`}
+          aria-label={`${label} : ${judgmentLabel(judgment, judgmentFormat)}`}
           className={`flex items-center gap-2 ${compact ? "text-[11px] mt-0.5" : "text-xs mt-1"}`}
           style={{ color: judgmentColor(judgment) }}
         >
-          <span>{judgmentLabel(judgment)}</span>
+          <span>{judgmentLabel(judgment, judgmentFormat)}</span>
           {sortedTraj && sortedTraj.length >= 2 && judgment.trend && (
             <Sparkline
               values={sortedTraj.map((p) => p.v)}
@@ -295,15 +320,15 @@ export function Metric({
         </div>
       )}
       <div
-        className={`${compact ? "text-xs mt-0.5" : "text-sm mt-1"} ${hasDelta ? (positive ? "text-green-600" : negative ? "text-red-600" : "") : "opacity-0"}`}
+        className={`${compact ? "text-xs mt-0.5" : "text-sm mt-1"} ${hasDelta || hasText ? (positive ? "text-green-600" : negative ? "text-red-600" : "") : "opacity-0"}`}
       >
         {hasDelta ? (
           <>
             {deltaNum! > 0 ? "▲" : deltaNum! < 0 ? "▼" : "—"}
-            {formatDelta(deltaNum!, deltaIsPercent)}
+            {parsed?.literal ? deltaStr : formatDelta(deltaNum!)}
           </>
         ) : (
-          "\u00A0"
+          hasText ? suppliedText : "\u00A0"
         )}
       </div>
     </div>

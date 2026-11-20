@@ -50,13 +50,12 @@ export default function WebhooksDocumentationPage() {
         {S.hmacP4}
       </p>
       <CodeBlock
-        code={`import hashlib
-import hmac
+        code={`from bpm.webhooks import verify
+import time
 
-def verifier_signature(secret: str, timestamp: str, corps: bytes, signature: str) -> bool:
-    message = f"{timestamp}.".encode() + corps
-    attendu = hmac.new(secret.encode(), message, hashlib.sha256).hexdigest()
-    return hmac.compare_digest(attendu, signature)`}
+valid = verify(active_secrets, headers["X-Webhook-Timestamp"], raw_body,
+               headers["X-Webhook-Signature"], int(time.time()))
+# For a valid message, commit its unique event ID with the business update.`}
         language="python"
       />
 
@@ -76,13 +75,23 @@ def verifier_signature(secret: str, timestamp: str, corps: bytes, signature: str
         {S.productionTitle}
       </h2>
       <p className="mb-4 text-sm" style={{ color: "var(--bpm-text-secondary)", maxWidth: "62ch" }}>
-        {S.prodP1}
-        <code>webhooks</code>
-        {S.prodP2}
-        <code>webhook_deliveries</code>
-        {S.prodP3}
+        {locale === "fr"
+          ? "Installez le paquet Python depuis cette version du dépôt (pip install .). Le worker utilise une base SQLite sur un disque persistant. Configurez BPM_HOOK_ERP_URL et BPM_HOOK_ERP_SECRET pour l’intégration ERP. Le destinataire doit accepter le JSON du module et un secret partagé d’au moins 32 octets."
+          : "Install the Python package from this repository version (pip install .). The worker uses SQLite on a persistent disk. Set BPM_HOOK_ERP_URL and BPM_HOOK_ERP_SECRET for the ERP integration. The recipient must accept this module’s JSON format and a shared secret of at least 32 bytes."}
+      </p>
+      <CodeBlock language="bash" code={`python -m bpm.webhooks --db /var/lib/modular/events.sqlite subscribe ERP commande.creee
+python -m bpm.webhooks --db /var/lib/modular/events.sqlite publish commande-42 commande.creee < commande.json
+python -m bpm.webhooks --db /var/lib/modular/events.sqlite tick
+python -m bpm.webhooks --db /var/lib/modular/events.sqlite history`} />
+      <p className="mt-3 text-sm">
+        {locale === "fr"
+          ? "Exécutez tick chaque minute. La commande alerts affiche les incidents persistants. Utilisez pause, resume ou delete avec le nom de l’intégration. Une nouvelle tentative transmet le même identifiant d’événement. Le destinataire enregistre cet identifiant avec l’opération métier pour éviter les doublons, y compris si la réponse se perd après traitement. Pendant une rotation, activez les deux clés côté réception avant de remplacer le secret de l’émetteur."
+          : "Run tick every minute. The alerts command lists persistent delivery incidents. Use pause, resume or delete with the integration name. Retries carry the same event ID. Commit that ID with the receiving business operation to prevent duplicates, including when an acknowledgement is lost. For key rotation, accept both keys at the receiver before replacing the sender’s secret."}
       </p>
 
+      <p className="mt-3 text-sm">{locale === "fr"
+        ? "Dans le serveur Next, pointez BPM_WEBHOOKS_DB vers la même base. Les administrateurs consultent les tentatives HTTP et suspendent ou reprennent les abonnements dans l’onglet Opérations."
+        : "Set BPM_WEBHOOKS_DB on the Next server to the same database. Administrators can inspect HTTP attempts and pause or resume subscriptions in the Operations tab."}</p>
       <p className="mt-6 text-sm" style={{ color: "var(--bpm-text-secondary)" }}>
         <Link
           href="/modules/webhooks/simulateur"

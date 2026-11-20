@@ -1,10 +1,11 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import { readResponse } from "../../lib/read-response";
 import Link from "next/link";
 import { useParams, useRouter } from "next/navigation";
 import { BookOpen, ChevronDown, ChevronUp } from "lucide-react";
-import { Table, Spinner, Panel, Button, Chip, EmptyState } from "@/components/bpm";
+import { Input, Table, Spinner, Panel, Button, Chip, EmptyState } from "@/components/bpm";
 import { useI18n } from "@/lib/i18n/LocaleProvider";
 import { STR, dateLocale } from "../../strings";
 
@@ -34,7 +35,10 @@ export default function AssetManagerKnowledgePage() {
   const domainId = typeof params?.domainId === "string" ? params.domainId : "";
   const [articles, setArticles] = useState<KnowledgeArticle[]>([]);
   const [config, setConfig] = useState<{ domain_label?: string } | null>(null);
+  const [canEdit, setCanEdit] = useState(false);
+  const [error, setError] = useState("");
   const [loading, setLoading] = useState(true);
+  const [query, setQuery] = useState("");
   const [filterCategory, setFilterCategory] = useState("");
   const [filtersOpen, setFiltersOpen] = useState(false);
 
@@ -43,19 +47,25 @@ export default function AssetManagerKnowledgePage() {
       setLoading(false);
       return;
     }
+    let active = true;
     setLoading(true);
-    const url = `/api/asset-manager/knowledge?domainId=${encodeURIComponent(domainId)}${filterCategory ? `&categoryId=${encodeURIComponent(filterCategory)}` : ""}`;
+    setError("");
+    const params = new URLSearchParams({ domainId, q: query, categoryId: filterCategory });
+    const url = `/api/asset-manager/knowledge?${params}`;
     Promise.all([
-      fetch(`/api/asset-manager/config/${domainId}`, { credentials: "include" }).then((r) => (r.ok ? r.json() : null)),
-      fetch(url, { credentials: "include" }).then((r) => (r.ok ? r.json() : [])),
+      fetch(`/api/asset-manager/config/${domainId}`, { credentials: "include" }).then(readResponse),
+      fetch(url, { credentials: "include" }).then(async response => ({ articles: await readResponse(response), canEdit: response.headers.get("X-Can-Edit") === "true" })),
     ])
       .then(([cfg, data]) => {
+        if (!active) return;
+        setCanEdit(data.canEdit);
         setConfig(cfg);
-        setArticles(Array.isArray(data) ? data : []);
+        setArticles(data.articles);
       })
-      .catch(() => setArticles([]))
-      .finally(() => setLoading(false));
-  }, [domainId, filterCategory]);
+      .catch(err => { if (active) setError(err.message); })
+      .finally(() => { if (active) setLoading(false); });
+    return () => { active = false; };
+  }, [domainId, filterCategory, query]);
 
   const columns = [
     { key: "title", label: tk.colTitle },
@@ -91,6 +101,7 @@ export default function AssetManagerKnowledgePage() {
     ...Object.entries(CATEGORY_LABELS).map(([id, label]) => ({ value: id, label })),
   ];
 
+  if (error) return <Panel variant="warning" title={tk.title}>{error}</Panel>;
   if (!config && !loading) {
     return (
       <div className="doc-page">
@@ -115,12 +126,13 @@ export default function AssetManagerKnowledgePage() {
               {tk.listSubtitle}
             </p>
           </div>
-          <Link href={`/modules/asset-manager/${domainId}/knowledge/new`} className="asset-manager-cta-button">
+          {canEdit && <Link href={`/modules/asset-manager/${domainId}/knowledge/new`} className="asset-manager-cta-button">
             <Button variant="primary" size="small">{tk.newArticle}</Button>
-          </Link>
+          </Link>}
         </div>
       </div>
 
+      <Input label={t.common.search} value={query} onChange={setQuery} placeholder={t.common.searchPlaceholder} />
       <div className={`asset-manager-equipment-filters ${!filtersOpen ? "asset-manager-equipment-filters--collapsed" : ""}`}>
         <button
           type="button"
@@ -165,7 +177,7 @@ export default function AssetManagerKnowledgePage() {
             title={tk.emptyTitle}
             description={tk.emptyDescription}
             icon={<BookOpen size={64} style={{ color: "var(--bpm-text-secondary)", opacity: 0.6 }} />}
-            action={
+            action={canEdit &&
               <Link href={`/modules/asset-manager/${domainId}/knowledge/new`}>
                 <Button variant="primary" size="small">{tk.newArticle}</Button>
               </Link>

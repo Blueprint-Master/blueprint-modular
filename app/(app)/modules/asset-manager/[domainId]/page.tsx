@@ -1,6 +1,9 @@
 "use client";
 
+import { ticketSla } from "@/lib/asset-manager/ticket-sla";
 import { useState, useEffect, useRef, useCallback } from "react";
+import { readHistory, readResponse } from "../lib/read-response";
+import { contractAlert } from "@/lib/asset-manager/contract-terms";
 import Link from "next/link";
 import { useParams } from "next/navigation";
 import { Monitor, Ticket, UserCheck, FileText, BookOpen, RefreshCw } from "lucide-react";
@@ -48,13 +51,14 @@ export default function AssetManagerDomainPage() {
   const [assets, setAssets] = useState<Asset[]>([]);
   const [loading, setLoading] = useState(true);
 
+  const [error, setError] = useState("");
   const [ticketCount, setTicketCount] = useState(0);
   const [assignmentCount, setAssignmentCount] = useState(0);
   const [contractCount, setContractCount] = useState(0);
   const [knowledgeCount, setKnowledgeCount] = useState(0);
   const [changeCount, setChangeCount] = useState(0);
-  const [alerts, setAlerts] = useState<{ contractsExpiring30: number; ticketsSlaRisk: number; assetsOutOfService: number }>({
-    contractsExpiring30: 0,
+  const [alerts, setAlerts] = useState<{ contractAlerts: number; ticketsSlaRisk: number; assetsOutOfService: number }>({
+    contractAlerts: 0,
     ticketsSlaRisk: 0,
     assetsOutOfService: 0,
   });
@@ -69,14 +73,17 @@ export default function AssetManagerDomainPage() {
 
   useEffect(() => {
     if (!domainId) return;
+    const controller = new AbortController();
+    const signal = controller.signal;
+    setLoading(true); setError("");
     Promise.all([
-      fetch(`/api/asset-manager/config/${domainId}`, { credentials: "include" }).then((r) => (r.ok ? r.json() : null)),
-      fetch(`/api/asset-manager/assets?domainId=${encodeURIComponent(domainId)}`, { credentials: "include" }).then((r) => (r.ok ? r.json() : [])),
-      fetch(`/api/asset-manager/tickets?domainId=${encodeURIComponent(domainId)}`, { credentials: "include" }).then((r) => (r.ok ? r.json() : [])),
-      fetch(`/api/asset-manager/assignments?domainId=${encodeURIComponent(domainId)}`, { credentials: "include" }).then((r) => (r.ok ? r.json() : [])),
-      fetch(`/api/asset-manager/contracts?domainId=${encodeURIComponent(domainId)}`, { credentials: "include" }).then((r) => (r.ok ? r.json() : [])),
-      fetch(`/api/asset-manager/knowledge?domainId=${encodeURIComponent(domainId)}`, { credentials: "include" }).then((r) => (r.ok ? r.json() : [])),
-      fetch(`/api/asset-manager/changes?domainId=${encodeURIComponent(domainId)}`, { credentials: "include" }).then((r) => (r.ok ? r.json() : [])),
+      fetch(`/api/asset-manager/config/${domainId}`, { signal }).then(readResponse),
+      fetch(`/api/asset-manager/assets?domainId=${encodeURIComponent(domainId)}`, { signal }).then(readResponse),
+      readHistory<Parameters<typeof ticketSla>[0] & { updatedAt: string }>(`/api/asset-manager/tickets?domainId=${encodeURIComponent(domainId)}`, signal),
+      readHistory<{ updatedAt: string }>(`/api/asset-manager/assignments?domainId=${encodeURIComponent(domainId)}`, signal),
+      fetch(`/api/asset-manager/contracts?domainId=${encodeURIComponent(domainId)}`, { signal }).then(readResponse),
+      fetch(`/api/asset-manager/knowledge?domainId=${encodeURIComponent(domainId)}`, { signal }).then(readResponse),
+      fetch(`/api/asset-manager/changes?domainId=${encodeURIComponent(domainId)}`, { signal }).then(readResponse),
     ])
       .then(([cfg, list, tickets, assignments, contracts, knowledge, changes]) => {
         setConfig(cfg);
@@ -88,24 +95,11 @@ export default function AssetManagerDomainPage() {
         setKnowledgeCount(Array.isArray(knowledge) ? knowledge.length : 0);
         setChangeCount(Array.isArray(changes) ? changes.length : 0);
         const priorities = (cfg as DomainConfig)?.priorities ?? [];
-        const openStatuses = ["new", "open", "pending", "in_progress", "assigned"];
         const now = Date.now();
-        const in30Days = now + 30 * 24 * 60 * 60 * 1000;
-        const contractsExpiring30 = (Array.isArray(contracts) ? contracts : []).filter((c: { endDate?: string | null }) => {
-          const end = c.endDate ? new Date(c.endDate).getTime() : null;
-          return end != null && end >= now && end <= in30Days;
-        }).length;
-        const ticketsSlaRisk = (Array.isArray(tickets) ? tickets : []).filter((t: { status: string; openedAt: string; priorityId: string }) => {
-          if (!openStatuses.includes(t.status)) return false;
-          const prio = priorities.find((p: { id: string; sla_hours: number }) => p.id === t.priorityId);
-          const slaHours = prio?.sla_hours ?? 48;
-          const opened = new Date(t.openedAt).getTime();
-          const elapsed = (now - opened) / (1000 * 60 * 60);
-          const pct = (elapsed / slaHours) * 100;
-          return pct >= 80;
-        }).length;
+        const contractAlerts = (Array.isArray(contracts) ? contracts : []).filter(contract => contractAlert(contract, new Date(now))).length;
+        const ticketsSlaRisk = tickets.filter((ticket: Parameters<typeof ticketSla>[0]) => ticketSla(ticket, priorities, now).atRisk).length;
         const assetsOutOfService = assetList.filter((a: { statusId: string }) => a.statusId === "out_of_service").length;
-        setAlerts({ contractsExpiring30, ticketsSlaRisk, assetsOutOfService });
+        setAlerts({ contractAlerts, ticketsSlaRisk, assetsOutOfService });
         const ticketList = Array.isArray(tickets) ? tickets : [];
         const assignmentList = Array.isArray(assignments) ? assignments : [];
         const contractList = Array.isArray(contracts) ? contracts : [];
@@ -115,7 +109,7 @@ export default function AssetManagerDomainPage() {
           if (!arr?.length) return null;
           const dates = arr.map((x) => (x?.updatedAt ? new Date(x.updatedAt).getTime() : 0)).filter(Boolean);
           if (!dates.length) return null;
-          return new Date(Math.max(...dates)).toISOString();
+          return new Date(dates.reduce((maximum, value) => Math.max(maximum, value), 0)).toISOString();
         };
         setLastUpdated({
           assets: assetList[0]?.updatedAt ?? null,
@@ -126,7 +120,9 @@ export default function AssetManagerDomainPage() {
           changes: latest(changeList),
         });
       })
-      .finally(() => setLoading(false));
+      .catch(err => { if (!signal.aborted) setError(err.message); })
+      .finally(() => { if (!signal.aborted) setLoading(false); });
+    return () => controller.abort();
   }, [domainId]);
 
   const getStatusLabel = (id: string) => config?.statuses.find((s) => s.id === id)?.label ?? id;
@@ -161,6 +157,8 @@ export default function AssetManagerDomainPage() {
       </div>
     );
   }
+
+  if (error) return <div className="doc-page"><p role="alert">{error}</p></div>;
 
   if (!config) {
     return (
@@ -319,7 +317,7 @@ export default function AssetManagerDomainPage() {
         </button>
       </div>
 
-      {(alerts.contractsExpiring30 > 0 || alerts.ticketsSlaRisk > 0 || alerts.assetsOutOfService > 0) && (
+      {(alerts.contractAlerts > 0 || alerts.ticketsSlaRisk > 0 || alerts.assetsOutOfService > 0) && (
         <div
           className="rounded-xl border overflow-hidden mb-6"
           style={{
@@ -335,21 +333,21 @@ export default function AssetManagerDomainPage() {
             {t.hub.alerts}
           </h2>
           <div className="grid gap-4 grid-cols-1 md:grid-cols-3 text-sm">
-            {alerts.contractsExpiring30 > 0 && (
+            {alerts.contractAlerts > 0 && (
               <Link
-                href={`/modules/asset-manager/${domainId}/contracts`}
+                href={`/modules/asset-manager/${domainId}/contracts?alert=1`}
                 className="flex items-center gap-2 p-3 rounded-lg border"
                 style={{ borderColor: "var(--bpm-border)", background: "var(--bpm-bg-secondary)" }}
               >
                 <span className="font-semibold" style={{ color: "var(--bpm-accent-amber, #f59e0b)" }}>
-                  {alerts.contractsExpiring30}
+                  {alerts.contractAlerts}
                 </span>
-                <span style={{ color: "var(--bpm-text-primary)" }}>{t.hub.contractsExpiring(alerts.contractsExpiring30)}</span>
+                <span style={{ color: "var(--bpm-text-primary)" }}>{t.hub.contractsExpiring(alerts.contractAlerts)}</span>
               </Link>
             )}
             {alerts.ticketsSlaRisk > 0 && (
               <Link
-                href={`/modules/asset-manager/${domainId}/tickets`}
+                href={`/modules/asset-manager/${domainId}/tickets?slaRisk=1`}
                 className="flex items-center gap-2 p-3 rounded-lg border"
                 style={{ borderColor: "var(--bpm-border)", background: "var(--bpm-bg-secondary)" }}
               >

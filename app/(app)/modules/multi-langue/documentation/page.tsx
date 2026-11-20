@@ -134,6 +134,14 @@ new Intl.DateTimeFormat("es-ES", { dateStyle: "long" }).format(d) // "10 de juni
         {s.prod2}
       </p>
 
+      <h2 className="text-lg font-semibold mt-6 mb-2">@blueprint-modular/core</h2>
+      <CodeBlock code={`import { createTranslator } from "@blueprint-modular/core/i18n";
+const messages = { fr: { orders: "{count} commande|{count} commandes" },
+                   en: { orders: "{count} order|{count} orders" } };
+const t = createTranslator(messages, "fr", "en-GB");
+t.translate("orders", { count: 2 }); // "2 orders"
+t.currency(129.95, "EUR");`} language="typescript" />
+
       <p className="mt-6 text-sm" style={{ color: "var(--bpm-text-secondary)" }}>
         <Link
           href="/modules/multi-langue/simulateur"

@@ -1,13 +1,23 @@
+import { z } from "zod";
 import { NextResponse } from "next/server";
-import { getSessionOrTestUser } from "@/lib/auth";
+import { getPersonalModuleSession } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { vllmClient } from "@/lib/ai/vllm-client";
 import { extractTextFromBuffer } from "@/lib/contract-extract";
-import { writeFile, mkdir } from "fs/promises";
+import { writeFile, mkdir, unlink } from "fs/promises";
 import path from "path";
+import { documentMime, documentMaxBytes } from "@/lib/documents/formats";
+
+const analysis = z.object({
+  summary: z.string().trim().min(1),
+  supplier: z.string().nullish(), client: z.string().nullish(),
+  contract_date: z.string().date().nullish(), signature_date: z.string().date().nullish(),
+  termination_date: z.string().date().nullish(), key_points: z.array(z.string()).nullish(),
+  commitments: z.array(z.string()).nullish(),
+});
 
 export async function GET() {
-  const result = await getSessionOrTestUser();
+  const result = await getPersonalModuleSession();
   if (!result) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   const { user } = result;
   const docs = await prisma.document.findMany({
@@ -30,7 +40,7 @@ export async function GET() {
 }
 
 export async function POST(request: Request) {
-  const result = await getSessionOrTestUser();
+  const result = await getPersonalModuleSession();
   if (!result) return NextResponse.json({ error: "Non autorisé" }, { status: 401 });
   const { user } = result;
 
@@ -40,14 +50,16 @@ export async function POST(request: Request) {
   } catch {
     return NextResponse.json({ error: "Requête invalide" }, { status: 400 });
   }
-  const file = formData.get("file") as File | null;
-  if (!file || file.size === 0) return NextResponse.json({ error: "Aucun fichier fourni" }, { status: 400 });
-  if (file.type !== "application/pdf")
-    return NextResponse.json({ error: "Seuls les fichiers PDF sont acceptés" }, { status: 400 });
+  const file = formData.get("file");
+  if (!file || typeof file === "string" || !file.size) {
+    return NextResponse.json({ error: "Aucun fichier fourni" }, { status: 400 });
+  }
+  if (file.size > documentMaxBytes) return NextResponse.json({ error: "Limite de 50 Mo par fichier" }, { status: 413 });
+  const mime = documentMime(file);
+  if (!mime) return NextResponse.json({ error: "Formats acceptés : PDF, DOCX et TXT" }, { status: 415 });
 
-  const mime = file.type;
   const ext = path.extname(file.name) || ".pdf";
-  const baseDir = path.join(process.cwd(), "uploads", user.id);
+  const baseDir = path.resolve(process.env.MODULAR_UPLOAD_DIR || "uploads", user.id);
   const docId = crypto.randomUUID();
   const filePath = path.join(baseDir, `${docId}${ext}`);
   let buf: Buffer;
@@ -70,12 +82,16 @@ export async function POST(request: Request) {
 
   let doc = await prisma.document.create({
     data: {
+      id: docId,
       filename: file.name,
       mimeType: mime,
       filePath,
       uploadedById: user.id,
       analysisStatus: "processing",
     },
+  }).catch(async error => {
+    await unlink(filePath);
+    throw error;
   });
 
   const extractPrompt = `Tu es un assistant d'extraction de données. Tu dois analyser le document fourni et répondre par UN SEUL objet JSON valide, sans aucun texte avant ou après, sans balises markdown (\`\`\`).
@@ -101,13 +117,13 @@ Règles : supplier = partie qui fournit le service ; client = partie qui le reç
       const match = stripped.match(/\{[\s\S]*\}/);
       if (!match) return null;
       try {
-        return JSON.parse(match[0]) as Record<string, unknown>;
+        return analysis.parse(JSON.parse(match[0]));
       } catch {
         return null;
       }
     };
 
-    if (rawText.length > 0) {
+    if (rawText.trim().length > 0) {
       if (apiKey) {
         const documentPayload = `${extractPrompt}\n\n---\nDocument (extrait texte) :\n${rawText.slice(0, 80000)}`;
         const Anthropic = (await import("@anthropic-ai/sdk")).default;
@@ -142,7 +158,7 @@ Règles : supplier = partie qui fournit le service ; client = partie qui le reç
       return NextResponse.json(doc);
     }
 
-    if (parsed) {
+    if (parsed && typeof parsed.summary === "string" && parsed.summary.trim()) {
       const contractDate = parsed.contract_date ? new Date(String(parsed.contract_date)) : null;
       const signatureDate = parsed.signature_date ? new Date(String(parsed.signature_date)) : null;
       const terminationDate = parsed.termination_date ? new Date(String(parsed.termination_date)) : null;
@@ -156,8 +172,8 @@ Règles : supplier = partie qui fournit le service ; client = partie qui le reç
           signatureDate: signatureDate && !Number.isNaN(signatureDate.getTime()) ? signatureDate : null,
           terminationDate: terminationDate && !Number.isNaN(terminationDate.getTime()) ? terminationDate : null,
           summary: typeof parsed.summary === "string" ? parsed.summary : null,
-          keyPoints: Array.isArray(parsed.key_points) ? JSON.stringify(parsed.key_points) : null,
-          commitments: Array.isArray(parsed.commitments) ? JSON.stringify(parsed.commitments) : null,
+          keyPoints: Array.isArray(parsed.key_points) ? JSON.stringify(parsed.key_points.filter(point => typeof point === "string")) : null,
+          commitments: Array.isArray(parsed.commitments) ? JSON.stringify(parsed.commitments.filter(point => typeof point === "string")) : null,
         },
       });
     } else {

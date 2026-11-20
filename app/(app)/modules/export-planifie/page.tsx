@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { WorkerConsole } from "@/components/module-workers/WorkerConsole";
 import { CodeBlock, Tabs } from "@/components/bpm";
 import { ModulePageHeader } from "@/components/site/ModulePageHeader";
 import { useI18n } from "@/lib/i18n/LocaleProvider";
@@ -72,6 +73,7 @@ export default function ExportPlanifieModulePage() {
         tabs={[
           { label: t.docLabel, content: <DocContent t={t} /> },
           { label: t.simLabel, content: <ExportPlanifieSimulateur /> },
+          { label: locale === "fr" ? "Opérations" : "Operations", content: <WorkerConsole module="export-planifie" /> },
         ]}
         defaultTab={0}
       />

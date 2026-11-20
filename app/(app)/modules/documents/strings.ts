@@ -16,9 +16,9 @@ const fr = {
   list: {
     importTitle: "Analyse de documents",
     importDescription:
-      "Importez des documents PDF (analyses, études, rapports) pour générer automatiquement une synthèse actionnable grâce à Claude. Les analyses sont stockées en base de données et peuvent être réexploitées dans d'autres onglets.",
+      "Importez des documents PDF, DOCX ou TXT (analyses, études, rapports) pour générer automatiquement une synthèse actionnable avec le fournisseur IA configuré. Les analyses sont stockées en base de données et peuvent être réexploitées dans d'autres onglets.",
     dropLabel:
-      "Glissez-déposez ou cliquez pour sélectionner des fichiers PDF (jusqu'à 10 fichiers)",
+      "Glissez-déposez ou cliquez pour sélectionner des fichiers PDF, DOCX ou TXT (jusqu'à 10 fichiers)",
     analyzeButton: "Analyser les documents",
     analyzing: "Analyse en cours...",
     documentsHeading: "Documents",
@@ -26,9 +26,9 @@ const fr = {
     loading: "Chargement des documents...",
     emptyText: "Aucun document analysé pour l'instant.",
     emptyCta: "Analyser un document →",
-    onlyPdf: "Seuls les fichiers PDF sont acceptés.",
+    unsupportedFormat: "Formats acceptés : PDF, DOCX et TXT.",
     fileTooLarge:
-      "Fichier trop volumineux (limite 1 Mo par défaut). Vérifiez la config serveur.",
+      "Fichier trop volumineux (50 Mo maximum, sous réserve de la limite du proxy).",
     statusDone: "✓",
     statusError: "✗ Erreur",
     statusProcessing: "⏳ Analyse...",
@@ -81,7 +81,7 @@ const fr = {
     bcDocumentation: "Documentation",
     title: "Documentation — Analyse de documents",
     description:
-      "Upload, analyse et gestion de documents PDF. Métadonnées et statut d'analyse. Intégration avec le module IA (contexte assistant).",
+      "Upload, analyse et gestion de documents PDF, DOCX ou TXT. Métadonnées et statut d'analyse. Intégration avec le module IA (contexte assistant).",
     introHtml: {
       lead1: "Les modules Blueprint Modular (Auth, Wiki, IA, Documents, etc.) font partie de l'",
       leadStrong1: "application Next.js",
@@ -105,14 +105,14 @@ const fr = {
       p1: "Le module permet d'",
       p1Strong1: "uploader",
       p2: " des documents ",
-      p2Strong: "PDF",
+      p2Strong: "PDF / DOCX / TXT",
       p3: ", de les ",
       p3Strong: "analyser automatiquement",
       p4: " via l'IA pour extraire fournisseur, client, dates (contrat, signature, échéance), résumé, points clés et engagements. Le résultat est stocké en base (table ",
       pCode1: "Document",
       p5: ") ; le fichier est enregistré sur disque dans ",
-      pCode2: "uploads/[userId]/[docId].pdf",
-      p6: ". L'analyse est lancée juste après l'upload (synchrone) : extraction du texte (pdf-parse), puis appel au modèle (Claude si ",
+      pCode2: "uploads/[userId]/[docId].[ext]",
+      p6: ". L'analyse est lancée juste après l'upload (synchrone) : extraction du texte (pdf-parse, Mammoth ou UTF-8), puis appel au modèle (Claude si ",
       pCode3: "ANTHROPIC_API_KEY",
       p7:
         " est défini, sinon Ollama / Qwen). Le module Documents est enregistré dans le registry de l'assistant IA : les métadonnées des documents peuvent être injectées dans le contexte des conversations.",
@@ -192,7 +192,7 @@ ollama pull qwen3:8b
       p2: " (id, filename, mimeType, filePath, uploadedById, analysisStatus, supplier, client, contractDate, terminationDate, summary, keyPoints, commitments, rawText, createdAt). ",
       pStrong2: "Fichiers",
       p3: " : ",
-      pCode2: "uploads/[userId]/[docId].pdf",
+      pCode2: "uploads/[userId]/[docId].[ext]",
       p4: ". S'assurer que le répertoire ",
       pCode3: "uploads/",
       p5: " est accessible en écriture.",
@@ -208,7 +208,7 @@ ollama pull qwen3:8b
       pStrong2: "Utiliser",
       p4: " : depuis l'interface, ouvrez ",
       pCode3: "/modules/documents",
-      p5: " pour uploader des PDF et consulter la liste ; depuis du code, appelez ",
+      p5: " pour importer des fichiers PDF, DOCX ou TXT et consulter la liste ; depuis du code, appelez ",
       pCode4: "POST /api/documents",
       p6: " (FormData avec ",
       pCode5: "file",
@@ -231,7 +231,7 @@ ollama pull qwen3:8b
       aiServerCode2: "qwen3:8b",
       aiServer3: ").",
       formatsStrong: "Formats acceptés",
-      formats: " : PDF uniquement (côté API actuel).",
+      formats: " : PDF, DOCX et TXT. Maximum 50 Mo par fichier.",
       maxSizeStrong: "Taille max",
       maxSize: " : dépend du serveur (proxy). En cas d'erreur 413, augmenter ",
       maxSizeCode1: "client_max_body_size",
@@ -249,7 +249,7 @@ ollama pull qwen3:8b
     apiLi: {
       list: " — Liste des documents de l'utilisateur.",
       upload:
-        " — Upload d'un PDF. FormData : ",
+        " — Import d’un fichier PDF, DOCX ou TXT. FormData : ",
       uploadCode: "file",
       upload2: ". Réponse : document créé (analyse lancée en synchrone).",
       detail: " — Détail d'un document.",
@@ -274,9 +274,9 @@ const en: typeof fr = {
   list: {
     importTitle: "Document analysis",
     importDescription:
-      "Upload PDF documents (analyses, studies, reports) to automatically generate an actionable summary with Claude. Analyses are stored in the database and can be reused in other tabs.",
+      "Upload PDF, DOCX or TXT documents (analyses, studies, reports) to automatically generate an actionable summary using the configured AI provider. Analyses are stored in the database and can be reused in other tabs.",
     dropLabel:
-      "Drag and drop or click to select PDF files (up to 10 files)",
+      "Drag and drop or click to select PDF, DOCX or TXT files (up to 10 files)",
     analyzeButton: "Analyze documents",
     analyzing: "Analyzing...",
     documentsHeading: "Documents",
@@ -284,9 +284,9 @@ const en: typeof fr = {
     loading: "Loading documents...",
     emptyText: "No documents analyzed yet.",
     emptyCta: "Analyze a document →",
-    onlyPdf: "Only PDF files are accepted.",
+    unsupportedFormat: "Accepted formats: PDF, DOCX and TXT.",
     fileTooLarge:
-      "File too large (default limit 1 MB). Check the server configuration.",
+      "File too large (50 MB maximum, subject to the proxy limit).",
     statusDone: "✓",
     statusError: "✗ Error",
     statusProcessing: "⏳ Analyzing...",
@@ -336,7 +336,7 @@ const en: typeof fr = {
     bcDocumentation: "Documentation",
     title: "Documentation — Document analysis",
     description:
-      "Upload, analysis and management of PDF documents. Metadata and analysis status. Integration with the AI module (assistant context).",
+      "Upload, analysis and management of PDF, DOCX or TXT documents. Metadata and analysis status. Integration with the AI module (assistant context).",
     introHtml: {
       lead1: "The Blueprint Modular modules (Auth, Wiki, AI, Documents, etc.) are part of the ",
       leadStrong1: "Next.js application",
@@ -360,14 +360,14 @@ const en: typeof fr = {
       p1: "The module lets you ",
       p1Strong1: "upload",
       p2: " ",
-      p2Strong: "PDF",
+      p2Strong: "PDF / DOCX / TXT",
       p3: " documents and ",
       p3Strong: "automatically analyze",
       p4: " them with AI to extract supplier, client, dates (contract, signature, due date), summary, key points and commitments. The result is stored in the database (table ",
       pCode1: "Document",
       p5: "); the file is saved to disk under ",
-      pCode2: "uploads/[userId]/[docId].pdf",
-      p6: ". The analysis runs right after upload (synchronously): text extraction (pdf-parse), then a call to the model (Claude if ",
+      pCode2: "uploads/[userId]/[docId].[ext]",
+      p6: ". The analysis runs right after upload (synchronously): text extraction (pdf-parse, Mammoth or UTF-8), then a call to the model (Claude if ",
       pCode3: "ANTHROPIC_API_KEY",
       p7:
         " is set, otherwise Ollama / Qwen). The Documents module is registered in the AI assistant registry: document metadata can be injected into the context of conversations.",
@@ -447,7 +447,7 @@ ollama pull qwen3:8b
       p2: " (id, filename, mimeType, filePath, uploadedById, analysisStatus, supplier, client, contractDate, terminationDate, summary, keyPoints, commitments, rawText, createdAt). ",
       pStrong2: "Files",
       p3: ": ",
-      pCode2: "uploads/[userId]/[docId].pdf",
+      pCode2: "uploads/[userId]/[docId].[ext]",
       p4: ". Make sure the ",
       pCode3: "uploads/",
       p5: " directory is writable.",
@@ -463,7 +463,7 @@ ollama pull qwen3:8b
       pStrong2: "Use",
       p4: ": from the interface, open ",
       pCode3: "/modules/documents",
-      p5: " to upload PDFs and browse the list; from code, call ",
+      p5: " to upload PDF, DOCX or TXT files and browse the list; from code, call ",
       pCode4: "POST /api/documents",
       p6: " (FormData with ",
       pCode5: "file",
@@ -486,7 +486,7 @@ ollama pull qwen3:8b
       aiServerCode2: "qwen3:8b",
       aiServer3: ").",
       formatsStrong: "Accepted formats",
-      formats: " : PDF only (current API).",
+      formats: " : PDF, DOCX and TXT. Maximum 50 MB per file.",
       maxSizeStrong: "Max size",
       maxSize: " : depends on the server (proxy). On a 413 error, increase ",
       maxSizeCode1: "client_max_body_size",
@@ -504,7 +504,7 @@ ollama pull qwen3:8b
     apiLi: {
       list: " — List of the user's documents.",
       upload:
-        " — Upload a PDF. FormData: ",
+        " — Upload a PDF, DOCX or TXT file. FormData: ",
       uploadCode: "file",
       upload2: ". Response: created document (analysis launched synchronously).",
       detail: " — Details of a document.",

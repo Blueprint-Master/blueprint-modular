@@ -185,11 +185,15 @@ export function trendArrow(j: Judgment): string {
 }
 
 /** Libellé court du jugement, ex. "▲ +12 vs repère · tendance ↘ · anomalie". */
-export function judgmentLabel(j: Judgment): string {
+export function judgmentLabel(j: Judgment, opts: { locale?: string; unit?: string } = {}): string {
   const arrow = j.level.status === "favorable" ? "▲" : j.level.status === "unfavorable" ? "▼" : "•";
   const gapAbs = Math.abs(j.level.gap);
-  const gapStr = gapAbs >= 100 ? Math.round(gapAbs).toString() : gapAbs.toFixed(gapAbs >= 10 ? 1 : 2).replace(/\.?0+$/, "");
-  const parts = [`${arrow} ${j.level.gap >= 0 ? "+" : "−"}${gapStr} vs repère`];
+  // Même écriture que la valeur affichée : séparateurs et virgule de la locale, deux
+  // décimales au plus, jamais d'arrondi à l'entier (« +1235 » sous « +1 234,5 € » donnait
+  // deux chiffres pour le même écart). L'unité d'écart (« pt », « € ») suit si fournie.
+  const gapStr = gapAbs.toLocaleString(opts.locale ?? "fr-FR", { maximumFractionDigits: 2 });
+  const unit = opts.unit ? `\u00a0${opts.unit}` : "";
+  const parts = [`${arrow} ${j.level.gap >= 0 ? "+" : "−"}${gapStr}${unit} vs repère`];
   if (j.trend) parts.push(`tendance ${trendArrow(j)}`);
   if (j.anomaly?.status === "abnormal") parts.push("anomalie");
   return parts.join(" · ");

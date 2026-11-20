@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { getSessionOrTestUser } from "@/lib/auth";
+import { getPersonalModuleSession } from "@/lib/auth";
 import { requireWriteRole } from "@/lib/asset-manager/authz";
 import { prisma } from "@/lib/prisma";
 
@@ -13,8 +13,8 @@ async function resolveParams(params: Params): Promise<{ id: string }> {
     : (params as { id: string });
 }
 
-export async function GET(_request: Request, context: { params: Params }) {
-  const result = await getSessionOrTestUser();
+export async function GET(_request: Request, context: { params: Promise<Awaited<Params>> }) {
+  const result = await getPersonalModuleSession();
   if (!result) return NextResponse.json({ error: "Non autorisé" }, { status: 401 });
 
   const { id } = await resolveParams(context.params);
@@ -29,15 +29,21 @@ export async function GET(_request: Request, context: { params: Params }) {
   return NextResponse.json(relation);
 }
 
-export async function DELETE(_request: Request, context: { params: Params }) {
-  const result = await getSessionOrTestUser();
+export async function DELETE(_request: Request, context: { params: Promise<Awaited<Params>> }) {
+  const result = await getPersonalModuleSession();
   if (!result) return NextResponse.json({ error: "Non autorisé" }, { status: 401 });
   const forbidden = requireWriteRole(result.user);
   if (forbidden) return forbidden;
 
   const { id } = await resolveParams(context.params);
-  const existing = await prisma.cIRelation.findUnique({ where: { id } });
-  if (!existing) return NextResponse.json({ error: "Relation introuvable" }, { status: 404 });
-  await prisma.cIRelation.delete({ where: { id } });
-  return NextResponse.json({ ok: true });
+  return prisma.$transaction(async tx => {
+    const existing = await tx.cIRelation.findUnique({ where: { id } });
+    if (!existing || !(await tx.cIRelation.deleteMany({ where: { id } })).count)
+      return NextResponse.json({ error: "Relation introuvable" }, { status: 404 });
+    await tx.auditLog.create({ data: {
+      domainId: existing.domainId, resourceType: "relation", resourceId: id, userId: result.user.id, action: "delete",
+      beforeState: JSON.stringify({ sourceAssetId: existing.sourceAssetId, targetAssetId: existing.targetAssetId, relationType: existing.relationType }),
+    } });
+    return NextResponse.json({ ok: true });
+  });
 }

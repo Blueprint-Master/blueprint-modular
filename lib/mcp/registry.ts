@@ -10,6 +10,7 @@
  * Aucun identifiant interne (slug), chemin de fichier, timestamp ou champ debug
  * n'est exposé. L'index de recherche `_haystack` reste strictement interne.
  */
+import { artifactComponents, artifactGuide } from "@/lib/artifact/guidance";
 import registry from "@/lib/generated/mcp-registry.json";
 import { fieldAnswers } from "@/lib/mcp/match";
 import type { ComponentSemantics } from "@/lib/semantics/types";
@@ -19,11 +20,7 @@ export interface BpmComponent {
   name: string;
   description: string;
   category: string;
-  /**
-   * Statut de curation : "curated" (porte une couche sémantique) ou "uncurated"
-   * (exposé sans sémantique — champ honnête, pas de guidance fabriquée). Dérivé
-   * par generate-mcp-registry.mjs. Optionnel pour tolérer un registre ancien.
-   */
+  /** Human approval. Proposed annotations remain available under semantics. */
   status?: "curated" | "uncurated";
   fullDescription?: string;
   props?: string;
@@ -124,7 +121,6 @@ export function componentDetail(c: BpmComponent) {
     name: c.name,
     category: c.category,
     description: c.fullDescription || c.description,
-    // Statut de curation honnête : "uncurated" => semantics null, sans guidance fabriquée.
     status: c.status ?? "uncurated",
     props: c.props ?? "(props non documentées dans le registre)",
     example: c.example ?? null,
@@ -376,6 +372,7 @@ export interface SuggestResult {
   suggestions: Array<ComponentSummary & { why: string; meaning?: SuggestionMeaning }>;
   /** Additif : présent SEULEMENT quand count === 0. Le schéma des suggestions ne change pas. */
   fallback?: SuggestEmptyState;
+  artifact?: typeof artifactGuide;
 }
 
 /**
@@ -431,7 +428,7 @@ function emptyState(expandedNeed: string): SuggestEmptyState {
   };
 }
 
-function meaningOf(c: BpmComponent): SuggestionMeaning | undefined {
+function meaningOf(c: BpmComponent, portable = false): SuggestionMeaning | undefined {
   const s = c.semantics;
   if (!s) return undefined;
   return {
@@ -441,7 +438,7 @@ function meaningOf(c: BpmComponent): SuggestionMeaning | undefined {
       ? { indicatorType: s.indicator.indicatorType, directionality: s.indicator.directionality }
       : {}),
     use: s.agentGuidance.use,
-    pairWith: s.agentGuidance.pairWith,
+    pairWith: portable ? s.agentGuidance.pairWith.filter(name => artifactComponents.has(name)) : s.agentGuidance.pairWith,
     status: s.status,
   };
 }
@@ -453,7 +450,7 @@ function meaningOf(c: BpmComponent): SuggestionMeaning | undefined {
  * Réponse bornée (SUGGEST_MAX), pas de curseur.
  * @throws RegistryError si le besoin est vide.
  */
-export function suggestComposition(need: string, limit?: number): SuggestResult {
+export function suggestComposition(need: string, limit?: number, target?: "html" | "app"): SuggestResult {
   const n = (need ?? "").trim();
   if (!n) {
     throw new RegistryError(
@@ -464,14 +461,21 @@ export function suggestComposition(need: string, limit?: number): SuggestResult 
   const cap = Math.min(SUGGEST_MAX, Math.max(1, limit ?? SUGGEST_DEFAULT));
   // Déplie acronymes/termes métier ("CRM" → concepts portés par Ω) AVANT le scoring.
   const expanded = expandNeed(n);
-  const scored = scoreComponents(expanded).slice(0, cap);
+  const portable = target === "html";
+  const guide = portable ? { artifact: artifactGuide } : {};
+  const matches = scoreComponents(expanded);
+  const scored = (portable ? matches.filter(({ c }) => artifactComponents.has(c.name)) : matches).slice(0, cap);
 
   // État vide UTILE : pas de tableau nu ni de faux positif, mais une orientation honnête.
   if (scored.length === 0) {
-    return { need: n, count: 0, suggestions: [], fallback: emptyState(expanded) };
+    const fallback = portable
+      ? { message: "Aucun composant du profil HTML statique ne correspond à ce besoin.", categories: [] }
+      : emptyState(expanded);
+    return { need: n, count: 0, suggestions: [], fallback, ...guide };
   }
 
   return {
+    ...guide,
     need: n,
     count: scored.length,
     suggestions: scored.map((s) => ({
@@ -479,7 +483,7 @@ export function suggestComposition(need: string, limit?: number): SuggestResult 
       why: s.matched.length
         ? `Correspond à : ${s.matched.join(", ")}`
         : "Pertinent pour le besoin décrit",
-      meaning: meaningOf(s.c),
+      meaning: meaningOf(s.c, portable),
     })),
   };
 }

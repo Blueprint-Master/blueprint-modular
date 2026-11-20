@@ -177,7 +177,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     envLi5:
       "`AUTHORIZED_EMAILS` (optionnel) — liste d'emails autorisés, séparés par des virgules (whitelist). Si défini, seuls ces emails peuvent se connecter (Google ou e-mail).",
     envLi6:
-      "`CREDENTIALS_DEMO_PASSWORD` (optionnel) — mot de passe unique pour le provider credentials (connexion e-mail de démo).",
+      "`AUTH_SMTP_URL` et `AUTH_MAIL_FROM` — relais et expéditeur du code de confirmation envoyé lors de l’inscription par e-mail.",
     choiceTitle: "Choix du modèle de page de connexion",
     choiceBefore:
       "Trois variantes sont disponibles. Par défaut, les routes `/login` et `/register` utilisent le ",
@@ -434,7 +434,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     envLi5:
       "`AUTHORIZED_EMAILS` (optional) — comma-separated list of allowed emails (whitelist). If set, only these emails can sign in (Google or email).",
     envLi6:
-      "`CREDENTIALS_DEMO_PASSWORD` (optional) — single password for the credentials provider (demo email sign-in).",
+      "`AUTH_SMTP_URL` and `AUTH_MAIL_FROM` — relay and sender for email registration confirmation codes.",
     choiceTitle: "Choosing the sign-in page template",
     choiceBefore:
       "Three variants are available. By default, the `/login` and `/register` routes use the ",

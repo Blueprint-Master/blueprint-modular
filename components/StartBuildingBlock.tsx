@@ -56,12 +56,12 @@ export function StartBuildingBlock() {
 
   return (
     <div
-      className="rounded-xl p-8 mb-12 max-w-2xl mx-auto text-center mt-[4rem] md:mt-[8rem]"
+      className="rounded-xl p-8 mb-12 max-w-2xl mx-auto text-center"
       style={{
         background: "var(--bpm-bg-primary)",
       }}
     >
-      <h2 className="font-bold mt-[6.5rem] md:mt-[6rem]" style={{ color: "var(--bpm-text-primary)", fontSize: "3rem", lineHeight: "3rem", marginBottom: "2rem" }}>
+      <h2 className="font-bold" style={{ color: "var(--bpm-text-primary)", fontSize: "3rem", lineHeight: "3rem", marginBottom: "2rem" }}>
         {t.heading} <code className="px-2.5 py-1.5 rounded align-middle text-xl font-medium" style={{ background: "var(--bpm-bg-secondary)" }}>bpm.*</code>
       </h2>
       <div

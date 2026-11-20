@@ -18,6 +18,11 @@ export type GuestWikiArticle = {
   canEdit?: boolean;
   children?: GuestWikiArticle[];
   tags?: string[];
+  revision?: number;
+  pinned?: boolean;
+  excerpt?: string;
+  template?: string;
+  coverImage?: string;
 };
 
 /** 3 articles de base (non stockés en cache, toujours visibles en mode invité). */
@@ -57,25 +62,22 @@ export const WIKI_BASE_ARTICLES: GuestWikiArticle[] = [
   },
 ];
 
-function getStored(): GuestWikiArticle[] {
+function getStored(strict = false): GuestWikiArticle[] {
   if (typeof window === "undefined") return [];
   try {
     const raw = localStorage.getItem(WIKI_GUEST_STORAGE_KEY);
     if (!raw) return [];
     const data = JSON.parse(raw);
-    return Array.isArray(data) ? data : [];
-  } catch {
+    if (!Array.isArray(data)) throw new Error("Stockage Wiki illisible");
+    return data;
+  } catch (error) {
+    if (strict) throw error;
     return [];
   }
 }
 
 function setStored(articles: GuestWikiArticle[]) {
-  if (typeof window === "undefined") return;
-  try {
-    localStorage.setItem(WIKI_GUEST_STORAGE_KEY, JSON.stringify(articles));
-  } catch {
-    // ignore
-  }
+  localStorage.setItem(WIKI_GUEST_STORAGE_KEY, JSON.stringify(articles));
 }
 
 /** Tous les articles en mode invité : base + cache. */
@@ -92,45 +94,62 @@ export function getGuestArticleBySlug(slug: string): GuestWikiArticle | null {
   return cached ? { ...cached, canEdit: true } : null;
 }
 
+function writeGuest<T>(operation: () => T): Promise<T> {
+  return navigator.locks ? navigator.locks.request(WIKI_GUEST_STORAGE_KEY, operation) : Promise.resolve().then(operation);
+}
+
+export class GuestEditConflict extends Error {
+  constructor(readonly article: GuestWikiArticle) { super("Article modifié"); }
+}
+
 /** Ajouter un article en cache invité. */
-export function addGuestArticle(article: Omit<GuestWikiArticle, "id" | "updatedAt">): GuestWikiArticle {
-  const id = `guest-${Date.now()}-${Math.random().toString(36).slice(2, 9)}`;
-  const now = new Date().toISOString();
-  const full: GuestWikiArticle = {
-    ...article,
-    id,
-    updatedAt: now,
-    canEdit: true,
-  };
-  const list = getStored();
-  if (list.some((a) => a.slug === full.slug)) {
-    throw new Error("Un article avec ce slug existe déjà");
-  }
-  list.push(full);
-  setStored(list);
-  return full;
+export function addGuestArticle(article: Omit<GuestWikiArticle, "id" | "updatedAt">): Promise<GuestWikiArticle> {
+  return writeGuest(() => {
+    const id = `guest-${Date.now()}-${Math.random().toString(36).slice(2, 9)}`;
+    const now = new Date().toISOString();
+    const full: GuestWikiArticle = {
+      ...article,
+      id,
+      updatedAt: now,
+      canEdit: true,
+    };
+    const list = getStored(true);
+    if ([...WIKI_BASE_ARTICLES, ...list].some((a) => a.slug === full.slug)) {
+      throw new Error("Un article avec ce slug existe déjà");
+    }
+    list.push(full);
+    setStored(list);
+    return full;
+  });
 }
 
 /** Mettre à jour un article en cache (invité uniquement, pas les base). */
-export function updateGuestArticle(slug: string, patch: Partial<Pick<GuestWikiArticle, "title" | "content" | "isPublished">>): GuestWikiArticle | null {
-  if (WIKI_BASE_ARTICLES.some((a) => a.slug === slug)) return null;
-  const list = getStored();
-  const idx = list.findIndex((a) => a.slug === slug);
-  if (idx === -1) return null;
-  const updated = {
-    ...list[idx],
-    ...patch,
-    updatedAt: new Date().toISOString(),
-  };
-  list[idx] = updated;
-  setStored(list);
-  return updated;
+export function updateGuestArticle(slug: string, patch: Partial<Pick<GuestWikiArticle, "title" | "content" | "isPublished" | "excerpt" | "pinned" | "tags" | "template" | "coverImage">>, expected?: number): Promise<GuestWikiArticle | null> {
+  return writeGuest(() => {
+    if (WIKI_BASE_ARTICLES.some((a) => a.slug === slug)) return null;
+    const list = getStored(true);
+    const idx = list.findIndex((a) => a.slug === slug);
+    if (idx === -1) return null;
+    const revision = list[idx].revision ?? 0;
+    if (expected !== undefined && revision !== expected) throw new GuestEditConflict(list[idx]);
+    const updated = {
+      ...list[idx],
+      ...patch,
+      revision: revision + 1,
+      updatedAt: new Date().toISOString(),
+    };
+    list[idx] = updated;
+    setStored(list);
+    return updated;
+  });
 }
 
 /** Supprimer un article du cache (invité uniquement). */
-export function deleteGuestArticle(slug: string): boolean {
-  if (WIKI_BASE_ARTICLES.some((a) => a.slug === slug)) return false;
-  const list = getStored().filter((a) => a.slug !== slug);
-  setStored(list);
-  return true;
+export function deleteGuestArticle(slug: string): Promise<boolean> {
+  return writeGuest(() => {
+    if (WIKI_BASE_ARTICLES.some((a) => a.slug === slug)) return false;
+    const list = getStored(true).filter((a) => a.slug !== slug);
+    setStored(list);
+    return true;
+  });
 }

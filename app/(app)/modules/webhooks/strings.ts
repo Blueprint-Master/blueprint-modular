@@ -37,7 +37,7 @@ bpm.table(
 bpm.button("Créer le webhook", on_click=creer_webhook)`,
   configTitle: "Paramétrage",
   configP1:
-    "Le simulateur fonctionne entièrement en local (données seedées, aucune API requise). En production, brancher la création sur votre bus d'événements et l'envoi sur un worker HTTP avec signature HMAC et retries exponentiels. Voir la ",
+    "Le simulateur fonctionne entièrement en local (données seedées, aucune API requise). Le worker Python livré avec Modular reçoit les événements de votre application, signe les requêtes et conserve chaque tentative. Voir la ",
   configDocLink: "documentation",
   configP2: " pour le modèle de données, la signature et les points d'intégration.",
 
@@ -60,7 +60,7 @@ bpm.button("Créer le webhook", on_click=creer_webhook)`,
   hmacP2: ") : l'en-tête ",
   hmacP3: " contient le HMAC-SHA256 de ",
   hmacP4:
-    ". Le destinataire recalcule la signature et rejette toute requête dont l'horodatage a plus de 5 minutes (protection anti-rejeu).",
+    ". Le destinataire recalcule la signature et rejette toute requête dont l'horodatage a plus de 5 minutes.",
   retriesTitle: "Politique de retries",
   retryItems: [
     {
@@ -225,7 +225,7 @@ bpm.button("Create webhook", on_click=creer_webhook)`,
   hmacP2: "): the ",
   hmacP3: " header contains the HMAC-SHA256 of ",
   hmacP4:
-    ". The recipient recomputes the signature and rejects any request whose timestamp is more than 5 minutes old (replay protection).",
+    ". The recipient recomputes the signature and rejects any request whose timestamp is more than 5 minutes old.",
   retriesTitle: "Retry policy",
   retryItems: [
     {

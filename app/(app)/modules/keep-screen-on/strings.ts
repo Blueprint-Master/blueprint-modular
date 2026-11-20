@@ -1,3 +1,5 @@
+import type { ScreenWakeDuration } from "@/components/bpm/useScreenWakeLock";
+
 /**
  * Chaînes bilingues du module Keep screen on.
  * Parité fr/en garantie par le type : `const en: typeof fr`.
@@ -25,7 +27,7 @@ const fr = {
     { value: 30, label: "30 min" },
     { value: 60, label: "1 h" },
     { value: -1, label: "Indéfini" },
-  ] as { value: number; label: string }[],
+  ] as { value: ScreenWakeDuration; label: string }[],
   checkingSupport: "Vérification du support…",
   unsupportedBefore:
     "Votre navigateur ou la page (HTTP au lieu de HTTPS) ne supporte pas le maintien de l'écran. Utilisez un navigateur récent (Chrome, Edge, Safari) sur une page en ",

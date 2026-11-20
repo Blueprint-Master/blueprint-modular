@@ -4,6 +4,7 @@
  * Build : depuis la racine du repo, avec alias @ → repo root.
  */
 import React from "react";
+import { wrap } from "./wrap";
 
 import { Button } from "./components/Button";
 import {
@@ -216,11 +217,6 @@ export type { SpinnerProps as SpinnerPropsBpm, SpinnerSize } from "../../../comp
  * type l'est aussi. Une copie ne peut que re-diverger.
  */
 export type { TableColumn } from "../../../components/bpm/Table";
-
-/** Wrapper : (props) => createElement(Component, props) — API toujours en objet */
-function wrap<P extends object>(Component: React.ComponentType<P>) {
-  return (props: P) => React.createElement(Component, props);
-}
 
 // --- Types locaux (Page, Title, Chat) — API explicite en objet ---
 

@@ -152,17 +152,9 @@ export default function ContractDetailPage() {
     assistant?.openAssistant(ctx);
   };
 
-  if (loading || !contract) {
-    return (
-      <div className="doc-page flex justify-center items-center min-h-[200px]">
-        {loading ? <Spinner size="medium" /> : <EmptyState title={t.notFoundTitle} description={t.notFoundDesc} />}
-      </div>
-    );
-  }
-
-  const ex = contract.extractedData;
+  const ex = contract?.extractedData;
   const riskColor = ex?.overall_risk_level === "low" ? "var(--bpm-accent-mint)" : ex?.overall_risk_level === "high" ? "var(--bpm-accent)" : "var(--bpm-accent-cyan)";
-  const isAnalyzing = contract.status === "analyzing" || reanalyzing;
+  const isAnalyzing = contract?.status === "analyzing" || reanalyzing;
 
   // Colonnes pour le tableau des signataires
   const signatoriesColumns: TableColumn[] = useMemo(
@@ -230,6 +222,14 @@ export default function ContractDetailPage() {
       })) ?? [],
     [ex?.action_items]
   );
+
+  if (loading || !contract) {
+    return (
+      <div className="doc-page flex justify-center items-center min-h-[200px]">
+        {loading ? <Spinner size="medium" /> : <EmptyState title={t.notFoundTitle} description={t.notFoundDesc} />}
+      </div>
+    );
+  }
 
   return (
     <div className="doc-page">

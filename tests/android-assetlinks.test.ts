@@ -12,7 +12,10 @@
  *    en silence, le site restant vert ;
  * 3. l'icône adaptative embarquée existe et a la taille attendue.
  */
-import { readFileSync } from "node:fs";
+import { execFileSync } from "node:child_process";
+import { mkdirSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from "node:fs";
+import { tmpdir } from "node:os";
+import { join, resolve } from "node:path";
 
 import { describe, expect, it } from "vitest";
 
@@ -56,10 +59,21 @@ describe("assetlinks.json — chemin jusqu'à la production", () => {
     }
   });
 
-  it("le déploiement standalone copie public/ dotfiles compris", () => {
-    const script = readFileSync("deploy/deploy-from-git.sh", "utf8");
-    expect(script).toContain("cp -r public/. .next/standalone/blueprint-modular/public/");
-  });
+  it.each([".next/standalone", ".next/standalone/blueprint-modular"])(
+    "la copie standalone conserve le fichier assetlinks dans %s", target => {
+      const root = mkdtempSync(join(tmpdir(), "modular-assetlinks-"));
+      try {
+        for (const dir of [target, ".next/static", "public/.well-known", "lib/asset-manager/config"])
+          mkdirSync(join(root, dir), { recursive: true });
+        writeFileSync(join(root, target, "server.js"), "// fixture");
+        const declaration = readFileSync("public/.well-known/assetlinks.json");
+        writeFileSync(join(root, "public/.well-known/assetlinks.json"), declaration);
+        expect(readFileSync("deploy/deploy-from-git.sh", "utf8")).toContain("bash deploy/copy-standalone-assets.sh");
+        execFileSync("bash", [resolve("deploy/copy-standalone-assets.sh")], { env: { ...process.env, REPO_DIR: root } });
+        expect(readFileSync(join(root, target, "public/.well-known/assetlinks.json"))).toEqual(declaration);
+      } finally { rmSync(root, { recursive: true, force: true }); }
+    },
+  );
 });
 
 describe("icône adaptative de l'APK", () => {

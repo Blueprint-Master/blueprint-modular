@@ -1,38 +1,32 @@
 "use client";
 
 import { useState, useEffect, useCallback } from "react";
+import { relationTypes, symmetricRelation } from "@/lib/asset-manager/relation-types";
+import { readResponse } from "../../../lib/read-response";
+import { MovementHistory } from "./MovementHistory";
 import Link from "next/link";
-import { useParams } from "next/navigation";
-import { Panel, Button, Spinner, Selectbox, Input, Badge, Card, Divider, EmptyState, Metric } from "@/components/bpm";
+import { useParams, useRouter } from "next/navigation";
+import { Panel, Button, Spinner, Selectbox, Badge, Card, Divider, EmptyState, Metric } from "@/components/bpm";
 import { FicheHeader, FicheSectionCard, FicheFieldGrid, FicheNav, FicheSkeleton } from "@/components/fiche";
 import type { DomainConfig } from "@/lib/asset-manager/get-domain-config";
 import { useI18n } from "@/lib/i18n/LocaleProvider";
 import { STR, dateLocale } from "../../../strings";
 
 type Asset = {
+  canEdit: boolean; updatedAt: string;
   id: string;
   reference: string;
   label: string;
   assetTypeId: string;
   statusId: string;
   lifecycleStage?: string | null;
+  locationId?: string | null;
   brand?: string | null;
   model?: string | null;
   serialNumber?: string | null;
   notes?: string | null;
   attributes: { key: string; valueText?: string | null; valueNumber?: number | null; valueDate?: string | null; valueBool?: boolean | null }[];
   createdBy?: { name?: string | null } | null;
-};
-
-type Movement = {
-  id: string;
-  assetId: string;
-  movementType: string;
-  date: string;
-  reason?: string | null;
-  notes?: string | null;
-  ticketId?: string | null;
-  createdAt: string;
 };
 
 const DEFAULT_LIFECYCLE_KEYS = ["achat", "reception", "deploiement", "en_service", "maintenance", "renouvellement", "reforme"] as const;
@@ -52,10 +46,11 @@ type ContractSummary = { id: string; reference: string; label: string; type: str
 
 export default function AssetDetailPage() {
   const params = useParams();
+  const router = useRouter();
+  const [assetError, setAssetError] = useState("");
   const { locale } = useI18n();
   const t = STR[locale];
   const ta = t.assets;
-  const MOVEMENT_TYPE_LABELS = ta.movementTypes;
   const RELATION_TYPE_LABELS = ta.relationTypes;
   const DEFAULT_LIFECYCLE_STAGES = DEFAULT_LIFECYCLE_KEYS.map((k) => ({ id: k, label: ta.lifecycleStages[k] ?? k }));
   const domainId = typeof params?.domainId === "string" ? params.domainId : "";
@@ -64,59 +59,47 @@ export default function AssetDetailPage() {
   const [asset, setAsset] = useState<Asset | null>(null);
   const [loading, setLoading] = useState(true);
   const [savingLifecycle, setSavingLifecycle] = useState(false);
-  const [movements, setMovements] = useState<Movement[]>([]);
-  const [loadingMovements, setLoadingMovements] = useState(false);
-  const [showMovementForm, setShowMovementForm] = useState(false);
-  const [newMovementType, setNewMovementType] = useState("deployment");
-  const [newMovementDate, setNewMovementDate] = useState(() => new Date().toISOString().slice(0, 10));
-  const [newMovementReason, setNewMovementReason] = useState("");
-  const [newMovementNotes, setNewMovementNotes] = useState("");
-  const [savingMovement, setSavingMovement] = useState(false);
   const [relations, setRelations] = useState<CIRelation[]>([]);
   const [loadingRelations, setLoadingRelations] = useState(false);
   const [showRelationForm, setShowRelationForm] = useState(false);
   const [newRelationTargetId, setNewRelationTargetId] = useState("");
   const [newRelationType, setNewRelationType] = useState("depends_on");
+  const [relationError, setRelationError] = useState("");
+  const [canEditRelations, setCanEditRelations] = useState(false);
   const [savingRelation, setSavingRelation] = useState(false);
   const [domainAssets, setDomainAssets] = useState<{ id: string; reference: string; label: string }[]>([]);
   const [tickets, setTickets] = useState<TicketSummary[]>([]);
   const [contracts, setContracts] = useState<ContractSummary[]>([]);
-  const [loadingTickets, setLoadingTickets] = useState(false);
   const [loadingContracts, setLoadingContracts] = useState(false);
 
   useEffect(() => {
     if (!domainId || !id) return;
+    const controller = new AbortController();
+    const signal = controller.signal;
+    setLoading(true); setAssetError("");
     Promise.all([
-      fetch(`/api/asset-manager/config/${domainId}`, { credentials: "include" }).then((r) => (r.ok ? r.json() : null)),
-      fetch(`/api/asset-manager/assets/${id}`, { credentials: "include" }).then((r) => (r.ok ? r.json() : null)),
-    ])
-      .then(([cfg, a]) => {
-        setConfig(cfg);
-        setAsset(a);
-      })
-      .finally(() => setLoading(false));
+      fetch(`/api/asset-manager/config/${domainId}`, { signal }).then(readResponse),
+      fetch(`/api/asset-manager/assets/${id}`, { signal }).then(readResponse),
+    ]).then(([cfg, row]) => {
+      if (signal.aborted) return;
+      setConfig(cfg);
+      setAsset(row.domainId === domainId ? row : null);
+      setTickets(row.domainId === domainId ? row.tickets : []);
+    }).catch(err => { if (!signal.aborted) { setAsset(null); setAssetError(err.message); } })
+      .finally(() => { if (!signal.aborted) setLoading(false); });
+    return () => controller.abort();
   }, [domainId, id]);
-
-  const fetchMovements = useCallback(() => {
-    if (!id) return;
-    setLoadingMovements(true);
-    fetch(`/api/asset-manager/movements?assetId=${encodeURIComponent(id)}`, { credentials: "include" })
-      .then((r) => (r.ok ? r.json() : []))
-      .then((list) => setMovements(Array.isArray(list) ? list : []))
-      .finally(() => setLoadingMovements(false));
-  }, [id]);
-
-  useEffect(() => {
-    if (!asset?.id) return;
-    fetchMovements();
-  }, [asset?.id, fetchMovements]);
 
   const fetchRelations = useCallback(() => {
     if (!domainId || !id) return;
     setLoadingRelations(true);
     fetch(`/api/asset-manager/ci-relations?domainId=${encodeURIComponent(domainId)}&assetId=${encodeURIComponent(id)}`, { credentials: "include" })
-      .then((r) => (r.ok ? r.json() : []))
-      .then((list) => setRelations(Array.isArray(list) ? list : []))
+      .then(async response => {
+        const list = await readResponse(response);
+        setCanEditRelations(response.headers.get("X-Can-Edit") === "true");
+        setRelations(list);
+      })
+      .catch(err => setRelationError(err.message))
       .finally(() => setLoadingRelations(false));
   }, [domainId, id]);
 
@@ -124,15 +107,6 @@ export default function AssetDetailPage() {
     if (!asset?.id) return;
     fetchRelations();
   }, [asset?.id, fetchRelations]);
-
-  useEffect(() => {
-    if (!domainId || !id) return;
-    setLoadingTickets(true);
-    fetch(`/api/asset-manager/tickets?domainId=${encodeURIComponent(domainId)}`, { credentials: "include" })
-      .then((r) => (r.ok ? r.json() : []))
-      .then((list: { assetId?: string | null }[]) => setTickets(Array.isArray(list) ? list.filter((t) => t.assetId === id) as TicketSummary[] : []))
-      .finally(() => setLoadingTickets(false));
-  }, [domainId, id]);
 
   useEffect(() => {
     if (!domainId || !id) return;
@@ -158,6 +132,7 @@ export default function AssetDetailPage() {
   const handleAddRelation = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!asset || !domainId || !newRelationTargetId || savingRelation) return;
+    setRelationError("");
     setSavingRelation(true);
     try {
       const res = await fetch("/api/asset-manager/ci-relations", {
@@ -171,11 +146,11 @@ export default function AssetDetailPage() {
           relationType: newRelationType,
         }),
       });
-      if (res.ok) {
-        setNewRelationTargetId("");
-        setShowRelationForm(false);
-        fetchRelations();
-      }
+      await readResponse(res);
+      setNewRelationTargetId("");
+      setShowRelationForm(false);
+      fetchRelations();
+    } catch (err) { setRelationError(err instanceof Error ? err.message : String(err));
     } finally {
       setSavingRelation(false);
     }
@@ -183,18 +158,26 @@ export default function AssetDetailPage() {
 
   const handleDeleteRelation = async (relId: string) => {
     if (!confirm(ta.confirmDeleteRelation)) return;
-    const res = await fetch(`/api/asset-manager/ci-relations/${relId}`, { method: "DELETE", credentials: "include" });
-    if (res.ok) fetchRelations();
+    setRelationError("");
+    try {
+      await readResponse(await fetch(`/api/asset-manager/ci-relations/${relId}`, { method: "DELETE", credentials: "include" }));
+      fetchRelations();
+    } catch (err) { setRelationError(err instanceof Error ? err.message : String(err)); }
   };
 
   const loadDomainAssetsForRelation = useCallback(() => {
-    if (domainId && domainAssets.length === 0) {
+    if (domainId) {
       fetch(`/api/asset-manager/assets?domainId=${encodeURIComponent(domainId)}`, { credentials: "include" })
-        .then((r) => (r.ok ? r.json() : []))
-        .then((list) => setDomainAssets(Array.isArray(list) ? list.filter((a: { id: string }) => a.id !== asset?.id) : []));
+        .then(readResponse)
+        .then(list => setDomainAssets(list.filter((a: { id: string }) => a.id !== asset?.id)))
+        .catch(err => setRelationError(err.message));
     }
-  }, [domainId, asset?.id, domainAssets.length]);
+  }, [domainId, asset?.id]);
 
+  const relationLabel = (type: string) => {
+    const configured = config?.ci_relation_types?.find(entry => entry.id === type);
+    return (locale === "fr" ? configured?.label : undefined) ?? RELATION_TYPE_LABELS[type] ?? type;
+  };
   const getStatusLabel = (sid: string) => config?.statuses.find((s) => s.id === sid)?.label ?? sid;
   const getTypeLabel = (tid: string) => config?.asset_types.find((t) => t.id === tid)?.label ?? tid;
   const lifecycleStages = config?.lifecycle_stages?.length ? config.lifecycle_stages : DEFAULT_LIFECYCLE_STAGES;
@@ -203,51 +186,30 @@ export default function AssetDetailPage() {
 
   const handleLifecycleChange = async (value: string) => {
     if (!asset || savingLifecycle) return;
-    const stage = value || null;
-    setSavingLifecycle(true);
+    setSavingLifecycle(true); setAssetError("");
     try {
       const res = await fetch(`/api/asset-manager/assets/${asset.id}`, {
-        method: "PUT",
-        headers: { "Content-Type": "application/json" },
-        credentials: "include",
-        body: JSON.stringify({ lifecycleStage: stage }),
+        method: "PUT", headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ lifecycleStage: value || null, expectedUpdatedAt: asset.updatedAt }),
       });
-      if (res.ok) {
-        const updated = await res.json();
-        setAsset(updated);
-      }
-    } finally {
-      setSavingLifecycle(false);
-    }
+      if (res.status === 409) setAsset(await fetch(`/api/asset-manager/assets/${asset.id}`).then(readResponse));
+      setAsset(await readResponse(res));
+    } catch (err) { setAssetError(err instanceof Error ? err.message : String(err)); }
+    finally { setSavingLifecycle(false); }
   };
 
-  const handleAddMovement = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!asset || savingMovement) return;
-    setSavingMovement(true);
+  async function removeAsset() {
+    if (!asset || !window.confirm(locale === "fr" ? "Supprimer cet actif et son historique associé ?" : "Delete this asset and its associated history?")) return;
+    setSavingLifecycle(true); setAssetError("");
     try {
-      const res = await fetch("/api/asset-manager/movements", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        credentials: "include",
-        body: JSON.stringify({
-          assetId: asset.id,
-          movementType: newMovementType,
-          date: newMovementDate,
-          reason: newMovementReason.trim() || null,
-          notes: newMovementNotes.trim() || null,
-        }),
-      });
-      if (res.ok) {
-        setNewMovementReason("");
-        setNewMovementNotes("");
-        setShowMovementForm(false);
-        fetchMovements();
-      }
-    } finally {
-      setSavingMovement(false);
-    }
-  };
+      const endpoint = "/api/asset-manager/assets/" + asset.id;
+      const response = await fetch(endpoint + "?expectedUpdatedAt=" + encodeURIComponent(asset.updatedAt), { method: "DELETE" });
+      if (response.status === 409) setAsset(await fetch(endpoint).then(readResponse));
+      await readResponse(response);
+      router.push(`/modules/asset-manager/${domainId}/assets`);
+    } catch (err) { setAssetError(err instanceof Error ? err.message : String(err)); }
+    finally { setSavingLifecycle(false); }
+  }
 
   if (loading) {
     return <FicheSkeleton sections={5} withMetrics withList withForm />;
@@ -257,7 +219,7 @@ export default function AssetDetailPage() {
     return (
       <div className="doc-page">
         <Panel variant="warning" title={ta.notFoundTitle}>
-          {ta.notFoundDescription}
+          {assetError || ta.notFoundDescription}
         </Panel>
         <FicheNav backLink={`/modules/asset-manager/${domainId}/assets`} backLabel={ta.backList} />
       </div>
@@ -288,6 +250,11 @@ export default function AssetDetailPage() {
         }
       />
 
+      {assetError && <p role="alert">{assetError}</p>}
+      {asset.canEdit && <div className="flex gap-2 mt-3">
+        <Link href={`/modules/asset-manager/${domainId}/assets/${asset.id}/edit`}><Button size="small" variant="outline">{t.common.edit}</Button></Link>
+        <Button size="small" variant="outline" disabled={savingLifecycle} onClick={removeAsset}>{t.common.delete}</Button>
+      </div>}
       <FicheSectionCard title={ta.sectionGeneral} className="mt-4">
         <FicheFieldGrid
           withDividers
@@ -301,6 +268,7 @@ export default function AssetDetailPage() {
                 <span className="flex items-center gap-2">
                   <Selectbox
                     label=""
+                    disabled={!asset.canEdit || savingLifecycle}
                     value={asset.lifecycleStage ?? ""}
                     onChange={(v) => handleLifecycleChange(String(v))}
                     options={[{ value: "", label: ta.lifecycleUndefined }, ...lifecycleStages.map((s) => ({ value: s.id, label: s.label }))]}
@@ -310,6 +278,7 @@ export default function AssetDetailPage() {
                 </span>
               ),
             },
+            ...(asset.locationId ? [{ label: locale === "fr" ? "Emplacement" : "Location", value: asset.locationId }] : []),
             ...(asset.brand ? [{ label: ta.fieldBrand, value: asset.brand }] : []),
             ...(asset.model ? [{ label: ta.fieldModel, value: asset.model }] : []),
             ...(asset.serialNumber ? [{ label: ta.fieldSerial, value: asset.serialNumber }] : []),
@@ -339,102 +308,17 @@ export default function AssetDetailPage() {
       )}
 
       <Divider thickness={1} color="var(--bpm-border)" className="my-4" />
-      <FicheSectionCard title={ta.sectionMovements} className="mt-4">
-        <div className="flex flex-wrap items-center justify-between gap-2 mb-4">
-          <Metric label={ta.metricMovements} value={movements.length} border={false} />
-          <Button
-            size="small"
-            variant="outline"
-            onClick={() => setShowMovementForm((v) => !v)}
-          >
-            {showMovementForm ? ta.cancel : ta.addMovement}
-          </Button>
-        </div>
-        {showMovementForm && (
-          <Card variant="outlined" className="mb-4">
-            <div className="bpm-card-body p-4">
-              <h4 className="text-sm font-semibold mb-3" style={{ color: "var(--bpm-text-primary)" }}>{ta.newMovement}</h4>
-              <form onSubmit={handleAddMovement}>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-3 mb-3">
-              <Selectbox
-                label={ta.fieldType}
-                value={newMovementType}
-                onChange={(v) => setNewMovementType(String(v))}
-                options={Object.entries(MOVEMENT_TYPE_LABELS).map(([value, label]) => ({ value, label }))}
-              />
-              <Input
-                label={ta.fieldDate}
-                type="date"
-                value={newMovementDate}
-                onChange={(v) => setNewMovementDate(v)}
-              />
-            </div>
-            <Input
-              label={ta.fieldReasonOptional}
-              value={newMovementReason}
-              onChange={setNewMovementReason}
-              placeholder={ta.placeholderReason}
-            />
-            <div className="mt-3">
-              <label className="block text-sm font-medium mb-1" style={{ color: "var(--bpm-text-secondary)" }}>{ta.fieldNotesOptional}</label>
-              <textarea
-                value={newMovementNotes}
-                onChange={(e) => setNewMovementNotes(e.target.value)}
-                rows={2}
-                className="bpm-textarea w-full rounded-lg border px-3 py-2 text-sm resize-y"
-                style={{ borderColor: "var(--bpm-border)", background: "var(--bpm-surface)", color: "var(--bpm-text-primary)" }}
-                placeholder={ta.placeholderComment}
-              />
-            </div>
-            <div className="mt-6">
-            <Button type="submit" size="medium" variant="primary" disabled={savingMovement}>
-              {savingMovement ? ta.saving : ta.saveMovement}
-            </Button>
-            </div>
-              </form>
-            </div>
-          </Card>
-        )}
-        {loadingMovements ? (
-          <div className="flex justify-center py-6">
-            <Spinner size="small" />
-          </div>
-        ) : movements.length === 0 ? (
-          <EmptyState
-            title={ta.emptyMovementsTitle}
-            description={ta.emptyMovementsDescription}
-            action={<Button size="small" variant="outline" onClick={() => setShowMovementForm(true)}>{ta.addMovement}</Button>}
-          />
-        ) : (
-          <ul className="space-y-2">
-            {movements.map((m) => (
-              <li
-                key={m.id}
-                className="flex flex-wrap items-baseline gap-2 py-2 border-b border-[var(--bpm-border)] last:border-0 text-sm"
-              >
-                <span className="font-medium" style={{ color: "var(--bpm-text-primary)", minWidth: "10rem" }}>
-                  {new Date(m.date).toLocaleDateString(dateLocale(locale))}
-                </span>
-                <Badge variant="primary">{MOVEMENT_TYPE_LABELS[m.movementType] ?? m.movementType}</Badge>
-                {m.reason && <span style={{ color: "var(--bpm-text-secondary)" }}>{m.reason}</span>}
-                {m.notes && <span className="text-xs" style={{ color: "var(--bpm-text-secondary)" }}>— {m.notes}</span>}
-              </li>
-            ))}
-          </ul>
-        )}
-      </FicheSectionCard>
+      <MovementHistory key={asset.id} assetId={asset.id} domainId={domainId} onAssetChange={setAsset} />
 
       <Divider thickness={1} color="var(--bpm-border)" className="my-4" />
       <FicheSectionCard title={ta.sectionTickets} className="mt-4">
-        {loadingTickets ? (
-          <div className="flex justify-center py-4">
-            <Spinner size="small" />
-          </div>
-        ) : tickets.length === 0 ? (
+        {asset.canEdit && <Link href={`/modules/asset-manager/${domainId}/tickets/new?assetId=${encodeURIComponent(asset.id)}`}>
+          <Button size="small" variant="outline">{ta.newTicket}</Button>
+        </Link>}
+        {tickets.length === 0 ? (
           <EmptyState
             title={ta.emptyTicketsTitle}
             description={ta.emptyTicketsDescription}
-            action={<Link href={`/modules/asset-manager/${domainId}/tickets/new`}><Button size="small" variant="outline">{ta.newTicket}</Button></Link>}
           />
         ) : (
           <ul className="space-y-2">
@@ -486,11 +370,13 @@ export default function AssetDetailPage() {
       <FicheSectionCard title={ta.sectionDependencies} className="mt-4">
         <div className="flex flex-wrap items-center justify-between gap-2 mb-4">
           <Metric label={ta.metricRelations} value={relations.length} border={false} />
-          <Button size="small" variant="outline" onClick={() => { setShowRelationForm((v) => !v); loadDomainAssetsForRelation(); }}>
+          <Link href={`/modules/asset-manager/${domainId}/cmdb-graph?rootAssetId=${encodeURIComponent(id)}`} className="font-medium">{t.cmdb.title}</Link>
+          {canEditRelations && <Button size="small" variant="outline" onClick={() => { setShowRelationForm((v) => !v); loadDomainAssetsForRelation(); }}>
             {showRelationForm ? ta.cancel : ta.addRelation}
-          </Button>
+          </Button>}
         </div>
-        {showRelationForm && (
+        {relationError && <p role="alert">{relationError}</p>}
+        {showRelationForm && canEditRelations && (
           <Card variant="outlined" className="mb-4">
             <div className="bpm-card-body p-4">
               <form onSubmit={handleAddRelation}>
@@ -506,7 +392,7 @@ export default function AssetDetailPage() {
                     label={ta.fieldRelationType}
                     value={newRelationType}
                     onChange={(v) => setNewRelationType(String(v))}
-                    options={Object.entries(RELATION_TYPE_LABELS).map(([value, label]) => ({ value, label }))}
+                    options={relationTypes(config).map(value => ({ value, label: relationLabel(value) }))}
                   />
                 </div>
                 <div className="mt-6">
@@ -526,24 +412,24 @@ export default function AssetDetailPage() {
           <EmptyState
             title={ta.emptyRelationsTitle}
             description={ta.emptyRelationsDescription}
-            action={<Button size="small" variant="outline" onClick={() => { setShowRelationForm(true); loadDomainAssetsForRelation(); }}>{ta.addRelation}</Button>}
+            action={canEditRelations && <Button size="small" variant="outline" onClick={() => { setShowRelationForm(true); loadDomainAssetsForRelation(); }}>{ta.addRelation}</Button>}
           />
         ) : (
           <ul className="space-y-2">
             {relations.map((rel) => {
               const isSource = rel.sourceAssetId === asset.id;
               const other = isSource ? rel.targetAsset : rel.sourceAsset;
-              const direction = isSource ? "→" : "←";
+              const direction = symmetricRelation(rel.relationType) ? "↔" : isSource ? "→" : "←";
               return (
                 <li key={rel.id} className="flex flex-wrap items-center gap-2 py-2 border-b border-[var(--bpm-border)] last:border-0 text-sm">
-                  <Badge variant="primary">{RELATION_TYPE_LABELS[rel.relationType] ?? rel.relationType}</Badge>
+                  <Badge variant="primary">{relationLabel(rel.relationType)}</Badge>
                   <span style={{ color: "var(--bpm-text-secondary)" }}>{direction}</span>
                   <Link href={`/modules/asset-manager/${domainId}/assets/${other.id}`} className="font-medium" style={{ color: "var(--bpm-accent-cyan)" }}>
                     {other.reference} — {other.label}
                   </Link>
-                  <Button size="small" variant="outline" onClick={() => handleDeleteRelation(rel.id)} className="ml-auto asset-manager-btn-compact">
+                  {canEditRelations && <Button size="small" variant="outline" onClick={() => handleDeleteRelation(rel.id)} className="ml-auto asset-manager-btn-compact">
                     {ta.delete}
-                  </Button>
+                  </Button>}
                 </li>
               );
             })}

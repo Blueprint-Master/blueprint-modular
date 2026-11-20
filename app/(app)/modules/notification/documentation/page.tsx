@@ -98,6 +98,7 @@ function MyComponent() {
       <h2 className="text-lg font-semibold mt-8 mb-2" style={{ color: "var(--bpm-text-primary)" }}>
         {s.configHeading}
       </h2>
+      <p className="mb-4 text-sm">{s.inboxApi}</p>
       <ul className="list-disc pl-6 mb-4 text-sm" style={{ color: "var(--bpm-text-secondary)" }}>
         <li><strong>{s.cfg1Strong}</strong>{s.cfg1a}<Link href="/settings" className="underline" style={{ color: "var(--bpm-accent-cyan)" }}>{s.settingsPath}</Link>{s.cfg1b}</li>
         <li><strong>{s.cfg2Strong}</strong>{s.cfg2a}<code>lib/notificationLevels.ts</code>{s.cfg2b}&quot;Paramètre sauvegardé&quot;{s.cfg2c}</li>

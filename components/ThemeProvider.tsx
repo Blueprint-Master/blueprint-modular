@@ -30,8 +30,7 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
 
   useEffect(() => {
     if (!mounted) return;
-    const meta = document.querySelector('meta[name="theme-color"]');
-    if (meta) meta.setAttribute("content", themeColorHex);
+    document.querySelectorAll('meta[name="theme-color"]').forEach((meta) => meta.setAttribute("content", themeColorHex));
   }, [mounted, themeColorHex]);
 
   const toggleTheme = useCallback(() => {

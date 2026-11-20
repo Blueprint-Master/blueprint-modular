@@ -43,7 +43,7 @@ const fr = {
 
   // En-tête de la page module (page.tsx)
   moduleDescription:
-    "Historique des notifications, cloche dans le header, niveaux 1 (haute) à 3 (basse). Le niveau minimal affiché est configurable dans Paramètres → Général.",
+    "La cloche affiche les notifications non lues du compte et l’historique de cet appareil.",
   badgeModule: "Module",
   readingTime: "⏱ 1 min",
   simulatorLinkLabel: "Simulateur (tester les notifications)",
@@ -53,7 +53,7 @@ const fr = {
   // Onglet documentation intégré (page.tsx)
   aboutHeading: "À propos",
   aboutBefore:
-    "La cloche affiche les notifications récentes (stockées dans le navigateur). Chaque notification a un niveau 1, 2 ou 3 ; le filtre dans ",
+    "La cloche permet de marquer comme lues les notifications du compte. L’historique de cet appareil utilise les niveaux 1, 2 et 3. Le filtre dans ",
   aboutAfter: " permet de n'afficher que les niveaux suffisamment prioritaires.",
   implementHeading: "Comment implanter le module",
   implementIntro1: "Le module repose sur un ",
@@ -93,10 +93,10 @@ const fr = {
   docIntroStrongApp: "application Next.js",
   docIntro2: ". Il n'y a pas de package séparé par module (pas de ",
   docIntro3: " ni ",
-  docIntro4: ") : on installe l'application une fois. Le module Notification ne requiert ",
-  docIntroStrongNoDep: "aucune dépendance externe",
+  docIntro4: ") : on installe l'application une fois. La boîte personnelle utilise ",
+  docIntroStrongNoDep: "PostgreSQL et NextAuth",
   docIntro5:
-    " (pas de base dédiée, pas d'API) : uniquement React (contexte + composants). Cette documentation décrit ",
+    " dans l’application. Cette documentation décrit ",
   docIntroStrongInstall: "comment installer",
   docIntro6: " l'app pour utiliser les notifications, ",
   docIntroStrongHow: "comment le module fonctionne",
@@ -113,7 +113,7 @@ const fr = {
   how3: ") et une ",
   howStrongBell: "cloche dans le header",
   how4:
-    " déjà intégrée au layout. Les notifications sont stockées dans le navigateur (état React, pas de base de données). Chaque notification a un ",
+    " déjà intégrée au layout. Les non-lues du compte proviennent du serveur. Les notifications du simulateur restent sur cet appareil. Chacune de ces notifications locales a un ",
   howStrongLevel: "niveau",
   how5:
     " (1 = haute priorité, 2 = moyenne, 3 = basse) déduit automatiquement à partir du type (info, success, warning, error) et du titre/page via ",
@@ -123,7 +123,7 @@ const fr = {
 
   installHeading: "Installation et dépendances",
   installP:
-    "Le module fait partie de l'application Next.js. Aucune dépendance externe (API, base) n'est requise pour les notifications : uniquement React (contexte + composants). Aucune variable d'environnement spécifique au module Notification.",
+    "La boîte personnelle utilise la session NextAuth et la base PostgreSQL de l’application. L’historique local fonctionne également en mode invité.",
   cmdHeading: "Résumé des commandes (installer l'app et utiliser les notifications)",
   afterCmd1: "L'app est déjà enveloppée avec ",
   afterCmd2: " dans ",
@@ -142,6 +142,7 @@ const fr = {
   docImplLi2d: ".",
 
   configHeading: "Paramétrage",
+  inboxApi: "La cloche charge jusqu’à 100 non-lues du compte connecté. Au-delà de 99, le badge affiche 99+. Le marquage comme lu recharge la liste ; effacer l’historique de cet appareil agit uniquement sur les entrées locales. POST /api/notifications crée une notification pour la session, GET /api/notifications?read=false liste les non lues et PATCH /api/notifications/{id}/read enregistre la première lecture.",
   cfg1Strong: "Filtre d'affichage",
   cfg1a: " : dans ",
   cfg1b:
@@ -197,7 +198,7 @@ const en: typeof fr = {
 
   // Module page header (page.tsx)
   moduleDescription:
-    "Notification history, bell in the header, levels 1 (high) to 3 (low). The minimum displayed level can be configured in Settings → General.",
+    "The bell shows unread notifications from your account and the history on this device.",
   badgeModule: "Module",
   readingTime: "⏱ 1 min",
   simulatorLinkLabel: "Simulator (test notifications)",
@@ -207,7 +208,7 @@ const en: typeof fr = {
   // Embedded documentation tab (page.tsx)
   aboutHeading: "About",
   aboutBefore:
-    "The bell shows recent notifications (stored in the browser). Each notification has a level of 1, 2 or 3; the filter in ",
+    "The bell lets you mark account notifications as read. History on this device uses levels 1, 2 and 3. The filter in ",
   aboutAfter: " lets you display only the levels with sufficient priority.",
   implementHeading: "How to implement the module",
   implementIntro1: "The module relies on a ",
@@ -247,10 +248,10 @@ const en: typeof fr = {
   docIntroStrongApp: "Next.js application",
   docIntro2: ". There is no separate package per module (no ",
   docIntro3: " or ",
-  docIntro4: "): you install the application once. The Notification module requires ",
-  docIntroStrongNoDep: "no external dependencies",
+  docIntro4: "): you install the application once. The personal inbox uses ",
+  docIntroStrongNoDep: "PostgreSQL and NextAuth",
   docIntro5:
-    " (no dedicated database, no API): only React (context + components). This documentation describes ",
+    " from the application. This documentation describes ",
   docIntroStrongInstall: "how to install",
   docIntro6: " the app to use notifications, ",
   docIntroStrongHow: "how the module works",
@@ -267,7 +268,7 @@ const en: typeof fr = {
   how3: ") and a ",
   howStrongBell: "bell in the header",
   how4:
-    " already integrated into the layout. Notifications are stored in the browser (React state, no database). Each notification has a ",
+    " already integrated into the layout. Unread account notifications come from the server. Simulator notifications stay on this device. Each local notification has a ",
   howStrongLevel: "level",
   how5:
     " (1 = high priority, 2 = medium, 3 = low) inferred automatically from the type (info, success, warning, error) and the title/page via ",
@@ -277,7 +278,7 @@ const en: typeof fr = {
 
   installHeading: "Installation and dependencies",
   installP:
-    "The module is part of the Next.js application. No external dependency (API, database) is required for notifications: only React (context + components). No environment variable is specific to the Notification module.",
+    "The personal inbox uses the application’s NextAuth session and PostgreSQL database. Local history is also available to guests.",
   cmdHeading: "Command summary (install the app and use notifications)",
   afterCmd1: "The app is already wrapped with ",
   afterCmd2: " in ",
@@ -296,6 +297,7 @@ const en: typeof fr = {
   docImplLi2d: ".",
 
   configHeading: "Configuration",
+  inboxApi: "The bell loads up to 100 unread notifications for the signed-in account. Above 99 the badge shows 99+. Marking one as read reloads the list. Clearing device history only removes local entries. POST /api/notifications creates a notification for the session, GET /api/notifications?read=false lists unread items, and PATCH /api/notifications/{id}/read records the first read.",
   cfg1Strong: "Display filter",
   cfg1a: ": in ",
   cfg1b:

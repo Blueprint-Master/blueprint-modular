@@ -96,13 +96,13 @@ export default function WikiNewPage() {
     try {
       const finalSlug = normalizeSlug(slug || slugFromTitle(title));
       if (!session) {
-        const article = addGuestArticle({
+        const article = await addGuestArticle({
           title,
           content,
           slug: finalSlug,
           parentId,
           isPublished,
-          author: { name: tr.new.guestAuthor },
+          author: { name: tr.new.guestAuthor }, excerpt, tags, pinned,
         });
         router.push(`/modules/wiki/${article.slug}`);
         return;

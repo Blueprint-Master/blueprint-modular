@@ -139,25 +139,7 @@
 }
 
 /* Skeleton : contraste mode sombre, reduced motion, conteneur, shimmer */
-@keyframes bpm-shimmer {
-  0% { background-position: 200% 0; }
-  100% { background-position: -200% 0; }
-}
-.bpm-skeleton { background: var(--bpm-skeleton-bg) !important; }
-.bpm-skeleton--shimmer {
-  background: linear-gradient(
-    90deg,
-    var(--bpm-skeleton-bg) 25%,
-    var(--bpm-skeleton-shimmer-mid) 50%,
-    var(--bpm-skeleton-bg) 75%
-  ) !important;
-  background-size: 200% 100% !important;
-  animation: bpm-shimmer 1.5s ease-in-out infinite;
-}
-@media (prefers-reduced-motion: reduce) {
-  .bpm-skeleton { animation: none !important; }
-  .bpm-skeleton--shimmer { animation: none !important; }
-}
+
 
 /* FAB : pulse discret, arrêt au hover + scale */
 @keyframes bpm-fab-pulse {

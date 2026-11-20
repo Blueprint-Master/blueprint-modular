@@ -4,6 +4,7 @@ import React, { useState, useMemo, useCallback } from "react";
 import Link from "next/link";
 import { Button, Modal, Input, Textarea, Chip, Selectbox } from "@/components/bpm";
 import { useI18n } from "@/lib/i18n/LocaleProvider";
+import { addMonths, eventDates, formatDateKey, getISOWeekNumber, MAX_OCCURRENCES, type Frequency } from "@/lib/calendar/civil-days";
 import type { Locale } from "@/lib/i18n";
 import {
   str,
@@ -132,7 +133,7 @@ function buildDemoEvents(anchorMonth: Date): CalEvent[] {
     }
   }
   const prevMonth = new Date(y, m - 1, 1);
-  const prevLast = new Date(y, m - 1, 0);
+  const prevLast = new Date(y, m, 0);
   for (let d = Math.max(1, prevLast.getDate() - 6); d <= prevLast.getDate(); d++) {
     const dateStr = `${prevMonth.getFullYear()}-${String(prevMonth.getMonth() + 1).padStart(2, "0")}-${String(d).padStart(2, "0")}`;
     const c = COULEURS[d % COULEURS.length];
@@ -165,10 +166,6 @@ function buildDemoEvents(anchorMonth: Date): CalEvent[] {
   return events;
 }
 
-function formatDateKey(d: Date): string {
-  return d.toISOString().slice(0, 10);
-}
-
 /** Affiche une date "YYYY-MM-DD" dans la locale active (fr-FR / en-GB). */
 function formatDateLong(dateStr: string, locale: Locale): string {
   const [y, m, d] = dateStr.split("-").map(Number);
@@ -194,15 +191,6 @@ function getWeekRange(d: Date): { start: Date; end: Date } {
   return { start, end };
 }
 
-/** Numéro de semaine ISO (1–53) */
-function getISOWeekNumber(d: Date): number {
-  const { start } = getWeekRange(d);
-  const jan4 = new Date(start.getFullYear(), 0, 4);
-  const jan4Start = getWeekRange(jan4).start;
-  const diffDays = (start.getTime() - jan4Start.getTime()) / (24 * 3600 * 1000);
-  return Math.floor(diffDays / 7) + 1;
-}
-
 function formatTitle(view: View, focusDate: Date, locale: Locale): string {
   const MONTHS = months(locale);
   const WEEKDAYS_SHORT = weekdaysShort(locale);
@@ -222,12 +210,6 @@ function formatTitle(view: View, focusDate: Date, locale: Locale): string {
 function addDays(d: Date, delta: number): Date {
   const out = new Date(d);
   out.setDate(d.getDate() + delta);
-  return out;
-}
-
-function addMonths(d: Date, delta: number): Date {
-  const out = new Date(d);
-  out.setMonth(d.getMonth() + delta);
   return out;
 }
 
@@ -322,7 +304,7 @@ export default function CalendrierSimulateurPage() {
 
   const handleAddEvent = (ev: Omit<CalEvent, "id" | "_user"> | Omit<CalEvent, "id" | "_user">[]) => {
     const list = Array.isArray(ev) ? ev : [ev];
-    const baseId = `user-${Date.now()}`;
+    const baseId = `user-${crypto.randomUUID()}`;
     setUserEvents((prev) => [...prev, ...list.map((e, i) => ({ ...e, id: `${baseId}-${i}`, _user: true }))]);
     setFormOpen(false);
   };
@@ -649,7 +631,7 @@ export default function CalendrierSimulateurPage() {
       </Modal>
 
       {/* Modale formulaire Nouvel événement (P11) */}
-      <EventFormModal open={formOpen} onClose={() => setFormOpen(false)} onSubmit={handleAddEvent} defaultDate={focusKey} locale={locale} />
+      {formOpen && <EventFormModal open={formOpen} onClose={() => setFormOpen(false)} onSubmit={handleAddEvent} defaultDate={focusKey} locale={locale} />}
 
       <p className="mt-6 text-sm" style={{ color: "var(--bpm-text-secondary)" }}>
         <Link href="/modules" className="font-medium underline" style={{ color: "var(--bpm-accent-cyan)" }}>{s.backToModules}</Link>
@@ -666,44 +648,6 @@ function recurrenceOptions(locale: Locale) {
     { value: "weekly", label: s.recurWeekly },
     { value: "monthly", label: s.recurMonthly },
   ];
-}
-
-/** Génère les dates pour une récurrence à partir de la date de début. */
-function generateRecurrenceDates(
-  startDateStr: string,
-  recurrence: "daily" | "weekly" | "monthly",
-  count: number
-): string[] {
-  const [y, m, d] = startDateStr.split("-").map(Number);
-  const dates: string[] = [];
-  let current = new Date(y, m - 1, d);
-  for (let i = 0; i < count; i++) {
-    dates.push(
-      `${current.getFullYear()}-${String(current.getMonth() + 1).padStart(2, "0")}-${String(current.getDate()).padStart(2, "0")}`
-    );
-    if (recurrence === "daily") current.setDate(current.getDate() + 1);
-    else if (recurrence === "weekly") current.setDate(current.getDate() + 7);
-    else current.setMonth(current.getMonth() + 1);
-  }
-  return dates;
-}
-
-/** Retourne toutes les dates entre du et au (inclus), au format YYYY-MM-DD. */
-function getDatesBetween(du: string, au: string): string[] {
-  if (au < du) return [du];
-  const [y1, m1, d1] = du.split("-").map(Number);
-  const [y2, m2, d2] = au.split("-").map(Number);
-  const start = new Date(y1, m1 - 1, d1);
-  const end = new Date(y2, m2 - 1, d2);
-  const dates: string[] = [];
-  const current = new Date(start);
-  while (current <= end) {
-    dates.push(
-      `${current.getFullYear()}-${String(current.getMonth() + 1).padStart(2, "0")}-${String(current.getDate()).padStart(2, "0")}`
-    );
-    current.setDate(current.getDate() + 1);
-  }
-  return dates;
 }
 
 function EventFormModal({
@@ -723,39 +667,40 @@ function EventFormModal({
   const RECURRENCE_OPTIONS = recurrenceOptions(locale);
   const [date, setDate] = useState(defaultDate);
   const [dateFin, setDateFin] = useState("");
-  const [heure, setHeure] = useState("09h00");
+  const [heure, setHeure] = useState("09:00");
   const [titre, setTitre] = useState("");
   const [duree, setDuree] = useState("");
   const [lieu, setLieu] = useState("");
   const [description, setDescription] = useState("");
   const [couleur, setCouleur] = useState(COULEURS[0].value);
-  const [recurrence, setRecurrence] = useState<string>("");
+  const [recurrence, setRecurrence] = useState<Frequency | "">("");
+  const [error, setError] = useState("");
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (!titre.trim()) return;
-    const h = heure.includes("h") ? heure : `${heure.slice(0, 2)}h${heure.slice(2) || "00"}`;
+    const dates = eventDates(date, dateFin, recurrence);
+    if (!dates) {
+      setError(s.invalidDates(MAX_OCCURRENCES));
+      return;
+    }
+    const minutes = duree ? Number(duree) : undefined;
+    if (minutes !== undefined && (!Number.isSafeInteger(minutes) || minutes < 1)) {
+      setError(s.invalidDuration);
+      return;
+    }
     const base: Omit<CalEvent, "id" | "_user" | "date"> = {
       titre: titre.trim(),
-      heure: h,
-      duree: duree ? parseInt(duree, 10) : undefined,
+      heure: heure.replace(":", "h"),
+      duree: minutes,
       lieu: lieu.trim() || undefined,
       description: description.trim() || undefined,
       couleur,
-      recurrence: recurrence ? (recurrence as "daily" | "weekly" | "monthly") : undefined,
+      recurrence: recurrence || undefined,
     };
-    if (recurrence === "daily" || recurrence === "weekly" || recurrence === "monthly") {
-      const count = recurrence === "daily" ? 60 : recurrence === "weekly" ? 12 : 12;
-      const dates = generateRecurrenceDates(date, recurrence as "daily" | "weekly" | "monthly", count);
-      onSubmit(dates.map((d) => ({ ...base, date: d })));
-    } else if (dateFin && dateFin >= date) {
-      const dates = getDatesBetween(date, dateFin);
-      onSubmit(dates.map((d) => ({ ...base, date: d })));
-    } else {
-      onSubmit({ ...base, date });
-    }
+    onSubmit(dates.map((day) => ({ ...base, date: day })));
     setTitre("");
-    setHeure("09h00");
+    setHeure("09:00");
     setDuree("");
     setLieu("");
     setDescription("");
@@ -773,6 +718,7 @@ function EventFormModal({
           <label className="block text-sm font-medium mb-1" style={{ color: "var(--bpm-text-primary)" }}>{s.fieldFrom}</label>
           <input
             type="date"
+            required
             value={date}
             onChange={(e) => setDate(e.target.value)}
             className="w-full px-3 py-2 rounded-lg border text-sm"
@@ -796,15 +742,9 @@ function EventFormModal({
             <label className="block text-sm font-medium mb-1" style={{ color: "var(--bpm-text-primary)" }}>{s.fieldTime}</label>
             <input
               type="time"
-              value={(() => {
-                const [h, m] = heure.split("h");
-                return `${(h ?? "09").padStart(2, "0")}:${(m ?? "00").padStart(2, "0")}`;
-              })()}
-              onChange={(e) => {
-                const v = e.target.value;
-                const [h, m] = v.split(":").map((x) => x || "0");
-                setHeure(`${h}h${m.padStart(2, "0")}`);
-              }}
+              required
+              value={heure}
+              onChange={(e) => setHeure(e.target.value)}
               className="w-full px-3 py-2 rounded-lg border text-sm"
               style={{ borderColor: "var(--bpm-border)", background: "var(--bpm-bg-primary)", color: "var(--bpm-text-primary)" }}
             />
@@ -818,7 +758,7 @@ function EventFormModal({
           <Selectbox
             options={RECURRENCE_OPTIONS}
             value={recurrence}
-            onChange={(v) => setRecurrence(v ?? "")}
+            onChange={(v) => setRecurrence(v === "daily" || v === "weekly" || v === "monthly" ? v : "")}
             placeholder={s.recurNone}
           />
         </div>
@@ -843,6 +783,7 @@ function EventFormModal({
           </div>
         </div>
         <div className="flex gap-2 pt-2">
+          {error && <p role="alert">{error}</p>}
           <Button type="submit" size="small">{s.create}</Button>
           <Button type="button" variant="secondary" size="small" onClick={onClose}>{s.cancel}</Button>
         </div>

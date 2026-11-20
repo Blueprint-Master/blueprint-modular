@@ -28,16 +28,15 @@ const instrumentSerif = Instrument_Serif({
   display: "swap",
 });
 
-/** Fond de la nuit de Prusse (sombre, défaut) et du papier de Prusse (clair). */
+/** Fond de la nuit de Prusse (thème sombre, défaut). Le clair (#f3f6fa) est posé par le script de thème. */
 const PLANO_THEME_COLOR_DARK = "#0a1626";
-const PLANO_THEME_COLOR_LIGHT = "#f3f6fa";
 
-export const viewport: Viewport = {
-  themeColor: [
-    { media: "(prefers-color-scheme: light)", color: PLANO_THEME_COLOR_LIGHT },
-    { media: "(prefers-color-scheme: dark)", color: PLANO_THEME_COLOR_DARK },
-  ],
-};
+// Pas de themeColor ici : Next en émettait deux balises indexées sur le thème du
+// TÉLÉPHONE (prefers-color-scheme), alors que le thème de l'app est celui choisi dans
+// l'app. Téléphone en clair + app en sombre = barre d'état blanche au-dessus de l'en-tête
+// (19/11), et Next réécrivait ces balises à chaque navigation, d'où « il faut recharger ».
+// Une seule balise, posée dans <head> et pilotée par le script de thème et ThemeProvider.
+export const viewport: Viewport = {};
 
 export const metadata: Metadata = {
   metadataBase: new URL(BASE_URL),
@@ -102,7 +101,7 @@ export default async function RootLayout({
         <meta name="theme-color" content={PLANO_THEME_COLOR_DARK} />
         <script
           dangerouslySetInnerHTML={{
-            __html: `(function(){var t=localStorage.getItem('bpm-theme');var d=t==='light'?'light':'dark';document.documentElement.setAttribute('data-theme',d);var m=document.querySelector('meta[name=theme-color]');if(m)m.setAttribute('content',d==='dark'?'#0a1626':'#f3f6fa');var a=localStorage.getItem('bpm-accent-color');if(a&&/^#[0-9A-Fa-f]{6}$/.test(a)&&['#048dc3','#1379e7','#00a3e2'].indexOf(a.toLowerCase())<0)document.documentElement.style.setProperty('--bpm-accent',a);})();`,
+            __html: `(function(){var t=localStorage.getItem('bpm-theme');var d=t==='light'?'light':'dark';document.documentElement.setAttribute('data-theme',d);document.querySelectorAll('meta[name=theme-color]').forEach(function(m){m.setAttribute('content',d==='dark'?'#0a1626':'#f3f6fa');});var a=localStorage.getItem('bpm-accent-color');if(a&&/^#[0-9A-Fa-f]{6}$/.test(a)&&['#048dc3','#1379e7','#00a3e2'].indexOf(a.toLowerCase())<0)document.documentElement.style.setProperty('--bpm-accent',a);})();`,
           }}
         />
       </head>

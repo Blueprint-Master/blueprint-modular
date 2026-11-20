@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import { readResponse } from "../../../lib/read-response";
 import Link from "next/link";
 import { useParams } from "next/navigation";
 import { Panel, Button, Spinner, Selectbox, Badge, Card, Divider } from "@/components/bpm";
@@ -11,6 +12,7 @@ import { STR, dateLocale } from "../../../strings";
 type Assignment = {
   id: string;
   reference: string;
+  updatedAt: string;
   assignmentType: string;
   startDate: string;
   expectedEndDate: string | null;
@@ -50,6 +52,7 @@ export default function AssetManagerAssignmentDetailPage() {
   const id = typeof params?.id === "string" ? params.id : "";
   const [assignment, setAssignment] = useState<Assignment | null>(null);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
   const [saving, setSaving] = useState(false);
   const [returning, setReturning] = useState(false);
   const [editStatus, setEditStatus] = useState("");
@@ -57,11 +60,12 @@ export default function AssetManagerAssignmentDetailPage() {
   const [editContractSigned, setEditContractSigned] = useState(false);
 
   const handleReturn = () => {
-    if (!assignment || assignment.status !== "active" || returning) return;
+    if (!assignment || !["active","overdue"].includes(assignment.status) || returning) return;
     if (!confirm(ta.returnConfirm)) return;
+    setError("");
     setReturning(true);
     fetch(`/api/asset-manager/assignments/${id}/return`, { method: "POST", credentials: "include" })
-      .then((r) => (r.ok ? r.json() : null))
+      .then(readResponse)
       .then((updated) => {
         if (updated) {
           setAssignment(updated);
@@ -70,13 +74,14 @@ export default function AssetManagerAssignmentDetailPage() {
           setEditContractSigned(updated.contractSigned);
         }
       })
+      .catch(err => setError(err instanceof Error ? err.message : String(err)))
       .finally(() => setReturning(false));
   };
 
   useEffect(() => {
     if (!id) return;
     fetch(`/api/asset-manager/assignments/${id}`, { credentials: "include" })
-      .then((r) => (r.ok ? r.json() : null))
+      .then(readResponse)
       .then((a) => {
         setAssignment(a);
         if (a) {
@@ -85,26 +90,30 @@ export default function AssetManagerAssignmentDetailPage() {
           setEditContractSigned(a.contractSigned);
         }
       })
+      .catch(err => setError(err instanceof Error ? err.message : String(err)))
       .finally(() => setLoading(false));
   }, [id]);
 
   const handleSave = () => {
     if (!assignment || saving) return;
+    setError("");
     setSaving(true);
     fetch(`/api/asset-manager/assignments/${id}`, {
       method: "PUT",
       headers: { "Content-Type": "application/json" },
       credentials: "include",
       body: JSON.stringify({
+        expectedUpdatedAt: assignment.updatedAt,
         status: editStatus,
         conditionAtReturn: editConditionReturn.trim() || null,
         contractSigned: editContractSigned,
       }),
     })
-      .then((r) => (r.ok ? r.json() : null))
+      .then(readResponse)
       .then((updated) => {
         if (updated) setAssignment(updated);
       })
+      .catch(err => setError(err instanceof Error ? err.message : String(err)))
       .finally(() => setSaving(false));
   };
 
@@ -115,7 +124,7 @@ export default function AssetManagerAssignmentDetailPage() {
   if (!assignment) {
     return (
       <div className="doc-page">
-        <Panel variant="warning" title={ta.notFoundTitle}>{ta.notFoundBody}</Panel>
+        <Panel variant="warning" title={ta.notFoundTitle}>{error || ta.notFoundBody}</Panel>
         <FicheNav backLink={`/modules/asset-manager/${domainId}/assignments`} backLabel={ta.backToList} />
       </div>
     );
@@ -125,6 +134,7 @@ export default function AssetManagerAssignmentDetailPage() {
 
   return (
     <div className="doc-page">
+      {error && <p role="alert">{error}</p>}
       <FicheHeader
         breadcrumb={
           <>
@@ -145,7 +155,7 @@ export default function AssetManagerAssignmentDetailPage() {
         }
       />
 
-      {assignment.status === "active" && (
+      {["active","overdue"].includes(assignment.status) && (
         <>
           <FicheSectionCard title={ta.returnTitle} className="mt-4">
             <p className="text-sm mb-3" style={{ color: "var(--bpm-text-secondary)" }}>

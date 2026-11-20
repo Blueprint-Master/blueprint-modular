@@ -26,7 +26,10 @@ export default function NewAssetPage() {
   useEffect(() => {
     if (!domainId) return;
     fetch(`/api/asset-manager/config/${domainId}`, { credentials: "include" })
-      .then((r) => (r.ok ? r.json() : null))
+      .then(async r => {
+        if (!r.ok) throw new Error((await r.json().catch(() => ({}))).error || ta.errNetwork);
+        return r.json();
+      })
       .then((cfg) => {
         setConfig(cfg);
         if (cfg?.asset_types?.length) {
@@ -34,8 +37,9 @@ export default function NewAssetPage() {
           setStatusId(cfg.statuses?.[0]?.id ?? "");
         }
       })
+      .catch(err => setError(err instanceof Error ? err.message : ta.errNetwork))
       .finally(() => setLoading(false));
-  }, [domainId]);
+  }, [domainId, ta.errNetwork]);
 
   useEffect(() => {
     if (config?.statuses?.length && !statusId) setStatusId(config.statuses[0].id);
@@ -75,6 +79,7 @@ export default function NewAssetPage() {
     }
   };
 
+  if (!config && error) return <p role="alert">{error}</p>;
   if (loading || !config) {
     return (
       <div className="doc-page flex justify-center py-12">

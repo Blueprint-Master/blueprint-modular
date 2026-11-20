@@ -43,6 +43,7 @@
     "bpm",
     "doc-app",
     "backend",
+    "build",
     "dist",
     "packages"
   ]

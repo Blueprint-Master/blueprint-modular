@@ -1,3 +1,4 @@
+import type { Prisma } from "@prisma/client";
 import { prisma } from "@/lib/prisma";
 
 export type AuditParams = {
@@ -13,9 +14,8 @@ export type AuditParams = {
   userAgent?: string | null;
 };
 
-export async function writeAuditLog(params: AuditParams): Promise<void> {
-  try {
-    await prisma.auditLog.create({
+export async function writeAuditLog(params: AuditParams, db: Prisma.TransactionClient = prisma): Promise<void> {
+  await db.auditLog.create({
       data: {
         domainId: params.domainId ?? null,
         userId: params.userId,
@@ -28,10 +28,7 @@ export async function writeAuditLog(params: AuditParams): Promise<void> {
         ipAddress: params.ipAddress ?? null,
         userAgent: params.userAgent ?? null,
       },
-    });
-  } catch (err) {
-    console.error("[AuditLog] write failed:", err);
-  }
+  });
 }
 
 export function getClientIpAndAgent(request: Request): { ipAddress: string | null; userAgent: string | null } {

@@ -43,19 +43,6 @@ export default function App() {
     fetchNodes()
   }, [fetchNodes])
 
-  if (loading) return (
-    <div className="bpm-loading">
-      <div className="bpm-spinner" />
-    </div>
-  )
-
-  if (error) return (
-    <div className="bpm-error">
-      <h2>Erreur</h2>
-      <pre>{error}</pre>
-    </div>
-  )
-
   // Grouper les métriques consécutives en une seule ligne
   const displayNodes = React.useMemo(() => {
     const out: Node[] = []
@@ -75,6 +62,19 @@ export default function App() {
     }
     return out
   }, [nodes])
+
+  if (loading) return (
+    <div className="bpm-loading">
+      <div className="bpm-spinner" />
+    </div>
+  )
+
+  if (error) return (
+    <div className="bpm-error">
+      <h2>Erreur</h2>
+      <pre>{error}</pre>
+    </div>
+  )
 
   return (
     <div className="bpm-runtime">

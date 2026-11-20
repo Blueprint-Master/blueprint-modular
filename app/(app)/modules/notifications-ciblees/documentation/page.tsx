@@ -19,6 +19,23 @@ export default function NotificationsCibleesDocumentationPage() {
         <p className="doc-description">{s.docDescription}</p>
       </div>
 
+      <h2 className="text-lg font-semibold mt-6 mb-2">
+        {locale === "fr" ? "Utiliser le module dans votre application" : "Use the module in your application"}
+      </h2>
+      <p className="mb-4 text-sm">
+        {locale === "fr"
+          ? "Déclarez les règles et fournissez les membres des équipes depuis votre annuaire. La boîte interne est persistante. E-mail et SMS passent par vos adaptateurs de livraison via le worker bpm.webhooks (événements notification.email et notification.sms). Un adaptateur absent fait échouer la transaction. Le worker conserve les tentatives et les accusés de réception de l’adaptateur."
+          : "Register rules and supply team membership from your own directory. The inbox persists. Email and SMS use your delivery adapters via the bpm.webhooks worker (notification.email and notification.sms events). A missing adapter causes a rollback. The worker records delivery attempts and adapter acknowledgements."}
+      </p>
+      <CodeBlock language="python" code={`from contextlib import closing
+from bpm import targeted_notifications as notifications
+
+with closing(notifications.open_store("team.sqlite")) as db:
+    notifications.configure(db, "approvals", "purchase.review", "finance", ["in-app"])
+    notifications.notify(db, "purchase-42-review", "purchase.review", "Order 42", "Review requested",
+                         teams={"finance": ["user-123", "user-456"]})
+    messages = notifications.inbox(db, "user-123", unread_only=True)`} />
+
       <h2 className="text-lg font-semibold mt-6 mb-2" style={{ color: "var(--bpm-text-primary)" }}>
         {s.ruleModelTitle}
       </h2>
@@ -27,6 +44,8 @@ export default function NotificationsCibleesDocumentationPage() {
         <code>actif</code>
         {s.ruleModel2} <code>declenchements7j</code> {s.ruleModel3}
       </p>
+      <CodeBlock language="python" code={`notices.configure(db, "large-quote", "devis.cree", "sales", ["in-app"], amount_above="10000.00")
+notices.notify(db, event_id, "devis.cree", "Devis", reference, teams=directory, amount="12500.00")`} />
       <CodeBlock code={s.ruleModelCode} language="json" />
 
       <h2 className="text-lg font-semibold mt-6 mb-2" style={{ color: "var(--bpm-text-primary)" }}>

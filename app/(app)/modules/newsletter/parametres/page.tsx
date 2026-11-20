@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import { newsletterHeaderUrl } from "@/lib/newsletter-header";
 import Link from "next/link";
 import { Button, Card, Input } from "@/components/bpm";
 import { useI18n } from "@/lib/i18n/LocaleProvider";
@@ -11,18 +12,23 @@ export default function NewsletterParametresPage() {
   const str = STR[locale];
   const [headerImageUrl, setHeaderImageUrl] = useState("");
   const [loading, setLoading] = useState(true);
+  const [revision, setRevision] = useState<number | null>(null);
   const [saving, setSaving] = useState(false);
-  const [message, setMessage] = useState<"saved" | "error" | null>(null);
+  const [message, setMessage] = useState<"saved" | "error" | "conflict" | null>(null);
 
   useEffect(() => {
     fetch("/api/newsletter/settings", { credentials: "include" })
       .then((r) => (r.ok ? r.json() : null))
       .then((data) => {
+        if (data) setRevision(data.revision);
+        else setMessage("error");
         if (data?.headerImageUrl) setHeaderImageUrl(data.headerImageUrl);
         setLoading(false);
       })
-      .catch(() => setLoading(false));
+      .catch(() => { setMessage("error"); setLoading(false); });
   }, []);
+
+  const previewUrl = newsletterHeaderUrl(headerImageUrl);
 
   const handleSave = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -32,10 +38,11 @@ export default function NewsletterParametresPage() {
       const res = await fetch("/api/newsletter/settings", {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ headerImageUrl: headerImageUrl.trim() || null }),
+        body: JSON.stringify({ headerImageUrl: headerImageUrl.trim() || null, revision }),
         credentials: "include",
       });
-      if (res.ok) setMessage("saved");
+      if (res.ok) { setRevision((await res.json()).revision); setMessage("saved"); }
+      else if (res.status === 409) setMessage("conflict");
       else setMessage("error");
     } catch {
       setMessage("error");
@@ -83,7 +90,7 @@ export default function NewsletterParametresPage() {
               aria-label={str.imageUrlAria}
             />
           </div>
-          {headerImageUrl.trim() && (
+          {previewUrl && (
             <div>
               <span className="block text-sm font-medium mb-1" style={{ color: "var(--bpm-text-secondary)" }}>
                 {str.previewLabel}
@@ -93,7 +100,7 @@ export default function NewsletterParametresPage() {
                 style={{
                   borderColor: "var(--bpm-border)",
                   height: 120,
-                  backgroundImage: `url(${headerImageUrl.trim()})`,
+                  backgroundImage: `url(${JSON.stringify(previewUrl)})`,
                 }}
                 role="img"
                 aria-label={str.previewAria}
@@ -101,9 +108,13 @@ export default function NewsletterParametresPage() {
             </div>
           )}
           <div className="flex items-center gap-2">
-            <Button type="submit" variant="primary" disabled={saving}>
+            <Button type="submit" variant="primary" disabled={saving || revision === null || message === "conflict"}>
               {saving ? str.saving : str.save}
             </Button>
+            {(message === "conflict" || (message === "error" && revision === null)) && <p role="alert">
+              {message === "conflict" && (locale === "en" ? "The header changed in another session. " : "La photo a changé dans une autre session. ")}
+              <button className="underline" type="button" onClick={() => window.location.reload()}>{locale === "en" ? "Reload" : "Recharger"}</button>
+            </p>}
             {message === "saved" && (
               <span className="text-sm" style={{ color: "var(--bpm-accent-mint)" }}>
                 {str.savedMessage}

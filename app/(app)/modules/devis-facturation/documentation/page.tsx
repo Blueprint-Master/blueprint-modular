@@ -46,6 +46,26 @@ export default function DevisFacturationDocumentationPage() {
         <p className="doc-description">{D.description}</p>
       </div>
 
+      <h2 className="text-lg font-semibold mt-6 mb-2">
+        {locale === "fr" ? "Utiliser le module dans votre application" : "Use the module in your application"}
+      </h2>
+      <p className="mb-4 text-sm">
+        {locale === "fr"
+          ? "Le SDK Python numérote les devis et les factures dans la transaction de l’application. Les montants sont en unités monétaires mineures. Les remises et taux de TVA sont en points de base, avec arrondi commercial par ligne. Une facture conserve les parties, les conditions, les lignes et leur prix. Le règlement est rapproché par référence bancaire. Pour livrer un devis, configurez un adaptateur Webhooks quote.delivery et utilisez request_delivery. quote_details expose séparément l’état de la transmission."
+          : "The Python SDK allocates quote and invoice numbers inside the transaction. Use minor units for amounts and basis points for discounts and tax, rounded per line. Invoices retain the parties, terms, lines and prices. Payments are recorded by bank reference. To send a quote, configure a quote.delivery Webhooks adapter and call request_delivery. quote_details exposes the delivery status separately."}
+      </p>
+      <CodeBlock language="python" code={`from contextlib import closing
+from pathlib import Path
+from bpm import billing
+
+with closing(billing.open_store("sales.sqlite")) as db:
+    lines = [{"label": "Service", "quantity": 2, "unit_minor": 12500, "vat_basis_points": 2000}]
+    q = billing.quote(db, {"name": "Seller"}, {"name": "Buyer"}, "EUR", lines,
+                      actor="sales", request_id="deal-42", issued="2026-11-19")
+    invoice = billing.issue_invoice(db, q, actor="sales", issued="2026-11-20", due="2026-12-20")
+    Path("invoice.html").write_text(billing.printable(db, invoice, currency_decimals=2), encoding="utf-8")
+    balance = billing.invoice_details(db, invoice)["due_minor"]`} />
+
       <h2 className="text-lg font-semibold mt-6 mb-2" style={{ color: "var(--bpm-text-primary)" }}>
         {D.modelTitle}
       </h2>

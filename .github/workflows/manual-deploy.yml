@@ -29,9 +29,15 @@ jobs:
     runs-on: [self-hosted, bpm-prod]
     steps:
       - name: Deploy
+        env:
+          # Sans cela, `pm2 restart --update-env` transmet RUNNER_TRACKING_ID au process
+          # de l'app, et le runner le tue en fin de job comme « orphelin » (constaté le
+          # 19/11 : « Terminate orphan process … next-server », PM2 relance aussitôt).
+          RUNNER_TRACKING_ID: ""
         run: |
           cd ~/blueprint-modular
           git fetch origin
           git reset --hard origin/master  # reset --hard : prod doit refléter origin/master exactement, jamais avoir de commits locaux (cf. incident 04/06/2026 côté maker)
+          ./deploy/sauvegarde-avant-migration.sh
           chmod +x deploy/deploy-from-git.sh
           ./deploy/deploy-from-git.sh

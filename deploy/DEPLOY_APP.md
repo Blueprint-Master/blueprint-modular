@@ -65,7 +65,7 @@ En prod, **blueprint-modular.com** et **docs.blueprint-modular.com** servent la 
 
 1. **Dans le terminal** (où tu as lancé `.\scripts\deploy-vps-remote.ps1`) : attendre la ligne **`✅ Déploiement terminé.`** avec la version déployée (ex. `02a3db0`) et les chemins Vitrine / Doc / App.
 2. **En SSH sur le VPS** : `pm2 status blueprint-app` → la colonne **status** doit être **online** et **restart** peut avoir augmenté de 1 après un `pm2 restart`.
-3. **Fichier de version** : ouvrir **https://blueprint-modular.com/version.txt** (ou docs) : tu dois voir le hash court du commit (ex. `02a3db0`) et la date du dernier déploiement.
+3. Sur l’application déployée, lire `https://app.blueprint-modular.com/api/health`. Vérifier que `sourceCommit` correspond au SHA effectivement construit et que `applicationVersion` correspond à son `package.json`. Les distributions antérieures peuvent uniquement exposer la version du connecteur dans `version`.
 
 ### Modifications visibles après ce déploiement (Phase 0 multitenant)
 
@@ -100,13 +100,16 @@ Après un `git pull` (ou après avoir exécuté `./deploy/deploy-from-git.sh`) p
 
 Le module **Monitor** (téléprompte IA) appelle l’API `https://app.blueprint-modular.com/api/prompteur/*`. En prod, Nginx proxy cette voie vers un service Python séparé (port 8001).
 
-1. **Sur le VPS** : créer le projet (ex. `/home/ubuntu/prompteur-api`) avec `main.py`, `router_prompteur.py`, `prompteur_schemas.py`, et `.env` (ANTHROPIC_API_KEY).
-2. **Dépendances Python** (inclure **python-multipart** pour l’upload PPTX) :
+1. Depuis la racine du dépôt, créer un environnement Python 3.10+ et y installer le service fourni.
    ```bash
-   pip install -r deploy/prompteur-api-requirements.txt
+   python3 -m venv .venv-prompteur
+   .venv-prompteur/bin/python -m pip install -r deploy/prompteur-api-requirements.txt
    ```
-   Ou à la main : `pip install fastapi uvicorn anthropic python-pptx python-dotenv python-multipart`
-3. **PM2** : `pm2 start "venv/bin/uvicorn main:app --host 0.0.0.0 --port 8001" --name prompteur-api --cwd /home/ubuntu/prompteur-api`
+2. Pour activer les trois commandes IA, définir `PROMPTEUR_MODEL` dans l’environnement du service avec un identifiant de modèle Messages accessible à l’utilisateur. La clé personnelle est transmise par la requête HTTPS dans `X-Anthropic-API-Key`. L’import PowerPoint fonctionne sans modèle ni clé.
+3. Lancer le service en gardant la racine du dépôt comme répertoire courant.
+   ```bash
+   pm2 start .venv-prompteur/bin/uvicorn --name prompteur-api --interpreter none -- main:app --app-dir deploy/prompteur --host 127.0.0.1 --port 8001
+   ```
 4. **Nginx** : dans le bloc `server { server_name app.blueprint-modular.com; }`, s’assurer que `client_max_body_size 100m;` est présent (pour upload PPTX Monitor jusqu’à 50 Mo), puis ajouter :
    ```nginx
    location /api/prompteur/ {

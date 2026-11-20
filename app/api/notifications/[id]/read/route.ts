@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { getSessionOrTestUser } from "@/lib/auth";
+import { getPersonalModuleSession } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 
 export const dynamic = "force-dynamic";
@@ -12,7 +12,7 @@ export async function PATCH(
   _request: Request,
   { params }: { params: Promise<{ id: string }> }
 ) {
-  const result = await getSessionOrTestUser();
+  const result = await getPersonalModuleSession();
   if (!result) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   const { user } = result;
 
@@ -20,12 +20,13 @@ export async function PATCH(
   if (!id) return NextResponse.json({ error: "Missing id" }, { status: 400 });
 
   const updated = await prisma.notification.updateMany({
-    where: { id, userId: user.id },
+    where: { id, userId: user.id, readAt: null },
     data: { readAt: new Date() },
   });
 
   if (updated.count === 0) {
-    return NextResponse.json({ error: "Not found" }, { status: 404 });
+    const exists = await prisma.notification.findFirst({ where: { id, userId: user.id }, select: { id: true } });
+    if (!exists) return NextResponse.json({ error: "Not found" }, { status: 404 });
   }
 
   return NextResponse.json({ ok: true });

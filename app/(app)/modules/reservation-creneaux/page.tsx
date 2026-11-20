@@ -73,7 +73,7 @@ export default function ReservationCreneauxModulePage() {
         title={s.moduleName}
         description={s.pageDescription}
         category={s.categoryBadge}
-        links={[{ href: "/modules/reservation-creneaux/simulateur", label: s.openSimulator }]}
+        links={[{ href: "/modules/reservation-creneaux/planning", label: locale === "fr" ? "Réserver une salle" : "Book a room" }, { href: "/modules/reservation-creneaux/simulateur", label: s.openSimulator }]}
       />
       <Tabs
         tabs={[

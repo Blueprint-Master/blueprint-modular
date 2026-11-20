@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { useAuditAccess } from "../lib/useAuditAccess";
 import { usePathname } from "next/navigation";
 import { useI18n } from "@/lib/i18n/LocaleProvider";
 import { STR } from "../strings";
@@ -129,6 +130,7 @@ function getSectionFromPath(pathname: string): string {
 export function AssetManagerSidebar({ domainId }: { domainId: string }) {
   const pathname = usePathname();
   const { locale } = useI18n();
+  const canViewAudit = useAuditAccess();
   const t = STR[locale].nav;
   const current = getSectionFromPath(pathname ?? "");
   const basePath = `/modules/asset-manager/${domainId}`;
@@ -136,7 +138,7 @@ export function AssetManagerSidebar({ domainId }: { domainId: string }) {
   return (
     <aside className="asset-manager-sidebar" aria-label={t.ariaLabel}>
       <nav className="asset-manager-sidebar-nav">
-        {ITEMS.map((item) => {
+        {ITEMS.filter(item => item.key !== "audit" || canViewAudit).map((item) => {
           const href = item.path ? `${basePath}${item.path}` : basePath;
           const isActive = current === item.key;
           return (

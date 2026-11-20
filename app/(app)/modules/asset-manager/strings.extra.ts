@@ -10,6 +10,7 @@ const extraFr = {
     filters: "Filtres",
     filterStatus: "Statut",
     filterPriority: "Priorité",
+    assetUnavailable: "L’équipement sélectionné est indisponible dans ce domaine.",
     filterSla: "SLA",
     allStatuses: "Tous les statuts",
     allPriorities: "Toutes les priorités",
@@ -94,6 +95,7 @@ const extraFr = {
       create: "Création",
       update: "Modification",
       delete: "Suppression",
+      escalate: "Escalade SLA",
     } as Record<string, string>,
     resourceLabels: {
       asset: "Actif",
@@ -101,7 +103,7 @@ const extraFr = {
       change: "Changement",
       assignment: "Mise à disposition",
       contract: "Contrat",
-      relation: "Relation",
+      relation: "Relation", movement: "Mouvement",
     } as Record<string, string>,
   },
   cmdb: {
@@ -445,6 +447,7 @@ const extraEn: typeof extraFr = {
     filters: "Filters",
     filterStatus: "Status",
     filterPriority: "Priority",
+    assetUnavailable: "The selected asset is unavailable in this domain.",
     filterSla: "SLA",
     allStatuses: "All statuses",
     allPriorities: "All priorities",
@@ -529,6 +532,7 @@ const extraEn: typeof extraFr = {
       create: "Creation",
       update: "Update",
       delete: "Deletion",
+      escalate: "SLA escalation",
     } as Record<string, string>,
     resourceLabels: {
       asset: "Asset",
@@ -536,7 +540,7 @@ const extraEn: typeof extraFr = {
       change: "Change",
       assignment: "Assignment",
       contract: "Contract",
-      relation: "Relation",
+      relation: "Relation", movement: "Movement",
     } as Record<string, string>,
   },
   cmdb: {

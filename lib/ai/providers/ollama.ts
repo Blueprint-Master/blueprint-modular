@@ -18,7 +18,7 @@ export class OllamaProvider implements AIProvider {
   }
 
   async isAvailable() {
-    const result = await vllmClient.healthCheck();
+    const result = await vllmClient.healthCheck(this.getModelName());
     return result.available;
   }
 

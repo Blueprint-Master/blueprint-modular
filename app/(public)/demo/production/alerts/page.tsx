@@ -13,13 +13,9 @@ function parsePeriod(s: string | null): DemoPeriod {
 export default async function DemoAlertsPage({
   searchParams,
 }: {
-  searchParams?: Promise<{ period?: string }> | { period?: string };
+  searchParams?: Promise<{ period?: string }>;
 }) {
-  const raw = searchParams != null
-    ? typeof (searchParams as Promise<unknown>).then === "function"
-      ? await (searchParams as Promise<{ period?: string }>)
-      : (searchParams as { period?: string })
-    : {};
+  const raw = (await searchParams) ?? {};
   const period = parsePeriod(raw?.period ?? null);
 
   let alerts: DemoAlert[] = [];

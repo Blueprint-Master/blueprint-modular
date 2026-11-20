@@ -1,9 +1,10 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import { readResponse } from "../../../lib/read-response";
 import Link from "next/link";
-import { useParams } from "next/navigation";
-import { Panel, Button, Spinner, Badge, Metric, Divider } from "@/components/bpm";
+import { useParams, useRouter } from "next/navigation";
+import { Panel, Button, Badge, Metric, Divider } from "@/components/bpm";
 import { Markdown } from "@/components/bpm/Markdown";
 import { FicheHeader, FicheSectionCard, FicheNav, FicheSkeleton } from "@/components/fiche";
 import { useI18n } from "@/lib/i18n/LocaleProvider";
@@ -19,6 +20,7 @@ type KnowledgeArticle = {
   tags: string[];
   visibility: string;
   publishedAt: string | null;
+  canEdit: boolean;
   viewsCount: number;
   helpfulCount: number;
   notHelpfulCount: number;
@@ -35,21 +37,46 @@ export default function AssetManagerKnowledgeDetailPage() {
   const domainId = typeof params?.domainId === "string" ? params.domainId : "";
   const id = typeof params?.id === "string" ? params.id : "";
   const [article, setArticle] = useState<KnowledgeArticle | null>(null);
-  const [config, setConfig] = useState<{ asset_types?: { id: string; label: string }[] } | null>(null);
   const [loading, setLoading] = useState(true);
 
+  const router = useRouter();
+  const [helpful, setHelpful] = useState<boolean | null>(null);
+  const [busy, setBusy] = useState(false);
+  const [error, setError] = useState("");
+  const endpoint = `/api/asset-manager/knowledge/${id}`;
+
   useEffect(() => {
-    if (!domainId || !id) return;
-    Promise.all([
-      fetch(`/api/asset-manager/config/${domainId}`, { credentials: "include" }).then((r) => (r.ok ? r.json() : null)),
-      fetch(`/api/asset-manager/knowledge/${id}`, { credentials: "include" }).then((r) => (r.ok ? r.json() : null)),
-    ])
-      .then(([cfg, a]) => {
-        setConfig(cfg);
-        setArticle(a);
-      })
-      .finally(() => setLoading(false));
-  }, [domainId, id]);
+    let current = true;
+    setError(""); setLoading(true); setArticle(null);
+    async function load() {
+      const item = await fetch(endpoint).then(readResponse);
+      const counts = await fetch(endpoint + "/reader", { method: "PUT", headers: { "Content-Type": "application/json" }, body: "{}" }).then(readResponse);
+      if (current) { setArticle({ ...item, ...counts }); setHelpful(counts.helpful); }
+    }
+    load().catch(err => { if (current) setError(err.message); }).finally(() => { if (current) setLoading(false); });
+    return () => { current = false; };
+  }, [domainId, endpoint]);
+
+  async function vote(value: boolean) {
+    setBusy(true); setError("");
+    try {
+      const counts = await fetch(endpoint + "/reader", { method: "PUT", headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ helpful: helpful === value ? null : value }) }).then(readResponse);
+      setHelpful(counts.helpful);
+      setArticle(item => item && ({ ...item, ...counts }));
+    } catch (err) { setError(err instanceof Error ? err.message : String(err)); }
+    finally { setBusy(false); }
+  }
+
+  async function remove() {
+    if (!article || !window.confirm(locale === "fr" ? "Supprimer cet article ?" : "Delete this article?")) return;
+    setBusy(true); setError("");
+    try {
+      await fetch(endpoint + "?expectedUpdatedAt=" + encodeURIComponent(article.updatedAt), { method: "DELETE" }).then(readResponse);
+      router.push(`/modules/asset-manager/${domainId}/knowledge`);
+    } catch (err) { setError(err instanceof Error ? err.message : String(err)); }
+    finally { setBusy(false); }
+  }
 
   if (loading) {
     return <FicheSkeleton sections={1} withMetrics />;
@@ -58,7 +85,7 @@ export default function AssetManagerKnowledgeDetailPage() {
   if (!article) {
     return (
       <div className="doc-page">
-        <Panel variant="warning" title={tk.notFoundTitle}>{tk.notFoundDescription}</Panel>
+        <Panel variant="warning" title={tk.notFoundTitle}>{error || tk.notFoundDescription}</Panel>
         <FicheNav backLink={`/modules/asset-manager/${domainId}/knowledge`} backLabel={`← ${tk.title}`} />
       </div>
     );
@@ -94,10 +121,13 @@ export default function AssetManagerKnowledgeDetailPage() {
           <Metric label={tk.metricHelpful} value={article.helpfulCount} border={false} />
           <Metric label={tk.metricNotHelpful} value={article.notHelpfulCount} border={false} />
         </div>
-        <Link href={`/modules/asset-manager/${domainId}/knowledge/${id}/edit`}>
+        <Button size="small" variant={helpful === true ? "primary" : "outline"} disabled={busy} onClick={() => vote(true)}>{tk.metricHelpful}</Button>
+        <Button size="small" variant={helpful === false ? "primary" : "outline"} disabled={busy} onClick={() => vote(false)}>{tk.metricNotHelpful}</Button>
+        {article.canEdit && <><Link href={`/modules/asset-manager/${domainId}/knowledge/${id}/edit`}>
           <Button size="small" variant="outline">{t.common.edit}</Button>
-        </Link>
+        </Link><Button size="small" variant="outline" disabled={busy} onClick={remove}>{locale === "fr" ? "Supprimer" : "Delete"}</Button></>}
       </div>
+      {error && <p role="alert">{error}</p>}
 
       <Divider thickness={1} color="var(--bpm-border)" className="my-4" />
       <FicheSectionCard title={tk.sectionContent} className="mt-4">

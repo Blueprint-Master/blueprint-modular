@@ -1,8 +1,20 @@
 "use client";
 import React from "react";
-import dynamic from "next/dynamic";
 
-const Plot = dynamic(() => import("react-plotly.js"), { ssr: false });
+type PlotComponent = typeof import("react-plotly.js").default;
+const LazyPlot = React.lazy(async () => {
+  // Native ESM exposes the CommonJS exports object under default. Webpack
+  // exposes the component directly. Normalize both before handing it to React.
+  const module = await import("react-plotly.js");
+  const exported = module.default as PlotComponent | { default: PlotComponent };
+  return { default: typeof exported === "function" ? exported : exported.default };
+});
+
+function Plot(props: React.ComponentProps<typeof LazyPlot>) {
+  const [mounted, setMounted] = React.useState(false);
+  React.useEffect(() => setMounted(true), []);
+  return mounted ? <React.Suspense fallback={null}><LazyPlot {...props} /></React.Suspense> : null;
+}
 
 /**
  * @component bpm.plotlyChart

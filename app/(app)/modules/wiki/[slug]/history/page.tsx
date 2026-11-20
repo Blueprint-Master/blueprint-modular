@@ -31,6 +31,7 @@ export default function WikiHistoryPage() {
   const [compareId, setCompareId] = useState<string | null>(null);
   const [restoreRevId, setRestoreRevId] = useState<string | null>(null);
   const [restoreNote, setRestoreNote] = useState("");
+  const [revision, setRevision] = useState<number>();
   const [restoring, setRestoring] = useState(false);
 
   useEffect(() => {
@@ -42,6 +43,7 @@ export default function WikiHistoryPage() {
           return [];
         }
         if (!r.ok) throw new Error("Not found");
+        setRevision(Number(r.headers.get("X-Article-Revision")));
         return r.json();
       })
       .then((data) => setRevisions(Array.isArray(data) ? data : []))
@@ -87,7 +89,7 @@ export default function WikiHistoryPage() {
       const res = await fetch(`/api/wiki/${encodeURIComponent(slug)}/restore`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ revisionId: restoreRevId }),
+        body: JSON.stringify({ revisionId: restoreRevId, revision, changeNote: restoreNote }),
         credentials: "include",
       });
       if (res.ok) router.push(`/modules/wiki/${slug}`);

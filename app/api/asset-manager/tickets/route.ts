@@ -1,85 +1,59 @@
+import { readHistoryCursor, historyPage } from "@/lib/asset-manager/history-page";
 import { NextResponse } from "next/server";
-import { getSessionOrTestUser } from "@/lib/auth";
+import { getPersonalModuleSession } from "@/lib/auth";
 import { requireWriteRole } from "@/lib/asset-manager/authz";
 import { prisma } from "@/lib/prisma";
-import { generateTicketReference } from "@/lib/asset-manager/numbering";
-import { getDomainConfig } from "@/lib/asset-manager/get-domain-config";
+import { nextInventoryReference } from "@/lib/asset-manager/numbering";
+import { ticketDetails, ticketInput, ticketOptions } from "@/lib/asset-manager/ticket-input";
 
 export const dynamic = "force-dynamic";
 
 export async function GET(request: Request) {
-  const result = await getSessionOrTestUser();
+  const result = await getPersonalModuleSession();
   if (!result) return NextResponse.json({ error: "Non autorisé" }, { status: 401 });
 
   const { searchParams } = new URL(request.url);
   const domainId = searchParams.get("domainId") ?? "";
   if (!domainId) return NextResponse.json({ error: "domainId requis" }, { status: 400 });
 
+  const cursor = searchParams.get("cursor");
+  const point = cursor ? readHistoryCursor(cursor) : null;
+  if (cursor && !point) return NextResponse.json({ error: "Curseur invalide." }, { status: 400 });
   const tickets = await prisma.ticket.findMany({
-    where: { domainId },
-    orderBy: [{ openedAt: "desc" }],
-    take: 200,
+    where: { domainId, OR: point ? [{ openedAt: { lt: point.date } }, { openedAt: point.date, id: { lt: point.id } }] : undefined },
+    orderBy: [{ openedAt: "desc" }, { id: "desc" }],
+    take: 201,
     include: {
       requester: { select: { id: true, name: true, email: true } },
       assignee: { select: { id: true, name: true } },
       asset: { select: { id: true, reference: true, label: true } },
     },
   });
-  return NextResponse.json(tickets);
+  return historyPage(tickets, 200, row => row.openedAt);
 }
 
 export async function POST(request: Request) {
-  const result = await getSessionOrTestUser();
+  const result = await getPersonalModuleSession();
   if (!result) return NextResponse.json({ error: "Non autorisé" }, { status: 401 });
   const forbidden = requireWriteRole(result.user);
   if (forbidden) return forbidden;
 
-  const body = (await request.json()) as {
-    domainId: string;
-    typeId?: string;
-    title: string;
-    description: string;
-    priorityId: string;
-    categoryId: string;
-    subcategory?: string | null;
-    assetId?: string | null;
-  };
-
-  const domainId = body.domainId?.trim();
-  if (!domainId) return NextResponse.json({ error: "domainId requis" }, { status: 400 });
-  const config = getDomainConfig(domainId);
-  if (!config) return NextResponse.json({ error: "Domaine inconnu" }, { status: 400 });
-
-  const typeId = body.typeId ?? (config.ticket_types?.[0] ?? "Incident");
-  const title = body.title?.trim();
-  const description = body.description?.trim();
-  const priorityId = body.priorityId ?? config.priorities?.[0]?.id ?? "normal";
-  const categoryId = body.categoryId ?? config.ticket_categories?.[0]?.id ?? "other";
-  if (!title) return NextResponse.json({ error: "title requis" }, { status: 400 });
-  if (!description) return NextResponse.json({ error: "description requis" }, { status: 400 });
-
-  const prefix = config.numbering?.ticket?.split("-")[0] ?? "TK";
-  const reference = await generateTicketReference(domainId, prefix);
-
-  const ticket = await prisma.ticket.create({
-    data: {
-      domainId,
-      reference,
-      typeId,
-      title,
-      description,
-      status: "new",
-      priorityId,
-      categoryId,
-      subcategory: body.subcategory?.trim() || null,
-      assetId: body.assetId || null,
-      requesterId: result.user.id,
-    },
-    include: {
-      requester: { select: { id: true, name: true, email: true } },
-      assignee: { select: { id: true, name: true } },
-      asset: { select: { id: true, reference: true, label: true } },
-    },
+  const input = ticketInput.safeParse(await request.json().catch(() => null));
+  if (!input.success) return NextResponse.json({ error: "Vérifiez les champs du ticket." }, { status: 400 });
+  const data = input.data;
+  const options = ticketOptions(data.domainId, data);
+  if (!options) return NextResponse.json({ error: "Options inconnues dans ce domaine." }, { status: 400 });
+  return prisma.$transaction(async tx => {
+    if (data.assetId && !await tx.asset.count({ where: { id: data.assetId, domainId: data.domainId } }))
+      return NextResponse.json({ error: "Actif introuvable dans ce domaine." }, { status: 400 });
+    const openedAt = new Date();
+    const reference = await nextInventoryReference(tx, "Ticket", `${options.prefix}-${openedAt.getFullYear()}-`);
+    const ticket = await tx.ticket.create({ data: {
+      domainId: data.domainId, title: data.title, description: data.description, reference,
+      status: "new", typeId: options.typeId, priorityId: options.priority.id, categoryId: options.categoryId,
+      assetId: data.assetId, subcategory: data.subcategory, requesterId: result.user.id, openedAt,
+      slaDueAt: new Date(openedAt.getTime() + options.priority.sla_hours * 3_600_000),
+    }, include: ticketDetails });
+    return NextResponse.json(ticket);
   });
-  return NextResponse.json(ticket);
 }
