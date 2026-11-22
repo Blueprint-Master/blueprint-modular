@@ -6,7 +6,9 @@ import { Button } from "@/components/bpm/Button";
 import { Table, type TableColumn } from "@/components/bpm/Table";
 import { useI18n } from "@/lib/i18n/LocaleProvider";
 
-type Snapshot = { items: Record<string, unknown>[]; history: Record<string, unknown>[]; reports?: string[] };
+import { exportIntent } from "@/lib/module-workers/export-intent";
+
+type Snapshot = { intentScope?: string; items: Record<string, unknown>[]; history: Record<string, unknown>[]; reports?: string[] };
 type Module = "webhooks" | "export-planifie";
 
 export function WorkerConsole({ module }: { module: Module }) {
@@ -19,7 +21,7 @@ export function WorkerConsole({ module }: { module: Module }) {
   const [notice, setNotice] = useState("");
   const [busy, setBusy] = useState(false);
   const locked = useRef(false);
-  const keys = useRef(new Map<string, string>());
+  const pendingWrite = useRef<AbortController | null>(null);
   const pendingRead = useRef<AbortController | null>(null);
 
   const refresh = useCallback(async () => {
@@ -43,7 +45,10 @@ export function WorkerConsole({ module }: { module: Module }) {
 
   useEffect(() => {
     void refresh();
-    return () => pendingRead.current?.abort();
+    return () => {
+      pendingRead.current?.abort();
+      pendingWrite.current?.abort();
+    };
   }, [refresh]);
 
   async function mutate(command: Record<string, unknown>, success: string) {
@@ -51,23 +56,34 @@ export function WorkerConsole({ module }: { module: Module }) {
     locked.current = true;
     setBusy(true);
     setNotice("");
-    const fingerprint = JSON.stringify(command);
-    const unique = command.action === "add" || command.action === "send";
-    if (unique && !keys.current.has(fingerprint)) keys.current.set(fingerprint, crypto.randomUUID());
+    const controller = new AbortController();
+    pendingWrite.current = controller;
     try {
+      const unique = command.action === "add" || command.action === "send";
+      const scope = data?.intentScope;
+      const intent = unique ? await exportIntent(scope, command) : null;
+      if (controller.signal.aborted) return;
       const response = await fetch(endpoint, {
-        method: "POST", headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(unique ? { ...command, requestId: keys.current.get(fingerprint) } : command),
+        method: "POST",
+        headers: { "Content-Type": "application/json", ...(intent && scope ? { "X-BPM-Intent-Scope": scope } : {}) },
+        signal: controller.signal,
+        body: JSON.stringify(intent ? { ...command, requestId: intent.requestId } : command),
       });
       if (!response.ok) throw new Error((await response.json()).error);
-      keys.current.delete(fingerprint);
+      if (intent) {
+        const receipt = await response.json().catch(() => null);
+        if (controller.signal.aborted) return;
+        intent.acknowledge(receipt?.id);
+      }
       setNotice(success);
       await refresh();
     } catch (e) {
       const reason = e instanceof Error ? e.message : "unavailable";
-      if (reason === "login" || reason === "forbidden") setData(null);
+      if (controller.signal.aborted) return;
+      if (reason === "login" || reason === "forbidden" || reason === "scope") setData(null);
       setFailure(reason);
     } finally {
+      pendingWrite.current = null;
       setBusy(false);
       locked.current = false;
     }
@@ -126,6 +142,9 @@ export function WorkerConsole({ module }: { module: Module }) {
   const errors: Record<string, string> = {
     login: t("Connectez-vous pour consulter les opérations.", "Sign in to view operations."),
     forbidden: t("Cet espace est réservé aux administrateurs de l’installation.", "Installation administrators can access these operations."),
+    scope: t("Le compte ou l’installation a changé. Actualisez les opérations.", "The account or installation changed. Refresh operations."),
+    receipt: t("Confirmation de l’opération indisponible. Réessayez la même commande dans cet onglet.", "Confirmation unavailable. Retry the same command in this tab."),
+    "intent-storage": t("Le stockage de reprise de cet onglet est indisponible. Vérifiez les reçus avant de réessayer.", "Recovery storage is unavailable in this tab. Check receipts before retrying."),
     unconfigured: t("La base du worker doit être raccordée à cette installation.", "Connect the worker database to this installation."),
     invalid: t("Vérifiez les valeurs saisies et que la ligne existe toujours.", "Check your entries and that the record still exists."),
   };
@@ -152,3 +171,4 @@ export function WorkerConsole({ module }: { module: Module }) {
     </>}
   </section>;
 }
+
