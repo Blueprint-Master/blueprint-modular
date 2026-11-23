@@ -1,0 +1,93 @@
+name: Worker retry on the installed ZIP
+on:
+  pull_request:
+    branches: [codex/qualification-modular-4405e6f0]
+permissions:
+  contents: read
+jobs:
+  installed:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    strategy:
+      fail-fast: false
+      matrix:
+        candidate: [false, true]
+    env:
+      NEXT_TELEMETRY_DISABLED: '1'
+      MODULAR_EXPECTED_SHA: ${{ matrix.candidate && github.event.pull_request.head.sha || github.event.pull_request.base.sha }}
+    steps:
+      - name: Check out the regression oracle from the proposed commit
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+          persist-credentials: false
+      - name: Check out the version to install
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ env.MODULAR_EXPECTED_SHA }}
+          path: source
+          persist-credentials: false
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Package the commit and build the application outside the checkout
+        working-directory: source
+        run: |
+          npm run build:modules-bundle -- --output "$RUNNER_TEMP/release"
+          zip="$RUNNER_TEMP/release/blueprint-modules-latest.zip"
+          sha256sum "$zip"
+          unzip -q "$zip" -d "$RUNNER_TEMP/install"
+          cd "$RUNNER_TEMP/install/application"
+          test "$(cat BUILD-REVISION)" = "$MODULAR_EXPECTED_SHA"
+          npm ci --ignore-scripts --no-audit --no-fund
+          npm ci --prefix packages/core --ignore-scripts --no-audit --no-fund
+          npx --no-install prisma generate
+          npm run build --prefix packages/core
+          npm run build:standalone
+      - name: Install Chromium test driver
+        run: |
+          python3 -m venv "$RUNNER_TEMP/worker-browser"
+          "$RUNNER_TEMP/worker-browser/bin/pip" install playwright==1.56.0
+      - name: Restore two synthetic PostgreSQL identity tables and exercise the worker console
+        env:
+          CANDIDATE: ${{ matrix.candidate }}
+        run: |
+          set -euo pipefail
+          export PATH="/usr/lib/postgresql/16/bin:$PATH"
+          fixture=$(mktemp -d)
+          export PGHOST=127.0.0.1 PGUSER=fixture PGDATABASE=postgres PGCONNECT_TIMEOUT=5
+          PGPORT=$(node -e 'const s=require("node:net").createServer().listen(0,"127.0.0.1",()=>{console.log(s.address().port);s.close()})')
+          PGPASSWORD=$(openssl rand -hex 32)
+          export PGPORT PGPASSWORD
+          echo "::add-mask::$PGPASSWORD"
+          (umask 077 && echo "$PGPASSWORD" > "$fixture/pw")
+          initdb -D "$fixture/cluster" -U "$PGUSER" --pwfile="$fixture/pw" -A scram-sha-256 --encoding=UTF8 --no-locale >/dev/null
+          rm "$fixture/pw"
+          pg_ctl -D "$fixture/cluster" -l "$fixture/postgres.log" -o "-h 127.0.0.1 -p $PGPORT -c unix_socket_directories=''" -w start
+          trap 'pg_ctl -D "$fixture/cluster" -m fast -w stop >/dev/null' EXIT
+          psql -Xq -v ON_ERROR_STOP=1 -c 'CREATE SCHEMA worker_identity' -c 'SET search_path TO worker_identity' -f tests/fixtures/worker-console-identity.sql
+          pg_dump --schema-only --schema=worker_identity --no-owner --no-privileges -Fc -f "$fixture/identity.dump"
+          createdb worker_browser
+          pg_restore --exit-on-error --no-owner --no-privileges -d worker_browser "$fixture/identity.dump"
+          test "$(psql -d worker_browser -XqAtc "select count(*) from pg_tables where schemaname='worker_identity'")" = 2
+          export MODULAR_TEST_DATABASE_URL="postgresql://fixture:$PGPASSWORD@127.0.0.1:$PGPORT/worker_browser?schema=worker_identity"
+          export MODULAR_TEST_CHROMIUM="$(command -v google-chrome)"
+          recipe=("$RUNNER_TEMP/worker-browser/bin/python" scripts/verify-worker-console.py "$RUNNER_TEMP/install/application")
+          if [[ "$CANDIDATE" == "true" ]]; then
+            "${recipe[@]}"
+          else
+            if "${recipe[@]}" > "$fixture/red.log" 2>&1; then
+              echo 'The baseline unexpectedly passed.' >&2
+              exit 1
+            fi
+            tail -30 "$fixture/red.log"
+            grep -F 'Intent replay: add=2, send=2, fresh_add=1, fresh_send=1' "$fixture/red.log"
+            grep -F 'Duplicate effects after reload' "$fixture/red.log"
+          fi
+      - name: Retain the qualified candidate ZIP
+        if: matrix.candidate
+        uses: actions/upload-artifact@v4
+        with:
+          name: worker-retry-${{ env.MODULAR_EXPECTED_SHA }}
+          path: ${{ runner.temp }}/release/blueprint-modules-v*.zip
+          if-no-files-found: error
