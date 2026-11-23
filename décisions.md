@@ -1,3 +1,9 @@
+## 23 novembre 2026 · Précision des valeurs sous les courbes et comparaisons
+
+La liste des points affichait les nombres avec trois décimales au maximum. Une mesure de 0,00042 y apparaissait comme 0 et deux cotations distinctes, 1,2344 et 1,23449, devenaient toutes deux 1,234. Les lecteurs de contexte conservaient la valeur fournie. Pour les graphiques, dont le contrat ne prévoit aucun arrondi demandé, utiliser la précision du nombre JavaScript et conserver les séparateurs de la locale. Au-delà de vingt-huit caractères, préférer la notation scientifique localisée lorsqu’elle raccourcit le nombre. Le libellé représente la valeur reçue, sans prétendre décrire la précision de l’instrument.
+
+La recette `scripts/verify-artifact-chart-values.py` installe ses vérifications sur le ZIP identifié par BUILD-REVISION. Elle compare dix libellés de courbe et dix de comparaison dans trois langues, sur le HTML hors ligne et la vue montée. Le témoin doit reproduire exactement les trente-six valeurs arrondies sur soixante par rendu. Les deux lecteurs de contexte sont vérifiés séparément. La qualification générale des modules et la préproduction distante restent à attester sur une base déjà restaurée.
+
 
 ## 2026-11-19 — Artefacts HTML pour Claude et ChatGPT
 
