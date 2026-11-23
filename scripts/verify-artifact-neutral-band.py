@@ -54,7 +54,7 @@ def run(app, baseline, chrome):
         page.add_script_tag(path=str(bundles / "bpm.min.js"))
         page.evaluate("spec => {window.view = BlueprintModular.mount(document.querySelector('#test'), spec)}", spec)
         check_screen()
-        observations["view.context"] = page.evaluate("view.context().observations")
+        observations["view.context"] = page.evaluate("JSON.parse(JSON.stringify(view.context().observations))")
         browser.close()
     for name, records in observations.items():
         assert len(records) == len(wanted)
