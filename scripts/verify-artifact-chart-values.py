@@ -1,4 +1,5 @@
 """Verify chart numbers on an installed Modular archive, in both renderers and readers."""
+from decimal import Decimal
 import argparse
 import json
 from pathlib import Path
@@ -17,15 +18,28 @@ POINTS = [
     ("zero", 0),
     ("ordinary", 12.5),
     ("grouped", 1234.5),
+    ("subnormal", 5e-324),
+    ("large", 1e30),
 ]
-EXACT = ["0.00042", "-0.00037", "1.2344", "1.23449", "0.0000001", "0", "12.5", "1234.5"]
-LEGACY = ["0", "-0", "1.234", "1.234", "0", "0", "12.5", "1234.5"]
+EXACT = ["0.00042", "-0.00037", "1.2344", "1.23449", "0.0000001", "0", "12.5", "1234.5", "5E-324", "1E30"]
+LEGACY = ["0", "-0", "1.234", "1.234", "0", "0", "12.5", "1234.5", "0", str(10**30)]
 
 
 def localize(values, locale):
     decimal, group = {"en-US": (".", ","), "fr-FR": (",", "\u202f"), "de-DE": (",", ".")}[locale]
-    return [v.replace(".", decimal).replace("1234", "1" + group + "234") if v == "1234.5"
-            else v.replace(".", decimal) for v in values]
+    result = []
+    for value in values:
+        mantissa, exponent_marker, exponent = value.partition("E")
+        sign = "-" if mantissa.startswith("-") else ""
+        integer, _, fraction = mantissa.lstrip("-").partition(".")
+        grouped = f"{int(integer):,}".replace(",", group)
+        result.append(sign + grouped + (decimal + fraction if fraction else "") + exponent_marker + exponent)
+    return result
+
+
+def quantity(text, locale):
+    decimal, group = {"en-US": (".", ","), "fr-FR": (",", "\u202f"), "de-DE": (",", ".")}[locale]
+    return Decimal(text.replace(group, "").replace(decimal, "."))
 
 
 def verify(application, chrome, baseline):
@@ -59,7 +73,7 @@ def verify(application, chrome, baseline):
                 assert page.locator("figure dt").all_text_contents() == [k for k, _ in POINTS] * 2
                 actual = values.all_text_contents()
                 exact = localize(EXACT, locale) * 2
-                errors[mode] += sum(a != b for a, b in zip(actual, exact))
+                errors[mode] += sum(quantity(a, locale) != quantity(b, locale) for a, b in zip(actual, exact))
                 assert actual == (localize(LEGACY, locale) * 2 if baseline else exact), (mode, locale, actual)
             assert page.evaluate("view.context().observations.map(o => o.value)") == numeric
             rows += len(numeric)
@@ -67,7 +81,7 @@ def verify(application, chrome, baseline):
         browser.close()
     for mode, count in errors.items():
         print(f"{mode}: {count}/{rows} labels differ from the source quantity")
-        assert count == (30 if baseline else 0)
+        assert count == (36 if baseline else 0)
     print(f"Both readers returned {rows}/{rows} exact observations.")
 
 
