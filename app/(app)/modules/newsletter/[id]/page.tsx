@@ -100,10 +100,10 @@ export default function NewsletterArticlePage() {
     );
   }
 
-  const dateStr = article.publishedAt || article.createdAt;
+  const dateStr = article.publishedAt;
   const formattedDate = dateStr
     ? new Date(dateStr).toLocaleDateString(str.dateLocale, { dateStyle: "long" })
-    : "—";
+    : str.noPublicationDate;
 
   return (
     <div className="doc-page">
