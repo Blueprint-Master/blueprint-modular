@@ -8,7 +8,7 @@ function decimalPlaces(value: number) {
 }
 
 export function Dashboard({ title, blocks, locale, period, source }: ArtifactSpec) {
-  const numberFormat = new Intl.NumberFormat(locale);
+  const numberFormat = new Intl.NumberFormat(locale, { maximumSignificantDigits: 21 });
   return <main className="bpm-artifact" lang={locale}><h1>{title}</h1>{(period || source) && <p>{[period, source].filter(Boolean).join(" · ")}</p>}<div className="blocks">{blocks.map((block, i) => {
     switch (block.kind) {
       case "indicator": return <section className="indicator" key={i}>{bpm.metric({
