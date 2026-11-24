@@ -56,3 +56,29 @@ jobs:
         with:
           name: artifact-chart-values-${{ github.event.pull_request.head.sha }}
           path: ${{ runner.temp }}/dist/blueprint-modules-v*.zip
+      - name: Build the standalone from the same extracted archive
+        working-directory: ${{ runner.temp }}/unpacked/application
+        env:
+          NEXT_TELEMETRY_DISABLED: '1'
+        run: |
+          npm ci --prefix packages/core --ignore-scripts --no-audit --no-fund
+          npx --no-install prisma generate
+          npm run build --prefix packages/core
+          npm run build -- --webpack
+          bash deploy/copy-standalone-assets.sh
+      - name: Check the Wiki, commit and artifact readers on the installed application
+        env:
+          MODULAR_EXPECTED_SHA: ${{ matrix.revision == 'candidate' && github.event.pull_request.head.sha || github.event.pull_request.base.sha }}
+        run: |
+          app="$RUNNER_TEMP/unpacked/application"
+          browser="$(command -v google-chrome)"
+          MODULAR_TEST_CHROMIUM="$browser" "$RUNNER_TEMP/qa/bin/python" scripts/verify-wiki-list.py "$app" candidate
+          "$RUNNER_TEMP/qa/bin/python" scripts/verify-artifact-neutral-band.py "$app" --chrome "$browser"
+      - name: Preserve the installed build for local preproduction
+        working-directory: ${{ runner.temp }}/unpacked/application
+        run: tar --exclude='.env' --exclude='.env.*' -czf "$RUNNER_TEMP/standalone.tar.gz" BUILD-REVISION package.json .next/standalone
+      - uses: actions/upload-artifact@v4
+        with:
+          name: standalone-${{ matrix.revision }}-${{ matrix.revision == 'candidate' && github.event.pull_request.head.sha || github.event.pull_request.base.sha }}
+          path: ${{ runner.temp }}/standalone.tar.gz
+          if-no-files-found: error
