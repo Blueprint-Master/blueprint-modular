@@ -1,2 +1,0 @@
-# BPM : installer le package en mode éditable (depuis la racine du repo)
--e .
