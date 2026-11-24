@@ -1,0 +1,61 @@
+name: Wiki list on the installed archive
+on:
+  pull_request:
+    branches: [codex/qualification-wiki-4405e6f0]
+    paths:
+      - 'app/(app)/modules/wiki/**'
+      - 'scripts/verify-wiki-list.py'
+      - '.github/workflows/wiki-installed-list.yml'
+permissions:
+  contents: read
+jobs:
+  installed:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 35
+    strategy:
+      fail-fast: false
+      matrix:
+        mode: [baseline, candidate]
+    env:
+      MODULAR_EXPECTED_SHA: ${{ matrix.mode == 'candidate' && github.event.pull_request.head.sha || github.event.pull_request.base.sha }}
+      NEXT_TELEMETRY_DISABLED: '1'
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+          persist-credentials: false
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ env.MODULAR_EXPECTED_SHA }}
+          path: source
+          persist-credentials: false
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Build the installed standalone and check the served version
+        working-directory: source
+        run: |
+          set -euo pipefail
+          python scripts/build-modules-bundle.py --output "$RUNNER_TEMP/release"
+          unzip -q "$RUNNER_TEMP/release/blueprint-modules-latest.zip" -d "$RUNNER_TEMP/install"
+          cd "$RUNNER_TEMP/install/application"
+          test "$(cat BUILD-REVISION)" = "$MODULAR_EXPECTED_SHA"
+          npm ci --ignore-scripts --no-audit --no-fund
+          npm ci --prefix packages/core --ignore-scripts --no-audit --no-fund
+          npx --no-install prisma generate
+          npm run build --prefix packages/core
+          node scripts/build-artifact.mjs
+          npm run build -- --webpack
+          bash deploy/copy-standalone-assets.sh
+      - name: Exercise both audiences in Chromium
+        run: |
+          set -euo pipefail
+          python -m venv "$RUNNER_TEMP/wiki-browser"
+          "$RUNNER_TEMP/wiki-browser/bin/pip" install playwright==1.56.0
+          MODULAR_TEST_CHROMIUM="$(command -v google-chrome)" "$RUNNER_TEMP/wiki-browser/bin/python" scripts/verify-wiki-list.py "$RUNNER_TEMP/install/application" "${{ matrix.mode }}"
+      - uses: actions/upload-artifact@v4
+        if: matrix.mode == 'candidate'
+        with:
+          name: wiki-list-${{ env.MODULAR_EXPECTED_SHA }}
+          path: ${{ runner.temp }}/release/blueprint-modules-v*.zip
+          if-no-files-found: error

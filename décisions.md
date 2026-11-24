@@ -1,3 +1,9 @@
+## 24 novembre 2026 · Wiki, échec de lecture de la liste
+
+Une réponse vide valide conserve l’état vide. Une erreur HTTP, une réponse hors contrat ou une panne réseau déclenche une alerte avec reprise manuelle, en français et en anglais. Les articles d’accueil et les articles locaux de l’invité restent consultables quand le serveur est indisponible. Un changement de session ou de filtre interrompt la requête devenue obsolète.
+
+Le 24 novembre, sur le ZIP de qualification intégré `35989fd1`, les six pannes du panel Chromium ont été silencieuses (trois pannes, invité et session synthétique). Les trois pannes de la session synthétique affichaient un wiki vide. Les quatre témoins (liste renseignée et liste vide pour chaque audience) ont rendu les données attendues. La recette `python scripts/verify-wiki-list.py "$APP" candidate` contrôle la version du standalone, ces dix lectures et les six reprises. Le transport des listes et la session sont synthétiques. Les deux recettes avec PostgreSQL et la préproduction distante restent distinctes.
+
 
 ## 2026-11-19 — Artefacts HTML pour Claude et ChatGPT
 
