@@ -7,7 +7,7 @@ export function describeArtifact(spec: ArtifactSpec) {
     if (!("context" in block) || !block.context) return [];
     const { reference, direction } = block.context;
     if (reference === undefined || direction === undefined) return [];
-    const baseline = { reference, direction };
+    const baseline = { reference, direction, neutralBand: block.context.neutralBand };
     const observation = (label: string, value: number) => ({
       block: index, component: componentsForBlock[block.kind],
       label, value, unit: block.unit, ...block.context,
