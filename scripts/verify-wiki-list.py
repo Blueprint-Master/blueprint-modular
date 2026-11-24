@@ -1,19 +1,18 @@
 """Check wiki lists on an installed standalone using deterministic local HTTP responses."""
-import json, os, secrets, socket, subprocess, sys, time
+import os, secrets, socket, subprocess, sys, time
 from pathlib import Path
 from urllib.request import build_opener, ProxyHandler
-from playwright.sync_api import sync_playwright
+from playwright.sync_api import sync_playwright, expect
 from urllib.parse import urlsplit, parse_qs
-from playwright.sync_api import expect
 import json
 
-def measure(browser,origin,expectation):
+def measure(browser,origin,expectation,width):
     rows=[]
     statuses=['empty','populated','503','nonlist','network']
     for audience in ['guest','member']:
         assert expectation in ('baseline','candidate')
         for scenario in statuses:
-            ctx=browser.new_context(locale='fr-FR',timezone_id='Europe/Paris',service_workers='block')
+            ctx=browser.new_context(viewport={'width':width,'height':800},locale='fr-FR',timezone_id='Europe/Paris',service_workers='block')
             observed=[]
             recovered=False
             def handler(route):
@@ -47,7 +46,7 @@ def measure(browser,origin,expectation):
             if scenario in ('503','nonlist','network'):
                 assert alert==(expectation=='candidate'),(audience,scenario,body)
                 if expectation=='candidate':assert local if audience=='guest' else not empty
-            rows.append(dict(audience=audience,case=scenario,serverArticleVisible=remote,localFAQVisible=local,emptyWikiVisible=empty,readFailureAnnounced=alert))
+            rows.append(dict(width=width,audience=audience,case=scenario,serverArticleVisible=remote,localFAQVisible=local,emptyWikiVisible=empty,readFailureAnnounced=alert))
             if expectation=='candidate' and scenario in ('503','network','nonlist'):
                 recovered=True
                 page.get_by_role('button',name='Réessayer',exact=True).click()
@@ -80,6 +79,7 @@ with open(os.devnull,'w') as log:
         with sync_playwright() as pw:
             browser=pw.chromium.launch(executable_path=os.environ['MODULAR_TEST_CHROMIUM'])
             try:
-                measure(browser,origin,sys.argv[2])
+                for width in (1280,390):
+                    measure(browser,origin,sys.argv[2],width)
             finally:browser.close()
     finally:proc.terminate();proc.wait(timeout=10)

@@ -59,3 +59,15 @@ jobs:
           name: wiki-list-${{ env.MODULAR_EXPECTED_SHA }}
           path: ${{ runner.temp }}/release/blueprint-modules-v*.zip
           if-no-files-found: error
+      - name: Keep the same standalone for the local preproduction check
+        if: matrix.mode == 'candidate'
+        working-directory: ${{ runner.temp }}/install/application
+        run: |
+          set -euo pipefail
+          tar --exclude='.env' --exclude='.env.*' -czf "$RUNNER_TEMP/wiki-standalone.tar.gz" BUILD-REVISION package.json .next/standalone
+      - uses: actions/upload-artifact@v4
+        if: matrix.mode == 'candidate'
+        with:
+          name: wiki-standalone-${{ env.MODULAR_EXPECTED_SHA }}
+          path: ${{ runner.temp }}/wiki-standalone.tar.gz
+          if-no-files-found: error

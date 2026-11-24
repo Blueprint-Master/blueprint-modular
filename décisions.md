@@ -4,6 +4,8 @@ Une réponse vide valide conserve l’état vide. Une erreur HTTP, une réponse 
 
 Le 24 novembre, sur le ZIP de qualification intégré `35989fd1`, les six pannes du panel Chromium ont été silencieuses (trois pannes, invité et session synthétique). Les trois pannes de la session synthétique affichaient un wiki vide. Les quatre témoins (liste renseignée et liste vide pour chaque audience) ont rendu les données attendues. La recette `python scripts/verify-wiki-list.py "$APP" candidate` contrôle la version du standalone, ces dix lectures et les six reprises. Le transport des listes et la session sont synthétiques. Les deux recettes avec PostgreSQL et la préproduction distante restent distinctes.
 
+Sur le premier candidat `acff46d8`, la CI 45338673557 a rejoué le témoin de master. Dans le candidat installé, l’alerte était présente mais le champ de recherche de l’en-tête interceptait le clic sur « Réessayer ». La commande de reprise est désormais dans l’en-tête. La recette clique directement sur le bouton, à 1 280 et 390 pixels.
+
 
 ## 2026-11-19 — Artefacts HTML pour Claude et ChatGPT
 

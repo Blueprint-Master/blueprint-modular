@@ -394,16 +394,16 @@ export default function WikiPage() {
           </div>
         )}
         </div>
-      </div>
-      <div className="wiki-body">
       {readFailed && (
-        <div role="alert" className="wiki-read-error">
+        <div role="alert" className="flex flex-wrap items-center gap-2 py-2">
           <p>{t.list.readUnavailable}</p>
           <Button type="button" variant="outline" size="small" onClick={() => setAttempt(count => count + 1)}>
             {t.list.retry}
           </Button>
         </div>
       )}
+      </div>
+      <div className="wiki-body">
       {loading || sessionStatus === "loading" ? (
         <div className="wiki-loading flex flex-col gap-4">
           {[1, 2, 3, 4, 5].map((i) => (
