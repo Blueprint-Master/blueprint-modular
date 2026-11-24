@@ -6,6 +6,8 @@ Le 24 novembre, sur le ZIP de qualification intégré `35989fd1`, les six pannes
 
 Sur le premier candidat `acff46d8`, la CI 45338673557 a rejoué le témoin de master. Dans le candidat installé, l’alerte était présente mais le champ de recherche de l’en-tête interceptait le clic sur « Réessayer ». La commande de reprise est désormais dans l’en-tête. La recette clique directement sur le bouton, à 1 280 et 390 pixels.
 
+La CI [45339422256](https://github.com/Blueprint-Master/blueprint-modular/actions/runs/45339422256) a compilé les ZIP de master `4405e6f0` et du candidat `3277e3d5` puis a exercé chaque standalone dans Chromium. Sur 12 pannes par version, elle a mesuré 0/12 puis 12/12 alertes, 6/6 puis 0/6 faux états vides côté membre, 12/12 reprises par clic sur le candidat, et 8/8 témoins conformes par version. La préproduction locale a rejoué les 20 cas sur le standalone issu de cette CI. Le ZIP candidat a le SHA-256 `1824446bef80a24af16e7c22aa66290c8965306e61a83ff22f4b10f6a5ef13f9`. Avec l’API Wiki réelle et la base déconnectée, l’invité a obtenu HTTP 500 à l’ouverture et au clic de reprise pour les deux largeurs ; l’alerte et la FAQ locale étaient visibles dans les deux cas. La commande de recette du candidat couvre aussi cette panne réelle. La préproduction distante répondait HTTP 503 sans SHA. Les deux recettes globales de session, d’écriture et de persistance attendent une base de qualification isolée déjà restaurée au schéma de #277. Le choix de poursuivre vers un déploiement reste en attente.
+
 
 ## 2026-11-19 — Artefacts HTML pour Claude et ChatGPT
 

@@ -56,6 +56,37 @@ def measure(browser,origin,expectation,width):
             ctx.close()
     print(json.dumps(rows,ensure_ascii=False,indent=2))
 
+def verify_guest_without_database(browser, origin, width):
+    context = browser.new_context(
+        locale="fr-FR", viewport={"width": width, "height": 800}, service_workers="block"
+    )
+    try:
+        def local_reads(route):
+            if route.request.url.startswith(origin + "/") and route.request.method == "GET":
+                return route.continue_()
+            return route.abort()
+
+        def wiki_response(response):
+            return urlsplit(response.url).path == "/api/wiki"
+
+        context.route("**/*", local_reads)
+        page = context.new_page()
+        statuses = []
+        page.on("response", lambda response: statuses.append(response.status) if wiki_response(response) else None)
+        page.goto(origin + "/modules/wiki", wait_until="networkidle")
+        alert = page.locator(".wiki-page [role=alert]")
+        expect(alert).to_contain_text("Les articles du serveur sont indisponibles")
+        expect(page.locator(".wiki-page").get_by_text("FAQ", exact=True).first).to_be_visible()
+        before = len(statuses)
+        with page.expect_response(wiki_response):
+            page.get_by_role("button", name="Réessayer", exact=True).click()
+        expect(alert).to_be_visible()
+        assert before >= 1 and len(statuses) > before and all(500 <= status < 600 for status in statuses), statuses
+        print(json.dumps({"width": width, "actualWikiHTTP": statuses, "guestFAQVisible": True, "alertVisible": True}))
+    finally:
+        context.close()
+
+
 app=Path(sys.argv[1]).resolve()
 with socket.socket() as reserve:
     reserve.bind(('127.0.0.1',0))
@@ -81,5 +112,7 @@ with open(os.devnull,'w') as log:
             try:
                 for width in (1280,390):
                     measure(browser,origin,sys.argv[2],width)
+                    if sys.argv[2] == "candidate":
+                        verify_guest_without_database(browser, origin, width)
             finally:browser.close()
     finally:proc.terminate();proc.wait(timeout=10)
