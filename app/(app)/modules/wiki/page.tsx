@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useCallback, useRef } from "react";
+import { useState, useEffect, useRef } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useSession } from "next-auth/react";
@@ -116,9 +116,11 @@ export default function WikiPage() {
   const router = useRouter();
   const { locale } = useI18n();
   const t = STR[locale];
-  const { data: session } = useSession();
+  const { data: session, status: sessionStatus } = useSession();
   const [articles, setArticles] = useState<WikiArticle[]>([]);
   const [search, setSearch] = useState("");
+  const [readFailed, setReadFailed] = useState(false);
+  const [attempt, setAttempt] = useState(0);
   const [loading, setLoading] = useState(true);
   const [selectedParent, setSelectedParent] = useState<string | null>(null);
   const [expandedIds, setExpandedIds] = useState<Set<string>>(new Set());
@@ -161,43 +163,42 @@ export default function WikiPage() {
     setPage(1);
   };
 
-  const fetchArticles = useCallback(() => {
-    setLoading(true);
-    if (!session) {
-      const params = new URLSearchParams();
-      params.set("status", "published");
-      if (search) params.set("search", search);
-      if (tagFilter) params.set("tag", tagFilter);
-      params.set("sortBy", sortBy);
-      params.set("sortOrder", sortOrder);
-      params.set("page", String(page));
-      fetch(`/api/wiki?${params.toString()}`, { credentials: "include" })
-        .then((r) => (r.ok ? r.json() : []))
-        .then((data) => {
-          const fromApi = Array.isArray(data) ? data : [];
-          const guest = getGuestWikiArticles();
-          const guestSlugs = new Set(guest.map((a) => a.slug));
-          const fromApiFiltered = fromApi.filter((a: { slug: string }) => !guestSlugs.has(a.slug));
-          setArticles([...guest, ...fromApiFiltered]);
-        })
-        .catch(() => setArticles(getGuestWikiArticles()))
-        .finally(() => setLoading(false));
-      return;
-    }
-    const params = new URLSearchParams();
+  useEffect(() => {
+    if (sessionStatus === "loading") return;
+    const controller = new AbortController();
+    const guest = !session;
+    const params = new URLSearchParams({ sortBy, sortOrder, page: String(page) });
+    if (guest) params.set("status", "published");
+    else if (statusFilter) params.set("status", statusFilter);
     if (search) params.set("search", search);
     if (tagFilter) params.set("tag", tagFilter);
-    if (statusFilter) params.set("status", statusFilter);
-    params.set("sortBy", sortBy);
-    params.set("sortOrder", sortOrder);
-    params.set("page", String(page));
-    const url = `/api/wiki?${params.toString()}`;
-    fetch(url, { credentials: "include" })
-      .then((r) => (r.ok ? r.json() : []))
-      .then((data) => setArticles(Array.isArray(data) ? data : []))
-      .catch(() => setArticles([]))
-      .finally(() => setLoading(false));
-  }, [search, tagFilter, statusFilter, sortBy, sortOrder, page, session]);
+    setLoading(true);
+    setReadFailed(false);
+    setArticles([]);
+
+    async function load() {
+      const local = guest ? getGuestWikiArticles() : [];
+      try {
+        const response = await fetch(`/api/wiki?${params}`, { credentials: "include", signal: controller.signal });
+        if (!response.ok) throw new Error("Wiki list unavailable");
+        const rows: unknown = await response.json();
+        if (!Array.isArray(rows) || !rows.every(article => article && typeof article.slug === "string" && typeof article.title === "string")) {
+          throw new Error("Invalid Wiki list");
+        }
+        if (controller.signal.aborted) return;
+        const localSlugs = new Set(local.map(article => article.slug));
+        setArticles([...local, ...rows.filter(article => !localSlugs.has(article.slug))]);
+      } catch {
+        if (controller.signal.aborted) return;
+        setArticles(local);
+        setReadFailed(true);
+      } finally {
+        if (!controller.signal.aborted) setLoading(false);
+      }
+    }
+    void load();
+    return () => controller.abort();
+  }, [search, tagFilter, statusFilter, sortBy, sortOrder, page, session, sessionStatus, attempt]);
 
   useEffect(() => {
     fetch("/api/wiki/tags", { credentials: "include" })
@@ -205,10 +206,6 @@ export default function WikiPage() {
       .then((data) => setAllTags(Array.isArray(data) ? data : []))
       .catch(() => setAllTags([]));
   }, []);
-
-  useEffect(() => {
-    fetchArticles();
-  }, [fetchArticles]);
 
   const toggleSelect = (slug: string) => {
     setSelectedSlugs((prev) => {
@@ -397,9 +394,17 @@ export default function WikiPage() {
           </div>
         )}
         </div>
+      {readFailed && (
+        <div role="alert" className="flex flex-wrap items-center gap-2 py-2">
+          <p>{t.list.readUnavailable}</p>
+          <Button type="button" variant="outline" size="small" onClick={() => setAttempt(count => count + 1)}>
+            {t.list.retry}
+          </Button>
+        </div>
+      )}
       </div>
       <div className="wiki-body">
-      {loading ? (
+      {loading || sessionStatus === "loading" ? (
         <div className="wiki-loading flex flex-col gap-4">
           {[1, 2, 3, 4, 5].map((i) => (
             <div key={i} className="wiki-card flex flex-col gap-2 p-4 rounded border animate-pulse" style={{ borderColor: "var(--bpm-border)", background: "var(--bpm-bg-secondary)" }}>
@@ -409,7 +414,7 @@ export default function WikiPage() {
             </div>
           ))}
         </div>
-      ) : articles.length === 0 && !hasActiveFilters ? (
+      ) : readFailed && (articles.length === 0 || noResultsForFilters) ? null : articles.length === 0 && !hasActiveFilters ? (
         <div className="wiki-empty text-center py-12">
           <p className="text-lg" style={{ color: "var(--bpm-text-primary)" }}>{t.list.emptyWiki}</p>
           <Link href="/modules/wiki/new" className="inline-block mt-4">
