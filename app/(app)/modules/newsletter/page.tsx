@@ -100,9 +100,8 @@ export default function NewsletterPage() {
     {
       key: "publishedAt",
       label: str.colPublishedAt,
-      render: (val: unknown, row: Record<string, unknown>) => {
-        const d = row.publishedAt ?? row.createdAt;
-        if (!d) return "—";
+      render: (d: unknown) => {
+        if (!d) return str.noPublicationDate;
         try {
           return new Date(String(d)).toLocaleDateString(str.dateLocale, { dateStyle: "short" });
         } catch {
@@ -172,7 +171,6 @@ export default function NewsletterPage() {
     title: a.title,
     revision: a.revision,
     publishedAt: a.publishedAt,
-    createdAt: a.createdAt,
     archived: a.archived,
   }));
 
