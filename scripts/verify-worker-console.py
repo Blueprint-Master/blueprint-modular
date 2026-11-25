@@ -1,4 +1,4 @@
-"""Run against an installed standalone and a disposable, migrated MODULAR_TEST_DATABASE_URL."""
+"""Run against an installed standalone and a disposable, initialized MODULAR_TEST_DATABASE_URL."""
 from contextlib import contextmanager
 from http.server import ThreadingHTTPServer
 import json
@@ -13,6 +13,7 @@ import sys
 import tempfile
 import threading
 import time
+import uuid
 from unittest.mock import patch
 
 from playwright.sync_api import expect, sync_playwright
@@ -53,10 +54,68 @@ def app_server(env, request, origin):
             time.sleep(0.1)
         else:
             raise RuntimeError("Standalone did not start")
+        health = request.get(origin + "/api/health").json()
+        revision = (APP / "BUILD-REVISION").read_text().strip()
+        assert health["sourceCommit"] == revision, "Served commit differs from the installed archive"
+        if os.environ.get("MODULAR_EXPECTED_SHA"):
+            assert revision == os.environ["MODULAR_EXPECTED_SHA"], "Unexpected qualification commit"
+        print(f"Worker console archive: {revision}", flush=True)
         yield
     finally:
         server.terminate()
         server.wait(timeout=15)
+
+
+def retry_after_lost_response(page, api, action, submit, reload_screen):
+    """Commit the first POST, lose its acknowledgement, then retry after a page navigation."""
+    ids = []
+    receipts = []
+
+    def intercept(route):
+        if route.request.method != "POST" or route.request.post_data_json.get("action") != action:
+            route.continue_()
+            return
+        ids.append(route.request.post_data_json["requestId"])
+        response = route.fetch()
+        try:
+            assert response.ok, f"{action}: unexpected HTTP {response.status}"
+            receipts.append(response.json()["id"])
+            if len(receipts) == 1:
+                route.abort("failed")
+            else:
+                route.fulfill(response=response)
+        finally:
+            response.dispose()
+
+    page.route(api, intercept)
+    try:
+        submit()
+        expect(page.get_by_role("alert")).to_be_visible()
+        reload_screen()
+        submit()
+        expect(page.get_by_role("status").filter(has_text="enregistrée" if action == "add" else "en file")).to_be_visible()
+    finally:
+        page.unroute(api, intercept)
+    assert len(ids) == 2, f"{action}: expected exactly two POST requests"
+    return len(set(ids)), len(set(receipts))
+
+
+def concurrent_command(page, endpoint, command):
+    """Two HTTP connections submit the same logical command before either acknowledges it."""
+    results = page.evaluate("""async ({ endpoint, command }) => {
+        const post = async () => {
+            const response = await fetch(endpoint, {
+                method: "POST", headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(command)
+            });
+            return { status: response.status, receipt: await response.json() };
+        };
+        return await Promise.all([post(), post()]);
+    }""", {"endpoint": endpoint, "command": command})
+    assert [r["status"] for r in results] == [200, 200], (command["action"], results)
+    ids = [r["receipt"]["id"] for r in results]
+    assert ids[0] == ids[1] and ids[0], (command["action"], ids)
+    return ids[0]
 
 
 def verify(tmp):
@@ -95,7 +154,7 @@ def verify(tmp):
                               BPM_SMTP_USER="", BPM_SMTP_PORT=str(smtp.server_address[1]))
             browser = pw.chromium.launch(executable_path=os.environ.get("MODULAR_TEST_CHROMIUM"),
                 args=json.loads(os.environ.get("MODULAR_TEST_CHROMIUM_ARGS", '["--no-sandbox"]')))
-            page = browser.new_page(locale="fr-FR", viewport={"width": 390, "height": 844})
+            page = browser.new_page(locale="fr-FR", viewport={"width": 390, "height": 844}, service_workers="block")
             request = page.context.request
             def operations(module):
                 page.goto(origin + "/modules/" + module)
@@ -140,9 +199,62 @@ def verify(tmp):
                 operations("export-planifie")
                 expect(page.get_by_role("cell", name="Accepté par le relais SMTP")).to_be_visible()
                 expect(page.get_by_role("cell", name="finance@example.test", exact=True)).to_have_count(2)
-                page.get_by_role("button", name="Envoyer maintenant").click()
-                expect(page.get_by_role("cell", name="En attente", exact=True)).to_be_visible()
-                assert schedules.execute("SELECT count(*) FROM run").fetchone()[0] == 2
+                def send():
+                    page.get_by_role("button", name="Envoyer maintenant").click()
+
+                def tick_manual():
+                    with patch.dict(os.environ, worker_env):
+                        exports.tick(schedules, lambda r, f: exports.report_file(tmp, r, f), exports.smtp_sender())
+
+                send_keys, send_receipts = retry_after_lost_response(page, api + "export-planifie", "send", send,
+                                                                      lambda: operations("export-planifie"))
+                tick_manual()
+                send_effects = len(smtp.messages) - 1  # Exclude the confirmed scheduled delivery.
+                messages_before = len(smtp.messages)
+                # A separate deliberate submission of the same command should always create one fresh send.
+                with page.expect_response(lambda r: r.url == api + "export-planifie" and r.request.method == "POST") as fresh:
+                    send()
+                assert fresh.value.ok
+                tick_manual()
+                fresh_sends = len(smtp.messages) - messages_before
+
+                def plan():
+                    page.get_by_label("Destinataires", exact=False).fill("retry@example.test")
+                    page.get_by_role("button", name="Planifier", exact=True).click()
+
+                def plans():
+                    return schedules.execute("SELECT count(*) FROM schedule").fetchone()[0]
+
+                plans_before = plans()
+                add_keys, add_receipts = retry_after_lost_response(page, api + "export-planifie", "add", plan,
+                                                                   lambda: operations("export-planifie"))
+                add_effects = plans() - plans_before
+                plans_before = plans()
+                with page.expect_response(lambda r: r.url == api + "export-planifie" and r.request.method == "POST") as fresh:
+                    plan()
+                assert fresh.value.ok
+                fresh_plans = plans() - plans_before
+                endpoint = api + "export-planifie"
+                parallel_plan = {"action": "add", "requestId": str(uuid.uuid4()), "file": "sales.csv",
+                                 "frequency": "weekly", "hour": "10:00", "zone": "UTC",
+                                 "recipients": ["parallel@example.test"]}
+                before = plans()
+                plan_id = concurrent_command(page, endpoint, parallel_plan)
+                assert plans() - before == 1, "Concurrent add created duplicate schedules"
+                rejected = request.post(endpoint, data={**parallel_plan, "hour": "11:00"})
+                assert rejected.status == 400 and plans() - before == 1
+                parallel_send = {"action": "send", "requestId": str(uuid.uuid4()), "id": plan_id}
+                before = len(smtp.messages)
+                assert concurrent_command(page, endpoint, parallel_send) == parallel_send["requestId"]
+                tick_manual()
+                assert len(smtp.messages) - before == 1, "Concurrent send produced duplicate SMTP messages"
+                assert str(smtp.messages[-1]["To"]) == "parallel@example.test"
+                print("Concurrent replay: 4 POSTs, 2 stable receipts, 1 schedule, 1 SMTP message; changed payload rejected",
+                      flush=True)
+                print(f"Intent replay: add={add_effects}, send={send_effects}, fresh_add={fresh_plans}, fresh_send={fresh_sends}",
+                      flush=True)
+                assert (add_effects, send_effects, fresh_plans, fresh_sends) == (1, 1, 1, 1), "Duplicate effects after reload"
+                assert (add_keys, send_keys, add_receipts, send_receipts) == (1, 1, 1, 1), "Request or receipt identity changed"
             browser.close()
     finally:
         hooks.close()
@@ -152,4 +264,5 @@ def verify(tmp):
 
 with tempfile.TemporaryDirectory() as directory:
     verify(Path(directory))
-print("Worker screens: 401/403, HTTPS 503 → 204, scheduled SMTP attachment, restart and manual queue passed")
+print("Worker screens: 401/403, HTTPS 503 → 204, scheduled SMTP attachment, restart, add/send retries after lost response and fresh intents passed")
+
