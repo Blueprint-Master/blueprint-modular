@@ -45,7 +45,7 @@ export type AnomalyStatus = "normal" | "abnormal";
 
 /** Jugement porté sur la valeur. */
 export interface Judgment {
-  /** Écart au repère, orienté par direction (gap > 0 = favorable). */
+  /** gap is oriented toward improvement. difference is the arithmetic value minus reference. */
   level: { gap: number; difference?: number; status: LevelStatus };
   /** Tendance (si trajectoire) : signe(dv/dt) orienté par direction. */
   trend?: { slope: number; status: TrendStatus };
@@ -188,14 +188,13 @@ export function trendArrow(j: Judgment): string {
 /** Libellé court du jugement, ex. "▲ +12 vs repère · tendance ↘ · anomalie". */
 export function judgmentLabel(j: Judgment, opts: { locale?: string; unit?: string } = {}): string {
   const arrow = j.level.status === "favorable" ? "▲" : j.level.status === "unfavorable" ? "▼" : "•";
-  // Older externally constructed judgments carry only the oriented gap.
-  const difference = j.level.difference ?? j.level.gap;
-  const gapAbs = Math.abs(difference);
+  const gapAbs = Math.abs(j.level.gap);
   // Même écriture que la valeur affichée : séparateurs et virgule de la locale, deux
   // décimales au plus, jamais d'arrondi à l'entier (« +1235 » sous « +1 234,5 € » donnait
   // deux chiffres pour le même écart). L'unité d'écart (« pt », « € ») suit si fournie.
   const gapStr = gapAbs.toLocaleString(opts.locale ?? "fr-FR", { maximumFractionDigits: 2 });
   const unit = opts.unit ? `\u00a0${opts.unit}` : "";
+  const difference = j.level.difference ?? j.level.gap;
   const parts = [`${arrow} ${difference >= 0 ? "+" : "−"}${gapStr}${unit} vs repère`];
   if (j.trend) parts.push(`tendance ${trendArrow(j)}`);
   if (j.anomaly?.status === "abnormal") parts.push("anomalie");
