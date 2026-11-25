@@ -3,6 +3,7 @@ on:
   pull_request:
     branches: [codex/qualification-gaps-c02850db]
     paths:
+      - 'décisions.md'
       - 'components/bpm/interpret.ts'
       - 'scripts/verify-artifact-small-gaps.py'
       - '.github/workflows/artifact-small-gaps.yml'
