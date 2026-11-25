@@ -45,8 +45,8 @@ export type AnomalyStatus = "normal" | "abnormal";
 
 /** Jugement porté sur la valeur. */
 export interface Judgment {
-  /** Écart au repère, orienté par direction (gap > 0 = favorable). */
-  level: { gap: number; status: LevelStatus };
+  /** gap is oriented toward improvement. difference is the arithmetic value minus reference. */
+  level: { gap: number; difference?: number; status: LevelStatus };
   /** Tendance (si trajectoire) : signe(dv/dt) orienté par direction. */
   trend?: { slope: number; status: TrendStatus };
   /** Position dans comparisonFrame (si fourni) : > 2 écarts-types = abnormal. */
@@ -111,12 +111,13 @@ export function interpret(value: InterpretValue, context: InterpretContext): Jud
 
   // ── Niveau : écart au repère, orienté ────────────────────────────────────
   const scale = Math.max(Math.abs(reference), 1);
-  const gap = Number.isFinite(current) ? sign * (current - reference) : 0;
+  const difference = Number.isFinite(current) ? current - reference : 0;
+  const gap = sign * difference;
   const levelStatus: LevelStatus =
     Math.abs(gap) <= neutralBand * scale ? "neutral" : gap > 0 ? "favorable" : "unfavorable";
 
   const judgment: Judgment = {
-    level: { gap, status: levelStatus },
+    level: { gap, difference, status: levelStatus },
     severity: 0,
     current,
   };
@@ -188,14 +189,19 @@ export function trendArrow(j: Judgment): string {
 export function judgmentLabel(j: Judgment, opts: { locale?: string; unit?: string } = {}): string {
   const arrow = j.level.status === "favorable" ? "▲" : j.level.status === "unfavorable" ? "▼" : "•";
   const gapAbs = Math.abs(j.level.gap);
+  // Même écriture que la valeur affichée : séparateurs et virgule de la locale, deux
+  // décimales au plus, jamais d'arrondi à l'entier (« +1235 » sous « +1 234,5 € » donnait
+  // deux chiffres pour le même écart). L'unité d'écart (« pt », « € ») suit si fournie.
   // Keep the usual two-decimal display unless it would erase a nonzero gap.
   // Scientific notation keeps very small accepted values legible.
   const format: Intl.NumberFormatOptions = gapAbs > 0 && gapAbs < 0.005
     ? { maximumSignificantDigits: 3, notation: gapAbs < 1e-6 ? "scientific" : "standard" }
     : { maximumFractionDigits: 2 };
   const gapStr = gapAbs.toLocaleString(opts.locale ?? "fr-FR", format);
+
   const unit = opts.unit ? `\u00a0${opts.unit}` : "";
-  const parts = [`${arrow} ${j.level.gap >= 0 ? "+" : "−"}${gapStr}${unit} vs repère`];
+  const difference = j.level.difference ?? j.level.gap;
+  const parts = [`${arrow} ${difference >= 0 ? "+" : "−"}${gapStr}${unit} vs repère`];
   if (j.trend) parts.push(`tendance ${trendArrow(j)}`);
   if (j.anomaly?.status === "abnormal") parts.push("anomalie");
   return parts.join(" · ");
