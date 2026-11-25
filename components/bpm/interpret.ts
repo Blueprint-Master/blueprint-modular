@@ -46,7 +46,7 @@ export type AnomalyStatus = "normal" | "abnormal";
 /** Jugement porté sur la valeur. */
 export interface Judgment {
   /** Écart au repère, orienté par direction (gap > 0 = favorable). */
-  level: { gap: number; status: LevelStatus };
+  level: { gap: number; difference?: number; status: LevelStatus };
   /** Tendance (si trajectoire) : signe(dv/dt) orienté par direction. */
   trend?: { slope: number; status: TrendStatus };
   /** Position dans comparisonFrame (si fourni) : > 2 écarts-types = abnormal. */
@@ -111,12 +111,13 @@ export function interpret(value: InterpretValue, context: InterpretContext): Jud
 
   // ── Niveau : écart au repère, orienté ────────────────────────────────────
   const scale = Math.max(Math.abs(reference), 1);
-  const gap = Number.isFinite(current) ? sign * (current - reference) : 0;
+  const difference = Number.isFinite(current) ? current - reference : 0;
+  const gap = sign * difference;
   const levelStatus: LevelStatus =
     Math.abs(gap) <= neutralBand * scale ? "neutral" : gap > 0 ? "favorable" : "unfavorable";
 
   const judgment: Judgment = {
-    level: { gap, status: levelStatus },
+    level: { gap, difference, status: levelStatus },
     severity: 0,
     current,
   };
@@ -187,13 +188,15 @@ export function trendArrow(j: Judgment): string {
 /** Libellé court du jugement, ex. "▲ +12 vs repère · tendance ↘ · anomalie". */
 export function judgmentLabel(j: Judgment, opts: { locale?: string; unit?: string } = {}): string {
   const arrow = j.level.status === "favorable" ? "▲" : j.level.status === "unfavorable" ? "▼" : "•";
-  const gapAbs = Math.abs(j.level.gap);
+  // Older externally constructed judgments carry only the oriented gap.
+  const difference = j.level.difference ?? j.level.gap;
+  const gapAbs = Math.abs(difference);
   // Même écriture que la valeur affichée : séparateurs et virgule de la locale, deux
   // décimales au plus, jamais d'arrondi à l'entier (« +1235 » sous « +1 234,5 € » donnait
   // deux chiffres pour le même écart). L'unité d'écart (« pt », « € ») suit si fournie.
   const gapStr = gapAbs.toLocaleString(opts.locale ?? "fr-FR", { maximumFractionDigits: 2 });
   const unit = opts.unit ? `\u00a0${opts.unit}` : "";
-  const parts = [`${arrow} ${j.level.gap >= 0 ? "+" : "−"}${gapStr}${unit} vs repère`];
+  const parts = [`${arrow} ${difference >= 0 ? "+" : "−"}${gapStr}${unit} vs repère`];
   if (j.trend) parts.push(`tendance ${trendArrow(j)}`);
   if (j.anomaly?.status === "abnormal") parts.push("anomalie");
   return parts.join(" · ");
