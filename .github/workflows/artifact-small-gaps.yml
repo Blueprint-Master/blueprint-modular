@@ -1,7 +1,7 @@
 name: Small reference gaps on the installed archive
 on:
   pull_request:
-    branches: [codex/qualification-chart-0a097121]
+    branches: [codex/qualification-gaps-c02850db]
     paths:
       - 'components/bpm/interpret.ts'
       - 'scripts/verify-artifact-small-gaps.py'
@@ -51,6 +51,9 @@ jobs:
           args=()
           if [[ "$VARIANT" == baseline ]]; then args+=(--baseline); fi
           "$RUNNER_TEMP/qa/bin/python" scripts/verify-artifact-small-gaps.py "$RUNNER_TEMP/unpacked/application" --chrome "$(command -v google-chrome)" "${args[@]}"
+      - name: Verify all 60 chart labels inherited from master
+        run: |
+          "$RUNNER_TEMP/qa/bin/python" scripts/verify-artifact-chart-values.py "$RUNNER_TEMP/unpacked/application" --chrome "$(command -v google-chrome)"
       - if: matrix.revision == 'candidate'
         uses: actions/upload-artifact@v4
         with:
