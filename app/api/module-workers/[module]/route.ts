@@ -1,3 +1,4 @@
+import { createHash } from "node:crypto";
 import { execFile } from "node:child_process";
 import { isAbsolute } from "node:path";
 import { NextResponse } from "next/server";
@@ -27,11 +28,16 @@ async function handle(request: Request, context: Context) {
   const db = module === "webhooks" ? process.env.BPM_WEBHOOKS_DB : process.env.BPM_EXPORTS_DB;
   if (!db || !isAbsolute(db)) return error(503, "unconfigured");
 
+  const intentScope = module === "export-planifie"
+    ? createHash("sha256").update(JSON.stringify([module, db, session.user.id])).digest("hex")
+    : null;
   let input: object = { action: "snapshot" };
   if (request.method === "POST") {
     // Cross-origin browser forms cannot supply this JSON-only request header.
     if (request.headers.get("content-type")?.split(";")[0] !== "application/json" ||
         request.headers.get("sec-fetch-site") === "cross-site") return error(415, "invalid");
+    const requestedScope = request.headers.get("x-bpm-intent-scope");
+    if (requestedScope !== null && requestedScope !== intentScope) return error(409, "scope");
     const payload = await request.json().catch(() => null);
     const parsed = (module === "webhooks" ? control : z.union([add, control, send])).safeParse(payload);
     if (!parsed.success) return error(400, "invalid");
@@ -44,7 +50,9 @@ async function handle(request: Request, context: Context) {
     }, (failure, output) => {
       if (failure) return resolve(failure.code === 2 ? error(400, "invalid") : error(503, "unavailable"));
       try {
-        resolve(NextResponse.json(JSON.parse(output), { headers: { "Cache-Control": "private, no-store" } }));
+        const result = JSON.parse(output);
+        const body = request.method === "GET" && intentScope ? { ...result, intentScope } : result;
+        resolve(NextResponse.json(body, { headers: { "Cache-Control": "private, no-store" } }));
       } catch {
         resolve(error(503, "unavailable"));
       }
@@ -55,3 +63,4 @@ async function handle(request: Request, context: Context) {
 }
 
 export { handle as GET, handle as POST };
+
