@@ -192,7 +192,13 @@ export function judgmentLabel(j: Judgment, opts: { locale?: string; unit?: strin
   // Même écriture que la valeur affichée : séparateurs et virgule de la locale, deux
   // décimales au plus, jamais d'arrondi à l'entier (« +1235 » sous « +1 234,5 € » donnait
   // deux chiffres pour le même écart). L'unité d'écart (« pt », « € ») suit si fournie.
-  const gapStr = gapAbs.toLocaleString(opts.locale ?? "fr-FR", { maximumFractionDigits: 2 });
+  // Keep the usual two-decimal display unless it would erase a nonzero gap.
+  // Scientific notation keeps very small accepted values legible.
+  const format: Intl.NumberFormatOptions = gapAbs > 0 && gapAbs < 0.005
+    ? { maximumSignificantDigits: 3, notation: gapAbs < 1e-6 ? "scientific" : "standard" }
+    : { maximumFractionDigits: 2 };
+  const gapStr = gapAbs.toLocaleString(opts.locale ?? "fr-FR", format);
+
   const unit = opts.unit ? `\u00a0${opts.unit}` : "";
   const difference = j.level.difference ?? j.level.gap;
   const parts = [`${arrow} ${difference >= 0 ? "+" : "−"}${gapStr}${unit} vs repère`];
