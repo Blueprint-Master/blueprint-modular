@@ -570,3 +570,6 @@ Sur cette archive, `scripts/verify-modules-install.py` vérifie les entrées et 
 
 ### 2026-11-25 — Intégration #299 et réconciliation #300
 #299 fusionnée dans master c02850db après Convergence gate 45585699700 vert (2/2 jobs) ; comparaison au SHA candidat 4ab3f635 : zéro fichier différent. Les 545 lignes du journal de base sont conservées. #300 reprend maintenant ce master en conservant ses propres décisions et fichiers export. Le test ciblé et la recette globale doivent être rejoués sur la nouvelle composition ; aucune preuve de préproduction distante, aucun déploiement attesté.
+
+### 2026-11-25 — #300 : recette globale et passage vers master
+Sur le candidat 1db7ff260 réconcilié avec c02850db, les workflows 45596947007 (témoin/candidat du worker, 2/2 jobs) et 45596947087 (installation ZIP, migrations PostgreSQL complètes, 32 modules, analyse/équipe après redémarrage, worker, distributions) sont terminés success. Le journal master est un préfixe exact du journal candidat (105 294 caractères). La PR cible désormais master ; Convergence gate requis sur la nouvelle composition avant fusion. Les réserves de préproduction distante et de livraison SMTP finale subsistent. Aucun déploiement attesté.
