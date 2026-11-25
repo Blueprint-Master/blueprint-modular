@@ -596,3 +596,6 @@ Le master `c02850db41f6b6d41acbcabc5fcceb9df3f34f0b` contient #299. La qualifica
 
 ### 2026-11-25 — #301 : réconciliation après #300 et recette PostgreSQL complète
 Le candidat repart du master 8e499a47 et conserve intégralement les décisions des deux branches (préfixe commun c02850db). Le workflow existant modules-install est déclenché sur la base de qualification de #301 et extrait le SHA exact de la tête : migrations Prisma complètes, fixture synthétique, 32 modules, analyse, équipe, worker et distributions. Le juge ciblé des petits écarts reste inchangé. Attendre les deux recettes et le gate final sur master ; aucun GO de préproduction distante ni déploiement. Suivi #296.
+
+### 2026-11-25 — #301 : qualification globale réussie sur 36d7e745
+Les jobs 139354116763 et 139354117439 du run 45656393411 réussissent : 0/36 faux zéros, 27/27 contrôles, 63/63 écarts et 0/60 légendes divergentes par rendu. Le run 45656393440 (job 139354117011) installe le ZIP sur PostgreSQL migré, exerce les modules et les workflows d'analyse, équipe et worker après redémarrage, puis les distributions Python/npm. Le journal master 8e499a47 est préfixe exact du candidat. Passage de la PR vers master pour Convergence gate, à vérifier avant fusion. Préproduction distante et SHA servi non attestés. Suivi #296.
