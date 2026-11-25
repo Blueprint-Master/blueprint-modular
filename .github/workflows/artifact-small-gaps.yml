@@ -1,0 +1,83 @@
+name: Small reference gaps on the installed archive
+on:
+  pull_request:
+    branches: [codex/qualification-gaps-c02850db]
+    paths:
+      - 'décisions.md'
+      - 'components/bpm/interpret.ts'
+      - 'scripts/verify-artifact-small-gaps.py'
+      - '.github/workflows/artifact-small-gaps.yml'
+permissions:
+  contents: read
+jobs:
+  artifact:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    strategy:
+      fail-fast: false
+      matrix:
+        revision: [baseline, candidate]
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+          fetch-depth: 0
+          persist-credentials: false
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Build, extract and identify the precise archive
+        env:
+          BASELINE: ${{ github.event.pull_request.base.sha }}
+          CANDIDATE: ${{ github.event.pull_request.head.sha }}
+          VARIANT: ${{ matrix.revision }}
+        run: |
+          rev="$CANDIDATE"
+          if [[ "$VARIANT" == baseline ]]; then rev="$BASELINE"; fi
+          git worktree add --detach "$RUNNER_TEMP/source" "$rev"
+          python "$RUNNER_TEMP/source/scripts/build-modules-bundle.py" --output "$RUNNER_TEMP/dist"
+          zip=$(find "$RUNNER_TEMP/dist" -name 'blueprint-modules-v*.zip')
+          sha256sum "$zip"
+          unzip -q "$zip" -d "$RUNNER_TEMP/unpacked"
+          cd "$RUNNER_TEMP/unpacked/application"
+          test "$(cat BUILD-REVISION)" = "$rev"
+          npm ci --ignore-scripts --no-audit --no-fund
+          node scripts/build-artifact.mjs
+      - name: Read the 63 reference gaps in both renderers and both readers
+        env:
+          VARIANT: ${{ matrix.revision }}
+        run: |
+          python -m venv "$RUNNER_TEMP/qa"
+          "$RUNNER_TEMP/qa/bin/pip" install --quiet 'playwright==1.56.0'
+          args=()
+          if [[ "$VARIANT" == baseline ]]; then args+=(--baseline); fi
+          "$RUNNER_TEMP/qa/bin/python" scripts/verify-artifact-small-gaps.py "$RUNNER_TEMP/unpacked/application" --chrome "$(command -v google-chrome)" "${args[@]}"
+      - name: Verify all 60 chart labels inherited from master
+        run: |
+          "$RUNNER_TEMP/qa/bin/python" scripts/verify-artifact-chart-values.py "$RUNNER_TEMP/unpacked/application" --chrome "$(command -v google-chrome)"
+      - if: matrix.revision == 'candidate'
+        uses: actions/upload-artifact@v4
+        with:
+          name: artifact-small-gaps-${{ github.event.pull_request.head.sha }}
+          path: ${{ runner.temp }}/dist/blueprint-modules-v*.zip
+      - name: Build the standalone from the same extracted archive
+        if: matrix.revision == 'candidate'
+        working-directory: ${{ runner.temp }}/unpacked/application
+        env:
+          NEXT_TELEMETRY_DISABLED: '1'
+        run: |
+          npm ci --prefix packages/core --ignore-scripts --no-audit --no-fund
+          npx --no-install prisma generate
+          npm run build --prefix packages/core
+          npm run build -- --webpack
+          bash deploy/copy-standalone-assets.sh
+      - name: Preserve the exact standalone build
+        if: matrix.revision == 'candidate'
+        working-directory: ${{ runner.temp }}/unpacked/application
+        run: tar --exclude='.env' --exclude='.env.*' -czf "$RUNNER_TEMP/standalone.tar.gz" BUILD-REVISION package.json .next/standalone
+      - uses: actions/upload-artifact@v4
+        if: matrix.revision == 'candidate'
+        with:
+          name: small-gaps-standalone-${{ github.event.pull_request.head.sha }}
+          path: ${{ runner.temp }}/standalone.tar.gz
+          if-no-files-found: error
