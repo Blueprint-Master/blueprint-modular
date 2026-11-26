@@ -1,7 +1,7 @@
 name: Relative scale across equivalent units on the installed archive
 on:
   pull_request:
-    branches: [codex/qualification-scale-bbf646f9]
+    branches: [master, codex/qualification-scale-bbf646f9]
     paths:
       - 'décisions.md'
       - 'components/bpm/interpret.ts'
