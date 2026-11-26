@@ -156,6 +156,18 @@ describe("interpret — échelle du repère", () => {
     expect(cents.severity).toBeCloseTo(euros.severity, 10);
   });
 
+  it.each([1, 100])("inclut les deux bornes décimales à l'échelle %s", (factor) => {
+    const reference = 0.20 * factor;
+    const judge = (value: number) => interpret([{ t: 0, v: reference }, { t: 1, v: value * factor }],
+      { reference, direction: "lower_is_better" });
+    for (const value of [0.196, 0.204]) {
+      expect(judge(value).level.status).toBe("neutral");
+      expect(judge(value).trend?.status).toBe("flat");
+    }
+    expect(judge(0.1959).level.status).toBe("favorable");
+    expect(judge(0.2041).level.status).toBe("unfavorable");
+  });
+
   it("conserve la tolérance absolue historique au repère zéro", () => {
     const atZero = { reference: 0, direction: "higher_is_better" as const };
     expect(interpret(0.01, atZero).level.status).toBe("neutral");

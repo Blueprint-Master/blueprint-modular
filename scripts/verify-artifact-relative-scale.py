@@ -1,5 +1,6 @@
 """Check that changing the unit of a nonzero reference preserves its assessment."""
 import argparse
+from decimal import Decimal
 import json
 from pathlib import Path
 import subprocess
@@ -8,11 +9,11 @@ import tempfile
 from playwright.sync_api import sync_playwright
 
 
-def panel():
+def panel(percentages):
     blocks = []
     for kind in ("indicator", "trend", "comparison"):
         for direction in ("lower_is_better", "higher_is_better"):
-            for percent in (-5, 5, -1, 1):
+            for percent in percentages:
                 for unit, reference in (("EUR", 0.20), ("c€", 20)):
                     value = round(reference * (100 + percent) / 100, 4)
                     block = dict(kind=kind, unit=unit, context=dict(reference=reference, direction=direction))
@@ -35,7 +36,8 @@ def check(page, context, baseline):
             o = [item for item in context["observations"] if item["block"] == position][-1]
             delta = o["value"] - o["reference"]
             # The contract uses ±2% by default. Witness the historic defect for euros only.
-            outside = abs(delta / o["reference"]) > 0.02
+            reference = Decimal(str(o["reference"]))
+            outside = abs(Decimal(str(o["value"])) - reference) > abs(reference) * Decimal("0.02")
             favorable = (delta < 0) == (block["context"]["direction"] == "lower_is_better")
             expected = "favorable" if favorable else "unfavorable"
             if not outside or (baseline and position == index):
@@ -58,21 +60,23 @@ def verify(application, chrome, baseline):
     with tempfile.TemporaryDirectory() as folder, sync_playwright() as pw:
         path = Path(folder)
         source, html = path / "spec.json", path / "costs.html"
-        spec = panel()
-        source.write_text(json.dumps(spec))
-        html.write_bytes(subprocess.check_output([*cli, source]))
         browser = pw.chromium.launch(executable_path=chrome)
-        page = browser.new_page(offline=True)
-        page.goto(html.as_uri())
-        offline = check(page, json.loads(subprocess.check_output([*cli, "--inspect", html])), baseline)
-        page.set_content('<div id="root"></div>')
-        page.add_script_tag(path=str(binary / "bpm.min.js"))
-        page.evaluate("s => {window.view = BlueprintModular.mount(document.querySelector('#root'), s)}", spec)
-        page.locator("section.indicator").first.wait_for()
-        mounted = check(page, page.evaluate("view.context()"), baseline)
+        for percentages, outside, inside in [((-5, 5, -1, 1), "5", "1"), ((-2.05, 2.05, -2, 2), "2.05", "2")]:
+            spec = panel(percentages)
+            source.write_text(json.dumps(spec))
+            html.write_bytes(subprocess.check_output([*cli, source]))
+            page = browser.new_page(offline=True)
+            page.goto(html.as_uri())
+            offline = check(page, json.loads(subprocess.check_output([*cli, "--inspect", html])), baseline)
+            page.set_content('<div id="root"></div>')
+            page.add_script_tag(path=str(binary / "bpm.min.js"))
+            page.evaluate("s => {window.view = BlueprintModular.mount(document.querySelector('#root'), s)}", spec)
+            page.locator("section.indicator").first.wait_for()
+            mounted = check(page, page.evaluate("view.context()"), baseline)
+            page.close()
+            for name, mismatches in (("offline", offline), ("mounted", mounted)):
+                print(f"{name}: {mismatches}/12 divergent pairs at ±{outside}%, 12/12 pairs neutral at ±{inside}%")
         browser.close()
-    for name, mismatches in (("offline", offline), ("mounted", mounted)):
-        print(f"{name}: {mismatches}/12 judgments change units at ±5%, 12/12 neutral controls at ±1%")
 
 
 if __name__ == "__main__":
