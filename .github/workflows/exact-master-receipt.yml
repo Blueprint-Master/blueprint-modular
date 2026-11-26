@@ -1,0 +1,118 @@
+name: Qualifier le standalone du master fusionné
+on:
+  pull_request:
+    branches: [codex/qualification-master-582f05de]
+    paths:
+      - '.github/workflows/exact-master-receipt.yml'
+      - 'décisions.md'
+      - 'scripts/verify-restored-modules.sh'
+
+permissions:
+  contents: read
+
+jobs:
+  installed:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    env:
+      EXPECTED_REVISION: 582f05deab0b4d1f0aebf6241bcd9105be7d1eee
+      EXPECTED_DIGEST: 5aaefe99928e8ad002712c2589a5ba57755e826dfeac97b177ac7ee8914d7aee
+      NEXT_TELEMETRY_DISABLED: '1'
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.base.sha }}
+          persist-credentials: false
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Installer le ZIP de master au SHA et au SHA-256 attendus
+        run: |
+          set -euo pipefail
+          test "$(git rev-parse HEAD)" = "$EXPECTED_REVISION"
+          python3 scripts/build-modules-bundle.py --output "$RUNNER_TEMP/dist"
+          archive=$(find "$RUNNER_TEMP/dist" -name 'blueprint-modules-v*.zip')
+          echo "$EXPECTED_DIGEST  $archive" | sha256sum --check
+          unzip -q "$archive" -d "$RUNNER_TEMP/install"
+          cd "$RUNNER_TEMP/install/application"
+          test "$(cat BUILD-REVISION)" = "$EXPECTED_REVISION"
+          npm ci --ignore-scripts --no-audit --no-fund
+          npm ci --prefix packages/core --ignore-scripts --no-audit --no-fund
+          npx --no-install prisma generate
+          npm run build --prefix packages/core
+          npm run build -- --webpack
+          bash deploy/copy-standalone-assets.sh
+      - name: Exercer les cinq juges sur les artefacts installés
+        run: |
+          set -euo pipefail
+          python3 -m venv "$RUNNER_TEMP/browser"
+          "$RUNNER_TEMP/browser/bin/pip" install -q playwright==1.56.0
+          for judge in relative-scale gap-signs neutral-band small-gaps chart-values; do
+            "$RUNNER_TEMP/browser/bin/python" "scripts/verify-artifact-$judge.py" \
+              "$RUNNER_TEMP/install/application/.next/standalone" --chrome "$(command -v google-chrome)"
+          done
+      - name: Vérifier le SHA du serveur installé et ses 32 entrées de catalogue
+        env:
+          HOSTNAME: 127.0.0.1
+          PORT: 3040
+          NEXTAUTH_URL: http://127.0.0.1:3040
+        run: |
+          set -euo pipefail
+          cd "$RUNNER_TEMP/install/application"
+          export NEXTAUTH_SECRET="$(openssl rand -hex 32)"
+          node .next/standalone/server.js > "$RUNNER_TEMP/server.log" 2>&1 &
+          server=$!
+          trap 'kill "$server" 2>/dev/null || true' EXIT
+          curl -fsS --retry 20 --retry-connrefused --retry-delay 1 \
+            "$NEXTAUTH_URL/api/health" -o "$RUNNER_TEMP/health.json"
+          jq -e --arg sha "$EXPECTED_REVISION" \
+            '.status == "ok" and .sourceCommit == $sha and .applicationVersion == "0.1.61"' \
+            "$RUNNER_TEMP/health.json"
+          python3 - "$GITHUB_WORKSPACE/scripts" <<'PY'
+          import os, runpy, sys
+          from pathlib import Path
+          from urllib.request import urlopen
+          scripts = Path(sys.argv[1])
+          sys.path.insert(0, str(scripts))
+          catalogue = runpy.run_path(str(scripts / "verify-modules-install.py"))["Catalogue"]()
+          base = os.environ["NEXTAUTH_URL"]
+          with urlopen(base + "/modules", timeout=30) as response:
+              catalogue.feed(response.read().decode())
+          assert len(catalogue.modules) == 32
+          for slug, paths in catalogue.modules.items():
+              assert len(paths) == 2 and f"/modules/{slug}/documentation" in paths
+              for path in paths:
+                  with urlopen(base + path, timeout=30) as response:
+                      body = response.read()
+                      assert response.status == 200 and response.geturl() == base + path
+                      assert b"<!DOCTYPE html>" in body and b"Internal Server Error" not in body
+          print("32/32 entries and 32/32 documentation pages on the installed standalone")
+          PY
+      - name: Charger le pilote de restauration de la branche de qualification
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+          path: qualification-tools
+          persist-credentials: false
+      - name: Exercer les workers sur une restauration synthétique à deux tables
+        run: |
+          set -euo pipefail
+          export PATH="/usr/lib/postgresql/16/bin:$PATH"
+          export MODULAR_TEST_CHROMIUM="$(command -v google-chrome)"
+          export MODULAR_QA_PYTHON="$RUNNER_TEMP/browser/bin/python"
+          bash qualification-tools/scripts/verify-restored-modules.sh \
+            "$RUNNER_TEMP/install/application" "$EXPECTED_REVISION" --worker-fixture
+      - name: Conserver la distribution, le serveur construit et le reçu HTTP
+        run: |
+          set -euo pipefail
+          cd "$RUNNER_TEMP/install/application"
+          tar --exclude='.env' --exclude='.env.*' -czf "$RUNNER_TEMP/standalone.tar.gz" \
+            BUILD-REVISION package.json .next/standalone
+      - uses: actions/upload-artifact@v4
+        with:
+          name: master-installed-${{ env.EXPECTED_REVISION }}
+          path: |
+            ${{ runner.temp }}/dist/blueprint-modules-v*.zip
+            ${{ runner.temp }}/standalone.tar.gz
+            ${{ runner.temp }}/health.json
+          if-no-files-found: error
