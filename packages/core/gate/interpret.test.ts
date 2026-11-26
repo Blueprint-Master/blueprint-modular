@@ -168,6 +168,25 @@ describe("interpret — échelle du repère", () => {
     expect(judge(0.2041).level.status).toBe("unfavorable");
   });
 
+  it("classe les mêmes valeurs décimales pour 99 prix en euros et en centimes", () => {
+    for (let cents = 1; cents <= 99; cents++) {
+      for (const reference of [cents / 100, cents]) {
+        for (const percent of [-5, -2.05, -2, -1, 1, 2, 2.05, 5]) {
+          const value = Number((reference * (1 + percent / 100)).toFixed(8));
+          const expected = Math.abs(percent) <= 2 ? "neutral" : percent < 0 ? "favorable" : "unfavorable";
+          expect(interpret(value, { reference, direction: "lower_is_better" }).level.status).toBe(expected);
+        }
+      }
+    }
+  });
+
+  it("conserve une bande nulle ou inférieure à la résolution du repère", () => {
+    for (const neutralBand of [0, Number.EPSILON / 10]) {
+      const j = interpret(1 + Number.EPSILON, { reference: 1, direction: "higher_is_better", neutralBand });
+      expect(j.level.status).toBe("favorable");
+    }
+  });
+
   it("conserve la tolérance absolue historique au repère zéro", () => {
     const atZero = { reference: 0, direction: "higher_is_better" as const };
     expect(interpret(0.01, atZero).level.status).toBe("neutral");

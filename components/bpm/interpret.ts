@@ -113,15 +113,14 @@ export function interpret(value: InterpretValue, context: InterpretContext): Jud
   // Only zero lacks a relative scale. Keep the previous one-unit basis there.
   const scale = reference === 0 ? 1 : Math.abs(reference);
   const tolerance = neutralBand * scale;
-  // Subtract the reference from both representable endpoints too. A decimal
-  // boundary such as 0.196 against 0.20 then stays inside the inclusive band.
-  const minDifference = (reference - tolerance) - reference;
-  const maxDifference = (reference + tolerance) - reference;
-  const withinBand = (difference: number) => difference >= minDifference && difference <= maxDifference;
+  // Subtracting decimal inputs can shift a boundary by a floating-point
+  // rounding error. Keep zero and bands below the reference resolution strict.
+  const resolution = Math.abs(reference) * Number.EPSILON;
+  const limit = tolerance < resolution ? tolerance : tolerance + resolution;
   const difference = Number.isFinite(current) ? current - reference : 0;
   const gap = sign * difference;
   const levelStatus: LevelStatus =
-    withinBand(difference) ? "neutral" : gap > 0 ? "favorable" : "unfavorable";
+    Math.abs(difference) <= limit ? "neutral" : gap > 0 ? "favorable" : "unfavorable";
 
   const judgment: Judgment = {
     level: { gap, difference, status: levelStatus },
@@ -135,7 +134,7 @@ export function interpret(value: InterpretValue, context: InterpretContext): Jud
     const orientedSlope = sign * slope;
     // Zone plate : pente relative au repère sous la bande neutre.
     const trendStatus: TrendStatus =
-      withinBand(slope) ? "flat" : orientedSlope > 0 ? "improving" : "worsening";
+      Math.abs(slope) <= limit ? "flat" : orientedSlope > 0 ? "improving" : "worsening";
     judgment.trend = { slope, status: trendStatus };
   }
 

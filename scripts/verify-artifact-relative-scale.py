@@ -9,13 +9,13 @@ import tempfile
 from playwright.sync_api import sync_playwright
 
 
-def panel(percentages):
+def panel(percentages, cents):
     blocks = []
     for kind in ("indicator", "trend", "comparison"):
         for direction in ("lower_is_better", "higher_is_better"):
             for percent in percentages:
-                for unit, reference in (("EUR", 0.20), ("c€", 20)):
-                    value = round(reference * (100 + percent) / 100, 4)
+                for unit, reference in (("EUR", cents / 100), ("c€", cents)):
+                    value = round(reference * (100 + percent) / 100, 8)
                     block = dict(kind=kind, unit=unit, context=dict(reference=reference, direction=direction))
                     if kind == "indicator":
                         block.update(label="Coût unitaire", value=value)
@@ -61,8 +61,10 @@ def verify(application, chrome, baseline):
         path = Path(folder)
         source, html = path / "spec.json", path / "costs.html"
         browser = pw.chromium.launch(executable_path=chrome)
-        for percentages, outside, inside in [((-5, 5, -1, 1), "5", "1"), ((-2.05, 2.05, -2, 2), "2.05", "2")]:
-            spec = panel(percentages)
+        panels = [(20, (-5, 5, -1, 1), "5", "1"), (20, (-2.05, 2.05, -2, 2), "2.05", "2"),
+                  (7, (-2.05, 2.05, -2, 2), "2.05", "2")]
+        for cents, percentages, outside, inside in panels:
+            spec = panel(percentages, cents)
             source.write_text(json.dumps(spec))
             html.write_bytes(subprocess.check_output([*cli, source]))
             page = browser.new_page(offline=True)
@@ -75,7 +77,7 @@ def verify(application, chrome, baseline):
             mounted = check(page, page.evaluate("view.context()"), baseline)
             page.close()
             for name, mismatches in (("offline", offline), ("mounted", mounted)):
-                print(f"{name}: {mismatches}/12 divergent pairs at ±{outside}%, 12/12 pairs neutral at ±{inside}%")
+                print(f"{name}, reference {cents} cents: {mismatches}/12 divergent pairs at ±{outside}%, 12/12 pairs neutral at ±{inside}%")
         browser.close()
 
 
