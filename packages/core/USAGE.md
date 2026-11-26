@@ -59,13 +59,20 @@ bpm.tabs({ tabs: [{ label: string, content: ReactNode }], defaultTab?: number })
 ### Table
 ```ts
 bpm.table({
-  columns: [{ key: string, label: string, type?: string, sortable?: boolean }],
-  data: Record<string, unknown>[],
-  searchable?: boolean,
-  pagination?: boolean,
-  onRowClick?: (row) => void
+  columns: [
+    { key: "status", label: "Statut", filterable: true },
+    { key: "amount", label: "Montant", total: "sum" }
+  ],
+  data: rows,
+  onRowClick: openRow
 })
 ```
+
+Le bouton de colonne présente les valeurs distinctes des lignes reçues. Appliquer conserve les valeurs cochées. Une sélection vide affiche zéro ligne. Effacer rétablit l'ensemble. Choisir une autre colonne remplace le filtre précédent. Le pied et le contexte IA suivent les lignes affichées.
+
+Les clés de sélection sont des chaînes. Une colonne peut contenir du texte, des nombres finis ou des booléens d'un seul type. La valeur manquante utilise la clé vide. Un mélange ambigu (valeur manquante et chaîne vide sur la même colonne, ou plusieurs types), ou des objets, désactive le choix des valeurs.
+
+Pour une pagination serveur, passer `filters` et `onFiltersChange`. Recevoir par exemple `{ status: ["payee"] }`, recharger les lignes, puis fournir ensemble l'état appliqué et sa page dans `data`. Le composant affiche cette page directement. Le compte et le pied portent sur les lignes de cette page. Les options proviennent des valeurs reçues et de celles déjà sélectionnées.
 
 ### Metric
 ```ts
