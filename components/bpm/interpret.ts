@@ -88,7 +88,7 @@ function leastSquaresSlope(points: TrajectoryPoint[]): number {
  * Porte un jugement sur `value` relativement à `context`.
  *
  * - level : gap orienté (higher_is_better → v − reference ; lower_is_better → reference − v).
- *   |gap| ≤ neutralBand × max(|reference|, 1) → neutral.
+ *   |gap| ≤ neutralBand × |reference| → neutral. At zero, use one absolute unit.
  * - trend : si trajectoire (≥ 2 points), pente orientée par direction.
  * - anomaly : si comparisonFrame (≥ 3 valeurs), |v − μ| > 2σ → abnormal.
  * - severity : 0.5 × écart-défavorable-normalisé + 0.25 × worsening + 0.25 × abnormal.
@@ -110,11 +110,17 @@ export function interpret(value: InterpretValue, context: InterpretContext): Jud
     : (value as number);
 
   // ── Niveau : écart au repère, orienté ────────────────────────────────────
-  const scale = Math.max(Math.abs(reference), 1);
+  // Only zero lacks a relative scale. Keep the previous one-unit basis there.
+  const scale = reference === 0 ? 1 : Math.abs(reference);
+  const tolerance = neutralBand * scale;
+  // Subtracting decimal inputs can shift a boundary by a floating-point
+  // rounding error. Keep zero and bands below the reference resolution strict.
+  const resolution = Math.abs(reference) * Number.EPSILON;
+  const limit = tolerance < resolution ? tolerance : tolerance + resolution;
   const difference = Number.isFinite(current) ? current - reference : 0;
   const gap = sign * difference;
   const levelStatus: LevelStatus =
-    Math.abs(gap) <= neutralBand * scale ? "neutral" : gap > 0 ? "favorable" : "unfavorable";
+    Math.abs(difference) <= limit ? "neutral" : gap > 0 ? "favorable" : "unfavorable";
 
   const judgment: Judgment = {
     level: { gap, difference, status: levelStatus },
@@ -127,9 +133,8 @@ export function interpret(value: InterpretValue, context: InterpretContext): Jud
     const slope = leastSquaresSlope(trajectory);
     const orientedSlope = sign * slope;
     // Zone plate : pente relative au repère sous la bande neutre.
-    const flatBand = neutralBand * scale;
     const trendStatus: TrendStatus =
-      Math.abs(orientedSlope) <= flatBand ? "flat" : orientedSlope > 0 ? "improving" : "worsening";
+      Math.abs(slope) <= limit ? "flat" : orientedSlope > 0 ? "improving" : "worsening";
     judgment.trend = { slope, status: trendStatus };
   }
 

@@ -1,0 +1,91 @@
+name: Relative scale across equivalent units on the installed archive
+on:
+  pull_request:
+    branches: [master, codex/qualification-scale-bbf646f9]
+    paths:
+      - 'décisions.md'
+      - 'components/bpm/interpret.ts'
+      - 'scripts/verify-artifact-relative-scale.py'
+      - 'packages/core/gate/interpret.test.ts'
+      - 'public/artifacts/instructions.md'
+      - '.github/workflows/artifact-relative-scale.yml'
+permissions:
+  contents: read
+jobs:
+  artifact:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    strategy:
+      fail-fast: false
+      matrix:
+        revision: [baseline, candidate]
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+          fetch-depth: 0
+          persist-credentials: false
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Build, extract and identify the precise archive
+        env:
+          BASELINE: ${{ github.event.pull_request.base.sha }}
+          CANDIDATE: ${{ github.event.pull_request.head.sha }}
+          VARIANT: ${{ matrix.revision }}
+        run: |
+          rev="$CANDIDATE"
+          if [[ "$VARIANT" == baseline ]]; then rev="$BASELINE"; fi
+          git worktree add --detach "$RUNNER_TEMP/source" "$rev"
+          python "$RUNNER_TEMP/source/scripts/build-modules-bundle.py" --output "$RUNNER_TEMP/dist"
+          zip=$(find "$RUNNER_TEMP/dist" -name 'blueprint-modules-v*.zip')
+          sha256sum "$zip"
+          unzip -q "$zip" -d "$RUNNER_TEMP/unpacked"
+          cd "$RUNNER_TEMP/unpacked/application"
+          test "$(cat BUILD-REVISION)" = "$rev"
+          npm ci --ignore-scripts --no-audit --no-fund
+          node scripts/build-artifact.mjs
+      - name: Exercise equivalent units with default tolerance
+        env:
+          VARIANT: ${{ matrix.revision }}
+        run: |
+          python -m venv "$RUNNER_TEMP/qa"
+          "$RUNNER_TEMP/qa/bin/pip" install --quiet 'playwright==1.56.0'
+          args=()
+          if [[ "$VARIANT" == baseline ]]; then args+=(--baseline); fi
+          "$RUNNER_TEMP/qa/bin/python" scripts/verify-artifact-relative-scale.py "$RUNNER_TEMP/unpacked/application" --chrome "$(command -v google-chrome)" "${args[@]}"
+      - name: Preserve arithmetic signs and the declared neutral band
+        run: |
+          "$RUNNER_TEMP/qa/bin/python" scripts/verify-artifact-gap-signs.py "$RUNNER_TEMP/unpacked/application" --chrome "$(command -v google-chrome)"
+          "$RUNNER_TEMP/qa/bin/python" scripts/verify-artifact-neutral-band.py "$RUNNER_TEMP/unpacked/application" --chrome "$(command -v google-chrome)"
+      - name: Preserve all 63 small reference gaps from #301
+        run: |
+          "$RUNNER_TEMP/qa/bin/python" scripts/verify-artifact-small-gaps.py "$RUNNER_TEMP/unpacked/application" --chrome "$(command -v google-chrome)"
+      - name: Check existing chart label precision
+        run: |
+          "$RUNNER_TEMP/qa/bin/python" scripts/verify-artifact-chart-values.py "$RUNNER_TEMP/unpacked/application" --chrome "$(command -v google-chrome)"
+      - uses: actions/upload-artifact@v4
+        with:
+          name: relative-scale-${{ matrix.revision }}-${{ github.event.pull_request.head.sha }}
+          path: ${{ runner.temp }}/dist/blueprint-modules-v*.zip
+      - name: Build the standalone from the same extracted archive
+        working-directory: ${{ runner.temp }}/unpacked/application
+        env:
+          NEXT_TELEMETRY_DISABLED: '1'
+        run: |
+          npm ci --prefix packages/core --ignore-scripts --no-audit --no-fund
+          mkdir -p packages/core/gate
+          cp "$RUNNER_TEMP/source/packages/core/gate/interpret.test.ts" packages/core/gate/
+          (cd packages/core && node_modules/.bin/vitest run gate/interpret.test.ts)
+          npx --no-install prisma generate
+          npm run build --prefix packages/core
+          npm run build -- --webpack
+          bash deploy/copy-standalone-assets.sh
+      - name: Preserve the exact standalone build
+        working-directory: ${{ runner.temp }}/unpacked/application
+        run: tar --exclude='.env' --exclude='.env.*' -czf "$RUNNER_TEMP/standalone.tar.gz" BUILD-REVISION package.json .next/standalone
+      - uses: actions/upload-artifact@v4
+        with:
+          name: relative-scale-standalone-${{ matrix.revision }}-${{ github.event.pull_request.head.sha }}
+          path: ${{ runner.temp }}/standalone.tar.gz
+          if-no-files-found: error
