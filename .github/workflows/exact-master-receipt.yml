@@ -5,6 +5,7 @@ on:
     paths:
       - '.github/workflows/exact-master-receipt.yml'
       - 'décisions.md'
+      - 'scripts/verify-restored-modules.sh'
 
 permissions:
   contents: read
@@ -87,6 +88,20 @@ jobs:
                       assert b"<!DOCTYPE html>" in body and b"Internal Server Error" not in body
           print("32/32 entries and 32/32 documentation pages on the installed standalone")
           PY
+      - name: Charger le pilote de restauration de la branche de qualification
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+          path: qualification-tools
+          persist-credentials: false
+      - name: Exercer les workers sur une restauration synthétique à deux tables
+        run: |
+          set -euo pipefail
+          export PATH="/usr/lib/postgresql/16/bin:$PATH"
+          export MODULAR_TEST_CHROMIUM="$(command -v google-chrome)"
+          export MODULAR_QA_PYTHON="$RUNNER_TEMP/browser/bin/python"
+          bash qualification-tools/scripts/verify-restored-modules.sh \
+            "$RUNNER_TEMP/install/application" "$EXPECTED_REVISION" --worker-fixture
       - name: Conserver la distribution, le serveur construit et le reçu HTTP
         run: |
           set -euo pipefail
