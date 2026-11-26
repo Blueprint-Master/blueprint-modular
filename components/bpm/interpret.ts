@@ -88,7 +88,7 @@ function leastSquaresSlope(points: TrajectoryPoint[]): number {
  * Porte un jugement sur `value` relativement à `context`.
  *
  * - level : gap orienté (higher_is_better → v − reference ; lower_is_better → reference − v).
- *   |gap| ≤ neutralBand × max(|reference|, 1) → neutral.
+ *   |gap| ≤ neutralBand × |reference| → neutral. At zero, use one absolute unit.
  * - trend : si trajectoire (≥ 2 points), pente orientée par direction.
  * - anomaly : si comparisonFrame (≥ 3 valeurs), |v − μ| > 2σ → abnormal.
  * - severity : 0.5 × écart-défavorable-normalisé + 0.25 × worsening + 0.25 × abnormal.
@@ -110,7 +110,8 @@ export function interpret(value: InterpretValue, context: InterpretContext): Jud
     : (value as number);
 
   // ── Niveau : écart au repère, orienté ────────────────────────────────────
-  const scale = Math.max(Math.abs(reference), 1);
+  // Only zero lacks a relative scale. Keep the previous one-unit basis there.
+  const scale = reference === 0 ? 1 : Math.abs(reference);
   const difference = Number.isFinite(current) ? current - reference : 0;
   const gap = sign * difference;
   const levelStatus: LevelStatus =

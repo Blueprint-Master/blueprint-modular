@@ -140,3 +140,25 @@ describe("interpret — sévérité combinée", () => {
     expect(bad.severity).toBeLessThanOrEqual(1);
   });
 });
+
+describe("interpret — échelle du repère", () => {
+  it.each([0.2, -0.2])("conserve niveau, tendance et sévérité pour le repère %s exprimé dans deux unités", (reference) => {
+    const read = (factor: number) => interpret(
+      [{ t: 0, v: reference * factor }, { t: 1, v: (reference + 0.01) * factor }],
+      { reference: reference * factor, direction: "lower_is_better" }
+    );
+    const euros = read(1);
+    const cents = read(100);
+    expect(euros.level.status).toBe("unfavorable");
+    expect(cents.level.status).toBe(euros.level.status);
+    expect(euros.trend?.status).toBe("worsening");
+    expect(cents.trend?.status).toBe(euros.trend?.status);
+    expect(cents.severity).toBeCloseTo(euros.severity, 10);
+  });
+
+  it("conserve la tolérance absolue historique au repère zéro", () => {
+    const atZero = { reference: 0, direction: "higher_is_better" as const };
+    expect(interpret(0.01, atZero).level.status).toBe("neutral");
+    expect(interpret(-0.03, atZero).level.status).toBe("unfavorable");
+  });
+});
