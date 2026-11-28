@@ -53,10 +53,12 @@ export const COMPONENTS_DOC: ComponentDoc[] = [
     category: "display",
     description: "Tableau de données avec tri, formatage et scroll.",
     props: [
-      { name: "columns", type: "TableColumn[]", required: true, description: "Définition des colonnes (key, label, align, render)" },
+      { name: "columns", type: "TableColumn[]", required: true, description: "Colonnes (key, label, align, render). Dans le core React, filterable: true propose les valeurs distinctes de la colonne." },
       { name: "data", type: "Record<string, unknown>[]", required: true, description: "Données à afficher" },
       { name: "striped", type: "boolean", required: false, default: "true", description: "Lignes alternées" },
       { name: "hover", type: "boolean", required: false, default: "true", description: "Surbrillance au survol" },
+      { name: "filters", type: "Record<string, string[]>", required: false, description: "Core React, mode contrôlé : l’appelant fournit les lignes de la page filtrée." },
+      { name: "onFiltersChange", type: "function", required: false, description: "Core React : reçoit la sélection appliquée, ou {} après effacement." },
       { name: "onRowClick", type: "function", required: false, description: "Callback au clic sur une ligne" },
       { name: "trackContext", type: "boolean", required: false, default: "false", description: "Expose le tableau au contexte IA" },
     ],
