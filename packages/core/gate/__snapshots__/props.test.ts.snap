@@ -1279,6 +1279,8 @@ exports[`bpm prop surface snapshot > prop names match committed snapshot (additi
     "error",
     "density",
     "totalsLabel",
+    "filters",
+    "onFiltersChange",
   ],
   "tabs": [
     "tabs",

@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useMemo } from "react";
+import React, { useState, useMemo, useRef, useEffect } from "react";
 import "./Table.css";
 import { useIsMobile } from "@/hooks/useIsMobile";
 import { useBPMContext } from "@/lib/ai/context";
@@ -9,8 +9,8 @@ import { interpret, judgmentColor, type InterpretContext } from "./interpret";
 import { useBpmLocale } from "./i18n";
 
 const STRINGS = {
-  fr: { emptyMessage: "Aucune donnée disponible" },
-  en: { emptyMessage: "No data available" },
+  fr: { emptyMessage: "Aucune donnée disponible", filter: "Filtrer", prefix: "Filtrer : ", unsupported: "Filtre indisponible pour ces valeurs", apply: "Appliquer", clear: "Effacer", blank: "(Vide)", displayed: "Lignes affichées" },
+  en: { emptyMessage: "No data available", filter: "Filter", prefix: "Filter: ", unsupported: "Filtering unavailable for these values", apply: "Apply", clear: "Clear", blank: "(Empty)", displayed: "Rows shown" },
 } as const;
 
 /**
@@ -64,6 +64,8 @@ export interface TableColumn {
   decimals?: number;
   /** Si true, l'en-tête de colonne ne passe pas à la ligne (whitespace-nowrap). */
   noWrap?: boolean;
+  /** Filtre facultatif sur les valeurs distinctes de cette colonne. */
+  filterable?: boolean;
   /**
    * Agrégat affiché en PIED de tableau pour cette colonne.
    *
@@ -91,7 +93,7 @@ export interface TableColumn {
  */
 export interface TableProps {
   /** PARENT: bpm.panel | bpm.container | page directe. INTERDIT: bpm.card comme parent direct — overflow caché. ASSOCIÉ: bpm.pagination, bpm.input (recherche), bpm.badge (statut colonne), bpm.button (actions). */
-  /** Définition des colonnes — obligatoire. */
+  /** Définition des colonnes. Dans le core React, filterable: true propose leurs valeurs distinctes. */
   columns: TableColumn[];
   /** Tableau de données — obligatoire. INTERDIT : JSX dans data[], utiliser render dans TableColumn. */
   data: Record<string, unknown>[];
@@ -124,6 +126,10 @@ export interface TableProps {
   density?: "normal" | "compact";
   /** Libellé de la première cellule du pied de totaux. Défaut : "Total". */
   totalsLabel?: string;
+  /** Controlled mode: data already contains the rows to display (e.g. a server page). */
+  filters?: Record<string, string[]>;
+  /** Applying a filter replaces the previous column selection. An empty array matches no values. */
+  onFiltersChange?: (filters: Record<string, string[]>) => void;
 }
 
 function getSortValue(val: unknown): string | number {
@@ -131,6 +137,7 @@ function getSortValue(val: unknown): string | number {
   if (typeof val === "object" && val !== null && "value" in val) {
     return parseFloat((val as { value: unknown }).value as string) ?? "";
   }
+  if (typeof val === "string" && isNumericValue(val)) return toNumber(val);
   const num = parseFloat(String(val));
   if (!Number.isNaN(num) && isFinite(num)) return num;
   return String(val).toLowerCase();
@@ -160,6 +167,100 @@ function toNumber(val: unknown): number {
   return parseFloat(String(val).replace(",", ".")) || 0;
 }
 
+function filterValue(value: unknown): string {
+  return value == null ? "" : String(value);
+}
+
+/** A string[] filter must be reversible on this column. Do not conflate a
+ * number and its string representation, or two different composite cells. */
+function columnChoices(data: TableProps["data"], key: string, selected: string[]): string[] | null {
+  const values = new Set<string>();
+  let kind: string | undefined;
+  let missing = false;
+  for (const row of data) {
+    const v = row[key];
+    if (v == null) {
+      missing = true;
+      continue;
+    }
+    const type = typeof v;
+    if (!(type === "string" || type === "boolean" || (type === "number" && Number.isFinite(v)))) return null;
+    if (kind !== undefined && type !== kind) return null;
+    kind = type;
+    values.add(String(v));
+  }
+  if (missing && values.has("")) return null;
+  if (missing) values.add("");
+  return [...new Set([...values, ...selected])];
+}
+
+interface ColumnFilterProps {
+  label: string;
+  selected: string[] | undefined;
+  options: string[] | null;
+  strings: (typeof STRINGS)[keyof typeof STRINGS];
+  onApply: (selection?: string[]) => void;
+}
+
+function ColumnFilter({ label, selected, options, strings, onApply }: ColumnFilterProps) {
+  const [draft, setDraft] = useState<string[] | null>(null);
+  const initial = useRef<string[]>([]);
+  const control = useRef<HTMLSpanElement>(null);
+  const button = useRef<HTMLButtonElement>(null);
+  const open = draft !== null;
+  useEffect(() => {
+    if (!open) return;
+    const dismiss = (event: PointerEvent | FocusEvent) => {
+      if (event.target instanceof Node && !control.current?.contains(event.target)) setDraft(null);
+    };
+    document.addEventListener("pointerdown", dismiss);
+    document.addEventListener("focusin", dismiss);
+    return () => {
+      document.removeEventListener("pointerdown", dismiss);
+      document.removeEventListener("focusin", dismiss);
+    };
+  }, [open]);
+  const close = () => {
+    setDraft(null);
+    button.current?.focus();
+  };
+  return (
+    <span className="bpm-table-filter" ref={control} onClick={(e) => e.stopPropagation()}
+      onKeyDown={(e) => { if (e.key === "Escape" && open) { e.stopPropagation(); close(); } }}>
+      <button type="button" ref={button} aria-expanded={open}
+        disabled={!options && !selected} title={options ? undefined : strings.unsupported}
+        aria-label={strings.prefix + label}
+        onClick={() => {
+          if (open) return close();
+          initial.current = selected ?? options ?? [];
+          setDraft(initial.current);
+        }}>
+        {strings.filter}{selected && ` (${selected.length})`}
+      </button>
+      {draft && (
+        <span role="group" aria-label={label} className="bpm-table-filter-options">
+          {!options && <span>{strings.unsupported}</span>}
+          {options?.map(value => (
+            <label key={value}>
+              <input type="checkbox" checked={draft.includes(value)}
+                onChange={(e) => setDraft(e.target.checked ? [...draft, value] : draft.filter(v => v !== value))} />
+              {value || strings.blank}
+            </label>
+          ))}
+          <button type="button" disabled={!options} onClick={() => {
+            const chosen = new Set(draft);
+            if (chosen.size !== initial.current.length || initial.current.some(value => !chosen.has(value))) {
+              onApply(draft);
+            }
+            close();
+          }}>{strings.apply}</button>
+          <button type="button" onClick={() => { if (selected !== undefined) onApply(); close(); }}>{strings.clear}</button>
+        </span>
+      )}
+    </span>
+  );
+}
+
 export function Table({
   columns,
   data = [],
@@ -181,20 +282,46 @@ export function Table({
   error = null,
   density = "normal",
   totalsLabel,
+  filters,
+  onFiltersChange,
 }: TableProps) {
   const bpmLocale = useBpmLocale();
   const t = STRINGS[bpmLocale];
   const effEmptyMessage = emptyMessage ?? t.emptyMessage;
   const isMobile = useIsMobile(768);
 
+  const [localFilters, setLocalFilters] = useState<Record<string, string[]>>({});
+  const active = filters ?? localFilters;
+  const filterColumns = columns.filter(col => col.filterable);
+  const activeColumn = filterColumns.find(col => Object.prototype.hasOwnProperty.call(active, col.key));
+  const optionsByKey = useMemo(() => {
+    const entries = columns.filter(col => col.filterable).map(col => {
+      const selected = Object.prototype.hasOwnProperty.call(active, col.key) ? active[col.key] : [];
+      return [col.key, columnChoices(data, col.key, selected)] as const;
+    });
+    return new Map(entries);
+  }, [columns, data, active]);
+  const incompatibleFilter = activeColumn && optionsByKey.get(activeColumn.key) === null && filters === undefined;
+  const displayError = error || (incompatibleFilter ? t.unsupported : null);
+  const visible = useMemo(() => {
+    if (incompatibleFilter) return [];
+    if (filters !== undefined || !activeColumn) return data;
+    const allowed = new Set(active[activeColumn.key]);
+    return data.filter(row => allowed.has(filterValue(row[activeColumn.key])));
+  }, [incompatibleFilter, filters, activeColumn, data, active]);
+  const apply = (key: string, selection?: string[]) => {
+    const next = selection === undefined ? {} : { [key]: selection };
+    if (filters === undefined) setLocalFilters(next);
+    onFiltersChange?.(next);
+  };
   useBPMContext(
     {
       type: "table",
       label: name ?? "Tableau",
-      data: data,
+      data: visible,
       metadata: {
         columns: columns.map((c) => (typeof c.label === "string" ? c.label : c.key)),
-        rowCount: data.length,
+        rowCount: visible.length,
       },
     },
     trackContext === true
@@ -246,8 +373,8 @@ export function Table({
   };
 
   const sortedData = useMemo(() => {
-    if (!sortColumn) return data;
-    return [...data].sort((a, b) => {
+    if (!sortColumn) return visible;
+    return [...visible].sort((a, b) => {
       const aVal = getSortValue(a[sortColumn]);
       const bVal = getSortValue(b[sortColumn]);
       const aNum = typeof aVal === "number" ? aVal : 0;
@@ -262,7 +389,7 @@ export function Table({
         ? aStr.localeCompare(bStr)
         : bStr.localeCompare(aStr);
     });
-  }, [data, sortColumn, sortDirection]);
+  }, [visible, sortColumn, sortDirection]);
 
   /* UN SEUL CADRE (fix 07/07 — « bordures non fermées aux angles ») : le
      wrapper porte l'unique bordure extérieure (+ radius) ; les cellules ne
@@ -284,7 +411,7 @@ export function Table({
      voir le total inchangé est le défaut classique de cette fonctionnalité.
      Émis SEULEMENT si au moins une colonne le demande ET qu'il y a des lignes :
      un pied « Total — » sous une table vide n'apprend rien. */
-  const wantsTotals = columns.some((c) => c.total) && sortedData.length > 0 && !loading && !error;
+  const wantsTotals = columns.some((c) => c.total) && sortedData.length > 0 && !loading && !displayError;
   const totalFor = (col: TableColumn): string | null => {
     if (!col.total) return null;
     const bruts = sortedData.map((r) => r[col.key]);
@@ -325,6 +452,9 @@ export function Table({
           } ${hover ? "bpm-table-hover" : ""} ${onRowClick ? "bpm-table-clickable" : ""}`}
           style={tableMinWidthStyle}
         >
+          {activeColumn && !displayError && !loading && (
+            <caption className="bpm-table-filter-count" aria-live="polite">{t.displayed} · {visible.length}</caption>
+          )}
           <thead>
             <tr>
               {columns.map((col, idx) => (
@@ -354,6 +484,12 @@ export function Table({
                 >
                   <span className="flex items-center gap-2">
                     {col.label}
+                    {col.filterable && (
+                      <ColumnFilter label={typeof col.label === "string" ? col.label : col.key}
+                        selected={Object.prototype.hasOwnProperty.call(active, col.key) ? active[col.key] : undefined}
+                        options={optionsByKey.get(col.key) ?? null}
+                        strings={t} onApply={(selection) => apply(col.key, selection)} />
+                    )}
                     {sortColumn === col.key && (
                       <span className="bpm-table-sort-indicator" aria-hidden>
                         {sortDirection === "asc" ? " ↑" : " ↓"}
@@ -365,7 +501,7 @@ export function Table({
             </tr>
           </thead>
           <tbody>
-            {error ? (
+            {displayError ? (
               <tr>
                 <td
                   colSpan={columns.length}
@@ -377,7 +513,7 @@ export function Table({
                     backgroundColor: "var(--bpm-error-soft, #fef2f2)",
                   }}
                 >
-                  {error}
+                  {displayError}
                 </td>
               </tr>
             ) : loading ? (
