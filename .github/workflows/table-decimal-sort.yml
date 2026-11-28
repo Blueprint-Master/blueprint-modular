@@ -1,0 +1,83 @@
+name: Tri numérique de la table du ZIP installé
+on:
+  pull_request:
+    branches: [codex/q-table-decimal-sort-582f05de]
+permissions:
+  contents: read
+jobs:
+  browser:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 25
+    strategy:
+      fail-fast: false
+      matrix:
+        revision: [baseline, candidate]
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+          fetch-depth: 0
+          persist-credentials: false
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Installer le ZIP et compiler son paquet React
+        env:
+          BASE: ${{ github.event.pull_request.base.sha }}
+          HEAD_SHA: ${{ github.event.pull_request.head.sha }}
+          VARIANT: ${{ matrix.revision }}
+        run: |
+          set -euo pipefail
+          revision="$HEAD_SHA"
+          if [[ "$VARIANT" == baseline ]]; then revision="$BASE"; fi
+          git worktree add --detach "$RUNNER_TEMP/source" "$revision"
+          python "$RUNNER_TEMP/source/scripts/build-modules-bundle.py" --output "$RUNNER_TEMP/dist"
+          zip=("$RUNNER_TEMP"/dist/blueprint-modules-v*.zip)
+          test "${#zip[@]}" -eq 1
+          unzip -q "${zip[0]}" -d "$RUNNER_TEMP/install"
+          cd "$RUNNER_TEMP/install/application"
+          test "$(cat BUILD-REVISION)" = "$revision"
+          npm ci --ignore-scripts --no-audit --no-fund
+          npm ci --prefix packages/core --ignore-scripts --no-audit --no-fund
+          npm run build --prefix packages/core
+          (cd packages/core && npm pack --ignore-scripts --pack-destination "$RUNNER_TEMP/dist" --silent)
+          (cd "$RUNNER_TEMP/dist" && sha256sum *.zip *.tgz > SHA256SUMS)
+      - name: Lire les deux sens du tri, les lignes et les totaux dans Chromium
+        env:
+          VARIANT: ${{ matrix.revision }}
+        run: |
+          set -euo pipefail
+          python -m venv "$RUNNER_TEMP/qa"
+          "$RUNNER_TEMP/qa/bin/pip" install --quiet 'playwright==1.56.0'
+          flags=()
+          if [[ "$VARIANT" == baseline ]]; then flags+=(--baseline); fi
+          "$RUNNER_TEMP/qa/bin/python" scripts/verify-table-decimal-sort.py "$RUNNER_TEMP"/dist/*.tgz \
+            "$RUNNER_TEMP/install/application/node_modules" "$(command -v google-chrome)" "${flags[@]}" \
+            | tee "$RUNNER_TEMP/dist/sort.jsonl"
+      - name: Démarrer le standalone candidat et vérifier son SHA
+        if: matrix.revision == 'candidate'
+        env:
+          HEAD_SHA: ${{ github.event.pull_request.head.sha }}
+          HOSTNAME: 127.0.0.1
+          PORT: 3040
+          NEXTAUTH_URL: http://127.0.0.1:3040
+          NEXT_TELEMETRY_DISABLED: '1'
+        run: |
+          set -euo pipefail
+          cd "$RUNNER_TEMP/install/application"
+          npx --no-install prisma generate
+          npm run build -- --webpack
+          bash deploy/copy-standalone-assets.sh
+          export NEXTAUTH_SECRET="$(openssl rand -hex 32)"
+          node .next/standalone/server.js > "$RUNNER_TEMP/server.log" 2>&1 &
+          server=$!
+          trap 'kill "$server" 2>/dev/null || true' EXIT
+          curl -fsS --retry 20 --retry-connrefused --retry-delay 1 \
+            "$NEXTAUTH_URL/api/health" -o "$RUNNER_TEMP/dist/health.json"
+          jq -e --arg sha "$HEAD_SHA" '.sourceCommit == $sha and .status == "ok"' "$RUNNER_TEMP/dist/health.json"
+          tar --exclude='.env' --exclude='.env.*' -czf "$RUNNER_TEMP/dist/standalone.tar.gz" BUILD-REVISION package.json .next/standalone
+      - uses: actions/upload-artifact@v4
+        with:
+          name: table-decimal-sort-${{ matrix.revision }}-${{ github.event.pull_request.head.sha }}
+          path: ${{ runner.temp }}/dist/
+          if-no-files-found: error
