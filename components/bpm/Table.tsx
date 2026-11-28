@@ -131,6 +131,7 @@ function getSortValue(val: unknown): string | number {
   if (typeof val === "object" && val !== null && "value" in val) {
     return parseFloat((val as { value: unknown }).value as string) ?? "";
   }
+  if (typeof val === "string" && isNumericValue(val)) return toNumber(val);
   const num = parseFloat(String(val));
   if (!Number.isNaN(num) && isFinite(num)) return num;
   return String(val).toLowerCase();
