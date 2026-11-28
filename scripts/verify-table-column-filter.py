@@ -55,7 +55,19 @@ def probe(browser, bundle, width, baseline):
         expect(page.locator("#filters")).to_have_text('{"status":["Ouvert"]}')
         expect(server.locator(rows)).to_have_count(3)
         expect(server.locator("tfoot td").last).to_have_text("60")
-        return {"width": width, "usableFilterButtons": 2, "eligible": 2,
+        # A draft left unchanged must preserve the current selection (including
+        # one on another column) and must never turn today's values into a whitelist.
+        for view in (local, server):
+            view.get_by_role("button", name="Filtrer : Article", exact=True).click()
+            view.get_by_role("button", name="Appliquer", exact=True).click()
+        expect(page.locator("#changes")).to_have_text("1")
+        expect(page.locator("#filters")).to_have_text('{"status":["Ouvert"]}')
+        page.get_by_role("button", name="Recevoir une ligne").click()
+        expect(local.locator(rows)).to_have_count(4)
+        expect(local.locator("tfoot td").last).to_have_text("65")
+        expect(local.locator("caption")).to_have_count(0)
+        return {"width": width, "usableFilterButtons": 2,
+                "rowsAfterUnchangedDraftAndNewValue": 4, "unchangedControlledCallbacks": 0, "eligible": 2,
                 "localRows": [3, 2, 3], "localTotals": [60, 40, 60],
                 "controlledRows": 3, "sortControl": True}
     finally:

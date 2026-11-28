@@ -52,6 +52,15 @@ jobs:
           tar -xzf "${tarball[0]}" -C packages/core/consumer/node_modules/@blueprint-modular/core --strip-components=1
           cp "$GITHUB_WORKSPACE/scripts/table-column-filter-consumer.jsx" packages/core/consumer/
           node_modules/.bin/esbuild packages/core/consumer/table-column-filter-consumer.jsx --bundle --platform=browser --loader:.png=dataurl --loader:.svg=dataurl --loader:.woff2=dataurl --external:react-plotly.js --outfile="$RUNNER_TEMP/consumer.js"
+      - name: Vérifier la surface des props sur les sources du ZIP et la synchronisation des catalogues
+        if: matrix.revision == 'candidate'
+        run: |
+          set -euo pipefail
+          python3 scripts/gate-docs-sync.py
+          gate="$RUNNER_TEMP/install/application/packages/core"
+          cp -R packages/core/gate "$gate/"
+          cp packages/core/vitest.config.ts "$gate/"
+          (cd "$gate" && node_modules/.bin/vitest run gate/props.test.ts)
       - name: Vérifier les interactions, les pieds et le contrôle externe dans Chromium
         env:
           VARIANT: ${{ matrix.revision }}
@@ -85,6 +94,8 @@ jobs:
           jq -e --arg sha "$EXPECTED_REVISION" \
             '.status == "ok" and .sourceCommit == $sha and .applicationVersion == "0.1.61"' \
             "$RUNNER_TEMP/dist/health.json"
+          cp "$GITHUB_WORKSPACE/scripts/verify-table-mcp.mjs" "$RUNNER_TEMP/install/application/scripts/"
+          node scripts/verify-table-mcp.mjs "$NEXTAUTH_URL" | tee "$RUNNER_TEMP/dist/table-mcp.json"
           python3 - "$GITHUB_WORKSPACE/scripts" <<'PY'
           import os, runpy, sys
           from pathlib import Path

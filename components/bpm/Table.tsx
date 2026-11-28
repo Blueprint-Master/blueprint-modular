@@ -93,7 +93,7 @@ export interface TableColumn {
  */
 export interface TableProps {
   /** PARENT: bpm.panel | bpm.container | page directe. INTERDIT: bpm.card comme parent direct — overflow caché. ASSOCIÉ: bpm.pagination, bpm.input (recherche), bpm.badge (statut colonne), bpm.button (actions). */
-  /** Définition des colonnes — obligatoire. */
+  /** Définition des colonnes. Dans le core React, filterable: true propose leurs valeurs distinctes. */
   columns: TableColumn[];
   /** Tableau de données — obligatoire. INTERDIT : JSX dans data[], utiliser render dans TableColumn. */
   data: Record<string, unknown>[];
@@ -203,6 +203,7 @@ interface ColumnFilterProps {
 
 function ColumnFilter({ label, selected, options, strings, onApply }: ColumnFilterProps) {
   const [draft, setDraft] = useState<string[] | null>(null);
+  const initial = useRef<string[]>([]);
   const control = useRef<HTMLSpanElement>(null);
   const button = useRef<HTMLButtonElement>(null);
   const open = draft !== null;
@@ -228,7 +229,11 @@ function ColumnFilter({ label, selected, options, strings, onApply }: ColumnFilt
       <button type="button" ref={button} aria-expanded={open}
         disabled={!options && !selected} title={options ? undefined : strings.unsupported}
         aria-label={strings.prefix + label}
-        onClick={() => setDraft(open ? null : selected ?? options ?? [])}>
+        onClick={() => {
+          if (open) return close();
+          initial.current = selected ?? options ?? [];
+          setDraft(initial.current);
+        }}>
         {strings.filter}{selected && ` (${selected.length})`}
       </button>
       {draft && (
@@ -241,8 +246,14 @@ function ColumnFilter({ label, selected, options, strings, onApply }: ColumnFilt
               {value || strings.blank}
             </label>
           ))}
-          <button type="button" disabled={!options} onClick={() => { onApply(draft); close(); }}>{strings.apply}</button>
-          <button type="button" onClick={() => { onApply(); close(); }}>{strings.clear}</button>
+          <button type="button" disabled={!options} onClick={() => {
+            const chosen = new Set(draft);
+            if (chosen.size !== initial.current.length || initial.current.some(value => !chosen.has(value))) {
+              onApply(draft);
+            }
+            close();
+          }}>{strings.apply}</button>
+          <button type="button" onClick={() => { if (selected !== undefined) onApply(); close(); }}>{strings.clear}</button>
         </span>
       )}
     </span>

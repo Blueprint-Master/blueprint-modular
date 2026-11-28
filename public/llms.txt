@@ -1,7 +1,7 @@
 # Blueprint Modular — Agent Context File
 # Version React (@blueprint-modular/core, npm) : 0.3.18
 # Version Python (blueprint-modular, PyPI)      : 0.1.55
-# Date    : 2026-11-20
+# Date    : 2026-11-28
 # URL canonique : https://blueprint-modular.com/llms.txt
 #
 # Ce fichier est la référence machine de @blueprint-modular/core.
@@ -1991,7 +1991,7 @@ Conteneur page (core) — props : children.
 @semantic role=affichage frame=entity status=proposed
 @guidance Collection homogène d'entités à comparer ligne à ligne : chaque ligne est une instance, chaque colonne un champ. Associer : bpm.pagination, bpm.filterPanel, bpm.badge, bpm.exportButton. Éviter : Mesures agrégées (bpm.metric) ou exploration libre avec tri/recherche/export intégrés (bpm.dataExplorer).
 ```
-  columns*: TableColumn[]  — Définition des colonnes — obligatoire.
+  columns*: TableColumn[]  — Définition des colonnes. Dans le core React, filterable: true propose leurs valeurs distinctes.
   data*: Record<string, unknown>[]  — Tableau de données — obligatoire. INTERDIT : JSX dans data[], utiliser render dans TableColumn.
   striped?: boolean
   hover?: boolean
@@ -2011,6 +2011,8 @@ Conteneur page (core) — props : children.
   error?: string | null  — État erreur : affiche le message en ligne role=alert (prioritaire sur loading/empty). Additif : défaut null.
   density?: "normal" | "compact"  — Densité d'affichage : "normal" (défaut, rendu historique) ou "compact" (padding réduit).
   totalsLabel?: string  — Libellé de la première cellule du pied de totaux. Défaut : "Total".
+  filters?: Record<string, string[]>  — Controlled mode: data already contains the rows to display (e.g. a server page).
+  onFiltersChange?: (filters: Record<string, string[]>) => void  — Applying a filter replaces the previous column selection. An empty array matches no values.
 ```
 INTERDIT : - data (Record<string,unknown>[], obligatoire) — Lignes ; jamais de JSX dans data[] (utiliser render).
 INTERDIT : Tableau de données — obligatoire. INTERDIT : JSX dans data[], utiliser render dans TableColumn.
