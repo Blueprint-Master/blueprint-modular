@@ -49,9 +49,17 @@ jobs:
           test "${#tarball[@]}" -eq 1
           sha256sum "${tarball[0]}" >> "$RUNNER_TEMP/dist/SHA256SUMS"
           mkdir -p packages/core/consumer/node_modules/@blueprint-modular/core
+          echo '{"name":"table-filter-consumer","private":true,"type":"module"}' > packages/core/consumer/package.json
           tar -xzf "${tarball[0]}" -C packages/core/consumer/node_modules/@blueprint-modular/core --strip-components=1
           cp "$GITHUB_WORKSPACE/scripts/table-column-filter-consumer.jsx" packages/core/consumer/
-          node_modules/.bin/esbuild packages/core/consumer/table-column-filter-consumer.jsx --bundle --platform=browser --loader:.png=dataurl --loader:.svg=dataurl --loader:.woff2=dataurl --external:react-plotly.js --outfile="$RUNNER_TEMP/consumer.js"
+          node_modules/.bin/esbuild packages/core/consumer/table-column-filter-consumer.jsx --bundle --platform=browser --loader:.png=dataurl --loader:.svg=dataurl --loader:.woff2=dataurl --external:react-plotly.js --outfile="$RUNNER_TEMP/consumer.js" --metafile="$RUNNER_TEMP/consumer-meta.json"
+          jq -e --arg entry "packages/core/consumer/table-column-filter-consumer.jsx" \
+            --arg prefix "packages/core/consumer/node_modules/@blueprint-modular/core/dist/" '
+              ((.inputs | keys | map(select(startswith("packages/core/dist/"))) | length) == 0) and
+              ([.inputs[$entry].imports[] | select(.original == "@blueprint-modular/core" or .original == "@blueprint-modular/core/style.css") | .path] | sort == ([$prefix + "index.mjs", $prefix + "style.css"] | sort))
+            ' "$RUNNER_TEMP/consumer-meta.json"
+          jq '[.inputs["packages/core/consumer/table-column-filter-consumer.jsx"].imports[] | select(.original | startswith("@blueprint-modular/core")) | {original, path}]' \
+            "$RUNNER_TEMP/consumer-meta.json" > "$RUNNER_TEMP/dist/consumer-imports.json"
       - name: Vérifier la surface des props sur les sources du ZIP et la synchronisation des catalogues
         if: matrix.revision == 'candidate'
         run: |
